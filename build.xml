@@ -1,0 +1,70 @@
+<!--
+
+REMEMBER - Change the atlauncher.version property below
+
+Version 3.0.0dev1
+ - Initial Build
+
+-->
+
+<project name="ATLauncher 3.0" basedir=".">
+    <taskdef resource="proguard/ant/task.properties"
+             classpath="C:/Users/Ryan/IdeaProjects/proguard/lib/proguard.jar"/>
+    <taskdef resource="net/sf/antcontrib/antlib.xml"
+             classpath="C:/ant/lib/ant-contrib-1.0b3.jar"/>
+
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="release.dir" value="${build.dir}/release"/>
+    <property name="buildsrc.dir" value="${build.dir}/src"/>
+    <property name="bin.dir" value="${build.dir}/bin"/>
+    <property name="atlauncher.version" value="3.0.0dev1"/>
+
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${release.dir}"/>
+
+    <delete dir="${buildsrc.dir}"/>
+    <delete dir="${bin.dir}"/>
+
+    <mkdir dir="${buildsrc.dir}"/>
+    <mkdir dir="${bin.dir}"/>
+
+    <copy todir="${buildsrc.dir}">
+        <fileset dir="${src.dir}"/>
+    </copy>
+
+    <!--<replace file="${buildsrc.dir}/com/atlauncher/Version.java"
+              token="%VERSION%" value="${atlauncher.version}"/>-->
+
+    <javac srcdir="${buildsrc.dir}" destdir="${bin.dir}" target="1.6"
+           source="1.6" includeantruntime="false"/>
+
+    <!--<copy todir="${bin.dir}/resources"
+          file="${buildsrc.dir}/resources/Icon.png"/>
+    <copy todir="${bin.dir}/resources"
+          file="${buildsrc.dir}/resources/SplashScreen.png"/>
+    <copy todir="${bin.dir}/resources"
+          file="${buildsrc.dir}/resources/english.lang"/>-->
+
+    <!-- <copy todir="${bin.dir}/com/atlauncher"
+           file="${buildsrc.dir}/com/atlauncher/minecraft.key"/>-->
+
+    <jar destfile="${release.dir}/ATLauncher.jar"
+         filesetmanifest="mergewithoutmain">
+        <manifest>
+            <attribute name="Main-Class" value="com.atlauncher.Main"/>
+            <attribute name="Class-Path" value="."/>
+        </manifest>
+        <fileset dir="${bin.dir}"/>
+    </jar>
+
+    <proguard configuration="ProGuard.conf"/>
+
+    <exec executable="cmd">
+        <arg value="/c"/>
+        <arg value="..\launch4j\launch4jc.exe"/>
+        <arg value="launch4j.xml"/>
+    </exec>
+
+    <delete dir="${build.dir}"/>
+</project>
