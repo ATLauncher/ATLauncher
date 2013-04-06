@@ -16,24 +16,25 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
+@SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
-	
-	private final Dimension WINDOW_SIZE = new Dimension(800,500);
 
-	public LauncherFrame() {
-		setSize(WINDOW_SIZE);
-		setLocationRelativeTo(null); // Center window on screen
-		setVisible(true); // Set window visible
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent arg0) {
-				dispose();
-				System.gc();
-			}
-		});
-	}
-	
-	
+    private final Dimension WINDOW_SIZE = new Dimension(800, 500);
+
+    public LauncherFrame() {
+        setSize(WINDOW_SIZE);
+        setLocationRelativeTo(null);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+        setIconImage(Utils.getImage("/resources/Icon.png"));
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent arg0) {
+                dispose();
+                System.gc();
+            }
+        });
+    }
 
 }
