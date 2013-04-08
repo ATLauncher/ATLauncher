@@ -10,35 +10,46 @@
  */
 package com.atlauncher.gui;
 
+import java.awt.Desktop;
 import java.awt.Image;
+import java.net.URI;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
 
 public class Utils {
 
-	public static ImageIcon getIconImage(String path) {
-		URL url = System.class.getResource(path);
+    public static ImageIcon getIconImage(String path) {
+        URL url = System.class.getResource(path);
 
-		if (url == null) {
-			System.err.println("Unable to load image: " + path);
-		}
+        if (url == null) {
+            System.err.println("Unable to load image: " + path);
+        }
 
-		ImageIcon icon = new ImageIcon(url);
+        ImageIcon icon = new ImageIcon(url);
 
-		return icon;
-	}
-	
-	public static Image getImage(String path) {
-		URL url = System.class.getResource(path);
+        return icon;
+    }
 
-		if (url == null) {
-			System.err.println("Unable to load image: " + path);
-		}
+    public static Image getImage(String path) {
+        URL url = System.class.getResource(path);
 
-		ImageIcon icon = new ImageIcon(url);
+        if (url == null) {
+            System.err.println("Unable to load image: " + path);
+        }
 
-		return icon.getImage();
-	}
+        ImageIcon icon = new ImageIcon(url);
 
+        return icon.getImage();
+    }
+
+    public static void openBrowser(String URL) {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(new URI(URL));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
