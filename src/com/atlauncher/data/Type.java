@@ -8,11 +8,15 @@
  *
  * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
-package com.atlauncher.workers;
+package com.atlauncher.data;
 
-public enum UpdateDownloaderResults {
-    checking,
-    downloading,
-    complete,
-    serverNotReachable
+public enum Type {
+
+    jar,
+    mods,
+    coremods,
+    extract,
+    decomp,
+    millenaire
+    
 }

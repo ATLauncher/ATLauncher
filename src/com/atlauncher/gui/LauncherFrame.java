@@ -15,15 +15,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
+import java.io.File;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-import com.atlauncher.workers.UpdateDownloader;
-import com.atlauncher.workers.UpdateDownloaderResults;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
@@ -50,11 +55,11 @@ public class LauncherFrame extends JFrame {
         setIconImage(Utils.getImage("/resources/Icon.png"));
         setLayout(LAYOUT_MANAGER);
 
-        setLookAndFeel(); // Set the look and feel for the Launcher
+        setupLookAndFeel(); // Setup the look and feel for the Launcher
+
+        setupBottomBar(); // Setup the Bottom Bar
 
         setupTabs(); // Setup the JTabbedPane
-
-        setupSidebar(); // Setup the Sidebar
 
         add(tabbedPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
@@ -64,42 +69,14 @@ public class LauncherFrame extends JFrame {
                 dispose();
             }
         });
-        checkUpdates();
-    }
-
-    private void checkUpdates() {
-        UpdateDownloader updater = new UpdateDownloader(){
-            @Override
-            protected void process(List<UpdateDownloaderResults> chunks) {
-                UpdateDownloaderResults got = chunks.get(chunks.size()-1);
-                if(got == UpdateDownloaderResults.checking){
-                    bottomBar.setText("Checking For Updates!");
-                    bottomBar.setIndeterminate(true);
-                }else{
-                    bottomBar.setIndeterminate(false);
-                }
-
-                if(got == UpdateDownloaderResults.downloading){
-                    bottomBar.setText("Updates Downloading!");
-                    bottomBar.setProgress(50);
-                }else if(got == UpdateDownloaderResults.complete){
-                    bottomBar.setText("Updates Completed!");
-                    bottomBar.setProgress(100);
-                }else if(got == UpdateDownloaderResults.serverNotReachable){
-                    bottomBar.setText("Server Not Reachable!");
-                    bottomBar.setProgress(100);
-                }
-            }
-        };
-        updater.execute();
     }
 
     private void setupTabs() {
         tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
         tabbedPane.setBackground(BASE_COLOR);
 
-        newsPanel = new NewsPanel(this);
-        packsPanel = new PacksPanel();
+        newsPanel = new NewsPanel();
+        packsPanel = new PacksPanel(this);
         instancesPanel = new InstancesPanel();
         settingsPanel = new SettingsPanel();
 
@@ -117,12 +94,11 @@ public class LauncherFrame extends JFrame {
         tabbedPane.setOpaque(true);
     }
 
-    private void setupSidebar() {
+    private void setupBottomBar() {
         bottomBar = new BottomBar();
-        
     }
 
-    private void setLookAndFeel() {
+    private void setupLookAndFeel() {
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -147,6 +123,8 @@ public class LauncherFrame extends JFrame {
         UIManager.put("nimbusLightBackground", BASE_COLOR);
         UIManager.put("info", BASE_COLOR);
         UIManager.put("nimbusSelectionBackground", BASE_COLOR);
+        UIManager.put("Table.focusCellHighlightBorder",
+                BorderFactory.createEmptyBorder(2, 5, 2, 5));
     }
 
 }

@@ -52,4 +52,14 @@ public class Utils {
             }
         }
     }
+
+    public static void openBrowser(URL URL) {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(URL.toURI());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

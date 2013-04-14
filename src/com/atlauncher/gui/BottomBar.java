@@ -21,11 +21,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JSplitPane;
-import javax.swing.border.BevelBorder;
 
 @SuppressWarnings("serial")
 public class BottomBar extends JPanel {
@@ -36,14 +32,12 @@ public class BottomBar extends JPanel {
     private JButton facebookIcon;
     private JButton twitterIcon;
     private JButton redditIcon;
-    
-    private JLabel label;
-    private JProgressBar progressBar;
-    private JSplitPane splitPane;
 
     public BottomBar() {
         setBorder(BorderFactory.createEtchedBorder());
         setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(0, 50)); // Make the bottom bar at least
+                                                // 50 pixels high
 
         leftSide = new JPanel();
         rightSide = new JPanel();
@@ -51,21 +45,6 @@ public class BottomBar extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
 
         createIcons();
-
-        label = new JLabel("Checking For Updates");
-        label.setHorizontalAlignment(JLabel.CENTER);
-
-        progressBar = new JProgressBar();
-        progressBar.setIndeterminate(true);
-
-        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, label,
-                progressBar);
-        splitPane.setEnabled(false);
-        splitPane
-                .setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        splitPane.setPreferredSize(new Dimension(200, 50));
-
-        leftSide.add(splitPane);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
@@ -113,21 +92,5 @@ public class BottomBar extends JPanel {
                 Utils.openBrowser("http://www.twitter.com/ATLauncher");
             }
         });
-    }
-
-    public void setText(String text) {
-        label.setText(text);
-    }
-
-    public void setProgress(int value) {
-        progressBar.setValue(value);
-    }
-
-    public void setIndeterminate(boolean value) {
-        progressBar.setIndeterminate(value);
-        if(!value){
-            progressBar.setMinimum(0);
-            progressBar.setMaximum(100);
-        }
     }
 }

@@ -10,18 +10,60 @@
  */
 package com.atlauncher.gui;
 
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 @SuppressWarnings("serial")
 public class PacksPanel extends JPanel {
 
-    public PacksPanel() {
-        setLayout(new FlowLayout());
-        JButton button = new JButton("Packs");
-        add(button);
-    }
+    JFrame parent;
+    JTable packsTable;
+    JSplitPane splitPane;
+    JPanel packActions;
+    JButton newInstance;
+    JButton showMods;
 
+    public PacksPanel(final JFrame parent) {
+        this.parent = parent;
+        setLayout(new BorderLayout());
+
+        final PacksTable packsTable = new PacksTable();
+        packsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                packActions.setVisible(true);
+            }
+        });
+
+        packActions = new JPanel(new FlowLayout());
+
+        newInstance = new JButton("New Instance");
+        newInstance.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new NewInstanceDialog(parent, packsTable.getSelectedPack());
+            }
+        });
+        packActions.add(newInstance);
+
+        showMods = new JButton("Show Mods");
+        packActions.add(showMods);
+        packActions.setVisible(false);
+
+        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(
+                packsTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), packActions);
+        splitPane.setEnabled(false);
+        splitPane.setDividerLocation(375);
+        add(splitPane, BorderLayout.CENTER);
+    }
 }

@@ -17,7 +17,7 @@ Version 3.0.0dev1
     <property name="build.dir" value="build"/>
     <property name="release.dir" value="${build.dir}/release"/>
     <property name="buildsrc.dir" value="${build.dir}/src"/>
-    <property name="bin.dir" value="${build.dir}/bin"/>
+    <property name="bin.dir" value="${build.dir}/compiled"/>
     <property name="atlauncher.version" value="3.0.0dev1"/>
 
     <mkdir dir="${build.dir}"/>
@@ -39,12 +39,9 @@ Version 3.0.0dev1
     <javac srcdir="${buildsrc.dir}" destdir="${bin.dir}" target="1.6"
            source="1.6" includeantruntime="false"/>
 
-    <!--<copy todir="${bin.dir}/resources"
-          file="${buildsrc.dir}/resources/Icon.png"/>
-    <copy todir="${bin.dir}/resources"
-          file="${buildsrc.dir}/resources/SplashScreen.png"/>
-    <copy todir="${bin.dir}/resources"
-          file="${buildsrc.dir}/resources/english.lang"/>-->
+	<copy todir="${bin.dir}/resources">  
+	        <fileset dir="${buildsrc.dir}/resources" includes="**"/>  
+	</copy>
 
     <!-- <copy todir="${bin.dir}/com/atlauncher"
            file="${buildsrc.dir}/com/atlauncher/minecraft.key"/>-->
@@ -52,7 +49,7 @@ Version 3.0.0dev1
     <jar destfile="${release.dir}/ATLauncher.jar"
          filesetmanifest="mergewithoutmain">
         <manifest>
-            <attribute name="Main-Class" value="com.atlauncher.Main"/>
+            <attribute name="Main-Class" value="com.atlauncher.App"/>
             <attribute name="Class-Path" value="."/>
         </manifest>
         <fileset dir="${bin.dir}"/>
