@@ -15,20 +15,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.Instances;
+import com.atlauncher.data.Packs;
+import com.atlauncher.data.Version;
+import com.atlauncher.listeners.InstanceListener;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
@@ -44,6 +42,9 @@ public class LauncherFrame extends JFrame {
     private SettingsPanel settingsPanel;
 
     private BottomBar bottomBar;
+    
+    private Instances instances;
+    private Packs packs;
 
     public LauncherFrame() {
         setSize(WINDOW_SIZE);
@@ -56,6 +57,8 @@ public class LauncherFrame extends JFrame {
         setLayout(LAYOUT_MANAGER);
 
         setupLookAndFeel(); // Setup the look and feel for the Launcher
+        
+        setupData(); // Setup all the data needed
 
         setupBottomBar(); // Setup the Bottom Bar
 
@@ -70,6 +73,31 @@ public class LauncherFrame extends JFrame {
             }
         });
     }
+    
+    private void setupData() {
+        this.instances = new Instances();
+        this.packs = new Packs();
+        this.instances.addInstance(new Instance("Test 1", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 2", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 3", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 4", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 5", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 6", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 7", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 8", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 9", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 10", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 11", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 12", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 13", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 14", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 15", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 16", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 17", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 18", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 19", "SolitaryCraft", new Version(1, 2, 3)));
+        this.instances.addInstance(new Instance("Test 20", "SolitaryCraft", new Version(1, 2, 3)));
+    }
 
     private void setupTabs() {
         tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
@@ -77,7 +105,13 @@ public class LauncherFrame extends JFrame {
 
         newsPanel = new NewsPanel();
         packsPanel = new PacksPanel(this);
-        instancesPanel = new InstancesPanel();
+        packsPanel.setInstanceListener(new InstanceListener() {
+            public void newInstance(Instance instance) {
+                instances.addInstance(instance);
+                instancesPanel.reloadTable();
+            }
+        });
+        instancesPanel = new InstancesPanel(this, instances);
         settingsPanel = new SettingsPanel();
 
         tabbedPane.addTab(null, Utils.getIconImage("/resources/NewsTab.png"),
@@ -122,7 +156,7 @@ public class LauncherFrame extends JFrame {
         UIManager.put("nimbusBorder", BASE_COLOR);
         UIManager.put("nimbusLightBackground", BASE_COLOR);
         UIManager.put("info", BASE_COLOR);
-        UIManager.put("nimbusSelectionBackground", BASE_COLOR);
+        UIManager.put("nimbusSelectionBackground", new Color(100, 100, 200));
         UIManager.put("Table.focusCellHighlightBorder",
                 BorderFactory.createEmptyBorder(2, 5, 2, 5));
     }

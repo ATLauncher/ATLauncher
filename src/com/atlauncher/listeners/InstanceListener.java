@@ -8,17 +8,10 @@
  *
  * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
-package com.atlauncher.data;
+package com.atlauncher.listeners;
 
-public class PrivatePack extends Pack {
+import com.atlauncher.data.Instance;
 
-    private Player[] allowedPlayers;
-
-    public PrivatePack(int id, String name, Player owner, Version[] versions,
-            Version minecraftVersion, String description, String changelog,
-            Player[] allowedPlayers) {
-        super(id, name, owner, versions, minecraftVersion, description,
-                changelog);
-    }
-
+public interface InstanceListener {
+    public void newInstance(Instance instance);
 }

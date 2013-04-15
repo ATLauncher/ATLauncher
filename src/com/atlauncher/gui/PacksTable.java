@@ -27,11 +27,13 @@ public class PacksTable extends JTable {
 
         Version[] versions = { new Version(1, 1, 0), new Version(1, 1, 1),
                 new Version(1, 1, 2) };
+        Version mcVersion = new Version(1, 5, 1);
         Pack astockyPack = new Pack(
                 1,
                 "Astocky Pack",
                 new Player("astocky"),
                 versions,
+                mcVersion,
                 "Astocky Pack is a pack which does stuff, you know Minecraft and stuff!",
                 "Hi");
         Pack herocraftReloaded = new Pack(
@@ -39,6 +41,7 @@ public class PacksTable extends JTable {
                 "HeroCraft Reloaded",
                 new Player("dwinget2008"),
                 versions,
+                mcVersion,
                 "HeroCraft Reloaded is a pack which does stuff, you know Minecraft and stuff!",
                 "Hi");
         Pack solitaryCraft = new Pack(
@@ -46,6 +49,7 @@ public class PacksTable extends JTable {
                 "SolitaryCraft",
                 new Player("haighyorkie"),
                 versions,
+                mcVersion,
                 "SolitaryCraft is a pack which does stuff, you know Minecraft and stuff!",
                 "Hi");
         Pack theAllmightyPack = new Pack(
@@ -53,6 +57,7 @@ public class PacksTable extends JTable {
                 "The Allmighty Pack",
                 new Player("RyanTheAllmighty"),
                 versions,
+                mcVersion,
                 "The Allmighty Pack is a pack which does stuff, you know Minecraft and stuff!",
                 "Hi");
         Packs packs = new Packs();

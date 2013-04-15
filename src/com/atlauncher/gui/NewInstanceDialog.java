@@ -31,25 +31,32 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Version;
+import com.atlauncher.listeners.InstanceListener;
 import com.atlauncher.workers.PackInstaller;
 
+@SuppressWarnings("serial")
 public class NewInstanceDialog extends JDialog {
 
-    JPanel top;
-    JPanel middle;
-    JPanel bottom;
-    JButton install;
-    JButton cancel;
-    JProgressBar progressBar;
-    JLabel instanceNameLabel;
-    JTextField instanceNameField;
-    JLabel versionLabel;
-    JComboBox<Version> versionsDropDown;
+    private JPanel top;
+    private JPanel middle;
+    private JPanel bottom;
+    private JButton install;
+    private JButton cancel;
+    private JProgressBar progressBar;
+    private JLabel instanceNameLabel;
+    private JTextField instanceNameField;
+    private JLabel versionLabel;
+    private JComboBox<Version> versionsDropDown;
+    @SuppressWarnings("unused")
+    private InstanceListener instanceListener;
 
-    public NewInstanceDialog(final JFrame parent, final Pack pack) {
+    public NewInstanceDialog(final JFrame parent, final Pack pack,
+            final InstanceListener instanceListener) {
         super(parent, "New Instance", ModalityType.APPLICATION_MODAL);
+        this.instanceListener = instanceListener;
         setSize(400, 200);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
@@ -75,6 +82,7 @@ public class NewInstanceDialog extends JDialog {
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         instanceNameField = new JTextField(17);
+        instanceNameField.setText(pack.getName());
         middle.add(instanceNameField, gbc);
 
         gbc.gridx = 0;
@@ -149,6 +157,9 @@ public class NewInstanceDialog extends JDialog {
                                     + instanceNameField.getText() + "'";
                             title = pack.getName() + " " + version
                                     + " Installed";
+                            if (instanceListener != null) {
+                                instanceListener.newInstance(new Instance(instanceNameField.getText(), pack.getName(), version));
+                            }
                         } else {
                             type = JOptionPane.ERROR_MESSAGE;
                             text = pack.getName()

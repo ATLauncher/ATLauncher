@@ -16,48 +16,54 @@ public class Pack {
     private String name;
     private Player owner;
     private Version[] versions;
+    private Version minecraftVersion;
     private String description;
     private String changelog;
 
     public Pack(int id, String name, Player owner, Version[] versions,
-            String description, String changelog) {
+            Version minecraftVersion, String description, String changelog) {
         this.name = name;
         this.owner = owner;
         this.versions = versions;
         this.description = description;
         this.changelog = changelog;
+        this.minecraftVersion = minecraftVersion;
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public Player getOwner() {
-        return owner;
+        return this.owner;
     }
 
     public Version[] getVersions() {
-        return versions;
+        return this.versions;
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public String getChangelog() {
-        return changelog;
+        return this.changelog;
     }
     
     public int getVersionCount() {
-        return versions.length;
+        return this.versions.length;
     }
     
     public Version getVersion(int index) {
-        return versions[index];
+        return this.versions[index];
+    }
+    
+    public Version getMinecraftVersion() {
+        return this.minecraftVersion;
     }
 
 }

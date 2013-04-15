@@ -24,15 +24,18 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.atlauncher.listeners.InstanceListener;
+
 @SuppressWarnings("serial")
 public class PacksPanel extends JPanel {
 
-    JFrame parent;
-    JTable packsTable;
-    JSplitPane splitPane;
-    JPanel packActions;
-    JButton newInstance;
-    JButton showMods;
+    private JFrame parent;
+    private JTable packsTable;
+    private JSplitPane splitPane;
+    private JPanel packActions;
+    private JButton newInstance;
+    private JButton showMods;
+    private InstanceListener instanceListener;
 
     public PacksPanel(final JFrame parent) {
         this.parent = parent;
@@ -50,7 +53,7 @@ public class PacksPanel extends JPanel {
         newInstance = new JButton("New Instance");
         newInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new NewInstanceDialog(parent, packsTable.getSelectedPack());
+                new NewInstanceDialog(parent, packsTable.getSelectedPack(), instanceListener);
             }
         });
         packActions.add(newInstance);
@@ -65,5 +68,9 @@ public class PacksPanel extends JPanel {
         splitPane.setEnabled(false);
         splitPane.setDividerLocation(375);
         add(splitPane, BorderLayout.CENTER);
+    }
+
+    public void setInstanceListener(InstanceListener instanceListener) {
+        this.instanceListener = instanceListener;
     }
 }

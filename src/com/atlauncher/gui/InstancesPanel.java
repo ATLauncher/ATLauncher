@@ -10,18 +10,91 @@
  */
 package com.atlauncher.gui;
 
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import com.atlauncher.data.Instances;
 
 @SuppressWarnings("serial")
 public class InstancesPanel extends JPanel {
 
-    public InstancesPanel() {
-        setLayout(new FlowLayout());
-        JButton button = new JButton("Instances");
-        add(button);
+    private JFrame parent;
+    private InstancesTable instancesTable;
+    private JSplitPane splitPane;
+    private JPanel packActions;
+    private JButton playButton;
+    private JButton backupButton;
+    private JButton deleteButton;
+    private Instances instances;
+
+    public InstancesPanel(JFrame parentt, Instances instancess) {
+        this.parent = parentt;
+        this.instances = instancess;
+        setLayout(new BorderLayout());
+
+        instancesTable = new InstancesTable(instances);
+        instancesTable.getSelectionModel().addListSelectionListener(
+                new ListSelectionListener() {
+                    public void valueChanged(ListSelectionEvent e) {
+                        if (!packActions.isVisible()) {
+                            packActions.setVisible(true);
+                        }
+                    }
+                });
+
+        packActions = new JPanel(new FlowLayout());
+
+        playButton = new JButton("Play");
+        packActions.add(playButton);
+
+        backupButton = new JButton("Backups");
+        packActions.add(backupButton);
+
+        deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int todo = JOptionPane.showConfirmDialog(InstancesPanel.this,
+                        "Are you sure you want to delete the instance \""
+                                + instancesTable.getSelectedInstance()
+                                        .getName() + "\"?", "Are you sure?",
+                        JOptionPane.YES_NO_OPTION);
+                if (todo == JOptionPane.YES_OPTION) {
+                    int selected = instancesTable.getSelectedRow();
+                    instances.removeInstance(instancesTable
+                            .getSelectedInstance());
+                    reloadTable();
+                    if(selected == instancesTable.getModel().getRowCount()) selected--;
+                    instancesTable.getSelectionModel().setSelectionInterval(selected, selected);
+                    if(instancesTable.getModel().getRowCount()==0) {
+                        packActions.setVisible(false);
+                    }
+                }
+            }
+        });
+
+        packActions.add(deleteButton);
+        packActions.setVisible(false);
+
+        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(
+                instancesTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), packActions);
+        splitPane.setEnabled(false);
+        splitPane.setDividerLocation(375);
+        add(splitPane, BorderLayout.CENTER);
     }
 
+    public void reloadTable() {
+        instancesTable.reload();
+    }
 }
