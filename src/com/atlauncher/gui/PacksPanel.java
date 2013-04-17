@@ -24,7 +24,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.atlauncher.listeners.InstanceListener;
+import com.atlauncher.data.Instances;
 
 @SuppressWarnings("serial")
 public class PacksPanel extends JPanel {
@@ -35,25 +35,28 @@ public class PacksPanel extends JPanel {
     private JPanel packActions;
     private JButton newInstance;
     private JButton showMods;
-    private InstanceListener instanceListener;
+    private Instances instances;
 
-    public PacksPanel(final JFrame parent) {
-        this.parent = parent;
+    public PacksPanel(JFrame parentt, Instances instancess) {
+        this.parent = parentt;
+        this.instances = instancess;
         setLayout(new BorderLayout());
 
         final PacksTable packsTable = new PacksTable();
-        packsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                packActions.setVisible(true);
-            }
-        });
+        packsTable.getSelectionModel().addListSelectionListener(
+                new ListSelectionListener() {
+                    public void valueChanged(ListSelectionEvent e) {
+                        packActions.setVisible(true);
+                    }
+                });
 
         packActions = new JPanel(new FlowLayout());
 
         newInstance = new JButton("New Instance");
         newInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new NewInstanceDialog(parent, packsTable.getSelectedPack(), instanceListener);
+                new NewInstanceDialog(parent, packsTable.getSelectedPack(),
+                        instances);
             }
         });
         packActions.add(newInstance);
@@ -68,9 +71,5 @@ public class PacksPanel extends JPanel {
         splitPane.setEnabled(false);
         splitPane.setDividerLocation(375);
         add(splitPane, BorderLayout.CENTER);
-    }
-
-    public void setInstanceListener(InstanceListener instanceListener) {
-        this.instanceListener = instanceListener;
     }
 }

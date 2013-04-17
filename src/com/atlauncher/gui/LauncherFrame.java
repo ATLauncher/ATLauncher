@@ -26,7 +26,6 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Instances;
 import com.atlauncher.data.Packs;
 import com.atlauncher.data.Version;
-import com.atlauncher.listeners.InstanceListener;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
@@ -104,14 +103,9 @@ public class LauncherFrame extends JFrame {
         tabbedPane.setBackground(BASE_COLOR);
 
         newsPanel = new NewsPanel();
-        packsPanel = new PacksPanel(this);
-        packsPanel.setInstanceListener(new InstanceListener() {
-            public void newInstance(Instance instance) {
-                instances.addInstance(instance);
-                instancesPanel.reloadTable();
-            }
-        });
+        packsPanel = new PacksPanel(this, instances);
         instancesPanel = new InstancesPanel(this, instances);
+        instances.addPanel(instancesPanel);
         settingsPanel = new SettingsPanel();
 
         tabbedPane.addTab(null, Utils.getIconImage("/resources/NewsTab.png"),

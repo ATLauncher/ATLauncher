@@ -32,9 +32,9 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Instances;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Version;
-import com.atlauncher.listeners.InstanceListener;
 import com.atlauncher.workers.PackInstaller;
 
 @SuppressWarnings("serial")
@@ -51,12 +51,12 @@ public class NewInstanceDialog extends JDialog {
     private JLabel versionLabel;
     private JComboBox<Version> versionsDropDown;
     @SuppressWarnings("unused")
-    private InstanceListener instanceListener;
+    private Instances instances;
 
     public NewInstanceDialog(final JFrame parent, final Pack pack,
-            final InstanceListener instanceListener) {
+            final Instances instances) {
         super(parent, "New Instance", ModalityType.APPLICATION_MODAL);
-        this.instanceListener = instanceListener;
+        this.instances = instances;
         setSize(400, 200);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
@@ -107,97 +107,111 @@ public class NewInstanceDialog extends JDialog {
         install = new JButton("Install");
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                final Version version = (Version) versionsDropDown
-                        .getSelectedItem();
-                final JDialog dialog = new JDialog(parent, "Installing "
-                        + pack.getName() + " " + version,
-                        ModalityType.APPLICATION_MODAL);
-                dialog.setLocationRelativeTo(parent);
-                dialog.setSize(300, 75);
-                dialog.setResizable(false);
+                if (instances.isInstance(instanceNameField.getText())) {
+                    JOptionPane
+                            .showMessageDialog(
+                                    parent,
+                                    "<html><center>Error!<br/><br/>There is already an instance called "
+                                            + instanceNameField.getText()
+                                            + "<br/><br/>Rename it and try again</center></html>",
+                                    "Error!", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    final Version version = (Version) versionsDropDown
+                            .getSelectedItem();
+                    final JDialog dialog = new JDialog(parent, "Installing "
+                            + pack.getName() + " " + version,
+                            ModalityType.APPLICATION_MODAL);
+                    dialog.setLocationRelativeTo(parent);
+                    dialog.setSize(300, 75);
+                    dialog.setResizable(false);
 
-                JPanel topPanel = new JPanel();
-                topPanel.setLayout(new BorderLayout());
-                final JLabel doing = new JLabel("Starting Install Process");
-                doing.setHorizontalAlignment(JLabel.CENTER);
-                topPanel.add(doing);
+                    JPanel topPanel = new JPanel();
+                    topPanel.setLayout(new BorderLayout());
+                    final JLabel doing = new JLabel("Starting Install Process");
+                    doing.setHorizontalAlignment(JLabel.CENTER);
+                    topPanel.add(doing);
 
-                JPanel bottomPanel = new JPanel();
-                bottomPanel.setLayout(new BorderLayout());
-                progressBar = new JProgressBar();
-                bottomPanel.add(progressBar);
-                progressBar.setIndeterminate(true);
+                    JPanel bottomPanel = new JPanel();
+                    bottomPanel.setLayout(new BorderLayout());
+                    progressBar = new JProgressBar();
+                    bottomPanel.add(progressBar);
+                    progressBar.setIndeterminate(true);
 
-                dialog.add(topPanel, BorderLayout.CENTER);
-                dialog.add(bottomPanel, BorderLayout.SOUTH);
+                    dialog.add(topPanel, BorderLayout.CENTER);
+                    dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-                PackInstaller packInstaller = new PackInstaller(pack, version,
-                        instanceNameField.getText()) {
+                    PackInstaller packInstaller = new PackInstaller(pack,
+                            version, instanceNameField.getText()) {
 
-                    protected void done() {
-                        Boolean success = false;
-                        int type;
-                        String text;
-                        String title;
-                        if (!isCancelled()) {
-                            try {
-                                success = get();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (success) {
-                            type = JOptionPane.INFORMATION_MESSAGE;
-                            text = pack.getName()
-                                    + " "
-                                    + version
-                                    + " has been installed<br/><br/>Find it in your 'Instances' tab named '"
-                                    + instanceNameField.getText() + "'";
-                            title = pack.getName() + " " + version
-                                    + " Installed";
-                            if (instanceListener != null) {
-                                instanceListener.newInstance(new Instance(instanceNameField.getText(), pack.getName(), version));
-                            }
-                        } else {
-                            type = JOptionPane.ERROR_MESSAGE;
-                            text = pack.getName()
-                                    + " "
-                                    + version
-                                    + " wasn't installed<br/><br/>Check error logs for the error!";
-                            title = pack.getName() + " " + version
-                                    + " Not Installed";
-                        }
-
-                        dialog.dispose();
-
-                        JOptionPane.showMessageDialog(parent, "<html><center>"
-                                + text + "</center></html>", title, type);
-                    }
-
-                };
-                packInstaller
-                        .addPropertyChangeListener(new PropertyChangeListener() {
-
-                            public void propertyChange(PropertyChangeEvent evt) {
-                                if ("progress" == evt.getPropertyName()) {
-                                    if (progressBar.isIndeterminate()) {
-                                        progressBar.setIndeterminate(false);
-                                    }
-                                    int progress = (Integer) evt.getNewValue();
-                                    progressBar.setValue(progress);
-                                } else if ("doing" == evt.getPropertyName()) {
-                                    String doingText = (String) evt
-                                            .getNewValue();
-                                    doing.setText(doingText);
+                        protected void done() {
+                            Boolean success = false;
+                            int type;
+                            String text;
+                            String title;
+                            if (!isCancelled()) {
+                                try {
+                                    success = get();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
                                 }
-
                             }
-                        });
-                packInstaller.execute();
-                dispose();
-                dialog.setVisible(true);
+                            if (success) {
+                                type = JOptionPane.INFORMATION_MESSAGE;
+                                text = pack.getName()
+                                        + " "
+                                        + version
+                                        + " has been installed<br/><br/>Find it in your 'Instances' tab named '"
+                                        + instanceNameField.getText() + "'";
+                                title = pack.getName() + " " + version
+                                        + " Installed";
+                                instances.addInstance(new Instance(
+                                        instanceNameField.getText(), pack
+                                                .getName(), version));
+                                instances.reloadTable();
+                            } else {
+                                type = JOptionPane.ERROR_MESSAGE;
+                                text = pack.getName()
+                                        + " "
+                                        + version
+                                        + " wasn't installed<br/><br/>Check error logs for the error!";
+                                title = pack.getName() + " " + version
+                                        + " Not Installed";
+                            }
+
+                            dialog.dispose();
+
+                            JOptionPane.showMessageDialog(parent,
+                                    "<html><center>" + text
+                                            + "</center></html>", title, type);
+                        }
+
+                    };
+                    packInstaller
+                            .addPropertyChangeListener(new PropertyChangeListener() {
+
+                                public void propertyChange(
+                                        PropertyChangeEvent evt) {
+                                    if ("progress" == evt.getPropertyName()) {
+                                        if (progressBar.isIndeterminate()) {
+                                            progressBar.setIndeterminate(false);
+                                        }
+                                        int progress = (Integer) evt
+                                                .getNewValue();
+                                        progressBar.setValue(progress);
+                                    } else if ("doing" == evt.getPropertyName()) {
+                                        String doingText = (String) evt
+                                                .getNewValue();
+                                        doing.setText(doingText);
+                                    }
+
+                                }
+                            });
+                    packInstaller.execute();
+                    dispose();
+                    dialog.setVisible(true);
+                }
             }
         });
         cancel = new JButton("Cancel");

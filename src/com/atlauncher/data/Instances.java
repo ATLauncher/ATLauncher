@@ -12,9 +12,12 @@ package com.atlauncher.data;
 
 import java.util.ArrayList;
 
+import com.atlauncher.gui.InstancesPanel;
+
 public class Instances {
 
     private ArrayList<Instance> instances;
+    private InstancesPanel instancesPanel;
 
     public Instances() {
         instances = new ArrayList<Instance>();
@@ -54,6 +57,23 @@ public class Instances {
 
     public void removeInstance(Instance instance) {
         instances.remove(instance);
+    }
+
+    public boolean isInstance(String instanceName) {
+        for (int i = 0; i < instances.size(); i++) {
+            if (instances.get(i).getName().equals(instanceName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addPanel(InstancesPanel instancesPanel) {
+        this.instancesPanel = instancesPanel;
+    }
+    
+    public void reloadTable() {
+        instancesPanel.reloadTable();
     }
 
 }

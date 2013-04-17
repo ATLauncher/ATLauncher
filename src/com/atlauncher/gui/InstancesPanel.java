@@ -47,21 +47,24 @@ public class InstancesPanel extends JPanel {
         instancesTable.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
                     public void valueChanged(ListSelectionEvent e) {
-                        if (!packActions.isVisible()) {
-                            packActions.setVisible(true);
-                        }
+                        playButton.setEnabled(true);
+                        backupButton.setEnabled(true);
+                        deleteButton.setEnabled(true);
                     }
                 });
 
         packActions = new JPanel(new FlowLayout());
 
         playButton = new JButton("Play");
+        playButton.setEnabled(false);
         packActions.add(playButton);
 
         backupButton = new JButton("Backups");
+        backupButton.setEnabled(false);
         packActions.add(backupButton);
 
         deleteButton = new JButton("Delete");
+        deleteButton.setEnabled(false);
         deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int todo = JOptionPane.showConfirmDialog(InstancesPanel.this,
@@ -74,17 +77,16 @@ public class InstancesPanel extends JPanel {
                     instances.removeInstance(instancesTable
                             .getSelectedInstance());
                     reloadTable();
-                    if(selected == instancesTable.getModel().getRowCount()) selected--;
-                    instancesTable.getSelectionModel().setSelectionInterval(selected, selected);
-                    if(instancesTable.getModel().getRowCount()==0) {
-                        packActions.setVisible(false);
+                    if (selected == instancesTable.getModel().getRowCount()) {
+                        selected--;
                     }
+                    instancesTable.getSelectionModel().setSelectionInterval(
+                            selected, selected);
                 }
             }
         });
 
         packActions.add(deleteButton);
-        packActions.setVisible(false);
 
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(
                 instancesTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -96,5 +98,16 @@ public class InstancesPanel extends JPanel {
 
     public void reloadTable() {
         instancesTable.reload();
+        if (instancesTable.getModel().getRowCount() == 0) {
+            playButton.setEnabled(false);
+            backupButton.setEnabled(false);
+            deleteButton.setEnabled(false);
+        } else {
+            if (instancesTable.getSelectedRow() != -1) {
+                playButton.setEnabled(true);
+                backupButton.setEnabled(true);
+                deleteButton.setEnabled(true);
+            }
+        }
     }
 }
