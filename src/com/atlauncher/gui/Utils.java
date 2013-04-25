@@ -11,8 +11,17 @@
 package com.atlauncher.gui;
 
 import java.awt.Desktop;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
@@ -60,6 +69,68 @@ public class Utils {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static Font makeFont(String name, Float point) {
+        Font font = null;
+        try {
+            font = Font.createFont(Font.TRUETYPE_FONT, new File(System.class
+                    .getResource("/resources/" + name + ".ttf").toURI()));
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        font.deriveFont(point);
+        return font;
+    }
+    
+    public static boolean is64Bit() {
+        String osType = System.getProperty("sun.arch.data.model");
+        return Boolean.valueOf(osType.contains("64"));
+    }
+
+    public static int getSystemRam() {
+        long ramm = 0;
+        int ram = 0;
+        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+        try {
+            Method m = operatingSystemMXBean.getClass().getDeclaredMethod("getTotalPhysicalMemorySize");
+            m.setAccessible(true);
+            Object value = m.invoke(operatingSystemMXBean);
+            if (value != null) {
+                ramm = Long.parseLong(value.toString());
+                ram = (int) (ramm / 1048576);
+            } else {
+                ram = 1024;
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return ram;
+    }
+
+    public static int getMaximumRam() {
+        int maxRam = getSystemRam();
+        if (!is64Bit()) {
+            if (maxRam < 1024) {
+                return maxRam;
+            } else {
+                return 1024;
+            }
+        } else {
+            return maxRam;
         }
     }
 }

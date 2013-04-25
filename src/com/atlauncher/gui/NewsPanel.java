@@ -22,14 +22,17 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import com.atlauncher.data.Settings;
 import com.atlauncher.workers.NewsDownloader;
 
 @SuppressWarnings("serial")
 public class NewsPanel extends JPanel {
 
     private JEditorPane newsArea;
+    private Settings settings;
 
-    public NewsPanel() {
+    public NewsPanel(Settings settingss) {
+        this.settings = settingss;
         setLayout(new BorderLayout());
         newsArea = new JEditorPane("text/html", "");
         newsArea.setEditable(false);
@@ -37,11 +40,11 @@ public class NewsPanel extends JPanel {
 
         HTMLEditorKit kit = new HTMLEditorKit();
         StyleSheet styleSheet = kit.getStyleSheet();
-        styleSheet.addRule("A {color:#00C6EE}");
+        styleSheet.addRule("A {color:#0088CC}");
         styleSheet
                 .addRule("#loading {text-align:center;font-weight:bold;font-size:16px;color:#339933;}");
         styleSheet
-                .addRule("#newsHeader {font-weight:bold;font-size:16px;color:#339933;}");
+                .addRule("#newsHeader {font-weight:bold;font-size:14px;color:#339933;}");
         styleSheet.addRule("#newsBody {font-size:10px;padding-left:20px;}");
         newsArea.setEditorKit(kit);
         newsArea.setText("<html><p id=\"loading\">Loading News</p></html>");

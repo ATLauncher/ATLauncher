@@ -22,10 +22,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.Instances;
 import com.atlauncher.data.Packs;
-import com.atlauncher.data.Version;
+import com.atlauncher.data.Settings;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
@@ -37,13 +36,14 @@ public class LauncherFrame extends JFrame {
     private JTabbedPane tabbedPane;
     private NewsPanel newsPanel;
     private PacksPanel packsPanel;
+    private AddonsPanel addonsPanel;
     private InstancesPanel instancesPanel;
+    private AccountPanel accountPanel;
     private SettingsPanel settingsPanel;
 
     private BottomBar bottomBar;
-    
-    private Instances instances;
-    private Packs packs;
+
+    private Settings settings;
 
     public LauncherFrame() {
         setSize(WINDOW_SIZE);
@@ -74,47 +74,33 @@ public class LauncherFrame extends JFrame {
     }
     
     private void setupData() {
-        this.instances = new Instances();
-        this.packs = new Packs();
-        this.instances.addInstance(new Instance("Test 1", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 2", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 3", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 4", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 5", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 6", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 7", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 8", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 9", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 10", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 11", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 12", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 13", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 14", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 15", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 16", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 17", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 18", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 19", "SolitaryCraft", new Version(1, 2, 3)));
-        this.instances.addInstance(new Instance("Test 20", "SolitaryCraft", new Version(1, 2, 3)));
+        this.settings = new Settings(this);
     }
 
     private void setupTabs() {
         tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
         tabbedPane.setBackground(BASE_COLOR);
 
-        newsPanel = new NewsPanel();
-        packsPanel = new PacksPanel(this, instances);
-        instancesPanel = new InstancesPanel(this, instances);
-        instances.addPanel(instancesPanel);
-        settingsPanel = new SettingsPanel();
+        newsPanel = new NewsPanel(settings);
+        packsPanel = new PacksPanel(settings);
+        addonsPanel = new AddonsPanel(settings);
+        instancesPanel = new InstancesPanel(settings);
+        settings.setInstancesPanel(instancesPanel);
+        accountPanel = new AccountPanel(settings);
+        settingsPanel = new SettingsPanel(settings);
 
         tabbedPane.addTab(null, Utils.getIconImage("/resources/NewsTab.png"),
                 newsPanel, "News");
         tabbedPane.addTab(null, Utils.getIconImage("/resources/PacksTab.png"),
                 packsPanel, "Packs");
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/AddonsTab.png"),
+                addonsPanel, "Addons");
         tabbedPane.addTab(null,
                 Utils.getIconImage("/resources/InstancesTab.png"),
                 instancesPanel, "Instances");
+        tabbedPane.addTab(null,
+                Utils.getIconImage("/resources/AccountTab.png"),
+                accountPanel, "Account");
         tabbedPane.addTab(null,
                 Utils.getIconImage("/resources/SettingsTab.png"),
                 settingsPanel, "Settings");

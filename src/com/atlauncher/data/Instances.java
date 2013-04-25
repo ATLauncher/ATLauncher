@@ -13,11 +13,11 @@ package com.atlauncher.data;
 import java.util.ArrayList;
 
 import com.atlauncher.gui.InstancesPanel;
+import com.atlauncher.gui.InstancesTableModel;
 
 public class Instances {
 
     private ArrayList<Instance> instances;
-    private InstancesPanel instancesPanel;
 
     public Instances() {
         instances = new ArrayList<Instance>();
@@ -66,14 +66,6 @@ public class Instances {
             }
         }
         return false;
-    }
-
-    public void addPanel(InstancesPanel instancesPanel) {
-        this.instancesPanel = instancesPanel;
-    }
-    
-    public void reloadTable() {
-        instancesPanel.reloadTable();
     }
 
 }

@@ -41,13 +41,13 @@ public class NewsDownloader extends SwingWorker<Void, String> {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     if (i == nodeList.getLength()-1) {
-                        newsArticle = "<p id=\"newsHeader\">"
-                                + element.getAttribute("title") + "</p>"
+                        newsArticle = "<p id=\"newsHeader\">" + element.getAttribute("posted") + " - <a href=\"" + element.getAttribute("link") + "\">"
+                                + element.getAttribute("title") + "</a></p>"
                                 + "<p id=\"newsBody\">"
                                 + element.getTextContent() + "</p><br/>";
                     } else {
-                        newsArticle = "<p id=\"newsHeader\">"
-                                + element.getAttribute("title") + "</p>"
+                        newsArticle = "<p id=\"newsHeader\">" + element.getAttribute("posted") + " - <a href=\"" + element.getAttribute("link") + "\">"
+                                + element.getAttribute("title") + "</a></p>"
                                 + "<p id=\"newsBody\">"
                                 + element.getTextContent() + "</p><br/><hr/>";
                     }

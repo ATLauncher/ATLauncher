@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,8 +31,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.Instances;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.Settings;
 import com.atlauncher.data.Version;
 import com.atlauncher.workers.PackInstaller;
 
@@ -50,15 +49,11 @@ public class NewInstanceDialog extends JDialog {
     private JTextField instanceNameField;
     private JLabel versionLabel;
     private JComboBox<Version> versionsDropDown;
-    @SuppressWarnings("unused")
-    private Instances instances;
 
-    public NewInstanceDialog(final JFrame parent, final Pack pack,
-            final Instances instances) {
-        super(parent, "New Instance", ModalityType.APPLICATION_MODAL);
-        this.instances = instances;
+    public NewInstanceDialog(final Settings settings, final Pack pack) {
+        super(settings.getParent(), "New Instance", ModalityType.APPLICATION_MODAL);
         setSize(400, 200);
-        setLocationRelativeTo(parent);
+        setLocationRelativeTo(settings.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
 
@@ -107,10 +102,10 @@ public class NewInstanceDialog extends JDialog {
         install = new JButton("Install");
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (instances.isInstance(instanceNameField.getText())) {
+                if (settings.getInstances().isInstance(instanceNameField.getText())) {
                     JOptionPane
                             .showMessageDialog(
-                                    parent,
+                                    settings.getParent(),
                                     "<html><center>Error!<br/><br/>There is already an instance called "
                                             + instanceNameField.getText()
                                             + "<br/><br/>Rename it and try again</center></html>",
@@ -118,10 +113,10 @@ public class NewInstanceDialog extends JDialog {
                 } else {
                     final Version version = (Version) versionsDropDown
                             .getSelectedItem();
-                    final JDialog dialog = new JDialog(parent, "Installing "
+                    final JDialog dialog = new JDialog(settings.getParent(), "Installing "
                             + pack.getName() + " " + version,
                             ModalityType.APPLICATION_MODAL);
-                    dialog.setLocationRelativeTo(parent);
+                    dialog.setLocationRelativeTo(settings.getParent());
                     dialog.setSize(300, 75);
                     dialog.setResizable(false);
 
@@ -166,10 +161,10 @@ public class NewInstanceDialog extends JDialog {
                                         + instanceNameField.getText() + "'";
                                 title = pack.getName() + " " + version
                                         + " Installed";
-                                instances.addInstance(new Instance(
+                                settings.getInstances().addInstance(new Instance(
                                         instanceNameField.getText(), pack
                                                 .getName(), version));
-                                instances.reloadTable();
+                                settings.reloadTable();
                             } else {
                                 type = JOptionPane.ERROR_MESSAGE;
                                 text = pack.getName()
@@ -182,7 +177,7 @@ public class NewInstanceDialog extends JDialog {
 
                             dialog.dispose();
 
-                            JOptionPane.showMessageDialog(parent,
+                            JOptionPane.showMessageDialog(settings.getParent(),
                                     "<html><center>" + text
                                             + "</center></html>", title, type);
                         }

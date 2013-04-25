@@ -17,56 +17,12 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.Packs;
-import com.atlauncher.data.Player;
-import com.atlauncher.data.Version;
+import com.atlauncher.data.Settings;
 
 public class PacksTable extends JTable {
 
-    public PacksTable() {
-
-        Version[] versions = { new Version(1, 1, 0), new Version(1, 1, 1),
-                new Version(1, 1, 2) };
-        Version mcVersion = new Version(1, 5, 1);
-        Pack astockyPack = new Pack(
-                1,
-                "Astocky Pack",
-                new Player("astocky"),
-                versions,
-                mcVersion,
-                "Astocky Pack is a pack which does stuff, you know Minecraft and stuff!",
-                "Hi");
-        Pack herocraftReloaded = new Pack(
-                2,
-                "HeroCraft Reloaded",
-                new Player("dwinget2008"),
-                versions,
-                mcVersion,
-                "HeroCraft Reloaded is a pack which does stuff, you know Minecraft and stuff!",
-                "Hi");
-        Pack solitaryCraft = new Pack(
-                3,
-                "SolitaryCraft",
-                new Player("haighyorkie"),
-                versions,
-                mcVersion,
-                "SolitaryCraft is a pack which does stuff, you know Minecraft and stuff!",
-                "Hi");
-        Pack theAllmightyPack = new Pack(
-                4,
-                "The Allmighty Pack",
-                new Player("RyanTheAllmighty"),
-                versions,
-                mcVersion,
-                "The Allmighty Pack is a pack which does stuff, you know Minecraft and stuff!",
-                "Hi");
-        Packs packs = new Packs();
-        packs.addPack(astockyPack);
-        packs.addPack(herocraftReloaded);
-        packs.addPack(solitaryCraft);
-        packs.addPack(theAllmightyPack);
-
-        setModel(new PackTableModel(packs));
+    public PacksTable(Settings settings) {
+        setModel(new PackTableModel(settings.getPacks()));
         setRowHeight(50);
         setSelectionBackground(Color.GRAY);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

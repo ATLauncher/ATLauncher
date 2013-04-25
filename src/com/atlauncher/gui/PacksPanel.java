@@ -24,7 +24,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.atlauncher.data.Instances;
+import com.atlauncher.data.Settings;
 
 @SuppressWarnings("serial")
 public class PacksPanel extends JPanel {
@@ -35,14 +35,12 @@ public class PacksPanel extends JPanel {
     private JPanel packActions;
     private JButton newInstance;
     private JButton showMods;
-    private Instances instances;
+    private Settings settings;
 
-    public PacksPanel(JFrame parentt, Instances instancess) {
-        this.parent = parentt;
-        this.instances = instancess;
+    public PacksPanel(final Settings settings) {
         setLayout(new BorderLayout());
 
-        final PacksTable packsTable = new PacksTable();
+        final PacksTable packsTable = new PacksTable(settings);
         packsTable.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
                     public void valueChanged(ListSelectionEvent e) {
@@ -55,8 +53,7 @@ public class PacksPanel extends JPanel {
         newInstance = new JButton("New Instance");
         newInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new NewInstanceDialog(parent, packsTable.getSelectedPack(),
-                        instances);
+                new NewInstanceDialog(settings, packsTable.getSelectedPack());
             }
         });
         packActions.add(newInstance);

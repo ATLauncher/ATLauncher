@@ -25,6 +25,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.atlauncher.data.Instances;
+import com.atlauncher.data.Settings;
 
 @SuppressWarnings("serial")
 public class InstancesPanel extends JPanel {
@@ -36,14 +37,11 @@ public class InstancesPanel extends JPanel {
     private JButton playButton;
     private JButton backupButton;
     private JButton deleteButton;
-    private Instances instances;
 
-    public InstancesPanel(JFrame parentt, Instances instancess) {
-        this.parent = parentt;
-        this.instances = instancess;
+    public InstancesPanel(final Settings settings) {
         setLayout(new BorderLayout());
 
-        instancesTable = new InstancesTable(instances);
+        instancesTable = new InstancesTable(settings.getInstances());
         instancesTable.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
                     public void valueChanged(ListSelectionEvent e) {
@@ -74,7 +72,7 @@ public class InstancesPanel extends JPanel {
                         JOptionPane.YES_NO_OPTION);
                 if (todo == JOptionPane.YES_OPTION) {
                     int selected = instancesTable.getSelectedRow();
-                    instances.removeInstance(instancesTable
+                    settings.getInstances().removeInstance(instancesTable
                             .getSelectedInstance());
                     reloadTable();
                     if (selected == instancesTable.getModel().getRowCount()) {
@@ -103,11 +101,12 @@ public class InstancesPanel extends JPanel {
             backupButton.setEnabled(false);
             deleteButton.setEnabled(false);
         } else {
-            if (instancesTable.getSelectedRow() != -1) {
-                playButton.setEnabled(true);
-                backupButton.setEnabled(true);
-                deleteButton.setEnabled(true);
+            if (instancesTable.getSelectedRow() == -1) {
+                instancesTable.getSelectionModel().setSelectionInterval(0, 0);
             }
+            playButton.setEnabled(true);
+            backupButton.setEnabled(true);
+            deleteButton.setEnabled(true);
         }
     }
 }
