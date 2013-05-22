@@ -22,8 +22,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import com.atlauncher.data.Instances;
-import com.atlauncher.data.Packs;
 import com.atlauncher.data.Settings;
 
 @SuppressWarnings("serial")
@@ -56,7 +54,7 @@ public class LauncherFrame extends JFrame {
         setLayout(LAYOUT_MANAGER);
 
         setupLookAndFeel(); // Setup the look and feel for the Launcher
-        
+
         setupData(); // Setup all the data needed
 
         setupBottomBar(); // Setup the Bottom Bar
@@ -72,7 +70,7 @@ public class LauncherFrame extends JFrame {
             }
         });
     }
-    
+
     private void setupData() {
         this.settings = new Settings(this);
     }
@@ -99,8 +97,8 @@ public class LauncherFrame extends JFrame {
                 Utils.getIconImage("/resources/InstancesTab.png"),
                 instancesPanel, "Instances");
         tabbedPane.addTab(null,
-                Utils.getIconImage("/resources/AccountTab.png"),
-                accountPanel, "Account");
+                Utils.getIconImage("/resources/AccountTab.png"), accountPanel,
+                "Account");
         tabbedPane.addTab(null,
                 Utils.getIconImage("/resources/SettingsTab.png"),
                 settingsPanel, "Settings");
