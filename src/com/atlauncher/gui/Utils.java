@@ -14,8 +14,11 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Image;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +26,8 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import javax.swing.ImageIcon;
 
@@ -132,5 +137,35 @@ public class Utils {
         } else {
             return maxRam;
         }
+    }
+
+    public static String uploadPaste(String title, String log) {
+        String line = "";
+        String result = "";
+        try {
+            String urlParameters = "";
+            urlParameters += "title=" + URLEncoder.encode("title", "ISO-8859-1") + "&";
+            urlParameters += "name=" + URLEncoder.encode("name", "ISO-8859-1") + "&";
+            urlParameters += "language=" + URLEncoder.encode("text", "ISO-8859-1") + "&";
+            urlParameters += "private=" + URLEncoder.encode("1", "ISO-8859-1") + "&";
+            urlParameters += "text=" + URLEncoder.encode(log , "ISO-8859-1");
+            URL url = new URL("http://paste.atlauncher.com/api/create");
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+            OutputStreamWriter writer = new OutputStreamWriter(conn
+                    .getOutputStream());
+            writer.write(urlParameters);
+            writer.flush();
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+            while ((line = reader.readLine()) != null) {
+                result = line;
+            }
+            writer.close();
+            reader.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return result;
     }
 }

@@ -27,10 +27,13 @@ import com.atlauncher.data.Settings;
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
 
+    // Size of initial window
     private final Dimension WINDOW_SIZE = new Dimension(800, 500);
     private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
     private final Color BASE_COLOR = new Color(40, 45, 50);
 
+    public static LauncherConsole console;
+    
     private JTabbedPane tabbedPane;
     private NewsPanel newsPanel;
     private PacksPanel packsPanel;
@@ -47,19 +50,26 @@ public class LauncherFrame extends JFrame {
         setSize(WINDOW_SIZE);
         setTitle("ATLauncher");
         setLocationRelativeTo(null);
-        setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setIconImage(Utils.getImage("/resources/Icon.png"));
         setLayout(LAYOUT_MANAGER);
+        
+        setupConsole(); // Setup the console
 
+        console.log("Setting up Look & Feel");
         setupLookAndFeel(); // Setup the look and feel for the Launcher
+        console.log("Finished Setting up Look & Feel");
 
         setupData(); // Setup all the data needed
 
+        console.log("Setting up Look & Feel");
         setupBottomBar(); // Setup the Bottom Bar
+        console.log("Finished Setting up Bottom Bar");
 
+        console.log("Setting up Tabs");
         setupTabs(); // Setup the JTabbedPane
+        console.log("Finished Setting up Tabs");
 
         add(tabbedPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
@@ -69,6 +79,12 @@ public class LauncherFrame extends JFrame {
                 dispose();
             }
         });
+        console.log("Showing Launcher");
+        setVisible(true);
+    }
+    
+    private void setupConsole() {
+        console = new LauncherConsole();
     }
 
     private void setupData() {
