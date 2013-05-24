@@ -144,8 +144,7 @@ public class Utils {
         String result = "";
         try {
             String urlParameters = "";
-            urlParameters += "title=" + URLEncoder.encode("title", "ISO-8859-1") + "&";
-            urlParameters += "name=" + URLEncoder.encode("name", "ISO-8859-1") + "&";
+            urlParameters += "title=" + URLEncoder.encode(title, "ISO-8859-1") + "&";
             urlParameters += "language=" + URLEncoder.encode("text", "ISO-8859-1") + "&";
             urlParameters += "private=" + URLEncoder.encode("1", "ISO-8859-1") + "&";
             urlParameters += "text=" + URLEncoder.encode(log , "ISO-8859-1");
