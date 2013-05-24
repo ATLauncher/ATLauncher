@@ -53,7 +53,6 @@ public class Settings {
         this.languages = new Language[] { new Language("English", "English"),
                 new Language("Polish", "Polski") };
         this.servers = new Server[] {
-                new Server("Auto Select", "newfiles.atlauncher.com"),
                 new Server("Europe", "eu.atlauncher.com"),
                 new Server("US East", "useast.atlauncher.com"),
                 new Server("US West", "uswest.atlauncher.com") };

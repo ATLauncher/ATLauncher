@@ -14,20 +14,30 @@ public class Server {
 
     private String name;
     private String baseURL;
-    
+    private boolean disabled;
+
     public Server(String name, String baseURL) {
         this.name = name;
         this.baseURL = baseURL;
+        this.disabled = false;
     }
-    
+
+    public void disableServer() {
+        this.disabled = true;
+    }
+
+    public boolean isDisabled() {
+        return this.disabled;
+    }
+
     public String getName() {
         return this.name;
     }
-    
+
     public String getFileURL(String file) {
         return "http://" + this.baseURL + "/" + file;
     }
-    
+
     public String toString() {
         return this.name;
     }

@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -23,6 +24,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import com.atlauncher.data.Settings;
+import com.atlauncher.workers.ServerTester;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
@@ -33,7 +35,7 @@ public class LauncherFrame extends JFrame {
     private final Color BASE_COLOR = new Color(40, 45, 50);
 
     public static LauncherConsole console;
-    
+
     private JTabbedPane tabbedPane;
     private NewsPanel newsPanel;
     private PacksPanel packsPanel;
@@ -54,7 +56,7 @@ public class LauncherFrame extends JFrame {
         setResizable(false);
         setIconImage(Utils.getImage("/resources/Icon.png"));
         setLayout(LAYOUT_MANAGER);
-        
+
         setupConsole(); // Setup the console
 
         console.log("Setting up Look & Feel");
@@ -71,6 +73,10 @@ public class LauncherFrame extends JFrame {
         setupTabs(); // Setup the JTabbedPane
         console.log("Finished Setting up Tabs");
 
+        console.log("Checking Servers");
+        checkServers(); // Check the servers
+        console.log("Finished Checking Servers");
+
         add(tabbedPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
 
@@ -82,7 +88,14 @@ public class LauncherFrame extends JFrame {
         console.log("Showing Launcher");
         setVisible(true);
     }
-    
+
+    /**
+     * Check the server list and see which are/aren't available
+     */
+    private void checkServers() {
+        new ServerTester().execute();
+    }
+
     private void setupConsole() {
         console = new LauncherConsole();
     }
