@@ -29,6 +29,7 @@ public class BottomBar extends JPanel {
     private JPanel leftSide;
     private JPanel rightSide;
 
+    private JButton toggleConsole;
     private JButton facebookIcon;
     private JButton twitterIcon;
     private JButton redditIcon;
@@ -44,7 +45,13 @@ public class BottomBar extends JPanel {
         rightSide.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        createIcons();
+        createButtons();
+        setupListeners();
+
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.insets = new Insets(0, 0, 0, 5);
+        leftSide.add(toggleConsole, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
@@ -59,38 +66,66 @@ public class BottomBar extends JPanel {
         add(rightSide, BorderLayout.EAST);
     }
 
-    private void createIcons() {
+    /**
+     * Sets up the listeners on the buttons
+     */
+    private void setupListeners() {
+        toggleConsole.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(LauncherFrame.console.isVisible()){
+                    LauncherFrame.console.log("Hidding console");
+                    LauncherFrame.console.setVisible(false);
+                    toggleConsole.setText("Show Console");
+                }else{
+                    LauncherFrame.console.log("Showing console");
+                    LauncherFrame.console.setVisible(true);
+                    toggleConsole.setText("Hide Console");
+                }
+            }
+        });
+        facebookIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                LauncherFrame.console
+                        .log("Opening Up ATLauncher Facebook Page");
+                Utils.openBrowser("http://www.facebook.com/ATLauncher");
+            }
+        });
+        redditIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                LauncherFrame.console.log("Opening Up ATLauncher Reddit Page");
+                Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
+            }
+        });
+        twitterIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                LauncherFrame.console.log("Opening Up ATLauncher Twitter Page");
+                Utils.openBrowser("http://www.twitter.com/ATLauncher");
+            }
+        });
+    }
+
+    /**
+     * Creates the JButton's for use in the bar
+     */
+    private void createButtons() {
+        toggleConsole = new JButton("Hide Console");
+
         facebookIcon = new JButton(
                 Utils.getIconImage("/resources/FacebookIcon.png"));
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());
         facebookIcon.setContentAreaFilled(false);
         facebookIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        facebookIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser("http://www.facebook.com/ATLauncher");
-            }
-        });
 
         redditIcon = new JButton(
                 Utils.getIconImage("/resources/RedditIcon.png"));
         redditIcon.setBorder(BorderFactory.createEmptyBorder());
         redditIcon.setContentAreaFilled(false);
         redditIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        redditIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
-            }
-        });
 
         twitterIcon = new JButton(
                 Utils.getIconImage("/resources/TwitterIcon.png"));
         twitterIcon.setBorder(BorderFactory.createEmptyBorder());
         twitterIcon.setContentAreaFilled(false);
         twitterIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        twitterIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser("http://www.twitter.com/ATLauncher");
-            }
-        });
     }
 }

@@ -15,14 +15,9 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import com.atlauncher.data.Settings;
-
 public class AddonsPanel extends JPanel {
 
-    private Settings settings;
-
-    public AddonsPanel(Settings settingss) {
-        this.settings = settingss;
+    public AddonsPanel() {
         setLayout(new FlowLayout());
         add(new JButton("Addons"));
     }

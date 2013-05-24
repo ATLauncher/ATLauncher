@@ -17,7 +17,6 @@ import javax.swing.JFrame;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.Utils;
 
-
 public class Settings {
 
     // User Settings
@@ -30,7 +29,7 @@ public class Settings {
     private boolean enableConsole;
     private boolean enableLeaderboards;
     private boolean enableLogs;
-    
+
     // Pack and Instances
     private Packs packs;
     private Instances instances;
@@ -54,9 +53,10 @@ public class Settings {
         this.languages = new Language[] { new Language("English", "English"),
                 new Language("Polish", "Polski") };
         this.servers = new Server[] {
+                new Server("Auto Select", "newfiles.atlauncher.com"),
+                new Server("Europe", "eu.atlauncher.com"),
                 new Server("US East", "useast.atlauncher.com"),
                 new Server("US West", "uswest.atlauncher.com") };
-        
 
         Version[] versions = { new Version(1, 1, 0), new Version(1, 1, 1),
                 new Version(1, 1, 2) };
@@ -102,11 +102,11 @@ public class Settings {
     public Packs getPacks() {
         return this.packs;
     }
-    
+
     public Instances getInstances() {
         return this.instances;
     }
-    
+
     public Addons getAddons() {
         return this.addons;
     }

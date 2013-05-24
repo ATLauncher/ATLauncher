@@ -33,7 +33,7 @@ public class NewsDownloader extends SwingWorker<Void, String> {
                     .newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder
-                    .parse("http://files.atlauncher.com/3.0/News.xml");
+                    .parse("http://newfiles.atlauncher.com/launcher/News.xml");
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("article");
             for (int i = 0; i < nodeList.getLength(); i++) {

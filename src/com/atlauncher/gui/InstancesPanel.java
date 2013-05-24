@@ -24,9 +24,6 @@ import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.atlauncher.data.Instances;
-import com.atlauncher.data.Settings;
-
 @SuppressWarnings("serial")
 public class InstancesPanel extends JPanel {
 
@@ -38,10 +35,11 @@ public class InstancesPanel extends JPanel {
     private JButton backupButton;
     private JButton deleteButton;
 
-    public InstancesPanel(final Settings settings) {
+    public InstancesPanel() {
         setLayout(new BorderLayout());
 
-        instancesTable = new InstancesTable(settings.getInstances());
+        instancesTable = new InstancesTable(
+                LauncherFrame.settings.getInstances());
         instancesTable.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
                     public void valueChanged(ListSelectionEvent e) {
@@ -72,8 +70,8 @@ public class InstancesPanel extends JPanel {
                         JOptionPane.YES_NO_OPTION);
                 if (todo == JOptionPane.YES_OPTION) {
                     int selected = instancesTable.getSelectedRow();
-                    settings.getInstances().removeInstance(instancesTable
-                            .getSelectedInstance());
+                    LauncherFrame.settings.getInstances().removeInstance(
+                            instancesTable.getSelectedInstance());
                     reloadTable();
                     if (selected == instancesTable.getModel().getRowCount()) {
                         selected--;

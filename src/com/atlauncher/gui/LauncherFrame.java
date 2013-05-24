@@ -44,7 +44,7 @@ public class LauncherFrame extends JFrame {
 
     private BottomBar bottomBar;
 
-    private Settings settings;
+    public static Settings settings;
 
     public LauncherFrame() {
         setSize(WINDOW_SIZE);
@@ -88,20 +88,20 @@ public class LauncherFrame extends JFrame {
     }
 
     private void setupData() {
-        this.settings = new Settings(this);
+        LauncherFrame.settings = new Settings(this);
     }
 
     private void setupTabs() {
         tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
         tabbedPane.setBackground(BASE_COLOR);
 
-        newsPanel = new NewsPanel(settings);
-        packsPanel = new PacksPanel(settings);
-        addonsPanel = new AddonsPanel(settings);
-        instancesPanel = new InstancesPanel(settings);
+        newsPanel = new NewsPanel();
+        packsPanel = new PacksPanel();
+        addonsPanel = new AddonsPanel();
+        instancesPanel = new InstancesPanel();
         settings.setInstancesPanel(instancesPanel);
-        accountPanel = new AccountPanel(settings);
-        settingsPanel = new SettingsPanel(settings);
+        accountPanel = new AccountPanel();
+        settingsPanel = new SettingsPanel();
 
         tabbedPane.addTab(null, Utils.getIconImage("/resources/NewsTab.png"),
                 newsPanel, "News");

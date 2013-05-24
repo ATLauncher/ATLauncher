@@ -15,14 +15,9 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import com.atlauncher.data.Settings;
-
 public class AccountPanel extends JPanel {
 
-    private Settings settings;
-
-    public AccountPanel(Settings settingss) {
-        this.settings = settingss;
+    public AccountPanel() {
         setLayout(new FlowLayout());
         add(new JButton("Account"));
     }

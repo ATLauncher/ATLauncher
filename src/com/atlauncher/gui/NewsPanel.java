@@ -22,17 +22,14 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import com.atlauncher.data.Settings;
 import com.atlauncher.workers.NewsDownloader;
 
 @SuppressWarnings("serial")
 public class NewsPanel extends JPanel {
 
     private JEditorPane newsArea;
-    private Settings settings;
 
-    public NewsPanel(Settings settingss) {
-        this.settings = settingss;
+    public NewsPanel() {
         setLayout(new BorderLayout());
         newsArea = new JEditorPane("text/html", "");
         newsArea.setEditable(false);

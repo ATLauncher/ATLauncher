@@ -22,8 +22,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -51,7 +49,7 @@ public class LauncherConsole extends JFrame {
     public LauncherConsole() {
         setSize(WINDOW_SIZE);
         setTitle("ATLauncher Console");
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setIconImage(Utils.getImage("/resources/Icon.png"));
         setMinimumSize(MINIMUM_SIZE);
         setLayout(LAYOUT_MANAGER);
@@ -69,12 +67,6 @@ public class LauncherConsole extends JFrame {
         add(new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
-                setVisible(false); // When cross is pressed, hide the console
-            }
-        });
 
         // Make sure the size doesn't go below the minimum size
         addComponentListener(new ComponentAdapter() {

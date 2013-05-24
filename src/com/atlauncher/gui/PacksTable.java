@@ -17,12 +17,11 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.Settings;
 
 public class PacksTable extends JTable {
 
-    public PacksTable(Settings settings) {
-        setModel(new PackTableModel(settings.getPacks()));
+    public PacksTable() {
+        setModel(new PackTableModel(LauncherFrame.settings.getPacks()));
         setRowHeight(50);
         setSelectionBackground(Color.GRAY);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

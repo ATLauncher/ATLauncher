@@ -28,12 +28,10 @@ import javax.swing.JTextField;
 
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
-import com.atlauncher.data.Settings;
 
 @SuppressWarnings("serial")
 public class SettingsPanel extends JPanel {
 
-    private Settings settings;
     private JPanel topPanel;
     private JPanel bottomPanel;
     private JButton saveButton;
@@ -69,8 +67,7 @@ public class SettingsPanel extends JPanel {
     private final Insets LABEL_INSETS_SMALL = new Insets(0, 0, 0, 10);
     private final Insets FIELD_INSETS_SMALL = new Insets(0, 0, 0, 0);
 
-    public SettingsPanel(Settings settingss) {
-        this.settings = settingss;
+    public SettingsPanel() {
         setLayout(new BorderLayout());
         topPanel = new JPanel();
         topPanel.setLayout(new GridBagLayout());
@@ -89,7 +86,7 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         language = new JComboBox<Language>();
-        Language[] languages = settings.getLanguages();
+        Language[] languages = LauncherFrame.settings.getLanguages();
         for (int i = 0; i < languages.length; i++) {
             language.addItem(languages[i]);
         }
@@ -108,7 +105,7 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         downloadServer = new JComboBox<Server>();
-        Server[] servers = settings.getServers();
+        Server[] servers = LauncherFrame.settings.getServers();
         for (int i = 0; i < servers.length; i++) {
             downloadServer.addItem(servers[i]);
         }
@@ -127,7 +124,7 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         memory = new JComboBox<String>();
-        String[] memoryOptions = settings.getMemoryOptions();
+        String[] memoryOptions = LauncherFrame.settings.getMemoryOptions();
         for(int i=0;i<memoryOptions.length;i++){
             memory.addItem(memoryOptions[i]);
         }
