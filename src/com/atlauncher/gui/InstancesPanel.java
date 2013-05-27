@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -27,7 +26,6 @@ import javax.swing.event.ListSelectionListener;
 @SuppressWarnings("serial")
 public class InstancesPanel extends JPanel {
 
-    private JFrame parent;
     private InstancesTable instancesTable;
     private JSplitPane splitPane;
     private JPanel packActions;
@@ -38,8 +36,7 @@ public class InstancesPanel extends JPanel {
     public InstancesPanel() {
         setLayout(new BorderLayout());
 
-        instancesTable = new InstancesTable(
-                LauncherFrame.settings.getInstances());
+        instancesTable = new InstancesTable();
         instancesTable.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
                     public void valueChanged(ListSelectionEvent e) {
@@ -70,7 +67,7 @@ public class InstancesPanel extends JPanel {
                         JOptionPane.YES_NO_OPTION);
                 if (todo == JOptionPane.YES_OPTION) {
                     int selected = instancesTable.getSelectedRow();
-                    LauncherFrame.settings.getInstances().removeInstance(
+                    LauncherFrame.settings.getInstances().remove(
                             instancesTable.getSelectedInstance());
                     reloadTable();
                     if (selected == instancesTable.getModel().getRowCount()) {

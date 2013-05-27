@@ -27,7 +27,7 @@ public class Pack {
         this.description = description;
     }
 
-    public int getId() {
+    public int getID() {
         return this.id;
     }
 

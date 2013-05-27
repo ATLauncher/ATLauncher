@@ -75,7 +75,6 @@ public class SettingsPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
 
         // Language
-
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = LABEL_INSETS;
@@ -90,7 +89,6 @@ public class SettingsPanel extends JPanel {
         topPanel.add(language, gbc);
 
         // Download Server
-
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
@@ -102,14 +100,15 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         downloadServer = new JComboBox<Server>();
-        Server[] servers = LauncherFrame.settings.getServers();
-        for (int i = 0; i < servers.length; i++) {
-            downloadServer.addItem(servers[i]);
+        ArrayList<Server> servers = LauncherFrame.settings.getServers();
+        for (Server server : servers) {
+            if (!server.isDisabled()) {
+                downloadServer.addItem(server);
+            }
         }
         topPanel.add(downloadServer, gbc);
 
         // Memory Settings
-
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
@@ -121,14 +120,13 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         memory = new JComboBox<String>();
-        String[] memoryOptions = LauncherFrame.settings.getMemoryOptions();
+        String[] memoryOptions = Utils.getMemoryOptions();
         for (int i = 0; i < memoryOptions.length; i++) {
             memory.addItem(memoryOptions[i]);
         }
         topPanel.add(memory, gbc);
 
         // Window Size
-
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
@@ -148,10 +146,9 @@ public class SettingsPanel extends JPanel {
         windowSizePanel.add(new JLabel("x"));
         windowSizePanel.add(heightField);
         topPanel.add(windowSizePanel, gbc);
-        windowSizePanel.setPreferredSize(new Dimension(137, windowSizePanel
-                .getPreferredSize().height));
-        windowSizeLabel.setPreferredSize(new Dimension(windowSizeLabel
-                .getPreferredSize().width,
+        windowSizePanel.setPreferredSize(new Dimension(137,
+                windowSizePanel.getPreferredSize().height));
+        windowSizeLabel.setPreferredSize(new Dimension(windowSizeLabel.getPreferredSize().width,
                 windowSizePanel.getPreferredSize().height));
 
         // Java Paramaters
@@ -233,9 +230,16 @@ public class SettingsPanel extends JPanel {
      * Reloads changed data in this panel
      */
     public void reloadData() {
-        ArrayList<Language> languages = LauncherFrame.settings.getLanguages();
-        for (int i = 0; i < languages.size(); i++) {
-            language.addItem(languages.get(i));
+        downloadServer.removeAllItems();
+        downloadServer.addItem(new Server("Auto Select", "http://newfiles.atlauncher.com"));
+        for (Server server : LauncherFrame.settings.getServers()) {
+            if (!server.isDisabled()) {
+                downloadServer.addItem(server);
+            }
+        }
+        this.language.removeAllItems();
+        for (Language language : LauncherFrame.settings.getLanguages()) {
+            this.language.addItem(language);
         }
     }
 

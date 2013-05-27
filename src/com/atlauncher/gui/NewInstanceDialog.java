@@ -50,20 +50,17 @@ public class NewInstanceDialog extends JDialog {
     private JComboBox<Version> versionsDropDown;
 
     public NewInstanceDialog(final Pack pack) {
-        super(LauncherFrame.settings.getParent(), "New Instance",
-                ModalityType.APPLICATION_MODAL);
+        super(LauncherFrame.settings.getParent(), "New Instance", ModalityType.APPLICATION_MODAL);
         setSize(400, 200);
         setLocationRelativeTo(LauncherFrame.settings.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
 
         // Top Panel Stuff
-
         top = new JPanel();
         top.add(new JLabel("Installing " + pack.getName()));
 
         // Middle Panel Stuff
-
         middle = new JPanel();
         middle.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -96,28 +93,23 @@ public class NewInstanceDialog extends JDialog {
         middle.add(versionsDropDown, gbc);
 
         // Bottom Panel Stuff
-
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         install = new JButton("Install");
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (LauncherFrame.settings.getInstances().isInstance(
-                        instanceNameField.getText())) {
-                    JOptionPane.showMessageDialog(
-                            LauncherFrame.settings.getParent(),
+                if (LauncherFrame.settings.isInstance(instanceNameField.getText())) {
+                    JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
                             "<html><center>Error!<br/><br/>There is already an instance called "
                                     + instanceNameField.getText()
                                     + "<br/><br/>Rename it and try again</center></html>",
                             "Error!", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    final Version version = (Version) versionsDropDown
-                            .getSelectedItem();
-                    final JDialog dialog = new JDialog(LauncherFrame.settings
-                            .getParent(), "Installing " + pack.getName() + " "
-                            + version, ModalityType.DOCUMENT_MODAL);
-                    dialog.setLocationRelativeTo(LauncherFrame.settings
-                            .getParent());
+                    final Version version = (Version) versionsDropDown.getSelectedItem();
+                    final JDialog dialog = new JDialog(LauncherFrame.settings.getParent(),
+                            "Installing " + pack.getName() + " " + version,
+                            ModalityType.DOCUMENT_MODAL);
+                    dialog.setLocationRelativeTo(LauncherFrame.settings.getParent());
                     dialog.setSize(300, 75);
                     dialog.setResizable(false);
 
@@ -136,8 +128,8 @@ public class NewInstanceDialog extends JDialog {
                     dialog.add(topPanel, BorderLayout.CENTER);
                     dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-                    PackInstaller packInstaller = new PackInstaller(pack,
-                            version, instanceNameField.getText()) {
+                    PackInstaller packInstaller = new PackInstaller(pack, version,
+                            instanceNameField.getText()) {
 
                         protected void done() {
                             Boolean success = false;
@@ -160,13 +152,10 @@ public class NewInstanceDialog extends JDialog {
                                         + version
                                         + " has been installed<br/><br/>Find it in your 'Instances' tab named '"
                                         + instanceNameField.getText() + "'";
-                                title = pack.getName() + " " + version
-                                        + " Installed";
-                                LauncherFrame.settings.getInstances()
-                                        .addInstance(
-                                                new Instance(instanceNameField
-                                                        .getText(), pack
-                                                        .getName(), version));
+                                title = pack.getName() + " " + version + " Installed";
+                                LauncherFrame.settings.getInstances().add(
+                                        new Instance(instanceNameField.getText(), pack.getName(),
+                                                version));
                                 LauncherFrame.settings.reloadTable();
                             } else {
                                 type = JOptionPane.ERROR_MESSAGE;
@@ -174,39 +163,32 @@ public class NewInstanceDialog extends JDialog {
                                         + " "
                                         + version
                                         + " wasn't installed<br/><br/>Check error logs for the error!";
-                                title = pack.getName() + " " + version
-                                        + " Not Installed";
+                                title = pack.getName() + " " + version + " Not Installed";
                             }
 
                             dialog.dispose();
 
-                            JOptionPane.showMessageDialog(
-                                    LauncherFrame.settings.getParent(),
-                                    "<html><center>" + text
-                                            + "</center></html>", title, type);
+                            JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
+                                    "<html><center>" + text + "</center></html>", title, type);
                         }
 
                     };
-                    packInstaller
-                            .addPropertyChangeListener(new PropertyChangeListener() {
+                    packInstaller.addPropertyChangeListener(new PropertyChangeListener() {
 
-                                public void propertyChange(
-                                        PropertyChangeEvent evt) {
-                                    if ("progress" == evt.getPropertyName()) {
-                                        if (progressBar.isIndeterminate()) {
-                                            progressBar.setIndeterminate(false);
-                                        }
-                                        int progress = (Integer) evt
-                                                .getNewValue();
-                                        progressBar.setValue(progress);
-                                    } else if ("doing" == evt.getPropertyName()) {
-                                        String doingText = (String) evt
-                                                .getNewValue();
-                                        doing.setText(doingText);
-                                    }
-
+                        public void propertyChange(PropertyChangeEvent evt) {
+                            if ("progress" == evt.getPropertyName()) {
+                                if (progressBar.isIndeterminate()) {
+                                    progressBar.setIndeterminate(false);
                                 }
-                            });
+                                int progress = (Integer) evt.getNewValue();
+                                progressBar.setValue(progress);
+                            } else if ("doing" == evt.getPropertyName()) {
+                                String doingText = (String) evt.getNewValue();
+                                doing.setText(doingText);
+                            }
+
+                        }
+                    });
                     packInstaller.execute();
                     dispose();
                     dialog.setVisible(true);

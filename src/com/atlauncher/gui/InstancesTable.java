@@ -17,15 +17,14 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.Instances;
 
 @SuppressWarnings("serial")
 public class InstancesTable extends JTable {
     
     InstancesTableModel instancesTableModel;
 
-    public InstancesTable(Instances instances) {
-        instancesTableModel = new InstancesTableModel(instances);
+    public InstancesTable() {
+        instancesTableModel = new InstancesTableModel();
         setModel(instancesTableModel);
         setRowHeight(50);
         setSelectionBackground(Color.GRAY);

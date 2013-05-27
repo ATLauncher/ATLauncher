@@ -8,28 +8,20 @@
  *
  * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
-package com.atlauncher.data;
+package com.atlauncher.exceptions;
 
-import java.util.ArrayList;
+import com.atlauncher.gui.LauncherFrame;
 
-public class Addons {
-    
-    private ArrayList<Addon> addons;
+/**
+ * InvalidPack is thrown when searching for a Pack by ID and that ID isn't found
+ * 
+ * @author Ryan
+ */
+public class InvalidPack extends Exception {
 
-    public Addons() {
-        addons = new ArrayList<Addon>();
-    }
-
-    public void add(Addon addon) {
-        addons.add(addon);
-    }
-
-    public int totalAddons() {
-        return addons.size();
-    }
-
-    public Addon getAddon(int index) {
-        return addons.get(index);
+    public InvalidPack(String message) {
+        super(message);
+        LauncherFrame.console.log("InvalidPack Exception Thrown: " + message);
     }
 
 }

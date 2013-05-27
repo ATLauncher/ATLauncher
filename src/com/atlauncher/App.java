@@ -11,7 +11,7 @@ public class App {
 
         SplashScreen ss = new SplashScreen(); // Show Splash Screen
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1000); // Sleep for 1 second just to simulate stuff
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

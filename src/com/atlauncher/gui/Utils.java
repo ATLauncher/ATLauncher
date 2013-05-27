@@ -145,6 +145,19 @@ public class Utils {
         return Boolean.valueOf(osType.contains("64"));
     }
 
+    public static String[] getMemoryOptions() {
+        int options = Utils.getMaximumRam() / 512;
+        int ramLeft = 0;
+        int count = 0;
+        String[] ramOptions = new String[options];
+        while ((ramLeft + 512) <= Utils.getMaximumRam()) {
+            ramLeft = ramLeft + 512;
+            ramOptions[count] = ramLeft + " MB";
+            count++;
+        }
+        return ramOptions;
+    }
+    
     public static int getSystemRam() {
         long ramm = 0;
         int ram = 0;

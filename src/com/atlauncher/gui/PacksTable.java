@@ -15,8 +15,6 @@ import java.awt.Cursor;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 
 import com.atlauncher.data.Pack;
 
@@ -25,7 +23,7 @@ public class PacksTable extends JTable {
     PackTableModel packTableModel;
     
     public PacksTable() {
-        packTableModel = new PackTableModel(LauncherFrame.settings.getPacks());
+        packTableModel = new PackTableModel();
         setModel(packTableModel);
         setRowHeight(50);
         setSelectionBackground(Color.GRAY);

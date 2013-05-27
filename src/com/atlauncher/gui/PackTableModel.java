@@ -10,22 +10,24 @@
  */
 package com.atlauncher.gui;
 
+import java.util.ArrayList;
+
 import javax.swing.table.AbstractTableModel;
 
-import com.atlauncher.data.Packs;
+import com.atlauncher.data.Pack;
 
 @SuppressWarnings("serial")
 public class PackTableModel extends AbstractTableModel {
 
-    Packs packs;
+    ArrayList<Pack> packs;
 
-    public PackTableModel(Packs packs) {
-        this.packs = packs;
+    public PackTableModel() {
+        this.packs = LauncherFrame.settings.getPacks();
     }
 
     @Override
     public int getRowCount() {
-        return packs.totalPacks();
+        return packs.size();
     }
 
     @Override
@@ -36,24 +38,24 @@ public class PackTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex) {
-        case -1:
-            return packs.getPack(rowIndex);
-        case 0:
-            return packs.getName(rowIndex);
-        case 1:
-        default:
-            return packs.getDescription(rowIndex);
+            case -1:
+                return packs.get(rowIndex);
+            case 0:
+                return packs.get(rowIndex).getName();
+            case 1:
+            default:
+                return packs.get(rowIndex).getDescription();
         }
     }
 
     @Override
     public String getColumnName(int column) {
         switch (column) {
-        case 0:
-            return "Name";
-        case 1:
-        default:
-            return "Description";
+            case 0:
+                return "Name";
+            case 1:
+            default:
+                return "Description";
         }
     }
 

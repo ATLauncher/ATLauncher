@@ -22,7 +22,6 @@ import org.xml.sax.SAXException;
 
 import com.atlauncher.data.Addon;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.Player;
 import com.atlauncher.data.Version;
 import com.atlauncher.gui.LauncherFrame;
 
@@ -31,11 +30,9 @@ public class AddonLoader extends SwingWorker<Void, Addon> {
     @Override
     protected Void doInBackground() throws Exception {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory
-                    .newInstance();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder
-                    .parse("http://newfiles.atlauncher.com/launcher/addons.xml");
+            Document document = builder.parse("http://newfiles.atlauncher.com/launcher/addons.xml");
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("addon");
             for (int i = 0; i < nodeList.getLength(); i++) {
@@ -44,30 +41,24 @@ public class AddonLoader extends SwingWorker<Void, Addon> {
                     Element element = (Element) node;
                     int id = Integer.parseInt(element.getAttribute("id"));
                     String name = element.getAttribute("name");
-                    Player owner = new Player(element.getAttribute("owner"));
                     Version[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
                         // Pack has no versions so log it and continue to next
                         // pack
-                        LauncherFrame.console.log("Addon " + name
-                                + " has no versions!");
+                        LauncherFrame.console.log("Addon " + name + " has no versions!");
                         continue;
                     } else {
-                        String[] tempVersions = element
-                                .getAttribute("versions").split(",");
+                        String[] tempVersions = element.getAttribute("versions").split(",");
                         versions = new Version[tempVersions.length];
                         for (int v = 0; v < tempVersions.length; v++) {
                             String[] parsed = tempVersions[v].split("\\.");
-                            versions[v] = new Version(
-                                    Integer.parseInt(parsed[0]),
-                                    Integer.parseInt(parsed[1]),
-                                    Integer.parseInt(parsed[2]));
+                            versions[v] = new Version(Integer.parseInt(parsed[0]),
+                                    Integer.parseInt(parsed[1]), Integer.parseInt(parsed[2]));
                         }
                     }
                     String description = element.getAttribute("description");
                     Pack forPack;
-                    Pack pack = LauncherFrame.settings.getPacks().getPackByID(
-                            id);
+                    Pack pack = LauncherFrame.settings.getPackByID(id);
                     if (pack != null) {
                         forPack = pack;
                     } else {
@@ -75,8 +66,7 @@ public class AddonLoader extends SwingWorker<Void, Addon> {
                                 + " is not available for any packs!");
                         continue;
                     }
-                    Addon addon = new Addon(id, name, owner, versions,
-                            description, forPack);
+                    Addon addon = new Addon(id, name, versions, description, forPack);
                     publish(addon);
                     Thread.sleep(50); // Needed for publish to work properly
                 }

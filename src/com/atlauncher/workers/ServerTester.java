@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.SwingWorker;
 
@@ -24,8 +25,8 @@ public class ServerTester extends SwingWorker<Void, String> {
 
     @Override
     protected Void doInBackground() {
-        Server[] servers = LauncherFrame.settings.getServers();
-        double[] responseTimes = new double[servers.length];
+        ArrayList<Server> servers = LauncherFrame.settings.getServers();
+        double[] responseTimes = new double[servers.size()];
         int count = 0;
         for (Server server : servers) {
             double startTime = System.currentTimeMillis();
@@ -60,7 +61,7 @@ public class ServerTester extends SwingWorker<Void, String> {
                 bestTime = responseTimes[i];
             }
         }
-        LauncherFrame.console.log("The best connected server is " + servers[best].getName());
+        LauncherFrame.console.log("The best connected server is " + servers.get(best).getName());
         return null;
     }
 

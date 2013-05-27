@@ -10,22 +10,24 @@
  */
 package com.atlauncher.gui;
 
+import java.util.ArrayList;
+
 import javax.swing.table.AbstractTableModel;
 
-import com.atlauncher.data.Instances;
+import com.atlauncher.data.Instance;
 
 @SuppressWarnings("serial")
 public class InstancesTableModel extends AbstractTableModel {
 
-    Instances instances;
+    ArrayList<Instance> instances;
 
-    public InstancesTableModel(Instances instances) {
-        this.instances = instances;
+    public InstancesTableModel() {
+        this.instances = LauncherFrame.settings.getInstances();
     }
 
     @Override
     public int getRowCount() {
-        return instances.totalInstances();
+        return instances.size();
     }
 
     @Override
@@ -36,37 +38,33 @@ public class InstancesTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex) {
-        case -1:
-            return instances.getInstance(rowIndex);
-        case 0:
-            return instances.getName(rowIndex);
-        case 1:
-            return instances.getPack(rowIndex);
-        case 2:
-            return instances.getVersion(rowIndex);
-        case 3:
-        default:
-            return instances.getLatestVersion(rowIndex);
+            case -1:
+                return instances.get(rowIndex);
+            case 0:
+                return instances.get(rowIndex).getName();
+            case 1:
+                return instances.get(rowIndex).getPackName();
+            case 2:
+                return instances.get(rowIndex).getLatestVersion();
+            case 3:
+            default:
+                return instances.get(rowIndex).getLatestVersion();
         }
     }
 
     @Override
     public String getColumnName(int column) {
         switch (column) {
-        case 0:
-            return "Name";
-        case 1:
-            return "Pack";
-        case 2:
-            return "Installed Version";
-        case 3:
-        default:
-            return "Latest Version";
+            case 0:
+                return "Name";
+            case 1:
+                return "Pack";
+            case 2:
+                return "Installed Version";
+            case 3:
+            default:
+                return "Latest Version";
         }
-    }
-
-    public void reload() {
-        System.out.println("Hi");
     }
 
 }
