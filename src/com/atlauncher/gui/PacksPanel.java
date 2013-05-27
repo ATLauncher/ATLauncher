@@ -20,7 +20,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -28,7 +27,7 @@ import javax.swing.event.ListSelectionListener;
 public class PacksPanel extends JPanel {
 
     private JFrame parent;
-    private JTable packsTable;
+    private PacksTable packsTable;
     private JSplitPane splitPane;
     private JPanel packActions;
     private JButton newInstance;
@@ -37,27 +36,22 @@ public class PacksPanel extends JPanel {
     public PacksPanel() {
         setLayout(new BorderLayout());
 
-        final PacksTable packsTable = new PacksTable();
-        packsTable.getSelectionModel().addListSelectionListener(
-                new ListSelectionListener() {
-                    public void valueChanged(ListSelectionEvent e) {
-                        packActions.setVisible(true);
-                    }
-                });
+        packsTable = new PacksTable();
 
         packActions = new JPanel(new FlowLayout());
 
         newInstance = new JButton("New Instance");
         newInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new NewInstanceDialog(packsTable.getSelectedPack());
+                if (packsTable.getSelectedRow() != -1) {
+                    new NewInstanceDialog(packsTable.getSelectedPack());
+                }
             }
         });
         packActions.add(newInstance);
 
         showMods = new JButton("Show Mods");
         packActions.add(showMods);
-        packActions.setVisible(false);
 
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(
                 packsTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -65,5 +59,12 @@ public class PacksPanel extends JPanel {
         splitPane.setEnabled(false);
         splitPane.setDividerLocation(375);
         add(splitPane, BorderLayout.CENTER);
+    }
+
+    /**
+     * Reloads changed data in this panel
+     */
+    public void reloadTable() {
+        packsTable.reload();
     }
 }

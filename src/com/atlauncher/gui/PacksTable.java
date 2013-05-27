@@ -15,13 +15,18 @@ import java.awt.Cursor;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 
 import com.atlauncher.data.Pack;
 
 public class PacksTable extends JTable {
 
+    PackTableModel packTableModel;
+    
     public PacksTable() {
-        setModel(new PackTableModel(LauncherFrame.settings.getPacks()));
+        packTableModel = new PackTableModel(LauncherFrame.settings.getPacks());
+        setModel(packTableModel);
         setRowHeight(50);
         setSelectionBackground(Color.GRAY);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -29,10 +34,16 @@ public class PacksTable extends JTable {
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setResizingAllowed(false);
         getColumnModel().getColumn(getColumnCount() - 1).setMinWidth(400);
+        getColumnModel().getColumn(getColumnCount() - 1).setMaxWidth(400);
+        getColumnModel().getColumn(getColumnCount() - 1).setCellRenderer(new TableCellLongTextRenderer());
     }
 
     public Pack getSelectedPack() {
         return (Pack) getValueAt(getSelectedRow(), -1);
+    }
+    
+    public void reload() {
+        packTableModel.fireTableDataChanged();
     }
 
 }

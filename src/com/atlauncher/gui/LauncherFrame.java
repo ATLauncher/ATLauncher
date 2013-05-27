@@ -13,15 +13,17 @@ package com.atlauncher.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.atlauncher.data.Settings;
 import com.atlauncher.workers.ServerTester;
@@ -96,14 +98,24 @@ public class LauncherFrame extends JFrame {
         new ServerTester().execute();
     }
 
+    /**
+     * Setup the console and display it
+     */
     private void setupConsole() {
         console = new LauncherConsole();
     }
 
+    /**
+     * Setup the settings/data for the Launcher including Packs, Addons,
+     * Languages and other things
+     */
     private void setupData() {
         LauncherFrame.settings = new Settings(this);
     }
 
+    /**
+     * Setup the individual tabs used in the Launcher sidebar
+     */
     private void setupTabs() {
         tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
         tabbedPane.setBackground(BASE_COLOR);
@@ -131,14 +143,31 @@ public class LauncherFrame extends JFrame {
         tabbedPane.addTab(null,
                 Utils.getIconImage("/resources/SettingsTab.png"),
                 settingsPanel, "Settings");
+        tabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                if (tabbedPane.getSelectedComponent() instanceof PacksPanel) {
+                    // Reloads the data in the PacksPanel
+                    ((PacksPanel) tabbedPane.getSelectedComponent()).reloadTable();
+                }else if (tabbedPane.getSelectedComponent() instanceof SettingsPanel) {
+                    // Reloads the data in the SettingsPanel
+                    ((SettingsPanel) tabbedPane.getSelectedComponent()).reloadData();
+                }
+            }
+        });
         tabbedPane.setBackground(BASE_COLOR.brighter());
         tabbedPane.setOpaque(true);
     }
 
+    /**
+     * Setup the bottom bar of the Launcher
+     */
     private void setupBottomBar() {
         bottomBar = new BottomBar();
     }
 
+    /**
+     * Setup the Java Look and Feel to make things look pretty
+     */
     private void setupLookAndFeel() {
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -151,10 +180,11 @@ public class LauncherFrame extends JFrame {
             e.printStackTrace();
         }
 
-        // if (OSUtils.isMac()) {
-        // UIManager.getLookAndFeelDefaults().put("defaultFont", new
-        // Font("SansSerif", Font.PLAIN, 11));
-        // }
+        // For some reason Mac OS makes text bigger then it should be
+        if (Utils.isMac()) {
+            UIManager.getLookAndFeelDefaults().put("defaultFont",
+                    new Font("SansSerif", Font.PLAIN, 11));
+        }
 
         UIManager.put("control", BASE_COLOR);
         UIManager.put("text", Color.WHITE);

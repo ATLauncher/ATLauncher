@@ -11,11 +11,17 @@
 package com.atlauncher.data;
 
 import java.awt.Window;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 
 import com.atlauncher.gui.InstancesPanel;
+import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.Utils;
+import com.atlauncher.workers.AddonLoader;
+import com.atlauncher.workers.LanguageLoader;
+import com.atlauncher.workers.PackLoader;
 
 public class Settings {
 
@@ -37,7 +43,7 @@ public class Settings {
 
     // Launcher Settings
     private JFrame parent;
-    private Language[] languages;
+    private ArrayList<Language> languages = new ArrayList<Language>();
     private Server[] servers;
     private InstancesPanel instancesPanel;
 
@@ -47,55 +53,53 @@ public class Settings {
         this.instances = new Instances();
         this.addons = new Addons();
         setupDefaultData();
+        loadLanguages();
+        loadPacks();
+        loadAddons();
+    }
+
+    private void loadLanguages() {
+        LanguageLoader languageLoader = new LanguageLoader() {
+            @Override
+            protected void process(List<Language> chunks) {
+                Language got = chunks.get(chunks.size() - 1);
+                LauncherFrame.console.log("Loaded Language " + got.getName()
+                        + " (" + got.getLocalizedName() + ")");
+                languages.add(got);
+            }
+        };
+        languageLoader.execute();
+    }
+
+    private void loadPacks() {
+        PackLoader packLoader = new PackLoader() {
+            @Override
+            protected void process(List<Pack> chunks) {
+                Pack got = chunks.get(chunks.size() - 1);
+                LauncherFrame.console.log("Loaded Pack " + got.getName());
+                packs.add(got);
+            }
+        };
+        packLoader.execute();
+    }
+
+    private void loadAddons() {
+        AddonLoader addonLoader = new AddonLoader() {
+            @Override
+            protected void process(List<Addon> chunks) {
+                Addon got = chunks.get(chunks.size() - 1);
+                LauncherFrame.console.log("Loaded Addon " + got.getName());
+                addons.add(got);
+            }
+        };
+        addonLoader.execute();
     }
 
     private void setupDefaultData() {
-        this.languages = new Language[] { new Language("English", "English"),
-                new Language("Polish", "Polski") };
         this.servers = new Server[] {
                 new Server("Europe", "eu.atlauncher.com"),
                 new Server("US East", "useast.atlauncher.com"),
                 new Server("US West", "uswest.atlauncher.com") };
-
-        Version[] versions = { new Version(1, 1, 0), new Version(1, 1, 1),
-                new Version(1, 1, 2) };
-        Version mcVersion = new Version(1, 5, 1);
-        Pack astockyPack = new Pack(
-                1,
-                "Astocky Pack",
-                new Player("astocky"),
-                versions,
-                mcVersion,
-                "Astocky Pack is a pack which does stuff, you know Minecraft and stuff!",
-                "Hi");
-        Pack herocraftReloaded = new Pack(
-                2,
-                "HeroCraft Reloaded",
-                new Player("dwinget2008"),
-                versions,
-                mcVersion,
-                "HeroCraft Reloaded is a pack which does stuff, you know Minecraft and stuff!",
-                "Hi");
-        Pack solitaryCraft = new Pack(
-                3,
-                "SolitaryCraft",
-                new Player("haighyorkie"),
-                versions,
-                mcVersion,
-                "SolitaryCraft is a pack which does stuff, you know Minecraft and stuff!",
-                "Hi");
-        Pack theAllmightyPack = new Pack(
-                4,
-                "The Allmighty Pack",
-                new Player("RyanTheAllmighty"),
-                versions,
-                mcVersion,
-                "The Allmighty Pack is a pack which does stuff, you know Minecraft and stuff!",
-                "Hi");
-        this.packs.addPack(astockyPack);
-        this.packs.addPack(herocraftReloaded);
-        this.packs.addPack(solitaryCraft);
-        this.packs.addPack(theAllmightyPack);
     }
 
     public Packs getPacks() {
@@ -110,7 +114,7 @@ public class Settings {
         return this.addons;
     }
 
-    public Language[] getLanguages() {
+    public ArrayList<Language> getLanguages() {
         return this.languages;
     }
 

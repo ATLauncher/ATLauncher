@@ -20,7 +20,7 @@ public class Packs {
         packs = new ArrayList<Pack>();
     }
 
-    public void addPack(Pack pack) {
+    public void add(Pack pack) {
         packs.add(pack);
     }
 
@@ -32,9 +32,18 @@ public class Packs {
         Pack pack = packs.get(index);
         return pack.getName();
     }
-
+    
     public Pack getPack(int index) {
         return packs.get(index);
+    }
+
+    public Pack getPackByID(int id) {
+        for(int i=0;i<packs.size();i++){
+            if(packs.get(i).getId()==id){
+                return packs.get(i);
+            }
+        }
+        return null;
     }
 
     public String getDescription(int index) {

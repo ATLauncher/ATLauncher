@@ -12,9 +12,6 @@ package com.atlauncher.data;
 
 import java.util.ArrayList;
 
-import com.atlauncher.gui.InstancesPanel;
-import com.atlauncher.gui.InstancesTableModel;
-
 public class Instances {
 
     private ArrayList<Instance> instances;

@@ -20,7 +20,7 @@ public class Addons {
         addons = new ArrayList<Addon>();
     }
 
-    public void addAddon(Addon addon) {
+    public void add(Addon addon) {
         addons.add(addon);
     }
 

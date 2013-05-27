@@ -92,7 +92,54 @@ public class Utils {
         font.deriveFont(point);
         return font;
     }
-    
+
+    public static enum OS {
+        windows, mac, linux
+    }
+
+    private static OS getOS() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("win")) {
+            return OS.windows;
+        } else if (osName.contains("mac")) {
+            return OS.mac;
+        } else {
+            return OS.linux;
+        }
+    }
+
+    public static String osSlash() {
+        if (getOS() == OS.windows) {
+            return "\\";
+        } else {
+            return "/";
+        }
+    }
+
+    public static String osDelimiter() {
+        if (getOS() == OS.windows) {
+            return ";";
+        } else {
+            return ":";
+        }
+    }
+
+    public static String getJavaVersion() {
+        return System.getProperty("java.runtime.version");
+    }
+
+    public static boolean isWindows() {
+        return getOS() == OS.windows;
+    }
+
+    public static boolean isMac() {
+        return getOS() == OS.mac;
+    }
+
+    public static boolean isLinux() {
+        return getOS() == OS.linux;
+    }
+
     public static boolean is64Bit() {
         String osType = System.getProperty("sun.arch.data.model");
         return Boolean.valueOf(osType.contains("64"));
@@ -101,9 +148,11 @@ public class Utils {
     public static int getSystemRam() {
         long ramm = 0;
         int ram = 0;
-        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory
+                .getOperatingSystemMXBean();
         try {
-            Method m = operatingSystemMXBean.getClass().getDeclaredMethod("getTotalPhysicalMemorySize");
+            Method m = operatingSystemMXBean.getClass().getDeclaredMethod(
+                    "getTotalPhysicalMemorySize");
             m.setAccessible(true);
             Object value = m.invoke(operatingSystemMXBean);
             if (value != null) {
@@ -144,19 +193,22 @@ public class Utils {
         String result = "";
         try {
             String urlParameters = "";
-            urlParameters += "title=" + URLEncoder.encode(title, "ISO-8859-1") + "&";
-            urlParameters += "language=" + URLEncoder.encode("text", "ISO-8859-1") + "&";
-            urlParameters += "private=" + URLEncoder.encode("1", "ISO-8859-1") + "&";
-            urlParameters += "text=" + URLEncoder.encode(log , "ISO-8859-1");
+            urlParameters += "title=" + URLEncoder.encode(title, "ISO-8859-1")
+                    + "&";
+            urlParameters += "language="
+                    + URLEncoder.encode("text", "ISO-8859-1") + "&";
+            urlParameters += "private=" + URLEncoder.encode("1", "ISO-8859-1")
+                    + "&";
+            urlParameters += "text=" + URLEncoder.encode(log, "ISO-8859-1");
             URL url = new URL("http://paste.atlauncher.com/api/create");
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
-            OutputStreamWriter writer = new OutputStreamWriter(conn
-                    .getOutputStream());
+            OutputStreamWriter writer = new OutputStreamWriter(
+                    conn.getOutputStream());
             writer.write(urlParameters);
             writer.flush();
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    conn.getInputStream()));
             while ((line = reader.readLine()) != null) {
                 result = line;
             }

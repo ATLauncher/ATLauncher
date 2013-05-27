@@ -11,37 +11,52 @@
 package com.atlauncher.data;
 
 import java.io.File;
-import java.net.URISyntaxException;
 
 public class Language {
 
     private String name;
     private String localizedName;
+    private String author;
     private File file;
 
     public Language(String name, String localizedName) {
         this.name = name;
         this.localizedName = localizedName;
-//        try {
-//            this.file = new File(System.class.getResource(
-//                    "/resources/languages/" + name + ".lang").toURI());
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
+        this.author = "Anonymous";
+        this.file = new File(name + ".lang");
     }
-    
+
+    public Language(String name, String localizedName, String author) {
+        this.name = name;
+        this.localizedName = localizedName;
+        this.author = author;
+        this.file = new File(name + ".lang");
+    }
+
+    public Language(String name, String localizedName, String file,
+            String author) {
+        this.name = name;
+        this.localizedName = localizedName;
+        this.author = author;
+        this.file = new File(file);
+    }
+
     public String getName() {
         return this.name;
     }
-    
+
     public String getLocalizedName() {
         return this.localizedName;
     }
-    
+
+    public String getAuthor() {
+        return this.author;
+    }
+
     public File getFile() {
         return file;
     }
-    
+
     public String toString() {
         return this.localizedName;
     }

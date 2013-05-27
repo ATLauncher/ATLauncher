@@ -10,24 +10,23 @@
  */
 package com.atlauncher.data;
 
+
 public class Pack {
 
     private int id;
     private String name;
     private Player owner;
     private Version[] versions;
-    private Version minecraftVersion;
+    private Version[] minecraftVersions;
     private String description;
-    private String changelog;
 
     public Pack(int id, String name, Player owner, Version[] versions,
-            Version minecraftVersion, String description, String changelog) {
+            Version[] minecraftVersions, String description) {
         this.name = name;
         this.owner = owner;
         this.versions = versions;
+        this.minecraftVersions = minecraftVersions;
         this.description = description;
-        this.changelog = changelog;
-        this.minecraftVersion = minecraftVersion;
     }
 
     public int getId() {
@@ -46,24 +45,20 @@ public class Pack {
         return this.versions;
     }
 
+    public Version[] getMinecraftVersions() {
+        return this.minecraftVersions;
+    }
+
     public String getDescription() {
         return this.description;
     }
 
-    public String getChangelog() {
-        return this.changelog;
-    }
-    
     public int getVersionCount() {
         return this.versions.length;
     }
-    
+
     public Version getVersion(int index) {
         return this.versions[index];
-    }
-    
-    public Version getMinecraftVersion() {
-        return this.minecraftVersion;
     }
 
 }

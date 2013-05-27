@@ -10,18 +10,27 @@
  */
 package com.atlauncher.data;
 
+
 public class Addon {
     
     private int id;
     private String name;
+    private Player owner;
     private Version[] versions;
+    private String description;
     private Pack forPack;
     
-    public Addon(int id, String name, Version[] versions, Pack forPack) {
+    public Addon(int id, String name, Player owner, Version[] versions, String description, Pack forPack) {
         this.id = id;
         this.name = name;
+        this.owner = owner;
         this.versions = versions;
+        this.description = description;
         this.forPack = forPack;
+    }
+    
+    public String getName() {
+        return this.name;
     }
 
 }

@@ -18,6 +18,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -86,10 +87,6 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         language = new JComboBox<Language>();
-        Language[] languages = LauncherFrame.settings.getLanguages();
-        for (int i = 0; i < languages.length; i++) {
-            language.addItem(languages[i]);
-        }
         topPanel.add(language, gbc);
 
         // Download Server
@@ -125,7 +122,7 @@ public class SettingsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         memory = new JComboBox<String>();
         String[] memoryOptions = LauncherFrame.settings.getMemoryOptions();
-        for(int i=0;i<memoryOptions.length;i++){
+        for (int i = 0; i < memoryOptions.length; i++) {
             memory.addItem(memoryOptions[i]);
         }
         topPanel.add(memory, gbc);
@@ -223,13 +220,23 @@ public class SettingsPanel extends JPanel {
         saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                System.out.println("Settings Saved!");
+                LauncherFrame.console.log("Settings Saved!");
             }
         });
         bottomPanel.add(saveButton);
 
         add(topPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Reloads changed data in this panel
+     */
+    public void reloadData() {
+        ArrayList<Language> languages = LauncherFrame.settings.getLanguages();
+        for (int i = 0; i < languages.size(); i++) {
+            language.addItem(languages.get(i));
+        }
     }
 
 }

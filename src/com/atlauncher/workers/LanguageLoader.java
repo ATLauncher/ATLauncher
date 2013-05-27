@@ -10,12 +10,9 @@
  */
 package com.atlauncher.workers;
 
-import java.io.IOException;
-
 import javax.swing.SwingWorker;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -23,35 +20,30 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class NewsDownloader extends SwingWorker<Void, String> {
+import com.atlauncher.data.Language;
+
+public class LanguageLoader extends SwingWorker<Void, Language> {
 
     @Override
     protected Void doInBackground() throws Exception {
-        String newsArticle = "";
+        Language language;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory
                     .newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder
-                    .parse("http://newfiles.atlauncher.com/launcher/news.xml");
+                    .parse("http://newfiles.atlauncher.com/launcher/languages.xml");
             document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("article");
+            NodeList nodeList = document.getElementsByTagName("language");
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
-                    if (i == nodeList.getLength()-1) {
-                        newsArticle = "<p id=\"newsHeader\">" + element.getAttribute("posted") + " - <a href=\"" + element.getAttribute("link") + "\">"
-                                + element.getAttribute("title") + "</a></p>"
-                                + "<p id=\"newsBody\">"
-                                + element.getTextContent() + "</p><br/>";
-                    } else {
-                        newsArticle = "<p id=\"newsHeader\">" + element.getAttribute("posted") + " - <a href=\"" + element.getAttribute("link") + "\">"
-                                + element.getAttribute("title") + "</a></p>"
-                                + "<p id=\"newsBody\">"
-                                + element.getTextContent() + "</p><br/><hr/>";
-                    }
-                    publish(newsArticle);
+                    language = new Language(element.getAttribute("name"),
+                            element.getAttribute("localizedname"),
+                            element.getAttribute("file"),
+                            element.getAttribute("author"));
+                    publish(language);
                     Thread.sleep(50); // Needed for publish to work properly
                 }
             }
@@ -60,5 +52,4 @@ public class NewsDownloader extends SwingWorker<Void, String> {
         }
         return null;
     }
-
 }
