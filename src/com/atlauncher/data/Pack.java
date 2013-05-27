@@ -15,15 +15,13 @@ public class Pack {
 
     private int id;
     private String name;
-    private Player owner;
     private Version[] versions;
     private Version[] minecraftVersions;
     private String description;
 
-    public Pack(int id, String name, Player owner, Version[] versions,
+    public Pack(int id, String name, Version[] versions,
             Version[] minecraftVersions, String description) {
         this.name = name;
-        this.owner = owner;
         this.versions = versions;
         this.minecraftVersions = minecraftVersions;
         this.description = description;
@@ -35,10 +33,6 @@ public class Pack {
 
     public String getName() {
         return this.name;
-    }
-
-    public Player getOwner() {
-        return this.owner;
     }
 
     public Version[] getVersions() {

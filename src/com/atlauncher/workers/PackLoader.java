@@ -21,7 +21,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.Player;
 import com.atlauncher.data.Version;
 import com.atlauncher.gui.LauncherFrame;
 
@@ -43,7 +42,6 @@ public class PackLoader extends SwingWorker<Void, Pack> {
                     Element element = (Element) node;
                     int id = Integer.parseInt(element.getAttribute("id"));
                     String name = element.getAttribute("name");
-                    Player owner = new Player(element.getAttribute("owner"));
                     Version[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
                         // Pack has no versions so log it and continue to next pack
@@ -79,7 +77,7 @@ public class PackLoader extends SwingWorker<Void, Pack> {
                         }
                     }
                     String description = element.getAttribute("description");
-                    Pack pack = new Pack(id, name, owner, versions,
+                    Pack pack = new Pack(id, name, versions,
                             minecraftversions, description);
                     publish(pack);
                     Thread.sleep(50); // Needed for publish to work properly
