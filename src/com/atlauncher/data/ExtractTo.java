@@ -12,8 +12,6 @@ package com.atlauncher.data;
 
 public enum ExtractTo {
 
-    root,
-    mods,
-    coremods
-    
+    root, mods, coremods
+
 }

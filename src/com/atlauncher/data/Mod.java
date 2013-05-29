@@ -30,11 +30,10 @@ public class Mod {
     private boolean directDownload;
     private String description;
 
-    public Mod(String name, String version, String url, String file,
-            String website, String donation, Type type, ExtractTo extractTo,
-            String decompFile, DecompType decompType, boolean server,
-            String serverURL, String serverFile, Type serverType,
-            boolean optional, boolean directDownload, String description) {
+    public Mod(String name, String version, String url, String file, String website,
+            String donation, Type type, ExtractTo extractTo, String decompFile,
+            DecompType decompType, boolean server, String serverURL, String serverFile,
+            Type serverType, boolean optional, boolean directDownload, String description) {
         this.name = name;
         this.version = version;
         this.url = url;
@@ -52,6 +51,10 @@ public class Mod {
         this.optional = optional;
         this.directDownload = directDownload;
         this.description = description;
+    }
+
+    public String toString() {
+        return this.name + " " + this.version;
     }
 
 }

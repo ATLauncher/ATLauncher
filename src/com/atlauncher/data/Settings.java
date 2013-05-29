@@ -222,4 +222,25 @@ public class Settings {
         }
         throw new InvalidPack("No pack exists with ID " + id);
     }
+
+    /**
+     * Gets the URL for a file on the user selected server
+     * 
+     * @param filename
+     *            Filename including directories on the server
+     * @return URL of the file
+     */
+    public String getFileURL(String filename) {
+        return server.getFileURL(filename);
+    }
+
+    /**
+     * Sets the users server to download from
+     * 
+     * @param server
+     *            The server to download from
+     */
+    public void setServer(Server server) {
+        this.server = server;
+    }
 }

@@ -12,11 +12,6 @@ package com.atlauncher.data;
 
 public enum Type {
 
-    jar,
-    mods,
-    coremods,
-    extract,
-    decomp,
-    millenaire
-    
+    jar, mods, coremods, extract, decomp, millenaire
+
 }

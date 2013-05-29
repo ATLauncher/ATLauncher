@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 by ATLauncher and Contributors
+```````` * Copyright 2013 by ATLauncher and Contributors
  *
  * ATLauncher is licensed under CC BY-NC-ND 3.0 which allows others you to
  * share this software with others as long as you credit us by linking to our
@@ -72,11 +72,11 @@ public class BottomBar extends JPanel {
     private void setupListeners() {
         toggleConsole.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(LauncherFrame.console.isVisible()){
+                if (LauncherFrame.console.isVisible()) {
                     LauncherFrame.console.log("Hidding console");
                     LauncherFrame.console.setVisible(false);
                     toggleConsole.setText("Show Console");
-                }else{
+                } else {
                     LauncherFrame.console.log("Showing console");
                     LauncherFrame.console.setVisible(true);
                     toggleConsole.setText("Hide Console");
@@ -85,8 +85,7 @@ public class BottomBar extends JPanel {
         });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.console
-                        .log("Opening Up ATLauncher Facebook Page");
+                LauncherFrame.console.log("Opening Up ATLauncher Facebook Page");
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
@@ -110,22 +109,26 @@ public class BottomBar extends JPanel {
     private void createButtons() {
         toggleConsole = new JButton("Hide Console");
 
-        facebookIcon = new JButton(
-                Utils.getIconImage("/resources/FacebookIcon.png"));
+        facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());
         facebookIcon.setContentAreaFilled(false);
         facebookIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        redditIcon = new JButton(
-                Utils.getIconImage("/resources/RedditIcon.png"));
+        redditIcon = new JButton(Utils.getIconImage("/resources/RedditIcon.png"));
         redditIcon.setBorder(BorderFactory.createEmptyBorder());
         redditIcon.setContentAreaFilled(false);
         redditIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        twitterIcon = new JButton(
-                Utils.getIconImage("/resources/TwitterIcon.png"));
+        twitterIcon = new JButton(Utils.getIconImage("/resources/TwitterIcon.png"));
         twitterIcon.setBorder(BorderFactory.createEmptyBorder());
         twitterIcon.setContentAreaFilled(false);
         twitterIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
+
+    /**
+     * Changes the text on the toggleConsole button when the console is hidden
+     */
+    public void hideConsole() {
+        toggleConsole.setText("Show Console");
     }
 }

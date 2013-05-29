@@ -10,8 +10,11 @@
  */
 package com.atlauncher.workers;
 
+import java.util.ArrayList;
+
 import javax.swing.SwingWorker;
 
+import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Version;
 
@@ -28,13 +31,20 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
     }
 
     protected Boolean doInBackground() throws Exception {
+        ArrayList<Mod> mods = this.pack.getMods(this.version);
         System.out.println("Installing " + pack.getName() + " version " + version);
         firePropertyChange("progress", null, 25);
-        firePropertyChange("doing", null, "Downloading Something");
-        Thread.sleep(2000);
+        for(Mod mod : mods){
+            firePropertyChange("doing", null, "Downloading " + mod);
+            Thread.sleep(300);
+        }
+        Thread.sleep(1000);
         firePropertyChange("progress", null, 50);
-        firePropertyChange("doing", null, "Installing Something");
-        Thread.sleep(2000);
+        for(Mod mod : mods){
+            firePropertyChange("doing", null, "Installing " + mod);
+            Thread.sleep(300);
+        }
+        Thread.sleep(1000);
         firePropertyChange("progress", null, 75);
         firePropertyChange("doing", null, "Configuring Pack");
         Thread.sleep(2000);

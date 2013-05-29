@@ -62,6 +62,7 @@ public class ServerTester extends SwingWorker<Void, String> {
             }
         }
         LauncherFrame.console.log("The best connected server is " + servers.get(best).getName());
+        LauncherFrame.settings.setServer(servers.get(best));
         return null;
     }
 

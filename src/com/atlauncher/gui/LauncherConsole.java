@@ -22,6 +22,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -65,7 +67,7 @@ public class LauncherConsole extends JFrame {
         bottomBar = new ConsoleBottomBar();
 
         add(new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
 
         // Make sure the size doesn't go below the minimum size
@@ -83,6 +85,12 @@ public class LauncherConsole extends JFrame {
             }
         });
 
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent arg0) {
+                setVisible(false);
+            }
+        });
+
         setVisible(true);
     }
 
@@ -92,10 +100,8 @@ public class LauncherConsole extends JFrame {
         JMenuItem copy = new JMenuItem("Copy");
         copy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                StringSelection text = new StringSelection(console
-                        .getSelectedText());
-                Clipboard clipboard = Toolkit.getDefaultToolkit()
-                        .getSystemClipboard();
+                StringSelection text = new StringSelection(console.getSelectedText());
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);
             }
         });

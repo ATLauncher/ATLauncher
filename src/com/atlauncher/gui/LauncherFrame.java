@@ -14,6 +14,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -89,6 +91,14 @@ public class LauncherFrame extends JFrame {
         });
         console.log("Showing Launcher");
         setVisible(true);
+
+        console.addComponentListener(new ComponentAdapter() {
+            public void componentHidden(ComponentEvent e) {
+                LauncherFrame.console.log("Hidding console");
+                LauncherFrame.console.setVisible(false);
+                bottomBar.hideConsole();
+            }
+        });
     }
 
     /**
@@ -106,8 +116,7 @@ public class LauncherFrame extends JFrame {
     }
 
     /**
-     * Setup the settings/data for the Launcher including Packs, Addons,
-     * Languages and other things
+     * Setup the settings/data for the Launcher including Packs, Addons, Languages and other things
      */
     private void setupData() {
         LauncherFrame.settings = new Settings(this);
@@ -128,27 +137,22 @@ public class LauncherFrame extends JFrame {
         accountPanel = new AccountPanel();
         settingsPanel = new SettingsPanel();
 
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/NewsTab.png"),
-                newsPanel, "News");
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/PacksTab.png"),
-                packsPanel, "Packs");
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/AddonsTab.png"),
-                addonsPanel, "Addons");
-        tabbedPane.addTab(null,
-                Utils.getIconImage("/resources/InstancesTab.png"),
-                instancesPanel, "Instances");
-        tabbedPane.addTab(null,
-                Utils.getIconImage("/resources/AccountTab.png"), accountPanel,
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/NewsTab.png"), newsPanel, "News");
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/PacksTab.png"), packsPanel, "Packs");
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/AddonsTab.png"), addonsPanel,
+                "Addons");
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/InstancesTab.png"), instancesPanel,
+                "Instances");
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/AccountTab.png"), accountPanel,
                 "Account");
-        tabbedPane.addTab(null,
-                Utils.getIconImage("/resources/SettingsTab.png"),
-                settingsPanel, "Settings");
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/SettingsTab.png"), settingsPanel,
+                "Settings");
         tabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 if (tabbedPane.getSelectedComponent() instanceof PacksPanel) {
                     // Reloads the data in the PacksPanel
                     ((PacksPanel) tabbedPane.getSelectedComponent()).reloadTable();
-                }else if (tabbedPane.getSelectedComponent() instanceof SettingsPanel) {
+                } else if (tabbedPane.getSelectedComponent() instanceof SettingsPanel) {
                     // Reloads the data in the SettingsPanel
                     ((SettingsPanel) tabbedPane.getSelectedComponent()).reloadData();
                 }
@@ -194,8 +198,8 @@ public class LauncherFrame extends JFrame {
         UIManager.put("nimbusLightBackground", BASE_COLOR);
         UIManager.put("info", BASE_COLOR);
         UIManager.put("nimbusSelectionBackground", new Color(100, 100, 200));
-        UIManager.put("Table.focusCellHighlightBorder",
-                BorderFactory.createEmptyBorder(2, 5, 2, 5));
+        UIManager
+                .put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
     }
 
 }
