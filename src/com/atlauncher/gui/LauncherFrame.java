@@ -22,10 +22,13 @@ import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.ColorUIResource;
 
 import com.atlauncher.data.Settings;
 import com.atlauncher.workers.ServerTester;
@@ -137,16 +140,12 @@ public class LauncherFrame extends JFrame {
         accountPanel = new AccountPanel();
         settingsPanel = new SettingsPanel();
 
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/NewsTab.png"), newsPanel, "News");
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/PacksTab.png"), packsPanel, "Packs");
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/AddonsTab.png"), addonsPanel,
-                "Addons");
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/InstancesTab.png"), instancesPanel,
-                "Instances");
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/AccountTab.png"), accountPanel,
-                "Account");
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/SettingsTab.png"), settingsPanel,
-                "Settings");
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/NewsTab.png"), newsPanel);
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/PacksTab.png"), packsPanel);
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/AddonsTab.png"), addonsPanel);
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/InstancesTab.png"), instancesPanel);
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/AccountTab.png"), accountPanel);
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/SettingsTab.png"), settingsPanel);
         tabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 if (tabbedPane.getSelectedComponent() instanceof PacksPanel) {

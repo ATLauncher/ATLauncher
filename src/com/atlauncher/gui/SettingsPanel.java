@@ -18,12 +18,16 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -36,6 +40,7 @@ public class SettingsPanel extends JPanel {
     private JPanel topPanel;
     private JPanel bottomPanel;
     private JButton saveButton;
+    private ImageIcon helpIcon;
 
     private JLabel languageLabel;
     private JComboBox<Language> language;
@@ -74,12 +79,27 @@ public class SettingsPanel extends JPanel {
         topPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
+        helpIcon = Utils.getIconImage("/resources/Help.png");
+
         // Language
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         languageLabel = new JLabel("Language:");
+        languageLabel.setIcon(helpIcon);
+        languageLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
+                                "This specifies the Language used by the Launcher", "Help",
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
         topPanel.add(languageLabel, gbc);
 
         gbc.gridx++;
@@ -94,6 +114,20 @@ public class SettingsPanel extends JPanel {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         downloadServerLabel = new JLabel("Download Server:");
+        downloadServerLabel.setIcon(helpIcon);
+        downloadServerLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(
+                                LauncherFrame.settings.getParent(),
+                                "The server to download files from. Keep on Auto for best results.",
+                                "Help", JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
         topPanel.add(downloadServerLabel, gbc);
 
         gbc.gridx++;
@@ -114,6 +148,29 @@ public class SettingsPanel extends JPanel {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         memoryLabel = new JLabel("Memory/RAM:");
+        memoryLabel.setIcon(helpIcon);
+        memoryLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        if (Utils.is64Bit()) {
+                            JOptionPane.showMessageDialog(
+                                    LauncherFrame.settings.getParent(),
+                                    "<html><center>The amount of RAM to use when launching Minecraft.<br/>"
+                                            + "<br/>You can only allocate up to 1GB of RAM as you "
+                                            + "don't have<br/>a 64 bit system or you don't have Java "
+                                            + "64 bit version installed</center></html>", "Help",
+                                    JOptionPane.PLAIN_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
+                                    "The amount of RAM to use when launching Minecraft.", "Help",
+                                    JOptionPane.PLAIN_MESSAGE);
+                        }
+                    }
+                }
+            }
+        });
         topPanel.add(memoryLabel, gbc);
 
         gbc.gridx++;
@@ -133,6 +190,19 @@ public class SettingsPanel extends JPanel {
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         windowSizeLabel = new JLabel("Window Size:");
+        windowSizeLabel.setIcon(helpIcon);
+        windowSizeLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
+                                "The size that the Minecraft window should open as", "Help",
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
         topPanel.add(windowSizeLabel, gbc);
 
         gbc.gridx++;
@@ -158,6 +228,19 @@ public class SettingsPanel extends JPanel {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaParametersLabel = new JLabel("Java Parameters:");
+        javaParametersLabel.setIcon(helpIcon);
+        javaParametersLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
+                                "Extra Java command line paramaters can be added here", "Help",
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
         topPanel.add(javaParametersLabel, gbc);
 
         gbc.gridx++;
@@ -173,6 +256,19 @@ public class SettingsPanel extends JPanel {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableConsoleLabel = new JLabel("Enable Console?");
+        enableConsoleLabel.setIcon(helpIcon);
+        enableConsoleLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
+                                "If you want the console to be visible when opening the Launcher",
+                                "Help", JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
         topPanel.add(enableConsoleLabel, gbc);
 
         gbc.gridx++;
@@ -188,6 +284,19 @@ public class SettingsPanel extends JPanel {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableLeaderboardsLabel = new JLabel("Enable Leaderboards?");
+        enableLeaderboardsLabel.setIcon(helpIcon);
+        enableLeaderboardsLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
+                                "If you want to participate in the Leaderboards", "Help",
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
         topPanel.add(enableLeaderboardsLabel, gbc);
 
         gbc.gridx++;
@@ -203,6 +312,23 @@ public class SettingsPanel extends JPanel {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableLoggingLabel = new JLabel("Enable Logging?");
+        enableLoggingLabel.setIcon(helpIcon);
+        enableLoggingLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(
+                                LauncherFrame.settings.getParent(),
+                                "<html><center>The Launcher sends back anonymous usage and error "
+                                        + "logs<br/>to our servers in order to make the Launcher and Packs"
+                                        + "<br/>better. If you don't want this to happen then simply<br/>"
+                                        + "disable this option</center></html>", "Help",
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
         topPanel.add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
@@ -231,7 +357,7 @@ public class SettingsPanel extends JPanel {
      */
     public void reloadData() {
         downloadServer.removeAllItems();
-        downloadServer.addItem(new Server("Auto Select", "http://newfiles.atlauncher.com"));
+        downloadServer.addItem(new Server("Auto", "http://newfiles.atlauncher.com"));
         for (Server server : LauncherFrame.settings.getServers()) {
             if (!server.isDisabled()) {
                 downloadServer.addItem(server);
