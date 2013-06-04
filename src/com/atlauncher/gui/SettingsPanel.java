@@ -343,7 +343,7 @@ public class SettingsPanel extends JPanel {
         saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                LauncherFrame.console.log("Settings Saved!");
+                LauncherFrame.settings.getConsole().log("Settings Saved!");
             }
         });
         bottomPanel.add(saveButton);

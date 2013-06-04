@@ -90,8 +90,6 @@ public class LauncherConsole extends JFrame {
                 setVisible(false);
             }
         });
-
-        setVisible(true);
     }
 
     private void setupContextMenu() {

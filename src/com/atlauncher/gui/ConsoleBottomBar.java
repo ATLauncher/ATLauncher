@@ -78,46 +78,43 @@ public class ConsoleBottomBar extends JPanel {
     private void setupActionListeners() {
         copyLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.console.log("Copied Log To Clipboard");
-                StringSelection text = new StringSelection(
-                        LauncherFrame.console.getLog());
-                Clipboard clipboard = Toolkit.getDefaultToolkit()
-                        .getSystemClipboard();
+                LauncherFrame.settings.getConsole().log("Copied Log To Clipboard");
+                StringSelection text = new StringSelection(LauncherFrame.settings.getConsole()
+                        .getLog());
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);
             }
         });
         uploadLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String result = Utils.uploadPaste("ATLauncher Log", LauncherFrame.console.getLog());
+                String result = Utils.uploadPaste("ATLauncher Log", LauncherFrame.settings
+                        .getConsole().getLog());
                 if (result.contains("http://paste.atlauncher.com")) {
-                    LauncherFrame.console
-                            .log("Log uploaded and copied to clipboard: " + result);
+                    LauncherFrame.settings.getConsole().log(
+                            "Log uploaded and copied to clipboard: " + result);
                     StringSelection text = new StringSelection(result);
-                    Clipboard clipboard = Toolkit.getDefaultToolkit()
-                            .getSystemClipboard();
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(text, null);
-                }else{
-                    LauncherFrame.console
-                            .log("Log failed to upload: " + result);
+                } else {
+                    LauncherFrame.settings.getConsole().log("Log failed to upload: " + result);
                 }
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.console
-                        .log("Opening Up ATLauncher Facebook Page");
+                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
         redditIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.console.log("Opening Up ATLauncher Reddit Page");
+                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Reddit Page");
                 Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
             }
         });
         twitterIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.console.log("Opening Up ATLauncher Twitter Page");
+                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Twitter Page");
                 Utils.openBrowser("http://www.twitter.com/ATLauncher");
             }
         });
@@ -130,20 +127,17 @@ public class ConsoleBottomBar extends JPanel {
         copyLog = new JButton("Copy Log");
         uploadLog = new JButton("Upload Log");
 
-        facebookIcon = new JButton(
-                Utils.getIconImage("/resources/FacebookIcon.png"));
+        facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());
         facebookIcon.setContentAreaFilled(false);
         facebookIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        redditIcon = new JButton(
-                Utils.getIconImage("/resources/RedditIcon.png"));
+        redditIcon = new JButton(Utils.getIconImage("/resources/RedditIcon.png"));
         redditIcon.setBorder(BorderFactory.createEmptyBorder());
         redditIcon.setContentAreaFilled(false);
         redditIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        twitterIcon = new JButton(
-                Utils.getIconImage("/resources/TwitterIcon.png"));
+        twitterIcon = new JButton(Utils.getIconImage("/resources/TwitterIcon.png"));
         twitterIcon.setBorder(BorderFactory.createEmptyBorder());
         twitterIcon.setContentAreaFilled(false);
         twitterIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));

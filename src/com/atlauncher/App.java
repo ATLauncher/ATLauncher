@@ -1,5 +1,6 @@
 package com.atlauncher;
 
+import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 
@@ -9,15 +10,15 @@ public class App {
         // TODO Add in arguments for some stuff and handle relaunching of the
         // client under certain situations such as updates
 
-        SplashScreen ss = new SplashScreen(); // Show Splash Screen
-        try {
-            Thread.sleep(1000); // Sleep for 1 second just to simulate stuff
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        ss.close(); // Close the Splash Screen
+        Settings settings = new Settings(); // Setup the Settings and wait for it to finish
 
-        new LauncherFrame(); // Open the Launcher
+        settings.getConsole().log("Launcher started. Loading everything and showing splash screen");
+        SplashScreen ss = new SplashScreen(); // Show Splash Screen
+        settings.loadEverything(); // Loads everything that needs to be loaded
+        ss.close(); // Close the Splash Screen
+        settings.getConsole().log("Launcher finished loading everything. Opening Launcher");
+
+        new LauncherFrame(settings); // Open the Launcher
     }
 
 }

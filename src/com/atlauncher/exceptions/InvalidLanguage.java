@@ -12,13 +12,13 @@ package com.atlauncher.exceptions;
 
 
 /**
- * InvalidPack is thrown when searching for a Pack by ID and that ID isn't found
+ * InvalidLanguage is thrown when searching for a Language by Name and that Name isn't found
  * 
  * @author Ryan
  */
-public class InvalidPack extends Exception {
+public class InvalidLanguage extends Exception {
 
-    public InvalidPack(String message) {
+    public InvalidLanguage(String message) {
         super(message);
     }
 

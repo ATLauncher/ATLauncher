@@ -22,16 +22,12 @@ import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.ColorUIResource;
 
 import com.atlauncher.data.Settings;
-import com.atlauncher.workers.ServerTester;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
@@ -40,8 +36,6 @@ public class LauncherFrame extends JFrame {
     private final Dimension WINDOW_SIZE = new Dimension(800, 500);
     private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
     private final Color BASE_COLOR = new Color(40, 45, 50);
-
-    public static LauncherConsole console;
 
     private JTabbedPane tabbedPane;
     private NewsPanel newsPanel;
@@ -55,7 +49,10 @@ public class LauncherFrame extends JFrame {
 
     public static Settings settings;
 
-    public LauncherFrame() {
+    public LauncherFrame(Settings settings) {
+        LauncherFrame.settings = settings;
+        LauncherFrame.settings.setParentFrame(this);
+        LauncherFrame.settings.getConsole().setVisible(true);
         setSize(WINDOW_SIZE);
         setTitle("ATLauncher");
         setLocationRelativeTo(null);
@@ -64,25 +61,17 @@ public class LauncherFrame extends JFrame {
         setIconImage(Utils.getImage("/resources/Icon.png"));
         setLayout(LAYOUT_MANAGER);
 
-        setupConsole(); // Setup the console
-
-        console.log("Setting up Look & Feel");
+        LauncherFrame.settings.getConsole().log("Setting up Look & Feel");
         setupLookAndFeel(); // Setup the look and feel for the Launcher
-        console.log("Finished Setting up Look & Feel");
+        LauncherFrame.settings.getConsole().log("Finished Setting up Look & Feel");
 
-        setupData(); // Setup all the data needed
-
-        console.log("Setting up Look & Feel");
+        LauncherFrame.settings.getConsole().log("Setting up Look & Feel");
         setupBottomBar(); // Setup the Bottom Bar
-        console.log("Finished Setting up Bottom Bar");
+        LauncherFrame.settings.getConsole().log("Finished Setting up Bottom Bar");
 
-        console.log("Setting up Tabs");
+        LauncherFrame.settings.getConsole().log("Setting up Tabs");
         setupTabs(); // Setup the JTabbedPane
-        console.log("Finished Setting up Tabs");
-
-        console.log("Checking Servers");
-        checkServers(); // Check the servers
-        console.log("Finished Checking Servers");
+        LauncherFrame.settings.getConsole().log("Finished Setting up Tabs");
 
         add(tabbedPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
@@ -92,37 +81,16 @@ public class LauncherFrame extends JFrame {
                 dispose();
             }
         });
-        console.log("Showing Launcher");
+        LauncherFrame.settings.getConsole().log("Showing Launcher");
         setVisible(true);
 
-        console.addComponentListener(new ComponentAdapter() {
+        LauncherFrame.settings.getConsole().addComponentListener(new ComponentAdapter() {
             public void componentHidden(ComponentEvent e) {
-                LauncherFrame.console.log("Hidding console");
-                LauncherFrame.console.setVisible(false);
+                LauncherFrame.settings.getConsole().log("Hidding console");
+                LauncherFrame.settings.getConsole().setVisible(false);
                 bottomBar.hideConsole();
             }
         });
-    }
-
-    /**
-     * Check the server list and see which are/aren't available
-     */
-    private void checkServers() {
-        new ServerTester().execute();
-    }
-
-    /**
-     * Setup the console and display it
-     */
-    private void setupConsole() {
-        console = new LauncherConsole();
-    }
-
-    /**
-     * Setup the settings/data for the Launcher including Packs, Addons, Languages and other things
-     */
-    private void setupData() {
-        LauncherFrame.settings = new Settings(this);
     }
 
     /**

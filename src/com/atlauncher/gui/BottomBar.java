@@ -72,32 +72,32 @@ public class BottomBar extends JPanel {
     private void setupListeners() {
         toggleConsole.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (LauncherFrame.console.isVisible()) {
-                    LauncherFrame.console.log("Hidding console");
-                    LauncherFrame.console.setVisible(false);
+                if (LauncherFrame.settings.getConsole().isVisible()) {
+                    LauncherFrame.settings.getConsole().log("Hidding console");
+                    LauncherFrame.settings.getConsole().setVisible(false);
                     toggleConsole.setText("Show Console");
                 } else {
-                    LauncherFrame.console.log("Showing console");
-                    LauncherFrame.console.setVisible(true);
+                    LauncherFrame.settings.getConsole().log("Showing console");
+                    LauncherFrame.settings.getConsole().setVisible(true);
                     toggleConsole.setText("Hide Console");
                 }
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.console.log("Opening Up ATLauncher Facebook Page");
+                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
         redditIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.console.log("Opening Up ATLauncher Reddit Page");
+                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Reddit Page");
                 Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
             }
         });
         twitterIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.console.log("Opening Up ATLauncher Twitter Page");
+                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Twitter Page");
                 Utils.openBrowser("http://www.twitter.com/ATLauncher");
             }
         });
