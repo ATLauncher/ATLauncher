@@ -2,6 +2,7 @@ package com.atlauncher;
 
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.gui.SetupDialog;
 import com.atlauncher.gui.SplashScreen;
 
 public class App {
@@ -16,8 +17,14 @@ public class App {
         SplashScreen ss = new SplashScreen(); // Show Splash Screen
         settings.loadEverything(); // Loads everything that needs to be loaded
         ss.close(); // Close the Splash Screen
-        settings.getConsole().log("Launcher finished loading everything. Opening Launcher");
+        settings.getConsole().log("Launcher finished loading everything");
 
+        if (settings.isFirstTimeRun()) {
+            settings.getConsole().log("Launcher not setup. Loading Setup Dialog");
+            new SetupDialog();
+        }
+
+        settings.getConsole().log("Launcher opening");
         new LauncherFrame(settings); // Open the Launcher
     }
 

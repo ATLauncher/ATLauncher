@@ -35,7 +35,6 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.Version;
 import com.atlauncher.workers.PackInstaller;
 
-@SuppressWarnings("serial")
 public class NewInstanceDialog extends JDialog {
 
     private JPanel top;

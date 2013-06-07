@@ -17,7 +17,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -83,14 +82,6 @@ public class Settings {
     public Settings() {
         this.console = new LauncherConsole();
         this.properties = new Properties(); // Make the properties variable
-        try {
-            if (!propertiesFile.exists()) {
-                propertiesFile.createNewFile();
-                this.firstTimeRun = true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void loadEverything() {
@@ -118,6 +109,13 @@ public class Settings {
      */
     public void loadServerProperty() {
         try {
+            if (!propertiesFile.exists()) {
+                propertiesFile.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
             this.properties.load(new FileInputStream(propertiesFile));
             this.server = getServerByName(properties.getProperty("server", "Auto"));
         } catch (FileNotFoundException e) {
@@ -136,6 +134,8 @@ public class Settings {
     public void loadProperties() {
         try {
             this.properties.load(new FileInputStream(propertiesFile));
+            this.firstTimeRun = Boolean
+                    .parseBoolean(properties.getProperty("firsttimerun", "true"));
             this.language = getLanguageByName(properties.getProperty("language", "English"));
             this.server = getServerByName(properties.getProperty("server", "Auto"));
             this.ram = Integer.parseInt(properties.getProperty("ram", "512"));
@@ -151,10 +151,11 @@ public class Settings {
                 throw new InvalidWindowHeight("Cannot set screen height to " + this.windowHeight);
             }
             this.javaParamaters = properties.getProperty("javaparameters", "");
-            this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "1"));
+            this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
+                    "true"));
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty(
-                    "enableleaderboards", "0"));
-            this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "1"));
+                    "enableleaderboards", "true"));
+            this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -182,15 +183,17 @@ public class Settings {
      */
     public void saveProperties() {
         try {
+            properties.setProperty("firsttimerun", "false");
             properties.setProperty("language", this.language.getName());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("ram", this.ram + "");
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
             properties.setProperty("javaparameters", this.javaParamaters);
-            properties.setProperty("enableconsole", (this.enableConsole) ? "1" : "0");
-            properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "1" : "0");
-            properties.setProperty("enablelogs", (this.enableLogs) ? "1" : "0");
+            properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
+            properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
+                    : "false");
+            properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -415,6 +418,15 @@ public class Settings {
         } catch (InvalidPack e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Finds out if this is the first time the Launcher has been run
+     * 
+     * @return true if the Launcher hasn't been run and setup yet, false for otherwise
+     */
+    public boolean isFirstTimeRun() {
+        return this.firstTimeRun;
     }
 
     /**

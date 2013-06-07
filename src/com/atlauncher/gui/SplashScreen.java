@@ -15,11 +15,10 @@ import javax.swing.JButton;
 import javax.swing.JWindow;
 
 public class SplashScreen extends JWindow {
-    private static final long serialVersionUID = 1L;
-    protected final ImageIcon icon;
+
+    private ImageIcon icon = Utils.getIconImage("/resources/SplashScreen.png");
 
     public SplashScreen() {
-        this.icon = Utils.getIconImage("/resources/SplashScreen.png");
         setLayout(null);
         JButton background = new JButton(icon);
         background.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
@@ -33,6 +32,9 @@ public class SplashScreen extends JWindow {
         setLocationRelativeTo(null);
     }
 
+    /**
+     * Closes and disposes of the splash screen
+     */
     public void close() {
         this.setVisible(false);
         this.dispose();
