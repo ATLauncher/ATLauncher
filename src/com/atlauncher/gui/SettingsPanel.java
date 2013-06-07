@@ -46,7 +46,7 @@ public class SettingsPanel extends JPanel {
     private JComboBox<Language> language;
 
     private JLabel downloadServerLabel;
-    private JComboBox<Server> downloadServer;
+    private JComboBox<Server> server;
 
     private JLabel memoryLabel;
     private JComboBox<String> memory;
@@ -106,6 +106,10 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         language = new JComboBox<Language>();
+        for (Language languagee : LauncherFrame.settings.getLanguages()) {
+            language.addItem(languagee);
+        }
+        language.setSelectedItem(LauncherFrame.settings.getLanguage());
         topPanel.add(language, gbc);
 
         // Download Server
@@ -133,14 +137,12 @@ public class SettingsPanel extends JPanel {
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        downloadServer = new JComboBox<Server>();
-        ArrayList<Server> servers = LauncherFrame.settings.getServers();
-        for (Server server : servers) {
-            if (!server.isDisabled()) {
-                downloadServer.addItem(server);
-            }
+        server = new JComboBox<Server>();
+        for (Server serverr : LauncherFrame.settings.getServers()) {
+            server.addItem(serverr);
         }
-        topPanel.add(downloadServer, gbc);
+        server.setSelectedItem(LauncherFrame.settings.getServer());
+        topPanel.add(server, gbc);
 
         // Memory Settings
         gbc.gridx = 0;
@@ -343,6 +345,9 @@ public class SettingsPanel extends JPanel {
         saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
+                LauncherFrame.settings.setLanguage((Language) language.getSelectedItem());
+                LauncherFrame.settings.setServer((Server) server.getSelectedItem());
+                LauncherFrame.settings.saveProperties();
                 LauncherFrame.settings.getConsole().log("Settings Saved!");
             }
         });
@@ -350,23 +355,6 @@ public class SettingsPanel extends JPanel {
 
         add(topPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
-    }
-
-    /**
-     * Reloads changed data in this panel
-     */
-    public void reloadData() {
-        downloadServer.removeAllItems();
-        downloadServer.addItem(new Server("Auto", "http://newfiles.atlauncher.com"));
-        for (Server server : LauncherFrame.settings.getServers()) {
-            if (!server.isDisabled()) {
-                downloadServer.addItem(server);
-            }
-        }
-        this.language.removeAllItems();
-        for (Language language : LauncherFrame.settings.getLanguages()) {
-            this.language.addItem(language);
-        }
     }
 
 }

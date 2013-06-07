@@ -18,11 +18,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,8 +37,13 @@ import org.xml.sax.SAXException;
 
 import com.atlauncher.exceptions.InvalidLanguage;
 import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.exceptions.InvalidRam;
+import com.atlauncher.exceptions.InvalidServer;
+import com.atlauncher.exceptions.InvalidWindowHeight;
+import com.atlauncher.exceptions.InvalidWindowWidth;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
+import com.atlauncher.gui.Utils;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user
@@ -69,13 +76,18 @@ public class Settings {
     private ArrayList<Language> languages = new ArrayList<Language>(); // Languages for the Launcher
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private InstancesPanel instancesPanel; // The instances panel
+    private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
+    private Server bestConnectedServer; // The best connected server for Auto selection
+    private boolean offlineMode = false; // If offline mode is enabled
 
     public Settings() {
         this.console = new LauncherConsole();
         this.properties = new Properties(); // Make the properties variable
         try {
-            if (!propertiesFile.exists())
+            if (!propertiesFile.exists()) {
                 propertiesFile.createNewFile();
+                this.firstTimeRun = true;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,6 +95,8 @@ public class Settings {
 
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
+        testServers(); // Test servers for best connected one
+        loadServerProperty(); // Get users Server preference
         loadLanguages(); // Load the Languages available in the Launcher
         loadPacks(); // Load the Packs available in the Launcher
         loadAddons(); // Load the Addons available in the Launcher
@@ -100,18 +114,66 @@ public class Settings {
     }
 
     /**
+     * Load the users Server preference from file
+     */
+    public void loadServerProperty() {
+        try {
+            this.properties.load(new FileInputStream(propertiesFile));
+            this.server = getServerByName(properties.getProperty("server", "Auto"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidServer e) {
+            console.log(e.getMessage());
+            this.server = this.servers.get(0); // Server not found, use default of Auto
+        }
+    }
+
+    /**
      * Load the properties from file
      */
     public void loadProperties() {
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             this.language = getLanguageByName(properties.getProperty("language", "English"));
+            this.server = getServerByName(properties.getProperty("server", "Auto"));
+            this.ram = Integer.parseInt(properties.getProperty("ram", "512"));
+            if (this.ram > Utils.getMaximumRam()) {
+                throw new InvalidRam("Cannot allocate " + this.ram + "MB of Ram");
+            }
+            this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
+            if (this.windowWidth > Utils.getMaximumWindowWidth()) {
+                throw new InvalidWindowWidth("Cannot set screen width to " + this.windowWidth);
+            }
+            this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "854"));
+            if (this.windowHeight > Utils.getMaximumWindowHeight()) {
+                throw new InvalidWindowHeight("Cannot set screen height to " + this.windowHeight);
+            }
+            this.javaParamaters = properties.getProperty("javaparameters", "");
+            this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "1"));
+            this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty(
+                    "enableleaderboards", "0"));
+            this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "1"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InvalidLanguage e) {
-            e.printStackTrace();
+            console.log(e.getMessage());
+            this.language = languages.get(0); // Language not found, use the default first one
+        } catch (InvalidServer e) {
+            console.log(e.getMessage());
+            this.server = bestConnectedServer; // Server not found, use the best one found
+        } catch (InvalidRam e) {
+            console.log(e.getMessage());
+            this.ram = 512; // User tried to allocate too much ram, set it back to 0.5GB
+        } catch (InvalidWindowWidth e) {
+            console.log(e.getMessage());
+            this.windowWidth = 854; // User tried to make screen size wider than they have
+        } catch (InvalidWindowHeight e) {
+            console.log(e.getMessage());
+            this.windowHeight = 480; // User tried to make screen size wider than they have
         }
     }
 
@@ -120,6 +182,15 @@ public class Settings {
      */
     public void saveProperties() {
         try {
+            properties.setProperty("language", this.language.getName());
+            properties.setProperty("server", this.server.getName());
+            properties.setProperty("ram", this.ram + "");
+            properties.setProperty("windowwidth", this.windowWidth + "");
+            properties.setProperty("windowheight", this.windowHeight + "");
+            properties.setProperty("javaparameters", this.javaParamaters);
+            properties.setProperty("enableconsole", (this.enableConsole) ? "1" : "0");
+            properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "1" : "0");
+            properties.setProperty("enablelogs", (this.enableLogs) ? "1" : "0");
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -135,10 +206,10 @@ public class Settings {
      * files
      */
     private void setupServers() {
+        servers.add(new Server("Auto", ""));
         servers.add(new Server("Europe", "eu.atlcdn.net"));
         servers.add(new Server("US East", "useast.atlcdn.net"));
         servers.add(new Server("US West", "uswest.atlcdn.net"));
-        testServers();
     }
 
     /**
@@ -147,12 +218,16 @@ public class Settings {
     private void testServers() {
         double[] responseTimes = new double[servers.size()];
         int count = 0;
+        int up = 0;
         for (Server server : servers) {
+            if (server.isAuto())
+                continue; // Don't scan the Auto server
             double startTime = System.currentTimeMillis();
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(
-                        server.getFileURL("10MB.file")).openConnection();
+                HttpURLConnection connection = (HttpURLConnection) new URL(server.getTestURL())
+                        .openConnection();
                 connection.setRequestMethod("HEAD");
+                connection.setConnectTimeout(3000);
                 int responseCode = connection.getResponseCode();
                 if (responseCode != 200) {
                     responseTimes[count] = 1000000.0;
@@ -163,9 +238,12 @@ public class Settings {
                     responseTimes[count] = endTime - startTime;
                     console.log("Server " + server.getName() + " is available! ("
                             + responseTimes[count] + ")");
+                    up++;
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
+            } catch (SocketTimeoutException e) {
+                responseTimes[count] = 1000000.0;
+                console.log("Server " + server.getName() + " isn't available!");
+                server.disableServer();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -179,8 +257,18 @@ public class Settings {
                 bestTime = responseTimes[i];
             }
         }
-        console.log("The best connected server is " + servers.get(best).getName());
-        setServer(servers.get(best));
+        if (up != 0) {
+            console.log("The best connected server is " + servers.get(best).getName());
+            this.bestConnectedServer = servers.get(best);
+        } else {
+            JOptionPane.showMessageDialog(null,
+                    "<html><center>There was an issue connecting to ATLauncher "
+                            + "Servers<br/><br/>Offline mode is now enabled.<br/><br/>"
+                            + "To install packs again, please try connecting later"
+                            + "</center></html>", "Error Connecting To ATLauncher Servers",
+                    JOptionPane.ERROR_MESSAGE);
+            this.offlineMode = true; // Set offline mode to be true
+        }
     }
 
     /**
@@ -375,6 +463,15 @@ public class Settings {
     }
 
     /**
+     * Determines if offline mode is enabled or not
+     * 
+     * @return true if offline mode is enabled, false otherwise
+     */
+    public boolean isInOfflineMode() {
+        return this.offlineMode;
+    }
+
+    /**
      * Returns the JFrame reference of the main Launcher
      * 
      * @return Main JFrame of the Launcher
@@ -445,11 +542,29 @@ public class Settings {
      */
     private Language getLanguageByName(String name) throws InvalidLanguage {
         for (Language language : languages) {
-            if (language.getLocalizedName().equalsIgnoreCase(name)) {
+            if (language.getName().equalsIgnoreCase(name)) {
                 return language;
             }
         }
         throw new InvalidLanguage("No language exists with name " + name);
+    }
+
+    /**
+     * Finds a Language from the given name
+     * 
+     * @param name
+     *            Name of the Language to find
+     * @return Language if the language is found from the name
+     * @throws InvalidLanguage
+     *             If Language is not found
+     */
+    private Server getServerByName(String name) throws InvalidServer {
+        for (Server server : servers) {
+            if (server.getName().equalsIgnoreCase(name)) {
+                return server;
+            }
+        }
+        throw new InvalidServer("No server exists with name " + name);
     }
 
     /**
@@ -460,17 +575,7 @@ public class Settings {
      * @return URL of the file
      */
     public String getFileURL(String filename) {
-        return this.server.getFileURL(filename);
-    }
-
-    /**
-     * Sets the users server to download from
-     * 
-     * @param server
-     *            The server to download from
-     */
-    public void setServer(Server server) {
-        this.server = server;
+        return this.server.getFileURL(filename, bestConnectedServer);
     }
 
     /**
@@ -480,6 +585,54 @@ public class Settings {
      */
     public LauncherConsole getConsole() {
         return this.console;
+    }
+
+    /**
+     * Returns the best connected server
+     * 
+     * @return The server that the user was best connected to
+     */
+    public Server getBestConnectedServer() {
+        System.out.println("hi");
+        return this.bestConnectedServer;
+    }
+
+    /**
+     * Gets the users current active Language
+     * 
+     * @return The users set language
+     */
+    public Language getLanguage() {
+        return this.language;
+    }
+
+    /**
+     * Sets the users current active Language
+     * 
+     * @param language
+     *            The language to set to
+     */
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    /**
+     * Gets the users current active Server
+     * 
+     * @return The users set server
+     */
+    public Server getServer() {
+        return this.server;
+    }
+
+    /**
+     * Sets the users current active Server
+     * 
+     * @param server
+     *            The server to set to
+     */
+    public void setServer(Server server) {
+        this.server = server;
     }
 
 }

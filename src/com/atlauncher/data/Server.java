@@ -10,16 +10,23 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.gui.LauncherFrame;
+
 public class Server {
 
     private String name;
     private String baseURL;
     private boolean disabled;
+    private boolean isAuto;
 
     public Server(String name, String baseURL) {
         this.name = name;
         this.baseURL = baseURL;
         this.disabled = false;
+        this.isAuto = false;
+        if (name.equalsIgnoreCase("Auto")) {
+            this.isAuto = true;
+        }
     }
 
     public void disableServer() {
@@ -30,15 +37,42 @@ public class Server {
         return this.disabled;
     }
 
+    public boolean isAuto() {
+        return this.isAuto;
+    }
+
     public String getName() {
         return this.name;
     }
 
-    public String getFileURL(String file) {
+    private String getFileURL(String file) {
+        System.out.println("Getting " + file + " for server " + this.name);
+        if (this.isAuto) {
+            return LauncherFrame.settings.getBestConnectedServer().getFileURL(file);
+        }
         return "http://" + this.baseURL + "/" + file;
     }
 
+    public String getFileURL(String file, Server bestConnectedServer) {
+        System.out.println("Getting " + file + " for server " + this.name);
+        if (this.isAuto) {
+            return bestConnectedServer.getFileURL(file);
+        }
+        if(this.isDisabled()){
+            return bestConnectedServer.getFileURL(file);
+        }
+        return "http://" + this.baseURL + "/" + file;
+    }
+
+    public String getTestURL() {
+        return "http://" + this.baseURL + "/ping";
+    }
+
     public String toString() {
-        return this.name;
+        if (this.disabled) {
+            return "(X) " + this.name;
+        } else {
+            return this.name;
+        }
     }
 }

@@ -24,8 +24,6 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import com.atlauncher.data.Settings;
 
@@ -114,17 +112,6 @@ public class LauncherFrame extends JFrame {
         tabbedPane.addTab(null, Utils.getIconImage("/resources/InstancesTab.png"), instancesPanel);
         tabbedPane.addTab(null, Utils.getIconImage("/resources/AccountTab.png"), accountPanel);
         tabbedPane.addTab(null, Utils.getIconImage("/resources/SettingsTab.png"), settingsPanel);
-        tabbedPane.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if (tabbedPane.getSelectedComponent() instanceof PacksPanel) {
-                    // Reloads the data in the PacksPanel
-                    ((PacksPanel) tabbedPane.getSelectedComponent()).reloadTable();
-                } else if (tabbedPane.getSelectedComponent() instanceof SettingsPanel) {
-                    // Reloads the data in the SettingsPanel
-                    ((SettingsPanel) tabbedPane.getSelectedComponent()).reloadData();
-                }
-            }
-        });
         tabbedPane.setBackground(BASE_COLOR.brighter());
         tabbedPane.setOpaque(true);
     }
