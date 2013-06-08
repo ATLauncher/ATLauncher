@@ -12,7 +12,8 @@ package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -21,8 +22,15 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
-import com.atlauncher.workers.NewsDownloader;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 @SuppressWarnings("serial")
 public class NewsPanel extends JPanel {
@@ -38,13 +46,9 @@ public class NewsPanel extends JPanel {
         HTMLEditorKit kit = new HTMLEditorKit();
         StyleSheet styleSheet = kit.getStyleSheet();
         styleSheet.addRule("A {color:#0088CC}");
-        styleSheet
-                .addRule("#loading {text-align:center;font-weight:bold;font-size:16px;color:#339933;}");
-        styleSheet
-                .addRule("#newsHeader {font-weight:bold;font-size:14px;color:#339933;}");
+        styleSheet.addRule("#newsHeader {font-weight:bold;font-size:14px;color:#339933;}");
         styleSheet.addRule("#newsBody {font-size:10px;padding-left:20px;}");
         newsArea.setEditorKit(kit);
-        newsArea.setText("<html><p id=\"loading\">Loading News</p></html>");
 
         newsArea.addHyperlinkListener(new HyperlinkListener() {
             public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -55,30 +59,41 @@ public class NewsPanel extends JPanel {
         });
         add(new JScrollPane(newsArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        loadNews();
-    }
-
-    private void loadNews() {
-        NewsDownloader newsDownloader = new NewsDownloader() {
-            String news = "";
-
-            @Override
-            protected void process(List<String> chunks) {
-                String got = chunks.get(chunks.size() - 1);
-                if (news.isEmpty()) {
-                    news = "<html>" + got;
-                } else {
-                    news = news + got;
+        String news = "<html>";
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new File(LauncherFrame.settings.getConfigsDir(),
+                    "news.xml"));
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("article");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    if (i == nodeList.getLength() - 1) {
+                        news += "<p id=\"newsHeader\">" + element.getAttribute("posted")
+                                + " - <a href=\"" + element.getAttribute("link") + "\">"
+                                + element.getAttribute("title") + "</a></p>"
+                                + "<p id=\"newsBody\">" + element.getTextContent() + "</p><br/>";
+                    } else {
+                        news += "<p id=\"newsHeader\">" + element.getAttribute("posted")
+                                + " - <a href=\"" + element.getAttribute("link") + "\">"
+                                + element.getAttribute("title") + "</a></p>"
+                                + "<p id=\"newsBody\">" + element.getTextContent()
+                                + "</p><br/><hr/>";
+                    }
                 }
             }
-
-            @Override
-            protected void done() {
-                newsArea.setText(news + "</html>");
-                newsArea.setCaretPosition(0);
-            }
-        };
-        newsDownloader.execute();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        newsArea.setText(news + "</html>");
+        newsArea.setCaretPosition(0);
     }
 
 }

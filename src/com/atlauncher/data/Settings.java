@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -32,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.exceptions.InvalidPack;
@@ -62,12 +64,18 @@ public class Settings {
     private ArrayList<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
     private ArrayList<Addon> addons = new ArrayList<Addon>(); // Addons in the Launcher
 
+    // Directories and Files for the Launcher
+    private File baseDir = new File(System.getProperty("user.dir"));
+    private File backupsDir = new File(baseDir, "Backups");
+    private File configsDir = new File(baseDir, "Configs");
+    private File downloadsDir = new File(baseDir, "Downloads");
+    private File instancesDir = new File(baseDir, "Instances");
+    private File propertiesFile = new File(baseDir, "ATLauncher.conf"); // File for properties
+
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
-    private File baseDir = new File(System.getProperty("user.dir"));
-    private Properties properties; // Properties to store everything in
-    private File propertiesFile = new File(baseDir, "ATLauncher.conf"); // File for properties
-    private LauncherConsole console; // The Launcher's Console
+    private Properties properties = new Properties(); // Properties to store everything in
+    private LauncherConsole console = new LauncherConsole(); // The Launcher's Console
     private ArrayList<Language> languages = new ArrayList<Language>(); // Languages for the Launcher
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private InstancesPanel instancesPanel; // The instances panel
@@ -76,18 +84,114 @@ public class Settings {
     private boolean offlineMode = false; // If offline mode is enabled
 
     public Settings() {
-        this.console = new LauncherConsole();
-        this.properties = new Properties(); // Make the properties variable
+        checkFolders(); // Checks the setup of the folders and makes sure they're there
     }
 
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
         testServers(); // Test servers for best connected one
         loadServerProperty(); // Get users Server preference
+        if (!isInOfflineMode()) {
+            checkForUpdatedFiles(); // Checks for updated files on the server
+        }
         loadLanguages(); // Load the Languages available in the Launcher
         loadPacks(); // Load the Packs available in the Launcher
         loadAddons(); // Load the Addons available in the Launcher
         loadProperties(); // Load the users Properties
+    }
+
+    /**
+     * This checks the servers hashes.xml file and downloads and new/updated files that differ from
+     * what the user has
+     */
+    private void checkForUpdatedFiles() {
+        String hashes = new Downloader(getFileURL("launcher/hashes.xml"), false).run();
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new InputSource(new StringReader(hashes)));
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("hash");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    String name = element.getAttribute("name");
+                    String md5 = element.getAttribute("md5");
+                    File file = new File(configsDir, name);
+                    boolean download = false; // If we have to download the file or not
+                    if (!file.exists()) {
+                        download = true; // File doesn't exist so download it
+                    } else {
+                        if (!Utils.getMD5(file).equalsIgnoreCase(md5)) {
+                            download = true; // MD5 hashes don't match so download it
+                        }
+                    }
+
+                    if (download) {
+                        System.out.println("Downloading file " + name + " to "
+                                + file.getAbsolutePath());
+                        new Downloader(getFileURL("launcher/" + name), file.getAbsolutePath(),
+                                false).runNoReturn();
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Checks the directory to make sure all the necessary folders are there
+     */
+    private void checkFolders() {
+        File[] files = { backupsDir, configsDir, downloadsDir, instancesDir };
+        for (File file : files) {
+            if (!file.exists()) {
+                console.log("Folder " + file.getAbsolutePath() + " doesn't exist. Creating now");
+                file.mkdir();
+            }
+        }
+    }
+
+    /**
+     * Returns the base directory
+     * 
+     * @return File object for the base directory
+     */
+    public File getBaseDir() {
+        return this.baseDir;
+    }
+
+    /**
+     * Returns the backups directory
+     * 
+     * @return File object for the backups directory
+     */
+    public File getBackupsDir() {
+        return this.backupsDir;
+    }
+
+    /**
+     * Returns the configs directory
+     * 
+     * @return File object for the configs directory
+     */
+    public File getConfigsDir() {
+        return this.configsDir;
+    }
+
+    /**
+     * Returns the downloads directory
+     * 
+     * @return File object for the downloads directory
+     */
+    public File getDownloadsDir() {
+        return this.downloadsDir;
     }
 
     /**
@@ -282,7 +386,7 @@ public class Settings {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(getFileURL("launcher/languages.xml"));
+            Document document = builder.parse(new File(configsDir, "languages.xml"));
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("language");
             for (int i = 0; i < nodeList.getLength(); i++) {
@@ -313,7 +417,7 @@ public class Settings {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(getFileURL("launcher/packs.xml"));
+            Document document = builder.parse(new File(configsDir, "packs.xml"));
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("pack");
             for (int i = 0; i < nodeList.getLength(); i++) {
@@ -372,7 +476,7 @@ public class Settings {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(getFileURL("launcher/addons.xml"));
+            Document document = builder.parse(new File(configsDir, "addons.xml"));
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("addon");
             for (int i = 0; i < nodeList.getLength(); i++) {
