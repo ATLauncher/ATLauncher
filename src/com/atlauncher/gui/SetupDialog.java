@@ -22,11 +22,9 @@ import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Settings;
@@ -37,11 +35,8 @@ public class SetupDialog extends JDialog {
     private JPanel middle;
     private JPanel bottom;
 
-    private JLabel languageLabel, installLocationLabel;
+    private JLabel languageLabel;
     private JComboBox<Language> language;
-    private JButton installLocation;
-    private JTextField installLocationField;
-    private JFileChooser location;
 
     private JButton saveButton;
     private Settings settings;
@@ -80,34 +75,6 @@ public class SetupDialog extends JDialog {
         language.setSelectedItem(settings.getLanguage());
         middle.add(language, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        installLocationLabel = new JLabel("Install Location: ");
-        middle.add(installLocationLabel, gbc);
-
-        gbc.gridx++;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        installLocation = new JButton("...");
-        installLocationField = new JTextField(16);
-        installLocationField.setEditable(false);
-        installLocationField.setText(settings.getInstallLocation().getAbsolutePath());
-        location = new JFileChooser();
-        location.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        location.setMultiSelectionEnabled(false);
-        location.setCurrentDirectory(settings.getInstallLocation());
-        installLocation.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int done = location.showSaveDialog(SetupDialog.this);
-                if (done == JFileChooser.APPROVE_OPTION) {
-                    installLocationField.setText(location.getSelectedFile().getAbsolutePath());
-                }
-            }
-        });
-        middle.add(installLocationField, gbc);
-        gbc.gridx++;
-        middle.add(installLocation, gbc);
-
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
@@ -115,7 +82,6 @@ public class SetupDialog extends JDialog {
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 settings.setLanguage((Language) language.getSelectedItem());
-                settings.setInstallLocation(location.getSelectedFile().getAbsolutePath());
                 settings.saveProperties();
                 setVisible(false);
                 dispose();

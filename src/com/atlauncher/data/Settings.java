@@ -47,9 +47,6 @@ import com.atlauncher.gui.Utils;
 public class Settings {
 
     // Users Settings
-    private Properties properties; // Properties to store everything in
-    private File installLocation; // Location the ATLauncher is installed
-    private File propertiesFile = new File("ATLauncher.conf"); // File for properties
     private Language language; // Language for the Launcher
     private Server server; // Server to use for the Launcher
     private int ram; // RAM to use when launching Minecraft
@@ -67,6 +64,9 @@ public class Settings {
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
+    private File baseDir = new File(System.getProperty("user.dir"));
+    private Properties properties; // Properties to store everything in
+    private File propertiesFile = new File(baseDir, "ATLauncher.conf"); // File for properties
     private LauncherConsole console; // The Launcher's Console
     private ArrayList<Language> languages = new ArrayList<Language>(); // Languages for the Launcher
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
@@ -136,17 +136,6 @@ public class Settings {
             this.firstTimeRun = Boolean
                     .parseBoolean(properties.getProperty("firsttimerun", "true"));
 
-            this.installLocation = new File(properties.getProperty("installlocation",
-                    getDefaultInstallLocation()));
-            if (!this.installLocation.exists()) {
-                // Install directory not found. Use default
-                console.log("Invalid install location provided of " + this.installLocation);
-                this.installLocation = new File(getDefaultInstallLocation());
-                if (!this.installLocation.exists()) {
-                    this.installLocation.mkdirs(); // Create folder structure if not exists
-                }
-            }
-
             String lang = properties.getProperty("language", "English");
             if (isLanguageByName(lang)) {
                 this.language = getLanguageByName(lang);
@@ -195,7 +184,6 @@ public class Settings {
     public void saveProperties() {
         try {
             properties.setProperty("firsttimerun", "false");
-            properties.setProperty("installlocation", this.installLocation.getAbsolutePath());
             properties.setProperty("language", this.language.getName());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("ram", this.ram + "");
@@ -685,51 +673,6 @@ public class Settings {
      */
     public void setServer(Server server) {
         this.server = server;
-    }
-
-    /**
-     * Gets the default install location for the Launcher
-     * 
-     * @return The OS specific default install location
-     */
-    public String getDefaultInstallLocation() {
-        if (Utils.isWindows()) {
-            return System.getenv("APPDATA") + "/.atlauncher/"; // Windows
-        } else if (Utils.isMac()) {
-            return System.getProperty("user.home") + "/Library/Application Support/.atlauncher/"; // Mac
-        } else if (Utils.isLinux()) {
-            return System.getProperty("user.home") + "/.atlauncher/"; // Linux
-        } else {
-            return System.getProperty("user.dir") + "/ATLauncher/"; // Just incase use this dir
-        }
-    }
-
-    /**
-     * Gets the user set Install Location
-     * 
-     * @return Install Location
-     */
-    public File getInstallLocation() {
-        return this.installLocation;
-    }
-
-    /**
-     * Sets the install location for the ATLauncher. If the folder doesn't exist it will default
-     * back to the default
-     * 
-     * @param installLocation
-     *            The absolute path to install the ATLauncher
-     */
-    public void setInstallLocation(String installLocation) {
-        this.installLocation = new File(installLocation);
-        if (!this.installLocation.exists()) {
-            // Install directory not found. Use default
-            console.log("Invalid install location provided of " + this.installLocation);
-            this.installLocation = new File(getDefaultInstallLocation());
-            if (!this.installLocation.exists()) {
-                this.installLocation.mkdirs(); // Create folder structure if not exists
-            }
-        }
     }
 
 }
