@@ -46,7 +46,6 @@ public class Server {
     }
 
     private String getFileURL(String file) {
-        System.out.println("Getting " + file + " for server " + this.name);
         if (this.isAuto) {
             return LauncherFrame.settings.getBestConnectedServer().getFileURL(file);
         }
@@ -54,7 +53,6 @@ public class Server {
     }
 
     public String getFileURL(String file, Server bestConnectedServer) {
-        System.out.println("Getting " + file + " for server " + this.name);
         if (this.isAuto) {
             return bestConnectedServer.getFileURL(file);
         }

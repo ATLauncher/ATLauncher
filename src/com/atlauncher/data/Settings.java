@@ -34,12 +34,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.atlauncher.exceptions.InvalidLanguage;
 import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.exceptions.InvalidRam;
-import com.atlauncher.exceptions.InvalidServer;
-import com.atlauncher.exceptions.InvalidWindowHeight;
-import com.atlauncher.exceptions.InvalidWindowWidth;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.Utils;
@@ -53,6 +48,7 @@ public class Settings {
 
     // Users Settings
     private Properties properties; // Properties to store everything in
+    private File installLocation; // Location the ATLauncher is installed
     private File propertiesFile = new File("ATLauncher.conf"); // File for properties
     private Language language; // Language for the Launcher
     private Server server; // Server to use for the Launcher
@@ -117,14 +113,17 @@ public class Settings {
         }
         try {
             this.properties.load(new FileInputStream(propertiesFile));
-            this.server = getServerByName(properties.getProperty("server", "Auto"));
+            String serv = properties.getProperty("server", "Auto");
+            if (isServerByName(serv)) {
+                this.server = getServerByName(serv);
+            } else {
+                console.log("Server " + serv + " is invalid");
+                this.server = getServerByName("Auto"); // Server not found, use default of Auto
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InvalidServer e) {
-            console.log(e.getMessage());
-            this.server = this.servers.get(0); // Server not found, use default of Auto
         }
     }
 
@@ -136,45 +135,57 @@ public class Settings {
             this.properties.load(new FileInputStream(propertiesFile));
             this.firstTimeRun = Boolean
                     .parseBoolean(properties.getProperty("firsttimerun", "true"));
-            this.language = getLanguageByName(properties.getProperty("language", "English"));
-            this.server = getServerByName(properties.getProperty("server", "Auto"));
+
+            this.installLocation = new File(properties.getProperty("installlocation",
+                    getDefaultInstallLocation()));
+            if (!this.installLocation.exists()) {
+                // Install directory not found. Use default
+                console.log("Invalid install location provided of " + this.installLocation);
+                this.installLocation = new File(getDefaultInstallLocation());
+                if (!this.installLocation.exists()) {
+                    this.installLocation.mkdirs(); // Create folder structure if not exists
+                }
+            }
+
+            String lang = properties.getProperty("language", "English");
+            if (isLanguageByName(lang)) {
+                this.language = getLanguageByName(lang);
+            } else {
+                console.log("Language " + lang + " is invalid");
+                this.language = getLanguageByName("English"); // Language not found, use default
+            }
+
             this.ram = Integer.parseInt(properties.getProperty("ram", "512"));
             if (this.ram > Utils.getMaximumRam()) {
-                throw new InvalidRam("Cannot allocate " + this.ram + "MB of Ram");
+                console.log("Cannot allocate " + this.ram + "MB of Ram");
+                this.ram = 512; // User tried to allocate too much ram, set it back to 0.5GB
             }
+
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             if (this.windowWidth > Utils.getMaximumWindowWidth()) {
-                throw new InvalidWindowWidth("Cannot set screen width to " + this.windowWidth);
+                console.log("Cannot set screen width to " + this.windowWidth);
+                this.windowWidth = 854; // User tried to make screen size wider than they have
             }
+
             this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "854"));
             if (this.windowHeight > Utils.getMaximumWindowHeight()) {
-                throw new InvalidWindowHeight("Cannot set screen height to " + this.windowHeight);
+                console.log("Cannot set screen height to " + this.windowHeight);
+                this.windowHeight = 480; // User tried to make screen size wider than they have
             }
+
             this.javaParamaters = properties.getProperty("javaparameters", "");
+
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
+
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty(
                     "enableleaderboards", "true"));
+
             this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InvalidLanguage e) {
-            console.log(e.getMessage());
-            this.language = languages.get(0); // Language not found, use the default first one
-        } catch (InvalidServer e) {
-            console.log(e.getMessage());
-            this.server = bestConnectedServer; // Server not found, use the best one found
-        } catch (InvalidRam e) {
-            console.log(e.getMessage());
-            this.ram = 512; // User tried to allocate too much ram, set it back to 0.5GB
-        } catch (InvalidWindowWidth e) {
-            console.log(e.getMessage());
-            this.windowWidth = 854; // User tried to make screen size wider than they have
-        } catch (InvalidWindowHeight e) {
-            console.log(e.getMessage());
-            this.windowHeight = 480; // User tried to make screen size wider than they have
         }
     }
 
@@ -184,6 +195,7 @@ public class Settings {
     public void saveProperties() {
         try {
             properties.setProperty("firsttimerun", "false");
+            properties.setProperty("installlocation", this.installLocation.getAbsolutePath());
             properties.setProperty("language", this.language.getName());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("ram", this.ram + "");
@@ -549,16 +561,14 @@ public class Settings {
      * @param name
      *            Name of the Language to find
      * @return Language if the language is found from the name
-     * @throws InvalidLanguage
-     *             If Language is not found
      */
-    private Language getLanguageByName(String name) throws InvalidLanguage {
+    private Language getLanguageByName(String name) {
         for (Language language : languages) {
             if (language.getName().equalsIgnoreCase(name)) {
                 return language;
             }
         }
-        throw new InvalidLanguage("No language exists with name " + name);
+        return null;
     }
 
     /**
@@ -567,16 +577,46 @@ public class Settings {
      * @param name
      *            Name of the Language to find
      * @return Language if the language is found from the name
-     * @throws InvalidLanguage
-     *             If Language is not found
      */
-    private Server getServerByName(String name) throws InvalidServer {
+    private Server getServerByName(String name) {
         for (Server server : servers) {
             if (server.getName().equalsIgnoreCase(name)) {
                 return server;
             }
         }
-        throw new InvalidServer("No server exists with name " + name);
+        return null;
+    }
+
+    /**
+     * Finds if a language is available
+     * 
+     * @param name
+     *            The name of the Language
+     * @return true if found, false if not
+     */
+    public boolean isLanguageByName(String name) {
+        for (Language language : languages) {
+            if (language.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Finds if a server is available
+     * 
+     * @param name
+     *            The name of the Server
+     * @return true if found, false if not
+     */
+    public boolean isServerByName(String name) {
+        for (Server server : servers) {
+            if (server.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -645,6 +685,51 @@ public class Settings {
      */
     public void setServer(Server server) {
         this.server = server;
+    }
+
+    /**
+     * Gets the default install location for the Launcher
+     * 
+     * @return The OS specific default install location
+     */
+    public String getDefaultInstallLocation() {
+        if (Utils.isWindows()) {
+            return System.getenv("APPDATA") + "/.atlauncher/"; // Windows
+        } else if (Utils.isMac()) {
+            return System.getProperty("user.home") + "/Library/Application Support/.atlauncher/"; // Mac
+        } else if (Utils.isLinux()) {
+            return System.getProperty("user.home") + "/.atlauncher/"; // Linux
+        } else {
+            return System.getProperty("user.dir") + "/ATLauncher/"; // Just incase use this dir
+        }
+    }
+
+    /**
+     * Gets the user set Install Location
+     * 
+     * @return Install Location
+     */
+    public File getInstallLocation() {
+        return this.installLocation;
+    }
+
+    /**
+     * Sets the install location for the ATLauncher. If the folder doesn't exist it will default
+     * back to the default
+     * 
+     * @param installLocation
+     *            The absolute path to install the ATLauncher
+     */
+    public void setInstallLocation(String installLocation) {
+        this.installLocation = new File(installLocation);
+        if (!this.installLocation.exists()) {
+            // Install directory not found. Use default
+            console.log("Invalid install location provided of " + this.installLocation);
+            this.installLocation = new File(getDefaultInstallLocation());
+            if (!this.installLocation.exists()) {
+                this.installLocation.mkdirs(); // Create folder structure if not exists
+            }
+        }
     }
 
 }

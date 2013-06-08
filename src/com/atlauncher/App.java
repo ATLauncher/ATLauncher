@@ -21,7 +21,7 @@ public class App {
 
         if (settings.isFirstTimeRun()) {
             settings.getConsole().log("Launcher not setup. Loading Setup Dialog");
-            new SetupDialog();
+            new SetupDialog(settings);
         }
 
         settings.getConsole().log("Launcher opening");

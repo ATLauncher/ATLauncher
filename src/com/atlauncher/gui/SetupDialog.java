@@ -20,20 +20,35 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import com.atlauncher.data.Language;
+import com.atlauncher.data.Settings;
 
 public class SetupDialog extends JDialog {
 
     private JPanel top;
     private JPanel middle;
     private JPanel bottom;
-    private JButton saveButton;
 
-    public SetupDialog() {
+    private JLabel languageLabel, installLocationLabel;
+    private JComboBox<Language> language;
+    private JButton installLocation;
+    private JTextField installLocationField;
+    private JFileChooser location;
+
+    private JButton saveButton;
+    private Settings settings;
+
+    public SetupDialog(Settings set) {
         super(null, "ATLauncher Setup", ModalityType.APPLICATION_MODAL);
+        this.settings = set;
         setSize(400, 200);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -50,32 +65,48 @@ public class SetupDialog extends JDialog {
         middle.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // gbc.gridx = 0;
-        // gbc.gridy = 0;
-        // gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        // instanceNameLabel = new JLabel("Instance Name: ");
-        // middle.add(instanceNameLabel, gbc);
-        //
-        // gbc.gridx++;
-        // gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        // instanceNameField = new JTextField(17);
-        // instanceNameField.setText(pack.getName());
-        // middle.add(instanceNameField, gbc);
-        //
-        // gbc.gridx = 0;
-        // gbc.gridy = 1;
-        // gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        // versionLabel = new JLabel("Version To Install: ");
-        // middle.add(versionLabel, gbc);
-        //
-        // gbc.gridx++;
-        // gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        // versionsDropDown = new JComboBox<Version>();
-        // for (int i = 0; i < pack.getVersionCount(); i++) {
-        // versionsDropDown.addItem(pack.getVersion(i));
-        // }
-        // versionsDropDown.setPreferredSize(new Dimension(200, 25));
-        // middle.add(versionsDropDown, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        languageLabel = new JLabel("Language: ");
+        middle.add(languageLabel, gbc);
+
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        language = new JComboBox<Language>();
+        for (Language languagee : settings.getLanguages()) {
+            language.addItem(languagee);
+        }
+        language.setSelectedItem(settings.getLanguage());
+        middle.add(language, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        installLocationLabel = new JLabel("Install Location: ");
+        middle.add(installLocationLabel, gbc);
+
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        installLocation = new JButton("...");
+        installLocationField = new JTextField(16);
+        installLocationField.setEditable(false);
+        installLocationField.setText(settings.getInstallLocation().getAbsolutePath());
+        location = new JFileChooser();
+        location.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        location.setMultiSelectionEnabled(false);
+        location.setCurrentDirectory(settings.getInstallLocation());
+        installLocation.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int done = location.showSaveDialog(SetupDialog.this);
+                if (done == JFileChooser.APPROVE_OPTION) {
+                    installLocationField.setText(location.getSelectedFile().getAbsolutePath());
+                }
+            }
+        });
+        middle.add(installLocationField, gbc);
+        gbc.gridx++;
+        middle.add(installLocation, gbc);
 
         // Bottom Panel Stuff
         bottom = new JPanel();
@@ -83,6 +114,9 @@ public class SetupDialog extends JDialog {
         saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                settings.setLanguage((Language) language.getSelectedItem());
+                settings.setInstallLocation(location.getSelectedFile().getAbsolutePath());
+                settings.saveProperties();
                 setVisible(false);
                 dispose();
             }
