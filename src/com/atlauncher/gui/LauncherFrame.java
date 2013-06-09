@@ -38,6 +38,7 @@ public class LauncherFrame extends JFrame {
     private JTabbedPane tabbedPane;
     private NewsPanel newsPanel;
     private PacksPanel packsPanel;
+    private NewPacksPanel newPacksPanel;
     private AddonsPanel addonsPanel;
     private InstancesPanel instancesPanel;
     private AccountPanel accountPanel;
@@ -100,6 +101,7 @@ public class LauncherFrame extends JFrame {
 
         newsPanel = new NewsPanel();
         packsPanel = new PacksPanel();
+        newPacksPanel = new NewPacksPanel();
         addonsPanel = new AddonsPanel();
         instancesPanel = new InstancesPanel();
         settings.setInstancesPanel(instancesPanel);
@@ -108,6 +110,7 @@ public class LauncherFrame extends JFrame {
 
         tabbedPane.addTab(null, Utils.getIconImage("/resources/NewsTab.png"), newsPanel);
         tabbedPane.addTab(null, Utils.getIconImage("/resources/PacksTab.png"), packsPanel);
+        tabbedPane.addTab(null, Utils.getIconImage("/resources/PacksTab.png"), newPacksPanel);
         tabbedPane.addTab(null, Utils.getIconImage("/resources/AddonsTab.png"), addonsPanel);
         tabbedPane.addTab(null, Utils.getIconImage("/resources/InstancesTab.png"), instancesPanel);
         tabbedPane.addTab(null, Utils.getIconImage("/resources/AccountTab.png"), accountPanel);

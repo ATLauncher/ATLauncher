@@ -16,17 +16,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 @SuppressWarnings("serial")
 public class PacksPanel extends JPanel {
 
-    private JFrame parent;
     private PacksTable packsTable;
     private JSplitPane splitPane;
     private JPanel packActions;
@@ -53,9 +49,9 @@ public class PacksPanel extends JPanel {
         showMods = new JButton("Show Mods");
         packActions.add(showMods);
 
-        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(
-                packsTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), packActions);
+        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(packsTable,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
+                packActions);
         splitPane.setEnabled(false);
         splitPane.setDividerLocation(375);
         add(splitPane, BorderLayout.CENTER);
