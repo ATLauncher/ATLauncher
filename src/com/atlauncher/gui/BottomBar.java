@@ -107,7 +107,11 @@ public class BottomBar extends JPanel {
      * Creates the JButton's for use in the bar
      */
     private void createButtons() {
-        toggleConsole = new JButton("Hide Console");
+        if (LauncherFrame.settings.getConsole().isVisible()) {
+            toggleConsole = new JButton("Hide Console");
+        } else {
+            toggleConsole = new JButton("Show Console");
+        }
 
         facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());

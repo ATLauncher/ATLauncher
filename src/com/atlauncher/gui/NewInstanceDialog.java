@@ -149,8 +149,7 @@ public class NewInstanceDialog extends JDialog {
                                 text = pack.getName()
                                         + " "
                                         + version
-                                        + " has been installed<br/><br/>Find it in your 'Instances' tab named '"
-                                        + instanceNameField.getText() + "'";
+                                        + " has been installed<br/><br/>Find it in your 'Instances' tab";
                                 title = pack.getName() + " " + version + " Installed";
                                 LauncherFrame.settings.getInstances().add(
                                         new Instance(instanceNameField.getText(), pack.getName(),

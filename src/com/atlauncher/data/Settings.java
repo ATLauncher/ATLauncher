@@ -260,7 +260,7 @@ public class Settings {
                 this.windowWidth = 854; // User tried to make screen size wider than they have
             }
 
-            this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "854"));
+            this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
             if (this.windowHeight > Utils.getMaximumWindowHeight()) {
                 console.log("Cannot set screen height to " + this.windowHeight);
                 this.windowHeight = 480; // User tried to make screen size wider than they have
@@ -272,7 +272,7 @@ public class Settings {
                     "true"));
 
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty(
-                    "enableleaderboards", "true"));
+                    "enableleaderboards", "false"));
 
             this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
         } catch (FileNotFoundException e) {
@@ -795,6 +795,67 @@ public class Settings {
      */
     public void setServer(Server server) {
         this.server = server;
+    }
+
+    public int getMemory() {
+        return this.ram;
+    }
+
+    public void setMemory(int memory) {
+        this.ram = memory;
+    }
+
+    public int getWindowWidth() {
+        return this.windowWidth;
+    }
+
+    public void setWindowWidth(int windowWidth) {
+        this.windowWidth = windowWidth;
+    }
+
+    public int getWindowHeight() {
+        return this.windowHeight;
+    }
+
+    public void setWindowHeight(int windowHeight) {
+        this.windowHeight = windowHeight;
+    }
+
+    public String getJavaParameters() {
+        return this.javaParamaters;
+    }
+
+    public void setJavaParameters(String javaParamaters) {
+        this.javaParamaters = javaParamaters;
+    }
+
+    /**
+     * If the user has selected to show the console always or not
+     * 
+     * @return true if yes, false if not
+     */
+    public boolean enableConsole() {
+        return this.enableConsole;
+    }
+
+    public void setEnableConsole(boolean enableConsole) {
+        this.enableConsole = enableConsole;
+    }
+
+    public boolean enableLeaderboards() {
+        return this.enableLeaderboards;
+    }
+
+    public void setEnableLeaderboards(boolean enableLeaderboards) {
+        this.enableLeaderboards = enableLeaderboards;
+    }
+
+    public boolean enableLogs() {
+        return this.enableLogs;
+    }
+
+    public void setEnableLogs(boolean enableLogs) {
+        this.enableLogs = enableLogs;
     }
 
 }

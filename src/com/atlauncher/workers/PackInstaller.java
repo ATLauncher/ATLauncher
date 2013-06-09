@@ -19,11 +19,11 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.Version;
 
 public class PackInstaller extends SwingWorker<Boolean, Void> {
-    
+
     Pack pack;
     Version version;
     String instanceName;
-    
+
     public PackInstaller(Pack pack, Version version, String instanceName) {
         this.pack = pack;
         this.version = version;
@@ -31,26 +31,26 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
     }
 
     protected Boolean doInBackground() throws Exception {
-//        ArrayList<Mod> mods = this.pack.getMods(this.version);
-//        System.out.println("Installing " + pack.getName() + " version " + version);
-//        firePropertyChange("progress", null, 25);
-//        for(Mod mod : mods){
-//            firePropertyChange("doing", null, "Downloading " + mod);
-//            Thread.sleep(300);
-//        }
-//        Thread.sleep(1000);
-//        firePropertyChange("progress", null, 50);
-//        for(Mod mod : mods){
-//            firePropertyChange("doing", null, "Installing " + mod);
-//            Thread.sleep(300);
-//        }
-//        Thread.sleep(1000);
-//        firePropertyChange("progress", null, 75);
-//        firePropertyChange("doing", null, "Configuring Pack");
-//        Thread.sleep(2000);
-//        firePropertyChange("progress", null, 100);
-//        firePropertyChange("doing", null, "Finished");
-//        Thread.sleep(250);
+        ArrayList<Mod> mods = this.pack.getMods(this.version);
+        System.out.println("Installing " + pack.getName() + " version " + version);
+        firePropertyChange("progress", null, 25);
+        for (Mod mod : mods) {
+            firePropertyChange("doing", null, "Downloading " + mod);
+            Thread.sleep(300);
+        }
+        Thread.sleep(1000);
+        firePropertyChange("progress", null, 50);
+        for (Mod mod : mods) {
+            firePropertyChange("doing", null, "Installing " + mod);
+            Thread.sleep(300);
+        }
+        Thread.sleep(1000);
+        firePropertyChange("progress", null, 75);
+        firePropertyChange("doing", null, "Configuring Pack");
+        Thread.sleep(2000);
+        firePropertyChange("progress", null, 100);
+        firePropertyChange("doing", null, "Finished");
+        Thread.sleep(250);
         return true;
     }
 

@@ -56,7 +56,7 @@ public class SettingsPanel extends JPanel {
     private JTextField heightField;
 
     private JLabel javaParametersLabel;
-    private JTextField javaParametersField;
+    private JTextField javaParameters;
 
     private JLabel enableConsoleLabel;
     private JCheckBox enableConsole;
@@ -65,7 +65,7 @@ public class SettingsPanel extends JPanel {
     private JCheckBox enableLeaderboards;
 
     private JLabel enableLoggingLabel;
-    private JCheckBox enableLogging;
+    private JCheckBox enableLogs;
 
     private final Insets LABEL_INSETS = new Insets(3, 0, 3, 10);
     private final Insets FIELD_INSETS = new Insets(3, 0, 3, 0);
@@ -182,6 +182,7 @@ public class SettingsPanel extends JPanel {
         for (int i = 0; i < memoryOptions.length; i++) {
             memory.addItem(memoryOptions[i]);
         }
+        memory.setSelectedItem(LauncherFrame.settings.getMemory() + " MB");
         topPanel.add(memory, gbc);
 
         // Window Size
@@ -197,9 +198,10 @@ public class SettingsPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
-                                "The size that the Minecraft window should open as", "Help",
-                                JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showMessageDialog(
+                                LauncherFrame.settings.getParent(),
+                                "The size that the Minecraft window should open as - Width x Height",
+                                "Help", JOptionPane.PLAIN_MESSAGE);
                     }
                 }
             }
@@ -212,7 +214,9 @@ public class SettingsPanel extends JPanel {
         windowSizePanel = new JPanel();
         windowSizePanel.setLayout(new FlowLayout());
         widthField = new JTextField(4);
+        widthField.setText(LauncherFrame.settings.getWindowWidth() + "");
         heightField = new JTextField(4);
+        heightField.setText(LauncherFrame.settings.getWindowHeight() + "");
         windowSizePanel.add(widthField);
         windowSizePanel.add(new JLabel("x"));
         windowSizePanel.add(heightField);
@@ -247,8 +251,9 @@ public class SettingsPanel extends JPanel {
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        javaParametersField = new JTextField(20);
-        topPanel.add(javaParametersField, gbc);
+        javaParameters = new JTextField(20);
+        javaParameters.setText(LauncherFrame.settings.getJavaParameters());
+        topPanel.add(javaParameters, gbc);
 
         // Enable Console
 
@@ -276,6 +281,9 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableConsole = new JCheckBox();
+        if (LauncherFrame.settings.enableConsole()) {
+            enableConsole.setSelected(true);
+        }
         topPanel.add(enableConsole, gbc);
 
         // Enable Leaderboards
@@ -304,6 +312,9 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLeaderboards = new JCheckBox();
+        if (LauncherFrame.settings.enableLeaderboards()) {
+            enableLeaderboards.setSelected(true);
+        }
         topPanel.add(enableLeaderboards, gbc);
 
         // Enable Logging
@@ -335,8 +346,11 @@ public class SettingsPanel extends JPanel {
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableLogging = new JCheckBox();
-        topPanel.add(enableLogging, gbc);
+        enableLogs = new JCheckBox();
+        if (LauncherFrame.settings.enableLogs()) {
+            enableLogs.setSelected(true);
+        }
+        topPanel.add(enableLogs, gbc);
 
         // End Components
 
@@ -346,6 +360,14 @@ public class SettingsPanel extends JPanel {
             public void actionPerformed(ActionEvent arg0) {
                 LauncherFrame.settings.setLanguage((Language) language.getSelectedItem());
                 LauncherFrame.settings.setServer((Server) server.getSelectedItem());
+                LauncherFrame.settings.setMemory(Integer.parseInt(((String) memory
+                        .getSelectedItem()).replace(" MB", "")));
+                LauncherFrame.settings.setWindowWidth(Integer.parseInt(widthField.getText()));
+                LauncherFrame.settings.setWindowHeight(Integer.parseInt(heightField.getText()));
+                LauncherFrame.settings.setJavaParameters(javaParameters.getText());
+                LauncherFrame.settings.setEnableConsole(enableConsole.isSelected());
+                LauncherFrame.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
+                LauncherFrame.settings.setEnableLogs(enableLogs.isSelected());
                 LauncherFrame.settings.saveProperties();
                 LauncherFrame.settings.getConsole().log("Settings Saved!");
             }

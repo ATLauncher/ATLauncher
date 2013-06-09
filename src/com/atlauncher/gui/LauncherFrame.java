@@ -49,7 +49,9 @@ public class LauncherFrame extends JFrame {
     public LauncherFrame(Settings settings) {
         LauncherFrame.settings = settings;
         LauncherFrame.settings.setParentFrame(this);
-        LauncherFrame.settings.getConsole().setVisible(true);
+        if(settings.enableConsole()){
+            LauncherFrame.settings.getConsole().setVisible(true);
+        }
         setSize(new Dimension(800, 500));
         setTitle("ATLauncher");
         setLocationRelativeTo(null);
