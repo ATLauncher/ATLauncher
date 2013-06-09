@@ -11,56 +11,42 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 
-@SuppressWarnings("serial")
+import com.atlauncher.data.Pack;
+
 public class PacksPanel extends JPanel {
 
-    private PacksTable packsTable;
-    private JSplitPane splitPane;
-    private JPanel packActions;
-    private JButton newInstance;
-    private JButton showMods;
+    private JPanel panel;
+    private JScrollPane scrollPane;
 
     public PacksPanel() {
         setLayout(new BorderLayout());
+        panel = new JPanel();
+        scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        add(scrollPane, BorderLayout.CENTER);
 
-        packsTable = new PacksTable();
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
 
-        packActions = new JPanel(new FlowLayout());
-
-        newInstance = new JButton("New Instance");
-        newInstance.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (packsTable.getSelectedRow() != -1) {
-                    new NewInstanceDialog(packsTable.getSelectedPack());
-                }
+        if (LauncherFrame.settings.getPacks().size() == 0) {
+            panel.add(new NothingToDisplay("There are no packs to display\n\n"
+                    + "Please check back another time"), gbc);
+        } else {
+            for (Pack pack : LauncherFrame.settings.getPacks()) {
+                panel.add(new PackDisplay(pack), gbc);
+                gbc.gridy++;
             }
-        });
-        packActions.add(newInstance);
-
-        showMods = new JButton("Show Mods");
-        packActions.add(showMods);
-
-        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(packsTable,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
-                packActions);
-        splitPane.setEnabled(false);
-        splitPane.setDividerLocation(375);
-        add(splitPane, BorderLayout.CENTER);
+        }
     }
 
-    /**
-     * Reloads changed data in this panel
-     */
-    public void reloadTable() {
-        packsTable.reload();
-    }
 }

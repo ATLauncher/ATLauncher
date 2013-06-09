@@ -11,97 +11,53 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
-@SuppressWarnings("serial")
+import com.atlauncher.data.Instance;
+
 public class InstancesPanel extends JPanel {
 
-    private InstancesTable instancesTable;
-    private JSplitPane splitPane;
-    private JPanel packActions;
-    private JButton playButton;
-    private JButton backupButton;
-    private JButton deleteButton;
+    private JPanel panel;
+    private JScrollPane scrollPane;
 
     public InstancesPanel() {
         setLayout(new BorderLayout());
-
-        instancesTable = new InstancesTable();
-        instancesTable.getSelectionModel().addListSelectionListener(
-                new ListSelectionListener() {
-                    public void valueChanged(ListSelectionEvent e) {
-                        playButton.setEnabled(true);
-                        backupButton.setEnabled(true);
-                        deleteButton.setEnabled(true);
-                    }
-                });
-
-        packActions = new JPanel(new FlowLayout());
-
-        playButton = new JButton("Play");
-        playButton.setEnabled(false);
-        packActions.add(playButton);
-
-        backupButton = new JButton("Backups");
-        backupButton.setEnabled(false);
-        packActions.add(backupButton);
-
-        deleteButton = new JButton("Delete");
-        deleteButton.setEnabled(false);
-        deleteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int todo = JOptionPane.showConfirmDialog(InstancesPanel.this,
-                        "Are you sure you want to delete the instance \""
-                                + instancesTable.getSelectedInstance()
-                                        .getName() + "\"?", "Are you sure?",
-                        JOptionPane.YES_NO_OPTION);
-                if (todo == JOptionPane.YES_OPTION) {
-                    int selected = instancesTable.getSelectedRow();
-                    LauncherFrame.settings.getInstances().remove(
-                            instancesTable.getSelectedInstance());
-                    reloadTable();
-                    if (selected == instancesTable.getModel().getRowCount()) {
-                        selected--;
-                    }
-                    instancesTable.getSelectionModel().setSelectionInterval(
-                            selected, selected);
-                }
-            }
-        });
-
-        packActions.add(deleteButton);
-
-        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(
-                instancesTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), packActions);
-        splitPane.setEnabled(false);
-        splitPane.setDividerLocation(375);
-        add(splitPane, BorderLayout.CENTER);
+        loadContent();
     }
 
-    public void reloadTable() {
-        instancesTable.reload();
-        if (instancesTable.getModel().getRowCount() == 0) {
-            playButton.setEnabled(false);
-            backupButton.setEnabled(false);
-            deleteButton.setEnabled(false);
+    public void loadContent() {
+        panel = new JPanel();
+        scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        add(scrollPane, BorderLayout.CENTER);
+
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+
+        if (LauncherFrame.settings.getInstances().size() == 0) {
+            panel.add(new NothingToDisplay("There are no packs installed\n\n"
+                    + "Please install a pack and visit me again"), gbc);
         } else {
-            if (instancesTable.getSelectedRow() == -1) {
-                instancesTable.getSelectionModel().setSelectionInterval(0, 0);
+            for (Instance instance : LauncherFrame.settings.getInstances()) {
+                panel.add(new InstanceDisplay(instance), gbc);
+                gbc.gridy++;
             }
-            playButton.setEnabled(true);
-            backupButton.setEnabled(true);
-            deleteButton.setEnabled(true);
         }
     }
+
+    public void reload() {
+        removeAll();
+        loadContent();
+        validate();
+        repaint();
+    }
+
 }

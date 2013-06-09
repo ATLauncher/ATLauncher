@@ -11,61 +11,77 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.text.Highlighter;
 
-public class PackSquare extends JPanel {
+import com.atlauncher.data.Pack;
 
-    private JPanel packActions;
-    private JLabel packImage;
-    private JButton newInstance;
-    private JButton info;
-    private JTextArea packDescription;
-    private JSplitPane splitPane;
-    private JPanel leftPanel, rightPanel;
+/**
+ * Class for displaying packs in the Pack Tab
+ * 
+ * @author Ryan
+ * 
+ */
+public class PackDisplay extends JPanel {
 
-    public PackSquare() {
+    private JPanel leftPanel; // Left panel with image
+    private JPanel rightPanel; // Right panel with description and actions
+    private JSplitPane splitPane; // The split pane
+    private JLabel packImage; // The image for the pack
+    private JTextArea packDescription; // Description of the pack
+    private JPanel packActions; // All the actions that can be performed on the pack
+    private JButton newInstance; // New Instance button
+    private JButton mods; // Mods button
+
+    public PackDisplay(final Pack pack) {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createLineBorder(new Color(45, 50, 55)));
-        splitPane = new JSplitPane();
+        setBorder(BorderFactory.createTitledBorder(pack.getName())); // Add titles border with name
+
         leftPanel = new JPanel();
-        rightPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
+
+        rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
+
+        splitPane = new JSplitPane();
         splitPane.setLeftComponent(leftPanel);
         splitPane.setRightComponent(rightPanel);
         splitPane.setEnabled(false);
 
-        packImage = new JLabel(Utils.getIconImage("/resources/test.png")); // 213x168 Maximum
+        packImage = new JLabel(Utils.getIconImage("/resources/test.png"));
 
-        packActions = new JPanel();
-        packActions.setLayout(new FlowLayout());
-        newInstance = new JButton("New Instance");
-        info = new JButton("Info");
-        packActions.add(newInstance);
-        packActions.add(info);
         packDescription = new JTextArea();
         packDescription.setBorder(BorderFactory.createEmptyBorder());
         packDescription.setEditable(false);
         packDescription.setHighlighter(null);
         packDescription.setLineWrap(true);
         packDescription.setWrapStyleWord(true);
-        packDescription
-                .setText("This pack is for the magic users out there and features some of the best magical mods and some of the up and coming ones. Thaumcraft and Ars Magica are part of this pack along with new ones such as Magical Crops and Elemental Tinkerer!");
+        packDescription.setText(pack.getDescription());
+
+        packActions = new JPanel();
+        packActions.setLayout(new FlowLayout());
+        newInstance = new JButton("New Instance");
+        newInstance.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new NewInstanceDialog(pack);
+            }
+        });
+        mods = new JButton("Mods");
+        packActions.add(newInstance);
+        packActions.add(mods);
+
         leftPanel.add(packImage, BorderLayout.CENTER);
         rightPanel.add(packDescription, BorderLayout.CENTER);
         rightPanel.add(packActions, BorderLayout.SOUTH);
+
         add(splitPane, BorderLayout.CENTER);
     }
 

@@ -10,6 +10,9 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.gui.LauncherFrame;
+
 public class Instance {
 
     private String name;
@@ -28,6 +31,17 @@ public class Instance {
 
     public String getPackName() {
         return pack;
+    }
+
+    public String getPackDescription() {
+        Pack pack;
+        try {
+            pack = LauncherFrame.settings.getPackByName(this.pack);
+        } catch (InvalidPack e) {
+            // Pack doesn't exist anymore
+            return "No description";
+        }
+        return pack.getDescription();
     }
     
     public Version getVersion() {

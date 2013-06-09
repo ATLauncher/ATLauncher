@@ -155,7 +155,7 @@ public class NewInstanceDialog extends JDialog {
                                 LauncherFrame.settings.getInstances().add(
                                         new Instance(instanceNameField.getText(), pack.getName(),
                                                 version));
-                                LauncherFrame.settings.reloadTable();
+                                LauncherFrame.settings.reloadInstancesPanel();
                             } else {
                                 type = JOptionPane.ERROR_MESSAGE;
                                 text = pack.getName()

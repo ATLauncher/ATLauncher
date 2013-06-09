@@ -597,7 +597,7 @@ public class Settings {
     }
 
     /**
-     * Sets the Panel used for Instances
+     * Sets the panel used for Instances
      * 
      * @param instancesPanel
      *            Instances Panel
@@ -607,10 +607,10 @@ public class Settings {
     }
 
     /**
-     * Reloads the Instances Panel table
+     * Reloads the panel used for Instances
      */
-    public void reloadTable() {
-        this.instancesPanel.reloadTable();
+    public void reloadInstancesPanel() {
+        this.instancesPanel.reload(); // Reload the instances panel
     }
 
     /**
@@ -645,6 +645,24 @@ public class Settings {
             }
         }
         throw new InvalidPack("No pack exists with ID " + id);
+    }
+
+    /**
+     * Finds a Pack from the given name
+     * 
+     * @param name
+     *            name of the Pack to find
+     * @return Pack if the pack is found from the name
+     * @throws InvalidPack
+     *             If name is not found
+     */
+    public Pack getPackByName(String name) throws InvalidPack {
+        for (Pack pack : packs) {
+            if (pack.getName().equalsIgnoreCase(name)) {
+                return pack;
+            }
+        }
+        throw new InvalidPack("No pack exists with name " + name);
     }
 
     /**
