@@ -10,13 +10,18 @@
  */
 package com.atlauncher.workers;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
+import com.atlauncher.data.Downloader;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Version;
+import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.gui.Utils;
 
 public class PackInstaller extends SwingWorker<Boolean, Void> {
 
@@ -35,13 +40,44 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         System.out.println("Installing " + pack.getName() + " version " + version);
         firePropertyChange("progress", null, 25);
         for (Mod mod : mods) {
-            firePropertyChange("doing", null, "Downloading " + mod);
+            firePropertyChange("doing", null, "Downloading " + mod.getName());
+            File fileLocation = new File(LauncherFrame.settings.getDownloadsDir(), mod.getFile());
+            if (mod.isDirectDownload()) {
+                if (mod.getURL().contains("http://newfiles.atlauncher.com/")) {
+                    new Downloader(LauncherFrame.settings.getFileURL(mod.getURL().replace(
+                            "http://newfiles.atlauncher.com/", "")),
+                            fileLocation.getAbsolutePath(), true).runNoReturn();
+                } else {
+                    new Downloader(mod.getURL(), fileLocation.getAbsolutePath(), true)
+                            .runNoReturn();
+                }
+            } else {
+                while (!fileLocation.exists()) {
+                    Utils.openBrowser(mod.getURL());
+                    String[] options = new String[] { "I've Downloaded This File" };
+                    int retValue = JOptionPane
+                            .showOptionDialog(
+                                    LauncherFrame.settings.getParent(),
+                                    "<html><center>Browser opened to download file "
+                                            + mod.getName()
+                                            + "<br/><br/>Please save this file to the following location<br/><br/>"
+                                            + LauncherFrame.settings.getDownloadsDir()
+                                                    .getAbsolutePath() + "</center></html>",
+                                    "Downloading " + mod.getFile(), JOptionPane.DEFAULT_OPTION,
+                                    JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                    if (retValue == JOptionPane.CLOSED_OPTION) {
+                        cancel(true);
+                        break;
+                    }
+                }
+            }
             Thread.sleep(300);
         }
         Thread.sleep(1000);
         firePropertyChange("progress", null, 50);
         for (Mod mod : mods) {
-            firePropertyChange("doing", null, "Installing " + mod);
+            firePropertyChange("doing", null, "Installing " + mod.getName());
+            mod.install();
             Thread.sleep(300);
         }
         Thread.sleep(1000);

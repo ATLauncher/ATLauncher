@@ -10,6 +10,14 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Component;
+import java.io.File;
+
+import javax.swing.JOptionPane;
+
+import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.gui.Utils;
+
 public class Mod {
 
     private String name;
@@ -53,8 +61,28 @@ public class Mod {
         this.description = description;
     }
 
-    public String toString() {
-        return this.name + " " + this.version;
+    public String getName() {
+        return this.name;
+    }
+
+    public String getVersion() {
+        return this.version;
+    }
+
+    public void install() {
+        System.out.println("Installing " + this.name);
+    }
+
+    public boolean isDirectDownload() {
+        return this.directDownload;
+    }
+
+    public String getURL() {
+        return this.url;
+    }
+
+    public String getFile() {
+        return this.file;
     }
 
 }

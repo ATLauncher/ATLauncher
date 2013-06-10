@@ -17,6 +17,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.ExecutionException;
@@ -127,7 +129,7 @@ public class NewInstanceDialog extends JDialog {
                     dialog.add(topPanel, BorderLayout.CENTER);
                     dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-                    PackInstaller packInstaller = new PackInstaller(pack, version,
+                    final PackInstaller packInstaller = new PackInstaller(pack, version,
                             instanceNameField.getText()) {
 
                         protected void done() {
@@ -135,7 +137,14 @@ public class NewInstanceDialog extends JDialog {
                             int type;
                             String text;
                             String title;
-                            if (!isCancelled()) {
+                            if (isCancelled()) {
+                                type = JOptionPane.ERROR_MESSAGE;
+                                text = pack.getName()
+                                        + " "
+                                        + version
+                                        + " wasn't installed<br/><br/>Action was cancelled by user!";
+                                title = pack.getName() + " " + version + " Not Installed";
+                            } else {
                                 try {
                                     success = get();
                                 } catch (InterruptedException e) {
@@ -143,25 +152,25 @@ public class NewInstanceDialog extends JDialog {
                                 } catch (ExecutionException e) {
                                     e.printStackTrace();
                                 }
-                            }
-                            if (success) {
-                                type = JOptionPane.INFORMATION_MESSAGE;
-                                text = pack.getName()
-                                        + " "
-                                        + version
-                                        + " has been installed<br/><br/>Find it in your 'Instances' tab";
-                                title = pack.getName() + " " + version + " Installed";
-                                LauncherFrame.settings.getInstances().add(
-                                        new Instance(instanceNameField.getText(), pack.getName(),
-                                                version));
-                                LauncherFrame.settings.reloadInstancesPanel();
-                            } else {
-                                type = JOptionPane.ERROR_MESSAGE;
-                                text = pack.getName()
-                                        + " "
-                                        + version
-                                        + " wasn't installed<br/><br/>Check error logs for the error!";
-                                title = pack.getName() + " " + version + " Not Installed";
+                                if (success) {
+                                    type = JOptionPane.INFORMATION_MESSAGE;
+                                    text = pack.getName()
+                                            + " "
+                                            + version
+                                            + " has been installed<br/><br/>Find it in your 'Instances' tab";
+                                    title = pack.getName() + " " + version + " Installed";
+                                    LauncherFrame.settings.getInstances().add(
+                                            new Instance(instanceNameField.getText(), pack
+                                                    .getName(), version));
+                                    LauncherFrame.settings.reloadInstancesPanel();
+                                } else {
+                                    type = JOptionPane.ERROR_MESSAGE;
+                                    text = pack.getName()
+                                            + " "
+                                            + version
+                                            + " wasn't installed<br/><br/>Check error logs for the error!";
+                                    title = pack.getName() + " " + version + " Not Installed";
+                                }
                             }
 
                             dialog.dispose();
@@ -185,6 +194,11 @@ public class NewInstanceDialog extends JDialog {
                                 doing.setText(doingText);
                             }
 
+                        }
+                    });
+                    dialog.addWindowListener(new WindowAdapter() {
+                        public void windowClosing(WindowEvent e) {
+                            packInstaller.cancel(true);
                         }
                     });
                     packInstaller.execute();

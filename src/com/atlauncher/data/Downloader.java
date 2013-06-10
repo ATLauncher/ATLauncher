@@ -68,12 +68,12 @@ public class Downloader {
         if (worker != null) {
             worker.execute(); // Run the worker process
         }
-        while(!worker.isDone()){
+        while (!worker.isDone()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
+                worker.cancel(true);
             }
         }
         return this.response;
@@ -83,12 +83,12 @@ public class Downloader {
         if (worker != null) {
             worker.execute(); // Run the worker process
         }
-        while(!worker.isDone()){
+        while (!worker.isDone()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
+                worker.cancel(true);
             }
         }
     }
