@@ -83,7 +83,8 @@ public class Pack {
 
     public ArrayList<Mod> getMods(Version versionToInstall) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
-        String path = "packs/" + getSafeName() + "/versions/" + versionToInstall.toString() + "/Configs.xml";
+        String path = "packs/" + getSafeName() + "/versions/" + versionToInstall.toString()
+                + "/Configs.xml";
         String versionURL = LauncherFrame.settings.getFileURL(path); // The XML with path on server
         Downloader download = new Downloader(versionURL);
         String versionXML = download.run();
@@ -104,38 +105,41 @@ public class Pack {
                     String file = element.getAttribute("file");
                     String website = element.getAttribute("website");
                     String donation = element.getAttribute("donation");
+                    String md5 = element.getAttribute("md5");
                     Type type = Type.valueOf(element.getAttribute("type").toLowerCase());
                     ExtractTo extractTo = null;
                     String decompFile = null;
                     DecompType decompType = null;
-                    if(type == Type.extract){
-                        extractTo = ExtractTo.valueOf(element.getAttribute("extractto").toLowerCase());
-                    }else if(type == Type.decomp){
+                    if (type == Type.extract) {
+                        extractTo = ExtractTo.valueOf(element.getAttribute("extractto")
+                                .toLowerCase());
+                    } else if (type == Type.decomp) {
                         decompFile = element.getAttribute("decompFile");
-                        decompType = DecompType.valueOf(element.getAttribute("decomptype").toLowerCase());
+                        decompType = DecompType.valueOf(element.getAttribute("decomptype")
+                                .toLowerCase());
                     }
                     boolean server = false;
                     String serverURL = null;
                     String serverFile = null;
                     Type serverType = null;
-                    if(element.getAttribute("server").equalsIgnoreCase("yes")){
+                    if (element.getAttribute("server").equalsIgnoreCase("yes")) {
                         server = true;
                         serverURL = element.getAttribute("serverurl");
                         serverFile = element.getAttribute("serverfile");
                         serverType = Type.valueOf(element.getAttribute("servertype").toLowerCase());
                     }
                     boolean optional = false;
-                    if(element.getAttribute("optional").equalsIgnoreCase("yes")){
+                    if (element.getAttribute("optional").equalsIgnoreCase("yes")) {
                         optional = true;
                     }
                     boolean directDownload = false;
-                    if(element.getAttribute("directdownload").equalsIgnoreCase("yes")){
+                    if (element.getAttribute("directdownload").equalsIgnoreCase("yes")) {
                         directDownload = true;
                     }
                     String description = element.getAttribute("description");
-                    mods.add(new Mod(name, version, url, file, website, donation, type, extractTo,
-                            decompFile, decompType, server, serverURL, serverFile, serverType,
-                            optional, directDownload, description));
+                    mods.add(new Mod(name, version, url, file, website, donation, md5, type,
+                            extractTo, decompFile, decompType, server, serverURL, serverFile,
+                            serverType, optional, directDownload, description));
                 }
             }
         } catch (SAXException e) {
@@ -147,5 +151,4 @@ public class Pack {
         }
         return mods;
     }
-
 }

@@ -101,6 +101,8 @@ public class DownloadWorker extends SwingWorker<Void, String> {
             InputStream in = null;
             URL downloadURL = getRedirect(this.url);
             URLConnection conn = downloadURL.openConnection();
+            int size = conn.getContentLength();
+            int downloaded = 0;
             in = conn.getInputStream();
             FileOutputStream writer = new FileOutputStream(this.destination);
             byte[] buffer = new byte[1024];
@@ -108,11 +110,12 @@ public class DownloadWorker extends SwingWorker<Void, String> {
             int bytesRead = 0;
             while ((bytesRead = in.read(buffer)) > 0) {
                 writer.write(buffer, 0, bytesRead);
+                downloaded += bytesRead;
+                firePropertyChange("progress", null, (100 * downloaded) / size);
                 buffer = new byte[1024];
             }
             writer.close();
             in.close();
-            firePropertyChange("response", null, "Saved to File");
         }
         return null;
     }

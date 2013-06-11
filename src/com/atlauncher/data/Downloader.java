@@ -14,6 +14,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import com.atlauncher.workers.DownloadWorker;
+import com.atlauncher.workers.PackInstaller;
 
 /**
  * Class to download files and optionally show a progress dialog
@@ -24,32 +25,46 @@ public class Downloader {
 
     private String url; // URL to download
     private String destination; // Destination to save file to
-    private boolean showDialog; // If to show dialog or not
     private DownloadWorker worker; // The download worker process
     private String response; // The response from the worker process
+    private PackInstaller installer;
 
-    public Downloader(String url, String destination, boolean showDialog) {
+    public Downloader(String url, String destination, PackInstaller installerr) {
         this.url = url;
         this.destination = destination;
-        this.showDialog = showDialog;
+        this.installer = installerr;
         this.worker = new DownloadWorker(url, destination);
-        this.worker.addPropertyChangeListener(new PropertyChangeListener() {
-
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("response" == evt.getPropertyName()) {
-                    String res = (String) evt.getNewValue();
-                    response = res;
+        if (this.destination == null) {
+            this.worker.addPropertyChangeListener(new PropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if ("response" == evt.getPropertyName()) {
+                        String res = (String) evt.getNewValue();
+                        response = res;
+                    }
                 }
-            }
-        });
+            });
+        }
+        if (this.installer != null) {
+            this.worker.addPropertyChangeListener(new PropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if ("progress" == evt.getPropertyName()) {
+                        int progress = (Integer) evt.getNewValue();
+                        if (progress > 100) {
+                            progress = 100;
+                        }
+                        installer.setSubPercent(progress);
+                    }
+                }
+            });
+        }
     }
 
-    public Downloader(String url, boolean showDialog) {
-        this(url, null, showDialog); // Default to not save the file
+    public Downloader(String url, String destination) {
+        this(url, destination, null); // Default to not show progress
     }
 
     public Downloader(String url) {
-        this(url, null, false); // Default to not show the dialog
+        this(url, null, null); // Default to not save the file
     }
 
     public void setURL(String url) {
@@ -58,10 +73,6 @@ public class Downloader {
 
     public void setDestination(String destination) {
         this.destination = destination;
-    }
-
-    public void setShowDialog(boolean showDialog) {
-        this.showDialog = showDialog;
     }
 
     public String run() {

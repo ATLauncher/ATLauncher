@@ -10,13 +10,13 @@
  */
 package com.atlauncher.data;
 
-import java.awt.Component;
 import java.io.File;
 
 import javax.swing.JOptionPane;
 
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.Utils;
+import com.atlauncher.workers.PackInstaller;
 
 public class Mod {
 
@@ -26,6 +26,7 @@ public class Mod {
     private String file;
     private String website;
     private String donation;
+    private String md5;
     private Type type;
     private ExtractTo extractTo;
     private String decompFile;
@@ -39,7 +40,7 @@ public class Mod {
     private String description;
 
     public Mod(String name, String version, String url, String file, String website,
-            String donation, Type type, ExtractTo extractTo, String decompFile,
+            String donation, String md5, Type type, ExtractTo extractTo, String decompFile,
             DecompType decompType, boolean server, String serverURL, String serverFile,
             Type serverType, boolean optional, boolean directDownload, String description) {
         this.name = name;
@@ -48,6 +49,7 @@ public class Mod {
         this.file = file;
         this.website = website;
         this.donation = donation;
+        this.md5 = md5;
         this.type = type;
         this.extractTo = extractTo;
         this.decompFile = decompFile;
@@ -67,6 +69,71 @@ public class Mod {
 
     public String getVersion() {
         return this.version;
+    }
+
+    public String getMD5() {
+        return this.md5;
+    }
+
+    public boolean compareMD5(String md5) {
+        return this.md5.equalsIgnoreCase(md5);
+    }
+
+    public boolean hasMD5() {
+        return !this.md5.isEmpty();
+    }
+
+    public void download(PackInstaller installer) {
+        File fileLocation = new File(LauncherFrame.settings.getDownloadsDir(), getFile());
+        if (fileLocation.exists()) {
+            if (hasMD5()) {
+                if (compareMD5(Utils.getMD5(fileLocation))) {
+                    return; // File already exists and matches hash, don't download it
+                } else {
+                    fileLocation.delete(); // File exists but is corrupt, delete it
+                }
+            } else {
+                return; // No MD5, but file is there, can only assume it's fine
+            }
+        }
+        if (isDirectDownload()) {
+            if (getURL().contains("http://newfiles.atlauncher.com/")) {
+                new Downloader(LauncherFrame.settings.getFileURL(getURL().replace(
+                        "http://newfiles.atlauncher.com/", "")), fileLocation.getAbsolutePath(),
+                        installer).runNoReturn();
+            } else {
+                new Downloader(getURL(), fileLocation.getAbsolutePath(), installer).runNoReturn();
+            }
+        } else {
+            while (!fileLocation.exists()) {
+                Utils.openBrowser(getURL());
+                String[] options = new String[] { "I've Downloaded This File" };
+                int retValue = JOptionPane
+                        .showOptionDialog(
+                                LauncherFrame.settings.getParent(),
+                                "<html><center>Browser opened to download file "
+                                        + getFile()
+                                        + "<br/><br/>Please save this file to the following location<br/><br/>"
+                                        + LauncherFrame.settings.getDownloadsDir()
+                                                .getAbsolutePath() + "</center></html>",
+                                "Downloading " + getFile(), JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                if (retValue == JOptionPane.CLOSED_OPTION) {
+                    installer.cancel(true);
+                    break;
+                }
+            }
+        }
+        if (hasMD5()) {
+            if (compareMD5(Utils.getMD5(fileLocation))) {
+                return; // MD5 hash matches
+            } else {
+                fileLocation.delete(); // MD5 hash doesn't match, delete it
+                download(installer); // download again
+            }
+        } else {
+            return; // No MD5, but file is there, can only assume it's fine
+        }
     }
 
     public void install() {

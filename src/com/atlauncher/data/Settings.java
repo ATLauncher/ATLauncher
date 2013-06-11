@@ -105,7 +105,10 @@ public class Settings {
      * what the user has
      */
     private void checkForUpdatedFiles() {
-        String hashes = new Downloader(getFileURL("launcher/hashes.xml"), false).run();
+        String hashes = null;
+        while (hashes == null) {
+            hashes = new Downloader(getFileURL("launcher/hashes.xml")).run();
+        }
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -131,8 +134,8 @@ public class Settings {
                     if (download) {
                         System.out.println("Downloading file " + name + " to "
                                 + file.getAbsolutePath());
-                        new Downloader(getFileURL("launcher/" + name), file.getAbsolutePath(),
-                                false).runNoReturn();
+                        new Downloader(getFileURL("launcher/" + name), file.getAbsolutePath())
+                                .runNoReturn();
                     }
                 }
             }

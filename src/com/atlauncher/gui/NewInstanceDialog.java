@@ -45,6 +45,7 @@ public class NewInstanceDialog extends JDialog {
     private JButton install;
     private JButton cancel;
     private JProgressBar progressBar;
+    private JProgressBar subProgressBar;
     private JLabel instanceNameLabel;
     private JTextField instanceNameField;
     private JLabel versionLabel;
@@ -111,20 +112,25 @@ public class NewInstanceDialog extends JDialog {
                             "Installing " + pack.getName() + " " + version,
                             ModalityType.DOCUMENT_MODAL);
                     dialog.setLocationRelativeTo(LauncherFrame.settings.getParent());
-                    dialog.setSize(300, 75);
+                    dialog.setSize(300, 100);
                     dialog.setResizable(false);
 
                     JPanel topPanel = new JPanel();
                     topPanel.setLayout(new BorderLayout());
                     final JLabel doing = new JLabel("Starting Install Process");
                     doing.setHorizontalAlignment(JLabel.CENTER);
+                    doing.setVerticalAlignment(JLabel.TOP);
                     topPanel.add(doing);
 
                     JPanel bottomPanel = new JPanel();
                     bottomPanel.setLayout(new BorderLayout());
-                    progressBar = new JProgressBar();
-                    bottomPanel.add(progressBar);
+                    progressBar = new JProgressBar(0, 100);
+                    bottomPanel.add(progressBar, BorderLayout.NORTH);
                     progressBar.setIndeterminate(true);
+                    subProgressBar = new JProgressBar(0, 100);
+                    bottomPanel.add(subProgressBar, BorderLayout.SOUTH);
+                    subProgressBar.setValue(0);
+                    subProgressBar.setVisible(false);
 
                     dialog.add(topPanel, BorderLayout.CENTER);
                     dialog.add(bottomPanel, BorderLayout.SOUTH);
@@ -188,7 +194,22 @@ public class NewInstanceDialog extends JDialog {
                                     progressBar.setIndeterminate(false);
                                 }
                                 int progress = (Integer) evt.getNewValue();
+                                if(progress>100){
+                                    progress = 100;
+                                }
                                 progressBar.setValue(progress);
+                            }else if ("subprogress" == evt.getPropertyName()) {
+                                if (!subProgressBar.isVisible()) {
+                                    subProgressBar.setVisible(true);
+                                }
+                                int progress = (Integer) evt.getNewValue();
+                                if(progress>100){
+                                    progress = 100;
+                                }
+                                if(progress==0){
+                                    subProgressBar.setVisible(false);
+                                }
+                                subProgressBar.setValue(progress);
                             } else if ("doing" == evt.getPropertyName()) {
                                 String doingText = (String) evt.getNewValue();
                                 doing.setText(doingText);
