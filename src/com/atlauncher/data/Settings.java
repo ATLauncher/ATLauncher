@@ -71,6 +71,7 @@ public class Settings {
     private File imagesDir = new File(configsDir, "Images");
     private File downloadsDir = new File(baseDir, "Downloads");
     private File instancesDir = new File(baseDir, "Instances");
+    private File tempDir = new File(baseDir, "Temp");
     private File propertiesFile = new File(baseDir, "ATLauncher.conf"); // File for properties
 
     // Launcher Settings
@@ -158,7 +159,7 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, imagesDir, downloadsDir, instancesDir };
+        File[] files = { backupsDir, configsDir, imagesDir, downloadsDir, instancesDir, tempDir };
         for (File file : files) {
             if (!file.exists()) {
                 console.log("Folder " + file.getAbsolutePath() + " doesn't exist. Creating now");
@@ -210,6 +211,24 @@ public class Settings {
      */
     public File getDownloadsDir() {
         return this.downloadsDir;
+    }
+
+    /**
+     * Returns the instances directory
+     * 
+     * @return File object for the instances directory
+     */
+    public File getInstancesDir() {
+        return this.instancesDir;
+    }
+
+    /**
+     * Returns the temp directory
+     * 
+     * @return File object for the temp directory
+     */
+    public File getTempDir() {
+        return this.tempDir;
     }
 
     /**

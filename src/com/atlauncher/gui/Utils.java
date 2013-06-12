@@ -16,12 +16,17 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
@@ -32,8 +37,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.swing.ImageIcon;
 
@@ -284,4 +293,165 @@ public class Utils {
         }
         return sb.toString();
     }
+
+    public static void copyFile(File from, File to) {
+        if (from.exists()) {
+            if (to.exists()) {
+                to.delete();
+            }
+
+            try {
+                to.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            FileChannel source = null;
+            FileChannel destination = null;
+
+            try {
+                source = new FileInputStream(from).getChannel();
+                destination = new FileOutputStream(to).getChannel();
+                destination.transferFrom(source, 0, source.size());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (source != null) {
+                        source.close();
+                    }
+                    if (destination != null) {
+                        destination.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void copyDirectory(File sourceLocation, File targetLocation) {
+        try {
+            if (sourceLocation.isDirectory()) {
+                if (!targetLocation.exists()) {
+                    targetLocation.mkdir();
+                }
+
+                String[] children = sourceLocation.list();
+                for (int i = 0; i < children.length; i++) {
+                    copyDirectory(new File(sourceLocation, children[i]), new File(targetLocation,
+                            children[i]));
+                }
+            } else {
+
+                InputStream in = new FileInputStream(sourceLocation);
+                OutputStream out = new FileOutputStream(targetLocation);
+
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void unzip(File in, File out) {
+        try {
+            ZipFile zipFile = null;
+            if (!out.exists()) {
+                out.mkdirs();
+            }
+            zipFile = new ZipFile(in);
+            Enumeration<?> e = zipFile.entries();
+            while (e.hasMoreElements()) {
+                ZipEntry entry = (ZipEntry) e.nextElement();
+                String entryName = entry.getName();
+                if (entry.getName().endsWith("aux.class")) {
+                    entryName = "aux_class";
+                }
+                File destinationFilePath = new File(out, entryName);
+                destinationFilePath.getParentFile().mkdirs();
+                if (!entry.isDirectory() && !entry.getName().equals(".minecraft")) {
+                    BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
+                    int b;
+                    byte buffer[] = new byte[1024];
+                    FileOutputStream fos = new FileOutputStream(destinationFilePath);
+                    BufferedOutputStream bos = new BufferedOutputStream(fos, 1024);
+                    while ((b = bis.read(buffer, 0, 1024)) != -1) {
+                        bos.write(buffer, 0, b);
+                    }
+                    bos.flush();
+                    bos.close();
+                    bis.close();
+                }
+            }
+            zipFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // public static void deleteMetaInf(String pack) {
+    // File inputFile = new File(PackUtils.getMinecraftJar(pack));
+    // File outputTmpFile = new File(PackUtils.getMinecraftJar(pack) + ".tmp");
+    // try {
+    // JarInputStream input = new JarInputStream(new FileInputStream(inputFile));
+    // JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile));
+    // JarEntry entry;
+    //
+    // while ((entry = input.getNextJarEntry()) != null) {
+    // if (entry.getName().contains("META-INF")) {
+    // continue;
+    // }
+    // output.putNextEntry(entry);
+    // byte buffer[] = new byte[1024];
+    // int amo;
+    // while ((amo = input.read(buffer, 0, 1024)) != -1) {
+    // output.write(buffer, 0, amo);
+    // }
+    // output.closeEntry();
+    // }
+    //
+    // input.close();
+    // output.close();
+    //
+    // inputFile.delete();
+    // outputTmpFile.renameTo(inputFile);
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
+    // }
+
+    public static void cleanTempDirectory() {
+        File file = LauncherFrame.settings.getTempDir();
+        String[] myFiles;
+        if (file.isDirectory()) {
+            myFiles = file.list();
+            for (int i = 0; i < myFiles.length; i++) {
+                new File(file, myFiles[i]).delete();
+            }
+        }
+    }
+
+    public static void delete(File file) {
+        if (file.isDirectory()) {
+            for (File c : file.listFiles())
+                delete(c);
+        }
+        boolean deleted = file.delete();
+        if (!deleted) {
+            if (file.isFile())
+                LauncherFrame.settings.getConsole().log(
+                        "File " + file.getAbsolutePath() + " couldn't be deleted");
+            if (file.isDirectory())
+                LauncherFrame.settings.getConsole().log(
+                        "Folder " + file.getAbsolutePath() + " couldn't be deleted");
+        }
+    }
+
 }

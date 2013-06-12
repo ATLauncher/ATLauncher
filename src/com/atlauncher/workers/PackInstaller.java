@@ -10,6 +10,7 @@
  */
 package com.atlauncher.workers;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.SwingWorker;
@@ -17,6 +18,7 @@ import javax.swing.SwingWorker;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Version;
+import com.atlauncher.gui.LauncherFrame;
 
 public class PackInstaller extends SwingWorker<Boolean, Void> {
 
@@ -29,6 +31,38 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         this.pack = pack;
         this.version = version;
         this.instanceName = instanceName;
+    }
+
+    public String getInstanceName() {
+        return this.instanceName;
+    }
+
+    public String getInstanceSafeName() {
+        return this.instanceName.replaceAll("[^A-Za-z0-9]", "");
+    }
+
+    public File getRootDirectory() {
+        return new File(LauncherFrame.settings.getInstancesDir(), getInstanceSafeName());
+    }
+
+    public File getMinecraftDirectory() {
+        return new File(getRootDirectory(), ".minecraft");
+    }
+
+    public File getModsDirectory() {
+        return new File(getMinecraftDirectory(), "mods");
+    }
+
+    public File getCoreModsDirectory() {
+        return new File(getMinecraftDirectory(), "coremods");
+    }
+
+    public File getBinDirectory() {
+        return new File(getMinecraftDirectory(), "bin");
+    }
+
+    public File getMinecraftJar() {
+        return new File(getBinDirectory(), "minecraft.jar");
     }
 
     protected Boolean doInBackground() throws Exception {
@@ -47,7 +81,7 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
             if (!isCancelled()) {
                 firePropertyChange("doing", null, "Installing " + mod.getName());
                 addPercent(amountPer);
-                mod.install();
+                mod.install(this);
             }
         }
         firePropertyChange("progress", null, 75);

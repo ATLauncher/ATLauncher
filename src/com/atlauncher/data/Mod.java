@@ -67,6 +67,10 @@ public class Mod {
         return this.name;
     }
 
+    public String getSafeName() {
+        return this.name.replaceAll("[^A-Za-z0-9]", "");
+    }
+
     public String getVersion() {
         return this.version;
     }
@@ -136,8 +140,85 @@ public class Mod {
         }
     }
 
-    public void install() {
-        System.out.println("Installing " + this.name);
+    public void install(PackInstaller installer) {
+        File fileLocation = new File(LauncherFrame.settings.getDownloadsDir(), getFile());
+        switch (type) {
+            case mods:
+                Utils.copyFile(fileLocation, installer.getModsDirectory());
+                break;
+            case coremods:
+                Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
+                break;
+            case extract:
+                File tempDirExtract = new File(LauncherFrame.settings.getTempDir(), getSafeName());
+                Utils.unzip(fileLocation, tempDirExtract);
+                switch (extractTo) {
+                    case coremods:
+                        Utils.copyDirectory(tempDirExtract, installer.getCoreModsDirectory());
+                        break;
+                    case mods:
+                        Utils.copyDirectory(tempDirExtract, installer.getModsDirectory());
+                        break;
+                    case root:
+                        Utils.copyDirectory(tempDirExtract, installer.getRootDirectory());
+                        break;
+                    default:
+                        LauncherFrame.settings.getConsole().log(
+                                "No known way to extract mod " + this.name + " with type "
+                                        + this.extractTo);
+                        break;
+                }
+                Utils.delete(tempDirExtract);
+                break;
+            case decomp:
+                File tempDirDecomp = new File(LauncherFrame.settings.getTempDir(), getSafeName());
+                Utils.unzip(fileLocation, tempDirDecomp);
+                File tempFileDecomp = new File(tempDirDecomp, decompFile);
+                if (tempFileDecomp.exists()) {
+                    switch (decompType) {
+                        case coremods:
+                            if (tempFileDecomp.isFile()) {
+                                Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
+                            } else {
+                                Utils.copyDirectory(tempFileDecomp,
+                                        installer.getCoreModsDirectory());
+                            }
+                            break;
+                        case jar:
+                            break;
+                        case mods:
+                            if (tempFileDecomp.isFile()) {
+                                Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
+                            } else {
+                                Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
+                            }
+                            break;
+                        case root:
+                            if (tempFileDecomp.isFile()) {
+                                Utils.copyFile(tempFileDecomp, installer.getMinecraftDirectory());
+                            } else {
+                                Utils.copyDirectory(tempFileDecomp,
+                                        installer.getMinecraftDirectory());
+                            }
+                            break;
+                        default:
+                            LauncherFrame.settings.getConsole().log(
+                                    "No known way to decomp mod " + this.name + " with type "
+                                            + this.decompType);
+                            break;
+                    }
+                } else {
+                    LauncherFrame.settings.getConsole().log(
+                            "Couldn't find decomp file " + this.decompFile + " for mod "
+                                    + this.name);
+                }
+                Utils.delete(tempDirDecomp);
+                break;
+            default:
+                LauncherFrame.settings.getConsole().log(
+                        "No known way to install mod " + this.name + " with type " + this.type);
+                break;
+        }
     }
 
     public boolean isDirectDownload() {

@@ -14,6 +14,7 @@ public enum DecompType {
 
     jar,
     mods,
-    coremods
+    coremods,
+    root
     
 }
