@@ -51,6 +51,16 @@ public class Utils {
         return icon;
     }
 
+    public static ImageIcon getIconImage(File file) {
+        if (!file.exists()) {
+            System.err.println("Unable to load image: " + file.getAbsolutePath());
+        }
+
+        ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+
+        return icon;
+    }
+
     public static Image getImage(String path) {
         URL url = System.class.getResource(path);
 

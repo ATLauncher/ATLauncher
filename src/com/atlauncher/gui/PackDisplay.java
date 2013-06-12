@@ -56,7 +56,7 @@ public class PackDisplay extends JPanel {
         splitPane.setRightComponent(rightPanel);
         splitPane.setEnabled(false);
 
-        packImage = new JLabel(Utils.getIconImage("/resources/test.png"));
+        packImage = new JLabel(pack.getImage());
 
         packDescription = new JTextArea();
         packDescription.setBorder(BorderFactory.createEmptyBorder());

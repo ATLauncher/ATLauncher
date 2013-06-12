@@ -53,7 +53,7 @@ public class AddonDisplay extends JPanel {
         splitPane.setRightComponent(rightPanel);
         splitPane.setEnabled(false);
 
-        addonImage = new JLabel(Utils.getIconImage("/resources/test.png"));
+        addonImage = new JLabel(Utils.getIconImage("/resources/DefaultImage.png"));
 
         addonDescription = new JTextArea();
         addonDescription.setBorder(BorderFactory.createEmptyBorder());

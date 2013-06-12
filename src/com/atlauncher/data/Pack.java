@@ -10,10 +10,12 @@
  */
 package com.atlauncher.data;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,6 +28,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.gui.Utils;
 
 public class Pack {
 
@@ -49,6 +52,15 @@ public class Pack {
 
     public String getName() {
         return this.name;
+    }
+
+    public ImageIcon getImage() {
+        File imageFile = new File(LauncherFrame.settings.getImagesDir(), getSafeName()
+                .toLowerCase() + ".png");
+        if (!imageFile.exists()) {
+            imageFile = new File(LauncherFrame.settings.getImagesDir(), "defaultimage.png");
+        }
+        return Utils.getIconImage(imageFile);
     }
 
     /**

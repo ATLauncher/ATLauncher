@@ -56,7 +56,7 @@ public class InstanceDisplay extends JPanel {
         splitPane.setRightComponent(rightPanel);
         splitPane.setEnabled(false);
 
-        instanceImage = new JLabel(Utils.getIconImage("/resources/test.png"));
+        instanceImage = new JLabel(instance.getImage());
 
         instanceDescription = new JTextArea();
         instanceDescription.setBorder(BorderFactory.createEmptyBorder());

@@ -11,16 +11,12 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-
-import com.atlauncher.data.Pack;
 
 /**
  * Class for displaying packs in the Pack Tab
@@ -51,7 +47,7 @@ public class NothingToDisplay extends JPanel {
         splitPane.setRightComponent(rightPanel);
         splitPane.setEnabled(false);
 
-        errorImage = new JLabel(Utils.getIconImage("/resources/test.png"));
+        errorImage = new JLabel(Utils.getIconImage("/resources/DefaultImage.png"));
 
         errorMessage = new JTextArea();
         errorMessage.setBorder(BorderFactory.createEmptyBorder());

@@ -68,6 +68,7 @@ public class Settings {
     private File baseDir = new File(System.getProperty("user.dir"));
     private File backupsDir = new File(baseDir, "Backups");
     private File configsDir = new File(baseDir, "Configs");
+    private File imagesDir = new File(configsDir, "Images");
     private File downloadsDir = new File(baseDir, "Downloads");
     private File instancesDir = new File(baseDir, "Instances");
     private File propertiesFile = new File(baseDir, "ATLauncher.conf"); // File for properties
@@ -120,8 +121,15 @@ public class Settings {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     String name = element.getAttribute("name");
+                    String type = element.getAttribute("type");
                     String md5 = element.getAttribute("md5");
-                    File file = new File(configsDir, name);
+                    File file = null;
+                    if (type.equalsIgnoreCase("Root")) {
+                        file = new File(configsDir, name);
+                    } else if (type.equalsIgnoreCase("Images")) {
+                        file = new File(imagesDir, name);
+                        name = "images/" + name;
+                    }
                     boolean download = false; // If we have to download the file or not
                     if (!file.exists()) {
                         download = true; // File doesn't exist so download it
@@ -132,8 +140,6 @@ public class Settings {
                     }
 
                     if (download) {
-                        System.out.println("Downloading file " + name + " to "
-                                + file.getAbsolutePath());
                         new Downloader(getFileURL("launcher/" + name), file.getAbsolutePath())
                                 .runNoReturn();
                     }
@@ -152,7 +158,7 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, downloadsDir, instancesDir };
+        File[] files = { backupsDir, configsDir, imagesDir, downloadsDir, instancesDir };
         for (File file : files) {
             if (!file.exists()) {
                 console.log("Folder " + file.getAbsolutePath() + " doesn't exist. Creating now");
@@ -186,6 +192,15 @@ public class Settings {
      */
     public File getConfigsDir() {
         return this.configsDir;
+    }
+
+    /**
+     * Returns the images directory
+     * 
+     * @return File object for the images directory
+     */
+    public File getImagesDir() {
+        return this.imagesDir;
     }
 
     /**

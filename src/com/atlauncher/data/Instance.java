@@ -10,8 +10,13 @@
  */
 package com.atlauncher.data;
 
+import java.io.File;
+
+import javax.swing.ImageIcon;
+
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.gui.Utils;
 
 public class Instance {
 
@@ -31,6 +36,25 @@ public class Instance {
 
     public String getPackName() {
         return pack;
+    }
+
+    /**
+     * Gets a file safe and URL safe name which simply means replacing all non alpha numerical
+     * characters with nothing
+     * 
+     * @return File safe and URL safe name of the pack
+     */
+    public String getSafePackName() {
+        return this.pack.replaceAll("[^A-Za-z0-9]", "");
+    }
+
+    public ImageIcon getImage() {
+        File imageFile = new File(LauncherFrame.settings.getImagesDir(), getSafePackName()
+                .toLowerCase() + ".png");
+        if (!imageFile.exists()) {
+            imageFile = new File(LauncherFrame.settings.getImagesDir(), "defaultimage.png");
+        }
+        return Utils.getIconImage(imageFile);
     }
 
     public String getPackDescription() {
