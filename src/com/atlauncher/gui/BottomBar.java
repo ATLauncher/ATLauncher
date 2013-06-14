@@ -18,18 +18,25 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class BottomBar extends JPanel {
 
     private JPanel leftSide;
+    private JPanel middle;
     private JPanel rightSide;
 
     private JButton toggleConsole;
+    private JLabel loggedInAs;
+    private JComboBox<String> username;
+    private JLabel userSkin;
     private JButton facebookIcon;
     private JButton twitterIcon;
     private JButton redditIcon;
@@ -41,6 +48,9 @@ public class BottomBar extends JPanel {
                                                 // 50 pixels high
 
         leftSide = new JPanel();
+        leftSide.setLayout(new GridBagLayout());
+        middle = new JPanel();
+        middle.setLayout(new GridBagLayout());
         rightSide = new JPanel();
         rightSide.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -56,6 +66,15 @@ public class BottomBar extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 0, 0, 5);
+        middle.add(loggedInAs, gbc);
+        gbc.gridx++;
+        middle.add(username, gbc);
+        gbc.gridx++;
+        middle.add(userSkin, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.insets = new Insets(0, 0, 0, 5);
         rightSide.add(facebookIcon, gbc);
         gbc.gridx++;
         rightSide.add(redditIcon, gbc);
@@ -63,6 +82,7 @@ public class BottomBar extends JPanel {
         rightSide.add(twitterIcon, gbc);
 
         add(leftSide, BorderLayout.WEST);
+        add(middle, BorderLayout.CENTER);
         add(rightSide, BorderLayout.EAST);
     }
 
@@ -81,6 +101,12 @@ public class BottomBar extends JPanel {
                     LauncherFrame.settings.getConsole().setVisible(true);
                     toggleConsole.setText("Hide Console");
                 }
+            }
+        });
+        username.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String user = (String) username.getSelectedItem();
+                userSkin.setIcon(Utils.getMinecraftHead(user));
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
@@ -112,6 +138,15 @@ public class BottomBar extends JPanel {
         } else {
             toggleConsole = new JButton("Show Console");
         }
+
+        loggedInAs = new JLabel("Logged in user:");
+        username = new JComboBox<String>();
+        username.addItem("astocky");
+        username.addItem("dwinget2008");
+        username.addItem("haighyorkie");
+        username.addItem("RyanTheAllmighty");
+        username.setSelectedIndex(3);
+        userSkin = new JLabel(Utils.getMinecraftHead("RyanTheAllmighty"));
 
         facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());

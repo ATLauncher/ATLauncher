@@ -48,6 +48,7 @@ public class ConsoleBottomBar extends JPanel {
         setupActionListeners(); // Setup Action Listeners
 
         leftSide = new JPanel();
+        leftSide.setLayout(new GridBagLayout());
         rightSide = new JPanel();
         rightSide.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();

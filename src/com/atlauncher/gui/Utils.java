@@ -14,8 +14,10 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -48,7 +50,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+
+import com.atlauncher.data.Downloader;
 
 public class Utils {
 
@@ -70,6 +75,31 @@ public class Utils {
         }
 
         ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+
+        return icon;
+    }
+
+    public static ImageIcon getMinecraftHead(String user) {
+        File file = new File(LauncherFrame.settings.getSkinsDir(), user + ".png");
+        if (!file.exists()) {
+            new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", file.getAbsolutePath()).runNoReturn();
+        }
+
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BufferedImage main = image.getSubimage(8, 8, 8, 8);
+        BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
+        BufferedImage head = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics g = head.getGraphics();
+        g.drawImage(main, 0, 0, null);
+        g.drawImage(helmet, 0, 0, null);
+        
+        ImageIcon icon = new ImageIcon(head.getScaledInstance(32, 32, Image.SCALE_SMOOTH));
 
         return icon;
     }

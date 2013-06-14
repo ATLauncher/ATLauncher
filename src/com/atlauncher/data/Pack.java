@@ -150,10 +150,11 @@ public class Pack {
                     if (element.getAttribute("directdownload").equalsIgnoreCase("yes")) {
                         directDownload = true;
                     }
+                    String linked = element.getAttribute("linked");
                     String description = element.getAttribute("description");
                     mods.add(new Mod(name, version, url, file, website, donation, md5, type,
                             extractTo, decompFile, decompType, server, serverURL, serverFile,
-                            serverType, optional, directDownload, description));
+                            serverType, optional, directDownload, linked, description));
                 }
             }
         } catch (SAXException e) {

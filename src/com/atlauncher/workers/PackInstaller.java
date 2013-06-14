@@ -19,6 +19,7 @@ import com.atlauncher.data.Downloader;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.gui.ModsChooser;
 import com.atlauncher.gui.Utils;
 
 public class PackInstaller extends SwingWorker<Boolean, Void> {
@@ -29,6 +30,7 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
     String minecraftVersion;
     String jarOrder;
     int percent = 0; // Percent done installing
+    ArrayList<Mod> allMods;
 
     public PackInstaller(String instanceName, Pack pack, String version, String minecraftVersion) {
         this.instanceName = instanceName;
@@ -89,6 +91,25 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
+    public Mod getModByName(String name) {
+        for (Mod mod : allMods) {
+            if (mod.getName().equalsIgnoreCase(name)) {
+                return mod;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Mod> getLinkedMods(Mod mod) {
+        ArrayList<Mod> linkedMods = new ArrayList<Mod>();
+        for (Mod modd : allMods) {
+            if (modd.getLinked().equalsIgnoreCase(mod.getName())) {
+                linkedMods.add(modd);
+            }
+        }
+        return linkedMods;
+    }
+
     private void makeDirectories() {
         File[] directories = { getRootDirectory(), getMinecraftDirectory(), getModsDirectory(),
                 getCoreModsDirectory(), getJarModsDirectory(), getBinDirectory(),
@@ -134,6 +155,7 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
                 "http://s3.amazonaws.com/MinecraftDownload/jinput.jar",
                 "http://s3.amazonaws.com/MinecraftDownload/" + nativesURL + ".jar" };
         for (int i = 0; i < 5; i++) {
+            addPercent(5);
             while (!Utils.getMD5(files[i]).equalsIgnoreCase(hashes[i])) {
                 firePropertyChange("doing", null, "Downloading " + files[i].getName());
                 new Downloader(urls[i], files[i].getAbsolutePath(), this).runNoReturn();
@@ -148,13 +170,28 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
+    public void configurePack() {
+        firePropertyChange("doing", null, "Extracting Configs");
+        File configs = new File(LauncherFrame.settings.getTempDir(), "Configs.zip");
+        String path = "packs/" + pack.getSafeName() + "/versions/" + version + "/Configs.zip";
+        String configsURL = LauncherFrame.settings.getFileURL(path); // The zip on the server
+        new Downloader(configsURL, configs.getAbsolutePath(), this).runNoReturn();
+        Utils.unzip(configs, getMinecraftDirectory());
+        configs.delete();
+    }
+
+    public ArrayList<Mod> getMods() {
+        return this.allMods;
+    }
+
     protected Boolean doInBackground() throws Exception {
-        ArrayList<Mod> mods = this.pack.getMods(this.version);
+        this.allMods = this.pack.getMods(this.version);
+        ModsChooser modsChooser = new ModsChooser(this);
+        modsChooser.setVisible(true);
+        ArrayList<Mod> mods = modsChooser.getSelectedMods();
         addPercent(0);
         makeDirectories();
-        addPercent(5);
         downloadMojangStuff();
-        addPercent(5);
         int amountPer = 40 / mods.size();
         for (Mod mod : mods) {
             if (!isCancelled()) {
@@ -170,12 +207,9 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
                 mod.install(this);
             }
         }
-        firePropertyChange("progress", null, 75);
-        firePropertyChange("doing", null, "Configuring Pack");
+        configurePack();
         addPercent(5);
-        firePropertyChange("progress", null, 100);
         firePropertyChange("doing", null, "Finished");
-        addPercent(5);
         return true;
     }
 

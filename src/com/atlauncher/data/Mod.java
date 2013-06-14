@@ -37,12 +37,13 @@ public class Mod {
     private Type serverType;
     private boolean optional;
     private boolean directDownload;
+    private String linked;
     private String description;
 
     public Mod(String name, String version, String url, String file, String website,
             String donation, String md5, Type type, ExtractTo extractTo, String decompFile,
             DecompType decompType, boolean server, String serverURL, String serverFile,
-            Type serverType, boolean optional, boolean directDownload, String description) {
+            Type serverType, boolean optional, boolean directDownload, String linked, String description) {
         this.name = name;
         this.version = version;
         this.url = url;
@@ -60,6 +61,7 @@ public class Mod {
         this.serverType = serverType;
         this.optional = optional;
         this.directDownload = directDownload;
+        this.linked = linked;
         this.description = description;
     }
 
@@ -85,6 +87,18 @@ public class Mod {
 
     public boolean hasMD5() {
         return !this.md5.isEmpty();
+    }
+    
+    public boolean isOptional() {
+        return this.optional;
+    }
+    
+    public String getLinked() {
+        return this.linked;
+    }
+    
+    public String getDescription() {
+        return this.description;
     }
 
     public void download(PackInstaller installer) {

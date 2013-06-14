@@ -76,6 +76,7 @@ public class Settings {
     private File backupsDir = new File(baseDir, "Backups");
     private File configsDir = new File(baseDir, "Configs");
     private File imagesDir = new File(configsDir, "Images");
+    private File skinsDir = new File(imagesDir, "Skins");
     private File jarsDir = new File(configsDir, "Jars");
     private File downloadsDir = new File(baseDir, "Downloads");
     private File instancesDir = new File(baseDir, "Instances");
@@ -166,8 +167,8 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, imagesDir, jarsDir, downloadsDir, instancesDir,
-                tempDir };
+        File[] files = { backupsDir, configsDir, imagesDir, skinsDir, jarsDir, downloadsDir,
+                instancesDir, tempDir };
         for (File file : files) {
             if (!file.exists()) {
                 console.log("Folder " + file.getAbsolutePath() + " doesn't exist. Creating now");
@@ -219,6 +220,15 @@ public class Settings {
      */
     public File getImagesDir() {
         return this.imagesDir;
+    }
+
+    /**
+     * Returns the skins directory
+     * 
+     * @return File object for the skins directory
+     */
+    public File getSkinsDir() {
+        return this.skinsDir;
     }
 
     /**
