@@ -269,6 +269,9 @@ public class Utils {
     }
 
     public static String getMD5(File file) {
+        if (!file.exists()) {
+            return "0"; // File doesn't exists so MD5 is nothing
+        }
         StringBuffer sb = null;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -299,6 +302,10 @@ public class Utils {
     }
 
     public static void copyFile(File from, File to) {
+        copyFile(from, to, false);
+    }
+
+    public static void copyFile(File from, File to, boolean withFilename) {
         if (!from.isFile()) {
             LauncherFrame.settings.getConsole().log(
                     "File " + from.getAbsolutePath() + " cannot be copied to "
@@ -311,7 +318,9 @@ public class Utils {
                             + to.getAbsolutePath() + " as it doesn't exist");
             return;
         }
-        to = new File(to, from.getName());
+        if (!withFilename) {
+            to = new File(to, from.getName());
+        }
         if (to.exists()) {
             to.delete();
         }

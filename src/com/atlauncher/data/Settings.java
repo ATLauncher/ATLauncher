@@ -76,6 +76,7 @@ public class Settings {
     private File backupsDir = new File(baseDir, "Backups");
     private File configsDir = new File(baseDir, "Configs");
     private File imagesDir = new File(configsDir, "Images");
+    private File jarsDir = new File(configsDir, "Jars");
     private File downloadsDir = new File(baseDir, "Downloads");
     private File instancesDir = new File(baseDir, "Instances");
     private File tempDir = new File(baseDir, "Temp");
@@ -165,7 +166,8 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, imagesDir, downloadsDir, instancesDir, tempDir };
+        File[] files = { backupsDir, configsDir, imagesDir, jarsDir, downloadsDir, instancesDir,
+                tempDir };
         for (File file : files) {
             if (!file.exists()) {
                 console.log("Folder " + file.getAbsolutePath() + " doesn't exist. Creating now");
@@ -217,6 +219,15 @@ public class Settings {
      */
     public File getImagesDir() {
         return this.imagesDir;
+    }
+
+    /**
+     * Returns the jars directory
+     * 
+     * @return File object for the jars directory
+     */
+    public File getJarsDir() {
+        return this.jarsDir;
     }
 
     /**
@@ -597,6 +608,39 @@ public class Settings {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Gets the MD5 hash for a minecraft.jar or minecraft_server.jar
+     */
+    public String getMinecraftHash(String root, String version, String type) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new File(configsDir, "minecraft.xml"));
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName(root);
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    if (element.getAttribute("version").equalsIgnoreCase(version)) {
+                        if (type.equalsIgnoreCase("client")) {
+                            return element.getAttribute("client");
+                        } else {
+                            return element.getAttribute("server");
+                        }
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

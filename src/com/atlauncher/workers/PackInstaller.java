@@ -15,9 +15,11 @@ import java.util.ArrayList;
 
 import javax.swing.SwingWorker;
 
+import com.atlauncher.data.Downloader;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.gui.Utils;
 
 public class PackInstaller extends SwingWorker<Boolean, Void> {
 
@@ -67,6 +69,10 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         return new File(getMinecraftDirectory(), "bin");
     }
 
+    public File getNativesDirectory() {
+        return new File(getBinDirectory(), "natives");
+    }
+
     public File getMinecraftJar() {
         return new File(getBinDirectory(), "minecraft.jar");
     }
@@ -83,18 +89,72 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
-    public void makeDirectories() {
+    private void makeDirectories() {
         File[] directories = { getRootDirectory(), getMinecraftDirectory(), getModsDirectory(),
-                getCoreModsDirectory(), getJarModsDirectory(), getBinDirectory() };
+                getCoreModsDirectory(), getJarModsDirectory(), getBinDirectory(),
+                getNativesDirectory() };
         for (File directory : directories) {
             directory.mkdir();
         }
     }
 
+    private void downloadMojangStuff() {
+        File nativesFile = null;
+        String nativesRoot = null;
+        String nativesURL = null;
+        if (Utils.isWindows()) {
+            nativesFile = new File(LauncherFrame.settings.getJarsDir(), "windows_natives.jar");
+            nativesRoot = "windowsnatives";
+            nativesURL = "windows_natives";
+        } else if (Utils.isMac()) {
+            nativesFile = new File(LauncherFrame.settings.getJarsDir(), "macosx_natives.jar");
+            nativesRoot = "macosxnatives";
+            nativesURL = "macosx_natives";
+        } else {
+            nativesFile = new File(LauncherFrame.settings.getJarsDir(), "linux_natives.jar");
+            nativesRoot = "linuxnatives";
+            nativesURL = "linux_natives";
+        }
+        File[] files = {
+                new File(LauncherFrame.settings.getJarsDir(), minecraftVersion.replace(".", "_")
+                        + "_minecraft.jar"),
+                new File(LauncherFrame.settings.getJarsDir(), "lwjgl.jar"),
+                new File(LauncherFrame.settings.getJarsDir(), "lwjgl_util.jar"),
+                new File(LauncherFrame.settings.getJarsDir(), "jinput.jar"), nativesFile };
+        String[] hashes = {
+                LauncherFrame.settings.getMinecraftHash("minecraft", minecraftVersion, "client"),
+                LauncherFrame.settings.getMinecraftHash("lwjgl", "mojang", "client"),
+                LauncherFrame.settings.getMinecraftHash("lwjglutil", "mojang", "client"),
+                LauncherFrame.settings.getMinecraftHash("jinput", "mojang", "client"),
+                LauncherFrame.settings.getMinecraftHash(nativesRoot, "mojang", "client") };
+        String[] urls = {
+                "http://assets.minecraft.net/" + minecraftVersion.replace(".", "_")
+                        + "/minecraft.jar", "http://s3.amazonaws.com/MinecraftDownload/lwjgl.jar",
+                "http://s3.amazonaws.com/MinecraftDownload/lwjgl_util.jar",
+                "http://s3.amazonaws.com/MinecraftDownload/jinput.jar",
+                "http://s3.amazonaws.com/MinecraftDownload/" + nativesURL + ".jar" };
+        for (int i = 0; i < 5; i++) {
+            while (!Utils.getMD5(files[i]).equalsIgnoreCase(hashes[i])) {
+                firePropertyChange("doing", null, "Downloading " + files[i].getName());
+                new Downloader(urls[i], files[i].getAbsolutePath(), this).runNoReturn();
+            }
+            if (i == 0) {
+                Utils.copyFile(files[i], getMinecraftJar(), true);
+            } else if (i == 4) {
+                Utils.unzip(files[i], getNativesDirectory());
+            } else {
+                Utils.copyFile(files[i], getBinDirectory());
+            }
+        }
+    }
+
     protected Boolean doInBackground() throws Exception {
         ArrayList<Mod> mods = this.pack.getMods(this.version);
-        makeDirectories();
         addPercent(0);
+        makeDirectories();
+        addPercent(5);
+        downloadMojangStuff();
+        addPercent(5);
         int amountPer = 40 / mods.size();
         for (Mod mod : mods) {
             if (!isCancelled()) {
