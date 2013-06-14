@@ -143,6 +143,10 @@ public class Mod {
     public void install(PackInstaller installer) {
         File fileLocation = new File(LauncherFrame.settings.getDownloadsDir(), getFile());
         switch (type) {
+            case jar:
+                Utils.copyFile(fileLocation, installer.getJarModsDirectory());
+                installer.addToJarOrder(getFile());
+                break;
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
                 break;
@@ -185,6 +189,14 @@ public class Mod {
                             }
                             break;
                         case jar:
+                            if (tempFileDecomp.isFile()) {
+                                Utils.copyFile(tempFileDecomp, installer.getJarModsDirectory());
+                                installer.addToJarOrder(decompFile);
+                            } else {
+                                File newFile = new File(installer.getJarModsDirectory(), getSafeName() + ".zip");
+                                Utils.zip(tempFileDecomp, newFile);
+                                installer.addToJarOrder(getSafeName() + ".zip");
+                            }
                             break;
                         case mods:
                             if (tempFileDecomp.isFile()) {

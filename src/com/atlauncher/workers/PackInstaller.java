@@ -17,20 +17,22 @@ import javax.swing.SwingWorker;
 
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.Version;
 import com.atlauncher.gui.LauncherFrame;
 
 public class PackInstaller extends SwingWorker<Boolean, Void> {
 
-    Pack pack;
-    Version version;
     String instanceName;
+    Pack pack;
+    String version;
+    String minecraftVersion;
+    String jarOrder;
     int percent = 0; // Percent done installing
 
-    public PackInstaller(Pack pack, Version version, String instanceName) {
+    public PackInstaller(String instanceName, Pack pack, String version, String minecraftVersion) {
+        this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
-        this.instanceName = instanceName;
+        this.minecraftVersion = minecraftVersion;
     }
 
     public String getInstanceName() {
@@ -57,6 +59,10 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         return new File(getMinecraftDirectory(), "coremods");
     }
 
+    public File getJarModsDirectory() {
+        return new File(getMinecraftDirectory(), "jarmods");
+    }
+
     public File getBinDirectory() {
         return new File(getMinecraftDirectory(), "bin");
     }
@@ -65,9 +71,29 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         return new File(getBinDirectory(), "minecraft.jar");
     }
 
+    public String getJarOrder() {
+        return this.jarOrder;
+    }
+
+    public void addToJarOrder(String file) {
+        if (jarOrder == null) {
+            jarOrder = file;
+        } else {
+            jarOrder += "," + file;
+        }
+    }
+
+    public void makeDirectories() {
+        File[] directories = { getRootDirectory(), getMinecraftDirectory(), getModsDirectory(),
+                getCoreModsDirectory(), getJarModsDirectory(), getBinDirectory() };
+        for (File directory : directories) {
+            directory.mkdir();
+        }
+    }
+
     protected Boolean doInBackground() throws Exception {
         ArrayList<Mod> mods = this.pack.getMods(this.version);
-        System.out.println("Installing " + pack.getName() + " version " + version);
+        makeDirectories();
         addPercent(0);
         int amountPer = 40 / mods.size();
         for (Mod mod : mods) {

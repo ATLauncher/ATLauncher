@@ -22,16 +22,24 @@ public class Instance {
 
     private String name;
     private String pack;
-    private Version version;
+    private String version;
+    private String minecraftVersion;
+    private String jarOrder;
 
-    public Instance(String name, String pack, Version version) {
+    public Instance(String name, String pack, String version, String minecraftVersion, String jarOrder) {
         this.name = name;
         this.pack = pack;
         this.version = version;
+        this.minecraftVersion = minecraftVersion;
+        this.jarOrder = jarOrder;
     }
 
     public String getName() {
         return this.name;
+    }
+
+    public String getSafeName() {
+        return this.name.replaceAll("[^A-Za-z0-9]", "");
     }
 
     public String getPackName() {
@@ -68,17 +76,36 @@ public class Instance {
         return pack.getDescription();
     }
     
-    public Version getVersion() {
+    public String getVersion() {
         return version;
     }
     
-    public Version getLatestVersion() {
-        return version;
+    public File getRootDirectory() {
+        return new File(LauncherFrame.settings.getInstancesDir(), getSafeName());
     }
 
-    public String toString() {
-        return "Instance Name: " + this.name + ", Pack Name: " + pack
-                + ", Version: " + version;
+    public File getMinecraftDirectory() {
+        return new File(getRootDirectory(), ".minecraft");
+    }
+
+    public File getModsDirectory() {
+        return new File(getMinecraftDirectory(), "mods");
+    }
+
+    public File getCoreModsDirectory() {
+        return new File(getMinecraftDirectory(), "coremods");
+    }
+
+    public File getJarModsDirectory() {
+        return new File(getMinecraftDirectory(), "jarmods");
+    }
+
+    public File getBinDirectory() {
+        return new File(getMinecraftDirectory(), "bin");
+    }
+
+    public File getMinecraftJar() {
+        return new File(getBinDirectory(), "minecraft.jar");
     }
 
 }

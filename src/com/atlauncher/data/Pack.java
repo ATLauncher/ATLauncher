@@ -34,11 +34,11 @@ public class Pack {
 
     private int id;
     private String name;
-    private Version[] versions;
-    private Version[] minecraftVersions;
+    private String[] versions;
+    private String[] minecraftVersions;
     private String description;
 
-    public Pack(int id, String name, Version[] versions, Version[] minecraftVersions,
+    public Pack(int id, String name, String[] versions, String[] minecraftVersions,
             String description) {
         this.name = name;
         this.versions = versions;
@@ -73,11 +73,11 @@ public class Pack {
         return this.name.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    public Version[] getVersions() {
+    public String[] getVersions() {
         return this.versions;
     }
 
-    public Version[] getMinecraftVersions() {
+    public String[] getMinecraftVersions() {
         return this.minecraftVersions;
     }
 
@@ -89,17 +89,19 @@ public class Pack {
         return this.versions.length;
     }
 
-    public Version getVersion(int index) {
+    public String getVersion(int index) {
         return this.versions[index];
     }
 
-    public ArrayList<Mod> getMods(Version versionToInstall) {
+    public String getMinecraftVersion(int index) {
+        return this.minecraftVersions[index];
+    }
+
+    public ArrayList<Mod> getMods(String versionToInstall) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
-        String path = "packs/" + getSafeName() + "/versions/" + versionToInstall.toString()
-                + "/Configs.xml";
+        String path = "packs/" + getSafeName() + "/versions/" + versionToInstall + "/Configs.xml";
         String versionURL = LauncherFrame.settings.getFileURL(path); // The XML with path on server
-        Downloader download = new Downloader(versionURL);
-        String versionXML = download.run();
+        String versionXML = new Downloader(versionURL).run();
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();

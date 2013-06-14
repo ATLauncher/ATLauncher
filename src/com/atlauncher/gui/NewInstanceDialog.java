@@ -34,7 +34,6 @@ import javax.swing.JTextField;
 
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.Version;
 import com.atlauncher.workers.PackInstaller;
 
 public class NewInstanceDialog extends JDialog {
@@ -49,7 +48,7 @@ public class NewInstanceDialog extends JDialog {
     private JLabel instanceNameLabel;
     private JTextField instanceNameField;
     private JLabel versionLabel;
-    private JComboBox<Version> versionsDropDown;
+    private JComboBox<String> versionsDropDown;
 
     public NewInstanceDialog(final Pack pack) {
         super(LauncherFrame.settings.getParent(), "New Instance", ModalityType.APPLICATION_MODAL);
@@ -87,9 +86,10 @@ public class NewInstanceDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        versionsDropDown = new JComboBox<Version>();
+        versionsDropDown = new JComboBox<String>();
         for (int i = 0; i < pack.getVersionCount(); i++) {
-            versionsDropDown.addItem(pack.getVersion(i));
+            versionsDropDown.addItem(pack.getVersion(i) + " (Minecraft "
+                    + pack.getMinecraftVersion(i) + ")");
         }
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         middle.add(versionsDropDown, gbc);
@@ -107,7 +107,10 @@ public class NewInstanceDialog extends JDialog {
                                     + "<br/><br/>Rename it and try again</center></html>",
                             "Error!", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    final Version version = (Version) versionsDropDown.getSelectedItem();
+                    final String version = (String) pack.getVersion(versionsDropDown
+                            .getSelectedIndex());
+                    final String minecraftVersion = (String) pack
+                            .getMinecraftVersion(versionsDropDown.getSelectedIndex());
                     final JDialog dialog = new JDialog(LauncherFrame.settings.getParent(),
                             "Installing " + pack.getName() + " " + version,
                             ModalityType.DOCUMENT_MODAL);
@@ -135,8 +138,8 @@ public class NewInstanceDialog extends JDialog {
                     dialog.add(topPanel, BorderLayout.CENTER);
                     dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-                    final PackInstaller packInstaller = new PackInstaller(pack, version,
-                            instanceNameField.getText()) {
+                    final PackInstaller packInstaller = new PackInstaller(instanceNameField
+                            .getText(), pack, version, minecraftVersion) {
 
                         protected void done() {
                             Boolean success = false;
@@ -165,11 +168,13 @@ public class NewInstanceDialog extends JDialog {
                                             + version
                                             + " has been installed<br/><br/>Find it in your 'Instances' tab";
                                     title = pack.getName() + " " + version + " Installed";
-                                    LauncherFrame.settings.getInstances().add(
-                                            new Instance(instanceNameField.getText(), pack
-                                                    .getName(), version));
+                                    LauncherFrame.settings.addInstance(instanceNameField.getText(),
+                                            pack.getName(), version, minecraftVersion, this.getJarOrder());
                                     LauncherFrame.settings.reloadInstancesPanel();
                                 } else {
+                                    // Install failed so delete the folder and clear Temp Dir
+                                    Utils.delete(this.getRootDirectory());
+                                    Utils.cleanTempDirectory();
                                     type = JOptionPane.ERROR_MESSAGE;
                                     text = pack.getName()
                                             + " "
@@ -194,19 +199,19 @@ public class NewInstanceDialog extends JDialog {
                                     progressBar.setIndeterminate(false);
                                 }
                                 int progress = (Integer) evt.getNewValue();
-                                if(progress>100){
+                                if (progress > 100) {
                                     progress = 100;
                                 }
                                 progressBar.setValue(progress);
-                            }else if ("subprogress" == evt.getPropertyName()) {
+                            } else if ("subprogress" == evt.getPropertyName()) {
                                 if (!subProgressBar.isVisible()) {
                                     subProgressBar.setVisible(true);
                                 }
                                 int progress = (Integer) evt.getNewValue();
-                                if(progress>100){
+                                if (progress > 100) {
                                     progress = 100;
                                 }
-                                if(progress==0){
+                                if (progress == 0) {
                                     subProgressBar.setVisible(false);
                                 }
                                 subProgressBar.setValue(progress);

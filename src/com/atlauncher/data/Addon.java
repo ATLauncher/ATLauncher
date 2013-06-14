@@ -19,7 +19,7 @@ public class Addon {
 
     private int id; // ID of Addon
     private String name; // Name of Addon
-    private Version[] versions; // Versions of the Addon available
+    private String[] versions; // Versions of the Addon available
     private String description; // Description of Addon
     private Pack forPack; // Pack that this addon is for
 
@@ -37,7 +37,7 @@ public class Addon {
      * @param forPack
      *            Pack the Addon is for
      */
-    public Addon(int id, String name, Version[] versions, String description,
+    public Addon(int id, String name, String[] versions, String description,
             Pack forPack) {
         this.id = id;
         this.name = name;
@@ -69,7 +69,7 @@ public class Addon {
      * 
      * @return Array of Version type for all available versions of Addon
      */
-    public Version[] getVersions() {
+    public String[] getVersions() {
         return this.versions;
     }
 

@@ -11,6 +11,7 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -47,7 +48,8 @@ public class NothingToDisplay extends JPanel {
         splitPane.setRightComponent(rightPanel);
         splitPane.setEnabled(false);
 
-        errorImage = new JLabel(Utils.getIconImage("/resources/DefaultImage.png"));
+        errorImage = new JLabel(Utils.getIconImage(new File(LauncherFrame.settings.getImagesDir(),
+                "defaultimage.png")));
 
         errorMessage = new JTextArea();
         errorMessage.setBorder(BorderFactory.createEmptyBorder());

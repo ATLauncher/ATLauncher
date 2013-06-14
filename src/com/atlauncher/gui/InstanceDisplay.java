@@ -12,10 +12,13 @@ package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
@@ -71,6 +74,16 @@ public class InstanceDisplay extends JPanel {
         play = new JButton("Play");
         backup = new JButton("Backup");
         delete = new JButton("Delete");
+        delete.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int response = JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
+                        "Are you sure you want to delete this instance?", "Delete Instance",
+                        JOptionPane.YES_NO_OPTION);
+                if(response == JOptionPane.YES_OPTION){
+                    LauncherFrame.settings.removeInstance(instance);
+                }
+            }
+        });
         instanceActions.add(play);
         instanceActions.add(backup);
         instanceActions.add(delete);

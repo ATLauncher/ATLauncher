@@ -19,6 +19,7 @@ import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,9 +41,12 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Deque;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import javax.swing.ImageIcon;
 
@@ -295,37 +299,48 @@ public class Utils {
     }
 
     public static void copyFile(File from, File to) {
-        if (from.exists()) {
-            if (to.exists()) {
-                to.delete();
-            }
+        if (!from.isFile()) {
+            LauncherFrame.settings.getConsole().log(
+                    "File " + from.getAbsolutePath() + " cannot be copied to "
+                            + to.getAbsolutePath() + " as it isn't a file");
+            return;
+        }
+        if (!from.exists()) {
+            LauncherFrame.settings.getConsole().log(
+                    "File " + from.getAbsolutePath() + " cannot be copied to "
+                            + to.getAbsolutePath() + " as it doesn't exist");
+            return;
+        }
+        to = new File(to, from.getName());
+        if (to.exists()) {
+            to.delete();
+        }
 
+        try {
+            to.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        FileChannel source = null;
+        FileChannel destination = null;
+
+        try {
+            source = new FileInputStream(from).getChannel();
+            destination = new FileOutputStream(to).getChannel();
+            destination.transferFrom(source, 0, source.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
             try {
-                to.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            FileChannel source = null;
-            FileChannel destination = null;
-
-            try {
-                source = new FileInputStream(from).getChannel();
-                destination = new FileOutputStream(to).getChannel();
-                destination.transferFrom(source, 0, source.size());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (source != null) {
-                        source.close();
-                    }
-                    if (destination != null) {
-                        destination.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (source != null) {
+                    source.close();
                 }
+                if (destination != null) {
+                    destination.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -451,6 +466,62 @@ public class Utils {
             if (file.isDirectory())
                 LauncherFrame.settings.getConsole().log(
                         "Folder " + file.getAbsolutePath() + " couldn't be deleted");
+        }
+    }
+
+    public static void zip(File in, File out) {
+        try {
+            URI base = in.toURI();
+            Deque<File> queue = new LinkedList<File>();
+            queue.push(in);
+            OutputStream stream = new FileOutputStream(out);
+            Closeable res = stream;
+            try {
+                ZipOutputStream zout = new ZipOutputStream(stream);
+                res = zout;
+                while (!queue.isEmpty()) {
+                    in = queue.pop();
+                    for (File kid : in.listFiles()) {
+                        String name = base.relativize(kid.toURI()).getPath();
+                        if (name.endsWith("aux_class")) {
+                            name = "aux.class";
+                        }
+                        if (kid.isDirectory()) {
+                            queue.push(kid);
+                            name = name.endsWith("/") ? name : name + "/";
+                            zout.putNextEntry(new ZipEntry(name));
+                        } else {
+                            zout.putNextEntry(new ZipEntry(name));
+                            copy(kid, zout);
+                            zout.closeEntry();
+                        }
+                    }
+                }
+            } finally {
+                res.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void copy(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        while (true) {
+            int readCount = in.read(buffer);
+            if (readCount < 0) {
+                break;
+            }
+            out.write(buffer, 0, readCount);
+        }
+    }
+
+    private static void copy(File file, OutputStream out) throws IOException {
+        InputStream in = new FileInputStream(file);
+        try {
+            copy(in, out);
+        } finally {
+            in.close();
         }
     }
 

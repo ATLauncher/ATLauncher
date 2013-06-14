@@ -38,8 +38,7 @@ public class Downloader {
             this.worker.addPropertyChangeListener(new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent evt) {
                     if ("response" == evt.getPropertyName()) {
-                        String res = (String) evt.getNewValue();
-                        response = res;
+                        response = (String) evt.getNewValue();
                     }
                 }
             });
@@ -79,9 +78,9 @@ public class Downloader {
         if (worker != null) {
             worker.execute(); // Run the worker process
         }
-        while (!worker.isDone()) {
+        while (response == null) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 worker.cancel(true);
@@ -96,7 +95,7 @@ public class Downloader {
         }
         while (!worker.isDone()) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 worker.cancel(true);
