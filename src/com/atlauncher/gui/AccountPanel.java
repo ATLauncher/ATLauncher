@@ -12,14 +12,14 @@ package com.atlauncher.gui;
 
 import java.awt.FlowLayout;
 
-import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class AccountPanel extends JPanel {
 
     public AccountPanel() {
         setLayout(new FlowLayout());
-        add(new JButton("Account"));
+        add(new JLabel(LauncherFrame.settings.getAccounts().get(0).getMinecraftSkin()));
     }
 
 }
