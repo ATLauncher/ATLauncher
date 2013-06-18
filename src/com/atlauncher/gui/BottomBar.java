@@ -18,13 +18,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import com.atlauncher.data.Account;
 
 @SuppressWarnings("serial")
 public class BottomBar extends JPanel {
@@ -34,9 +34,7 @@ public class BottomBar extends JPanel {
     private JPanel rightSide;
 
     private JButton toggleConsole;
-    private JLabel loggedInAs;
-    private JComboBox<String> username;
-    private JLabel userSkin;
+    private JComboBox<Account> username;
     private JButton facebookIcon;
     private JButton twitterIcon;
     private JButton redditIcon;
@@ -66,11 +64,7 @@ public class BottomBar extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 0, 0, 5);
-        middle.add(loggedInAs, gbc);
-        gbc.gridx++;
         middle.add(username, gbc);
-        gbc.gridx++;
-        middle.add(userSkin, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
@@ -103,12 +97,6 @@ public class BottomBar extends JPanel {
                 }
             }
         });
-        username.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String user = (String) username.getSelectedItem();
-                userSkin.setIcon(Utils.getMinecraftHead(user));
-            }
-        });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
@@ -139,14 +127,13 @@ public class BottomBar extends JPanel {
             toggleConsole = new JButton("Show Console");
         }
 
-        loggedInAs = new JLabel("Logged in user:");
-        username = new JComboBox<String>();
-        username.addItem("astocky");
-        username.addItem("dwinget2008");
-        username.addItem("haighyorkie");
-        username.addItem("RyanTheAllmighty");
-        username.setSelectedIndex(3);
-        userSkin = new JLabel(Utils.getMinecraftHead("RyanTheAllmighty"));
+        username = new JComboBox<Account>();
+        username.setRenderer(new AccountsDropDownRenderer());
+        username.addItem(new Account("", "", "Select A Username", false));
+        for (Account account : LauncherFrame.settings.getAccounts()) {
+            username.addItem(account);
+        }
+        username.setSelectedIndex(0);
 
         facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());

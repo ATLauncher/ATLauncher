@@ -10,7 +10,7 @@ public class App {
     public static void main(String[] args) {
         // TODO Add in arguments for some stuff and handle relaunching of the
         // client under certain situations such as updates
-
+        
         Settings settings = new Settings(); // Setup the Settings and wait for it to finish
 
         settings.getConsole().log("Launcher started. Loading everything and showing splash screen");

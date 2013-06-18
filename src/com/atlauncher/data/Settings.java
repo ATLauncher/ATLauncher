@@ -11,18 +11,24 @@
 package com.atlauncher.data;
 
 import java.awt.Window;
+import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -66,10 +72,11 @@ public class Settings {
     private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
 
-    // Packs, Addons and Instances
+    // Packs, Addons, Instances and Accounts
     private ArrayList<Pack> packs = new ArrayList<Pack>(); // Packs in the Launcher
     private ArrayList<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
     private ArrayList<Addon> addons = new ArrayList<Addon>(); // Addons in the Launcher
+    private ArrayList<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
 
     // Directories and Files for the Launcher
     private File baseDir = new File(System.getProperty("user.dir"));
@@ -82,6 +89,7 @@ public class Settings {
     private File instancesDir = new File(baseDir, "Instances");
     private File tempDir = new File(baseDir, "Temp");
     private File instancesFile = new File(getConfigsDir(), "instances.xml");
+    private File userDataFile = new File(configsDir, "userdata");
     private File propertiesFile = new File(baseDir, "ATLauncher.conf"); // File for properties
 
     // Launcher Settings
@@ -110,6 +118,7 @@ public class Settings {
         loadPacks(); // Load the Packs available in the Launcher
         loadAddons(); // Load the Addons available in the Launcher
         loadInstances(); // Load the users installed Instances
+        loadAccounts(); // Load the saved Accounts
         loadProperties(); // Load the users Properties
     }
 
@@ -621,6 +630,54 @@ public class Settings {
     }
 
     /**
+     * Loads the saved Accounts
+     */
+    private void loadAccounts() {
+        if (userDataFile.exists()) {
+            try {
+                FileInputStream in = new FileInputStream(userDataFile);
+                ObjectInputStream objIn = new ObjectInputStream(in);
+                try {
+                    Object obj;
+                    while ((obj = objIn.readObject()) != null) {
+                        if (obj instanceof Account) {
+                            accounts.add((Account) obj);
+                        }
+                    }
+                } catch (EOFException e) {
+                    // Don't log this, it always happens when it gets to the end of the file
+                } finally {
+                    objIn.close();
+                    in.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void saveAccounts() {
+        FileOutputStream out = null;
+        ObjectOutputStream objOut = null;
+        try {
+            out = new FileOutputStream(userDataFile);
+            objOut = new ObjectOutputStream(out);
+            for (Account account : accounts) {
+                objOut.writeObject(account);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                objOut.close();
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * Gets the MD5 hash for a minecraft.jar or minecraft_server.jar
      */
     public String getMinecraftHash(String root, String version, String type) {
@@ -778,6 +835,15 @@ public class Settings {
      */
     public ArrayList<Addon> getAddons() {
         return this.addons;
+    }
+
+    /**
+     * Get the Accounts added to the Launcher
+     * 
+     * @return The Accounts added to the Launcher
+     */
+    public ArrayList<Account> getAccounts() {
+        return this.accounts;
     }
 
     /**

@@ -41,6 +41,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Deque;
@@ -50,9 +51,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import com.atlauncher.data.Base64;
 import com.atlauncher.data.Downloader;
 
 public class Utils {
@@ -82,7 +86,8 @@ public class Utils {
     public static ImageIcon getMinecraftHead(String user) {
         File file = new File(LauncherFrame.settings.getSkinsDir(), user + ".png");
         if (!file.exists()) {
-            new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", file.getAbsolutePath()).runNoReturn();
+            new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png",
+                    file.getAbsolutePath()).runNoReturn();
         }
 
         BufferedImage image = null;
@@ -98,7 +103,7 @@ public class Utils {
         Graphics g = head.getGraphics();
         g.drawImage(main, 0, 0, null);
         g.drawImage(helmet, 0, 0, null);
-        
+
         ImageIcon icon = new ImageIcon(head.getScaledInstance(32, 32, Image.SCALE_SMOOTH));
 
         return icon;
@@ -564,4 +569,39 @@ public class Utils {
         }
     }
 
+    public static String encrypt(String Data) {
+        Key key;
+        String encryptedValue = null;
+        try {
+            key = generateKey();
+            Cipher c = Cipher.getInstance("AES");
+            c.init(Cipher.ENCRYPT_MODE, key);
+            byte[] encVal = c.doFinal(Data.getBytes());
+            encryptedValue = Base64.encodeBytes(encVal);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return encryptedValue;
+    }
+
+    public static String decrypt(String encryptedData) {
+        Key key;
+        String decryptedValue = null;
+        try {
+            key = generateKey();
+            Cipher c = Cipher.getInstance("AES");
+            c.init(Cipher.DECRYPT_MODE, key);
+            byte[] decordedValue = Base64.decode(encryptedData);
+            byte[] decValue = c.doFinal(decordedValue);
+            decryptedValue = new String(decValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return decryptedValue;
+    }
+
+    private static Key generateKey() throws Exception {
+        Key key = new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
+        return key;
+    }
 }

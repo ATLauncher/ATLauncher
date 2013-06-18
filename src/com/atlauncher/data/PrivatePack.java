@@ -12,11 +12,11 @@ package com.atlauncher.data;
 
 public class PrivatePack extends Pack {
 
-    private Player[] allowedPlayers;
+    private Account[] allowedPlayers;
 
     public PrivatePack(int id, String name, String[] versions,
             String[] minecraftVersions, String description,
-            Player[] allowedPlayers) {
+            Account[] allowedPlayers) {
         super(id, name, versions, minecraftVersions, description);
     }
 
