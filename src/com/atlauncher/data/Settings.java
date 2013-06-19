@@ -47,7 +47,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.gui.AccountPanel;
 import com.atlauncher.gui.BottomBar;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
@@ -70,6 +69,7 @@ public class Settings {
     private boolean enableConsole; // If to show the console by default
     private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
+    private Account account; // Account using the Launcher
 
     // Packs, Addons, Instances and Accounts
     private ArrayList<Pack> packs = new ArrayList<Pack>(); // Packs in the Launcher
@@ -368,6 +368,16 @@ public class Settings {
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty(
                     "enableleaderboards", "false"));
 
+            String lastAccountTemp = properties.getProperty("lastaccount", null);
+            if (lastAccountTemp != null) {
+                if (isAccountByName(lastAccountTemp)) {
+                    this.account = getAccountByName(lastAccountTemp);
+                } else {
+                    console.log("Account " + lastAccountTemp + " not found");
+                    this.account = null; // Account not found
+                }
+            }
+
             this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -392,6 +402,34 @@ public class Settings {
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
+            this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Switch account currently used and save it
+     * 
+     * @param account
+     *            Account to switch to
+     */
+    public void switchAccount(Account account) {
+        try {
+            properties.setProperty("firsttimerun", "false");
+            properties.setProperty("language", this.language.getName());
+            properties.setProperty("server", this.server.getName());
+            properties.setProperty("ram", this.ram + "");
+            properties.setProperty("windowwidth", this.windowWidth + "");
+            properties.setProperty("windowheight", this.windowHeight + "");
+            properties.setProperty("javaparameters", this.javaParamaters);
+            properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
+            properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
+                    : "false");
+            properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
+            properties.setProperty("lastaccount", account.getUsername());
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -989,16 +1027,32 @@ public class Settings {
     }
 
     /**
-     * Finds a Language from the given name
+     * Finds a Server from the given name
      * 
      * @param name
-     *            Name of the Language to find
-     * @return Language if the language is found from the name
+     *            Name of the Server to find
+     * @return Server if the server is found from the name
      */
     private Server getServerByName(String name) {
         for (Server server : servers) {
             if (server.getName().equalsIgnoreCase(name)) {
                 return server;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds an Account from the given username
+     * 
+     * @param username
+     *            Username of the Account to find
+     * @return Account if the Account is found from the username
+     */
+    private Account getAccountByName(String username) {
+        for (Account account : accounts) {
+            if (account.getUsername().equalsIgnoreCase(username)) {
+                return account;
             }
         }
         return null;
@@ -1030,6 +1084,22 @@ public class Settings {
     public boolean isServerByName(String name) {
         for (Server server : servers) {
             if (server.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Finds if an Account is available
+     * 
+     * @param username
+     *            The username of the Account
+     * @return true if found, false if not
+     */
+    public boolean isAccountByName(String username) {
+        for (Account account : accounts) {
+            if (account.getUsername().equalsIgnoreCase(username)) {
                 return true;
             }
         }
@@ -1134,6 +1204,10 @@ public class Settings {
 
     public void setJavaParameters(String javaParamaters) {
         this.javaParamaters = javaParamaters;
+    }
+
+    public Account getAccount() {
+        return this.account;
     }
 
     /**

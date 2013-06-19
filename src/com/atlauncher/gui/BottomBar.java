@@ -18,6 +18,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -32,7 +34,7 @@ public class BottomBar extends JPanel {
     private JPanel leftSide;
     private JPanel middle;
     private JPanel rightSide;
-    
+
     private Account fillerAccount;
 
     private JButton toggleConsole;
@@ -99,6 +101,11 @@ public class BottomBar extends JPanel {
                 }
             }
         });
+        username.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                LauncherFrame.settings.switchAccount((Account) username.getSelectedItem());
+            }
+        });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
@@ -136,7 +143,12 @@ public class BottomBar extends JPanel {
         for (Account account : LauncherFrame.settings.getAccounts()) {
             username.addItem(account);
         }
-        username.setSelectedIndex(0);
+        Account active = LauncherFrame.settings.getAccount();
+        if (active == null) {
+            username.setSelectedIndex(0);
+        } else {
+            username.setSelectedItem(active);
+        }
 
         facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());
@@ -160,7 +172,7 @@ public class BottomBar extends JPanel {
     public void hideConsole() {
         toggleConsole.setText("Show Console");
     }
-    
+
     public void reloadAccounts() {
         username.removeAllItems();
         username.addItem(fillerAccount);

@@ -35,8 +35,10 @@ public class Account implements Serializable {
 
     public Account(String username, String password, String minecraftUsername, boolean remember) {
         this.username = username;
-        this.password = password;
-        this.encryptedPassword = Utils.encrypt(password);
+        if (remember) {
+            this.password = password;
+            this.encryptedPassword = Utils.encrypt(password);
+        }
         this.minecraftUsername = minecraftUsername;
         this.remember = remember;
     }
@@ -119,22 +121,35 @@ public class Account implements Serializable {
 
         return icon;
     }
-    
+
     public String getUsername() {
         return this.username;
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
         this.minecraftUsername = username;
     }
-    
+
     public String getPassword() {
         return this.password;
     }
-    
+
     public void setPassword(String password) {
         this.password = password;
+        this.encryptedPassword = Utils.encrypt(password);
+    }
+
+    public boolean isRemembered() {
+        return this.remember;
+    }
+
+    public void setRemember(boolean remember) {
+        this.remember = remember;
+        if(!remember) {
+            this.password = "";
+            this.encryptedPassword = "";
+        }
     }
 
     public String getMinecraftUsername() {

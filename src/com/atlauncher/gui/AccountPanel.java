@@ -22,6 +22,7 @@ import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -41,6 +42,8 @@ public class AccountPanel extends JPanel {
     private JTextField usernameField;
     private JLabel passwordLabel;
     private JPasswordField passwordField;
+    private JLabel rememberLabel;
+    private JCheckBox rememberField;
     private JPanel buttons;
     private JButton leftButton;
     private JButton rightButton;
@@ -71,7 +74,7 @@ public class AccountPanel extends JPanel {
         gbc.insets = TOP_INSETS;
         gbc.anchor = GridBagConstraints.CENTER;
 
-        fillerAccount = new Account("", "", "Select A Username", false);
+        fillerAccount = new Account("", "", "Add New Account", false);
 
         accountsComboBox = new JComboBox<Account>();
         accountsComboBox.addItem(fillerAccount);
@@ -86,11 +89,13 @@ public class AccountPanel extends JPanel {
                     if (accountsComboBox.getSelectedIndex() == 0) {
                         usernameField.setText("");
                         passwordField.setText("");
+                        rememberField.setSelected(false);
                         leftButton.setText("Add");
                         rightButton.setText("Clear");
                     } else {
                         usernameField.setText(account.getUsername());
                         passwordField.setText(account.getPassword());
+                        rememberField.setSelected(account.isRemembered());
                         leftButton.setText("Save");
                         rightButton.setText("Delete");
                     }
@@ -123,9 +128,22 @@ public class AccountPanel extends JPanel {
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         passwordField = new JPasswordField(16);
         bottomPanel.add(passwordField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        rememberLabel = new JLabel("Remember Password:");
+        bottomPanel.add(rememberLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        rememberField = new JCheckBox();
+        bottomPanel.add(rememberField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -139,12 +157,14 @@ public class AccountPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (accountsComboBox.getSelectedIndex() == 0) {
                     Account account = new Account(usernameField.getText(), passwordField
-                            .getPassword().toString(), usernameField.getText(), true);
+                            .getPassword().toString(), usernameField.getText(), rememberField
+                            .isSelected());
                     LauncherFrame.settings.getAccounts().add(account);
                 } else {
                     Account account = (Account) accountsComboBox.getSelectedItem();
                     account.setUsername(usernameField.getText());
-                    account.setPassword(passwordField.getPassword().toString());
+                    account.setPassword(new String(passwordField.getPassword()));
+                    account.setRemember(rememberField.isSelected());
                 }
                 LauncherFrame.settings.saveAccounts();
                 accountsComboBox.removeAllItems();
@@ -160,6 +180,7 @@ public class AccountPanel extends JPanel {
                 if (accountsComboBox.getSelectedIndex() == 0) {
                     usernameField.setText("");
                     passwordField.setText("");
+                    rememberField.setSelected(false);
                 } else {
                     Account account = (Account) accountsComboBox.getSelectedItem();
                     int res = JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
