@@ -23,6 +23,8 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import com.atlauncher.gui.Utils;
+
 import net.minecraft.Launcher;
 
 public class MCFrame extends Frame implements WindowListener {
@@ -30,13 +32,7 @@ public class MCFrame extends Frame implements WindowListener {
 
     public MCFrame(String title) {
         super(title);
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(new File("icon.png"));
-            setIconImage(image);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setIconImage(Utils.getImage("/resources/Icon.png"));
         this.addWindowListener(this);
     }
 

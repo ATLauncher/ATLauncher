@@ -38,6 +38,10 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
             boolean isSelected, boolean cellHasFocus) {
         Account account = (Account) value;
 
+        if (value == null) {
+            return this;
+        }
+
         if (isSelected) {
             setBackground(list.getSelectionBackground());
             setForeground(list.getSelectionForeground());
@@ -46,7 +50,6 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
             setForeground(list.getForeground());
         }
 
-        // Set the icon and text. If icon was null, say so.
         ImageIcon icon = account.getMinecraftHead();
         String username = account.getMinecraftUsername();
         setIcon(icon);

@@ -143,7 +143,7 @@ public class BottomBar extends JPanel {
 
         username = new JComboBox<Account>();
         username.setRenderer(new AccountsDropDownRenderer());
-        fillerAccount = new Account("", "", "Select A Username", false);
+        fillerAccount = new Account("Select An Account");
         username.addItem(fillerAccount);
         for (Account account : LauncherFrame.settings.getAccounts()) {
             username.addItem(account);

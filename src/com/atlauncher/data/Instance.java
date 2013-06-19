@@ -45,6 +45,10 @@ public class Instance {
     public String getPackName() {
         return pack;
     }
+    
+    public String getJarOrder() {
+        return this.jarOrder;
+    }
 
     /**
      * Gets a file safe and URL safe name which simply means replacing all non alpha numerical

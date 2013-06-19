@@ -604,4 +604,23 @@ public class Utils {
         Key key = new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
         return key;
     }
+
+    public static String urlToString(String url) {
+        StringBuilder response = null;
+        try {
+            URL urll = new URL(url);
+            URLConnection connection = urll.openConnection();
+            BufferedReader in;
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            response = new StringBuilder();
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null)
+                response.append(inputLine);
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return response.toString();
+    }
 }

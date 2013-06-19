@@ -21,63 +21,98 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import com.atlauncher.data.Account;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.Settings;
+import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.gui.Utils;
+
 public class MCLauncher {
-    /**
-     * @param args
-     *            The arguments you want to launch Minecraft with. New path, Username, Session ID.
-     */
-    public static void main(String[] args) {
-        if (args.length < 3) {
-            System.out.println("Not enough arguments.");
-            System.exit(-1);
+
+    public static Process launch(Account account, Instance instance) throws IOException {
+        System.out.println("Launching");
+        String[] jarFiles = new String[] { "minecraft.jar", "lwjgl.jar", "lwjgl_util.jar",
+                "jinput.jar" };
+        StringBuilder cpb = new StringBuilder("");
+        File jarMods = instance.getJarModsDirectory();
+        if (jarMods.exists()) {
+            for (String mod : instance.getJarOrder().split(",")) {
+                cpb.append(File.pathSeparator);
+                cpb.append(new File(jarMods, mod));
+            }
         }
 
-        String userName = args[0];
-        String sessionId = args[1];
-        String windowtitle = args[2];
-        String windowParams = args[3];
-        String lwjgl = args[4];
-        String cwd = System.getProperty("user.dir");
+        for (String jarFile : jarFiles) {
+            cpb.append(File.pathSeparator);
+            cpb.append(new File(instance.getBinDirectory(), jarFile));
+        }
 
-        Dimension winSize = new Dimension(854, 480);
+        List<String> arguments = new ArrayList<String>();
+
+        String path = System.getProperty("java.home") + File.separator + "bin" + File.separator
+                + "java";
+        if (Utils.isWindows()) {
+            path += "w";
+        }
+        arguments.add(path);
+
+        arguments.add("-Xms256M");
+        arguments.add("-Xmx" + LauncherFrame.settings.getMemory() + "M");
+
+        arguments.add("-cp");
+        arguments.add(System.getProperty("java.class.path") + cpb.toString());
+
+        arguments.add(MCLauncher.class.getCanonicalName());
+
+        System.out.println("Arguments");
+        // Start or passed in arguments
+        arguments.add(instance.getMinecraftDirectory().getAbsolutePath()); // Path
+        arguments.add(account.getMinecraftUsername()); // Username
+        arguments.add(account.getPassword()); // Password
+        arguments.add(instance.getName()); // Instance Name
+        arguments.add(instance.getJarOrder()); // Jar Order
+        arguments.add(LauncherFrame.settings.getWindowWidth() + ""); // Window Width
+        arguments.add(LauncherFrame.settings.getWindowHeight() + ""); // Window Height
+
+        ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+        System.out.println(arguments);
+        return processBuilder.start();
+    }
+
+    public static void main(String[] args) {
+        Dimension winSize = new Dimension(Integer.parseInt(args[5]), Integer.parseInt(args[6]));
         boolean maximize = false;
         boolean compatMode = false;
-
-        String[] dimStrings = windowParams.split("x");
-
-        if (windowParams.equalsIgnoreCase("compatmode")) {
-            compatMode = true;
-        } else if (windowParams.equalsIgnoreCase("max")) {
-            maximize = true;
-        } else if (dimStrings.length == 2) {
-            try {
-                winSize = new Dimension(Integer.parseInt(dimStrings[0]),
-                        Integer.parseInt(dimStrings[1]));
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid Window size argument, " + "using default.");
-            }
-        } else {
-            System.out.println("Invalid Window size argument, " + "using default.");
-        }
+        
+        File cwd = new File(args[0]);
 
         try {
             File binDir = new File(cwd, "bin");
-            File lwjglDir;
-            if (lwjgl.equalsIgnoreCase("Mojang"))
-                lwjglDir = binDir;
-            else
-                lwjglDir = new File(lwjgl);
+            File lwjglDir = binDir;
 
             System.out.println("Loading jars...");
             String[] lwjglJars = new String[] { "lwjgl.jar", "lwjgl_util.jar", "jinput.jar" };
 
             URL[] urls = new URL[4];
             try {
+                File jarModsDir = new File(cwd, "jarmods");
+                String jarMods = args[4];
+                String[] mods = jarMods.split(",");
+                for (String mod : mods) {
+                    File f = new File(jarModsDir, mod);
+                    urls[0] = f.toURI().toURL();
+                    System.out.println("Loading URL: " + urls[0].toString());
+                }
+
                 File f = new File(binDir, "minecraft.jar");
                 urls[0] = f.toURI().toURL();
                 System.out.println("Loading URL: " + urls[0].toString());
@@ -98,6 +133,8 @@ public class MCLauncher {
             System.setProperty("org.lwjgl.librarypath", nativesDir);
             System.setProperty("net.java.games.input.librarypath", nativesDir);
 
+            System.setProperty("user.home", cwd.getAbsolutePath());
+
             URLClassLoader cl = new URLClassLoader(urls, MCLauncher.class.getClassLoader());
 
             // Get the Minecraft Class.
@@ -113,7 +150,7 @@ public class MCLauncher {
                 }
 
                 f.setAccessible(true);
-                f.set(null, new File(cwd));
+                f.set(null, cwd);
                 // And set it.
                 System.out.println("Fixed Minecraft Path: Field was " + f.toString());
             } catch (ClassNotFoundException e) {
@@ -181,11 +218,11 @@ public class MCLauncher {
                 }
             }
 
-            System.setProperty("minecraft.applet.TargetDirectory", cwd);
+            System.setProperty("minecraft.applet.TargetDirectory", cwd.getAbsolutePath());
 
             String[] mcArgs = new String[2];
-            mcArgs[0] = userName;
-            mcArgs[1] = sessionId;
+            mcArgs[0] = args[1];
+            mcArgs[1] = args[2];
 
             if (compatMode) {
                 System.out.println("Launching in compatibility mode...");
@@ -195,8 +232,8 @@ public class MCLauncher {
                 try {
                     Class<?> MCAppletClass = cl.loadClass("net.minecraft.client.MinecraftApplet");
                     Applet mcappl = (Applet) MCAppletClass.newInstance();
-                    MCFrame mcWindow = new MCFrame(windowtitle);
-                    mcWindow.start(mcappl, userName, sessionId, winSize, maximize);
+                    MCFrame mcWindow = new MCFrame("ATLauncher - " + args[3]);
+                    mcWindow.start(mcappl, args[1], args[2], winSize, maximize);
                 } catch (InstantiationException e) {
                     System.out.println("Applet wrapper failed! Falling back "
                             + "to compatibility mode.");

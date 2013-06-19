@@ -19,6 +19,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -74,7 +76,7 @@ public class AccountPanel extends JPanel {
         gbc.insets = TOP_INSETS;
         gbc.anchor = GridBagConstraints.CENTER;
 
-        fillerAccount = new Account("", "", "Add New Account", false);
+        fillerAccount = new Account("Add New Account");
 
         accountsComboBox = new JComboBox<Account>();
         accountsComboBox.addItem(fillerAccount);
@@ -156,26 +158,74 @@ public class AccountPanel extends JPanel {
         leftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Account account;
-                if (accountsComboBox.getSelectedIndex() == 0) {
-                    account = new Account(usernameField.getText(), passwordField
-                            .getPassword().toString(), usernameField.getText(), rememberField
-                            .isSelected());
-                    LauncherFrame.settings.getAccounts().add(account);
-                    JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
-                            "Account Added Successfully", "Account Added", JOptionPane.OK_OPTION);
+                boolean loggedIn = false;
+                String url = null;
+                String username = usernameField.getText();
+                String minecraftUsername = null;
+                String password = new String(passwordField.getPassword());
+                boolean remember = rememberField.isSelected();
+                if (LauncherFrame.settings.isAccountByName(username)
+                        && accountsComboBox.getSelectedIndex() == 0) {
+                    String[] options = { "Ok" };
+                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                            "This account already exists", "Account Already Exists",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
+                    return;
+                }
+                try {
+                    url = "https://login.minecraft.net/?user="
+                            + URLEncoder.encode(username, "UTF-8") + "&password="
+                            + URLEncoder.encode(password, "UTF-8") + "&version=999";
+                } catch (UnsupportedEncodingException e1) {
+                    e1.printStackTrace();
+                }
+                String auth = Utils.urlToString(url);
+                if (auth.contains(":")) {
+                    String[] parts = auth.split(":");
+                    if (parts.length == 5) {
+                        loggedIn = true;
+                        minecraftUsername = parts[2];
+                    }
+                }
+                if (!loggedIn) {
+                    String[] options = { "Ok" };
+                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                            "<html><center>Account not added as login details were incorrect<br/><br/>"
+                                    + auth + "</center></html>", "Account Not Added",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
                 } else {
-                    account = (Account) accountsComboBox.getSelectedItem();
-                    account.setUsername(usernameField.getText());
-                    account.setPassword(new String(passwordField.getPassword()));
-                    account.setRemember(rememberField.isSelected());
+                    if (accountsComboBox.getSelectedIndex() == 0) {
+                        account = new Account(username, password, minecraftUsername, remember);
+                        LauncherFrame.settings.getAccounts().add(account);
+                        String[] options = { "Ok" };
+                        JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                                "Account Added Successfully", "Account Added",
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                                options, options[0]);
+                    } else {
+                        account = (Account) accountsComboBox.getSelectedItem();
+                        account.setUsername(username);
+                        account.setMinecraftUsername(minecraftUsername);
+                        if (remember) {
+                            account.setPassword(password);
+                        }
+                        account.setRemember(remember);
+                        String[] options = { "Ok" };
+                        JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                                "Account Edited Successfully", "Account Edited",
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                                options, options[0]);
+                    }
+                    LauncherFrame.settings.saveAccounts();
+                    accountsComboBox.removeAllItems();
+                    accountsComboBox.addItem(fillerAccount);
+                    for (Account accountt : LauncherFrame.settings.getAccounts()) {
+                        accountsComboBox.addItem(accountt);
+                    }
+                    accountsComboBox.setSelectedItem(account);
                 }
-                LauncherFrame.settings.saveAccounts();
-                accountsComboBox.removeAllItems();
-                accountsComboBox.addItem(fillerAccount);
-                for (Account accountt : LauncherFrame.settings.getAccounts()) {
-                    accountsComboBox.addItem(accountt);
-                }
-                accountsComboBox.setSelectedItem(account);
             }
         });
         rightButton = new JButton("Clear");
@@ -192,15 +242,14 @@ public class AccountPanel extends JPanel {
                                     + "?", "Delete User", JOptionPane.YES_NO_OPTION);
                     if (res == JOptionPane.YES_OPTION) {
                         LauncherFrame.settings.getAccounts().remove(account);
-                        LauncherFrame.settings.reloadAccounts();
+                        LauncherFrame.settings.saveAccounts();
+                        accountsComboBox.removeAllItems();
+                        accountsComboBox.addItem(fillerAccount);
+                        for (Account accountt : LauncherFrame.settings.getAccounts()) {
+                            accountsComboBox.addItem(accountt);
+                        }
+                        accountsComboBox.setSelectedIndex(0);
                     }
-                    LauncherFrame.settings.saveAccounts();
-                    accountsComboBox.removeAllItems();
-                    accountsComboBox.addItem(fillerAccount);
-                    for (Account accountt : LauncherFrame.settings.getAccounts()) {
-                        accountsComboBox.addItem(accountt);
-                    }
-                    accountsComboBox.setSelectedIndex(0);
                 }
             }
         });

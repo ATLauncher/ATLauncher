@@ -32,6 +32,7 @@ public class Account implements Serializable {
     private String encryptedPassword; // users encrypted password
     private String minecraftUsername; // Users Minecraft Username
     private boolean remember; // Remember the users password or not
+    private transient boolean isReal; // If this is a real user
 
     public Account(String username, String password, String minecraftUsername, boolean remember) {
         this.username = username;
@@ -41,18 +42,26 @@ public class Account implements Serializable {
         }
         this.minecraftUsername = minecraftUsername;
         this.remember = remember;
+        this.isReal = true;
+    }
+
+    public Account(String name) {
+        this.username = "";
+        this.minecraftUsername = name;
+        this.remember = false;
+        this.isReal = false;
     }
 
     public ImageIcon getMinecraftHead() {
         File file;
-        if (this.username.isEmpty()) {
-            file = new File(LauncherFrame.settings.getSkinsDir(), "default.png");
-        } else {
+        if (isReal()) {
             file = new File(LauncherFrame.settings.getSkinsDir(), minecraftUsername + ".png");
-        }
-        if (!file.exists()) {
-            new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png",
-                    file.getAbsolutePath()).runNoReturn();
+            if (!file.exists()) {
+                new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername
+                        + ".png", file.getAbsolutePath()).runNoReturn();
+            }
+        } else {
+            file = new File(LauncherFrame.settings.getSkinsDir(), "default.png");
         }
 
         BufferedImage image = null;
@@ -122,12 +131,19 @@ public class Account implements Serializable {
         return icon;
     }
 
+    public boolean isReal() {
+        return this.isReal;
+    }
+
     public String getUsername() {
         return this.username;
     }
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setMinecraftUsername(String username) {
         this.minecraftUsername = username;
     }
 
@@ -146,7 +162,7 @@ public class Account implements Serializable {
 
     public void setRemember(boolean remember) {
         this.remember = remember;
-        if(!remember) {
+        if (!remember) {
             this.password = "";
             this.encryptedPassword = "";
         }
@@ -164,6 +180,7 @@ public class Account implements Serializable {
         } else {
             password = Utils.decrypt(encryptedPassword); // Encrypted password found so decrypt it
         }
+        isReal = true;
     }
 
     public String toString() {
