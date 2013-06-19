@@ -36,6 +36,7 @@ public class BottomBar extends JPanel {
     private JPanel rightSide;
 
     private Account fillerAccount;
+    private boolean dontSave = false;
 
     private JButton toggleConsole;
     private JComboBox<Account> username;
@@ -103,7 +104,11 @@ public class BottomBar extends JPanel {
         });
         username.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                LauncherFrame.settings.switchAccount((Account) username.getSelectedItem());
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    if (!dontSave) {
+                        LauncherFrame.settings.switchAccount((Account) username.getSelectedItem());
+                    }
+                }
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
@@ -179,5 +184,8 @@ public class BottomBar extends JPanel {
         for (Account account : LauncherFrame.settings.getAccounts()) {
             username.addItem(account);
         }
+        dontSave = true;
+        username.setSelectedItem(LauncherFrame.settings.getAccount());
+        dontSave = false;
     }
 }

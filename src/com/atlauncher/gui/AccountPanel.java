@@ -155,13 +155,16 @@ public class AccountPanel extends JPanel {
         leftButton = new JButton("Add");
         leftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                Account account;
                 if (accountsComboBox.getSelectedIndex() == 0) {
-                    Account account = new Account(usernameField.getText(), passwordField
+                    account = new Account(usernameField.getText(), passwordField
                             .getPassword().toString(), usernameField.getText(), rememberField
                             .isSelected());
                     LauncherFrame.settings.getAccounts().add(account);
+                    JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
+                            "Account Added Successfully", "Account Added", JOptionPane.OK_OPTION);
                 } else {
-                    Account account = (Account) accountsComboBox.getSelectedItem();
+                    account = (Account) accountsComboBox.getSelectedItem();
                     account.setUsername(usernameField.getText());
                     account.setPassword(new String(passwordField.getPassword()));
                     account.setRemember(rememberField.isSelected());
@@ -169,9 +172,10 @@ public class AccountPanel extends JPanel {
                 LauncherFrame.settings.saveAccounts();
                 accountsComboBox.removeAllItems();
                 accountsComboBox.addItem(fillerAccount);
-                for (Account account : LauncherFrame.settings.getAccounts()) {
-                    accountsComboBox.addItem(account);
+                for (Account accountt : LauncherFrame.settings.getAccounts()) {
+                    accountsComboBox.addItem(accountt);
                 }
+                accountsComboBox.setSelectedItem(account);
             }
         });
         rightButton = new JButton("Clear");
@@ -190,13 +194,13 @@ public class AccountPanel extends JPanel {
                         LauncherFrame.settings.getAccounts().remove(account);
                         LauncherFrame.settings.reloadAccounts();
                     }
+                    LauncherFrame.settings.saveAccounts();
+                    accountsComboBox.removeAllItems();
+                    accountsComboBox.addItem(fillerAccount);
+                    for (Account accountt : LauncherFrame.settings.getAccounts()) {
+                        accountsComboBox.addItem(accountt);
+                    }
                     accountsComboBox.setSelectedIndex(0);
-                }
-                LauncherFrame.settings.saveAccounts();
-                accountsComboBox.removeAllItems();
-                accountsComboBox.addItem(fillerAccount);
-                for (Account account : LauncherFrame.settings.getAccounts()) {
-                    accountsComboBox.addItem(account);
                 }
             }
         });
