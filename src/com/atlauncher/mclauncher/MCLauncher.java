@@ -21,25 +21,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.Utils;
 
 public class MCLauncher {
 
-    public static Process launch(Account account, Instance instance) throws IOException {
-        System.out.println("Launching");
+    public static Process launch(Account account, Instance instance, String session)
+            throws IOException {
         String[] jarFiles = new String[] { "minecraft.jar", "lwjgl.jar", "lwjgl_util.jar",
                 "jinput.jar" };
         StringBuilder cpb = new StringBuilder("");
@@ -73,18 +69,16 @@ public class MCLauncher {
 
         arguments.add(MCLauncher.class.getCanonicalName());
 
-        System.out.println("Arguments");
         // Start or passed in arguments
         arguments.add(instance.getMinecraftDirectory().getAbsolutePath()); // Path
         arguments.add(account.getMinecraftUsername()); // Username
-        arguments.add(account.getPassword()); // Password
+        arguments.add(session); // Session
         arguments.add(instance.getName()); // Instance Name
         arguments.add(instance.getJarOrder()); // Jar Order
         arguments.add(LauncherFrame.settings.getWindowWidth() + ""); // Window Width
         arguments.add(LauncherFrame.settings.getWindowHeight() + ""); // Window Height
 
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
-        System.out.println(arguments);
         return processBuilder.start();
     }
 
@@ -92,7 +86,7 @@ public class MCLauncher {
         Dimension winSize = new Dimension(Integer.parseInt(args[5]), Integer.parseInt(args[6]));
         boolean maximize = false;
         boolean compatMode = false;
-        
+
         File cwd = new File(args[0]);
 
         try {

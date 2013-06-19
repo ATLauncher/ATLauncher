@@ -58,7 +58,11 @@ public class LauncherConsole extends JFrame {
 
         setupLookAndFeel(); // Setup the look and feel for the Console
 
-        console = new JEditorPane("text/plain", "");
+        console = new JEditorPane("text/plain", "") {
+            public boolean getScrollableTracksViewportWidth() {
+                return true;
+            }
+        };
         console.setEditable(false);
         console.setSelectionColor(Color.GRAY);
 
@@ -155,6 +159,7 @@ public class LauncherConsole extends JFrame {
         } else {
             console.setText(console.getText() + "\n[" + timestamp + "] " + text);
         }
+        console.setCaretPosition(console.getDocument().getLength());
     }
 
     /**

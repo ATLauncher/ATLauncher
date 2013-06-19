@@ -18,6 +18,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -81,7 +83,7 @@ public class InstanceDisplay extends JPanel {
         play = new JButton("Play");
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Account account = LauncherFrame.settings.getAccount();
+                final Account account = LauncherFrame.settings.getAccount();
                 if (!account.isRemembered()) {
                     JPanel panel = new JPanel();
                     panel.setLayout(new BorderLayout());
@@ -97,22 +99,53 @@ public class InstanceDisplay extends JPanel {
                         return;
                     }
                 }
-                LauncherFrame.settings.getParent().setVisible(false);
-                LauncherFrame.settings.getConsole().setVisible(false);
+                boolean loggedIn = false;
+                String url = null;
+                String sess = null;
                 try {
-                    Process process = MCLauncher.launch(account, instance);
-                    InputStream is = process.getInputStream();
-                    InputStreamReader isr = new InputStreamReader(is);
-                    BufferedReader br = new BufferedReader(isr);
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        System.out.println(line);
-                    }
-                } catch (IOException e1) {
+                    url = "https://login.minecraft.net/?user="
+                            + URLEncoder.encode(account.getUsername(), "UTF-8") + "&password="
+                            + URLEncoder.encode(account.getPassword(), "UTF-8") + "&version=999";
+                } catch (UnsupportedEncodingException e1) {
                     e1.printStackTrace();
                 }
-                LauncherFrame.settings.getParent().setVisible(true);
-                LauncherFrame.settings.getConsole().setVisible(true);
+                String auth = Utils.urlToString(url);
+                if (auth.contains(":")) {
+                    String[] parts = auth.split(":");
+                    if (parts.length == 5) {
+                        loggedIn = true;
+                        sess = parts[3];
+                    }
+                }
+                if (!loggedIn) {
+                    String[] options = { "Ok" };
+                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                            "<html><center>Couldn't login to minecraft servers<br/><br/>" + auth
+                                    + "</center></html>", "Error Logging In",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
+                } else {
+                    final String session = sess;
+                    Object launcher = new Thread() {
+                        public void run() {
+                            try {
+                                LauncherFrame.settings.getParent().setVisible(false);
+                                Process process = MCLauncher.launch(account, instance, session);
+                                InputStream is = process.getErrorStream();
+                                InputStreamReader isr = new InputStreamReader(is);
+                                BufferedReader br = new BufferedReader(isr);
+                                String line;
+                                while ((line = br.readLine()) != null) {
+                                    LauncherFrame.settings.getConsole().log(line);
+                                }
+                                LauncherFrame.settings.getParent().setVisible(true);
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    };
+                    ((Thread) launcher).start();
+                }
             }
         });
         backup = new JButton("Backup");

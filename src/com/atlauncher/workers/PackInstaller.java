@@ -87,7 +87,7 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         if (jarOrder == null) {
             jarOrder = file;
         } else {
-            jarOrder += "," + file;
+            jarOrder = file + "," + jarOrder;
         }
     }
 
