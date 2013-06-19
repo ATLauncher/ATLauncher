@@ -12,7 +12,6 @@ package com.atlauncher.data;
 
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Dialog.ModalityType;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +20,6 @@ import java.io.Serializable;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
 
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.Utils;
@@ -43,17 +40,19 @@ public class Account implements Serializable {
         this.minecraftUsername = minecraftUsername;
         this.remember = remember;
     }
-    
+
     public ImageIcon getMinecraftHead() {
-        if(this.username.isEmpty()){
-            return null;
+        File file;
+        if (this.username.isEmpty()) {
+            file = new File(LauncherFrame.settings.getSkinsDir(), "default.png");
+        } else {
+            file = new File(LauncherFrame.settings.getSkinsDir(), minecraftUsername + ".png");
         }
-        File file = new File(LauncherFrame.settings.getSkinsDir(), minecraftUsername + ".png");
         if (!file.exists()) {
             new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png",
                     file.getAbsolutePath()).runNoReturn();
         }
-        
+
         BufferedImage image = null;
         try {
             image = ImageIO.read(file);
@@ -63,21 +62,23 @@ public class Account implements Serializable {
         BufferedImage main = image.getSubimage(8, 8, 8, 8);
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
         BufferedImage head = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
-        
+
         Graphics g = head.getGraphics();
         g.drawImage(main, 0, 0, null);
         g.drawImage(helmet, 0, 0, null);
-        
+
         ImageIcon icon = new ImageIcon(head.getScaledInstance(32, 32, Image.SCALE_SMOOTH));
-        
+
         return icon;
     }
 
     public ImageIcon getMinecraftSkin() {
-        if(this.username.isEmpty()){
-            return null;
+        File file;
+        if (this.username.isEmpty()) {
+            file = new File(LauncherFrame.settings.getSkinsDir(), "default.png");
+        } else {
+            file = new File(LauncherFrame.settings.getSkinsDir(), minecraftUsername + ".png");
         }
-        File file = new File(LauncherFrame.settings.getSkinsDir(), minecraftUsername + ".png");
         if (!file.exists()) {
             new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png",
                     file.getAbsolutePath()).runNoReturn();
@@ -89,15 +90,15 @@ public class Account implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-//        Head - 8,8,8,8 > 4,0
-//        Hat (Overlay) - 40,8,8,8 > 4,0
-//        Arm - 44,20,4,12 > 0,8 > 12,8
-//        Body - 20,20,8,12 > 4,8
-//        Legs - 4,20,4,12 > 4,20 > 8,20
-//
-//        Total Size - 16,32
-        
+
+        // Head - 8,8,8,8 > 4,0
+        // Hat (Overlay) - 40,8,8,8 > 4,0
+        // Arm - 44,20,4,12 > 0,8 > 12,8
+        // Body - 20,20,8,12 > 4,8
+        // Legs - 4,20,4,12 > 4,20 > 8,20
+        //
+        // Total Size - 16,32
+
         BufferedImage head = image.getSubimage(8, 8, 8, 8);
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
         BufferedImage arm = image.getSubimage(44, 20, 4, 12);
@@ -118,11 +119,28 @@ public class Account implements Serializable {
 
         return icon;
     }
+    
+    public String getUsername() {
+        return this.username;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+        this.minecraftUsername = username;
+    }
+    
+    public String getPassword() {
+        return this.password;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getMinecraftUsername() {
         return this.minecraftUsername;
     }
-    
+
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
         s.defaultReadObject(); // Read the object in
         if (encryptedPassword.isEmpty()) {
@@ -132,7 +150,7 @@ public class Account implements Serializable {
             password = Utils.decrypt(encryptedPassword); // Encrypted password found so decrypt it
         }
     }
-    
+
     public String toString() {
         return this.minecraftUsername;
     }

@@ -11,13 +11,11 @@
 package com.atlauncher.data;
 
 import java.awt.Window;
-import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -28,7 +26,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -50,6 +47,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.gui.AccountPanel;
+import com.atlauncher.gui.BottomBar;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.Utils;
@@ -99,6 +98,7 @@ public class Settings {
     private ArrayList<Language> languages = new ArrayList<Language>(); // Languages for the Launcher
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private InstancesPanel instancesPanel; // The instances panel
+    private BottomBar bottomBar; // The bottom bar
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private Server bestConnectedServer; // The best connected server for Auto selection
     private boolean offlineMode = false; // If offline mode is enabled
@@ -147,6 +147,9 @@ public class Settings {
                     } else if (type.equalsIgnoreCase("Images")) {
                         file = new File(imagesDir, name);
                         name = "images/" + name;
+                    } else if (type.equalsIgnoreCase("Skins")) {
+                        file = new File(skinsDir, name);
+                        name = "skins/" + name;
                     }
                     boolean download = false; // If we have to download the file or not
                     if (!file.exists()) {
@@ -675,6 +678,7 @@ public class Settings {
                 e.printStackTrace();
             }
         }
+        reloadAccounts();
     }
 
     /**
@@ -897,6 +901,23 @@ public class Settings {
      */
     public void reloadInstancesPanel() {
         this.instancesPanel.reload(); // Reload the instances panel
+    }
+
+    /**
+     * Sets the bottom bar
+     * 
+     * @param bottomBar
+     *            The Bottom Bar
+     */
+    public void setBottomBar(BottomBar bottomBar) {
+        this.bottomBar = bottomBar;
+    }
+
+    /**
+     * Reloads the bottom bar accounts combobox
+     */
+    public void reloadAccounts() {
+        this.bottomBar.reloadAccounts(); // Reload the Bottom Bar accounts combobox
     }
 
     /**

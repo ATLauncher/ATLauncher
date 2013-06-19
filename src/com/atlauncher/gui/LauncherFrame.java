@@ -122,6 +122,7 @@ public class LauncherFrame extends JFrame {
      */
     private void setupBottomBar() {
         bottomBar = new BottomBar();
+        settings.setBottomBar(bottomBar);
     }
 
     /**

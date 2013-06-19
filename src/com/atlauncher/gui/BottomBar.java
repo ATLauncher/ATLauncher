@@ -32,6 +32,8 @@ public class BottomBar extends JPanel {
     private JPanel leftSide;
     private JPanel middle;
     private JPanel rightSide;
+    
+    private Account fillerAccount;
 
     private JButton toggleConsole;
     private JComboBox<Account> username;
@@ -129,7 +131,8 @@ public class BottomBar extends JPanel {
 
         username = new JComboBox<Account>();
         username.setRenderer(new AccountsDropDownRenderer());
-        username.addItem(new Account("", "", "Select A Username", false));
+        fillerAccount = new Account("", "", "Select A Username", false);
+        username.addItem(fillerAccount);
         for (Account account : LauncherFrame.settings.getAccounts()) {
             username.addItem(account);
         }
@@ -156,5 +159,13 @@ public class BottomBar extends JPanel {
      */
     public void hideConsole() {
         toggleConsole.setText("Show Console");
+    }
+    
+    public void reloadAccounts() {
+        username.removeAllItems();
+        username.addItem(fillerAccount);
+        for (Account account : LauncherFrame.settings.getAccounts()) {
+            username.addItem(account);
+        }
     }
 }
