@@ -2,66 +2,59 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-Version 3.0.0dev1
- - Initial Build
+Version 3.0.0a3
+ - Added in version number in the Launcher Window and Console Window Titles
 
 -->
 
 <project name="ATLauncher 3.0" basedir=".">
-    <taskdef resource="proguard/ant/task.properties"
-             classpath="C:/Users/Ryan/IdeaProjects/proguard/lib/proguard.jar"/>
-    <taskdef resource="net/sf/antcontrib/antlib.xml"
-             classpath="C:/ant/lib/ant-contrib-1.0b3.jar"/>
+	<taskdef resource="proguard/ant/task.properties" classpath="C:/Users/Ryan/IdeaProjects/proguard/lib/proguard.jar" />
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="C:/ant/lib/ant-contrib-1.0b3.jar" />
 
-    <property name="src.dir" value="src"/>
-    <property name="build.dir" value="build"/>
-    <property name="release.dir" value="${build.dir}/release"/>
-    <property name="buildsrc.dir" value="${build.dir}/src"/>
-    <property name="bin.dir" value="${build.dir}/compiled"/>
-    <property name="atlauncher.version" value="3.0.0dev1"/>
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="release.dir" value="${build.dir}/release" />
+	<property name="buildsrc.dir" value="${build.dir}/src" />
+	<property name="bin.dir" value="${build.dir}/compiled" />
+	<property name="atlauncher.version" value="3.0.0a3" />
 
-    <mkdir dir="${build.dir}"/>
-    <mkdir dir="${release.dir}"/>
+	<mkdir dir="${build.dir}" />
+	<mkdir dir="${release.dir}" />
 
-    <delete dir="${buildsrc.dir}"/>
-    <delete dir="${bin.dir}"/>
+	<delete dir="${buildsrc.dir}" />
+	<delete dir="${bin.dir}" />
 
-    <mkdir dir="${buildsrc.dir}"/>
-    <mkdir dir="${bin.dir}"/>
+	<mkdir dir="${buildsrc.dir}" />
+	<mkdir dir="${bin.dir}" />
 
-    <copy todir="${buildsrc.dir}">
-        <fileset dir="${src.dir}"/>
-    </copy>
-
-    <!--<replace file="${buildsrc.dir}/com/atlauncher/Version.java"
-              token="%VERSION%" value="${atlauncher.version}"/>-->
-
-    <javac srcdir="${buildsrc.dir}" destdir="${bin.dir}" target="1.6"
-           source="1.6" includeantruntime="false"/>
-
-	<copy todir="${bin.dir}/resources">  
-	        <fileset dir="${buildsrc.dir}/resources" includes="**"/>  
+	<copy todir="${buildsrc.dir}">
+		<fileset dir="${src.dir}" />
 	</copy>
 
-    <!-- <copy todir="${bin.dir}/com/atlauncher"
-           file="${buildsrc.dir}/com/atlauncher/minecraft.key"/>-->
+	<replace file="${buildsrc.dir}/com/atlauncher/gui/LauncherConsole.java" token="%VERSION%" value="${atlauncher.version}" />
+	<replace file="${buildsrc.dir}/com/atlauncher/gui/LauncherFrame.java" token="%VERSION%" value="${atlauncher.version}" />
 
-    <jar destfile="${release.dir}/ATLauncher.jar"
-         filesetmanifest="mergewithoutmain">
-        <manifest>
-            <attribute name="Main-Class" value="com.atlauncher.App"/>
-            <attribute name="Class-Path" value="."/>
-        </manifest>
-        <fileset dir="${bin.dir}"/>
-    </jar>
+	<javac srcdir="${buildsrc.dir}" destdir="${bin.dir}" target="1.6" source="1.6" includeantruntime="false" />
 
-    <proguard configuration="ProGuard.conf"/>
+	<copy todir="${bin.dir}/resources">
+		<fileset dir="${buildsrc.dir}/resources" includes="**" />
+	</copy>
 
-    <exec executable="cmd">
-        <arg value="/c"/>
-        <arg value="..\launch4j\launch4jc.exe"/>
-        <arg value="launch4j.xml"/>
-    </exec>
+	<jar destfile="C:/Users/Ryan/Desktop/ATLauncher.jar" filesetmanifest="mergewithoutmain">
+		<manifest>
+			<attribute name="Main-Class" value="com.atlauncher.App" />
+			<attribute name="Class-Path" value="." />
+		</manifest>
+		<fileset dir="${bin.dir}" />
+	</jar>
 
-    <delete dir="${build.dir}"/>
+	<!-- <proguard configuration="ProGuard.conf"/> -->
+
+	<exec executable="cmd">
+		<arg value="/c" />
+		<arg value="..\launch4j\launch4jc.exe" />
+		<arg value="launch4j.xml" />
+	</exec>
+
+	<delete dir="${build.dir}" />
 </project>

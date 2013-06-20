@@ -1,2 +1,706 @@
-Main -> Main:
+com.atlauncher.App -> com.atlauncher.App:
     void main(java.lang.String[]) -> main
+com.atlauncher.data.Account -> com.atlauncher.data.Account:
+    java.lang.String username -> a
+    java.lang.String password -> b
+    java.lang.String minecraftUsername -> c
+    boolean remember -> d
+    boolean isReal -> e
+    javax.swing.ImageIcon getMinecraftHead() -> a
+    javax.swing.ImageIcon getMinecraftSkin() -> b
+    java.lang.String getUsername() -> c
+    void setUsername(java.lang.String) -> a
+    void setMinecraftUsername(java.lang.String) -> b
+    java.lang.String getPassword() -> d
+    void setPassword(java.lang.String) -> c
+    boolean isRemembered() -> e
+    void setRemember(boolean) -> a
+    java.lang.String getMinecraftUsername() -> f
+    java.lang.String toString() -> toString
+com.atlauncher.data.Addon -> com.atlauncher.data.a:
+    java.lang.String name -> a
+    java.lang.String description -> b
+    java.lang.String getName() -> a
+    java.lang.String getDescription() -> b
+com.atlauncher.data.Base64 -> com.atlauncher.data.b:
+    byte[] _STANDARD_ALPHABET -> a
+    byte[] _STANDARD_DECODABET -> b
+    byte[] _URL_SAFE_ALPHABET -> c
+    byte[] _URL_SAFE_DECODABET -> d
+    byte[] _ORDERED_ALPHABET -> e
+    byte[] _ORDERED_DECODABET -> f
+    boolean $assertionsDisabled -> g
+    byte[] getDecodabet(int) -> b
+    byte[] encode3to4(byte[],int,int,byte[],int,int) -> a
+    java.lang.String encodeBytes(byte[]) -> a
+    java.lang.String encodeBytes(byte[],int,int,int) -> a
+    byte[] encodeBytesToBytes(byte[],int,int,int) -> b
+    byte[] access$000(int) -> a
+    int access$200(byte[],int,byte[],int,int) -> a
+    byte[] access$300(byte[],byte[],int,int) -> a
+com.atlauncher.data.Base64$OutputStream -> com.atlauncher.data.c:
+    boolean encode -> a
+    int position -> b
+    byte[] buffer -> c
+    int bufferLength -> d
+    int lineLength -> e
+    boolean breakLines -> f
+    byte[] b4 -> g
+    boolean suspendEncoding -> h
+    int options -> i
+    byte[] decodabet -> j
+    void write(int) -> write
+    void write(byte[],int,int) -> write
+    void close() -> close
+com.atlauncher.data.DecompType -> com.atlauncher.data.d:
+    com.atlauncher.data.DecompType jar -> a
+    com.atlauncher.data.DecompType mods -> b
+    com.atlauncher.data.DecompType coremods -> c
+    com.atlauncher.data.DecompType root -> d
+    com.atlauncher.data.DecompType[] $VALUES -> e
+    com.atlauncher.data.DecompType[] values() -> values
+    com.atlauncher.data.DecompType valueOf(java.lang.String) -> valueOf
+com.atlauncher.data.Downloader -> com.atlauncher.data.e:
+    java.lang.String destination -> a
+    com.atlauncher.workers.DownloadWorker worker -> b
+    java.lang.String response -> c
+    com.atlauncher.workers.PackInstaller installer -> d
+    java.lang.String run() -> a
+    void runNoReturn() -> b
+    java.lang.String access$002(com.atlauncher.data.Downloader,java.lang.String) -> a
+    com.atlauncher.workers.PackInstaller access$100(com.atlauncher.data.Downloader) -> a
+com.atlauncher.data.Downloader$1 -> com.atlauncher.data.f:
+    com.atlauncher.data.Downloader this$0 -> a
+    void propertyChange(java.beans.PropertyChangeEvent) -> propertyChange
+com.atlauncher.data.Downloader$2 -> com.atlauncher.data.g:
+    com.atlauncher.data.Downloader this$0 -> a
+    void propertyChange(java.beans.PropertyChangeEvent) -> propertyChange
+com.atlauncher.data.ExtractTo -> com.atlauncher.data.h:
+    com.atlauncher.data.ExtractTo root -> a
+    com.atlauncher.data.ExtractTo mods -> b
+    com.atlauncher.data.ExtractTo coremods -> c
+    com.atlauncher.data.ExtractTo[] $VALUES -> d
+    com.atlauncher.data.ExtractTo[] values() -> values
+    com.atlauncher.data.ExtractTo valueOf(java.lang.String) -> valueOf
+com.atlauncher.data.Instance -> com.atlauncher.data.i:
+    java.lang.String name -> a
+    java.lang.String pack -> b
+    java.lang.String version -> c
+    java.lang.String jarOrder -> d
+    java.lang.String getName() -> a
+    java.lang.String getPackName() -> b
+    java.lang.String getJarOrder() -> c
+    javax.swing.ImageIcon getImage() -> d
+    java.lang.String getPackDescription() -> e
+    java.lang.String getVersion() -> f
+    java.io.File getRootDirectory() -> g
+    java.io.File getMinecraftDirectory() -> h
+    java.io.File getJarModsDirectory() -> i
+    java.io.File getBinDirectory() -> j
+com.atlauncher.data.Language -> com.atlauncher.data.j:
+    java.lang.String name -> a
+    java.lang.String localizedName -> b
+    java.lang.String getName() -> a
+    java.lang.String toString() -> toString
+com.atlauncher.data.Mod -> com.atlauncher.data.k:
+    java.lang.String name -> a
+    java.lang.String url -> b
+    java.lang.String file -> c
+    java.lang.String md5 -> d
+    com.atlauncher.data.Type type -> e
+    com.atlauncher.data.ExtractTo extractTo -> f
+    java.lang.String decompFile -> g
+    com.atlauncher.data.DecompType decompType -> h
+    boolean optional -> i
+    boolean directDownload -> j
+    java.lang.String linked -> k
+    java.lang.String description -> l
+    java.lang.String getName() -> a
+    java.lang.String getSafeName() -> e
+    boolean compareMD5(java.lang.String) -> a
+    boolean hasMD5() -> f
+    boolean isOptional() -> b
+    java.lang.String getLinked() -> c
+    java.lang.String getDescription() -> d
+    void download(com.atlauncher.workers.PackInstaller) -> a
+    void install(com.atlauncher.workers.PackInstaller) -> b
+com.atlauncher.data.Mod$1 -> com.atlauncher.data.l:
+    int[] $SwitchMap$com$atlauncher$data$ExtractTo -> a
+    int[] $SwitchMap$com$atlauncher$data$DecompType -> b
+    int[] $SwitchMap$com$atlauncher$data$Type -> c
+com.atlauncher.data.Pack -> com.atlauncher.data.m:
+    java.lang.String name -> a
+    java.lang.String[] versions -> b
+    java.lang.String[] minecraftVersions -> c
+    java.lang.String description -> d
+    java.lang.String getName() -> a
+    javax.swing.ImageIcon getImage() -> b
+    java.lang.String getSafeName() -> c
+    java.lang.String getDescription() -> d
+    int getVersionCount() -> e
+    java.lang.String getVersion(int) -> a
+    java.lang.String getMinecraftVersion(int) -> b
+    java.util.ArrayList getMods(java.lang.String) -> a
+com.atlauncher.data.Server -> com.atlauncher.data.n:
+    java.lang.String name -> a
+    java.lang.String baseURL -> b
+    boolean disabled -> c
+    boolean isAuto -> d
+    void disableServer() -> a
+    boolean isAuto() -> b
+    java.lang.String getName() -> c
+    java.lang.String getFileURL(java.lang.String) -> a
+    java.lang.String getFileURL(java.lang.String,com.atlauncher.data.Server) -> a
+    java.lang.String getTestURL() -> d
+    java.lang.String toString() -> toString
+com.atlauncher.data.Settings -> com.atlauncher.data.o:
+    com.atlauncher.data.Language language -> a
+    com.atlauncher.data.Server server -> b
+    int ram -> c
+    int windowWidth -> d
+    int windowHeight -> e
+    java.lang.String javaParamaters -> f
+    boolean enableConsole -> g
+    boolean enableLeaderboards -> h
+    boolean enableLogs -> i
+    com.atlauncher.data.Account account -> j
+    java.util.ArrayList packs -> k
+    java.util.ArrayList instances -> l
+    java.util.ArrayList addons -> m
+    java.util.ArrayList accounts -> n
+    java.io.File baseDir -> o
+    java.io.File backupsDir -> p
+    java.io.File configsDir -> q
+    java.io.File imagesDir -> r
+    java.io.File skinsDir -> s
+    java.io.File jarsDir -> t
+    java.io.File downloadsDir -> u
+    java.io.File instancesDir -> v
+    java.io.File tempDir -> w
+    java.io.File instancesFile -> x
+    java.io.File userDataFile -> y
+    java.io.File propertiesFile -> z
+    javax.swing.JFrame parent -> A
+    java.util.Properties properties -> B
+    com.atlauncher.gui.LauncherConsole console -> C
+    java.util.ArrayList languages -> D
+    java.util.ArrayList servers -> E
+    com.atlauncher.gui.InstancesPanel instancesPanel -> F
+    com.atlauncher.gui.BottomBar bottomBar -> G
+    boolean firstTimeRun -> H
+    com.atlauncher.data.Server bestConnectedServer -> I
+    boolean offlineMode -> J
+    void loadEverything() -> a
+    void checkForUpdatedFiles() -> F
+    void checkFolders() -> G
+    java.io.File getConfigsDir() -> b
+    java.io.File getImagesDir() -> c
+    java.io.File getSkinsDir() -> d
+    java.io.File getJarsDir() -> e
+    java.io.File getDownloadsDir() -> f
+    java.io.File getInstancesDir() -> g
+    java.io.File getTempDir() -> h
+    void setParentFrame(javax.swing.JFrame) -> a
+    void saveProperties() -> i
+    void switchAccount(com.atlauncher.data.Account) -> a
+    void loadLanguages() -> H
+    void loadPacks() -> I
+    void loadAddons() -> J
+    void loadInstances() -> K
+    void loadAccounts() -> L
+    void saveAccounts() -> j
+    java.lang.String getMinecraftHash(java.lang.String,java.lang.String,java.lang.String) -> a
+    boolean isFirstTimeRun() -> k
+    java.util.ArrayList getPacks() -> l
+    java.util.ArrayList getInstances() -> m
+    void addInstance(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
+    void removeInstance(com.atlauncher.data.Instance) -> a
+    java.util.ArrayList getAddons() -> n
+    java.util.ArrayList getAccounts() -> o
+    java.util.ArrayList getLanguages() -> p
+    java.util.ArrayList getServers() -> q
+    java.awt.Window getParent() -> r
+    void setInstancesPanel(com.atlauncher.gui.InstancesPanel) -> a
+    void reloadInstancesPanel() -> s
+    void setBottomBar(com.atlauncher.gui.BottomBar) -> a
+    boolean isInstance(java.lang.String) -> a
+    com.atlauncher.data.Pack getPackByID(int) -> d
+    com.atlauncher.data.Pack getPackByName(java.lang.String) -> b
+    com.atlauncher.data.Language getLanguageByName(java.lang.String) -> f
+    com.atlauncher.data.Server getServerByName(java.lang.String) -> g
+    com.atlauncher.data.Account getAccountByName(java.lang.String) -> h
+    boolean isLanguageByName(java.lang.String) -> i
+    boolean isServerByName(java.lang.String) -> j
+    boolean isAccountByName(java.lang.String) -> c
+    java.lang.String getFileURL(java.lang.String) -> d
+    com.atlauncher.gui.LauncherConsole getConsole() -> t
+    com.atlauncher.data.Server getBestConnectedServer() -> u
+    com.atlauncher.data.Language getLanguage() -> v
+    void setLanguage(com.atlauncher.data.Language) -> a
+    com.atlauncher.data.Server getServer() -> w
+    void setServer(com.atlauncher.data.Server) -> a
+    int getMemory() -> x
+    void setMemory(int) -> a
+    int getWindowWidth() -> y
+    void setWindowWidth(int) -> b
+    int getWindowHeight() -> z
+    void setWindowHeight(int) -> c
+    java.lang.String getJavaParameters() -> A
+    void setJavaParameters(java.lang.String) -> e
+    com.atlauncher.data.Account getAccount() -> B
+    boolean enableConsole() -> C
+    void setEnableConsole(boolean) -> a
+    boolean enableLeaderboards() -> D
+    void setEnableLeaderboards(boolean) -> b
+    boolean enableLogs() -> E
+    void setEnableLogs(boolean) -> c
+com.atlauncher.data.Type -> com.atlauncher.data.p:
+    com.atlauncher.data.Type jar -> a
+    com.atlauncher.data.Type mods -> b
+    com.atlauncher.data.Type coremods -> c
+    com.atlauncher.data.Type extract -> d
+    com.atlauncher.data.Type decomp -> e
+    com.atlauncher.data.Type millenaire -> f
+    com.atlauncher.data.Type[] $VALUES -> g
+    com.atlauncher.data.Type[] values() -> values
+    com.atlauncher.data.Type valueOf(java.lang.String) -> valueOf
+com.atlauncher.exceptions.InvalidPack -> com.atlauncher.exceptions.a:
+com.atlauncher.gui.AccountPanel -> com.atlauncher.gui.a:
+    javax.swing.JLabel userSkin -> a
+    javax.swing.JPanel rightPanel -> b
+    javax.swing.JPanel topPanel -> c
+    javax.swing.JComboBox accountsComboBox -> d
+    javax.swing.JLabel usernameLabel -> e
+    javax.swing.JTextField usernameField -> f
+    javax.swing.JLabel passwordLabel -> g
+    javax.swing.JPasswordField passwordField -> h
+    javax.swing.JLabel rememberLabel -> i
+    javax.swing.JCheckBox rememberField -> j
+    javax.swing.JPanel buttons -> k
+    javax.swing.JButton leftButton -> l
+    javax.swing.JButton rightButton -> m
+    javax.swing.JPanel bottomPanel -> n
+    com.atlauncher.data.Account fillerAccount -> o
+    java.awt.Insets TOP_INSETS -> p
+    java.awt.Insets BOTTOM_INSETS -> q
+    java.awt.Insets LABEL_INSETS -> r
+    java.awt.Insets FIELD_INSETS -> s
+    javax.swing.JComboBox access$000(com.atlauncher.gui.AccountPanel) -> a
+    javax.swing.JTextField access$100(com.atlauncher.gui.AccountPanel) -> b
+    javax.swing.JPasswordField access$200(com.atlauncher.gui.AccountPanel) -> c
+    javax.swing.JCheckBox access$300(com.atlauncher.gui.AccountPanel) -> d
+    javax.swing.JButton access$400(com.atlauncher.gui.AccountPanel) -> e
+    javax.swing.JButton access$500(com.atlauncher.gui.AccountPanel) -> f
+    javax.swing.JLabel access$600(com.atlauncher.gui.AccountPanel) -> g
+    com.atlauncher.data.Account access$700(com.atlauncher.gui.AccountPanel) -> h
+com.atlauncher.gui.AccountPanel$1 -> com.atlauncher.gui.b:
+    com.atlauncher.gui.AccountPanel this$0 -> a
+    void itemStateChanged(java.awt.event.ItemEvent) -> itemStateChanged
+com.atlauncher.gui.AccountPanel$2 -> com.atlauncher.gui.c:
+    com.atlauncher.gui.AccountPanel this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.AccountPanel$3 -> com.atlauncher.gui.d:
+    com.atlauncher.gui.AccountPanel this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.AccountsDropDownRenderer -> com.atlauncher.gui.e:
+    java.awt.Component getListCellRendererComponent(javax.swing.JList,java.lang.Object,int,boolean,boolean) -> getListCellRendererComponent
+com.atlauncher.gui.AddonDisplay -> com.atlauncher.gui.f:
+    javax.swing.JPanel leftPanel -> a
+    javax.swing.JPanel rightPanel -> b
+    javax.swing.JSplitPane splitPane -> c
+    javax.swing.JLabel addonImage -> d
+    javax.swing.JTextArea addonDescription -> e
+    javax.swing.JPanel addonActions -> f
+    javax.swing.JButton install -> g
+com.atlauncher.gui.AddonsPanel -> com.atlauncher.gui.g:
+    javax.swing.JPanel panel -> a
+    javax.swing.JScrollPane scrollPane -> b
+com.atlauncher.gui.BottomBar -> com.atlauncher.gui.h:
+    javax.swing.JPanel leftSide -> a
+    javax.swing.JPanel middle -> b
+    javax.swing.JPanel rightSide -> c
+    com.atlauncher.data.Account fillerAccount -> d
+    boolean dontSave -> e
+    javax.swing.JButton toggleConsole -> f
+    javax.swing.JComboBox username -> g
+    javax.swing.JButton facebookIcon -> h
+    javax.swing.JButton twitterIcon -> i
+    javax.swing.JButton redditIcon -> j
+    void createButtons() -> c
+    void hideConsole() -> a
+    void reloadAccounts() -> b
+    javax.swing.JButton access$000(com.atlauncher.gui.BottomBar) -> a
+    boolean access$100(com.atlauncher.gui.BottomBar) -> b
+    javax.swing.JComboBox access$200(com.atlauncher.gui.BottomBar) -> c
+com.atlauncher.gui.BottomBar$1 -> com.atlauncher.gui.i:
+    com.atlauncher.gui.BottomBar this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.BottomBar$2 -> com.atlauncher.gui.j:
+    com.atlauncher.gui.BottomBar this$0 -> a
+    void itemStateChanged(java.awt.event.ItemEvent) -> itemStateChanged
+com.atlauncher.gui.BottomBar$3 -> com.atlauncher.gui.k:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.BottomBar$4 -> com.atlauncher.gui.l:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.BottomBar$5 -> com.atlauncher.gui.m:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.ConsoleBottomBar -> com.atlauncher.gui.n:
+    javax.swing.JPanel leftSide -> a
+    javax.swing.JPanel rightSide -> b
+    javax.swing.JButton copyLog -> c
+    javax.swing.JButton uploadLog -> d
+    javax.swing.JButton facebookIcon -> e
+    javax.swing.JButton twitterIcon -> f
+    javax.swing.JButton redditIcon -> g
+com.atlauncher.gui.ConsoleBottomBar$1 -> com.atlauncher.gui.o:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.ConsoleBottomBar$2 -> com.atlauncher.gui.p:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.ConsoleBottomBar$3 -> com.atlauncher.gui.q:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.ConsoleBottomBar$4 -> com.atlauncher.gui.r:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.ConsoleBottomBar$5 -> com.atlauncher.gui.s:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.InstanceDisplay -> com.atlauncher.gui.t:
+    javax.swing.JPanel leftPanel -> a
+    javax.swing.JPanel rightPanel -> b
+    javax.swing.JSplitPane splitPane -> c
+    javax.swing.JLabel instanceImage -> d
+    javax.swing.JTextArea instanceDescription -> e
+    javax.swing.JPanel instanceActions -> f
+    javax.swing.JButton play -> g
+    javax.swing.JButton backup -> h
+    javax.swing.JButton delete -> i
+com.atlauncher.gui.InstanceDisplay$1 -> com.atlauncher.gui.u:
+    com.atlauncher.data.Instance val$instance -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.InstanceDisplay$1$1 -> com.atlauncher.gui.v:
+    com.atlauncher.data.Account val$account -> a
+    java.lang.String val$session -> b
+    com.atlauncher.gui.InstanceDisplay$1 this$1 -> c
+    void run() -> run
+com.atlauncher.gui.InstanceDisplay$2 -> com.atlauncher.gui.w:
+    com.atlauncher.data.Instance val$instance -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.InstancesPanel -> com.atlauncher.gui.x:
+    javax.swing.JPanel panel -> a
+    javax.swing.JScrollPane scrollPane -> b
+    void loadContent() -> b
+    void reload() -> a
+com.atlauncher.gui.LauncherConsole -> com.atlauncher.gui.y:
+    java.awt.Dimension WINDOW_SIZE -> a
+    java.awt.Dimension MINIMUM_SIZE -> b
+    java.awt.BorderLayout LAYOUT_MANAGER -> c
+    java.awt.Color BASE_COLOR -> d
+    javax.swing.JEditorPane console -> e
+    com.atlauncher.gui.ConsoleBottomBar bottomBar -> f
+    javax.swing.JPopupMenu contextMenu -> g
+    void setupLookAndFeel() -> b
+    void log(java.lang.String) -> a
+    void logMinecraft(java.lang.String) -> b
+    java.lang.String getLog() -> a
+    javax.swing.JEditorPane access$000(com.atlauncher.gui.LauncherConsole) -> a
+    javax.swing.JPopupMenu access$100(com.atlauncher.gui.LauncherConsole) -> b
+com.atlauncher.gui.LauncherConsole$1 -> com.atlauncher.gui.z:
+    boolean getScrollableTracksViewportWidth() -> getScrollableTracksViewportWidth
+com.atlauncher.gui.LauncherConsole$2 -> com.atlauncher.gui.A:
+    com.atlauncher.gui.LauncherConsole this$0 -> a
+    void componentResized(java.awt.event.ComponentEvent) -> componentResized
+com.atlauncher.gui.LauncherConsole$3 -> com.atlauncher.gui.B:
+    com.atlauncher.gui.LauncherConsole this$0 -> a
+    void windowClosing(java.awt.event.WindowEvent) -> windowClosing
+com.atlauncher.gui.LauncherConsole$4 -> com.atlauncher.gui.C:
+    com.atlauncher.gui.LauncherConsole this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.LauncherConsole$5 -> com.atlauncher.gui.D:
+    com.atlauncher.gui.LauncherConsole this$0 -> a
+    void mousePressed(java.awt.event.MouseEvent) -> mousePressed
+com.atlauncher.gui.LauncherFrame -> com.atlauncher.gui.E:
+    java.awt.BorderLayout LAYOUT_MANAGER -> b
+    java.awt.Color BASE_COLOR -> c
+    javax.swing.JTabbedPane tabbedPane -> d
+    com.atlauncher.gui.NewsPanel newsPanel -> e
+    com.atlauncher.gui.PacksPanel packsPanel -> f
+    com.atlauncher.gui.AddonsPanel addonsPanel -> g
+    com.atlauncher.gui.InstancesPanel instancesPanel -> h
+    com.atlauncher.gui.AccountPanel accountPanel -> i
+    com.atlauncher.gui.SettingsPanel settingsPanel -> j
+    com.atlauncher.gui.BottomBar bottomBar -> k
+    com.atlauncher.data.Settings settings -> a
+    void setupLookAndFeel() -> a
+    com.atlauncher.gui.BottomBar access$000(com.atlauncher.gui.LauncherFrame) -> a
+com.atlauncher.gui.LauncherFrame$1 -> com.atlauncher.gui.F:
+    com.atlauncher.gui.LauncherFrame this$0 -> a
+    void windowClosing(java.awt.event.WindowEvent) -> windowClosing
+com.atlauncher.gui.LauncherFrame$2 -> com.atlauncher.gui.G:
+    com.atlauncher.gui.LauncherFrame this$0 -> a
+    void componentHidden(java.awt.event.ComponentEvent) -> componentHidden
+com.atlauncher.gui.ModDescriptionJLabel -> com.atlauncher.gui.H:
+    java.lang.String description -> a
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+    void mousePressed(java.awt.event.MouseEvent) -> mousePressed
+    void mouseReleased(java.awt.event.MouseEvent) -> mouseReleased
+    void mouseEntered(java.awt.event.MouseEvent) -> mouseEntered
+    void mouseExited(java.awt.event.MouseEvent) -> mouseExited
+com.atlauncher.gui.ModsChooser -> com.atlauncher.gui.I:
+    com.atlauncher.workers.PackInstaller installer -> a
+    javax.swing.JButton selectAllButton -> b
+    javax.swing.JButton clearAllButton -> c
+    java.util.ArrayList modCheckboxes -> d
+    java.util.ArrayList modLabels -> e
+    java.util.ArrayList getSelectedMods() -> a
+    java.util.ArrayList access$000(com.atlauncher.gui.ModsChooser) -> a
+    java.util.ArrayList access$100(com.atlauncher.gui.ModsChooser,com.atlauncher.data.Mod) -> a
+com.atlauncher.gui.ModsChooser$1 -> com.atlauncher.gui.J:
+    com.atlauncher.gui.ModsChooser this$0 -> a
+    void windowClosing(java.awt.event.WindowEvent) -> windowClosing
+com.atlauncher.gui.ModsChooser$2 -> com.atlauncher.gui.K:
+    com.atlauncher.gui.ModsChooser this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.ModsChooser$3 -> com.atlauncher.gui.L:
+    com.atlauncher.gui.ModsChooser this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.ModsChooser$4 -> com.atlauncher.gui.M:
+    com.atlauncher.gui.ModsChooser this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.ModsChooser$5 -> com.atlauncher.gui.N:
+    com.atlauncher.gui.ModsChooser this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.ModsJCheckBox -> com.atlauncher.gui.O:
+    com.atlauncher.data.Mod mod -> a
+    com.atlauncher.data.Mod getMod() -> a
+com.atlauncher.gui.NewInstanceDialog -> com.atlauncher.gui.P:
+    javax.swing.JPanel top -> a
+    javax.swing.JPanel middle -> b
+    javax.swing.JPanel bottom -> c
+    javax.swing.JButton install -> d
+    javax.swing.JButton cancel -> e
+    javax.swing.JProgressBar progressBar -> f
+    javax.swing.JProgressBar subProgressBar -> g
+    javax.swing.JLabel instanceNameLabel -> h
+    javax.swing.JTextField instanceNameField -> i
+    javax.swing.JLabel versionLabel -> j
+    javax.swing.JComboBox versionsDropDown -> k
+    javax.swing.JTextField access$000(com.atlauncher.gui.NewInstanceDialog) -> a
+    javax.swing.JComboBox access$100(com.atlauncher.gui.NewInstanceDialog) -> b
+    javax.swing.JProgressBar access$202(com.atlauncher.gui.NewInstanceDialog,javax.swing.JProgressBar) -> a
+    javax.swing.JProgressBar access$200(com.atlauncher.gui.NewInstanceDialog) -> c
+    javax.swing.JProgressBar access$302(com.atlauncher.gui.NewInstanceDialog,javax.swing.JProgressBar) -> b
+    javax.swing.JProgressBar access$300(com.atlauncher.gui.NewInstanceDialog) -> d
+com.atlauncher.gui.NewInstanceDialog$1 -> com.atlauncher.gui.Q:
+    com.atlauncher.data.Pack val$pack -> a
+    com.atlauncher.gui.NewInstanceDialog this$0 -> b
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.NewInstanceDialog$1$1 -> com.atlauncher.gui.R:
+    java.lang.String val$version -> a
+    java.lang.String val$minecraftVersion -> b
+    javax.swing.JDialog val$dialog -> c
+    com.atlauncher.gui.NewInstanceDialog$1 this$1 -> d
+    void done() -> done
+com.atlauncher.gui.NewInstanceDialog$1$2 -> com.atlauncher.gui.S:
+    javax.swing.JLabel val$doing -> a
+    com.atlauncher.gui.NewInstanceDialog$1 this$1 -> b
+    void propertyChange(java.beans.PropertyChangeEvent) -> propertyChange
+com.atlauncher.gui.NewInstanceDialog$1$3 -> com.atlauncher.gui.T:
+    com.atlauncher.workers.PackInstaller val$packInstaller -> a
+    void windowClosing(java.awt.event.WindowEvent) -> windowClosing
+com.atlauncher.gui.NewInstanceDialog$2 -> com.atlauncher.gui.U:
+    com.atlauncher.gui.NewInstanceDialog this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.NewsPanel -> com.atlauncher.gui.V:
+    javax.swing.JEditorPane newsArea -> a
+com.atlauncher.gui.NewsPanel$1 -> com.atlauncher.gui.W:
+    void hyperlinkUpdate(javax.swing.event.HyperlinkEvent) -> hyperlinkUpdate
+com.atlauncher.gui.NothingToDisplay -> com.atlauncher.gui.X:
+    javax.swing.JPanel leftPanel -> a
+    javax.swing.JPanel rightPanel -> b
+    javax.swing.JSplitPane splitPane -> c
+    javax.swing.JLabel errorImage -> d
+    javax.swing.JTextArea errorMessage -> e
+com.atlauncher.gui.PackDisplay -> com.atlauncher.gui.Y:
+    javax.swing.JPanel leftPanel -> a
+    javax.swing.JPanel rightPanel -> b
+    javax.swing.JSplitPane splitPane -> c
+    javax.swing.JLabel packImage -> d
+    javax.swing.JTextArea packDescription -> e
+    javax.swing.JPanel packActions -> f
+    javax.swing.JButton newInstance -> g
+    javax.swing.JButton mods -> h
+com.atlauncher.gui.PackDisplay$1 -> com.atlauncher.gui.Z:
+    com.atlauncher.data.Pack val$pack -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.PacksPanel -> com.atlauncher.gui.aa:
+    javax.swing.JPanel panel -> a
+    javax.swing.JScrollPane scrollPane -> b
+com.atlauncher.gui.SettingsPanel -> com.atlauncher.gui.ab:
+    javax.swing.JPanel topPanel -> a
+    javax.swing.JPanel bottomPanel -> b
+    javax.swing.JButton saveButton -> c
+    javax.swing.ImageIcon helpIcon -> d
+    javax.swing.JLabel languageLabel -> e
+    javax.swing.JComboBox language -> f
+    javax.swing.JLabel downloadServerLabel -> g
+    javax.swing.JComboBox server -> h
+    javax.swing.JLabel memoryLabel -> i
+    javax.swing.JComboBox memory -> j
+    javax.swing.JPanel windowSizePanel -> k
+    javax.swing.JLabel windowSizeLabel -> l
+    javax.swing.JTextField widthField -> m
+    javax.swing.JTextField heightField -> n
+    javax.swing.JLabel javaParametersLabel -> o
+    javax.swing.JTextField javaParameters -> p
+    javax.swing.JLabel enableConsoleLabel -> q
+    javax.swing.JCheckBox enableConsole -> r
+    javax.swing.JLabel enableLeaderboardsLabel -> s
+    javax.swing.JCheckBox enableLeaderboards -> t
+    javax.swing.JLabel enableLoggingLabel -> u
+    javax.swing.JCheckBox enableLogs -> v
+    java.awt.Insets LABEL_INSETS -> w
+    java.awt.Insets FIELD_INSETS -> x
+    java.awt.Insets LABEL_INSETS_SMALL -> y
+    java.awt.Insets FIELD_INSETS_SMALL -> z
+    javax.swing.JComboBox access$000(com.atlauncher.gui.SettingsPanel) -> a
+    javax.swing.JComboBox access$100(com.atlauncher.gui.SettingsPanel) -> b
+    javax.swing.JComboBox access$200(com.atlauncher.gui.SettingsPanel) -> c
+    javax.swing.JTextField access$300(com.atlauncher.gui.SettingsPanel) -> d
+    javax.swing.JTextField access$400(com.atlauncher.gui.SettingsPanel) -> e
+    javax.swing.JTextField access$500(com.atlauncher.gui.SettingsPanel) -> f
+    javax.swing.JCheckBox access$600(com.atlauncher.gui.SettingsPanel) -> g
+    javax.swing.JCheckBox access$700(com.atlauncher.gui.SettingsPanel) -> h
+    javax.swing.JCheckBox access$800(com.atlauncher.gui.SettingsPanel) -> i
+com.atlauncher.gui.SettingsPanel$1 -> com.atlauncher.gui.ac:
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+com.atlauncher.gui.SettingsPanel$2 -> com.atlauncher.gui.ad:
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+com.atlauncher.gui.SettingsPanel$3 -> com.atlauncher.gui.ae:
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+com.atlauncher.gui.SettingsPanel$4 -> com.atlauncher.gui.af:
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+com.atlauncher.gui.SettingsPanel$5 -> com.atlauncher.gui.ag:
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+com.atlauncher.gui.SettingsPanel$6 -> com.atlauncher.gui.ah:
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+com.atlauncher.gui.SettingsPanel$7 -> com.atlauncher.gui.ai:
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+com.atlauncher.gui.SettingsPanel$8 -> com.atlauncher.gui.aj:
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+com.atlauncher.gui.SettingsPanel$9 -> com.atlauncher.gui.ak:
+    com.atlauncher.gui.SettingsPanel this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.SetupDialog -> com.atlauncher.gui.al:
+    javax.swing.JPanel top -> a
+    javax.swing.JPanel middle -> b
+    javax.swing.JPanel bottom -> c
+    javax.swing.JLabel languageLabel -> d
+    javax.swing.JComboBox language -> e
+    javax.swing.JButton saveButton -> f
+    com.atlauncher.data.Settings settings -> g
+    javax.swing.JComboBox access$000(com.atlauncher.gui.SetupDialog) -> a
+    com.atlauncher.data.Settings access$100(com.atlauncher.gui.SetupDialog) -> b
+com.atlauncher.gui.SetupDialog$1 -> com.atlauncher.gui.am:
+    com.atlauncher.gui.SetupDialog this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+com.atlauncher.gui.SetupDialog$2 -> com.atlauncher.gui.an:
+    void windowClosing(java.awt.event.WindowEvent) -> windowClosing
+com.atlauncher.gui.SplashScreen -> com.atlauncher.gui.ao:
+    javax.swing.ImageIcon icon -> a
+    void close() -> a
+com.atlauncher.gui.Utils -> com.atlauncher.gui.Utils:
+    javax.swing.ImageIcon getIconImage(java.lang.String) -> a
+    javax.swing.ImageIcon getIconImage(java.io.File) -> a
+    java.awt.Image getImage(java.lang.String) -> b
+    void openBrowser(java.lang.String) -> c
+    void openBrowser(java.net.URL) -> a
+    com.atlauncher.gui.Utils$OS getOS() -> i
+    boolean isWindows() -> a
+    boolean isMac() -> b
+    boolean is64Bit() -> c
+    java.lang.String[] getMemoryOptions() -> d
+    int getSystemRam() -> j
+    int getMaximumRam() -> e
+    int getMaximumWindowWidth() -> f
+    int getMaximumWindowHeight() -> g
+    java.lang.String uploadPaste(java.lang.String,java.lang.String) -> a
+    java.lang.String getMD5(java.io.File) -> b
+    void copyFile(java.io.File,java.io.File) -> a
+    void copyFile(java.io.File,java.io.File,boolean) -> a
+    void copyDirectory(java.io.File,java.io.File) -> b
+    void unzip(java.io.File,java.io.File) -> c
+    void cleanTempDirectory() -> h
+    void delete(java.io.File) -> c
+    void zip(java.io.File,java.io.File) -> d
+    void copy(java.io.InputStream,java.io.OutputStream) -> a
+    java.lang.String encrypt(java.lang.String) -> d
+    java.lang.String urlToString(java.lang.String) -> e
+com.atlauncher.gui.Utils$OS -> com.atlauncher.gui.ap:
+    com.atlauncher.gui.Utils$OS windows -> a
+    com.atlauncher.gui.Utils$OS mac -> b
+    com.atlauncher.gui.Utils$OS linux -> c
+    com.atlauncher.gui.Utils$OS[] $VALUES -> d
+    com.atlauncher.gui.Utils$OS[] values() -> values
+    com.atlauncher.gui.Utils$OS valueOf(java.lang.String) -> valueOf
+com.atlauncher.mclauncher.MCFrame -> com.atlauncher.mclauncher.MCFrame:
+    net.minecraft.Launcher appletWrap -> a
+    void start(java.applet.Applet,java.lang.String,java.lang.String,java.awt.Dimension,boolean) -> a
+    void windowActivated(java.awt.event.WindowEvent) -> windowActivated
+    void windowClosed(java.awt.event.WindowEvent) -> windowClosed
+    void windowClosing(java.awt.event.WindowEvent) -> windowClosing
+    void windowDeactivated(java.awt.event.WindowEvent) -> windowDeactivated
+    void windowDeiconified(java.awt.event.WindowEvent) -> windowDeiconified
+    void windowIconified(java.awt.event.WindowEvent) -> windowIconified
+    void windowOpened(java.awt.event.WindowEvent) -> windowOpened
+com.atlauncher.mclauncher.MCFrame$1 -> com.atlauncher.mclauncher.MCFrame$1:
+    void run() -> run
+com.atlauncher.mclauncher.MCLauncher -> com.atlauncher.mclauncher.MCLauncher:
+    java.lang.Process launch(com.atlauncher.data.Account,com.atlauncher.data.Instance,java.lang.String) -> a
+    void main(java.lang.String[]) -> main
+    java.lang.reflect.Field getMCPathField(java.lang.Class) -> a
+com.atlauncher.workers.DownloadWorker -> com.atlauncher.workers.a:
+    java.lang.String url -> a
+    java.lang.String destination -> b
+    java.net.URL getRedirect(java.lang.String) -> a
+    java.lang.Object doInBackground() -> doInBackground
+com.atlauncher.workers.PackInstaller -> com.atlauncher.workers.b:
+    java.lang.String instanceName -> a
+    com.atlauncher.data.Pack pack -> b
+    java.lang.String version -> c
+    java.lang.String minecraftVersion -> d
+    java.lang.String jarOrder -> e
+    int percent -> f
+    java.util.ArrayList allMods -> g
+    java.io.File getRootDirectory() -> a
+    java.io.File getMinecraftDirectory() -> b
+    java.io.File getModsDirectory() -> c
+    java.io.File getCoreModsDirectory() -> d
+    java.io.File getJarModsDirectory() -> e
+    java.io.File getBinDirectory() -> h
+    java.io.File getNativesDirectory() -> i
+    java.lang.String getJarOrder() -> f
+    void addToJarOrder(java.lang.String) -> a
+    com.atlauncher.data.Mod getModByName(java.lang.String) -> b
+    java.util.ArrayList getLinkedMods(com.atlauncher.data.Mod) -> a
+    java.util.ArrayList getMods() -> g
+    void addPercent(int) -> b
+    void setSubPercent(int) -> a
+    java.lang.Object doInBackground() -> doInBackground
+net.minecraft.Launcher -> net.minecraft.a:
+    java.applet.Applet wrappedApplet -> a
+    java.net.URL documentBase -> b
+    boolean active -> c
+    java.util.Map params -> d
+    void setParameter(java.lang.String,java.lang.String) -> a
+    java.lang.String getParameter(java.lang.String) -> getParameter
+    boolean isActive() -> isActive
+    void appletResize(int,int) -> appletResize
+    void resize(int,int) -> resize
+    void resize(java.awt.Dimension) -> resize
+    void init() -> init
+    void start() -> start
+    void stop() -> stop
+    void destroy() -> destroy
+    java.net.URL getCodeBase() -> getCodeBase
+    java.net.URL getDocumentBase() -> getDocumentBase
+    void setVisible(boolean) -> setVisible
+    void update(java.awt.Graphics) -> update
+    void paint(java.awt.Graphics) -> paint

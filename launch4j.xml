@@ -1,8 +1,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\Ryan\Desktop\ATLauncher (Obfuscated).jar</jar>
-  <outfile>C:\Users\Ryan\Desktop\ATLauncher (Obfuscated).exe</outfile>
+  <jar>C:\Users\Ryan\Desktop\ATLauncher.jar</jar>
+  <outfile>C:\Users\Ryan\Desktop\ATLauncher.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>
@@ -12,7 +12,7 @@
   <customProcName>true</customProcName>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
-  <icon>C:\Users\Ryan\IdeaProjects\ATLauncher 3.0\Icon.ico</icon>
+  <icon>C:\Users\Ryan\Documents\Eclipse Workspace\atlauncher-3.0\Icon.ico</icon>
   <jre>
     <path></path>
     <minVersion>1.6.0</minVersion>

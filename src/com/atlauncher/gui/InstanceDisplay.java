@@ -84,6 +84,8 @@ public class InstanceDisplay extends JPanel {
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Account account = LauncherFrame.settings.getAccount();
+                String username = account.getUsername();
+                String password = account.getPassword();
                 if (!account.isRemembered()) {
                     JPanel panel = new JPanel();
                     panel.setLayout(new BorderLayout());
@@ -94,7 +96,7 @@ public class InstanceDisplay extends JPanel {
                     int ret = JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
                             panel, "Enter Password", JOptionPane.OK_CANCEL_OPTION);
                     if (ret == JOptionPane.OK_OPTION) {
-                        account.setPassword(new String(passwordField.getPassword()));
+                        password = new String(passwordField.getPassword());
                     } else {
                         return;
                     }
@@ -104,8 +106,8 @@ public class InstanceDisplay extends JPanel {
                 String sess = null;
                 try {
                     url = "https://login.minecraft.net/?user="
-                            + URLEncoder.encode(account.getUsername(), "UTF-8") + "&password="
-                            + URLEncoder.encode(account.getPassword(), "UTF-8") + "&version=999";
+                            + URLEncoder.encode(username, "UTF-8") + "&password="
+                            + URLEncoder.encode(password, "UTF-8") + "&version=999";
                 } catch (UnsupportedEncodingException e1) {
                     e1.printStackTrace();
                 }
@@ -129,6 +131,7 @@ public class InstanceDisplay extends JPanel {
                     Object launcher = new Thread() {
                         public void run() {
                             try {
+                                long start = System.currentTimeMillis();
                                 LauncherFrame.settings.getParent().setVisible(false);
                                 Process process = MCLauncher.launch(account, instance, session);
                                 InputStream is = process.getErrorStream();
@@ -136,9 +139,14 @@ public class InstanceDisplay extends JPanel {
                                 BufferedReader br = new BufferedReader(isr);
                                 String line;
                                 while ((line = br.readLine()) != null) {
-                                    LauncherFrame.settings.getConsole().log(line);
+                                    LauncherFrame.settings.getConsole().logMinecraft(line);
                                 }
                                 LauncherFrame.settings.getParent().setVisible(true);
+                                long end = System.currentTimeMillis();
+                                LauncherFrame.settings.getConsole().log(
+                                        instance.getName() + " was played by user "
+                                                + account.getMinecraftUsername() + " for "
+                                                + ((end - start) / 1000) + " seconds");
                             } catch (IOException e1) {
                                 e1.printStackTrace();
                             }

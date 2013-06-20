@@ -11,7 +11,13 @@
 package com.atlauncher.workers;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
 
 import javax.swing.SwingWorker;
 
@@ -164,9 +170,42 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
                 Utils.copyFile(files[i], getMinecraftJar(), true);
             } else if (i == 4) {
                 Utils.unzip(files[i], getNativesDirectory());
+                Utils.delete(new File(getNativesDirectory(), "META-INF"));
             } else {
                 Utils.copyFile(files[i], getBinDirectory());
             }
+        }
+    }
+
+    public void deleteMetaInf() {
+        File inputFile = getMinecraftJar();
+        File outputTmpFile = new File(LauncherFrame.settings.getTempDir(), pack.getSafeName()
+                + "-minecraft.jar");
+        try {
+            JarInputStream input = new JarInputStream(new FileInputStream(inputFile));
+            JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile));
+            JarEntry entry;
+
+            while ((entry = input.getNextJarEntry()) != null) {
+                if (entry.getName().contains("META-INF")) {
+                    continue;
+                }
+                output.putNextEntry(entry);
+                byte buffer[] = new byte[1024];
+                int amo;
+                while ((amo = input.read(buffer, 0, 1024)) != -1) {
+                    output.write(buffer, 0, amo);
+                }
+                output.closeEntry();
+            }
+
+            input.close();
+            output.close();
+
+            inputFile.delete();
+            outputTmpFile.renameTo(inputFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -192,6 +231,7 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         addPercent(0);
         makeDirectories();
         downloadMojangStuff();
+        deleteMetaInf();
         int amountPer = 40 / mods.size();
         for (Mod mod : mods) {
             if (!isCancelled()) {

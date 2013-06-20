@@ -50,7 +50,7 @@ public class LauncherConsole extends JFrame {
 
     public LauncherConsole() {
         setSize(WINDOW_SIZE);
-        setTitle("ATLauncher Console");
+        setTitle("ATLauncher Console %VERSION%");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setIconImage(Utils.getImage("/resources/Icon.png"));
         setMinimumSize(MINIMUM_SIZE);
@@ -60,7 +60,7 @@ public class LauncherConsole extends JFrame {
 
         console = new JEditorPane("text/plain", "") {
             public boolean getScrollableTracksViewportWidth() {
-                return true;
+                return true; // Fixes issues with resizing from big to small and text not shrinking
             }
         };
         console.setEditable(false);
@@ -158,6 +158,21 @@ public class LauncherConsole extends JFrame {
             console.setText("[" + timestamp + "] " + text);
         } else {
             console.setText(console.getText() + "\n[" + timestamp + "] " + text);
+        }
+        console.setCaretPosition(console.getDocument().getLength());
+    }
+
+    /**
+     * Logs text to the console window from Minecraft
+     * 
+     * @param text
+     *            The text to show in the console
+     */
+    public void logMinecraft(String text) {
+        if (console.getText().isEmpty()) {
+            console.setText(text);
+        } else {
+            console.setText(console.getText() + "\n" + text);
         }
         console.setCaretPosition(console.getDocument().getLength());
     }

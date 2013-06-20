@@ -53,7 +53,7 @@ public class LauncherFrame extends JFrame {
             LauncherFrame.settings.getConsole().setVisible(true);
         }
         setSize(new Dimension(800, 500));
-        setTitle("ATLauncher");
+        setTitle("ATLauncher %VERSION%");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
