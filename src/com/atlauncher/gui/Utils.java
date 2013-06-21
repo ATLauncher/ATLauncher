@@ -513,6 +513,15 @@ public class Utils {
         }
     }
 
+    public static void deleteContents(File file) {
+        if (file.isDirectory()) {
+            for (File c : file.listFiles())
+                delete(c);
+        } else {
+            return;
+        }
+    }
+
     public static void zip(File in, File out) {
         try {
             URI base = in.toURI();

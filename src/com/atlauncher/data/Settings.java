@@ -24,7 +24,9 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JFrame;
@@ -46,6 +48,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.atlauncher.Update;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.BottomBar;
 import com.atlauncher.gui.InstancesPanel;
@@ -102,9 +105,11 @@ public class Settings {
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private Server bestConnectedServer; // The best connected server for Auto selection
     private boolean offlineMode = false; // If offline mode is enabled
+    private String version = "%VERSION%"; // Version of the Launcher
 
     public Settings() {
         checkFolders(); // Checks the setup of the folders and makes sure they're there
+        clearTempDir(); // Cleans all files in the Temp Dir
     }
 
     public void loadEverything() {
@@ -120,6 +125,58 @@ public class Settings {
         loadInstances(); // Load the users installed Instances
         loadAccounts(); // Load the saved Accounts
         loadProperties(); // Load the users Properties
+    }
+
+    public void downloadUpdate() {
+        System.out.println("Downloading Update");
+        try {
+            File thisFile = new File(Update.class.getProtectionDomain().getCodeSource()
+                    .getLocation().getPath());
+            String path = thisFile.getCanonicalPath();
+            path = URLDecoder.decode(path, "UTF-8");
+            String toget;
+            String saveAs = thisFile.getName();
+            if (path.contains(".exe")) {
+                toget = "exe";
+            } else {
+                toget = "jar";
+            }
+            File newFile = new File(getTempDir(), saveAs);
+            new Downloader(getFileURL("ATLauncher." + toget), newFile.getAbsolutePath())
+                    .runNoReturn(); // Download it
+            runUpdate(path, newFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void runUpdate(String currentPath, String temporaryUpdatePath) {
+        System.out.println("Running Update");
+        List<String> arguments = new ArrayList<String>();
+
+        String path = System.getProperty("java.home") + File.separator + "bin" + File.separator
+                + "java";
+        if (Utils.isWindows()) {
+            path += "w";
+        }
+        arguments.add(path);
+        arguments.add("-cp");
+        arguments.add(temporaryUpdatePath);
+        arguments.add("com.atlauncher.Update");
+        arguments.add(currentPath);
+        arguments.add(temporaryUpdatePath);
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(arguments);
+        System.out.println("Updating ATLauncher with command: " + processBuilder.command());
+
+        try {
+            processBuilder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.exit(0);
     }
 
     /**
@@ -150,6 +207,19 @@ public class Settings {
                     } else if (type.equalsIgnoreCase("Skins")) {
                         file = new File(skinsDir, name);
                         name = "skins/" + name;
+                    } else if (type.equalsIgnoreCase("Launcher")) {
+                        String version = element.getAttribute("version");
+                        if (!getVersion().equalsIgnoreCase(version)) {
+                            getConsole().log(
+                                    "New Launcher version detected. Old: " + getVersion()
+                                            + ", New: " + version);
+                            if (getVersion().equalsIgnoreCase("%VERSION%")) {
+                                continue; // Don't even think about updating my unbuilt copy
+                            }
+                            downloadUpdate();
+                        } else {
+                            continue;
+                        }
                     }
                     boolean download = false; // If we have to download the file or not
                     if (!file.exists()) {
@@ -277,6 +347,13 @@ public class Settings {
      */
     public File getTempDir() {
         return this.tempDir;
+    }
+
+    /**
+     * Deletes all files in the Temp directory
+     */
+    public void clearTempDir() {
+        Utils.deleteContents(getTempDir());
     }
 
     /**
@@ -1237,6 +1314,10 @@ public class Settings {
 
     public void setEnableLogs(boolean enableLogs) {
         this.enableLogs = enableLogs;
+    }
+
+    public String getVersion() {
+        return this.version;
     }
 
 }

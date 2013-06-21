@@ -2,8 +2,8 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-Version 3.0.0a3
- - Added in version number in the Launcher Window and Console Window Titles
+Version 3.0.0a4
+ - Added auto updating to new versions
 
 -->
 
@@ -16,7 +16,7 @@ Version 3.0.0a3
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0a3" />
+	<property name="atlauncher.version" value="3.0.0a4" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />
@@ -31,6 +31,7 @@ Version 3.0.0a3
 		<fileset dir="${src.dir}" />
 	</copy>
 
+	<replace file="${buildsrc.dir}/com/atlauncher/data/Settings.java" token="&quot;%VERSION%&quot;;" value="&quot;${atlauncher.version}&quot;;" />
 	<replace file="${buildsrc.dir}/com/atlauncher/gui/LauncherConsole.java" token="%VERSION%" value="${atlauncher.version}" />
 	<replace file="${buildsrc.dir}/com/atlauncher/gui/LauncherFrame.java" token="%VERSION%" value="${atlauncher.version}" />
 
