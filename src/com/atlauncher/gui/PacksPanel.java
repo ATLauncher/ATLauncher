@@ -17,7 +17,6 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 
 public class PacksPanel extends JPanel {
@@ -44,16 +43,17 @@ public class PacksPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
 
-        if (LauncherFrame.settings.getPacks().size() == 0) {
+        int count = 0;
+        for (Pack pack : LauncherFrame.settings.getPacks()) {
+            if (pack.hasVersions() || pack.isTester()) {
+                panel.add(new PackDisplay(pack), gbc);
+                gbc.gridy++;
+                count++;
+            }
+        }
+        if (count == 0) {
             panel.add(new NothingToDisplay("There are no packs to display\n\n"
                     + "Please check back another time"), gbc);
-        } else {
-            for (Pack pack : LauncherFrame.settings.getPacks()) {
-                if (pack.hasVersions() || pack.isTester()) {
-                    panel.add(new PackDisplay(pack), gbc);
-                    gbc.gridy++;
-                }
-            }
         }
     }
 

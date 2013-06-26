@@ -30,21 +30,23 @@ import com.atlauncher.gui.Utils;
 
 public class PackInstaller extends SwingWorker<Boolean, Void> {
 
-    String instanceName;
-    Pack pack;
-    String version;
-    String minecraftVersion;
-    String jarOrder;
-    int percent = 0; // Percent done installing
-    ArrayList<Mod> allMods;
+    private String instanceName;
+    private Pack pack;
+    private String version;
+    private boolean useLatestLWJGL;
+    private String minecraftVersion;
+    private String jarOrder;
+    private int percent = 0; // Percent done installing
+    private ArrayList<Mod> allMods;
 
-    public PackInstaller(String instanceName, Pack pack, String version) {
+    public PackInstaller(String instanceName, Pack pack, String version, boolean useLatestLWJGL) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
-        if(this.version.equalsIgnoreCase("Dev Version")){
+        if (this.version.equalsIgnoreCase("Dev Version")) {
             this.version = "dev";
         }
+        this.useLatestLWJGL = useLatestLWJGL;
     }
 
     public String getInstanceName() {
@@ -132,36 +134,55 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         String nativesRoot = null;
         String nativesURL = null;
         if (Utils.isWindows()) {
-            nativesFile = new File(LauncherFrame.settings.getJarsDir(), "windows_natives.jar");
+            nativesFile = new File(LauncherFrame.settings.getJarsDir(),
+                    ((this.useLatestLWJGL) ? "latest_" : "") + "windows_natives.jar");
             nativesRoot = "windowsnatives";
             nativesURL = "windows_natives";
         } else if (Utils.isMac()) {
-            nativesFile = new File(LauncherFrame.settings.getJarsDir(), "macosx_natives.jar");
+            nativesFile = new File(LauncherFrame.settings.getJarsDir(),
+                    ((this.useLatestLWJGL) ? "latest_" : "") + "macosx_natives.jar");
             nativesRoot = "macosxnatives";
             nativesURL = "macosx_natives";
         } else {
-            nativesFile = new File(LauncherFrame.settings.getJarsDir(), "linux_natives.jar");
+            nativesFile = new File(LauncherFrame.settings.getJarsDir(),
+                    ((this.useLatestLWJGL) ? "latest_" : "") + "linux_natives.jar");
             nativesRoot = "linuxnatives";
             nativesURL = "linux_natives";
         }
         File[] files = {
                 new File(LauncherFrame.settings.getJarsDir(), minecraftVersion.replace(".", "_")
                         + "_minecraft.jar"),
-                new File(LauncherFrame.settings.getJarsDir(), "lwjgl.jar"),
-                new File(LauncherFrame.settings.getJarsDir(), "lwjgl_util.jar"),
-                new File(LauncherFrame.settings.getJarsDir(), "jinput.jar"), nativesFile };
+                new File(LauncherFrame.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_"
+                        : "") + "lwjgl.jar"),
+                new File(LauncherFrame.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_"
+                        : "") + "lwjgl_util.jar"),
+                new File(LauncherFrame.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_"
+                        : "") + "jinput.jar"), nativesFile };
         String[] hashes = {
                 LauncherFrame.settings.getMinecraftHash("minecraft", minecraftVersion, "client"),
-                LauncherFrame.settings.getMinecraftHash("lwjgl", "mojang", "client"),
-                LauncherFrame.settings.getMinecraftHash("lwjglutil", "mojang", "client"),
-                LauncherFrame.settings.getMinecraftHash("jinput", "mojang", "client"),
-                LauncherFrame.settings.getMinecraftHash(nativesRoot, "mojang", "client") };
+                LauncherFrame.settings.getMinecraftHash("lwjgl", (this.useLatestLWJGL) ? "latest"
+                        : "mojang", "client"),
+                LauncherFrame.settings.getMinecraftHash("lwjglutil",
+                        (this.useLatestLWJGL) ? "latest" : "mojang", "client"),
+                LauncherFrame.settings.getMinecraftHash("jinput", (this.useLatestLWJGL) ? "latest"
+                        : "mojang", "client"),
+                LauncherFrame.settings.getMinecraftHash(nativesRoot,
+                        (this.useLatestLWJGL) ? "latest" : "mojang", "client") };
         String[] urls = {
                 "http://assets.minecraft.net/" + minecraftVersion.replace(".", "_")
-                        + "/minecraft.jar", "http://s3.amazonaws.com/MinecraftDownload/lwjgl.jar",
-                "http://s3.amazonaws.com/MinecraftDownload/lwjgl_util.jar",
-                "http://s3.amazonaws.com/MinecraftDownload/jinput.jar",
-                "http://s3.amazonaws.com/MinecraftDownload/" + nativesURL + ".jar" };
+                        + "/minecraft.jar",
+                (this.useLatestLWJGL) ? LauncherFrame.settings
+                        .getFileURL("launcher/lwjgl/latest_lwjgl.jar")
+                        : "http://s3.amazonaws.com/MinecraftDownload/lwjgl.jar",
+                (this.useLatestLWJGL) ? LauncherFrame.settings
+                        .getFileURL("launcher/lwjgl/latest_lwjgl_util.jar")
+                        : "http://s3.amazonaws.com/MinecraftDownload/lwjgl_util.jar",
+                (this.useLatestLWJGL) ? LauncherFrame.settings
+                        .getFileURL("launcher/lwjgl/latest_jinput.jar")
+                        : "http://s3.amazonaws.com/MinecraftDownload/jinput.jar",
+                (this.useLatestLWJGL) ? LauncherFrame.settings.getFileURL("launcher/lwjgl/latest_"
+                        + nativesURL + ".jar") : "http://s3.amazonaws.com/MinecraftDownload/"
+                        + nativesURL + ".jar" };
         for (int i = 0; i < 5; i++) {
             addPercent(5);
             while (!Utils.getMD5(files[i]).equalsIgnoreCase(hashes[i])) {
@@ -174,7 +195,12 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
                 Utils.unzip(files[i], getNativesDirectory());
                 Utils.delete(new File(getNativesDirectory(), "META-INF"));
             } else {
-                Utils.copyFile(files[i], getBinDirectory());
+                if (useLatestLWJGL) {
+                    Utils.copyFile(files[i], new File(getBinDirectory(), files[i].getName()
+                            .replace("latest_", "")), true);
+                } else {
+                    Utils.copyFile(files[i], getBinDirectory());
+                }
             }
         }
     }

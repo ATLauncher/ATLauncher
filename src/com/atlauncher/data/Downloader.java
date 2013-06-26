@@ -32,7 +32,7 @@ public class Downloader {
     public Downloader(String url, String destination, PackInstaller installerr) {
         this.url = url;
         this.destination = destination;
-        this.installer = installerr;
+        this.installer = (PackInstaller) installerr;
         this.worker = new DownloadWorker(url, destination);
         if (this.destination == null) {
             this.worker.addPropertyChangeListener(new PropertyChangeListener() {

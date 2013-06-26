@@ -92,7 +92,7 @@ public class ConsoleBottomBar extends JPanel {
                         .getConsole().getLog());
                 if (result.contains("http://paste.atlauncher.com")) {
                     LauncherFrame.settings.getConsole().log(
-                            "Log uploaded and copied to clipboard: " + result);
+                            "Log uploaded and link copied to clipboard: " + result);
                     StringSelection text = new StringSelection(result);
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(text, null);

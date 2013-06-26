@@ -239,4 +239,11 @@ public class Pack {
         }
         return false;
     }
+    
+    public boolean canInstall() {
+        if(hasVersions() || isTester()){
+            return true;
+        }
+        return false;
+    }
 }

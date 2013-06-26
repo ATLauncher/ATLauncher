@@ -24,6 +24,7 @@ import java.beans.PropertyChangeListener;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -32,7 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.workers.PackInstaller;
 
@@ -49,6 +49,8 @@ public class NewInstanceDialog extends JDialog {
     private JTextField instanceNameField;
     private JLabel versionLabel;
     private JComboBox<String> versionsDropDown;
+    private JLabel useLatestLWJGLLabel;
+    private JCheckBox useLatestLWJGL;
 
     public NewInstanceDialog(final Pack pack) {
         super(LauncherFrame.settings.getParent(), "New Instance", ModalityType.APPLICATION_MODAL);
@@ -79,7 +81,7 @@ public class NewInstanceDialog extends JDialog {
         middle.add(instanceNameField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         versionLabel = new JLabel("Version To Install: ");
         middle.add(versionLabel, gbc);
@@ -95,6 +97,17 @@ public class NewInstanceDialog extends JDialog {
         }
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         middle.add(versionsDropDown, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        useLatestLWJGLLabel = new JLabel("Use Latest LWJGL? ");
+        middle.add(useLatestLWJGLLabel, gbc);
+
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        useLatestLWJGL = new JCheckBox();
+        middle.add(useLatestLWJGL, gbc);
 
         // Bottom Panel Stuff
         bottom = new JPanel();
@@ -138,7 +151,7 @@ public class NewInstanceDialog extends JDialog {
                     dialog.add(bottomPanel, BorderLayout.SOUTH);
 
                     final PackInstaller packInstaller = new PackInstaller(instanceNameField
-                            .getText(), pack, version) {
+                            .getText(), pack, version, useLatestLWJGL.isSelected()) {
 
                         protected void done() {
                             Boolean success = false;
@@ -168,8 +181,8 @@ public class NewInstanceDialog extends JDialog {
                                             + " has been installed<br/><br/>Find it in your 'Instances' tab";
                                     title = pack.getName() + " " + version + " Installed";
                                     LauncherFrame.settings.addInstance(instanceNameField.getText(),
-                                            pack.getName(), version, this.getMinecraftVersion(), this.getJarOrder());
-                                    LauncherFrame.settings.reloadInstancesPanel();
+                                            pack.getName(), version, this.getMinecraftVersion(),
+                                            this.getJarOrder());
                                 } else {
                                     // Install failed so delete the folder and clear Temp Dir
                                     Utils.delete(this.getRootDirectory());

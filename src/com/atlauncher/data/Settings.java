@@ -650,7 +650,6 @@ public class Settings {
                     String name = element.getAttribute("name");
                     String[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
-                        // Pack has no versions so log it and continue to next pack
                         getConsole().log("Pack " + name + " has no versions!");
                         versions = new String[0];
                     } else {
@@ -658,15 +657,10 @@ public class Settings {
                     }
                     String[] testers;
                     if (element.getAttribute("testers").isEmpty()) {
-                        // Pack has no versions so log it and continue to next pack
-                        getConsole().log("Pack " + name + " has no testers!");
                         testers = new String[0];
                     } else {
                         testers = new String(Base64.decode(element.getAttribute("testers")))
                                 .split(",");
-                    }
-                    for (String tester : testers) {
-                        getConsole().log("Added tester " + tester + " for pack " + name);
                     }
                     String description = element.getAttribute("description");
                     String supportURL = element.getAttribute("supporturl");
@@ -703,10 +697,8 @@ public class Settings {
                     String name = element.getAttribute("name");
                     String[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
-                        // Pack has no versions so log it and continue to next
-                        // pack
                         getConsole().log("Addon " + name + " has no versions!");
-                        continue;
+                        versions = new String[0];
                     } else {
                         versions = element.getAttribute("versions").split(",");
                     }
@@ -753,8 +745,12 @@ public class Settings {
                     String version = element.getAttribute("version");
                     String minecraftVersion = element.getAttribute("minecraftversion");
                     String jarOrder = element.getAttribute("jarorder");
-                    Instance instance = new Instance(name, pack, version, minecraftVersion,
-                            jarOrder);
+                    Pack realPack = null;
+                    if (isPackByName(pack)) {
+                        realPack = getPackByName(pack);
+                    }
+                    Instance instance = new Instance(name, pack, realPack, version,
+                            minecraftVersion, jarOrder);
                     instances.add(instance);
                 }
             }
@@ -915,6 +911,7 @@ public class Settings {
             e.printStackTrace();
         }
         this.instances.add(new Instance(name, pack, version, minecraftVersion, jarOrder)); // Add It
+        reloadInstancesPanel();
     }
 
     /**
@@ -1107,6 +1104,22 @@ public class Settings {
     }
 
     /**
+     * Checks if there is a pack by the given name
+     * 
+     * @param name
+     *            name of the Pack to find
+     * @return True if the pack is found from the name
+     */
+    public boolean isPackByName(String name) {
+        for (Pack pack : packs) {
+            if (pack.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Finds a Pack from the given name
      * 
      * @param name
@@ -1115,13 +1128,13 @@ public class Settings {
      * @throws InvalidPack
      *             If name is not found
      */
-    public Pack getPackByName(String name) throws InvalidPack {
+    public Pack getPackByName(String name) {
         for (Pack pack : packs) {
             if (pack.getName().equalsIgnoreCase(name)) {
                 return pack;
             }
         }
-        throw new InvalidPack("No pack exists with name " + name);
+        return null;
     }
 
     /**

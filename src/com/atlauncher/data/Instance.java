@@ -25,13 +25,21 @@ public class Instance {
     private String version;
     private String minecraftVersion;
     private String jarOrder;
+    private Pack realPack;
 
-    public Instance(String name, String pack, String version, String minecraftVersion, String jarOrder) {
+    public Instance(String name, String pack, Pack realPack, String version,
+            String minecraftVersion, String jarOrder) {
         this.name = name;
         this.pack = pack;
+        this.realPack = realPack;
         this.version = version;
         this.minecraftVersion = minecraftVersion;
         this.jarOrder = jarOrder;
+    }
+
+    public Instance(String name, String pack, String version, String minecraftVersion,
+            String jarOrder) {
+        this(name, pack, null, version, minecraftVersion, jarOrder);
     }
 
     public String getName() {
@@ -45,7 +53,7 @@ public class Instance {
     public String getPackName() {
         return pack;
     }
-    
+
     public String getJarOrder() {
         return this.jarOrder;
     }
@@ -70,20 +78,21 @@ public class Instance {
     }
 
     public String getPackDescription() {
-        Pack pack;
-        try {
-            pack = LauncherFrame.settings.getPackByName(this.pack);
-        } catch (InvalidPack e) {
-            // Pack doesn't exist anymore
-            return "No description";
+        if (this.realPack != null) {
+            return this.realPack.getDescription();
+        } else {
+            return "No Description!";
         }
-        return pack.getDescription();
     }
-    
+
+    public boolean hasUpdate() {
+        return false;
+    }
+
     public String getVersion() {
         return version;
     }
-    
+
     public File getRootDirectory() {
         return new File(LauncherFrame.settings.getInstancesDir(), getSafeName());
     }
@@ -110,6 +119,17 @@ public class Instance {
 
     public File getMinecraftJar() {
         return new File(getBinDirectory(), "minecraft.jar");
+    }
+    
+    public boolean canInstall() {
+        if(realPack == null) {
+            return false;
+        }
+        return realPack.canInstall();
+    }
+    
+    public Pack getRealPack() {
+        return this.realPack;
     }
 
 }

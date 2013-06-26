@@ -2,8 +2,10 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-- Added in ability to install Dev Builds
-- Fixed spelling error when hiding console
+- Added in non functioning buttons in instances tab
+- Fixed issue when no packs are available to the user
+- Removed Reinstall and Update button when pack is no longer available
+- Added in ability to install Latest LWJGL
 
 -->
 
@@ -16,7 +18,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0a6" />
+	<property name="atlauncher.version" value="3.0.0a7" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

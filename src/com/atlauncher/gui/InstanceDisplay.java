@@ -49,10 +49,15 @@ public class InstanceDisplay extends JPanel {
     private JSplitPane splitPane; // The split pane
     private JLabel instanceImage; // The image for the instance
     private JTextArea instanceDescription; // Description of the instance
-    private JPanel instanceActions; // All the actions that can be performed on the instance
+    private JSplitPane instanceActions; // All the actions that can be performed on the instance
+    private JPanel instanceActionsTop; // All the actions that can be performed on the instance
+    private JPanel instanceActionsBottom; // All the actions that can be performed on the instance
     private JButton play; // Play button
+    private JButton reinstall; // Reinstall button
+    private JButton update; // Update button
     private JButton backup; // Backup button
     private JButton delete; // Delete button
+    private JButton restore; // Restore button
 
     public InstanceDisplay(final Instance instance) {
         setLayout(new BorderLayout());
@@ -89,8 +94,19 @@ public class InstanceDisplay extends JPanel {
         instanceDescription.setWrapStyleWord(true);
         instanceDescription.setText(instance.getPackDescription());
 
-        instanceActions = new JPanel();
-        instanceActions.setLayout(new FlowLayout());
+        instanceActions = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        instanceActions.setEnabled(false);
+        instanceActions.setDividerSize(0);
+
+        instanceActionsTop = new JPanel();
+        instanceActionsTop.setLayout(new FlowLayout());
+        instanceActionsBottom = new JPanel();
+        instanceActionsBottom.setLayout(new FlowLayout());
+        instanceActions.setLeftComponent(instanceActionsTop);
+        instanceActions.setRightComponent(instanceActionsBottom);
+
+        // Play Button
+
         play = new JButton("Play");
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -176,7 +192,37 @@ public class InstanceDisplay extends JPanel {
                 }
             }
         });
+
+        // Reinstall Button
+
+        reinstall = new JButton("Reinstall");
+        reinstall.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (LauncherFrame.settings.getAccount() == null) {
+                    String[] options = { "Ok" };
+                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                            "Cannot reinstall pack as you have no Account selected",
+                            "No Account Selected", JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                } else {
+                    // new ReinstallInstanceDialog(instance);
+                }
+            }
+        });
+
+        // Update Button
+
+        update = new JButton("Update");
+        if (!instance.hasUpdate()) {
+            update.setVisible(false);
+        }
+
+        // Backup Button
+
         backup = new JButton("Backup");
+
+        // Delete Button
+
         delete = new JButton("Delete");
         delete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -188,9 +234,29 @@ public class InstanceDisplay extends JPanel {
                 }
             }
         });
-        instanceActions.add(play);
-        instanceActions.add(backup);
-        instanceActions.add(delete);
+
+        // Restore Button
+
+        restore = new JButton("Restore");
+
+        // Check if pack can be installed and remove buttons if not
+
+        if (!instance.canInstall()) {
+            reinstall.setVisible(false);
+            update.setVisible(false);
+        }
+
+        // Add buttons to panels
+
+        instanceActionsTop.add(play);
+        instanceActionsTop.add(reinstall);
+        instanceActionsTop.add(update);
+
+        instanceActionsBottom.add(backup);
+        instanceActionsBottom.add(delete);
+        instanceActionsBottom.add(restore);
+
+        // Add panels to other panels
 
         leftPanel.add(instanceImage, BorderLayout.CENTER);
         rightPanel.add(instanceDescription, BorderLayout.CENTER);
