@@ -35,16 +35,19 @@ public class Pack {
     private int id;
     private String name;
     private String[] versions;
-    private String[] minecraftVersions;
+    private String[] testers;
     private String description;
     private String supportURL;
     private String websiteURL;
 
-    public Pack(int id, String name, String[] versions, String[] minecraftVersions,
-            String description, String supportURL, String websiteURL) {
+    private String xml; // The XML
+    private String xmlVersion; // The version the XML is for
+
+    public Pack(int id, String name, String[] versions, String[] testers, String description,
+            String supportURL, String websiteURL) {
         this.name = name;
         this.versions = versions;
-        this.minecraftVersions = minecraftVersions;
+        this.testers = testers;
         this.description = description;
         this.supportURL = supportURL;
         this.websiteURL = websiteURL;
@@ -81,10 +84,6 @@ public class Pack {
         return this.versions;
     }
 
-    public String[] getMinecraftVersions() {
-        return this.minecraftVersions;
-    }
-
     public String getDescription() {
         return this.description;
     }
@@ -105,19 +104,52 @@ public class Pack {
         return this.versions[index];
     }
 
-    public String getMinecraftVersion(int index) {
-        return this.minecraftVersions[index];
+    public String getXML(String version) {
+        if (this.xml == null || !this.xmlVersion.equalsIgnoreCase(version)) {
+            String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.xml";
+            String versionURL = LauncherFrame.settings.getFileURL(path); // The XML with path on
+                                                                         // server
+            this.xml = new Downloader(versionURL).run();
+            this.xmlVersion = version;
+        }
+        return this.xml;
+    }
+
+    public String getMinecraftVersion(String version) {
+        String xml = getXML(version);
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(xml));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("minecraft");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    NodeList nodeList1 = element.getChildNodes();
+                    return nodeList1.item(0).getNodeValue();
+                }
+            }
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Whoops nothing found");
+        return null;
     }
 
     public ArrayList<Mod> getMods(String versionToInstall) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
-        String path = "packs/" + getSafeName() + "/versions/" + versionToInstall + "/Configs.xml";
-        String versionURL = LauncherFrame.settings.getFileURL(path); // The XML with path on server
-        String versionXML = new Downloader(versionURL).run();
+        String xml = getXML(versionToInstall);
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(versionXML));
+            InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("mod");
@@ -177,5 +209,34 @@ public class Pack {
             e.printStackTrace();
         }
         return mods;
+    }
+
+    public boolean hasVersions() {
+        if (this.versions.length == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean hasTesters() {
+        if (this.testers.length == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean isTester() {
+        Account account = LauncherFrame.settings.getAccount();
+        if (account == null) {
+            return false;
+        }
+        for (String tester : testers) {
+            if (tester.equalsIgnoreCase(account.getMinecraftUsername())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

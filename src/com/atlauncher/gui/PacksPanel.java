@@ -17,6 +17,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 
 public class PacksPanel extends JPanel {
@@ -26,6 +27,11 @@ public class PacksPanel extends JPanel {
 
     public PacksPanel() {
         setLayout(new BorderLayout());
+        loadContent();
+    }
+
+    public void loadContent() {
+
         panel = new JPanel();
         scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -43,10 +49,19 @@ public class PacksPanel extends JPanel {
                     + "Please check back another time"), gbc);
         } else {
             for (Pack pack : LauncherFrame.settings.getPacks()) {
-                panel.add(new PackDisplay(pack), gbc);
-                gbc.gridy++;
+                if (pack.hasVersions() || pack.isTester()) {
+                    panel.add(new PackDisplay(pack), gbc);
+                    gbc.gridy++;
+                }
             }
         }
+    }
+
+    public void reload() {
+        removeAll();
+        loadContent();
+        validate();
+        repaint();
     }
 
 }

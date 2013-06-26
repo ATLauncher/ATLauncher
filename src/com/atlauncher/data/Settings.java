@@ -53,6 +53,7 @@ import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.BottomBar;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
+import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.Utils;
 
 /**
@@ -102,6 +103,7 @@ public class Settings {
     private ArrayList<Language> languages = new ArrayList<Language>(); // Languages for the Launcher
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private InstancesPanel instancesPanel; // The instances panel
+    private PacksPanel packsPanel; // The packs panel
     private BottomBar bottomBar; // The bottom bar
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private Server bestConnectedServer; // The best connected server for Auto selection
@@ -504,6 +506,7 @@ public class Settings {
         } else {
             this.account = null;
         }
+        reloadPacksPanel();
         try {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("language", this.language.getName());
@@ -649,22 +652,27 @@ public class Settings {
                     if (element.getAttribute("versions").isEmpty()) {
                         // Pack has no versions so log it and continue to next pack
                         getConsole().log("Pack " + name + " has no versions!");
-                        continue;
+                        versions = new String[0];
                     } else {
                         versions = element.getAttribute("versions").split(",");
                     }
-                    String[] minecraftversions;
-                    if (element.getAttribute("minecraftversions").isEmpty()) {
+                    String[] testers;
+                    if (element.getAttribute("testers").isEmpty()) {
                         // Pack has no versions so log it and continue to next pack
-                        getConsole().log("Pack " + name + " has no minecraftversions!");
-                        continue;
+                        getConsole().log("Pack " + name + " has no testers!");
+                        testers = new String[0];
                     } else {
-                        minecraftversions = element.getAttribute("minecraftversions").split(",");
+                        testers = new String(Base64.decode(element.getAttribute("testers")))
+                                .split(",");
+                    }
+                    for (String tester : testers) {
+                        getConsole().log("Added tester " + tester + " for pack " + name);
                     }
                     String description = element.getAttribute("description");
                     String supportURL = element.getAttribute("supporturl");
                     String websiteURL = element.getAttribute("websiteurl");
-                    Pack pack = new Pack(id, name, versions, minecraftversions, description, supportURL, websiteURL);
+                    Pack pack = new Pack(id, name, versions, testers, description, supportURL,
+                            websiteURL);
                     packs.add(pack);
                 }
             }
@@ -1028,6 +1036,23 @@ public class Settings {
      */
     public void reloadInstancesPanel() {
         this.instancesPanel.reload(); // Reload the instances panel
+    }
+
+    /**
+     * Sets the panel used for Packs
+     * 
+     * @param packsPanel
+     *            Packs Panel
+     */
+    public void setPacksPanel(PacksPanel packsPanel) {
+        this.packsPanel = packsPanel;
+    }
+
+    /**
+     * Reloads the panel used for Packs
+     */
+    public void reloadPacksPanel() {
+        this.packsPanel.reload(); // Reload the instances panel
     }
 
     /**

@@ -101,6 +101,7 @@ public class LauncherFrame extends JFrame {
 
         newsPanel = new NewsPanel();
         packsPanel = new PacksPanel();
+        settings.setPacksPanel(packsPanel);
         addonsPanel = new AddonsPanel();
         instancesPanel = new InstancesPanel();
         settings.setInstancesPanel(instancesPanel);

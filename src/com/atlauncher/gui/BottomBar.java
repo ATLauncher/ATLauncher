@@ -92,7 +92,7 @@ public class BottomBar extends JPanel {
         toggleConsole.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (LauncherFrame.settings.getConsole().isVisible()) {
-                    LauncherFrame.settings.getConsole().log("Hidding console");
+                    LauncherFrame.settings.getConsole().log("Hiding console");
                     LauncherFrame.settings.getConsole().setVisible(false);
                     toggleConsole.setText("Show Console");
                 } else {

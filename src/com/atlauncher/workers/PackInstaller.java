@@ -38,11 +38,13 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
     int percent = 0; // Percent done installing
     ArrayList<Mod> allMods;
 
-    public PackInstaller(String instanceName, Pack pack, String version, String minecraftVersion) {
+    public PackInstaller(String instanceName, Pack pack, String version) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
-        this.minecraftVersion = minecraftVersion;
+        if(this.version.equalsIgnoreCase("Dev Version")){
+            this.version = "dev";
+        }
     }
 
     public String getInstanceName() {
@@ -223,8 +225,16 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         return this.allMods;
     }
 
+    public String getMinecraftVersion() {
+        return this.minecraftVersion;
+    }
+
     protected Boolean doInBackground() throws Exception {
         this.allMods = this.pack.getMods(this.version);
+        this.minecraftVersion = this.pack.getMinecraftVersion(this.version);
+        if (this.minecraftVersion == null) {
+            this.cancel(true);
+        }
         ModsChooser modsChooser = new ModsChooser(this);
         modsChooser.setVisible(true);
         if (modsChooser.wasClosed()) {

@@ -87,9 +87,11 @@ public class NewInstanceDialog extends JDialog {
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         versionsDropDown = new JComboBox<String>();
+        if (pack.isTester()) {
+            versionsDropDown.addItem("Dev Version");
+        }
         for (int i = 0; i < pack.getVersionCount(); i++) {
-            versionsDropDown.addItem(pack.getVersion(i) + " (Minecraft "
-                    + pack.getMinecraftVersion(i) + ")");
+            versionsDropDown.addItem(pack.getVersion(i));
         }
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         middle.add(versionsDropDown, gbc);
@@ -107,10 +109,7 @@ public class NewInstanceDialog extends JDialog {
                                     + "<br/><br/>Rename it and try again</center></html>",
                             "Error!", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    final String version = (String) pack.getVersion(versionsDropDown
-                            .getSelectedIndex());
-                    final String minecraftVersion = (String) pack
-                            .getMinecraftVersion(versionsDropDown.getSelectedIndex());
+                    final String version = (String) versionsDropDown.getSelectedItem();
                     final JDialog dialog = new JDialog(LauncherFrame.settings.getParent(),
                             "Installing " + pack.getName() + " " + version,
                             ModalityType.DOCUMENT_MODAL);
@@ -139,7 +138,7 @@ public class NewInstanceDialog extends JDialog {
                     dialog.add(bottomPanel, BorderLayout.SOUTH);
 
                     final PackInstaller packInstaller = new PackInstaller(instanceNameField
-                            .getText(), pack, version, minecraftVersion) {
+                            .getText(), pack, version) {
 
                         protected void done() {
                             Boolean success = false;
@@ -169,7 +168,7 @@ public class NewInstanceDialog extends JDialog {
                                             + " has been installed<br/><br/>Find it in your 'Instances' tab";
                                     title = pack.getName() + " " + version + " Installed";
                                     LauncherFrame.settings.addInstance(instanceNameField.getText(),
-                                            pack.getName(), version, minecraftVersion, this.getJarOrder());
+                                            pack.getName(), version, this.getMinecraftVersion(), this.getJarOrder());
                                     LauncherFrame.settings.reloadInstancesPanel();
                                 } else {
                                     // Install failed so delete the folder and clear Temp Dir
