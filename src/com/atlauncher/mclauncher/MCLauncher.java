@@ -63,6 +63,7 @@ public class MCLauncher {
 
         arguments.add("-Xms256M");
         arguments.add("-Xmx" + LauncherFrame.settings.getMemory() + "M");
+        arguments.add("-XX:MaxPermSize=" + LauncherFrame.settings.getPermGen() + "M");
 
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());

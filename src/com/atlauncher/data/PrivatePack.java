@@ -14,10 +14,9 @@ public class PrivatePack extends Pack {
 
     private Account[] allowedPlayers;
 
-    public PrivatePack(int id, String name, String[] versions,
-            String[] minecraftVersions, String description,
-            Account[] allowedPlayers) {
-        super(id, name, versions, minecraftVersions, description);
+    public PrivatePack(int id, String name, String[] versions, String[] minecraftVersions,
+            String description, String supportURL, String websiteURL, Account[] allowedPlayers) {
+        super(id, name, versions, minecraftVersions, description, supportURL, websiteURL);
     }
 
 }

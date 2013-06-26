@@ -199,11 +199,15 @@ public class AccountPanel extends JPanel {
                     if (accountsComboBox.getSelectedIndex() == 0) {
                         account = new Account(username, password, minecraftUsername, remember);
                         LauncherFrame.settings.getAccounts().add(account);
-                        String[] options = { "Ok" };
-                        JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                                "Account Added Successfully", "Account Added",
+                        LauncherFrame.settings.getConsole().log("Added Account " + account);
+                        String[] options = { "Yes", "No" };
+                        int ret = JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                                "Account Added Successfully. Switch to it now?", "Account Added",
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
                                 options, options[0]);
+                        if (ret == 0) {
+                            LauncherFrame.settings.setAccount(account);
+                        }
                     } else {
                         account = (Account) accountsComboBox.getSelectedItem();
                         account.setUsername(username);
@@ -212,6 +216,7 @@ public class AccountPanel extends JPanel {
                             account.setPassword(password);
                         }
                         account.setRemember(remember);
+                        LauncherFrame.settings.getConsole().log("Edited Account " + account);
                         String[] options = { "Ok" };
                         JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
                                 "Account Edited Successfully", "Account Edited",

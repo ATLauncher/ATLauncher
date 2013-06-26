@@ -174,7 +174,7 @@ public class Account implements Serializable {
 
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
         s.defaultReadObject(); // Read the object in
-        if (encryptedPassword.isEmpty()) {
+        if (encryptedPassword == null) {
             password = ""; // No password saved so don't set it
             remember = false; // And make sure remember is set to false
         } else {

@@ -11,6 +11,7 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -18,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.border.TitledBorder;
 
 /**
  * Class for displaying packs in the Pack Tab
@@ -35,7 +37,15 @@ public class NothingToDisplay extends JPanel {
 
     public NothingToDisplay(final String message) {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder("Nothing to show"));
+
+        // Add titles border with name, Mac needs smaller font
+        if (Utils.isMac()) {
+            setBorder(new TitledBorder(null, "Nothing To Show", TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
+        } else {
+            setBorder(new TitledBorder(null, "Nothing To Show", TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
+        }
 
         leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());

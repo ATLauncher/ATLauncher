@@ -12,6 +12,7 @@ package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -19,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.border.TitledBorder;
 
 import com.atlauncher.data.Addon;
 
@@ -40,7 +42,15 @@ public class AddonDisplay extends JPanel {
 
     public AddonDisplay(final Addon addon) {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder(addon.getName())); // Add titles border with name
+
+        // Add titles border with name, Mac needs smaller font
+        if (Utils.isMac()) {
+            setBorder(new TitledBorder(null, addon.getName(), TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
+        } else {
+            setBorder(new TitledBorder(null, addon.getName(), TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
+        }
 
         leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());

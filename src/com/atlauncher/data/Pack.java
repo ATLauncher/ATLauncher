@@ -37,13 +37,17 @@ public class Pack {
     private String[] versions;
     private String[] minecraftVersions;
     private String description;
+    private String supportURL;
+    private String websiteURL;
 
     public Pack(int id, String name, String[] versions, String[] minecraftVersions,
-            String description) {
+            String description, String supportURL, String websiteURL) {
         this.name = name;
         this.versions = versions;
         this.minecraftVersions = minecraftVersions;
         this.description = description;
+        this.supportURL = supportURL;
+        this.websiteURL = websiteURL;
     }
 
     public int getID() {
@@ -83,6 +87,14 @@ public class Pack {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public String getSupportURL() {
+        return this.supportURL;
+    }
+
+    public String getWebsiteURL() {
+        return this.websiteURL;
     }
 
     public int getVersionCount() {

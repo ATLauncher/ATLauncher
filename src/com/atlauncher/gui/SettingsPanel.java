@@ -50,6 +50,9 @@ public class SettingsPanel extends JPanel {
     private JLabel memoryLabel;
     private JComboBox<String> memory;
 
+    private JLabel permGenLabel;
+    private JTextField permGen;
+
     private JPanel windowSizePanel;
     private JLabel windowSizeLabel;
     private JTextField widthField;
@@ -155,7 +158,7 @@ public class SettingsPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getX() < 16 && e.getY() < 16) {
-                        if (Utils.is64Bit()) {
+                        if (!Utils.is64Bit()) {
                             JOptionPane.showMessageDialog(
                                     LauncherFrame.settings.getParent(),
                                     "<html><center>The amount of RAM to use when launching Minecraft.<br/>"
@@ -184,6 +187,34 @@ public class SettingsPanel extends JPanel {
         }
         memory.setSelectedItem(LauncherFrame.settings.getMemory() + " MB");
         topPanel.add(memory, gbc);
+
+        // Perm Gen Settings
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        permGenLabel = new JLabel("PermGen Size:");
+        permGenLabel.setIcon(helpIcon);
+        permGenLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
+                                "The PermGen Size for java to use when launching Minecraft in MB.",
+                                "Help", JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
+        topPanel.add(permGenLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        permGen = new JTextField(4);
+        permGen.setText(LauncherFrame.settings.getPermGen() + "");
+        topPanel.add(permGen, gbc);
 
         // Window Size
         gbc.gridx = 0;
@@ -362,8 +393,9 @@ public class SettingsPanel extends JPanel {
                 LauncherFrame.settings.setServer((Server) server.getSelectedItem());
                 LauncherFrame.settings.setMemory(Integer.parseInt(((String) memory
                         .getSelectedItem()).replace(" MB", "")));
-                LauncherFrame.settings.setWindowWidth(Integer.parseInt(widthField.getText()));
-                LauncherFrame.settings.setWindowHeight(Integer.parseInt(heightField.getText()));
+                LauncherFrame.settings.setPermGen(Integer.parseInt(permGen.getText().replaceAll("[^0-9]", "")));
+                LauncherFrame.settings.setWindowWidth(Integer.parseInt(widthField.getText().replaceAll("[^0-9]", "")));
+                LauncherFrame.settings.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll("[^0-9]", "")));
                 LauncherFrame.settings.setJavaParameters(javaParameters.getText());
                 LauncherFrame.settings.setEnableConsole(enableConsole.isSelected());
                 LauncherFrame.settings.setEnableLeaderboards(enableLeaderboards.isSelected());

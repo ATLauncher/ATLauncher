@@ -39,6 +39,8 @@ public class ModsChooser extends JDialog {
     private ArrayList<ModsJCheckBox> modCheckboxes;
     private ArrayList<ModDescriptionJLabel> modLabels;
 
+    private boolean wasClosed = false;
+
     public ModsChooser(PackInstaller installerr) {
         super(LauncherFrame.settings.getParent(), "Select Mods To Install",
                 ModalityType.APPLICATION_MODAL);
@@ -50,6 +52,7 @@ public class ModsChooser extends JDialog {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent arg0) {
+                wasClosed = true;
                 dispose();
             }
         });
@@ -125,7 +128,7 @@ public class ModsChooser extends JDialog {
         selectAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
-                    if(check.getMod().isOptional()){
+                    if (check.getMod().isOptional()) {
                         check.setSelected(true);
                         check.setEnabled(true);
                     }
@@ -138,7 +141,7 @@ public class ModsChooser extends JDialog {
         clearAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
-                    if(check.getMod().isOptional()){
+                    if (check.getMod().isOptional()) {
                         check.setSelected(false);
                         ArrayList<Mod> linkedMods = modsToChange(check.getMod());
                         for (Mod mod : linkedMods) {
@@ -262,6 +265,9 @@ public class ModsChooser extends JDialog {
     }
 
     public ArrayList<Mod> getSelectedMods() {
+        if (wasClosed) {
+            return null;
+        }
         ArrayList<Mod> mods = new ArrayList<Mod>();
         for (ModsJCheckBox check : modCheckboxes) {
             if (check.isSelected()) {
@@ -269,6 +275,10 @@ public class ModsChooser extends JDialog {
             }
         }
         return mods;
+    }
+    
+    public boolean wasClosed() {
+        return this.wasClosed;
     }
 
 }

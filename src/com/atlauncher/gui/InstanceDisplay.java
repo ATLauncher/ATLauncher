@@ -12,6 +12,7 @@ package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -29,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.border.TitledBorder;
 
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
@@ -54,8 +56,17 @@ public class InstanceDisplay extends JPanel {
 
     public InstanceDisplay(final Instance instance) {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder(instance.getName() + " ("
-                + instance.getPackName() + " " + instance.getVersion() + ")"));
+
+        // Add titles border with name, Mac needs smaller font
+        if (Utils.isMac()) {
+            setBorder(new TitledBorder(null, instance.getName() + " (" + instance.getPackName()
+                    + " " + instance.getVersion() + ")", TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
+        } else {
+            setBorder(new TitledBorder(null, instance.getName() + " (" + instance.getPackName()
+                    + " " + instance.getVersion() + ")", TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
+        }
 
         leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
@@ -84,75 +95,84 @@ public class InstanceDisplay extends JPanel {
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Account account = LauncherFrame.settings.getAccount();
-                String username = account.getUsername();
-                String password = account.getPassword();
-                if (!account.isRemembered()) {
-                    JPanel panel = new JPanel();
-                    panel.setLayout(new BorderLayout());
-                    JLabel passwordLabel = new JLabel("Enter password for " + account.getUsername());
-                    JPasswordField passwordField = new JPasswordField();
-                    panel.add(passwordLabel, BorderLayout.NORTH);
-                    panel.add(passwordField, BorderLayout.CENTER);
-                    int ret = JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
-                            panel, "Enter Password", JOptionPane.OK_CANCEL_OPTION);
-                    if (ret == JOptionPane.OK_OPTION) {
-                        password = new String(passwordField.getPassword());
-                    } else {
-                        return;
-                    }
-                }
-                boolean loggedIn = false;
-                String url = null;
-                String sess = null;
-                try {
-                    url = "https://login.minecraft.net/?user="
-                            + URLEncoder.encode(username, "UTF-8") + "&password="
-                            + URLEncoder.encode(password, "UTF-8") + "&version=999";
-                } catch (UnsupportedEncodingException e1) {
-                    e1.printStackTrace();
-                }
-                String auth = Utils.urlToString(url);
-                if (auth.contains(":")) {
-                    String[] parts = auth.split(":");
-                    if (parts.length == 5) {
-                        loggedIn = true;
-                        sess = parts[3];
-                    }
-                }
-                if (!loggedIn) {
+                if (account == null) {
                     String[] options = { "Ok" };
                     JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "<html><center>Couldn't login to minecraft servers<br/><br/>" + auth
-                                    + "</center></html>", "Error Logging In",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
+                            "Cannot play instance as you have no Account selected",
+                            "No Account Selected", JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
-                    final String session = sess;
-                    Object launcher = new Thread() {
-                        public void run() {
-                            try {
-                                long start = System.currentTimeMillis();
-                                LauncherFrame.settings.getParent().setVisible(false);
-                                Process process = MCLauncher.launch(account, instance, session);
-                                InputStream is = process.getErrorStream();
-                                InputStreamReader isr = new InputStreamReader(is);
-                                BufferedReader br = new BufferedReader(isr);
-                                String line;
-                                while ((line = br.readLine()) != null) {
-                                    LauncherFrame.settings.getConsole().logMinecraft(line);
-                                }
-                                LauncherFrame.settings.getParent().setVisible(true);
-                                long end = System.currentTimeMillis();
-                                LauncherFrame.settings.getConsole().log(
-                                        instance.getName() + " was played by user "
-                                                + account.getMinecraftUsername() + " for "
-                                                + ((end - start) / 1000) + " seconds");
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
+                    String username = account.getUsername();
+                    String password = account.getPassword();
+                    if (!account.isRemembered()) {
+                        JPanel panel = new JPanel();
+                        panel.setLayout(new BorderLayout());
+                        JLabel passwordLabel = new JLabel("Enter password for "
+                                + account.getUsername());
+                        JPasswordField passwordField = new JPasswordField();
+                        panel.add(passwordLabel, BorderLayout.NORTH);
+                        panel.add(passwordField, BorderLayout.CENTER);
+                        int ret = JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
+                                panel, "Enter Password", JOptionPane.OK_CANCEL_OPTION);
+                        if (ret == JOptionPane.OK_OPTION) {
+                            password = new String(passwordField.getPassword());
+                        } else {
+                            return;
                         }
-                    };
-                    ((Thread) launcher).start();
+                    }
+                    boolean loggedIn = false;
+                    String url = null;
+                    String sess = null;
+                    try {
+                        url = "https://login.minecraft.net/?user="
+                                + URLEncoder.encode(username, "UTF-8") + "&password="
+                                + URLEncoder.encode(password, "UTF-8") + "&version=999";
+                    } catch (UnsupportedEncodingException e1) {
+                        e1.printStackTrace();
+                    }
+                    String auth = Utils.urlToString(url);
+                    if (auth.contains(":")) {
+                        String[] parts = auth.split(":");
+                        if (parts.length == 5) {
+                            loggedIn = true;
+                            sess = parts[3];
+                        }
+                    }
+                    if (!loggedIn) {
+                        String[] options = { "Ok" };
+                        JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                                "<html><center>Couldn't login to minecraft servers<br/><br/>"
+                                        + auth + "</center></html>", "Error Logging In",
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
+                    } else {
+                        final String session = sess;
+                        Object launcher = new Thread() {
+                            public void run() {
+                                try {
+                                    long start = System.currentTimeMillis();
+                                    LauncherFrame.settings.getParent().setVisible(false);
+                                    Process process = MCLauncher.launch(account, instance, session);
+                                    InputStream is = process.getErrorStream();
+                                    InputStreamReader isr = new InputStreamReader(is);
+                                    BufferedReader br = new BufferedReader(isr);
+                                    String line;
+                                    while ((line = br.readLine()) != null) {
+                                        LauncherFrame.settings.getConsole().logMinecraft(line);
+                                    }
+                                    LauncherFrame.settings.getParent().setVisible(true);
+                                    long end = System.currentTimeMillis();
+                                    LauncherFrame.settings.getConsole().log(
+                                            instance.getName() + " was played by user "
+                                                    + account.getMinecraftUsername() + " for "
+                                                    + ((end - start) / 1000) + " seconds");
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                        };
+                        ((Thread) launcher).start();
+                    }
                 }
             }
         });

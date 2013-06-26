@@ -49,7 +49,7 @@ public class LauncherFrame extends JFrame {
     public LauncherFrame(Settings settings) {
         LauncherFrame.settings = settings;
         LauncherFrame.settings.setParentFrame(this);
-        if(settings.enableConsole()){
+        if (settings.enableConsole()) {
             LauncherFrame.settings.getConsole().setVisible(true);
         }
         setSize(new Dimension(800, 500));
@@ -85,7 +85,7 @@ public class LauncherFrame extends JFrame {
 
         LauncherFrame.settings.getConsole().addComponentListener(new ComponentAdapter() {
             public void componentHidden(ComponentEvent e) {
-                LauncherFrame.settings.getConsole().log("Hidding console");
+                LauncherFrame.settings.getConsole().log("Hiding console");
                 LauncherFrame.settings.getConsole().setVisible(false);
                 bottomBar.hideConsole();
             }

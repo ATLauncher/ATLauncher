@@ -66,6 +66,7 @@ public class Settings {
     private Language language; // Language for the Launcher
     private Server server; // Server to use for the Launcher
     private int ram; // RAM to use when launching Minecraft
+    private int permGen; // PermGenSize to use when launching Minecraft in MB
     private int windowWidth; // Width of the Minecraft window
     private int windowHeight; // Height of the Minecraft window
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
@@ -425,6 +426,8 @@ public class Settings {
                 this.ram = 512; // User tried to allocate too much ram, set it back to 0.5GB
             }
 
+            this.permGen = Integer.parseInt(properties.getProperty("permGen", "64"));
+
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             if (this.windowWidth > Utils.getMaximumWindowWidth()) {
                 console.log("Cannot set screen width to " + this.windowWidth);
@@ -472,6 +475,7 @@ public class Settings {
             properties.setProperty("language", this.language.getName());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("ram", this.ram + "");
+            properties.setProperty("permGen", this.permGen + "");
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
             properties.setProperty("javaparameters", this.javaParamaters);
@@ -494,6 +498,12 @@ public class Settings {
      *            Account to switch to
      */
     public void switchAccount(Account account) {
+        if (account.isReal()) {
+            getConsole().log("Changing account to " + account);
+            this.account = account;
+        } else {
+            this.account = null;
+        }
         try {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("language", this.language.getName());
@@ -652,7 +662,9 @@ public class Settings {
                         minecraftversions = element.getAttribute("minecraftversions").split(",");
                     }
                     String description = element.getAttribute("description");
-                    Pack pack = new Pack(id, name, versions, minecraftversions, description);
+                    String supportURL = element.getAttribute("supporturl");
+                    String websiteURL = element.getAttribute("websiteurl");
+                    Pack pack = new Pack(id, name, versions, minecraftversions, description, supportURL, websiteURL);
                     packs.add(pack);
                 }
             }
@@ -1259,6 +1271,14 @@ public class Settings {
         this.ram = memory;
     }
 
+    public int getPermGen() {
+        return this.permGen;
+    }
+
+    public void setPermGen(int permGen) {
+        this.permGen = permGen;
+    }
+
     public int getWindowWidth() {
         return this.windowWidth;
     }
@@ -1285,6 +1305,10 @@ public class Settings {
 
     public Account getAccount() {
         return this.account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     /**

@@ -227,6 +227,9 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         this.allMods = this.pack.getMods(this.version);
         ModsChooser modsChooser = new ModsChooser(this);
         modsChooser.setVisible(true);
+        if (modsChooser.wasClosed()) {
+            this.cancel(true);
+        }
         ArrayList<Mod> mods = modsChooser.getSelectedMods();
         addPercent(0);
         makeDirectories();
