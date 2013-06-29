@@ -13,9 +13,11 @@ package com.atlauncher.gui;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import com.atlauncher.data.Instance;
 
@@ -46,11 +48,16 @@ public class InstancesPanel extends JPanel {
             panel.add(new NothingToDisplay("There are no packs installed\n\n"
                     + "Please install a pack and visit me again"), gbc);
         } else {
-            for (Instance instance : LauncherFrame.settings.getInstances()) {
+            for (Instance instance : LauncherFrame.settings.getInstancesSorted()) {
                 panel.add(new InstanceDisplay(instance), gbc);
                 gbc.gridy++;
             }
         }
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                scrollPane.getVerticalScrollBar().setValue(0);
+            }
+        });
     }
 
     public void reload() {

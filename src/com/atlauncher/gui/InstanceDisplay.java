@@ -169,6 +169,7 @@ public class InstanceDisplay extends JPanel {
                                     long start = System.currentTimeMillis();
                                     LauncherFrame.settings.getParent().setVisible(false);
                                     Process process = MCLauncher.launch(account, instance, session);
+                                    LauncherFrame.settings.showKillMinecraft(process);
                                     InputStream is = process.getErrorStream();
                                     InputStreamReader isr = new InputStreamReader(is);
                                     BufferedReader br = new BufferedReader(isr);
@@ -187,7 +188,6 @@ public class InstanceDisplay extends JPanel {
                                 }
                             }
                         };
-                        LauncherFrame.settings.showKillMinecraft(launcher);
                         launcher.start();
                     }
                 }

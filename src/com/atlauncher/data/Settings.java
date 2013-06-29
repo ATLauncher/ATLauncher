@@ -26,6 +26,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -108,7 +110,7 @@ public class Settings {
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private Server bestConnectedServer; // The best connected server for Auto selection
     private boolean offlineMode = false; // If offline mode is enabled
-    private Thread minecraftThread = null; // The thread minecraft is running on
+    private Process minecraftProcess = null; // The process minecraft is running on
     private String version = "%VERSION%"; // Version of the Launcher
 
     public Settings() {
@@ -649,7 +651,8 @@ public class Settings {
                     Element element = (Element) node;
                     int id = Integer.parseInt(element.getAttribute("id"));
                     String name = element.getAttribute("name");
-                    boolean createServer = Boolean.parseBoolean(element.getAttribute("createserver"));
+                    boolean createServer = Boolean.parseBoolean(element
+                            .getAttribute("createserver"));
                     String[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
                         getConsole().log("Pack " + name + " has no versions!");
@@ -667,8 +670,8 @@ public class Settings {
                     String description = element.getAttribute("description");
                     String supportURL = element.getAttribute("supporturl");
                     String websiteURL = element.getAttribute("websiteurl");
-                    Pack pack = new Pack(id, name, createServer, versions, testers, description, supportURL,
-                            websiteURL);
+                    Pack pack = new Pack(id, name, createServer, versions, testers, description,
+                            supportURL, websiteURL);
                     packs.add(pack);
                 }
             }
@@ -866,12 +869,42 @@ public class Settings {
     }
 
     /**
+     * Get the Packs available in the Launcher sorted alphabetically
+     * 
+     * @return The Packs available in the Launcher sorted alphabetically
+     */
+    public ArrayList<Pack> getPacksSorted() {
+        ArrayList<Pack> packs = new ArrayList<Pack>(this.packs);
+        Collections.sort(packs, new Comparator<Pack>() {
+            public int compare(Pack result1, Pack result2) {
+                return result1.getName().compareTo(result2.getName());
+            }
+        });
+        return packs;
+    }
+
+    /**
      * Get the Instances available in the Launcher
      * 
      * @return The Instances available in the Launcher
      */
     public ArrayList<Instance> getInstances() {
         return this.instances;
+    }
+
+    /**
+     * Get the Instances available in the Launcher sorted alphabetically
+     * 
+     * @return The Instances available in the Launcher sorted alphabetically
+     */
+    public ArrayList<Instance> getInstancesSorted() {
+        ArrayList<Instance> instances = new ArrayList<Instance>(this.instances);
+        Collections.sort(instances, new Comparator<Instance>() {
+            public int compare(Instance result1, Instance result2) {
+                return result1.getName().compareTo(result2.getName());
+            }
+        });
+        return instances;
     }
 
     /**
@@ -912,7 +945,8 @@ public class Settings {
         } catch (TransformerException e) {
             e.printStackTrace();
         }
-        this.instances.add(new Instance(name, pack.getName(), pack, version, minecraftVersion, jarOrder)); // Add It
+        this.instances.add(new Instance(name, pack.getName(), pack, version, minecraftVersion,
+                jarOrder)); // Add It
         reloadInstancesPanel();
     }
 
@@ -1254,15 +1288,17 @@ public class Settings {
     public LauncherConsole getConsole() {
         return this.console;
     }
-    
-    public void showKillMinecraft(Thread minecraft) {
-        this.minecraftThread = minecraft;
+
+    public void showKillMinecraft(Process minecraft) {
+        this.minecraftProcess = minecraft;
         getConsole().showKillMinecraft();
     }
-    
+
     public void killMinecraft() {
-        if(this.minecraftThread != null) {
+        if (this.minecraftProcess != null) {
             getConsole().log("Killing Minecraft");
+            this.minecraftProcess.destroy();
+            this.minecraftProcess = null;
         }
     }
 

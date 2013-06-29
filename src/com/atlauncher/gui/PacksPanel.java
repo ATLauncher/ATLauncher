@@ -44,7 +44,7 @@ public class PacksPanel extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for (Pack pack : LauncherFrame.settings.getPacks()) {
+        for (Pack pack : LauncherFrame.settings.getPacksSorted()) {
             if (pack.hasVersions() || pack.isTester()) {
                 panel.add(new PackDisplay(pack), gbc);
                 gbc.gridy++;

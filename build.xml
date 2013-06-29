@@ -2,11 +2,9 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-- Fixed installer not working when no mods are installed
-- Fixed minecraft not Launcher when no jar mods are installed
-- Added in Create Server button and allowed disabling of creating a server
-- Added in Kill Minecraft button on Launcher Console when Minecraft is running. Doesn't do anything just yet though
-- Fixed an instances description not showing up when installed until restarted
+- Now sorts Packs and Instances by name
+- The 'Kill Minecraft' button in the console now works as intended, now with a warning popup
+- Fixed issue with the instance panel jumping around when items added or removed. Now scrolls to the top
 
 -->
 
@@ -19,7 +17,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0a8" />
+	<property name="atlauncher.version" value="3.0.0a9" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

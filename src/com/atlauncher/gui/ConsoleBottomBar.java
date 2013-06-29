@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -106,7 +107,14 @@ public class ConsoleBottomBar extends JPanel {
         });
         killMinecraft.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                LauncherFrame.settings.killMinecraft();
+                int ret = JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
+                        "<html><center>Are you sure you want to kill the Minecraft process?<br/>"
+                                + "<br/>Doing so can cause corruption of your saves</center>"
+                                + "</html>", "Kill Minecraft", JOptionPane.YES_NO_OPTION);
+                if (ret == JOptionPane.YES_OPTION) {
+                    LauncherFrame.settings.killMinecraft();
+                    killMinecraft.setVisible(false);
+                }
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
@@ -135,7 +143,7 @@ public class ConsoleBottomBar extends JPanel {
     private void createButtons() {
         copyLog = new JButton("Copy Log");
         uploadLog = new JButton("Upload Log");
-        
+
         killMinecraft = new JButton("Kill Minecraft");
         killMinecraft.setVisible(false);
 
@@ -154,7 +162,7 @@ public class ConsoleBottomBar extends JPanel {
         twitterIcon.setContentAreaFilled(false);
         twitterIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
-    
+
     public void showKillMinecraft() {
         killMinecraft.setVisible(true);
     }
