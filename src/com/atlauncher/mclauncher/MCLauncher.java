@@ -40,7 +40,7 @@ public class MCLauncher {
                 "jinput.jar" };
         StringBuilder cpb = new StringBuilder("");
         File jarMods = instance.getJarModsDirectory();
-        if (jarMods.exists()) {
+        if (jarMods.exists() && instance.hasJarMods()) {
             for (String mod : instance.getJarOrder().split(",")) {
                 cpb.append(File.pathSeparator);
                 cpb.append(new File(jarMods, mod));
@@ -75,7 +75,9 @@ public class MCLauncher {
         arguments.add(account.getMinecraftUsername()); // Username
         arguments.add(session); // Session
         arguments.add(instance.getName()); // Instance Name
-        arguments.add(instance.getJarOrder()); // Jar Order
+        if (instance.hasJarMods()) {
+            arguments.add(instance.getJarOrder()); // Jar Order
+        }
         arguments.add(LauncherFrame.settings.getWindowWidth() + ""); // Window Width
         arguments.add(LauncherFrame.settings.getWindowHeight() + ""); // Window Height
 
@@ -84,11 +86,29 @@ public class MCLauncher {
     }
 
     public static void main(String[] args) {
-        Dimension winSize = new Dimension(Integer.parseInt(args[5]), Integer.parseInt(args[6]));
+        String workingDirectory = args[0];
+        String username = args[1];
+        String session = args[2];
+        String instanceName = args[3];
+        int screenWidth, screenHeight;
+        String jarOrder = null;
+        System.out.println(args.length);
+        if (args.length == 7) {
+            // Has JarOrder
+            jarOrder = args[4];
+            screenWidth = Integer.parseInt(args[5]);
+            screenHeight = Integer.parseInt(args[6]);
+        } else {
+            // Has No JarOrder
+            screenWidth = Integer.parseInt(args[4]);
+            screenHeight = Integer.parseInt(args[5]);
+        }
+
+        Dimension winSize = new Dimension(screenWidth, screenHeight);
         boolean maximize = false;
         boolean compatMode = false;
 
-        File cwd = new File(args[0]);
+        File cwd = new File(workingDirectory);
 
         try {
             File binDir = new File(cwd, "bin");
@@ -99,13 +119,14 @@ public class MCLauncher {
 
             URL[] urls = new URL[4];
             try {
-                File jarModsDir = new File(cwd, "jarmods");
-                String jarMods = args[4];
-                String[] mods = jarMods.split(",");
-                for (String mod : mods) {
-                    File f = new File(jarModsDir, mod);
-                    urls[0] = f.toURI().toURL();
-                    System.out.println("Loading URL: " + urls[0].toString());
+                if (jarOrder != null) {
+                    File jarModsDir = new File(cwd, "jarmods");
+                    String[] mods = jarOrder.split(",");
+                    for (String mod : mods) {
+                        File f = new File(jarModsDir, mod);
+                        urls[0] = f.toURI().toURL();
+                        System.out.println("Loading URL: " + urls[0].toString());
+                    }
                 }
 
                 File f = new File(binDir, "minecraft.jar");
@@ -216,8 +237,8 @@ public class MCLauncher {
             System.setProperty("minecraft.applet.TargetDirectory", cwd.getAbsolutePath());
 
             String[] mcArgs = new String[2];
-            mcArgs[0] = args[1];
-            mcArgs[1] = args[2];
+            mcArgs[0] = username;
+            mcArgs[1] = session;
 
             if (compatMode) {
                 System.out.println("Launching in compatibility mode...");
@@ -227,8 +248,8 @@ public class MCLauncher {
                 try {
                     Class<?> MCAppletClass = cl.loadClass("net.minecraft.client.MinecraftApplet");
                     Applet mcappl = (Applet) MCAppletClass.newInstance();
-                    MCFrame mcWindow = new MCFrame("ATLauncher - " + args[3]);
-                    mcWindow.start(mcappl, args[1], args[2], winSize, maximize);
+                    MCFrame mcWindow = new MCFrame("ATLauncher - " + instanceName);
+                    mcWindow.start(mcappl, username, session, winSize, maximize);
                 } catch (InstantiationException e) {
                     System.out.println("Applet wrapper failed! Falling back "
                             + "to compatibility mode.");

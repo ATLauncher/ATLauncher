@@ -14,9 +14,9 @@ public class PrivatePack extends Pack {
 
     private Account[] allowedPlayers;
 
-    public PrivatePack(int id, String name, String[] versions, String[] testers,
+    public PrivatePack(int id, String name, boolean createServer, String[] versions, String[] testers,
             String description, String supportURL, String websiteURL, Account[] allowedPlayers) {
-        super(id, name, versions, testers, description, supportURL, websiteURL);
+        super(id, name, createServer, versions, testers, description, supportURL, websiteURL);
     }
 
 }

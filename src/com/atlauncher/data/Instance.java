@@ -14,7 +14,6 @@ import java.io.File;
 
 import javax.swing.ImageIcon;
 
-import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.Utils;
 
@@ -120,16 +119,24 @@ public class Instance {
     public File getMinecraftJar() {
         return new File(getBinDirectory(), "minecraft.jar");
     }
-    
+
     public boolean canInstall() {
-        if(realPack == null) {
+        if (realPack == null) {
             return false;
         }
         return realPack.canInstall();
     }
-    
+
     public Pack getRealPack() {
         return this.realPack;
+    }
+
+    public boolean hasJarMods() {
+        if(this.jarOrder == null){
+            return false;
+        }else{
+            return true;
+        }
     }
 
 }

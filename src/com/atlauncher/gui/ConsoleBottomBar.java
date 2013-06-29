@@ -34,6 +34,7 @@ public class ConsoleBottomBar extends JPanel {
 
     private JButton copyLog;
     private JButton uploadLog;
+    private JButton killMinecraft;
     private JButton facebookIcon;
     private JButton twitterIcon;
     private JButton redditIcon;
@@ -59,6 +60,8 @@ public class ConsoleBottomBar extends JPanel {
         leftSide.add(copyLog, gbc);
         gbc.gridx++;
         leftSide.add(uploadLog, gbc);
+        gbc.gridx++;
+        leftSide.add(killMinecraft, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
@@ -101,6 +104,11 @@ public class ConsoleBottomBar extends JPanel {
                 }
             }
         });
+        killMinecraft.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                LauncherFrame.settings.killMinecraft();
+            }
+        });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
@@ -127,6 +135,9 @@ public class ConsoleBottomBar extends JPanel {
     private void createButtons() {
         copyLog = new JButton("Copy Log");
         uploadLog = new JButton("Upload Log");
+        
+        killMinecraft = new JButton("Kill Minecraft");
+        killMinecraft.setVisible(false);
 
         facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());
@@ -142,5 +153,9 @@ public class ConsoleBottomBar extends JPanel {
         twitterIcon.setBorder(BorderFactory.createEmptyBorder());
         twitterIcon.setContentAreaFilled(false);
         twitterIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
+    
+    public void showKillMinecraft() {
+        killMinecraft.setVisible(true);
     }
 }

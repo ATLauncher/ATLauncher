@@ -163,7 +163,7 @@ public class InstanceDisplay extends JPanel {
                                 options, options[0]);
                     } else {
                         final String session = sess;
-                        Object launcher = new Thread() {
+                        Thread launcher = new Thread() {
                             public void run() {
                                 try {
                                     long start = System.currentTimeMillis();
@@ -187,7 +187,8 @@ public class InstanceDisplay extends JPanel {
                                 }
                             }
                         };
-                        ((Thread) launcher).start();
+                        LauncherFrame.settings.showKillMinecraft(launcher);
+                        launcher.start();
                     }
                 }
             }

@@ -34,6 +34,7 @@ public class Pack {
 
     private int id;
     private String name;
+    private boolean createServer;
     private String[] versions;
     private String[] testers;
     private String description;
@@ -43,9 +44,10 @@ public class Pack {
     private String xml; // The XML
     private String xmlVersion; // The version the XML is for
 
-    public Pack(int id, String name, String[] versions, String[] testers, String description,
+    public Pack(int id, String name, boolean createServer, String[] versions, String[] testers, String description,
             String supportURL, String websiteURL) {
         this.name = name;
+        this.createServer = createServer;
         this.versions = versions;
         this.testers = testers;
         this.description = description;
@@ -245,5 +247,9 @@ public class Pack {
             return true;
         }
         return false;
+    }
+    
+    public boolean canCreateServer() {
+        return this.createServer;
     }
 }

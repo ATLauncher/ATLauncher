@@ -185,4 +185,8 @@ public class LauncherConsole extends JFrame {
     public String getLog() {
         return console.getText();
     }
+    
+    public void showKillMinecraft() {
+        bottomBar.showKillMinecraft();
+    }
 }

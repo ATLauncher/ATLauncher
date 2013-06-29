@@ -181,7 +181,7 @@ public class NewInstanceDialog extends JDialog {
                                             + " has been installed<br/><br/>Find it in your 'Instances' tab";
                                     title = pack.getName() + " " + version + " Installed";
                                     LauncherFrame.settings.addInstance(instanceNameField.getText(),
-                                            pack.getName(), version, this.getMinecraftVersion(),
+                                            pack, version, this.getMinecraftVersion(),
                                             this.getJarOrder());
                                 } else {
                                     // Install failed so delete the folder and clear Temp Dir

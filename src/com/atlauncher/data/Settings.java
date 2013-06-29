@@ -108,6 +108,7 @@ public class Settings {
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private Server bestConnectedServer; // The best connected server for Auto selection
     private boolean offlineMode = false; // If offline mode is enabled
+    private Thread minecraftThread = null; // The thread minecraft is running on
     private String version = "%VERSION%"; // Version of the Launcher
 
     public Settings() {
@@ -648,6 +649,7 @@ public class Settings {
                     Element element = (Element) node;
                     int id = Integer.parseInt(element.getAttribute("id"));
                     String name = element.getAttribute("name");
+                    boolean createServer = Boolean.parseBoolean(element.getAttribute("createserver"));
                     String[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
                         getConsole().log("Pack " + name + " has no versions!");
@@ -665,7 +667,7 @@ public class Settings {
                     String description = element.getAttribute("description");
                     String supportURL = element.getAttribute("supporturl");
                     String websiteURL = element.getAttribute("websiteurl");
-                    Pack pack = new Pack(id, name, versions, testers, description, supportURL,
+                    Pack pack = new Pack(id, name, createServer, versions, testers, description, supportURL,
                             websiteURL);
                     packs.add(pack);
                 }
@@ -875,7 +877,7 @@ public class Settings {
     /**
      * Adds an instance to the Launcher and saves it to the instances.xml file
      */
-    public void addInstance(String name, String pack, String version, String minecraftVersion,
+    public void addInstance(String name, Pack pack, String version, String minecraftVersion,
             String jarOrder) {
         try {
             // Open the file
@@ -887,7 +889,7 @@ public class Settings {
             // Create the instances element
             Element instance = document.createElement("instance");
             instance.setAttribute("name", name);
-            instance.setAttribute("pack", pack);
+            instance.setAttribute("pack", pack.getName());
             instance.setAttribute("version", version);
             instance.setAttribute("minecraft", minecraftVersion);
             instance.setAttribute("jarorder", jarOrder);
@@ -910,7 +912,7 @@ public class Settings {
         } catch (TransformerException e) {
             e.printStackTrace();
         }
-        this.instances.add(new Instance(name, pack, version, minecraftVersion, jarOrder)); // Add It
+        this.instances.add(new Instance(name, pack.getName(), pack, version, minecraftVersion, jarOrder)); // Add It
         reloadInstancesPanel();
     }
 
@@ -1252,6 +1254,17 @@ public class Settings {
     public LauncherConsole getConsole() {
         return this.console;
     }
+    
+    public void showKillMinecraft(Thread minecraft) {
+        this.minecraftThread = minecraft;
+        getConsole().showKillMinecraft();
+    }
+    
+    public void killMinecraft() {
+        if(this.minecraftThread != null) {
+            getConsole().log("Killing Minecraft");
+        }
+    }
 
     /**
      * Returns the best connected server
@@ -1259,7 +1272,6 @@ public class Settings {
      * @return The server that the user was best connected to
      */
     public Server getBestConnectedServer() {
-        System.out.println("hi");
         return this.bestConnectedServer;
     }
 

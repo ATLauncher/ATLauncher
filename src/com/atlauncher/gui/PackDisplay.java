@@ -40,8 +40,11 @@ public class PackDisplay extends JPanel {
     private JSplitPane splitPane; // The split pane
     private JLabel packImage; // The image for the pack
     private JTextArea packDescription; // Description of the pack
-    private JPanel packActions; // All the actions that can be performed on the pack
+    private JSplitPane packActions; // All the actions that can be performed on the pack
+    private JPanel packActionsTop; // All the actions that can be performed on the pack
+    private JPanel packActionsBottom; // All the actions that can be performed on the pack
     private JButton newInstance; // New Instance button
+    private JButton createServer; // Create Server button
     private JButton support; // Support button
     private JButton website; // Website button
 
@@ -78,8 +81,17 @@ public class PackDisplay extends JPanel {
         packDescription.setWrapStyleWord(true);
         packDescription.setText(pack.getDescription());
 
-        packActions = new JPanel();
-        packActions.setLayout(new FlowLayout());
+        packActions = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        packActions.setEnabled(false);
+        packActions.setDividerSize(0);
+
+        packActionsTop = new JPanel();
+        packActionsTop.setLayout(new FlowLayout());
+        packActionsBottom = new JPanel();
+        packActionsBottom.setLayout(new FlowLayout());
+        packActions.setLeftComponent(packActionsTop);
+        packActions.setRightComponent(packActionsBottom);
+        
         newInstance = new JButton("New Instance");
         newInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -94,7 +106,8 @@ public class PackDisplay extends JPanel {
                 }
             }
         });
-        packActions.add(newInstance);
+
+        createServer = new JButton("Create Server");
 
         support = new JButton("Support");
         support.addActionListener(new ActionListener() {
@@ -102,7 +115,6 @@ public class PackDisplay extends JPanel {
                 Utils.openBrowser(pack.getSupportURL());
             }
         });
-        packActions.add(support);
 
         website = new JButton("Website");
         website.addActionListener(new ActionListener() {
@@ -110,7 +122,15 @@ public class PackDisplay extends JPanel {
                 Utils.openBrowser(pack.getWebsiteURL());
             }
         });
-        packActions.add(website);
+        
+        if(!pack.canCreateServer()){
+            createServer.setVisible(false);
+        }
+
+        packActionsTop.add(newInstance);
+        packActionsTop.add(createServer);
+        packActionsBottom.add(support);
+        packActionsBottom.add(website);
 
         leftPanel.add(packImage, BorderLayout.CENTER);
         rightPanel.add(packDescription, BorderLayout.CENTER);

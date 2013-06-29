@@ -271,20 +271,24 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
         makeDirectories();
         downloadMojangStuff();
         deleteMetaInf();
-        int amountPer = 40 / mods.size();
-        for (Mod mod : mods) {
-            if (!isCancelled()) {
-                firePropertyChange("doing", null, "Downloading " + mod.getName());
-                addPercent(amountPer);
-                mod.download(this);
+        if (mods.size() != 0) {
+            int amountPer = 40 / mods.size();
+            for (Mod mod : mods) {
+                if (!isCancelled()) {
+                    firePropertyChange("doing", null, "Downloading " + mod.getName());
+                    addPercent(amountPer);
+                    mod.download(this);
+                }
             }
-        }
-        for (Mod mod : mods) {
-            if (!isCancelled()) {
-                firePropertyChange("doing", null, "Installing " + mod.getName());
-                addPercent(amountPer);
-                mod.install(this);
+            for (Mod mod : mods) {
+                if (!isCancelled()) {
+                    firePropertyChange("doing", null, "Installing " + mod.getName());
+                    addPercent(amountPer);
+                    mod.install(this);
+                }
             }
+        }else{
+            addPercent(80);
         }
         configurePack();
         addPercent(5);
