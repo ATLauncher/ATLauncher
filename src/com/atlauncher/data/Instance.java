@@ -25,20 +25,27 @@ public class Instance {
     private String minecraftVersion;
     private String jarOrder;
     private Pack realPack;
+    private boolean isPlayable;
 
     public Instance(String name, String pack, Pack realPack, String version,
-            String minecraftVersion, String jarOrder) {
+            String minecraftVersion, String jarOrder, boolean isPlayable) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
         this.version = version;
         this.minecraftVersion = minecraftVersion;
         this.jarOrder = jarOrder;
+        this.isPlayable = isPlayable;
+    }
+
+    public Instance(String name, String pack, Pack realPack, String version,
+            String minecraftVersion, String jarOrder) {
+        this(name, pack, realPack, version, minecraftVersion, jarOrder, true);
     }
 
     public Instance(String name, String pack, String version, String minecraftVersion,
             String jarOrder) {
-        this(name, pack, null, version, minecraftVersion, jarOrder);
+        this(name, pack, null, version, minecraftVersion, jarOrder, true);
     }
 
     public String getName() {
@@ -92,6 +99,10 @@ public class Instance {
         return version;
     }
 
+    public String getMinecraftVersion() {
+        return minecraftVersion;
+    }
+
     public File getRootDirectory() {
         return new File(LauncherFrame.settings.getInstancesDir(), getSafeName());
     }
@@ -132,11 +143,35 @@ public class Instance {
     }
 
     public boolean hasJarMods() {
-        if(this.jarOrder == null){
+        if (this.jarOrder == null) {
             return false;
-        }else{
+        } else {
             return true;
         }
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void setMinecraftVersion(String minecraftVersion) {
+        this.minecraftVersion = minecraftVersion;
+    }
+
+    public void setJarOrder(String jarOrder) {
+        this.jarOrder = jarOrder;
+    }
+
+    public void setPlayable() {
+        this.isPlayable = true;
+    }
+
+    public void setUnplayable() {
+        this.isPlayable = false;
+    }
+
+    public boolean isPlayable() {
+        return this.isPlayable;
     }
 
 }

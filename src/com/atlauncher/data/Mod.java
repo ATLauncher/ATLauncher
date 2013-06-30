@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.Utils;
-import com.atlauncher.workers.PackInstaller;
+import com.atlauncher.workers.InstanceInstaller;
 
 public class Mod {
 
@@ -101,7 +101,7 @@ public class Mod {
         return this.description;
     }
 
-    public void download(PackInstaller installer) {
+    public void download(InstanceInstaller installer) {
         File fileLocation = new File(LauncherFrame.settings.getDownloadsDir(), getFile());
         if (fileLocation.exists()) {
             if (hasMD5()) {
@@ -154,7 +154,7 @@ public class Mod {
         }
     }
 
-    public void install(PackInstaller installer) {
+    public void install(InstanceInstaller installer) {
         File fileLocation = new File(LauncherFrame.settings.getDownloadsDir(), getFile());
         switch (type) {
             case jar:

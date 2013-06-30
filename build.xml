@@ -2,9 +2,10 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-- Now sorts Packs and Instances by name
-- The 'Kill Minecraft' button in the console now works as intended, now with a warning popup
-- Fixed issue with the instance panel jumping around when items added or removed. Now scrolls to the top
+3.0.0a10
+- Instances can now be reinstalled
+- Added in ability for packs to be unplayable which is determined by if an error occurs during a reinstall or update
+- When unplayable you can only reinstall and delete an instance
 
 -->
 
@@ -17,7 +18,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0a9" />
+	<property name="atlauncher.version" value="3.0.0a10" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

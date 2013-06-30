@@ -65,12 +65,16 @@ public class InstanceDisplay extends JPanel {
         // Add titles border with name, Mac needs smaller font
         if (Utils.isMac()) {
             setBorder(new TitledBorder(null, instance.getName() + " (" + instance.getPackName()
-                    + " " + instance.getVersion() + ")", TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
+                    + " " + instance.getVersion() + ")"
+                    + (instance.isPlayable() ? "" : " CORRUPTED"),
+                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(
+                            "SansSerif", Font.BOLD, 14)));
         } else {
             setBorder(new TitledBorder(null, instance.getName() + " (" + instance.getPackName()
-                    + " " + instance.getVersion() + ")", TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
+                    + " " + instance.getVersion() + ")"
+                    + (instance.isPlayable() ? "" : " CORRUPTED"),
+                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(
+                            "SansSerif", Font.BOLD, 15)));
         }
 
         leftPanel = new JPanel();
@@ -206,7 +210,7 @@ public class InstanceDisplay extends JPanel {
                             "No Account Selected", JOptionPane.DEFAULT_OPTION,
                             JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
-                    // new ReinstallInstanceDialog(instance);
+                    new InstanceInstallerDialog(instance);
                 }
             }
         });
@@ -245,6 +249,14 @@ public class InstanceDisplay extends JPanel {
         if (!instance.canInstall()) {
             reinstall.setVisible(false);
             update.setVisible(false);
+        }
+
+        // Check is instance is playable and disable buttons if not
+        if (!instance.isPlayable()) {
+            play.setEnabled(false);
+            update.setEnabled(false);
+            backup.setEnabled(false);
+            restore.setEnabled(false);
         }
 
         // Add buttons to panels

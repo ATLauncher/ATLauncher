@@ -14,7 +14,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import com.atlauncher.workers.DownloadWorker;
-import com.atlauncher.workers.PackInstaller;
+import com.atlauncher.workers.InstanceInstaller;
 
 /**
  * Class to download files and optionally show a progress dialog
@@ -27,12 +27,12 @@ public class Downloader {
     private String destination; // Destination to save file to
     private DownloadWorker worker; // The download worker process
     private String response; // The response from the worker process
-    private PackInstaller installer;
+    private InstanceInstaller installer;
 
-    public Downloader(String url, String destination, PackInstaller installerr) {
+    public Downloader(String url, String destination, InstanceInstaller installerr) {
         this.url = url;
         this.destination = destination;
-        this.installer = (PackInstaller) installerr;
+        this.installer = (InstanceInstaller) installerr;
         this.worker = new DownloadWorker(url, destination);
         if (this.destination == null) {
             this.worker.addPropertyChangeListener(new PropertyChangeListener() {

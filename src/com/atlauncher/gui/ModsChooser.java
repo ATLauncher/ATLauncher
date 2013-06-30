@@ -29,11 +29,11 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
 import com.atlauncher.data.Mod;
-import com.atlauncher.workers.PackInstaller;
+import com.atlauncher.workers.InstanceInstaller;
 
 public class ModsChooser extends JDialog {
 
-    private PackInstaller installer;
+    private InstanceInstaller installer;
     private JButton selectAllButton;
     private JButton clearAllButton;
     private ArrayList<ModsJCheckBox> modCheckboxes;
@@ -41,7 +41,7 @@ public class ModsChooser extends JDialog {
 
     private boolean wasClosed = false;
 
-    public ModsChooser(PackInstaller installerr) {
+    public ModsChooser(InstanceInstaller installerr) {
         super(LauncherFrame.settings.getParent(), "Select Mods To Install",
                 ModalityType.APPLICATION_MODAL);
         this.installer = installerr;

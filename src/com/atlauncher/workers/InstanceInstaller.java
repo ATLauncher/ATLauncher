@@ -28,18 +28,19 @@ import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.ModsChooser;
 import com.atlauncher.gui.Utils;
 
-public class PackInstaller extends SwingWorker<Boolean, Void> {
+public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private String instanceName;
     private Pack pack;
     private String version;
     private boolean useLatestLWJGL;
+    private boolean isReinstall;
     private String minecraftVersion;
     private String jarOrder;
     private int percent = 0; // Percent done installing
     private ArrayList<Mod> allMods;
 
-    public PackInstaller(String instanceName, Pack pack, String version, boolean useLatestLWJGL) {
+    public InstanceInstaller(String instanceName, Pack pack, String version, boolean useLatestLWJGL, boolean isReinstall) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
@@ -47,6 +48,7 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
             this.version = "dev";
         }
         this.useLatestLWJGL = useLatestLWJGL;
+        this.isReinstall = isReinstall;
     }
 
     public String getInstanceName() {
@@ -121,6 +123,13 @@ public class PackInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void makeDirectories() {
+        if(isReinstall){
+            // We're reinstalling so delete these folders
+            Utils.delete(getBinDirectory());
+            Utils.delete(getModsDirectory());
+            Utils.delete(getCoreModsDirectory());
+            Utils.delete(getJarModsDirectory());
+        }
         File[] directories = { getRootDirectory(), getMinecraftDirectory(), getModsDirectory(),
                 getCoreModsDirectory(), getJarModsDirectory(), getBinDirectory(),
                 getNativesDirectory() };

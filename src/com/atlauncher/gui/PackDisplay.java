@@ -102,7 +102,7 @@ public class PackDisplay extends JPanel {
                             "No Account Selected", JOptionPane.DEFAULT_OPTION,
                             JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
-                    new NewInstanceDialog(pack);
+                    new InstanceInstallerDialog(pack);
                 }
             }
         });
