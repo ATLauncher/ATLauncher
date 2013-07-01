@@ -10,13 +10,37 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.gui.LauncherFrame;
+
 public class PrivatePack extends Pack {
 
-    private Account[] allowedPlayers;
+    private String[] allowedPlayers;
 
     public PrivatePack(int id, String name, boolean createServer, String[] versions, String[] testers,
-            String description, String supportURL, String websiteURL, Account[] allowedPlayers) {
+            String description, String supportURL, String websiteURL, String[] allowedPlayers) {
         super(id, name, createServer, versions, testers, description, supportURL, websiteURL);
+        this.allowedPlayers = allowedPlayers;
+    }
+
+    public boolean isAllowedPlayer() {
+        Account account = LauncherFrame.settings.getAccount();
+        if (account == null) {
+            return false;
+        }
+        for (String player : allowedPlayers) {
+            if (player.equalsIgnoreCase(account.getMinecraftUsername())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean canInstall() {
+        if(super.isTester() || (super.hasVersions() && isAllowedPlayer())){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }

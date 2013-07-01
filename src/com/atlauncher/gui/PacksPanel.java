@@ -45,7 +45,7 @@ public class PacksPanel extends JPanel {
 
         int count = 0;
         for (Pack pack : LauncherFrame.settings.getPacksSorted()) {
-            if (pack.hasVersions() || pack.isTester()) {
+            if (pack.canInstall()) {
                 panel.add(new PackDisplay(pack), gbc);
                 gbc.gridy++;
                 count++;

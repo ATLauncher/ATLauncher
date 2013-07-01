@@ -665,14 +665,25 @@ public class Settings {
                         testers = new String[0];
                     } else {
                         testers = new String(Base64.decode(element.getAttribute("testers")))
+                        .split(",");
+                    }
+                    String[] allowedPlayers;
+                    if (element.getAttribute("allowedplayers").isEmpty()) {
+                        allowedPlayers = new String[0];
+                    } else {
+                        allowedPlayers = new String(Base64.decode(element.getAttribute("allowedplayers")))
                                 .split(",");
                     }
                     String description = element.getAttribute("description");
                     String supportURL = element.getAttribute("supporturl");
                     String websiteURL = element.getAttribute("websiteurl");
-                    Pack pack = new Pack(id, name, createServer, versions, testers, description,
-                            supportURL, websiteURL);
-                    packs.add(pack);
+                    if(element.getAttribute("type").equalsIgnoreCase("private")){
+                        packs.add(new PrivatePack(id, name, createServer, versions, testers, description,
+                                supportURL, websiteURL, allowedPlayers));
+                    }else{
+                        packs.add(new Pack(id, name, createServer, versions, testers, description,
+                                supportURL, websiteURL));
+                    }
                 }
             }
         } catch (SAXException e) {
