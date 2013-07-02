@@ -197,12 +197,24 @@ public class InstanceInstallerDialog extends JDialog {
                                         + "<br/><br/>Find it in your 'Instances' tab";
                                 title = pack.getName() + " " + version + " Installed";
                                 if (isReinstall) {
-                                    LauncherFrame.settings.changeInstance(instance, version,
-                                            this.getMinecraftVersion(), this.getJarOrder());
+                                    instance.setVersion(version);
+                                    instance.setMinecraftVersion(this.getMinecraftVersion());
+                                    instance.setJarOrder(this.getJarOrder());
+                                    instance.setIsNewLaunchMethod(this.isNewLaunchMethod());
+                                    if (this.isNewLaunchMethod()) {
+                                        instance.setLibrariesNeeded(this.getLibrariesNeeded());
+                                        instance.setMinecraftArguments(this.getMinecraftArguments());
+                                        instance.setMainClass(this.getMainClass());
+                                    }
+                                    LauncherFrame.settings.reloadInstancesPanel();
+                                    LauncherFrame.settings.saveInstances();
                                 } else {
-                                    LauncherFrame.settings.addInstance(instanceNameField.getText(),
-                                            pack, version, this.getMinecraftVersion(),
-                                            this.getJarOrder());
+                                    LauncherFrame.settings.addInstance(new Instance(
+                                            instanceNameField.getText(), pack.getName(), pack,
+                                            version, this.getMinecraftVersion(),
+                                            this.getJarOrder(), this.getLibrariesNeeded(), this
+                                                    .getMinecraftArguments(), this.getMainClass(),
+                                            this.isNewLaunchMethod())); // Add It
                                 }
                             } else {
                                 if (isReinstall) {
@@ -250,6 +262,9 @@ public class InstanceInstallerDialog extends JDialog {
                             if (!subProgressBar.isVisible()) {
                                 subProgressBar.setVisible(true);
                             }
+                            if (subProgressBar.isIndeterminate()) {
+                                subProgressBar.setIndeterminate(false);
+                            }
                             int progress = (Integer) evt.getNewValue();
                             if (progress > 100) {
                                 progress = 100;
@@ -258,6 +273,13 @@ public class InstanceInstallerDialog extends JDialog {
                                 subProgressBar.setVisible(false);
                             }
                             subProgressBar.setValue(progress);
+                        } else if ("subprogressint" == evt.getPropertyName()) {
+                            if (!subProgressBar.isVisible()) {
+                                subProgressBar.setVisible(true);
+                            }
+                            if (!subProgressBar.isIndeterminate()) {
+                                subProgressBar.setIndeterminate(true);
+                            }
                         } else if ("doing" == evt.getPropertyName()) {
                             String doingText = (String) evt.getNewValue();
                             doing.setText(doingText);

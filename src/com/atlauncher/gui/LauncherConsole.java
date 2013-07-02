@@ -189,4 +189,8 @@ public class LauncherConsole extends JFrame {
     public void showKillMinecraft() {
         bottomBar.showKillMinecraft();
     }
+    
+    public void hideKillMinecraft() {
+        bottomBar.hideKillMinecraft();
+    }
 }

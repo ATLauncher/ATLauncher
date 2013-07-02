@@ -90,6 +90,7 @@ public class Downloader {
     }
 
     public void runNoReturn() {
+        System.out.println("Downloading " + this.url + " to " + this.destination);
         if (worker != null) {
             worker.execute(); // Run the worker process
         }

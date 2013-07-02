@@ -166,4 +166,8 @@ public class ConsoleBottomBar extends JPanel {
     public void showKillMinecraft() {
         killMinecraft.setVisible(true);
     }
+
+    public void hideKillMinecraft() {
+        killMinecraft.setVisible(false);
+    }
 }

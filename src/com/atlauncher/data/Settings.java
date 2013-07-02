@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,12 +35,6 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -91,12 +84,14 @@ public class Settings {
     private File imagesDir = new File(configsDir, "Images");
     private File skinsDir = new File(imagesDir, "Skins");
     private File jarsDir = new File(configsDir, "Jars");
+    private File resourcesDir = new File(configsDir, "Resources");
+    private File librariesDir = new File(configsDir, "Libraries");
     private File downloadsDir = new File(baseDir, "Downloads");
     private File instancesDir = new File(baseDir, "Instances");
     private File tempDir = new File(baseDir, "Temp");
-    private File instancesFile = new File(getConfigsDir(), "instances.xml");
+    private File instancesDataFile = new File(configsDir, "instancesdata");
     private File userDataFile = new File(configsDir, "userdata");
-    private File propertiesFile = new File(baseDir, "ATLauncher.conf"); // File for properties
+    private File propertiesFile = new File(configsDir, "ATLauncher.conf"); // File for properties
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -255,21 +250,12 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, imagesDir, skinsDir, jarsDir, downloadsDir,
-                instancesDir, tempDir };
+        File[] files = { backupsDir, configsDir, imagesDir, skinsDir, jarsDir, resourcesDir,
+                librariesDir, downloadsDir, instancesDir, tempDir };
         for (File file : files) {
             if (!file.exists()) {
                 console.log("Folder " + file.getAbsolutePath() + " doesn't exist. Creating now");
                 file.mkdir();
-            }
-        }
-        if (!instancesFile.exists()) {
-            try {
-                FileWriter fw = new FileWriter(instancesFile);
-                fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><instances></instances>");
-                fw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -329,6 +315,24 @@ public class Settings {
     }
 
     /**
+     * Returns the resources directory
+     * 
+     * @return File object for the resources directory
+     */
+    public File getResourcesDir() {
+        return this.resourcesDir;
+    }
+
+    /**
+     * Returns the libraries directory
+     * 
+     * @return File object for the libraries directory
+     */
+    public File getLibrariesDir() {
+        return this.librariesDir;
+    }
+
+    /**
      * Returns the downloads directory
      * 
      * @return File object for the downloads directory
@@ -363,12 +367,12 @@ public class Settings {
     }
 
     /**
-     * Returns the instances.xml file
+     * Returns the instancesdata file
      * 
-     * @return File object for the instances.xml file
+     * @return File object for the instancesdata file
      */
-    public File getInstancesFile() {
-        return instancesFile;
+    public File getInstancesDataFile() {
+        return instancesDataFile;
     }
 
     /**
@@ -504,9 +508,10 @@ public class Settings {
      */
     public void switchAccount(Account account) {
         if (account.isReal()) {
-            getConsole().log("Changing account to " + account);
+            getConsole().log("Changed account to " + account);
             this.account = account;
         } else {
+            getConsole().log("Logging out of account");
             this.account = null;
         }
         reloadPacksPanel();
@@ -655,7 +660,6 @@ public class Settings {
                             .getAttribute("createserver"));
                     String[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
-                        getConsole().log("Pack " + name + " has no versions!");
                         versions = new String[0];
                     } else {
                         versions = element.getAttribute("versions").split(",");
@@ -665,22 +669,22 @@ public class Settings {
                         testers = new String[0];
                     } else {
                         testers = new String(Base64.decode(element.getAttribute("testers")))
-                        .split(",");
+                                .split(",");
                     }
                     String[] allowedPlayers;
                     if (element.getAttribute("allowedplayers").isEmpty()) {
                         allowedPlayers = new String[0];
                     } else {
-                        allowedPlayers = new String(Base64.decode(element.getAttribute("allowedplayers")))
-                                .split(",");
+                        allowedPlayers = new String(Base64.decode(element
+                                .getAttribute("allowedplayers"))).split(",");
                     }
                     String description = element.getAttribute("description");
                     String supportURL = element.getAttribute("supporturl");
                     String websiteURL = element.getAttribute("websiteurl");
-                    if(element.getAttribute("type").equalsIgnoreCase("private")){
-                        packs.add(new PrivatePack(id, name, createServer, versions, testers, description,
-                                supportURL, websiteURL, allowedPlayers));
-                    }else{
+                    if (element.getAttribute("type").equalsIgnoreCase("private")) {
+                        packs.add(new PrivatePack(id, name, createServer, versions, testers,
+                                description, supportURL, websiteURL, allowedPlayers));
+                    } else {
                         packs.add(new Pack(id, name, createServer, versions, testers, description,
                                 supportURL, websiteURL));
                     }
@@ -713,7 +717,6 @@ public class Settings {
                     String name = element.getAttribute("name");
                     String[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
-                        getConsole().log("Addon " + name + " has no versions!");
                         versions = new String[0];
                     } else {
                         versions = element.getAttribute("versions").split(",");
@@ -746,48 +749,51 @@ public class Settings {
      * Loads the user installed Instances
      */
     private void loadInstances() {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(instancesFile);
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("instance");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    String name = element.getAttribute("name");
-                    String pack = element.getAttribute("pack");
-                    String version = element.getAttribute("version");
-                    String minecraftVersion = element.getAttribute("minecraftversion");
-                    String jarOrder = element.getAttribute("jarorder");
-                    boolean isPlayable, hasPlayable;
-                    // TODO: Remove the code checking if it has the attribute playable
-                    if (element.hasAttribute("playable")) {
-                        hasPlayable = true;
-                        isPlayable = Boolean.parseBoolean(element.getAttribute("playable"));
-                    } else {
-                        hasPlayable = false;
-                        isPlayable = true;
+        if (instancesDataFile.exists()) {
+            try {
+                FileInputStream in = new FileInputStream(instancesDataFile);
+                ObjectInputStream objIn = new ObjectInputStream(in);
+                try {
+                    Object obj;
+                    while ((obj = objIn.readObject()) != null) {
+                        if (obj instanceof Instance) {
+                            instances.add((Instance) obj);
+                            if (isPackByName(((Instance) obj).getPackName())) {
+                                ((Instance) obj).setRealPack(getPackByName(((Instance) obj)
+                                        .getPackName()));
+                            }
+                        }
                     }
-                    Pack realPack = null;
-                    if (isPackByName(pack)) {
-                        realPack = getPackByName(pack);
-                    }
-                    Instance instance = new Instance(name, pack, realPack, version,
-                            minecraftVersion, jarOrder, isPlayable);
-                    instances.add(instance);
-                    if (!hasPlayable) {
-                        setInstancePlayable(instance);
-                    }
+                } catch (EOFException e) {
+                    // Don't log this, it always happens when it gets to the end of the file
+                } finally {
+                    objIn.close();
+                    in.close();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+        }
+    }
+
+    public void saveInstances() {
+        FileOutputStream out = null;
+        ObjectOutputStream objOut = null;
+        try {
+            out = new FileOutputStream(instancesDataFile);
+            objOut = new ObjectOutputStream(out);
+            for (Instance instance : instances) {
+                objOut.writeObject(instance);
+            }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                objOut.close();
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -874,6 +880,35 @@ public class Settings {
     }
 
     /**
+     * Gets the install method for a minecraft version
+     */
+    public String getMinecraftInstallMethod(String version) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new File(configsDir, "minecraft.xml"));
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("minecraft");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    if (element.getAttribute("version").equalsIgnoreCase(version)) {
+                        return element.getAttribute("installmethod");
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
      * Finds out if this is the first time the Launcher has been run
      * 
      * @return true if the Launcher hasn't been run and setup yet, false for otherwise
@@ -931,256 +966,28 @@ public class Settings {
     }
 
     /**
-     * Adds an instance to the Launcher and saves it to the instances.xml file
+     * Adds an instance to the Launcher and saves it to the instancesdata file
      */
-    public void addInstance(String name, Pack pack, String version, String minecraftVersion,
-            String jarOrder) {
-        try {
-            // Open the file
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(getInstancesFile());
-            Node instances = document.getFirstChild();
-
-            // Create the instances element
-            Element instance = document.createElement("instance");
-            instance.setAttribute("name", name);
-            instance.setAttribute("pack", pack.getName());
-            instance.setAttribute("version", version);
-            instance.setAttribute("minecraft", minecraftVersion);
-            instance.setAttribute("jarorder", jarOrder);
-            instance.setAttribute("playable", "true");
-            instances.appendChild(instance);
-
-            // Save it all back to original file
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource source = new DOMSource(document);
-            StreamResult result = new StreamResult(getInstancesFile());
-            transformer.transform(source, result);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
-        this.instances.add(new Instance(name, pack.getName(), pack, version, minecraftVersion,
-                jarOrder)); // Add It
-        reloadInstancesPanel();
-    }
-
-    /**
-     * Adds an instance to the Launcher and saves it to the instances.xml file
-     */
-    public void changeInstance(Instance instance, String version, String minecraftVersion,
-            String jarOrder) {
-        instance.setVersion(version);
-        instance.setMinecraftVersion(minecraftVersion);
-        instance.setJarOrder(jarOrder);
-        instance.setPlayable();
-        try {
-            // Open the file
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(getInstancesFile());
-            NodeList currentInstances = document.getElementsByTagName("instance");
-
-            Element newInstance = document.createElement("instance");
-            newInstance.setAttribute("name", instance.getName());
-            newInstance.setAttribute("pack", instance.getPackName());
-            newInstance.setAttribute("version", version);
-            newInstance.setAttribute("minecraft", minecraftVersion);
-            newInstance.setAttribute("jarorder", jarOrder);
-            newInstance.setAttribute("playable", "true");
-
-            boolean found = false;
-            for (int i = 0; i < currentInstances.getLength(); i++) {
-                Element node = (Element) currentInstances.item(i);
-                if (node.getAttribute("name").equals(instance.getName())) {
-                    found = true;
-                    node.getParentNode().replaceChild(newInstance, node);
-                }
-            }
-
-            if (found) {
-                getConsole().log("Updating instance details successful");
-                // Save it all back to original file if it was replaced
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer = transformerFactory.newTransformer();
-                DOMSource source = new DOMSource(document);
-                StreamResult result = new StreamResult(getInstancesFile());
-                transformer.transform(source, result);
-                reloadInstancesPanel();
-            } else {
-                getConsole().log("Error updating instance details");
-                setInstanceUnplayable(instance);
-            }
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
+    public void addInstance(Instance instance) {
+        if (this.instances.add(instance)) { // Add It
+            saveInstances(); // Save the instancesdata file
+            reloadInstancesPanel(); // Reload the instances tab
         }
     }
 
     public void setInstanceUnplayable(Instance instance) {
-        instance.setUnplayable();
-        try {
-            // Open the file
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(getInstancesFile());
-            NodeList currentInstances = document.getElementsByTagName("instance");
-
-            Element newInstance = document.createElement("instance");
-            newInstance.setAttribute("name", instance.getName());
-            newInstance.setAttribute("pack", instance.getPackName());
-            newInstance.setAttribute("version", instance.getVersion());
-            newInstance.setAttribute("minecraft", instance.getMinecraftVersion());
-            newInstance.setAttribute("jarorder", instance.getJarOrder());
-            newInstance.setAttribute("playable", "false");
-
-            boolean found = false;
-            for (int i = 0; i < currentInstances.getLength(); i++) {
-                Element node = (Element) currentInstances.item(i);
-                if (node.getAttribute("name").equals(instance.getName())) {
-                    found = true;
-                    node.getParentNode().replaceChild(newInstance, node);
-                }
-            }
-
-            if (found) {
-                getConsole().log("Updating instance details successful");
-                // Save it all back to original file if it was replaced
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer = transformerFactory.newTransformer();
-                DOMSource source = new DOMSource(document);
-                StreamResult result = new StreamResult(getInstancesFile());
-                transformer.transform(source, result);
-            } else {
-                getConsole().log("Error updating instance details");
-            }
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
-        reloadInstancesPanel();
-    }
-
-    public void setInstancePlayable(Instance instance) {
-        instance.setPlayable();
-        try {
-            // Open the file
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(getInstancesFile());
-            NodeList currentInstances = document.getElementsByTagName("instance");
-
-            Element newInstance = document.createElement("instance");
-            newInstance.setAttribute("name", instance.getName());
-            newInstance.setAttribute("pack", instance.getPackName());
-            newInstance.setAttribute("version", instance.getVersion());
-            newInstance.setAttribute("minecraft", instance.getMinecraftVersion());
-            newInstance.setAttribute("jarorder", instance.getJarOrder());
-            newInstance.setAttribute("playable", "true");
-
-            boolean found = false;
-            for (int i = 0; i < currentInstances.getLength(); i++) {
-                Element node = (Element) currentInstances.item(i);
-                if (node.getAttribute("name").equals(instance.getName())) {
-                    found = true;
-                    node.getParentNode().replaceChild(newInstance, node);
-                }
-            }
-
-            if (found) {
-                getConsole().log("Updating instance details successful");
-                // Save it all back to original file if it was replaced
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer = transformerFactory.newTransformer();
-                DOMSource source = new DOMSource(document);
-                StreamResult result = new StreamResult(getInstancesFile());
-                transformer.transform(source, result);
-            } else {
-                getConsole().log("Error updating instance details");
-            }
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
-        reloadInstancesPanel();
+        instance.setUnplayable(); // Set the instance as unplayable
+        saveInstances(); // Save the instancesdata file
+        reloadInstancesPanel(); // Reload the instances tab
     }
 
     /**
      * Removes an instance from the Launcher
      */
     public void removeInstance(Instance instance) {
-        boolean found = false;
-        try {
-            // Open the file
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(getInstancesFile());
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("instance");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    String name = element.getAttribute("name");
-                    if (name.equalsIgnoreCase(instance.getName())) {
-                        found = true; // Found it
-                        node.getParentNode().removeChild(node);
-                    }
-                }
-            }
-
-            if (found) {
-                // Save it all back to original file if found
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer = transformerFactory.newTransformer();
-                DOMSource source = new DOMSource(document);
-                StreamResult result = new StreamResult(getInstancesFile());
-                transformer.transform(source, result);
-            }
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
-        if (found) {
+        if (this.instances.remove(instance)) { // Remove the instance
             Utils.delete(instance.getRootDirectory());
-            this.instances.remove(instance); // Remove the instance
+            saveInstances(); // Save the instancesdata file
             reloadInstancesPanel(); // Reload the instances panel
         }
     }
@@ -1348,13 +1155,43 @@ public class Settings {
      * @param name
      *            name of the Pack to find
      * @return Pack if the pack is found from the name
-     * @throws InvalidPack
-     *             If name is not found
      */
     public Pack getPackByName(String name) {
         for (Pack pack : packs) {
             if (pack.getName().equalsIgnoreCase(name)) {
                 return pack;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if there is an instance by the given name
+     * 
+     * @param name
+     *            name of the Instance to find
+     * @return True if the instance is found from the name
+     */
+    public boolean isInstanceByName(String name) {
+        for (Instance instance : instances) {
+            if (instance.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Finds a Instance from the given name
+     * 
+     * @param name
+     *            name of the Instance to find
+     * @return Instance if the instance is found from the name
+     */
+    public Instance getInstanceByName(String name) {
+        for (Instance instance : instances) {
+            if (instance.getName().equalsIgnoreCase(name)) {
+                return instance;
             }
         }
         return null;
@@ -1479,6 +1316,10 @@ public class Settings {
     public void showKillMinecraft(Process minecraft) {
         this.minecraftProcess = minecraft;
         getConsole().showKillMinecraft();
+    }
+
+    public void hideKillMinecraft() {
+        getConsole().hideKillMinecraft();
     }
 
     public void killMinecraft() {

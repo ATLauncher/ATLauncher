@@ -22,7 +22,17 @@ import com.atlauncher.gui.SplashScreen;
 public class App {
 
     public static void main(String[] args) {
-        File config = new File(System.getProperty("user.dir"), "ATLauncher.conf");
+        String autoLaunch = null;
+        if (args != null) {
+            for (String arg : args) {
+                String[] parts = arg.split("=");
+                if (parts[0].equalsIgnoreCase("--launch")) {
+                    autoLaunch = parts[1];
+                }
+            }
+        }
+
+        File config = new File(System.getProperty("user.dir"), "Configs");
         if (!config.exists()) {
             int files = config.getParentFile().list().length;
             if (files != 1) {
@@ -30,7 +40,7 @@ public class App {
                 int ret = JOptionPane.showOptionDialog(null,
                         "<html><center>I've detected that you may not have installed this "
                                 + "in the right location.<br/><br/>The exe or jar file"
-                                + "should be placed in it's own folder with nothing else"
+                                + "should be placed in it's own folder with nothing else "
                                 + "in it<br/><br/>Are you 100% sure that's what you've"
                                 + "done?</center></html>", "Warning", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
@@ -53,6 +63,11 @@ public class App {
             new SetupDialog(settings);
         }
 
+        // if (autoLaunch != null) {
+        // if (settings.isInstanceByName(autoLaunch)) {
+        // Instance instance = settings.getInstanceByName(autoLaunch);
+        // }
+        // }
         settings.getConsole().log("Launcher opening");
         new LauncherFrame(settings); // Open the Launcher
     }

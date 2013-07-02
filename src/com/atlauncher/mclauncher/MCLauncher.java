@@ -92,7 +92,6 @@ public class MCLauncher {
         String instanceName = args[3];
         int screenWidth, screenHeight;
         String jarOrder = null;
-        System.out.println(args.length);
         if (args.length == 7) {
             // Has JarOrder
             jarOrder = args[4];

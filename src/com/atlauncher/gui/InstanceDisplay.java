@@ -16,11 +16,15 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.util.UUID;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -32,9 +36,14 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.mclauncher.MCLauncher;
+import com.atlauncher.mclauncher.NewMCLauncher;
 
 /**
  * Class for displaying instances in the Instance Tab
@@ -143,19 +152,40 @@ public class InstanceDisplay extends JPanel {
                     boolean loggedIn = false;
                     String url = null;
                     String sess = null;
-                    try {
-                        url = "https://login.minecraft.net/?user="
-                                + URLEncoder.encode(username, "UTF-8") + "&password="
-                                + URLEncoder.encode(password, "UTF-8") + "&version=999";
-                    } catch (UnsupportedEncodingException e1) {
-                        e1.printStackTrace();
-                    }
-                    String auth = Utils.urlToString(url);
-                    if (auth.contains(":")) {
-                        String[] parts = auth.split(":");
-                        if (parts.length == 5) {
-                            loggedIn = true;
-                            sess = parts[3];
+                    String auth = null;
+                    if (instance.isNewLaunchMethod()) {
+                        String result = newLogin(username, password);
+                        JSONParser parser = new JSONParser();
+                        try {
+                            Object obj = parser.parse(result);
+                            JSONObject jsonObject = (JSONObject) obj;
+                            if (jsonObject.containsKey("accessToken")) {
+                                String accessToken = (String) jsonObject.get("accessToken");
+                                JSONObject profile = (JSONObject) jsonObject.get("selectedProfile");
+                                String profileID = (String) profile.get("id");
+                                sess = "token:" + accessToken + ":" + profileID;
+                                loggedIn = true;
+                            } else {
+                                auth = (String) jsonObject.get("errorMessage");
+                            }
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            url = "https://login.minecraft.net/?user="
+                                    + URLEncoder.encode(username, "UTF-8") + "&password="
+                                    + URLEncoder.encode(password, "UTF-8") + "&version=999";
+                        } catch (UnsupportedEncodingException e1) {
+                            e1.printStackTrace();
+                        }
+                        auth = Utils.urlToString(url);
+                        if (auth.contains(":")) {
+                            String[] parts = auth.split(":");
+                            if (parts.length == 5) {
+                                loggedIn = true;
+                                sess = parts[3];
+                            }
                         }
                     }
                     if (!loggedIn) {
@@ -172,7 +202,12 @@ public class InstanceDisplay extends JPanel {
                                 try {
                                     long start = System.currentTimeMillis();
                                     LauncherFrame.settings.getParent().setVisible(false);
-                                    Process process = MCLauncher.launch(account, instance, session);
+                                    Process process = null;
+                                    if (instance.isNewLaunchMethod()) {
+                                        process = NewMCLauncher.launch(account, instance, session);
+                                    } else {
+                                        process = MCLauncher.launch(account, instance, session);
+                                    }
                                     LauncherFrame.settings.showKillMinecraft(process);
                                     InputStream is = process.getErrorStream();
                                     InputStreamReader isr = new InputStreamReader(is);
@@ -181,6 +216,7 @@ public class InstanceDisplay extends JPanel {
                                     while ((line = br.readLine()) != null) {
                                         LauncherFrame.settings.getConsole().logMinecraft(line);
                                     }
+                                    LauncherFrame.settings.hideKillMinecraft();
                                     LauncherFrame.settings.getParent().setVisible(true);
                                     long end = System.currentTimeMillis();
                                     LauncherFrame.settings.getConsole().log(
@@ -276,5 +312,48 @@ public class InstanceDisplay extends JPanel {
         rightPanel.add(instanceActions, BorderLayout.SOUTH);
 
         add(splitPane, BorderLayout.CENTER);
+    }
+
+    public String newLogin(String username, String password) {
+        StringBuilder response = null;
+        try {
+            URL url = new URL("https://authserver.mojang.com/authenticate");
+            String request = "{\"agent\":{\"name\":\"Minecraft\",\"version\":10},\"username\":\""
+                    + username + "\",\"password\":\"" + password + "\",\"clientToken\":\""
+                    + UUID.randomUUID() + "\"}";
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
+            connection.setRequestProperty("Content-Length", "" + request.getBytes().length);
+            connection.setRequestProperty("Content-Language", "en-US");
+
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+            writer.write(request.getBytes());
+            writer.flush();
+            writer.close();
+
+            // Read the result
+
+            BufferedReader reader = null;
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return response.toString();
     }
 }

@@ -44,8 +44,8 @@ public class Pack {
     private String xml; // The XML
     private String xmlVersion; // The version the XML is for
 
-    public Pack(int id, String name, boolean createServer, String[] versions, String[] testers, String description,
-            String supportURL, String websiteURL) {
+    public Pack(int id, String name, boolean createServer, String[] versions, String[] testers,
+            String description, String supportURL, String websiteURL) {
         this.name = name;
         this.createServer = createServer;
         this.versions = versions;
@@ -111,7 +111,7 @@ public class Pack {
             String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.xml";
             String versionURL = LauncherFrame.settings.getFileURL(path); // The XML with path on
                                                                          // server
-            this.xml = new Downloader(versionURL).run();
+            this.xml = Utils.urlToString(versionURL);
             this.xmlVersion = version;
         }
         return this.xml;
@@ -141,7 +141,6 @@ public class Pack {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Whoops nothing found");
         return null;
     }
 
@@ -182,7 +181,7 @@ public class Pack {
                     String serverURL = null;
                     String serverFile = null;
                     Type serverType = null;
-                    if (element.getAttribute("server").equalsIgnoreCase("yes")) {
+                    if (element.getAttribute("server").equalsIgnoreCase("seperate")) {
                         server = true;
                         serverURL = element.getAttribute("serverurl");
                         serverFile = element.getAttribute("serverfile");
@@ -241,15 +240,24 @@ public class Pack {
         }
         return false;
     }
-    
+
     public boolean canInstall() {
-        if(hasVersions() || isTester()){
+        if (hasVersions() || isTester()) {
             return true;
         }
         return false;
     }
-    
+
     public boolean canCreateServer() {
         return this.createServer;
+    }
+
+    public boolean isNewInstallMethod(String version) {
+        if (LauncherFrame.settings.getMinecraftInstallMethod(getMinecraftVersion(version))
+                .equalsIgnoreCase("new")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

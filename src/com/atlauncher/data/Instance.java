@@ -11,41 +11,51 @@
 package com.atlauncher.data;
 
 import java.io.File;
+import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.Utils;
 
-public class Instance {
+public class Instance implements Serializable {
 
+    private static final long serialVersionUID = 1925450686877381452L;
     private String name;
     private String pack;
     private String version;
     private String minecraftVersion;
     private String jarOrder;
-    private Pack realPack;
+    private String librariesNeeded = null;
+    private String minecraftArguments = null;
+    private String mainClass = null;
+    private transient Pack realPack;
     private boolean isPlayable;
+    private boolean newLaunchMethod;
 
     public Instance(String name, String pack, Pack realPack, String version,
-            String minecraftVersion, String jarOrder, boolean isPlayable) {
+            String minecraftVersion, String jarOrder, String librariesNeeded,
+            String minecraftArguments, String mainClass, boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
         this.version = version;
         this.minecraftVersion = minecraftVersion;
         this.jarOrder = jarOrder;
+        if (newLaunchMethod) {
+            this.librariesNeeded = librariesNeeded;
+            this.mainClass = mainClass;
+            this.jarOrder = jarOrder;
+        }
         this.isPlayable = isPlayable;
+        this.newLaunchMethod = newLaunchMethod;
     }
 
     public Instance(String name, String pack, Pack realPack, String version,
-            String minecraftVersion, String jarOrder) {
-        this(name, pack, realPack, version, minecraftVersion, jarOrder, true);
-    }
-
-    public Instance(String name, String pack, String version, String minecraftVersion,
-            String jarOrder) {
-        this(name, pack, null, version, minecraftVersion, jarOrder, true);
+            String minecraftVersion, String jarOrder, String librariesNeeded,
+            String minecraftArguments, String mainClass, boolean newLaunchMethod) {
+        this(name, pack, realPack, version, minecraftVersion, jarOrder, librariesNeeded,
+                minecraftArguments, mainClass, true, newLaunchMethod);
     }
 
     public String getName() {
@@ -127,6 +137,10 @@ public class Instance {
         return new File(getMinecraftDirectory(), "bin");
     }
 
+    public File getNativesDirectory() {
+        return new File(getBinDirectory(), "natives");
+    }
+
     public File getMinecraftJar() {
         return new File(getBinDirectory(), "minecraft.jar");
     }
@@ -140,6 +154,10 @@ public class Instance {
 
     public Pack getRealPack() {
         return this.realPack;
+    }
+
+    public void setRealPack(Pack realPack) {
+        this.realPack = realPack;
     }
 
     public boolean hasJarMods() {
@@ -172,6 +190,38 @@ public class Instance {
 
     public boolean isPlayable() {
         return this.isPlayable;
+    }
+
+    public void setIsNewLaunchMethod(boolean newLaunchMethod) {
+        this.newLaunchMethod = newLaunchMethod;
+    }
+
+    public boolean isNewLaunchMethod() {
+        return this.newLaunchMethod;
+    }
+
+    public String getLibrariesNeeded() {
+        return librariesNeeded;
+    }
+
+    public void setLibrariesNeeded(String librariesNeeded) {
+        this.librariesNeeded = librariesNeeded;
+    }
+
+    public String getMinecraftArguments() {
+        return minecraftArguments;
+    }
+
+    public void setMinecraftArguments(String minecraftArguments) {
+        this.minecraftArguments = minecraftArguments;
+    }
+
+    public String getMainClass() {
+        return mainClass;
+    }
+
+    public void setMainClass(String mainClass) {
+        this.mainClass = mainClass;
     }
 
 }
