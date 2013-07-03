@@ -23,6 +23,7 @@ public class Instance implements Serializable {
     private static final long serialVersionUID = 1925450686877381452L;
     private String name;
     private String pack;
+    private String installedBy;
     private String version;
     private String minecraftVersion;
     private String jarOrder;
@@ -33,8 +34,8 @@ public class Instance implements Serializable {
     private boolean isPlayable;
     private boolean newLaunchMethod;
 
-    public Instance(String name, String pack, Pack realPack, String version,
-            String minecraftVersion, String jarOrder, String librariesNeeded,
+    public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
+            String version, String minecraftVersion, String jarOrder, String librariesNeeded,
             String minecraftArguments, String mainClass, boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
@@ -49,13 +50,18 @@ public class Instance implements Serializable {
         }
         this.isPlayable = isPlayable;
         this.newLaunchMethod = newLaunchMethod;
+        if (installJustForMe) {
+            this.installedBy = LauncherFrame.settings.getAccount().getMinecraftUsername();
+        } else {
+            this.installedBy = null;
+        }
     }
 
-    public Instance(String name, String pack, Pack realPack, String version,
-            String minecraftVersion, String jarOrder, String librariesNeeded,
+    public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
+            String version, String minecraftVersion, String jarOrder, String librariesNeeded,
             String minecraftArguments, String mainClass, boolean newLaunchMethod) {
-        this(name, pack, realPack, version, minecraftVersion, jarOrder, librariesNeeded,
-                minecraftArguments, mainClass, true, newLaunchMethod);
+        this(name, pack, realPack, installJustForMe, version, minecraftVersion, jarOrder,
+                librariesNeeded, minecraftArguments, mainClass, true, newLaunchMethod);
     }
 
     public String getName() {
@@ -224,4 +230,18 @@ public class Instance implements Serializable {
         this.mainClass = mainClass;
     }
 
+    public boolean canPlay() {
+        if (LauncherFrame.settings.getAccount() == null) {
+            return false;
+        } else if (!LauncherFrame.settings.getAccount().isReal()) {
+            return false;
+        }
+        if (installedBy != null) {
+            if (!LauncherFrame.settings.getAccount().getMinecraftUsername()
+                    .equalsIgnoreCase(installedBy)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

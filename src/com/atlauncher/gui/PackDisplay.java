@@ -15,6 +15,9 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -33,7 +36,7 @@ import com.atlauncher.data.Pack;
  * @author Ryan
  * 
  */
-public class PackDisplay extends JPanel {
+public class PackDisplay extends CollapsiblePanel {
 
     private JPanel leftPanel; // Left panel with image
     private JPanel rightPanel; // Right panel with description and actions
@@ -49,16 +52,9 @@ public class PackDisplay extends JPanel {
     private JButton website; // Website button
 
     public PackDisplay(final Pack pack) {
-        setLayout(new BorderLayout());
-
-        // Add titles border with name, Mac needs smaller font
-        if (Utils.isMac()) {
-            setBorder(new TitledBorder(null, pack.getName(), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
-        } else {
-            setBorder(new TitledBorder(null, pack.getName(), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
-        }
+        super(pack);
+        JPanel panel = super.getContentPane();
+        panel.setLayout(new BorderLayout());
 
         leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
@@ -91,7 +87,7 @@ public class PackDisplay extends JPanel {
         packActionsBottom.setLayout(new FlowLayout());
         packActions.setLeftComponent(packActionsTop);
         packActions.setRightComponent(packActionsBottom);
-        
+
         newInstance = new JButton("New Instance");
         newInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -122,8 +118,8 @@ public class PackDisplay extends JPanel {
                 Utils.openBrowser(pack.getWebsiteURL());
             }
         });
-        
-        if(!pack.canCreateServer()){
+
+        if (!pack.canCreateServer()) {
             createServer.setVisible(false);
         }
 
@@ -136,6 +132,6 @@ public class PackDisplay extends JPanel {
         rightPanel.add(packDescription, BorderLayout.CENTER);
         rightPanel.add(packActions, BorderLayout.SOUTH);
 
-        add(splitPane, BorderLayout.CENTER);
+        panel.add(splitPane, BorderLayout.CENTER);
     }
 }

@@ -118,9 +118,9 @@ public class Mod {
             if (getURL().contains("http://newfiles.atlauncher.com/")) {
                 new Downloader(LauncherFrame.settings.getFileURL(getURL().replace(
                         "http://newfiles.atlauncher.com/", "")), fileLocation.getAbsolutePath(),
-                        installer).runNoReturn();
+                        installer).run();
             } else {
-                new Downloader(getURL(), fileLocation.getAbsolutePath(), installer).runNoReturn();
+                new Downloader(getURL(), fileLocation.getAbsolutePath(), installer).run();
             }
         } else {
             while (!fileLocation.exists()) {

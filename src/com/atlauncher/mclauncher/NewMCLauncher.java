@@ -37,6 +37,7 @@ public class NewMCLauncher {
     public static Process launch(Account account, Instance instance, String session)
             throws IOException {
         StringBuilder cpb = new StringBuilder("");
+        
         File jarMods = instance.getJarModsDirectory();
         if (jarMods.exists() && instance.hasJarMods()) {
             for (String mod : instance.getJarOrder().split(",")) {
@@ -69,7 +70,7 @@ public class NewMCLauncher {
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
-
+System.out.println(cpb.toString());
         arguments.add(instance.getMainClass());
         arguments.add("--username=" + account.getMinecraftUsername());
         arguments.add("--session=" + session);

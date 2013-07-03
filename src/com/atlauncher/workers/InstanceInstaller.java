@@ -159,11 +159,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void downloadMojangStuffNew() {
-        firePropertyChange("doing", null, "Downloading Resources");
+        firePropertyChange("doing", null, "Downloading Resources (May Take A While)");
         firePropertyChange("subprogressint", null, null);
         ExecutorService executor = Executors.newFixedThreadPool(8);
-        ArrayList<Downloader> downloads = getNeededResources();
-        for (Downloader download : downloads) {
+        ArrayList<Downloadable> downloads = getNeededResources();
+        for (Downloadable download : downloads) {
             executor.execute(download);
         }
         executor.shutdown();
@@ -187,8 +187,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 new File(getBinDirectory(), "minecraft.jar"), true);
     }
 
-    private ArrayList<Downloader> getNeededResources() {
-        ArrayList<Downloader> downloads = new ArrayList<Downloader>(); // All the files
+    private ArrayList<Downloadable> getNeededResources() {
+        ArrayList<Downloadable> downloads = new ArrayList<Downloadable>(); // All the files
 
         // Read in the resources needed
 
@@ -226,7 +226,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             filename = file.getName();
                         }
                         if (!Utils.getMD5(file).equalsIgnoreCase(etag))
-                            downloads.add(new Downloader(
+                            downloads.add(new Downloadable(
                                     "https://s3.amazonaws.com/Minecraft.Resources/" + key, file,
                                     etag));
                     }
@@ -281,13 +281,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 String url = "https://s3.amazonaws.com/Minecraft.Download/libraries/" + dir + "/"
                         + filename;
                 File file = new File(LauncherFrame.settings.getLibrariesDir(), filename);
-                downloads.add(new Downloader(url, file));
+                downloads.add(new Downloadable(url, file));
             }
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        downloads.add(new Downloader("https://s3.amazonaws.com/Minecraft.Download/versions/"
+        downloads.add(new Downloadable("https://s3.amazonaws.com/Minecraft.Download/versions/"
                 + this.minecraftVersion + "/" + this.minecraftVersion + ".jar", new File(
                 LauncherFrame.settings.getJarsDir(), this.minecraftVersion + ".jar")));
         return downloads;
@@ -360,8 +360,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             addPercent(5);
             while (!Utils.getMD5(files[i]).equalsIgnoreCase(hashes[i])) {
                 firePropertyChange("doing", null, "Downloading " + files[i].getName());
-                new com.atlauncher.data.Downloader(urls[i], files[i].getAbsolutePath(), this)
-                        .runNoReturn();
+                new com.atlauncher.data.Downloader(urls[i], files[i].getAbsolutePath(), this).run();
             }
             if (i == 0) {
                 Utils.copyFile(files[i], getMinecraftJar(), true);
@@ -416,8 +415,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         File configs = new File(LauncherFrame.settings.getTempDir(), "Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version + "/Configs.zip";
         String configsURL = LauncherFrame.settings.getFileURL(path); // The zip on the server
-        new com.atlauncher.data.Downloader(configsURL, configs.getAbsolutePath(), this)
-                .runNoReturn();
+        new com.atlauncher.data.Downloader(configsURL, configs.getAbsolutePath(), this).run();
         Utils.unzip(configs, getMinecraftDirectory());
         configs.delete();
     }

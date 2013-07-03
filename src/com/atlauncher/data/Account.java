@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -33,6 +34,8 @@ public class Account implements Serializable {
     private String minecraftUsername; // Users Minecraft Username
     private boolean remember; // Remember the users password or not
     private transient boolean isReal; // If this is a real user
+    private ArrayList<String> collapsedPacks; // Array of packs collapsed in the Packs Tab
+    private ArrayList<String> collapsedInstances; // Array of instances collapsed in the Instances Tab
 
     public Account(String username, String password, String minecraftUsername, boolean remember) {
         this.username = username;
@@ -43,6 +46,8 @@ public class Account implements Serializable {
         this.minecraftUsername = minecraftUsername;
         this.remember = remember;
         this.isReal = true;
+        this.collapsedPacks = new ArrayList<String>();
+        this.collapsedInstances = new ArrayList<String>();
     }
 
     public Account(String name) {
@@ -50,6 +55,8 @@ public class Account implements Serializable {
         this.minecraftUsername = name;
         this.remember = false;
         this.isReal = false;
+        this.collapsedPacks = new ArrayList<String>();
+        this.collapsedInstances = new ArrayList<String>();
     }
 
     public ImageIcon getMinecraftHead() {
@@ -58,7 +65,7 @@ public class Account implements Serializable {
             file = new File(LauncherFrame.settings.getSkinsDir(), minecraftUsername + ".png");
             if (!file.exists()) {
                 new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername
-                        + ".png", file.getAbsolutePath()).runNoReturn();
+                        + ".png", file.getAbsolutePath()).run();
             }
         } else {
             file = new File(LauncherFrame.settings.getSkinsDir(), "default.png");
@@ -92,7 +99,7 @@ public class Account implements Serializable {
         }
         if (!file.exists()) {
             new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png",
-                    file.getAbsolutePath()).runNoReturn();
+                    file.getAbsolutePath()).run();
         }
 
         BufferedImage image = null;
@@ -101,14 +108,6 @@ public class Account implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // Head - 8,8,8,8 > 4,0
-        // Hat (Overlay) - 40,8,8,8 > 4,0
-        // Arm - 44,20,4,12 > 0,8 > 12,8
-        // Body - 20,20,8,12 > 4,8
-        // Legs - 4,20,4,12 > 4,20 > 8,20
-        //
-        // Total Size - 16,32
 
         BufferedImage head = image.getSubimage(8, 8, 8, 8);
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
@@ -181,6 +180,20 @@ public class Account implements Serializable {
             password = Utils.decrypt(encryptedPassword); // Encrypted password found so decrypt it
         }
         isReal = true;
+    }
+    
+    public ArrayList<String> getCollapsedPacks(){
+        if(this.collapsedPacks == null){
+            this.collapsedPacks = new ArrayList<String>();
+        }
+        return this.collapsedPacks;
+    }
+    
+    public ArrayList<String> getCollapsedInstances(){
+        if(this.collapsedInstances == null){
+            this.collapsedInstances = new ArrayList<String>();
+        }
+        return this.collapsedInstances;
     }
 
     public String toString() {

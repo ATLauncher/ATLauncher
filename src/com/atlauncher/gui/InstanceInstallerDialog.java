@@ -54,6 +54,8 @@ public class InstanceInstallerDialog extends JDialog {
     private JTextField instanceNameField;
     private JLabel versionLabel;
     private JComboBox<String> versionsDropDown;
+    private JLabel installForLabel;
+    private JCheckBox installForMe;
     private JLabel useLatestLWJGLLabel;
     private JCheckBox useLatestLWJGL;
 
@@ -66,7 +68,7 @@ public class InstanceInstallerDialog extends JDialog {
             pack = instance.getRealPack();
             isReinstall = true; // We're reinstalling
         }
-        setSize(400, 200);
+        setSize(400, 225);
         setLocationRelativeTo(LauncherFrame.settings.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
@@ -113,16 +115,31 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         middle.add(versionsDropDown, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        useLatestLWJGLLabel = new JLabel("Use Latest LWJGL? ");
-        middle.add(useLatestLWJGLLabel, gbc);
+        if (!isReinstall) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            installForLabel = new JLabel("Install Just For Me? ");
+            middle.add(installForLabel, gbc);
 
-        gbc.gridx++;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        useLatestLWJGL = new JCheckBox();
-        middle.add(useLatestLWJGL, gbc);
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            installForMe = new JCheckBox();
+            middle.add(installForMe, gbc);
+        }
+
+        if ((isReinstall && !instance.isNewLaunchMethod()) || !isReinstall) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            useLatestLWJGLLabel = new JLabel("Use Latest LWJGL? ");
+            middle.add(useLatestLWJGLLabel, gbc);
+
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            useLatestLWJGL = new JCheckBox();
+            middle.add(useLatestLWJGL, gbc);
+        }
 
         // Bottom Panel Stuff
         bottom = new JPanel();
@@ -168,7 +185,8 @@ public class InstanceInstallerDialog extends JDialog {
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceNameField
-                        .getText(), pack, version, useLatestLWJGL.isSelected(), isReinstall) {
+                        .getText(), pack, version, (useLatestLWJGL == null ? false : useLatestLWJGL
+                        .isSelected()), isReinstall) {
 
                     protected void done() {
                         Boolean success = false;
@@ -211,10 +229,11 @@ public class InstanceInstallerDialog extends JDialog {
                                 } else {
                                     LauncherFrame.settings.addInstance(new Instance(
                                             instanceNameField.getText(), pack.getName(), pack,
-                                            version, this.getMinecraftVersion(),
-                                            this.getJarOrder(), this.getLibrariesNeeded(), this
-                                                    .getMinecraftArguments(), this.getMainClass(),
-                                            this.isNewLaunchMethod())); // Add It
+                                            installForMe.isSelected(), version, this
+                                                    .getMinecraftVersion(), this.getJarOrder(),
+                                            this.getLibrariesNeeded(),
+                                            this.getMinecraftArguments(), this.getMainClass(), this
+                                                    .isNewLaunchMethod())); // Add It
                                 }
                             } else {
                                 if (isReinstall) {

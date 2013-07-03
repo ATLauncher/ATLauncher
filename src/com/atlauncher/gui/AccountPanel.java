@@ -224,6 +224,7 @@ public class AccountPanel extends JPanel {
                                 options, options[0]);
                     }
                     LauncherFrame.settings.saveAccounts();
+                    LauncherFrame.settings.reloadAccounts();
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(fillerAccount);
                     for (Account accountt : LauncherFrame.settings.getAccounts()) {
@@ -248,6 +249,7 @@ public class AccountPanel extends JPanel {
                     if (res == JOptionPane.YES_OPTION) {
                         LauncherFrame.settings.getAccounts().remove(account);
                         LauncherFrame.settings.saveAccounts();
+                        LauncherFrame.settings.reloadAccounts();
                         accountsComboBox.removeAllItems();
                         accountsComboBox.addItem(fillerAccount);
                         for (Account accountt : LauncherFrame.settings.getAccounts()) {
@@ -269,10 +271,6 @@ public class AccountPanel extends JPanel {
         userSkin.setBorder(BorderFactory.createEmptyBorder(0, 60, 0, 0));
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
-    }
-
-    public void reload() {
-
     }
 
 }

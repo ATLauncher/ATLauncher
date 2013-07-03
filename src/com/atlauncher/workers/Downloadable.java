@@ -21,20 +21,20 @@ import java.net.URLConnection;
 
 import com.atlauncher.gui.Utils;
 
-public class Downloader implements Runnable {
+public class Downloadable implements Runnable {
 
     private String url;
     private File file;
     private String md5;
     private HttpURLConnection connection;
 
-    public Downloader(String url, File file, String md5) {
+    public Downloadable(String url, File file, String md5) {
         this.url = url;
         this.file = file;
         this.md5 = md5;
     }
 
-    public Downloader(String url, File file) {
+    public Downloadable(String url, File file) {
         this(url, file, null);
     }
 

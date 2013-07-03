@@ -143,8 +143,8 @@ public class Settings {
                 toget = "jar";
             }
             File newFile = new File(getTempDir(), saveAs);
-            new Downloader(getFileURL("ATLauncher." + toget), newFile.getAbsolutePath())
-                    .runNoReturn(); // Download it
+            new Downloader(getFileURL("ATLauncher." + toget), newFile.getAbsolutePath()).run(); // Download
+                                                                                                // it
             runUpdate(path, newFile.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
@@ -185,7 +185,7 @@ public class Settings {
      * what the user has
      */
     private void checkForUpdatedFiles() {
-        String hashes = new Downloader(getFileURL("launcher/hashes.xml")).run();
+        String hashes = Utils.urlToString(getFileURL("launcher/hashes.xml"));
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -233,7 +233,7 @@ public class Settings {
 
                     if (download) {
                         new Downloader(getFileURL("launcher/" + name), file.getAbsolutePath())
-                                .runNoReturn();
+                                .run();
                     }
                 }
             }
@@ -515,6 +515,7 @@ public class Settings {
             this.account = null;
         }
         reloadPacksPanel();
+        reloadInstancesPanel();
         try {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("language", this.language.getName());
@@ -843,7 +844,6 @@ public class Settings {
                 e.printStackTrace();
             }
         }
-        reloadAccounts();
     }
 
     /**
@@ -939,6 +939,46 @@ public class Settings {
             }
         });
         return packs;
+    }
+
+    public void setPackVisbility(Pack pack, boolean collapsed) {
+        if (pack != null && account.isReal()) {
+            if (collapsed) {
+                // Closed It
+                if (!account.getCollapsedPacks().contains(pack.getName())) {
+                    account.getCollapsedPacks().add(pack.getName());
+                }
+            } else {
+                // Opened It
+                if (account.getCollapsedPacks().contains(pack.getName())) {
+                    account.getCollapsedPacks().remove(pack.getName());
+                }
+            }
+            saveAccounts();
+            reloadPacksPanel();
+        }
+    }
+
+    public void setInstanceVisbility(Instance instance, boolean collapsed) {
+        if (instance != null && account.isReal()) {
+            if (collapsed) {
+                // Closed It
+                if (!account.getCollapsedInstances().contains(instance.getName())) {
+                    account.getCollapsedInstances().add(instance.getName());
+                }
+            } else {
+                // Opened It
+                if (account.getCollapsedInstances().contains(instance.getName())) {
+                    account.getCollapsedInstances().remove(instance.getName());
+                }
+            }
+            saveAccounts();
+            reloadPacksPanel();
+            getConsole().log(
+                    "Instance " + instance.getName() + " is now "
+                            + (collapsed ? "collapsed" : "expanded") + " for Account "
+                            + account.getMinecraftUsername());
+        }
     }
 
     /**

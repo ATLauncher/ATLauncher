@@ -87,7 +87,7 @@ public class Utils {
         File file = new File(LauncherFrame.settings.getSkinsDir(), user + ".png");
         if (!file.exists()) {
             new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png",
-                    file.getAbsolutePath()).runNoReturn();
+                    file.getAbsolutePath()).run();
         }
 
         BufferedImage image = null;

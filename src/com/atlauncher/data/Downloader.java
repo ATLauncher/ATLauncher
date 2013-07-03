@@ -74,23 +74,7 @@ public class Downloader {
         this.destination = destination;
     }
 
-    public String run() {
-        if (worker != null) {
-            worker.execute(); // Run the worker process
-        }
-        while (response == null) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                worker.cancel(true);
-            }
-        }
-        return this.response;
-    }
-
-    public void runNoReturn() {
-        System.out.println("Downloading " + this.url + " to " + this.destination);
+    public void run() {
         if (worker != null) {
             worker.execute(); // Run the worker process
         }

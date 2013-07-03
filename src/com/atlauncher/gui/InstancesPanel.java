@@ -13,7 +13,6 @@ package com.atlauncher.gui;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,6 +24,7 @@ public class InstancesPanel extends JPanel {
 
     private JPanel panel;
     private JScrollPane scrollPane;
+    private int currentPosition = 0;
 
     public InstancesPanel() {
         setLayout(new BorderLayout());
@@ -44,23 +44,28 @@ public class InstancesPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
 
-        if (LauncherFrame.settings.getInstances().size() == 0) {
-            panel.add(new NothingToDisplay("There are no packs installed\n\n"
-                    + "Please install a pack and visit me again"), gbc);
-        } else {
-            for (Instance instance : LauncherFrame.settings.getInstancesSorted()) {
+        int count = 0;
+        for (Instance instance : LauncherFrame.settings.getInstancesSorted()) {
+            if (instance.canPlay()) {
                 panel.add(new InstanceDisplay(instance), gbc);
                 gbc.gridy++;
+                count++;
             }
         }
+        if (count == 0) {
+            panel.add(new NothingToDisplay("There are no instances to display\n\n"
+                    + "Please check back another time"), gbc);
+        }
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                scrollPane.getVerticalScrollBar().setValue(0);
+                scrollPane.getVerticalScrollBar().setValue(currentPosition);
             }
         });
     }
 
     public void reload() {
+        this.currentPosition = scrollPane.getVerticalScrollBar().getValue();
         removeAll();
         loadContent();
         validate();

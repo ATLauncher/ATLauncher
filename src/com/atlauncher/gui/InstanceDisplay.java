@@ -51,7 +51,7 @@ import com.atlauncher.mclauncher.NewMCLauncher;
  * @author Ryan
  * 
  */
-public class InstanceDisplay extends JPanel {
+public class InstanceDisplay extends CollapsiblePanel {
 
     private JPanel leftPanel; // Left panel with image
     private JPanel rightPanel; // Right panel with description and actions
@@ -69,22 +69,9 @@ public class InstanceDisplay extends JPanel {
     private JButton restore; // Restore button
 
     public InstanceDisplay(final Instance instance) {
-        setLayout(new BorderLayout());
-
-        // Add titles border with name, Mac needs smaller font
-        if (Utils.isMac()) {
-            setBorder(new TitledBorder(null, instance.getName() + " (" + instance.getPackName()
-                    + " " + instance.getVersion() + ")"
-                    + (instance.isPlayable() ? "" : " CORRUPTED"),
-                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(
-                            "SansSerif", Font.BOLD, 14)));
-        } else {
-            setBorder(new TitledBorder(null, instance.getName() + " (" + instance.getPackName()
-                    + " " + instance.getVersion() + ")"
-                    + (instance.isPlayable() ? "" : " CORRUPTED"),
-                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(
-                            "SansSerif", Font.BOLD, 15)));
-        }
+        super(instance);
+        JPanel panel = super.getContentPane();
+        panel.setLayout(new BorderLayout());
 
         leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
@@ -311,7 +298,7 @@ public class InstanceDisplay extends JPanel {
         rightPanel.add(instanceDescription, BorderLayout.CENTER);
         rightPanel.add(instanceActions, BorderLayout.SOUTH);
 
-        add(splitPane, BorderLayout.CENTER);
+        panel.add(splitPane, BorderLayout.CENTER);
     }
 
     public String newLogin(String username, String password) {

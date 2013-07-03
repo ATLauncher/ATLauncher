@@ -14,8 +14,10 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import com.atlauncher.data.Pack;
 
@@ -23,18 +25,20 @@ public class PacksPanel extends JPanel {
 
     private JPanel panel;
     private JScrollPane scrollPane;
+    private int currentPosition = 0;
 
     public PacksPanel() {
         setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
         loadContent();
     }
 
     public void loadContent() {
-
         panel = new JPanel();
         scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.getVerticalScrollBar().setValue(currentPosition);
         add(scrollPane, BorderLayout.CENTER);
 
         panel.setLayout(new GridBagLayout());
@@ -55,9 +59,16 @@ public class PacksPanel extends JPanel {
             panel.add(new NothingToDisplay("There are no packs to display\n\n"
                     + "Please check back another time"), gbc);
         }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                scrollPane.getVerticalScrollBar().setValue(currentPosition);
+            }
+        });
     }
 
     public void reload() {
+        this.currentPosition = scrollPane.getVerticalScrollBar().getValue();
         removeAll();
         loadContent();
         validate();

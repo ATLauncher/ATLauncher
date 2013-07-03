@@ -2,14 +2,11 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0a12
-- Added in JSON.Simple (https://code.google.com/p/json-simple/)
-- Added in ability to install Miencraft 1.6 and up
-- Moved ATLauncher.conf into the Configs folder
-- Moved instances information into instancesdata file rather than Instances.xml
-- Fixed issue when reinstalling a pack, the version number didn't change in the Instances Tab
-- Fixed issue when supplying seperate details for the server side of a mod not working
-- Removed logging of packs with no versions
+3.0.0a13
+- Added collapsable buttons to the Packs and Instances Tabs so you can hide/show individual Packs or Instances
+- Fixed issue where the Instances panel wouldn't update after switching Accounts
+- Added ability to install a Pack just for your account so only you can play it
+- Removed ability to see installed instances when no Account is selected
 
 -->
 
@@ -22,7 +19,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0a12" />
+	<property name="atlauncher.version" value="3.0.0a13" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />
