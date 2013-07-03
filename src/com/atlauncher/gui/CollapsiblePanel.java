@@ -82,7 +82,7 @@ public class CollapsiblePanel extends JPanel {
         collapsed = false;
         commonConstructor();
         if (LauncherFrame.settings.getAccount() != null) {
-            if(LauncherFrame.settings.getAccount().getCollapsedPacks().contains(pack.getName())){
+            if (LauncherFrame.settings.getAccount().getCollapsedPacks().contains(pack.getName())) {
                 setCollapsed(true);
             }
         }
@@ -90,12 +90,18 @@ public class CollapsiblePanel extends JPanel {
 
     public CollapsiblePanel(Instance instance) {
         this.instance = instance;
-        arrow.setText(instance.getName());
+        if (instance.isPlayable()) {
+            arrow.setText(instance.getName());
+        } else {
+            arrow.setText(instance.getName() + " (Corrupted)");
+            arrow.setForeground(Color.RED);
+        }
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
         if (LauncherFrame.settings.getAccount() != null) {
-            if(LauncherFrame.settings.getAccount().getCollapsedInstances().contains(instance.getName())){
+            if (LauncherFrame.settings.getAccount().getCollapsedInstances()
+                    .contains(instance.getName())) {
                 setCollapsed(true);
             }
         }
@@ -238,16 +244,16 @@ public class CollapsiblePanel extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
             setCollapsed(!isCollapsed());
-            if(pack != null){
+            if (pack != null) {
                 LauncherFrame.settings.setPackVisbility(pack, isCollapsed());
-            }else if(instance != null){
+            } else if (instance != null) {
                 LauncherFrame.settings.setInstanceVisbility(instance, isCollapsed());
             }
         }
 
         public void itemStateChanged(ItemEvent e) {
             setCollapsed(!isCollapsed());
-            if(pack != null){
+            if (pack != null) {
                 LauncherFrame.settings.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
                 LauncherFrame.settings.setInstanceVisbility(instance, isCollapsed());

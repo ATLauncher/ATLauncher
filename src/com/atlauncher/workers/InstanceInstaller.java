@@ -58,6 +58,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String mainClass = null;
     private int percent = 0; // Percent done installing
     private ArrayList<Mod> allMods;
+    private int totalResources = 0; // Total number of Resources to download for Minecraft >=1.6
+    private int doneResources = 0; // Total number of Resources downloaded for Minecraft >=1.6
 
     public InstanceInstaller(String instanceName, Pack pack, String version,
             boolean useLatestLWJGL, boolean isReinstall) {
@@ -163,28 +165,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         firePropertyChange("subprogressint", null, null);
         ExecutorService executor = Executors.newFixedThreadPool(8);
         ArrayList<Downloadable> downloads = getNeededResources();
+        totalResources = downloads.size();
+
         for (Downloadable download : downloads) {
             executor.execute(download);
         }
         executor.shutdown();
         while (!executor.isTerminated()) {
         }
-        firePropertyChange("doing", null, "Organising Libraries");
-        firePropertyChange("subprogress", null, 0);
-        String[] libraries = librariesNeeded.split(",");
-        for (String libraryFile : libraries) {
-            Utils.copyFile(new File(LauncherFrame.settings.getLibrariesDir(), libraryFile),
-                    getBinDirectory());
+        if (!isCancelled()) {
+            firePropertyChange("doing", null, "Organising Libraries");
+            firePropertyChange("subprogress", null, 0);
+            String[] libraries = librariesNeeded.split(",");
+            for (String libraryFile : libraries) {
+                Utils.copyFile(new File(LauncherFrame.settings.getLibrariesDir(), libraryFile),
+                        getBinDirectory());
+            }
+            String[] natives = nativesNeeded.split(",");
+            for (String nativeFile : natives) {
+                Utils.unzip(new File(LauncherFrame.settings.getLibrariesDir(), nativeFile),
+                        getNativesDirectory());
+            }
+            Utils.delete(new File(getNativesDirectory(), "META-INF"));
+            Utils.copyFile(new File(LauncherFrame.settings.getJarsDir(), this.minecraftVersion
+                    + ".jar"), new File(getBinDirectory(), "minecraft.jar"), true);
         }
-        String[] natives = nativesNeeded.split(",");
-        for (String nativeFile : natives) {
-            Utils.unzip(new File(LauncherFrame.settings.getLibrariesDir(), nativeFile),
-                    getNativesDirectory());
-        }
-        Utils.delete(new File(getNativesDirectory(), "META-INF"));
-        Utils.copyFile(
-                new File(LauncherFrame.settings.getJarsDir(), this.minecraftVersion + ".jar"),
-                new File(getBinDirectory(), "minecraft.jar"), true);
     }
 
     private ArrayList<Downloadable> getNeededResources() {
@@ -228,7 +233,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         if (!Utils.getMD5(file).equalsIgnoreCase(etag))
                             downloads.add(new Downloadable(
                                     "https://s3.amazonaws.com/Minecraft.Resources/" + key, file,
-                                    etag));
+                                    etag, this));
                     }
                 }
             }
@@ -281,7 +286,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 String url = "https://s3.amazonaws.com/Minecraft.Download/libraries/" + dir + "/"
                         + filename;
                 File file = new File(LauncherFrame.settings.getLibrariesDir(), filename);
-                downloads.add(new Downloadable(url, file));
+                downloads.add(new Downloadable(url, file, null, this));
             }
 
         } catch (ParseException e) {
@@ -289,7 +294,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         downloads.add(new Downloadable("https://s3.amazonaws.com/Minecraft.Download/versions/"
                 + this.minecraftVersion + "/" + this.minecraftVersion + ".jar", new File(
-                LauncherFrame.settings.getJarsDir(), this.minecraftVersion + ".jar")));
+                LauncherFrame.settings.getJarsDir(), this.minecraftVersion + ".jar"), null, this));
         return downloads;
     }
 
@@ -504,6 +509,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public void setSubPercent(int percent) {
         firePropertyChange("subprogress", null, percent);
+    }
+
+    public void setDoing(String doing) {
+        firePropertyChange("doing", null, doing);
+        doneResources++;
+        int progress = (100 * doneResources) / totalResources;
+        firePropertyChange("subprogress", null, progress);
     }
 
 }

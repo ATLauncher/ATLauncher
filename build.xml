@@ -2,11 +2,14 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0a13
-- Added collapsable buttons to the Packs and Instances Tabs so you can hide/show individual Packs or Instances
-- Fixed issue where the Instances panel wouldn't update after switching Accounts
-- Added ability to install a Pack just for your account so only you can play it
-- Removed ability to see installed instances when no Account is selected
+3.0.0a14
+- Fixed console logging when instances are collapsed/expanded and also not update the Instances Tab
+- Added progress bar and text when installing Minecraft >=1.6 showing what resources it's downloading
+- Fixed issue when aborting a reinstall wouldn't make it unplayable
+- Changed color and name of an instance when it's 'corrupted'
+- Added in a popup to notify user when trying to play/backup/restore a 'corrupted' instance
+- Instances are now removed on launch if the folder doesn't exist
+- Fixed issue where installer wouldn't cancel when closing a mod downloaded through the users browser
 
 -->
 

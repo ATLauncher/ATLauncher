@@ -27,15 +27,21 @@ public class Downloadable implements Runnable {
     private File file;
     private String md5;
     private HttpURLConnection connection;
-
-    public Downloadable(String url, File file, String md5) {
+    private InstanceInstaller instanceInstaller;
+    
+    public Downloadable(String url, File file, String md5, InstanceInstaller instanceInstaller) {
         this.url = url;
         this.file = file;
         this.md5 = md5;
+        this.instanceInstaller = instanceInstaller;
+    }
+
+    public Downloadable(String url, File file, String md5) {
+        this(url, file, md5, null);
     }
 
     public Downloadable(String url, File file) {
-        this(url, file, null);
+        this(url, file, null, null);
     }
 
     /**
@@ -114,6 +120,10 @@ public class Downloadable implements Runnable {
 
     @Override
     public void run() {
+        if(instanceInstaller.isCancelled()){
+            return;
+        }
+        instanceInstaller.setDoing("Downloading " + file.getName());
         if (this.md5 == null) {
             this.md5 = getEtagFromURL(this.url);
         }
@@ -127,16 +137,12 @@ public class Downloadable implements Runnable {
                 if (this.connection == null) {
                     this.connection = (HttpURLConnection) downloadURL.openConnection();
                 }
-                int size = this.connection.getContentLength();
-                int downloaded = 0;
                 in = this.connection.getInputStream();
                 FileOutputStream writer = new FileOutputStream(this.file);
                 byte[] buffer = new byte[1024];
-                long bytesCopied = 0;
                 int bytesRead = 0;
                 while ((bytesRead = in.read(buffer)) > 0) {
                     writer.write(buffer, 0, bytesRead);
-                    downloaded += bytesRead;
                     buffer = new byte[1024];
                 }
                 writer.close();

@@ -276,10 +276,54 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Check is instance is playable and disable buttons if not
         if (!instance.isPlayable()) {
-            play.setEnabled(false);
-            update.setEnabled(false);
-            backup.setEnabled(false);
-            restore.setEnabled(false);
+            for (ActionListener al : play.getActionListeners()) {
+                play.removeActionListener(al);
+            }
+            play.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String[] options = { "Ok" };
+                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                            "Cannot play instance as it's corrupted. Please reinstall or delete it",
+                            "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                }
+            });
+            for (ActionListener al : update.getActionListeners()) {
+                update.removeActionListener(al);
+            }
+            update.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String[] options = { "Ok" };
+                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                            "Cannot update instance as it's corrupted. Please reinstall or delete it",
+                            "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                }
+            });
+            for (ActionListener al : backup.getActionListeners()) {
+                backup.removeActionListener(al);
+            }
+            backup.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String[] options = { "Ok" };
+                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                            "Cannot backup instance as it's corrupted. Please reinstall or delete it",
+                            "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                }
+            });
+            for (ActionListener al : restore.getActionListeners()) {
+                restore.removeActionListener(al);
+            }
+            restore.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String[] options = { "Ok" };
+                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                            "Cannot restore instance as it's corrupted. Please reinstall or delete it",
+                            "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                }
+            });
         }
 
         // Add buttons to panels

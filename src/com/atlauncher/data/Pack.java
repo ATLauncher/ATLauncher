@@ -107,7 +107,7 @@ public class Pack {
     }
 
     public String getXML(String version) {
-        if (this.xml == null || !this.xmlVersion.equalsIgnoreCase(version)) {
+        if (this.xml == null || !this.xmlVersion.equalsIgnoreCase(version) || isTester()) {
             String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.xml";
             String versionURL = LauncherFrame.settings.getFileURL(path); // The XML with path on
                                                                          // server

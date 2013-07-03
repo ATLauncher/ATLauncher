@@ -758,10 +758,13 @@ public class Settings {
                     Object obj;
                     while ((obj = objIn.readObject()) != null) {
                         if (obj instanceof Instance) {
-                            instances.add((Instance) obj);
-                            if (isPackByName(((Instance) obj).getPackName())) {
-                                ((Instance) obj).setRealPack(getPackByName(((Instance) obj)
-                                        .getPackName()));
+                            File dir = new File(getInstancesDir(), ((Instance) obj).getSafeName());
+                            if (dir.exists()) {
+                                instances.add((Instance) obj);
+                                if (isPackByName(((Instance) obj).getPackName())) {
+                                    ((Instance) obj).setRealPack(getPackByName(((Instance) obj)
+                                            .getPackName()));
+                                }
                             }
                         }
                     }
@@ -973,11 +976,7 @@ public class Settings {
                 }
             }
             saveAccounts();
-            reloadPacksPanel();
-            getConsole().log(
-                    "Instance " + instance.getName() + " is now "
-                            + (collapsed ? "collapsed" : "expanded") + " for Account "
-                            + account.getMinecraftUsername());
+            reloadInstancesPanel();
         }
     }
 

@@ -200,6 +200,9 @@ public class InstanceInstallerDialog extends JDialog {
                                     + "<br/><br/>Action was cancelled by user!";
                             title = pack.getName() + " " + version + " Not "
                                     + ((isReinstall) ? "Reinstalled" : "Installed");
+                            if (isReinstall) {
+                                LauncherFrame.settings.setInstanceUnplayable(instance);
+                            }
                         } else {
                             try {
                                 success = get();

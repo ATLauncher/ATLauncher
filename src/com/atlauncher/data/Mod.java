@@ -138,7 +138,7 @@ public class Mod {
                                 JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 if (retValue == JOptionPane.CLOSED_OPTION) {
                     installer.cancel(true);
-                    break;
+                    return;
                 }
             }
         }
