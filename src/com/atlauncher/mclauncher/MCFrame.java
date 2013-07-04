@@ -15,17 +15,12 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
+import net.minecraft.Launcher;
 
 import com.atlauncher.gui.Utils;
-
-import net.minecraft.Launcher;
 
 public class MCFrame extends Frame implements WindowListener {
     private Launcher appletWrap = null;

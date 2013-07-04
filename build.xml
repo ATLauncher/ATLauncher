@@ -2,27 +2,25 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0a14
-- Fixed console logging when instances are collapsed/expanded and also not update the Instances Tab
-- Added progress bar and text when installing Minecraft >=1.6 showing what resources it's downloading
-- Fixed issue when aborting a reinstall wouldn't make it unplayable
-- Changed color and name of an instance when it's 'corrupted'
-- Added in a popup to notify user when trying to play/backup/restore a 'corrupted' instance
-- Instances are now removed on launch if the folder doesn't exist
-- Fixed issue where installer wouldn't cancel when closing a mod downloaded through the users browser
+3.0.0a15
+- When reinstalling an instance it remembers and selects the version and mods you had installed previously
+- Removed custom configurations
+- Added ability to update packs
+- Started to add in logging, if enabled in the settings
+- Changed exe creation to only use JRE's and not JDK's
 
 -->
 
 <project name="ATLauncher 3.0" basedir=".">
-	<taskdef resource="proguard/ant/task.properties" classpath="C:/Users/Ryan/IdeaProjects/proguard/lib/proguard.jar" />
-	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="C:/ant/lib/ant-contrib-1.0b3.jar" />
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="C:/Users/Ryan/Documents/Eclipse Workspace/ant/lib/ant-contrib-1.0b3.jar" />
+	<taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" />
 
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0a13" />
+	<property name="atlauncher.version" value="3.0.0a15" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />
@@ -55,13 +53,24 @@ REMEMBER - Change the atlauncher.version property below
 		<fileset dir="${bin.dir}" />
 	</jar>
 
-	<!-- <proguard configuration="ProGuard.conf"/> -->
-
 	<exec executable="cmd">
 		<arg value="/c" />
 		<arg value="..\launch4j\launch4jc.exe" />
 		<arg value="launch4j.xml" />
 	</exec>
 
+	<bundleapp outputdirectory="C:/Users/Ryan/Desktop/" name="ATLauncher" displayname="ATLauncher" identifier="com.atlauncher" shortversion="${atlauncher.version}" applicationCategory="public.app-category.games" mainclassname="com/atlauncher/App">
+		<classpath file="C:/Users/Ryan/Desktop/ATLauncher.jar" />
+		<option value="-Dapple.laf.useScreenMenuBar=true" />
+	</bundleapp>
+
+	<copy file="Icon.icns" tofile="C:/Users/Ryan/Desktop/ATLauncher.app/Contents/Resources/Icon.icns" />
+
+	<delete file="C:/Users/Ryan/Desktop/ATLauncher.app/Contents/Resources/GenericApp.icns" />
+
+	<zip destfile="C:/Users/Ryan/Desktop/ATLauncher.app.zip" basedir="C:/Users/Ryan/Desktop/ATLauncher.app" />
+
+	<delete dir="C:/Users/Ryan/Desktop/ATLauncher.app" />
+	
 	<delete dir="${build.dir}" />
 </project>

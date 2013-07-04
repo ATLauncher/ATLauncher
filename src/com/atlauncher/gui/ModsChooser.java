@@ -69,14 +69,14 @@ public class ModsChooser extends JDialog {
         labelsTop.setEnabled(false);
         split.setLeftComponent(labelsTop);
 
-        JLabel topLabelTop = new JLabel("Select Configuration: ");
-        topLabelTop.setHorizontalAlignment(SwingConstants.CENTER);
-        labelsTop.setLeftComponent(topLabelTop);
-
-        JComboBox<String> configs = new JComboBox<String>();
-        configs.addItem("Custom Configuration");
-        configs.setSelectedIndex(0);
-        labelsTop.setRightComponent(configs);
+//        JLabel topLabelTop = new JLabel("Select Configuration: ");
+//        topLabelTop.setHorizontalAlignment(SwingConstants.CENTER);
+//        labelsTop.setLeftComponent(topLabelTop);
+//
+//        JComboBox<String> configs = new JComboBox<String>();
+//        configs.addItem("Custom Configuration");
+//        configs.setSelectedIndex(0);
+//        labelsTop.setRightComponent(configs);
 
         JSplitPane labels = new JSplitPane();
         labels.setDividerLocation(275);
@@ -213,6 +213,19 @@ public class ModsChooser extends JDialog {
                 checkBox.setEnabled(false);
                 count2++;
             }
+            if (installer.wasModInstalled(mod.getName())) {
+                if (mod.isOptional()) {
+                    checkBox.setSelected(true);
+                    ArrayList<Mod> linkedMods = modsToChange(mod);
+                    for (Mod modd : linkedMods) {
+                        for (ModsJCheckBox check : modCheckboxes) {
+                            if (check.getMod() == modd) {
+                                check.setEnabled(true);
+                            }
+                        }
+                    }
+                }
+            }
             checkBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     ModsJCheckBox a = (ModsJCheckBox) e.getSource();
@@ -276,7 +289,7 @@ public class ModsChooser extends JDialog {
         }
         return mods;
     }
-    
+
     public boolean wasClosed() {
         return this.wasClosed;
     }

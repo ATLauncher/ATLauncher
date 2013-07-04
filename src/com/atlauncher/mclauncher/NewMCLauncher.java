@@ -10,22 +10,10 @@
  */
 package com.atlauncher.mclauncher;
 
-import java.applet.Applet;
-import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
@@ -37,7 +25,7 @@ public class NewMCLauncher {
     public static Process launch(Account account, Instance instance, String session)
             throws IOException {
         StringBuilder cpb = new StringBuilder("");
-        
+
         File jarMods = instance.getJarModsDirectory();
         if (jarMods.exists() && instance.hasJarMods()) {
             for (String mod : instance.getJarOrder().split(",")) {
@@ -70,7 +58,7 @@ public class NewMCLauncher {
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
-System.out.println(cpb.toString());
+
         arguments.add(instance.getMainClass());
         arguments.add("--username=" + account.getMinecraftUsername());
         arguments.add("--session=" + session);
@@ -81,6 +69,7 @@ System.out.println(cpb.toString());
         arguments.add("--height=" + LauncherFrame.settings.getWindowHeight());
 
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+        processBuilder.redirectErrorStream(true);
         return processBuilder.start();
     }
 

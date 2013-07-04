@@ -36,6 +36,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.LauncherFrame;
@@ -60,6 +61,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private ArrayList<Mod> allMods;
     private int totalResources = 0; // Total number of Resources to download for Minecraft >=1.6
     private int doneResources = 0; // Total number of Resources downloaded for Minecraft >=1.6
+    private Instance instance = null;
+    private String[] modsInstalled;
 
     public InstanceInstaller(String instanceName, Pack pack, String version,
             boolean useLatestLWJGL, boolean isReinstall) {
@@ -73,8 +76,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.isReinstall = isReinstall;
     }
 
+    public void setInstance(Instance instance) {
+        this.instance = instance;
+    }
+
     public String getInstanceName() {
         return this.instanceName;
+    }
+
+    public String[] getModsInstalled() {
+        return this.modsInstalled;
     }
 
     public String getInstanceSafeName() {
@@ -123,6 +134,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else {
             jarOrder = file + "," + jarOrder;
         }
+    }
+
+    public boolean wasModInstalled(String mod) {
+        if (isReinstall && instance != null) {
+            return instance.wasModInstalled(mod);
+        }
+        return false;
     }
 
     public Mod getModByName(String name) {
@@ -463,6 +481,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 this.cancel(true);
             }
             mods = modsChooser.getSelectedMods();
+        }
+        if (mods.size() != 0) {
+            modsInstalled = new String[mods.size()];
+            for (int i = 0; i < mods.size(); i++) {
+                modsInstalled[i] = mods.get(i).getName();
+            }
+        } else {
+            modsInstalled = new String[0];
         }
         addPercent(0);
         makeDirectories();

@@ -3,6 +3,7 @@ package com.atlauncher.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -91,9 +92,9 @@ public class CollapsiblePanel extends JPanel {
     public CollapsiblePanel(Instance instance) {
         this.instance = instance;
         if (instance.isPlayable()) {
-            arrow.setText(instance.getName());
+            arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion() + ")");
         } else {
-            arrow.setText(instance.getName() + " (Corrupted)");
+            arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion() + " - Corrupted)");
             arrow.setForeground(Color.RED);
         }
         titleComponent = arrow;
@@ -232,6 +233,7 @@ public class CollapsiblePanel extends JPanel {
         button.setFocusable(false);
         button.setContentAreaFilled(false);
         button.addActionListener(new CollapsiblePanel.ExpandAndCollapseAction());
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
 

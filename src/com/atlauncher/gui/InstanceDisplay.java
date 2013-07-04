@@ -12,7 +12,6 @@ package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -34,7 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.border.TitledBorder;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -196,7 +194,7 @@ public class InstanceDisplay extends CollapsiblePanel {
                                         process = MCLauncher.launch(account, instance, session);
                                     }
                                     LauncherFrame.settings.showKillMinecraft(process);
-                                    InputStream is = process.getErrorStream();
+                                    InputStream is = process.getInputStream();
                                     InputStreamReader isr = new InputStreamReader(is);
                                     BufferedReader br = new BufferedReader(isr);
                                     String line;
@@ -206,10 +204,11 @@ public class InstanceDisplay extends CollapsiblePanel {
                                     LauncherFrame.settings.hideKillMinecraft();
                                     LauncherFrame.settings.getParent().setVisible(true);
                                     long end = System.currentTimeMillis();
-                                    LauncherFrame.settings.getConsole().log(
-                                            instance.getName() + " was played by user "
-                                                    + account.getMinecraftUsername() + " for "
-                                                    + ((end - start) / 1000) + " seconds");
+                                    LauncherFrame.settings.apiCall(account.getMinecraftUsername(),
+                                            "addleaderboardtime",
+                                            (instance.getRealPack() == null ? "0" : instance
+                                                    .getRealPack().getID() + ""),
+                                            ((end - start) / 1000) + "");
                                 } catch (IOException e1) {
                                     e1.printStackTrace();
                                 }
@@ -241,6 +240,19 @@ public class InstanceDisplay extends CollapsiblePanel {
         // Update Button
 
         update = new JButton("Update");
+        update.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (LauncherFrame.settings.getAccount() == null) {
+                    String[] options = { "Ok" };
+                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
+                            "Cannot update pack as you have no Account selected",
+                            "No Account Selected", JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                } else {
+                    new InstanceInstallerDialog(instance, true);
+                }
+            }
+        });
         if (!instance.hasUpdate()) {
             update.setVisible(false);
         }
@@ -282,20 +294,10 @@ public class InstanceDisplay extends CollapsiblePanel {
             play.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "Cannot play instance as it's corrupted. Please reinstall or delete it",
-                            "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                }
-            });
-            for (ActionListener al : update.getActionListeners()) {
-                update.removeActionListener(al);
-            }
-            update.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "Cannot update instance as it's corrupted. Please reinstall or delete it",
+                    JOptionPane.showOptionDialog(
+                            LauncherFrame.settings.getParent(),
+                            "Cannot play instance as it's corrupted. Please reinstall"
+                                    + (instance.hasUpdate() ? ", update" : "") + " or delete it",
                             "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
                             JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 }
@@ -307,7 +309,8 @@ public class InstanceDisplay extends CollapsiblePanel {
                 public void actionPerformed(ActionEvent e) {
                     String[] options = { "Ok" };
                     JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "Cannot backup instance as it's corrupted. Please reinstall or delete it",
+                            "Cannot backup instance as it's corrupted. Please reinstall"
+                                    + (instance.hasUpdate() ? ", update" : "") + " or delete it",
                             "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
                             JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 }
@@ -319,7 +322,8 @@ public class InstanceDisplay extends CollapsiblePanel {
                 public void actionPerformed(ActionEvent e) {
                     String[] options = { "Ok" };
                     JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "Cannot restore instance as it's corrupted. Please reinstall or delete it",
+                            "Cannot restore instance as it's corrupted. Please reinstall"
+                                    + (instance.hasUpdate() ? ", update" : "") + " or delete it",
                             "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
                             JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 }

@@ -46,6 +46,7 @@ public class Pack {
 
     public Pack(int id, String name, boolean createServer, String[] versions, String[] testers,
             String description, String supportURL, String websiteURL) {
+        this.id = id;
         this.name = name;
         this.createServer = createServer;
         this.versions = versions;
@@ -259,5 +260,9 @@ public class Pack {
         } else {
             return false;
         }
+    }
+
+    public String getLatestVersion() {
+        return this.versions[0];
     }
 }

@@ -33,15 +33,18 @@ public class Instance implements Serializable {
     private transient Pack realPack;
     private boolean isPlayable;
     private boolean newLaunchMethod;
+    private String[] modsInstalled;
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
-            String version, String minecraftVersion, String jarOrder, String librariesNeeded,
-            String minecraftArguments, String mainClass, boolean isPlayable, boolean newLaunchMethod) {
+            String version, String minecraftVersion, String[] modsInstalled, String jarOrder,
+            String librariesNeeded, String minecraftArguments, String mainClass,
+            boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
         this.version = version;
         this.minecraftVersion = minecraftVersion;
+        this.modsInstalled = modsInstalled;
         this.jarOrder = jarOrder;
         if (newLaunchMethod) {
             this.librariesNeeded = librariesNeeded;
@@ -58,10 +61,11 @@ public class Instance implements Serializable {
     }
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
-            String version, String minecraftVersion, String jarOrder, String librariesNeeded,
-            String minecraftArguments, String mainClass, boolean newLaunchMethod) {
-        this(name, pack, realPack, installJustForMe, version, minecraftVersion, jarOrder,
-                librariesNeeded, minecraftArguments, mainClass, true, newLaunchMethod);
+            String version, String minecraftVersion, String[] modsInstalled, String jarOrder,
+            String librariesNeeded, String minecraftArguments, String mainClass,
+            boolean newLaunchMethod) {
+        this(name, pack, realPack, installJustForMe, version, minecraftVersion, modsInstalled,
+                jarOrder, librariesNeeded, minecraftArguments, mainClass, true, newLaunchMethod);
     }
 
     public String getName() {
@@ -105,10 +109,6 @@ public class Instance implements Serializable {
         } else {
             return "No Description!";
         }
-    }
-
-    public boolean hasUpdate() {
-        return false;
     }
 
     public String getVersion() {
@@ -243,5 +243,31 @@ public class Instance implements Serializable {
             }
         }
         return true;
+    }
+
+    public boolean hasUpdate() {
+        if (realPack != null) {
+            if (realPack.hasVersions() && !this.version.equalsIgnoreCase("Dev Version")) {
+                if (!realPack.getLatestVersion().equalsIgnoreCase(this.version)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean wasModInstalled(String name) {
+        if (modsInstalled != null) {
+            for (String modName : modsInstalled) {
+                if (modName.equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void setModsInstalled(String[] modsInstalled) {
+        this.modsInstalled = modsInstalled;
     }
 }

@@ -82,6 +82,7 @@ public class MCLauncher {
         arguments.add(LauncherFrame.settings.getWindowHeight() + ""); // Window Height
 
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+        processBuilder.redirectErrorStream(true);
         return processBuilder.start();
     }
 

@@ -60,6 +60,10 @@ public class InstanceInstallerDialog extends JDialog {
     private JCheckBox useLatestLWJGL;
 
     public InstanceInstallerDialog(Object object) {
+        this(object, false);
+    }
+
+    public InstanceInstallerDialog(Object object, boolean isUpdate) {
         super(LauncherFrame.settings.getParent(), ModalityType.APPLICATION_MODAL);
         if (object instanceof Pack) {
             pack = (Pack) object;
@@ -112,6 +116,15 @@ public class InstanceInstallerDialog extends JDialog {
         for (int i = 0; i < pack.getVersionCount(); i++) {
             versionsDropDown.addItem(pack.getVersion(i));
         }
+        if (isUpdate) {
+            if (pack.isTester()) {
+                versionsDropDown.setSelectedIndex(1);
+            } else {
+                versionsDropDown.setSelectedIndex(0);
+            }
+        } else if (isReinstall) {
+            versionsDropDown.setSelectedItem(instance.getVersion());
+        }
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         middle.add(versionsDropDown, gbc);
 
@@ -144,7 +157,7 @@ public class InstanceInstallerDialog extends JDialog {
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
-        install = new JButton(((isReinstall) ? "Reinstall" : "Install"));
+        install = new JButton(((isReinstall) ? (isUpdate ? "Update" : "Reinstall") : "Install"));
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!isReinstall && LauncherFrame.settings.isInstance(instanceNameField.getText())) {
@@ -220,6 +233,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 if (isReinstall) {
                                     instance.setVersion(version);
                                     instance.setMinecraftVersion(this.getMinecraftVersion());
+                                    instance.setModsInstalled(this.getModsInstalled());
                                     instance.setJarOrder(this.getJarOrder());
                                     instance.setIsNewLaunchMethod(this.isNewLaunchMethod());
                                     if (this.isNewLaunchMethod()) {
@@ -227,17 +241,25 @@ public class InstanceInstallerDialog extends JDialog {
                                         instance.setMinecraftArguments(this.getMinecraftArguments());
                                         instance.setMainClass(this.getMainClass());
                                     }
-                                    LauncherFrame.settings.reloadInstancesPanel();
-                                    LauncherFrame.settings.saveInstances();
+                                    if (!instance.isPlayable()) {
+                                        instance.setPlayable();
+                                    }
                                 } else {
-                                    LauncherFrame.settings.addInstance(new Instance(
-                                            instanceNameField.getText(), pack.getName(), pack,
-                                            installForMe.isSelected(), version, this
-                                                    .getMinecraftVersion(), this.getJarOrder(),
-                                            this.getLibrariesNeeded(),
-                                            this.getMinecraftArguments(), this.getMainClass(), this
-                                                    .isNewLaunchMethod())); // Add It
+                                    LauncherFrame.settings.getInstances().add(
+                                            new Instance(instanceNameField.getText(), pack
+                                                    .getName(), pack, installForMe.isSelected(),
+                                                    version, this.getMinecraftVersion(), this
+                                                            .getModsInstalled(),
+                                                    this.getJarOrder(), this.getLibrariesNeeded(),
+                                                    this.getMinecraftArguments(), this
+                                                            .getMainClass(), this
+                                                            .isNewLaunchMethod())); // Add It
                                 }
+                                LauncherFrame.settings.saveInstances();
+                                LauncherFrame.settings.reloadInstancesPanel();
+                                LauncherFrame.settings.apiCall(LauncherFrame.settings.getAccount()
+                                        .getMinecraftUsername(), "packinstalled",
+                                        pack.getID() + "", version);
                             } else {
                                 if (isReinstall) {
                                     type = JOptionPane.ERROR_MESSAGE;
@@ -314,6 +336,9 @@ public class InstanceInstallerDialog extends JDialog {
                         instanceInstaller.cancel(true);
                     }
                 });
+                if (isReinstall) {
+                    instanceInstaller.setInstance(instance);
+                }
                 instanceInstaller.execute();
                 dispose();
                 dialog.setVisible(true);

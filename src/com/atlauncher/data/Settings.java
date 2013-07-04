@@ -11,19 +11,24 @@
 package com.atlauncher.data;
 
 import java.awt.Window;
+import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,6 +53,7 @@ import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.BottomBar;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
+import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.Utils;
 
@@ -1004,16 +1010,6 @@ public class Settings {
         return instances;
     }
 
-    /**
-     * Adds an instance to the Launcher and saves it to the instancesdata file
-     */
-    public void addInstance(Instance instance) {
-        if (this.instances.add(instance)) { // Add It
-            saveInstances(); // Save the instancesdata file
-            reloadInstancesPanel(); // Reload the instances tab
-        }
-    }
-
     public void setInstanceUnplayable(Instance instance) {
         instance.setUnplayable(); // Set the instance as unplayable
         saveInstances(); // Save the instancesdata file
@@ -1029,6 +1025,47 @@ public class Settings {
             saveInstances(); // Save the instancesdata file
             reloadInstancesPanel(); // Reload the instances panel
         }
+    }
+
+    public void apiCall(String username, String action, String extra1, String extra2, boolean debug) {
+        if (enableLogs) {
+            try {
+                String data = URLEncoder.encode("username", "UTF-8") + "="
+                        + URLEncoder.encode(username, "UTF-8");
+                data += "&" + URLEncoder.encode("action", "UTF-8") + "="
+                        + URLEncoder.encode(action, "UTF-8");
+                data += "&" + URLEncoder.encode("extra1", "UTF-8") + "="
+                        + URLEncoder.encode(extra1, "UTF-8");
+                data += "&" + URLEncoder.encode("extra2", "UTF-8") + "="
+                        + URLEncoder.encode(extra2, "UTF-8");
+
+                URL url = new URL("http://api.atlauncher.com/log.php");
+                URLConnection conn = url.openConnection();
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(data);
+                wr.flush();
+                if (debug) {
+                    BufferedReader rd = new BufferedReader(new InputStreamReader(
+                            conn.getInputStream()));
+                    String line;
+                    while ((line = rd.readLine()) != null) {
+                        LauncherFrame.settings.getConsole().log("API Call Response:" + line);
+                    }
+                }
+                wr.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void apiCall(String username, String action, String extra1, String extra2) {
+        apiCall(username, action, extra1, extra2, true);
+    }
+
+    public void apiCall(String username, String action, String extra1) {
+        apiCall(username, action, extra1, "", true);
     }
 
     /**
