@@ -67,8 +67,20 @@ public class NewMCLauncher {
         arguments.add("--assetsDir=" + App.settings.getResourcesDir());
         arguments.add("--width=" + App.settings.getWindowWidth());
         arguments.add("--height=" + App.settings.getWindowHeight());
+        if (instance.hasMinecraftArguments()) {
+            String args = instance.getMinecraftArguments();
+            System.out.println(args);
+            if (args.contains(" ")) {
+                for (String arg : args.split(" ")) {
+                    arguments.add(arg);
+                }
+            } else {
+                arguments.add(args);
+            }
+        }
 
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+        System.out.println(processBuilder.command());
         processBuilder.redirectErrorStream(true);
         return processBuilder.start();
     }

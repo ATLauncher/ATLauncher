@@ -2,12 +2,8 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0a16
-- Fixed issue with Packs/Instances Tab border being cut off in Mac OSX
-- Fixed leaderboards sending even if option was disabled
-- Sped up launch time by moving the server checking option to run in the background
-- Added in Language framework and moved all text over to be translated
-- Fixed issue with Launcher not knowing to do with certain files when updating and hanging
+3.0.0a17
+- Added ability for packs to specify a mainclass and extra arguments. This is intended to make it work with forge
 
 -->
 
@@ -19,7 +15,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0a16" />
+	<property name="atlauncher.version" value="3.0.0a17" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

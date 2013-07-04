@@ -132,7 +132,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (jarOrder == null) {
             jarOrder = file;
         } else {
-            jarOrder = file + "," + jarOrder;
+            if (newLaunchMethod) {
+                jarOrder = jarOrder + "," + file;
+            } else {
+                jarOrder = file + "," + jarOrder;
+            }
         }
     }
 
@@ -270,8 +274,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     .urlToString("https://s3.amazonaws.com/Minecraft.Download/versions/"
                             + this.minecraftVersion + "/" + this.minecraftVersion + ".json"));
             JSONObject jsonObject = (JSONObject) obj;
-            this.minecraftArguments = (String) jsonObject.get("minecraftArguments");
-            this.mainClass = (String) jsonObject.get("mainClass");
+            this.minecraftArguments = pack.getExtraArguments(version);
+            String mc = pack.getMainClass(version);
+            if (mc == null) {
+                this.mainClass = (String) jsonObject.get("mainClass");
+            } else {
+                this.mainClass = mc;
+            }
             JSONArray msg = (JSONArray) jsonObject.get("libraries");
             Iterator<JSONObject> iterator = msg.iterator();
             while (iterator.hasNext()) {

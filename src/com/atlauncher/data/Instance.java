@@ -50,6 +50,7 @@ public class Instance implements Serializable {
             this.librariesNeeded = librariesNeeded;
             this.mainClass = mainClass;
             this.jarOrder = jarOrder;
+            this.minecraftArguments = minecraftArguments;
         }
         this.isPlayable = isPlayable;
         this.newLaunchMethod = newLaunchMethod;
@@ -95,8 +96,8 @@ public class Instance implements Serializable {
     }
 
     public ImageIcon getImage() {
-        File imageFile = new File(App.settings.getImagesDir(), getSafePackName()
-                .toLowerCase() + ".png");
+        File imageFile = new File(App.settings.getImagesDir(), getSafePackName().toLowerCase()
+                + ".png");
         if (!imageFile.exists()) {
             imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
         }
@@ -215,7 +216,7 @@ public class Instance implements Serializable {
     }
 
     public String getMinecraftArguments() {
-        return minecraftArguments;
+        return this.minecraftArguments;
     }
 
     public void setMinecraftArguments(String minecraftArguments) {
@@ -237,8 +238,7 @@ public class Instance implements Serializable {
             return false;
         }
         if (installedBy != null) {
-            if (!App.settings.getAccount().getMinecraftUsername()
-                    .equalsIgnoreCase(installedBy)) {
+            if (!App.settings.getAccount().getMinecraftUsername().equalsIgnoreCase(installedBy)) {
                 return false;
             }
         }
@@ -269,5 +269,12 @@ public class Instance implements Serializable {
 
     public void setModsInstalled(String[] modsInstalled) {
         this.modsInstalled = modsInstalled;
+    }
+
+    public boolean hasMinecraftArguments() {
+        if (this.minecraftArguments != null) {
+            return true;
+        }
+        return false;
     }
 }
