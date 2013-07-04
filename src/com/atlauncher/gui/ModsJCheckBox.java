@@ -12,7 +12,7 @@ public class ModsJCheckBox extends JCheckBox {
         super(mod.getName());
         this.mod = mod;
     }
-    
+
     public Mod getMod() {
         return this.mod;
     }

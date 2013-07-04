@@ -32,6 +32,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.atlauncher.App;
+
 @SuppressWarnings("serial")
 public class NewsPanel extends JPanel {
 
@@ -63,8 +65,7 @@ public class NewsPanel extends JPanel {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(LauncherFrame.settings.getConfigsDir(),
-                    "news.xml"));
+            Document document = builder.parse(new File(App.settings.getConfigsDir(), "news.xml"));
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("article");
             for (int i = 0; i < nodeList.getLength(); i++) {

@@ -1,5 +1,5 @@
 /**
-```````` * Copyright 2013 by ATLauncher and Contributors
+ * Copyright 2013 by ATLauncher and Contributors
  *
  * ATLauncher is licensed under CC BY-NC-ND 3.0 which allows others you to
  * share this software with others as long as you credit us by linking to our
@@ -26,6 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Account;
 
 @SuppressWarnings("serial")
@@ -91,14 +92,14 @@ public class BottomBar extends JPanel {
     private void setupListeners() {
         toggleConsole.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (LauncherFrame.settings.getConsole().isVisible()) {
-                    LauncherFrame.settings.getConsole().log("Hiding console");
-                    LauncherFrame.settings.getConsole().setVisible(false);
-                    toggleConsole.setText("Show Console");
+                if (App.settings.getConsole().isVisible()) {
+                    App.settings.getConsole().log("Hiding console");
+                    App.settings.getConsole().setVisible(false);
+                    toggleConsole.setText(App.settings.getLocalizedString("console.show"));
                 } else {
-                    LauncherFrame.settings.getConsole().log("Showing console");
-                    LauncherFrame.settings.getConsole().setVisible(true);
-                    toggleConsole.setText("Hide Console");
+                    App.settings.getConsole().log("Showing console");
+                    App.settings.getConsole().setVisible(true);
+                    toggleConsole.setText(App.settings.getLocalizedString("console.hide"));
                 }
             }
         });
@@ -106,26 +107,26 @@ public class BottomBar extends JPanel {
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     if (!dontSave) {
-                        LauncherFrame.settings.switchAccount((Account) username.getSelectedItem());
+                        App.settings.switchAccount((Account) username.getSelectedItem());
                     }
                 }
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
+                App.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
         redditIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Reddit Page");
+                App.settings.getConsole().log("Opening Up ATLauncher Reddit Page");
                 Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
             }
         });
         twitterIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Twitter Page");
+                App.settings.getConsole().log("Opening Up ATLauncher Twitter Page");
                 Utils.openBrowser("http://www.twitter.com/ATLauncher");
             }
         });
@@ -135,20 +136,20 @@ public class BottomBar extends JPanel {
      * Creates the JButton's for use in the bar
      */
     private void createButtons() {
-        if (LauncherFrame.settings.getConsole().isVisible()) {
-            toggleConsole = new JButton("Hide Console");
+        if (App.settings.getConsole().isVisible()) {
+            toggleConsole = new JButton(App.settings.getLocalizedString("console.hide"));
         } else {
-            toggleConsole = new JButton("Show Console");
+            toggleConsole = new JButton(App.settings.getLocalizedString("console.show"));
         }
 
         username = new JComboBox<Account>();
         username.setRenderer(new AccountsDropDownRenderer());
-        fillerAccount = new Account("Select An Account");
+        fillerAccount = new Account(App.settings.getLocalizedString("account.select"));
         username.addItem(fillerAccount);
-        for (Account account : LauncherFrame.settings.getAccounts()) {
+        for (Account account : App.settings.getAccounts()) {
             username.addItem(account);
         }
-        Account active = LauncherFrame.settings.getAccount();
+        Account active = App.settings.getAccount();
         if (active == null) {
             username.setSelectedIndex(0);
         } else {
@@ -175,17 +176,17 @@ public class BottomBar extends JPanel {
      * Changes the text on the toggleConsole button when the console is hidden
      */
     public void hideConsole() {
-        toggleConsole.setText("Show Console");
+        toggleConsole.setText(App.settings.getLocalizedString("console.show"));
     }
 
     public void reloadAccounts() {
         username.removeAllItems();
         username.addItem(fillerAccount);
-        for (Account account : LauncherFrame.settings.getAccounts()) {
+        for (Account account : App.settings.getAccounts()) {
             username.addItem(account);
         }
         dontSave = true;
-        username.setSelectedItem(LauncherFrame.settings.getAccount());
+        username.setSelectedItem(App.settings.getAccount());
         dontSave = false;
     }
 }

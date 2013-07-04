@@ -22,6 +22,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Addon;
 
 /**
@@ -75,7 +76,7 @@ public class AddonDisplay extends JPanel {
 
         addonActions = new JPanel();
         addonActions.setLayout(new FlowLayout());
-        install = new JButton("Install");
+        install = new JButton(App.settings.getLocalizedString("common.install"));
         addonActions.add(install);
 
         leftPanel.add(addonImage, BorderLayout.CENTER);

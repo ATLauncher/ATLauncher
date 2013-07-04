@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.App;
 import com.atlauncher.gui.Utils;
 
 public class Account implements Serializable {
@@ -62,13 +62,13 @@ public class Account implements Serializable {
     public ImageIcon getMinecraftHead() {
         File file;
         if (isReal()) {
-            file = new File(LauncherFrame.settings.getSkinsDir(), minecraftUsername + ".png");
+            file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
             if (!file.exists()) {
                 new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername
                         + ".png", file.getAbsolutePath()).run();
             }
         } else {
-            file = new File(LauncherFrame.settings.getSkinsDir(), "default.png");
+            file = new File(App.settings.getSkinsDir(), "default.png");
         }
 
         BufferedImage image = null;
@@ -93,9 +93,9 @@ public class Account implements Serializable {
     public ImageIcon getMinecraftSkin() {
         File file;
         if (this.username.isEmpty()) {
-            file = new File(LauncherFrame.settings.getSkinsDir(), "default.png");
+            file = new File(App.settings.getSkinsDir(), "default.png");
         } else {
-            file = new File(LauncherFrame.settings.getSkinsDir(), minecraftUsername + ".png");
+            file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
         }
         if (!file.exists()) {
             new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png",

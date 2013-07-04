@@ -27,6 +27,8 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.atlauncher.App;
+
 @SuppressWarnings("serial")
 public class ConsoleBottomBar extends JPanel {
 
@@ -83,55 +85,53 @@ public class ConsoleBottomBar extends JPanel {
     private void setupActionListeners() {
         copyLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.settings.getConsole().log("Copied Log To Clipboard");
-                StringSelection text = new StringSelection(LauncherFrame.settings.getConsole()
-                        .getLog());
+                App.settings.getConsole().log("Copied Log To Clipboard");
+                StringSelection text = new StringSelection(App.settings.getConsole().getLog());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);
             }
         });
         uploadLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String result = Utils.uploadPaste("ATLauncher Log", LauncherFrame.settings
-                        .getConsole().getLog());
+                String result = Utils.uploadPaste("ATLauncher Log", App.settings.getConsole()
+                        .getLog());
                 if (result.contains("http://paste.atlauncher.com")) {
-                    LauncherFrame.settings.getConsole().log(
+                    App.settings.getConsole().log(
                             "Log uploaded and link copied to clipboard: " + result);
                     StringSelection text = new StringSelection(result);
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(text, null);
                 } else {
-                    LauncherFrame.settings.getConsole().log("Log failed to upload: " + result);
+                    App.settings.getConsole().log("Log failed to upload: " + result);
                 }
             }
         });
         killMinecraft.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                int ret = JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
-                        "<html><center>Are you sure you want to kill the Minecraft process?<br/>"
-                                + "<br/>Doing so can cause corruption of your saves</center>"
-                                + "</html>", "Kill Minecraft", JOptionPane.YES_NO_OPTION);
+                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><center>"
+                        + App.settings.getLocalizedString("console.killsure", "<br/><br/>") + "</center>"
+                        + "</html>", App.settings.getLocalizedString("console.kill"), JOptionPane.YES_NO_OPTION);
                 if (ret == JOptionPane.YES_OPTION) {
-                    LauncherFrame.settings.killMinecraft();
+                    App.settings.killMinecraft();
                     killMinecraft.setVisible(false);
                 }
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
+                App.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
         redditIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Reddit Page");
+                App.settings.getConsole().log("Opening Up ATLauncher Reddit Page");
                 Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
             }
         });
         twitterIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LauncherFrame.settings.getConsole().log("Opening Up ATLauncher Twitter Page");
+                App.settings.getConsole().log("Opening Up ATLauncher Twitter Page");
                 Utils.openBrowser("http://www.twitter.com/ATLauncher");
             }
         });
@@ -141,10 +141,10 @@ public class ConsoleBottomBar extends JPanel {
      * Creates the JButton's for use in the bar
      */
     private void createButtons() {
-        copyLog = new JButton("Copy Log");
-        uploadLog = new JButton("Upload Log");
+        copyLog = new JButton(App.settings.getLocalizedString("console.copy"));
+        uploadLog = new JButton(App.settings.getLocalizedString("console.upload"));
 
-        killMinecraft = new JButton("Kill Minecraft");
+        killMinecraft = new JButton(App.settings.getLocalizedString("console.kill"));
         killMinecraft.setVisible(false);
 
         facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));

@@ -27,7 +27,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.App;
 import com.atlauncher.gui.Utils;
 
 public class Pack {
@@ -65,10 +65,10 @@ public class Pack {
     }
 
     public ImageIcon getImage() {
-        File imageFile = new File(LauncherFrame.settings.getImagesDir(), getSafeName()
+        File imageFile = new File(App.settings.getImagesDir(), getSafeName()
                 .toLowerCase() + ".png");
         if (!imageFile.exists()) {
-            imageFile = new File(LauncherFrame.settings.getImagesDir(), "defaultimage.png");
+            imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
         }
         return Utils.getIconImage(imageFile);
     }
@@ -110,7 +110,7 @@ public class Pack {
     public String getXML(String version) {
         if (this.xml == null || !this.xmlVersion.equalsIgnoreCase(version) || isTester()) {
             String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.xml";
-            String versionURL = LauncherFrame.settings.getFileURL(path); // The XML with path on
+            String versionURL = App.settings.getFileURL(path); // The XML with path on
                                                                          // server
             this.xml = Utils.urlToString(versionURL);
             this.xmlVersion = version;
@@ -230,7 +230,7 @@ public class Pack {
     }
 
     public boolean isTester() {
-        Account account = LauncherFrame.settings.getAccount();
+        Account account = App.settings.getAccount();
         if (account == null) {
             return false;
         }
@@ -254,7 +254,7 @@ public class Pack {
     }
 
     public boolean isNewInstallMethod(String version) {
-        if (LauncherFrame.settings.getMinecraftInstallMethod(getMinecraftVersion(version))
+        if (App.settings.getMinecraftInstallMethod(getMinecraftVersion(version))
                 .equalsIgnoreCase("new")) {
             return true;
         } else {

@@ -14,7 +14,7 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
-import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.App;
 import com.atlauncher.gui.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -43,7 +43,8 @@ public class Mod {
     public Mod(String name, String version, String url, String file, String website,
             String donation, String md5, Type type, ExtractTo extractTo, String decompFile,
             DecompType decompType, boolean server, String serverURL, String serverFile,
-            Type serverType, boolean optional, boolean directDownload, String linked, String description) {
+            Type serverType, boolean optional, boolean directDownload, String linked,
+            String description) {
         this.name = name;
         this.version = version;
         this.url = url;
@@ -88,21 +89,21 @@ public class Mod {
     public boolean hasMD5() {
         return !this.md5.isEmpty();
     }
-    
+
     public boolean isOptional() {
         return this.optional;
     }
-    
+
     public String getLinked() {
         return this.linked;
     }
-    
+
     public String getDescription() {
         return this.description;
     }
 
     public void download(InstanceInstaller installer) {
-        File fileLocation = new File(LauncherFrame.settings.getDownloadsDir(), getFile());
+        File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
         if (fileLocation.exists()) {
             if (hasMD5()) {
                 if (compareMD5(Utils.getMD5(fileLocation))) {
@@ -116,7 +117,7 @@ public class Mod {
         }
         if (isDirectDownload()) {
             if (getURL().contains("http://newfiles.atlauncher.com/")) {
-                new Downloader(LauncherFrame.settings.getFileURL(getURL().replace(
+                new Downloader(App.settings.getFileURL(getURL().replace(
                         "http://newfiles.atlauncher.com/", "")), fileLocation.getAbsolutePath(),
                         installer).run();
             } else {
@@ -125,17 +126,19 @@ public class Mod {
         } else {
             while (!fileLocation.exists()) {
                 Utils.openBrowser(getURL());
-                String[] options = new String[] { "I've Downloaded This File" };
-                int retValue = JOptionPane
-                        .showOptionDialog(
-                                LauncherFrame.settings.getParent(),
-                                "<html><center>Browser opened to download file "
-                                        + getFile()
-                                        + "<br/><br/>Please save this file to the following location<br/><br/>"
-                                        + LauncherFrame.settings.getDownloadsDir()
-                                                .getAbsolutePath() + "</center></html>",
-                                "Downloading " + getFile(), JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                String[] options = new String[] { App.settings
+                        .getLocalizedString("instance.ivedownloaded") };
+                int retValue = JOptionPane.showOptionDialog(
+                        App.settings.getParent(),
+                        "<html><center>"
+                                + App.settings.getLocalizedString("instance.browseropened",
+                                        getFile()) + "<br/><br/>"
+                                + App.settings.getLocalizedString("instance.pleasesave")
+                                + "<br/><br/>" + App.settings.getDownloadsDir().getAbsolutePath()
+                                + "</center></html>",
+                        App.settings.getLocalizedString("common.downloading") + " " + getFile(),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
+                        options[0]);
                 if (retValue == JOptionPane.CLOSED_OPTION) {
                     installer.cancel(true);
                     return;
@@ -155,7 +158,7 @@ public class Mod {
     }
 
     public void install(InstanceInstaller installer) {
-        File fileLocation = new File(LauncherFrame.settings.getDownloadsDir(), getFile());
+        File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
         switch (type) {
             case jar:
                 Utils.copyFile(fileLocation, installer.getJarModsDirectory());
@@ -168,7 +171,7 @@ public class Mod {
                 Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
                 break;
             case extract:
-                File tempDirExtract = new File(LauncherFrame.settings.getTempDir(), getSafeName());
+                File tempDirExtract = new File(App.settings.getTempDir(), getSafeName());
                 Utils.unzip(fileLocation, tempDirExtract);
                 switch (extractTo) {
                     case coremods:
@@ -181,7 +184,7 @@ public class Mod {
                         Utils.copyDirectory(tempDirExtract, installer.getRootDirectory());
                         break;
                     default:
-                        LauncherFrame.settings.getConsole().log(
+                        App.settings.getConsole().log(
                                 "No known way to extract mod " + this.name + " with type "
                                         + this.extractTo);
                         break;
@@ -189,7 +192,7 @@ public class Mod {
                 Utils.delete(tempDirExtract);
                 break;
             case decomp:
-                File tempDirDecomp = new File(LauncherFrame.settings.getTempDir(), getSafeName());
+                File tempDirDecomp = new File(App.settings.getTempDir(), getSafeName());
                 Utils.unzip(fileLocation, tempDirDecomp);
                 File tempFileDecomp = new File(tempDirDecomp, decompFile);
                 if (tempFileDecomp.exists()) {
@@ -207,7 +210,8 @@ public class Mod {
                                 Utils.copyFile(tempFileDecomp, installer.getJarModsDirectory());
                                 installer.addToJarOrder(decompFile);
                             } else {
-                                File newFile = new File(installer.getJarModsDirectory(), getSafeName() + ".zip");
+                                File newFile = new File(installer.getJarModsDirectory(),
+                                        getSafeName() + ".zip");
                                 Utils.zip(tempFileDecomp, newFile);
                                 installer.addToJarOrder(getSafeName() + ".zip");
                             }
@@ -228,20 +232,20 @@ public class Mod {
                             }
                             break;
                         default:
-                            LauncherFrame.settings.getConsole().log(
+                            App.settings.getConsole().log(
                                     "No known way to decomp mod " + this.name + " with type "
                                             + this.decompType);
                             break;
                     }
                 } else {
-                    LauncherFrame.settings.getConsole().log(
+                    App.settings.getConsole().log(
                             "Couldn't find decomp file " + this.decompFile + " for mod "
                                     + this.name);
                 }
                 Utils.delete(tempDirDecomp);
                 break;
             default:
-                LauncherFrame.settings.getConsole().log(
+                App.settings.getConsole().log(
                         "No known way to install mod " + this.name + " with type " + this.type);
                 break;
         }

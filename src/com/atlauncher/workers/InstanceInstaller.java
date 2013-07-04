@@ -36,10 +36,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
-import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.ModsChooser;
 import com.atlauncher.gui.Utils;
 
@@ -69,7 +69,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
-        if (this.version.equalsIgnoreCase("Dev Version")) {
+        if (this.version.equalsIgnoreCase("Dev")) {
             this.version = "dev";
         }
         this.useLatestLWJGL = useLatestLWJGL;
@@ -93,7 +93,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public File getRootDirectory() {
-        return new File(LauncherFrame.settings.getInstancesDir(), getInstanceSafeName());
+        return new File(App.settings.getInstancesDir(), getInstanceSafeName());
     }
 
     public File getMinecraftDirectory() {
@@ -179,7 +179,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void downloadMojangStuffNew() {
-        firePropertyChange("doing", null, "Downloading Resources (May Take A While)");
+        firePropertyChange("doing", null,
+                App.settings.getLocalizedString("instance.downloadingresources"));
         firePropertyChange("subprogressint", null, null);
         ExecutorService executor = Executors.newFixedThreadPool(8);
         ArrayList<Downloadable> downloads = getNeededResources();
@@ -192,21 +193,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         while (!executor.isTerminated()) {
         }
         if (!isCancelled()) {
-            firePropertyChange("doing", null, "Organising Libraries");
+            firePropertyChange("doing", null,
+                    App.settings.getLocalizedString("instance.organisinglibraries"));
             firePropertyChange("subprogress", null, 0);
             String[] libraries = librariesNeeded.split(",");
             for (String libraryFile : libraries) {
-                Utils.copyFile(new File(LauncherFrame.settings.getLibrariesDir(), libraryFile),
+                Utils.copyFile(new File(App.settings.getLibrariesDir(), libraryFile),
                         getBinDirectory());
             }
             String[] natives = nativesNeeded.split(",");
             for (String nativeFile : natives) {
-                Utils.unzip(new File(LauncherFrame.settings.getLibrariesDir(), nativeFile),
+                Utils.unzip(new File(App.settings.getLibrariesDir(), nativeFile),
                         getNativesDirectory());
             }
             Utils.delete(new File(getNativesDirectory(), "META-INF"));
-            Utils.copyFile(new File(LauncherFrame.settings.getJarsDir(), this.minecraftVersion
-                    + ".jar"), new File(getBinDirectory(), "minecraft.jar"), true);
+            Utils.copyFile(new File(App.settings.getJarsDir(), this.minecraftVersion + ".jar"),
+                    new File(getBinDirectory(), "minecraft.jar"), true);
         }
     }
 
@@ -241,11 +243,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         String filename;
                         if (key.contains("/")) {
                             filename = key.substring(key.lastIndexOf('/') + 1, key.length());
-                            File directory = new File(LauncherFrame.settings.getResourcesDir(),
+                            File directory = new File(App.settings.getResourcesDir(),
                                     key.substring(0, key.lastIndexOf('/')));
                             file = new File(directory, filename);
                         } else {
-                            file = new File(LauncherFrame.settings.getResourcesDir(), key);
+                            file = new File(App.settings.getResourcesDir(), key);
                             filename = file.getName();
                         }
                         if (!Utils.getMD5(file).equalsIgnoreCase(etag))
@@ -303,7 +305,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
                 String url = "https://s3.amazonaws.com/Minecraft.Download/libraries/" + dir + "/"
                         + filename;
-                File file = new File(LauncherFrame.settings.getLibrariesDir(), filename);
+                File file = new File(App.settings.getLibrariesDir(), filename);
                 downloads.add(new Downloadable(url, file, null, this));
             }
 
@@ -312,7 +314,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         downloads.add(new Downloadable("https://s3.amazonaws.com/Minecraft.Download/versions/"
                 + this.minecraftVersion + "/" + this.minecraftVersion + ".jar", new File(
-                LauncherFrame.settings.getJarsDir(), this.minecraftVersion + ".jar"), null, this));
+                App.settings.getJarsDir(), this.minecraftVersion + ".jar"), null, this));
         return downloads;
     }
 
@@ -330,59 +332,61 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         String nativesRoot = null;
         String nativesURL = null;
         if (Utils.isWindows()) {
-            nativesFile = new File(LauncherFrame.settings.getJarsDir(),
-                    ((this.useLatestLWJGL) ? "latest_" : "") + "windows_natives.jar");
+            nativesFile = new File(App.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_"
+                    : "") + "windows_natives.jar");
             nativesRoot = "windowsnatives";
             nativesURL = "windows_natives";
         } else if (Utils.isMac()) {
-            nativesFile = new File(LauncherFrame.settings.getJarsDir(),
-                    ((this.useLatestLWJGL) ? "latest_" : "") + "macosx_natives.jar");
+            nativesFile = new File(App.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_"
+                    : "") + "macosx_natives.jar");
             nativesRoot = "macosxnatives";
             nativesURL = "macosx_natives";
         } else {
-            nativesFile = new File(LauncherFrame.settings.getJarsDir(),
-                    ((this.useLatestLWJGL) ? "latest_" : "") + "linux_natives.jar");
+            nativesFile = new File(App.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_"
+                    : "") + "linux_natives.jar");
             nativesRoot = "linuxnatives";
             nativesURL = "linux_natives";
         }
         File[] files = {
-                new File(LauncherFrame.settings.getJarsDir(), minecraftVersion.replace(".", "_")
+                new File(App.settings.getJarsDir(), minecraftVersion.replace(".", "_")
                         + "_minecraft.jar"),
-                new File(LauncherFrame.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_"
-                        : "") + "lwjgl.jar"),
-                new File(LauncherFrame.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_"
-                        : "") + "lwjgl_util.jar"),
-                new File(LauncherFrame.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_"
-                        : "") + "jinput.jar"), nativesFile };
+                new File(App.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_" : "")
+                        + "lwjgl.jar"),
+                new File(App.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_" : "")
+                        + "lwjgl_util.jar"),
+                new File(App.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_" : "")
+                        + "jinput.jar"), nativesFile };
         String[] hashes = {
-                LauncherFrame.settings.getMinecraftHash("minecraft", minecraftVersion, "client"),
-                LauncherFrame.settings.getMinecraftHash("lwjgl", (this.useLatestLWJGL) ? "latest"
+                App.settings.getMinecraftHash("minecraft", minecraftVersion, "client"),
+                App.settings.getMinecraftHash("lwjgl", (this.useLatestLWJGL) ? "latest" : "mojang",
+                        "client"),
+                App.settings.getMinecraftHash("lwjglutil", (this.useLatestLWJGL) ? "latest"
                         : "mojang", "client"),
-                LauncherFrame.settings.getMinecraftHash("lwjglutil",
+                App.settings.getMinecraftHash("jinput",
                         (this.useLatestLWJGL) ? "latest" : "mojang", "client"),
-                LauncherFrame.settings.getMinecraftHash("jinput", (this.useLatestLWJGL) ? "latest"
-                        : "mojang", "client"),
-                LauncherFrame.settings.getMinecraftHash(nativesRoot,
-                        (this.useLatestLWJGL) ? "latest" : "mojang", "client") };
+                App.settings.getMinecraftHash(nativesRoot, (this.useLatestLWJGL) ? "latest"
+                        : "mojang", "client") };
         String[] urls = {
                 "http://assets.minecraft.net/" + minecraftVersion.replace(".", "_")
                         + "/minecraft.jar",
-                (this.useLatestLWJGL) ? LauncherFrame.settings
-                        .getFileURL("launcher/lwjgl/latest_lwjgl.jar")
+                (this.useLatestLWJGL) ? App.settings.getFileURL("launcher/lwjgl/latest_lwjgl.jar")
                         : "http://s3.amazonaws.com/MinecraftDownload/lwjgl.jar",
-                (this.useLatestLWJGL) ? LauncherFrame.settings
+                (this.useLatestLWJGL) ? App.settings
                         .getFileURL("launcher/lwjgl/latest_lwjgl_util.jar")
                         : "http://s3.amazonaws.com/MinecraftDownload/lwjgl_util.jar",
-                (this.useLatestLWJGL) ? LauncherFrame.settings
-                        .getFileURL("launcher/lwjgl/latest_jinput.jar")
+                (this.useLatestLWJGL) ? App.settings.getFileURL("launcher/lwjgl/latest_jinput.jar")
                         : "http://s3.amazonaws.com/MinecraftDownload/jinput.jar",
-                (this.useLatestLWJGL) ? LauncherFrame.settings.getFileURL("launcher/lwjgl/latest_"
+                (this.useLatestLWJGL) ? App.settings.getFileURL("launcher/lwjgl/latest_"
                         + nativesURL + ".jar") : "http://s3.amazonaws.com/MinecraftDownload/"
                         + nativesURL + ".jar" };
         for (int i = 0; i < 5; i++) {
             addPercent(5);
             while (!Utils.getMD5(files[i]).equalsIgnoreCase(hashes[i])) {
-                firePropertyChange("doing", null, "Downloading " + files[i].getName());
+                firePropertyChange(
+                        "doing",
+                        null,
+                        App.settings.getLocalizedString("common.downloading") + " "
+                                + files[i].getName());
                 new com.atlauncher.data.Downloader(urls[i], files[i].getAbsolutePath(), this).run();
             }
             if (i == 0) {
@@ -403,7 +407,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public void deleteMetaInf() {
         File inputFile = getMinecraftJar();
-        File outputTmpFile = new File(LauncherFrame.settings.getTempDir(), pack.getSafeName()
+        File outputTmpFile = new File(App.settings.getTempDir(), pack.getSafeName()
                 + "-minecraft.jar");
         try {
             JarInputStream input = new JarInputStream(new FileInputStream(inputFile));
@@ -434,10 +438,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public void configurePack() {
-        firePropertyChange("doing", null, "Extracting Configs");
-        File configs = new File(LauncherFrame.settings.getTempDir(), "Configs.zip");
+        firePropertyChange("doing", null,
+                App.settings.getLocalizedString("instance.extractingconfigs"));
+        File configs = new File(App.settings.getTempDir(), "Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version + "/Configs.zip";
-        String configsURL = LauncherFrame.settings.getFileURL(path); // The zip on the server
+        String configsURL = App.settings.getFileURL(path); // The zip on the server
         new com.atlauncher.data.Downloader(configsURL, configs.getAbsolutePath(), this).run();
         Utils.unzip(configs, getMinecraftDirectory());
         configs.delete();
@@ -504,14 +509,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             int amountPer = 40 / mods.size();
             for (Mod mod : mods) {
                 if (!isCancelled()) {
-                    firePropertyChange("doing", null, "Downloading " + mod.getName());
+                    firePropertyChange(
+                            "doing",
+                            null,
+                            App.settings.getLocalizedString("common.downloading") + " "
+                                    + mod.getName());
                     addPercent(amountPer);
                     mod.download(this);
                 }
             }
             for (Mod mod : mods) {
                 if (!isCancelled()) {
-                    firePropertyChange("doing", null, "Installing " + mod.getName());
+                    firePropertyChange(
+                            "doing",
+                            null,
+                            App.settings.getLocalizedString("common.installing") + " "
+                                    + mod.getName());
                     addPercent(amountPer);
                     mod.install(this);
                 }
@@ -520,8 +533,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             addPercent(80);
         }
         configurePack();
-        addPercent(5);
-        firePropertyChange("doing", null, "Finished");
         return true;
     }
 

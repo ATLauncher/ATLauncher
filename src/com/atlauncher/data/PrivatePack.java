@@ -10,7 +10,7 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.App;
 
 public class PrivatePack extends Pack {
 
@@ -23,7 +23,7 @@ public class PrivatePack extends Pack {
     }
 
     public boolean isAllowedPlayer() {
-        Account account = LauncherFrame.settings.getAccount();
+        Account account = App.settings.getAccount();
         if (account == null) {
             return false;
         }

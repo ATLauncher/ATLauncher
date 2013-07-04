@@ -21,6 +21,8 @@ import com.atlauncher.gui.SplashScreen;
 
 public class App {
 
+    public static Settings settings;
+
     public static void main(String[] args) {
         String autoLaunch = null;
         if (args != null) {
@@ -50,9 +52,8 @@ public class App {
             }
         }
 
-        Settings settings = new Settings(); // Setup the Settings and wait for it to finish
+        settings = new Settings(); // Setup the Settings and wait for it to finish
 
-        settings.getConsole().log("Launcher started. Loading everything and showing splash screen");
         SplashScreen ss = new SplashScreen(); // Show Splash Screen
         settings.loadEverything(); // Loads everything that needs to be loaded
         ss.close(); // Close the Splash Screen
@@ -69,7 +70,7 @@ public class App {
         // }
         // }
         settings.getConsole().log("Launcher opening");
-        new LauncherFrame(settings); // Open the Launcher
+        new LauncherFrame(); // Open the Launcher
     }
 
 }

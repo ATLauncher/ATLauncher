@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
-import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.Utils;
 
 public class NewMCLauncher {
@@ -52,8 +52,8 @@ public class NewMCLauncher {
         arguments.add(path);
 
         arguments.add("-Xms256M");
-        arguments.add("-Xmx" + LauncherFrame.settings.getMemory() + "M");
-        arguments.add("-XX:MaxPermSize=" + LauncherFrame.settings.getPermGen() + "M");
+        arguments.add("-Xmx" + App.settings.getMemory() + "M");
+        arguments.add("-XX:MaxPermSize=" + App.settings.getPermGen() + "M");
 
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());
         arguments.add("-cp");
@@ -64,9 +64,9 @@ public class NewMCLauncher {
         arguments.add("--session=" + session);
         arguments.add("--version=" + instance.getMinecraftVersion());
         arguments.add("--gameDir=" + instance.getMinecraftDirectory());
-        arguments.add("--assetsDir=" + LauncherFrame.settings.getResourcesDir());
-        arguments.add("--width=" + LauncherFrame.settings.getWindowWidth());
-        arguments.add("--height=" + LauncherFrame.settings.getWindowHeight());
+        arguments.add("--assetsDir=" + App.settings.getResourcesDir());
+        arguments.add("--width=" + App.settings.getWindowWidth());
+        arguments.add("--height=" + App.settings.getWindowHeight());
 
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.redirectErrorStream(true);

@@ -27,9 +27,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
-import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.Utils;
 
 public class MCLauncher {
@@ -62,8 +62,8 @@ public class MCLauncher {
         arguments.add(path);
 
         arguments.add("-Xms256M");
-        arguments.add("-Xmx" + LauncherFrame.settings.getMemory() + "M");
-        arguments.add("-XX:MaxPermSize=" + LauncherFrame.settings.getPermGen() + "M");
+        arguments.add("-Xmx" + App.settings.getMemory() + "M");
+        arguments.add("-XX:MaxPermSize=" + App.settings.getPermGen() + "M");
 
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
@@ -78,8 +78,8 @@ public class MCLauncher {
         if (instance.hasJarMods()) {
             arguments.add(instance.getJarOrder()); // Jar Order
         }
-        arguments.add(LauncherFrame.settings.getWindowWidth() + ""); // Window Width
-        arguments.add(LauncherFrame.settings.getWindowHeight() + ""); // Window Height
+        arguments.add(App.settings.getWindowWidth() + ""); // Window Width
+        arguments.add(App.settings.getWindowHeight() + ""); // Window Height
 
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.redirectErrorStream(true);

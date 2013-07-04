@@ -38,6 +38,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.mclauncher.MCLauncher;
@@ -105,29 +106,31 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Play Button
 
-        play = new JButton("Play");
+        play = new JButton(App.settings.getLocalizedString("common.play"));
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                final Account account = LauncherFrame.settings.getAccount();
+                final Account account = App.settings.getAccount();
                 if (account == null) {
-                    String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "Cannot play instance as you have no Account selected",
-                            "No Account Selected", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.noaccount"),
+                            App.settings.getLocalizedString("instance.noaccountselected"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
                 } else {
                     String username = account.getUsername();
                     String password = account.getPassword();
                     if (!account.isRemembered()) {
                         JPanel panel = new JPanel();
                         panel.setLayout(new BorderLayout());
-                        JLabel passwordLabel = new JLabel("Enter password for "
-                                + account.getUsername());
+                        JLabel passwordLabel = new JLabel(App.settings.getLocalizedString(
+                                "instance.enterpassword", account.getMinecraftUsername()));
                         JPasswordField passwordField = new JPasswordField();
                         panel.add(passwordLabel, BorderLayout.NORTH);
                         panel.add(passwordField, BorderLayout.CENTER);
-                        int ret = JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
-                                panel, "Enter Password", JOptionPane.OK_CANCEL_OPTION);
+                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
+                                App.settings.getLocalizedString("instance.enterpasswordtitle"),
+                                JOptionPane.OK_CANCEL_OPTION);
                         if (ret == JOptionPane.OK_OPTION) {
                             password = new String(passwordField.getPassword());
                         } else {
@@ -174,10 +177,14 @@ public class InstanceDisplay extends CollapsiblePanel {
                         }
                     }
                     if (!loggedIn) {
-                        String[] options = { "Ok" };
-                        JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                                "<html><center>Couldn't login to minecraft servers<br/><br/>"
-                                        + auth + "</center></html>", "Error Logging In",
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
+                        JOptionPane.showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString(
+                                                "instance.errorloggingin", "<br/><br/>" + auth)
+                                        + "</center></html>", App.settings
+                                        .getLocalizedString("instance.errorloggingintitle"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
                     } else {
@@ -186,29 +193,36 @@ public class InstanceDisplay extends CollapsiblePanel {
                             public void run() {
                                 try {
                                     long start = System.currentTimeMillis();
-                                    LauncherFrame.settings.getParent().setVisible(false);
+                                    App.settings.getParent().setVisible(false);
                                     Process process = null;
                                     if (instance.isNewLaunchMethod()) {
                                         process = NewMCLauncher.launch(account, instance, session);
                                     } else {
                                         process = MCLauncher.launch(account, instance, session);
                                     }
-                                    LauncherFrame.settings.showKillMinecraft(process);
+                                    App.settings.showKillMinecraft(process);
                                     InputStream is = process.getInputStream();
                                     InputStreamReader isr = new InputStreamReader(is);
                                     BufferedReader br = new BufferedReader(isr);
                                     String line;
                                     while ((line = br.readLine()) != null) {
-                                        LauncherFrame.settings.getConsole().logMinecraft(line);
+                                        App.settings.getConsole().logMinecraft(line);
                                     }
-                                    LauncherFrame.settings.hideKillMinecraft();
-                                    LauncherFrame.settings.getParent().setVisible(true);
+                                    App.settings.hideKillMinecraft();
+                                    App.settings.getParent().setVisible(true);
                                     long end = System.currentTimeMillis();
-                                    LauncherFrame.settings.apiCall(account.getMinecraftUsername(),
-                                            "addleaderboardtime",
-                                            (instance.getRealPack() == null ? "0" : instance
-                                                    .getRealPack().getID() + ""),
-                                            ((end - start) / 1000) + "");
+                                    if (App.settings.enableLeaderboards()) {
+                                        App.settings.apiCall(account.getMinecraftUsername(),
+                                                "addleaderboardtime",
+                                                (instance.getRealPack() == null ? "0" : instance
+                                                        .getRealPack().getID() + ""),
+                                                ((end - start) / 1000) + "");
+                                    } else {
+                                        App.settings.apiCall("NULL", "addleaderboardtime",
+                                                (instance.getRealPack() == null ? "0" : instance
+                                                        .getRealPack().getID() + ""),
+                                                ((end - start) / 1000) + "");
+                                    }
                                 } catch (IOException e1) {
                                     e1.printStackTrace();
                                 }
@@ -222,15 +236,16 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Reinstall Button
 
-        reinstall = new JButton("Reinstall");
+        reinstall = new JButton(App.settings.getLocalizedString("common.reinstall"));
         reinstall.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (LauncherFrame.settings.getAccount() == null) {
-                    String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "Cannot reinstall pack as you have no Account selected",
-                            "No Account Selected", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                if (App.settings.getAccount() == null) {
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.cantreinstall"),
+                            App.settings.getLocalizedString("instance.noaccountselected"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
                 } else {
                     new InstanceInstallerDialog(instance);
                 }
@@ -242,12 +257,13 @@ public class InstanceDisplay extends CollapsiblePanel {
         update = new JButton("Update");
         update.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (LauncherFrame.settings.getAccount() == null) {
-                    String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "Cannot update pack as you have no Account selected",
-                            "No Account Selected", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                if (App.settings.getAccount() == null) {
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.cantupdate"),
+                            App.settings.getLocalizedString("instance.noaccountselected"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
                 } else {
                     new InstanceInstallerDialog(instance, true);
                 }
@@ -259,25 +275,26 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Backup Button
 
-        backup = new JButton("Backup");
+        backup = new JButton(App.settings.getLocalizedString("common.backup"));
 
         // Delete Button
 
-        delete = new JButton("Delete");
+        delete = new JButton(App.settings.getLocalizedString("common.delete"));
         delete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
-                        "Are you sure you want to delete this instance?", "Delete Instance",
+                int response = JOptionPane.showConfirmDialog(App.settings.getParent(),
+                        App.settings.getLocalizedString("instance.deletesure"),
+                        App.settings.getLocalizedString("instance.deleteinstance"),
                         JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
-                    LauncherFrame.settings.removeInstance(instance);
+                    App.settings.removeInstance(instance);
                 }
             }
         });
 
         // Restore Button
 
-        restore = new JButton("Restore");
+        restore = new JButton(App.settings.getLocalizedString("common.restore"));
 
         // Check if pack can be installed and remove buttons if not
 
@@ -293,13 +310,12 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
             play.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(
-                            LauncherFrame.settings.getParent(),
-                            "Cannot play instance as it's corrupted. Please reinstall"
-                                    + (instance.hasUpdate() ? ", update" : "") + " or delete it",
-                            "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.corruptplay"),
+                            App.settings.getLocalizedString("instance.corrupt"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
                 }
             });
             for (ActionListener al : backup.getActionListeners()) {
@@ -307,12 +323,12 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
             backup.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "Cannot backup instance as it's corrupted. Please reinstall"
-                                    + (instance.hasUpdate() ? ", update" : "") + " or delete it",
-                            "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.corruptbackup"),
+                            App.settings.getLocalizedString("instance.corrupt"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
                 }
             });
             for (ActionListener al : restore.getActionListeners()) {
@@ -320,12 +336,12 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
             restore.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "Cannot restore instance as it's corrupted. Please reinstall"
-                                    + (instance.hasUpdate() ? ", update" : "") + " or delete it",
-                            "Instance Corrupt", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.corruptrestore"),
+                            App.settings.getLocalizedString("instance.corrupt"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
                 }
             });
         }

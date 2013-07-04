@@ -25,7 +25,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import com.atlauncher.data.Settings;
+import com.atlauncher.App;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
@@ -44,13 +44,10 @@ public class LauncherFrame extends JFrame {
 
     private BottomBar bottomBar;
 
-    public static Settings settings;
-
-    public LauncherFrame(Settings settings) {
-        LauncherFrame.settings = settings;
-        LauncherFrame.settings.setParentFrame(this);
-        if (settings.enableConsole()) {
-            LauncherFrame.settings.getConsole().setVisible(true);
+    public LauncherFrame() {
+        App.settings.setParentFrame(this);
+        if (App.settings.enableConsole()) {
+            App.settings.getConsole().setVisible(true);
         }
         setSize(new Dimension(800, 500));
         setTitle("ATLauncher %VERSION%");
@@ -60,17 +57,17 @@ public class LauncherFrame extends JFrame {
         setIconImage(Utils.getImage("/resources/Icon.png"));
         setLayout(LAYOUT_MANAGER);
 
-        LauncherFrame.settings.getConsole().log("Setting up Look & Feel");
+        App.settings.getConsole().log("Setting up Look & Feel");
         setupLookAndFeel(); // Setup the look and feel for the Launcher
-        LauncherFrame.settings.getConsole().log("Finished Setting up Look & Feel");
+        App.settings.getConsole().log("Finished Setting up Look & Feel");
 
-        LauncherFrame.settings.getConsole().log("Setting up Look & Feel");
+        App.settings.getConsole().log("Setting up Look & Feel");
         setupBottomBar(); // Setup the Bottom Bar
-        LauncherFrame.settings.getConsole().log("Finished Setting up Bottom Bar");
+        App.settings.getConsole().log("Finished Setting up Bottom Bar");
 
-        LauncherFrame.settings.getConsole().log("Setting up Tabs");
+        App.settings.getConsole().log("Setting up Tabs");
         setupTabs(); // Setup the JTabbedPane
-        LauncherFrame.settings.getConsole().log("Finished Setting up Tabs");
+        App.settings.getConsole().log("Finished Setting up Tabs");
 
         add(tabbedPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
@@ -80,13 +77,13 @@ public class LauncherFrame extends JFrame {
                 dispose();
             }
         });
-        LauncherFrame.settings.getConsole().log("Showing Launcher");
+        App.settings.getConsole().log("Showing Launcher");
         setVisible(true);
 
-        LauncherFrame.settings.getConsole().addComponentListener(new ComponentAdapter() {
+        App.settings.getConsole().addComponentListener(new ComponentAdapter() {
             public void componentHidden(ComponentEvent e) {
-                LauncherFrame.settings.getConsole().log("Hiding console");
-                LauncherFrame.settings.getConsole().setVisible(false);
+                App.settings.getConsole().log("Hiding console");
+                App.settings.getConsole().setVisible(false);
                 bottomBar.hideConsole();
             }
         });
@@ -101,10 +98,10 @@ public class LauncherFrame extends JFrame {
 
         newsPanel = new NewsPanel();
         packsPanel = new PacksPanel();
-        settings.setPacksPanel(packsPanel);
+        App.settings.setPacksPanel(packsPanel);
         addonsPanel = new AddonsPanel();
         instancesPanel = new InstancesPanel();
-        settings.setInstancesPanel(instancesPanel);
+        App.settings.setInstancesPanel(instancesPanel);
         accountPanel = new AccountPanel();
         settingsPanel = new SettingsPanel();
 
@@ -123,7 +120,7 @@ public class LauncherFrame extends JFrame {
      */
     private void setupBottomBar() {
         bottomBar = new BottomBar();
-        settings.setBottomBar(bottomBar);
+        App.settings.setBottomBar(bottomBar);
     }
 
     /**

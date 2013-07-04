@@ -12,12 +12,8 @@ package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.FocusAdapter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -26,8 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.border.TitledBorder;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Pack;
 
 /**
@@ -88,31 +84,32 @@ public class PackDisplay extends CollapsiblePanel {
         packActions.setLeftComponent(packActionsTop);
         packActions.setRightComponent(packActionsBottom);
 
-        newInstance = new JButton("New Instance");
+        newInstance = new JButton(App.settings.getLocalizedString("common.newinstance"));
         newInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (LauncherFrame.settings.getAccount() == null) {
-                    String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "Cannot create instance as you have no Account selected",
-                            "No Account Selected", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                if (App.settings.getAccount() == null) {
+                    String[] options = { App.settings.getLocalizedString("global.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.cannotcreate"),
+                            App.settings.getLocalizedString("instance.noaccountselected"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
                 } else {
                     new InstanceInstallerDialog(pack);
                 }
             }
         });
 
-        createServer = new JButton("Create Server");
+        createServer = new JButton(App.settings.getLocalizedString("common.createserver"));
 
-        support = new JButton("Support");
+        support = new JButton(App.settings.getLocalizedString("common.support"));
         support.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Utils.openBrowser(pack.getSupportURL());
             }
         });
 
-        website = new JButton("Website");
+        website = new JButton(App.settings.getLocalizedString("common.website"));
         website.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Utils.openBrowser(pack.getWebsiteURL());

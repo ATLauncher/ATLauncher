@@ -14,11 +14,11 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Pack;
 
 public class PacksPanel extends JPanel {
@@ -29,7 +29,6 @@ public class PacksPanel extends JPanel {
 
     public PacksPanel() {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
         loadContent();
     }
 
@@ -48,7 +47,7 @@ public class PacksPanel extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for (Pack pack : LauncherFrame.settings.getPacksSorted()) {
+        for (Pack pack : App.settings.getPacksSorted()) {
             if (pack.canInstall()) {
                 panel.add(new PackDisplay(pack), gbc);
                 gbc.gridy++;
@@ -56,8 +55,7 @@ public class PacksPanel extends JPanel {
             }
         }
         if (count == 0) {
-            panel.add(new NothingToDisplay("There are no packs to display\n\n"
-                    + "Please check back another time"), gbc);
+            panel.add(new NothingToDisplay(App.settings.getLocalizedString("pack.nodisplay", "\n\n")), gbc);
         }
 
         SwingUtilities.invokeLater(new Runnable() {

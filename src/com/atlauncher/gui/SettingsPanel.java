@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 
@@ -88,15 +89,16 @@ public class SettingsPanel extends JPanel {
         gbc.gridy = 0;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        languageLabel = new JLabel("Language:");
+        languageLabel = new JLabel(App.settings.getLocalizedString("settings.language") + ":");
         languageLabel.setIcon(helpIcon);
         languageLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
-                                "This specifies the Language used by the Launcher", "Help",
+                        JOptionPane.showMessageDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("settings.languagehelp"),
+                                App.settings.getLocalizedString("settings.help"),
                                 JOptionPane.PLAIN_MESSAGE);
                     }
                 }
@@ -108,10 +110,10 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         language = new JComboBox<Language>();
-        for (Language languagee : LauncherFrame.settings.getLanguages()) {
+        for (Language languagee : App.settings.getLanguages()) {
             language.addItem(languagee);
         }
-        language.setSelectedItem(LauncherFrame.settings.getLanguage());
+        language.setSelectedItem(App.settings.getLanguage());
         topPanel.add(language, gbc);
 
         // Download Server
@@ -119,17 +121,18 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        downloadServerLabel = new JLabel("Download Server:");
+        downloadServerLabel = new JLabel(App.settings.getLocalizedString("settings.downloadserver")
+                + ":");
         downloadServerLabel.setIcon(helpIcon);
         downloadServerLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(
-                                LauncherFrame.settings.getParent(),
-                                "The server to download files from. Keep on Auto for best results.",
-                                "Help", JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showMessageDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("settings.downloadserverhelp"),
+                                App.settings.getLocalizedString("settings.help"),
+                                JOptionPane.PLAIN_MESSAGE);
                     }
                 }
             }
@@ -140,10 +143,10 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         server = new JComboBox<Server>();
-        for (Server serverr : LauncherFrame.settings.getServers()) {
+        for (Server serverr : App.settings.getServers()) {
             server.addItem(serverr);
         }
-        server.setSelectedItem(LauncherFrame.settings.getServer());
+        server.setSelectedItem(App.settings.getServer());
         topPanel.add(server, gbc);
 
         // Memory Settings
@@ -151,7 +154,7 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        memoryLabel = new JLabel("Memory/RAM:");
+        memoryLabel = new JLabel(App.settings.getLocalizedString("settings.memory") + ":");
         memoryLabel.setIcon(helpIcon);
         memoryLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -160,15 +163,17 @@ public class SettingsPanel extends JPanel {
                     if (e.getX() < 16 && e.getY() < 16) {
                         if (!Utils.is64Bit()) {
                             JOptionPane.showMessageDialog(
-                                    LauncherFrame.settings.getParent(),
-                                    "<html><center>The amount of RAM to use when launching Minecraft.<br/>"
-                                            + "<br/>You can only allocate up to 1GB of RAM as you "
-                                            + "don't have<br/>a 64 bit system or you don't have Java "
-                                            + "64 bit version installed</center></html>", "Help",
+                                    App.settings.getParent(),
+                                    "<html><center>"
+                                            + App.settings.getLocalizedString(
+                                                    "settings.memoryhelp32bit", "<br/>")
+                                            + "</center></html>", App.settings
+                                            .getLocalizedString("settings.help"),
                                     JOptionPane.PLAIN_MESSAGE);
                         } else {
-                            JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
-                                    "The amount of RAM to use when launching Minecraft.", "Help",
+                            JOptionPane.showMessageDialog(App.settings.getParent(),
+                                    App.settings.getLocalizedString("settings.memoryhelp"),
+                                    App.settings.getLocalizedString("settings.help"),
                                     JOptionPane.PLAIN_MESSAGE);
                         }
                     }
@@ -185,7 +190,7 @@ public class SettingsPanel extends JPanel {
         for (int i = 0; i < memoryOptions.length; i++) {
             memory.addItem(memoryOptions[i]);
         }
-        memory.setSelectedItem(LauncherFrame.settings.getMemory() + " MB");
+        memory.setSelectedItem(App.settings.getMemory() + " MB");
         topPanel.add(memory, gbc);
 
         // Perm Gen Settings
@@ -193,16 +198,17 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        permGenLabel = new JLabel("PermGen Size:");
+        permGenLabel = new JLabel(App.settings.getLocalizedString("settings.permgen") + ":");
         permGenLabel.setIcon(helpIcon);
         permGenLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
-                                "The PermGen Size for java to use when launching Minecraft in MB.",
-                                "Help", JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showMessageDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("settings.permgenhelp"),
+                                App.settings.getLocalizedString("settings.help"),
+                                JOptionPane.PLAIN_MESSAGE);
                     }
                 }
             }
@@ -213,7 +219,7 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         permGen = new JTextField(4);
-        permGen.setText(LauncherFrame.settings.getPermGen() + "");
+        permGen.setText(App.settings.getPermGen() + "");
         topPanel.add(permGen, gbc);
 
         // Window Size
@@ -222,17 +228,17 @@ public class SettingsPanel extends JPanel {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        windowSizeLabel = new JLabel("Window Size:");
+        windowSizeLabel = new JLabel(App.settings.getLocalizedString("settings.windowsize") + ":");
         windowSizeLabel.setIcon(helpIcon);
         windowSizeLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(
-                                LauncherFrame.settings.getParent(),
-                                "The size that the Minecraft window should open as - Width x Height",
-                                "Help", JOptionPane.PLAIN_MESSAGE);
+                    if (e.getX() < 16 && (e.getY() > 10 && e.getY() < 26)) {
+                        JOptionPane.showMessageDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("settings.windowsizehelp"),
+                                App.settings.getLocalizedString("settings.help"),
+                                JOptionPane.PLAIN_MESSAGE);
                     }
                 }
             }
@@ -245,9 +251,9 @@ public class SettingsPanel extends JPanel {
         windowSizePanel = new JPanel();
         windowSizePanel.setLayout(new FlowLayout());
         widthField = new JTextField(4);
-        widthField.setText(LauncherFrame.settings.getWindowWidth() + "");
+        widthField.setText(App.settings.getWindowWidth() + "");
         heightField = new JTextField(4);
-        heightField.setText(LauncherFrame.settings.getWindowHeight() + "");
+        heightField.setText(App.settings.getWindowHeight() + "");
         windowSizePanel.add(widthField);
         windowSizePanel.add(new JLabel("x"));
         windowSizePanel.add(heightField);
@@ -263,15 +269,17 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        javaParametersLabel = new JLabel("Java Parameters:");
+        javaParametersLabel = new JLabel(App.settings.getLocalizedString("settings.javaparameters")
+                + ":");
         javaParametersLabel.setIcon(helpIcon);
         javaParametersLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
-                                "Extra Java command line paramaters can be added here", "Help",
+                        JOptionPane.showMessageDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("settings.javaparametershelp"),
+                                App.settings.getLocalizedString("settings.help"),
                                 JOptionPane.PLAIN_MESSAGE);
                     }
                 }
@@ -283,7 +291,7 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         javaParameters = new JTextField(20);
-        javaParameters.setText(LauncherFrame.settings.getJavaParameters());
+        javaParameters.setText(App.settings.getJavaParameters());
         topPanel.add(javaParameters, gbc);
 
         // Enable Console
@@ -292,16 +300,17 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableConsoleLabel = new JLabel("Enable Console?");
+        enableConsoleLabel = new JLabel(App.settings.getLocalizedString("settings.console") + "?");
         enableConsoleLabel.setIcon(helpIcon);
         enableConsoleLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
-                                "If you want the console to be visible when opening the Launcher",
-                                "Help", JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showMessageDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("settings.consolehelp"),
+                                App.settings.getLocalizedString("settings.help"),
+                                JOptionPane.PLAIN_MESSAGE);
                     }
                 }
             }
@@ -312,7 +321,7 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableConsole = new JCheckBox();
-        if (LauncherFrame.settings.enableConsole()) {
+        if (App.settings.enableConsole()) {
             enableConsole.setSelected(true);
         }
         topPanel.add(enableConsole, gbc);
@@ -323,15 +332,17 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLeaderboardsLabel = new JLabel("Enable Leaderboards?");
+        enableLeaderboardsLabel = new JLabel(
+                App.settings.getLocalizedString("settings.leaderboards") + "?");
         enableLeaderboardsLabel.setIcon(helpIcon);
         enableLeaderboardsLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(LauncherFrame.settings.getParent(),
-                                "If you want to participate in the Leaderboards", "Help",
+                        JOptionPane.showMessageDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("settings.leaderboardshelp"),
+                                App.settings.getLocalizedString("settings.help"),
                                 JOptionPane.PLAIN_MESSAGE);
                     }
                 }
@@ -343,7 +354,7 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLeaderboards = new JCheckBox();
-        if (LauncherFrame.settings.enableLeaderboards()) {
+        if (App.settings.enableLeaderboards()) {
             enableLeaderboards.setSelected(true);
         }
         topPanel.add(enableLeaderboards, gbc);
@@ -354,19 +365,17 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLoggingLabel = new JLabel("Enable Logging?");
+        enableLoggingLabel = new JLabel(App.settings.getLocalizedString("settings.logging") + "?");
         enableLoggingLabel.setIcon(helpIcon);
         enableLoggingLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(
-                                LauncherFrame.settings.getParent(),
-                                "<html><center>The Launcher sends back anonymous usage and error "
-                                        + "logs<br/>to our servers in order to make the Launcher and Packs"
-                                        + "<br/>better. If you don't want this to happen then simply<br/>"
-                                        + "disable this option</center></html>", "Help",
+                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html><center>"
+                                + App.settings.getLocalizedString("settings.logginghelp", "<br/>")
+                                + "</center></html>",
+                                App.settings.getLocalizedString("settings.help"),
                                 JOptionPane.PLAIN_MESSAGE);
                     }
                 }
@@ -378,7 +387,7 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLogs = new JCheckBox();
-        if (LauncherFrame.settings.enableLogs()) {
+        if (App.settings.enableLogs()) {
             enableLogs.setSelected(true);
         }
         topPanel.add(enableLogs, gbc);
@@ -386,22 +395,25 @@ public class SettingsPanel extends JPanel {
         // End Components
 
         bottomPanel = new JPanel();
-        saveButton = new JButton("Save");
+        saveButton = new JButton(App.settings.getLocalizedString("common.save"));
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                LauncherFrame.settings.setLanguage((Language) language.getSelectedItem());
-                LauncherFrame.settings.setServer((Server) server.getSelectedItem());
-                LauncherFrame.settings.setMemory(Integer.parseInt(((String) memory
-                        .getSelectedItem()).replace(" MB", "")));
-                LauncherFrame.settings.setPermGen(Integer.parseInt(permGen.getText().replaceAll("[^0-9]", "")));
-                LauncherFrame.settings.setWindowWidth(Integer.parseInt(widthField.getText().replaceAll("[^0-9]", "")));
-                LauncherFrame.settings.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll("[^0-9]", "")));
-                LauncherFrame.settings.setJavaParameters(javaParameters.getText());
-                LauncherFrame.settings.setEnableConsole(enableConsole.isSelected());
-                LauncherFrame.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
-                LauncherFrame.settings.setEnableLogs(enableLogs.isSelected());
-                LauncherFrame.settings.saveProperties();
-                LauncherFrame.settings.getConsole().log("Settings Saved!");
+                App.settings.setLanguage((Language) language.getSelectedItem());
+                App.settings.setServer((Server) server.getSelectedItem());
+                App.settings.setMemory(Integer.parseInt(((String) memory.getSelectedItem())
+                        .replace(" MB", "")));
+                App.settings.setPermGen(Integer
+                        .parseInt(permGen.getText().replaceAll("[^0-9]", "")));
+                App.settings.setWindowWidth(Integer.parseInt(widthField.getText().replaceAll(
+                        "[^0-9]", "")));
+                App.settings.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll(
+                        "[^0-9]", "")));
+                App.settings.setJavaParameters(javaParameters.getText());
+                App.settings.setEnableConsole(enableConsole.isSelected());
+                App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
+                App.settings.setEnableLogs(enableLogs.isSelected());
+                App.settings.saveProperties();
+                App.settings.getConsole().log("Settings Saved!");
             }
         });
         bottomPanel.add(saveButton);

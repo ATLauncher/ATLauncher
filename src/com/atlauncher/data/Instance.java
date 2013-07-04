@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
-import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.App;
 import com.atlauncher.gui.Utils;
 
 public class Instance implements Serializable {
@@ -54,7 +54,7 @@ public class Instance implements Serializable {
         this.isPlayable = isPlayable;
         this.newLaunchMethod = newLaunchMethod;
         if (installJustForMe) {
-            this.installedBy = LauncherFrame.settings.getAccount().getMinecraftUsername();
+            this.installedBy = App.settings.getAccount().getMinecraftUsername();
         } else {
             this.installedBy = null;
         }
@@ -95,10 +95,10 @@ public class Instance implements Serializable {
     }
 
     public ImageIcon getImage() {
-        File imageFile = new File(LauncherFrame.settings.getImagesDir(), getSafePackName()
+        File imageFile = new File(App.settings.getImagesDir(), getSafePackName()
                 .toLowerCase() + ".png");
         if (!imageFile.exists()) {
-            imageFile = new File(LauncherFrame.settings.getImagesDir(), "defaultimage.png");
+            imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
         }
         return Utils.getIconImage(imageFile);
     }
@@ -120,7 +120,7 @@ public class Instance implements Serializable {
     }
 
     public File getRootDirectory() {
-        return new File(LauncherFrame.settings.getInstancesDir(), getSafeName());
+        return new File(App.settings.getInstancesDir(), getSafeName());
     }
 
     public File getMinecraftDirectory() {
@@ -231,13 +231,13 @@ public class Instance implements Serializable {
     }
 
     public boolean canPlay() {
-        if (LauncherFrame.settings.getAccount() == null) {
+        if (App.settings.getAccount() == null) {
             return false;
-        } else if (!LauncherFrame.settings.getAccount().isReal()) {
+        } else if (!App.settings.getAccount().isReal()) {
             return false;
         }
         if (installedBy != null) {
-            if (!LauncherFrame.settings.getAccount().getMinecraftUsername()
+            if (!App.settings.getAccount().getMinecraftUsername()
                     .equalsIgnoreCase(installedBy)) {
                 return false;
             }
@@ -247,7 +247,7 @@ public class Instance implements Serializable {
 
     public boolean hasUpdate() {
         if (realPack != null) {
-            if (realPack.hasVersions() && !this.version.equalsIgnoreCase("Dev Version")) {
+            if (realPack.hasVersions() && !this.version.equalsIgnoreCase("Dev")) {
                 if (!realPack.getLatestVersion().equalsIgnoreCase(this.version)) {
                     return true;
                 }

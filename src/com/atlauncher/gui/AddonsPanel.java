@@ -17,6 +17,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Addon;
 
 public class AddonsPanel extends JPanel {
@@ -38,11 +39,10 @@ public class AddonsPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
 
-        if (LauncherFrame.settings.getAddons().size() == 0) {
-            panel.add(new NothingToDisplay("There are no addons to display\n\n"
-                    + "Please check back another time"), gbc);
+        if (App.settings.getAddons().size() == 0) {
+            panel.add(new NothingToDisplay(App.settings.getLocalizedString("addon.nodisplay", "\n\n")), gbc);
         } else {
-            for (Addon addon : LauncherFrame.settings.getAddons()) {
+            for (Addon addon : App.settings.getAddons()) {
                 panel.add(new AddonDisplay(addon), gbc);
                 gbc.gridy++;
             }

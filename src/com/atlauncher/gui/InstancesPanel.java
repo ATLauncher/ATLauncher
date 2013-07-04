@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 
 public class InstancesPanel extends JPanel {
@@ -45,7 +46,7 @@ public class InstancesPanel extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for (Instance instance : LauncherFrame.settings.getInstancesSorted()) {
+        for (Instance instance : App.settings.getInstancesSorted()) {
             if (instance.canPlay()) {
                 panel.add(new InstanceDisplay(instance), gbc);
                 gbc.gridy++;
@@ -53,8 +54,9 @@ public class InstancesPanel extends JPanel {
             }
         }
         if (count == 0) {
-            panel.add(new NothingToDisplay("There are no instances to display\n\n"
-                    + "Please check back another time"), gbc);
+            panel.add(
+                    new NothingToDisplay(App.settings.getLocalizedString("instance.nodisplay",
+                            "\n\n")), gbc);
         }
 
         SwingUtilities.invokeLater(new Runnable() {

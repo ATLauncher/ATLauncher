@@ -20,7 +20,6 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Mod;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -42,11 +42,11 @@ public class ModsChooser extends JDialog {
     private boolean wasClosed = false;
 
     public ModsChooser(InstanceInstaller installerr) {
-        super(LauncherFrame.settings.getParent(), "Select Mods To Install",
+        super(App.settings.getParent(), App.settings.getLocalizedString("instance.selectmods"),
                 ModalityType.APPLICATION_MODAL);
         this.installer = installerr;
         setSize(550, 450);
-        setLocationRelativeTo(LauncherFrame.settings.getParent());
+        setLocationRelativeTo(App.settings.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -69,14 +69,14 @@ public class ModsChooser extends JDialog {
         labelsTop.setEnabled(false);
         split.setLeftComponent(labelsTop);
 
-//        JLabel topLabelTop = new JLabel("Select Configuration: ");
-//        topLabelTop.setHorizontalAlignment(SwingConstants.CENTER);
-//        labelsTop.setLeftComponent(topLabelTop);
-//
-//        JComboBox<String> configs = new JComboBox<String>();
-//        configs.addItem("Custom Configuration");
-//        configs.setSelectedIndex(0);
-//        labelsTop.setRightComponent(configs);
+        // JLabel topLabelTop = new JLabel("Select Configuration: ");
+        // topLabelTop.setHorizontalAlignment(SwingConstants.CENTER);
+        // labelsTop.setLeftComponent(topLabelTop);
+        //
+        // JComboBox<String> configs = new JComboBox<String>();
+        // configs.addItem("Custom Configuration");
+        // configs.setSelectedIndex(0);
+        // labelsTop.setRightComponent(configs);
 
         JSplitPane labels = new JSplitPane();
         labels.setDividerLocation(275);
@@ -85,11 +85,11 @@ public class ModsChooser extends JDialog {
         labels.setEnabled(false);
         split.setRightComponent(labels);
 
-        JLabel topLabelLeft = new JLabel("Required Mods");
+        JLabel topLabelLeft = new JLabel(App.settings.getLocalizedString("instance.requiredmods"));
         topLabelLeft.setHorizontalAlignment(SwingConstants.CENTER);
         labels.setLeftComponent(topLabelLeft);
 
-        JLabel topLabelRight = new JLabel("Optional Mods");
+        JLabel topLabelRight = new JLabel(App.settings.getLocalizedString("instance.optionalmods"));
         topLabelRight.setHorizontalAlignment(SwingConstants.CENTER);
         labels.setRightComponent(topLabelRight);
 
@@ -123,7 +123,7 @@ public class ModsChooser extends JDialog {
         JPanel bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
 
-        selectAllButton = new JButton("Select All");
+        selectAllButton = new JButton(App.settings.getLocalizedString("instance.selectall"));
 
         selectAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -137,7 +137,7 @@ public class ModsChooser extends JDialog {
         });
         bottomPanel.add(selectAllButton);
 
-        clearAllButton = new JButton("Clear All");
+        clearAllButton = new JButton(App.settings.getLocalizedString("instance.clearall"));
         clearAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
@@ -158,7 +158,7 @@ public class ModsChooser extends JDialog {
         });
         bottomPanel.add(clearAllButton);
 
-        JButton installButton = new JButton("Install");
+        JButton installButton = new JButton(App.settings.getLocalizedString("common.install"));
         installButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();

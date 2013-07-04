@@ -35,6 +35,8 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import com.atlauncher.App;
+
 public class LauncherConsole extends JFrame {
 
     // Size of initial window
@@ -99,7 +101,7 @@ public class LauncherConsole extends JFrame {
     private void setupContextMenu() {
         contextMenu = new JPopupMenu();
 
-        JMenuItem copy = new JMenuItem("Copy");
+        JMenuItem copy = new JMenuItem(App.settings.getLocalizedString("common.copy"));
         copy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 StringSelection text = new StringSelection(console.getSelectedText());
@@ -131,11 +133,6 @@ public class LauncherConsole extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // if (OSUtils.isMac()) {
-        // UIManager.getLookAndFeelDefaults().put("defaultFont", new
-        // Font("SansSerif", Font.PLAIN, 11));
-        // }
 
         UIManager.put("control", BASE_COLOR);
         UIManager.put("text", Color.WHITE);
@@ -185,11 +182,11 @@ public class LauncherConsole extends JFrame {
     public String getLog() {
         return console.getText();
     }
-    
+
     public void showKillMinecraft() {
         bottomBar.showKillMinecraft();
     }
-    
+
     public void hideKillMinecraft() {
         bottomBar.hideKillMinecraft();
     }

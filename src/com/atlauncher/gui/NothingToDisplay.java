@@ -21,6 +21,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
+import com.atlauncher.App;
+
 /**
  * Class for displaying packs in the Pack Tab
  * 
@@ -40,11 +42,15 @@ public class NothingToDisplay extends JPanel {
 
         // Add titles border with name, Mac needs smaller font
         if (Utils.isMac()) {
-            setBorder(new TitledBorder(null, "Nothing To Show", TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
+            setBorder(new TitledBorder(null,
+                    App.settings.getLocalizedString("common.nothingtoshow"),
+                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(
+                            "SansSerif", Font.BOLD, 14)));
         } else {
-            setBorder(new TitledBorder(null, "Nothing To Show", TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
+            setBorder(new TitledBorder(null,
+                    App.settings.getLocalizedString("common.nothingtoshow"),
+                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(
+                            "SansSerif", Font.BOLD, 15)));
         }
 
         leftPanel = new JPanel();
@@ -58,7 +64,7 @@ public class NothingToDisplay extends JPanel {
         splitPane.setRightComponent(rightPanel);
         splitPane.setEnabled(false);
 
-        errorImage = new JLabel(Utils.getIconImage(new File(LauncherFrame.settings.getImagesDir(),
+        errorImage = new JLabel(Utils.getIconImage(new File(App.settings.getImagesDir(),
                 "defaultimage.png")));
 
         errorMessage = new JTextArea();

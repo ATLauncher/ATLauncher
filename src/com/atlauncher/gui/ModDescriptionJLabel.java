@@ -1,6 +1,9 @@
 package com.atlauncher.gui;
 
 import javax.swing.*;
+
+import com.atlauncher.App;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -17,9 +20,10 @@ public class ModDescriptionJLabel extends JLabel implements MouseListener {
     }
 
     public void mouseClicked(MouseEvent me) {
-        Object[] options = { "Ok" };
+        Object[] options = { App.settings.getLocalizedString("common.ok") };
         JOptionPane.showOptionDialog(null,
-                "<html><center>" + this.description + "</center></html>", "ATLauncher",
+                "<html><center>" + this.description + "</center></html>",
+                App.settings.getLocalizedString("instance.moddescription"),
                 JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
                 options[0]);
     }

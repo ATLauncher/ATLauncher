@@ -26,6 +26,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 
@@ -82,8 +83,8 @@ public class CollapsiblePanel extends JPanel {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (LauncherFrame.settings.getAccount() != null) {
-            if (LauncherFrame.settings.getAccount().getCollapsedPacks().contains(pack.getName())) {
+        if (App.settings.getAccount() != null) {
+            if (App.settings.getAccount().getCollapsedPacks().contains(pack.getName())) {
                 setCollapsed(true);
             }
         }
@@ -92,17 +93,18 @@ public class CollapsiblePanel extends JPanel {
     public CollapsiblePanel(Instance instance) {
         this.instance = instance;
         if (instance.isPlayable()) {
-            arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion() + ")");
+            arrow.setText(instance.getName() + " (" + instance.getPackName() + " "
+                    + instance.getVersion() + ")");
         } else {
-            arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion() + " - Corrupted)");
+            arrow.setText(instance.getName() + " (" + instance.getPackName() + " "
+                    + instance.getVersion() + " - Corrupted)");
             arrow.setForeground(Color.RED);
         }
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (LauncherFrame.settings.getAccount() != null) {
-            if (LauncherFrame.settings.getAccount().getCollapsedInstances()
-                    .contains(instance.getName())) {
+        if (App.settings.getAccount() != null) {
+            if (App.settings.getAccount().getCollapsedInstances().contains(instance.getName())) {
                 setCollapsed(true);
             }
         }
@@ -247,18 +249,18 @@ public class CollapsiblePanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             setCollapsed(!isCollapsed());
             if (pack != null) {
-                LauncherFrame.settings.setPackVisbility(pack, isCollapsed());
+                App.settings.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
-                LauncherFrame.settings.setInstanceVisbility(instance, isCollapsed());
+                App.settings.setInstanceVisbility(instance, isCollapsed());
             }
         }
 
         public void itemStateChanged(ItemEvent e) {
             setCollapsed(!isCollapsed());
             if (pack != null) {
-                LauncherFrame.settings.setPackVisbility(pack, isCollapsed());
+                App.settings.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
-                LauncherFrame.settings.setInstanceVisbility(instance, isCollapsed());
+                App.settings.setInstanceVisbility(instance, isCollapsed());
             }
         }
     }
@@ -269,14 +271,6 @@ public class CollapsiblePanel extends JPanel {
     private class CollapsibleTitledBorder extends TitledBorder {
         public static final long serialVersionUID = -343230;
         JComponent component;
-
-        public CollapsibleTitledBorder(JComponent component) {
-            this(null, component, LEFT, TOP);
-        }
-
-        public CollapsibleTitledBorder(Border border) {
-            this(border, null, LEFT, TOP);
-        }
 
         public CollapsibleTitledBorder(Border border, JComponent component) {
             this(border, component, LEFT, TOP);
@@ -315,7 +309,7 @@ public class CollapsiblePanel extends JPanel {
                 case TOP:
                 case DEFAULT_POSITION:
                     diff = insets.top / 2 - borderInsets.top - EDGE_SPACING;
-                    borderR.y += diff;
+                    borderR.y += diff + 7;
                     borderR.height -= diff;
                     break;
                 case BELOW_TOP:
@@ -390,6 +384,7 @@ public class CollapsiblePanel extends JPanel {
 
         public Rectangle getComponentRect(Rectangle rect, Insets borderInsets) {
             Dimension compD = component.getPreferredSize();
+
             Rectangle compR = new Rectangle(0, 0, compD.width, compD.height);
             switch (titlePosition) {
                 case ABOVE_TOP:
@@ -398,7 +393,9 @@ public class CollapsiblePanel extends JPanel {
                 case TOP:
                 case DEFAULT_POSITION:
                     if (titleComponent instanceof JButton) {
-                        compR.y = (EDGE_SPACING + (borderInsets.top - EDGE_SPACING - TEXT_SPACING - compD.height) / 2) - 7;
+                        compR.y = EDGE_SPACING
+                                + (borderInsets.top - EDGE_SPACING - TEXT_SPACING - compD.height)
+                                / 2;
                     } else if (titleComponent instanceof JRadioButton) {
                         compR.y = (borderInsets.top - EDGE_SPACING - TEXT_SPACING - compD.height) / 2;
                     }

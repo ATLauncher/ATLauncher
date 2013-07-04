@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Account;
 
 public class AccountPanel extends JPanel {
@@ -76,11 +77,11 @@ public class AccountPanel extends JPanel {
         gbc.insets = TOP_INSETS;
         gbc.anchor = GridBagConstraints.CENTER;
 
-        fillerAccount = new Account("Add New Account");
+        fillerAccount = new Account(App.settings.getLocalizedString("account.add"));
 
         accountsComboBox = new JComboBox<Account>();
         accountsComboBox.addItem(fillerAccount);
-        for (Account account : LauncherFrame.settings.getAccounts()) {
+        for (Account account : App.settings.getAccounts()) {
             accountsComboBox.addItem(account);
         }
         accountsComboBox.setSelectedIndex(0);
@@ -92,14 +93,14 @@ public class AccountPanel extends JPanel {
                         usernameField.setText("");
                         passwordField.setText("");
                         rememberField.setSelected(false);
-                        leftButton.setText("Add");
-                        rightButton.setText("Clear");
+                        leftButton.setText(App.settings.getLocalizedString("common.add"));
+                        rightButton.setText(App.settings.getLocalizedString("common.clear"));
                     } else {
                         usernameField.setText(account.getUsername());
                         passwordField.setText(account.getPassword());
                         rememberField.setSelected(account.isRemembered());
-                        leftButton.setText("Save");
-                        rightButton.setText("Delete");
+                        leftButton.setText(App.settings.getLocalizedString("common.save"));
+                        rightButton.setText(App.settings.getLocalizedString("common.delete"));
                     }
                     userSkin.setIcon(account.getMinecraftSkin());
                 }
@@ -112,7 +113,7 @@ public class AccountPanel extends JPanel {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        usernameLabel = new JLabel("Username:");
+        usernameLabel = new JLabel(App.settings.getLocalizedString("account.username") + ":");
         bottomPanel.add(usernameLabel, gbc);
 
         gbc.gridx++;
@@ -125,7 +126,7 @@ public class AccountPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        passwordLabel = new JLabel("Password:");
+        passwordLabel = new JLabel(App.settings.getLocalizedString("account.password") + ":");
         bottomPanel.add(passwordLabel, gbc);
 
         gbc.gridx++;
@@ -138,7 +139,7 @@ public class AccountPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        rememberLabel = new JLabel("Remember Password:");
+        rememberLabel = new JLabel(App.settings.getLocalizedString("account.remember") + ":");
         bottomPanel.add(rememberLabel, gbc);
 
         gbc.gridx++;
@@ -154,7 +155,7 @@ public class AccountPanel extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         buttons = new JPanel();
         buttons.setLayout(new FlowLayout());
-        leftButton = new JButton("Add");
+        leftButton = new JButton(App.settings.getLocalizedString("common.add"));
         leftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Account account;
@@ -164,11 +165,12 @@ public class AccountPanel extends JPanel {
                 String minecraftUsername = null;
                 String password = new String(passwordField.getPassword());
                 boolean remember = rememberField.isSelected();
-                if (LauncherFrame.settings.isAccountByName(username)
+                if (App.settings.isAccountByName(username)
                         && accountsComboBox.getSelectedIndex() == 0) {
-                    String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "This account already exists", "Account Already Exists",
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("account.exists"),
+                            App.settings.getLocalizedString("account.notadded"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                     return;
@@ -189,24 +191,27 @@ public class AccountPanel extends JPanel {
                     }
                 }
                 if (!loggedIn) {
-                    String[] options = { "Ok" };
-                    JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                            "<html><center>Account not added as login details were incorrect<br/><br/>"
-                                    + auth + "</center></html>", "Account Not Added",
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
+                            + App.settings.getLocalizedString("account.incorrect") + "<br/><br/>"
+                            + auth + "</center></html>",
+                            App.settings.getLocalizedString("account.notadded"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 } else {
                     if (accountsComboBox.getSelectedIndex() == 0) {
                         account = new Account(username, password, minecraftUsername, remember);
-                        LauncherFrame.settings.getAccounts().add(account);
-                        LauncherFrame.settings.getConsole().log("Added Account " + account);
-                        String[] options = { "Yes", "No" };
-                        int ret = JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                                "Account Added Successfully. Switch to it now?", "Account Added",
+                        App.settings.getAccounts().add(account);
+                        App.settings.getConsole().log("Added Account " + account);
+                        String[] options = { App.settings.getLocalizedString("common.yes"),
+                                App.settings.getLocalizedString("common.no") };
+                        int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("account.addedswitch"),
+                                App.settings.getLocalizedString("account.added"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
                                 options, options[0]);
                         if (ret == 0) {
-                            LauncherFrame.settings.setAccount(account);
+                            App.settings.setAccount(account);
                         }
                     } else {
                         account = (Account) accountsComboBox.getSelectedItem();
@@ -216,18 +221,19 @@ public class AccountPanel extends JPanel {
                             account.setPassword(password);
                         }
                         account.setRemember(remember);
-                        LauncherFrame.settings.getConsole().log("Edited Account " + account);
-                        String[] options = { "Ok" };
-                        JOptionPane.showOptionDialog(LauncherFrame.settings.getParent(),
-                                "Account Edited Successfully", "Account Edited",
+                        App.settings.getConsole().log("Edited Account " + account);
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
+                        JOptionPane.showOptionDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("account.editeddone"),
+                                App.settings.getLocalizedString("account.edited"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
                                 options, options[0]);
                     }
-                    LauncherFrame.settings.saveAccounts();
-                    LauncherFrame.settings.reloadAccounts();
+                    App.settings.saveAccounts();
+                    App.settings.reloadAccounts();
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(fillerAccount);
-                    for (Account accountt : LauncherFrame.settings.getAccounts()) {
+                    for (Account accountt : App.settings.getAccounts()) {
                         accountsComboBox.addItem(accountt);
                     }
                     accountsComboBox.setSelectedItem(account);
@@ -243,16 +249,19 @@ public class AccountPanel extends JPanel {
                     rememberField.setSelected(false);
                 } else {
                     Account account = (Account) accountsComboBox.getSelectedItem();
-                    int res = JOptionPane.showConfirmDialog(LauncherFrame.settings.getParent(),
-                            "Are you sure you want to delete the user " + usernameField.getText()
-                                    + "?", "Delete User", JOptionPane.YES_NO_OPTION);
+                    int res = JOptionPane.showConfirmDialog(
+                            App.settings.getParent(),
+                            App.settings.getLocalizedString("account.deletesure",
+                                    usernameField.getText()),
+                            App.settings.getLocalizedString("account.delete"),
+                            JOptionPane.YES_NO_OPTION);
                     if (res == JOptionPane.YES_OPTION) {
-                        LauncherFrame.settings.getAccounts().remove(account);
-                        LauncherFrame.settings.saveAccounts();
-                        LauncherFrame.settings.reloadAccounts();
+                        App.settings.getAccounts().remove(account);
+                        App.settings.saveAccounts();
+                        App.settings.reloadAccounts();
                         accountsComboBox.removeAllItems();
                         accountsComboBox.addItem(fillerAccount);
-                        for (Account accountt : LauncherFrame.settings.getAccounts()) {
+                        for (Account accountt : App.settings.getAccounts()) {
                             accountsComboBox.addItem(accountt);
                         }
                         accountsComboBox.setSelectedIndex(0);

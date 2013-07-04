@@ -44,11 +44,9 @@ import java.nio.channels.FileChannel;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -58,8 +56,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import org.omg.DynamicAny.NameValuePair;
-
+import com.atlauncher.App;
 import com.atlauncher.data.Base64;
 import com.atlauncher.data.Downloader;
 
@@ -88,7 +85,7 @@ public class Utils {
     }
 
     public static ImageIcon getMinecraftHead(String user) {
-        File file = new File(LauncherFrame.settings.getSkinsDir(), user + ".png");
+        File file = new File(App.settings.getSkinsDir(), user + ".png");
         if (!file.exists()) {
             new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png",
                     file.getAbsolutePath()).run();
@@ -346,13 +343,13 @@ public class Utils {
 
     public static void copyFile(File from, File to, boolean withFilename) {
         if (!from.isFile()) {
-            LauncherFrame.settings.getConsole().log(
+            App.settings.getConsole().log(
                     "File " + from.getAbsolutePath() + " cannot be copied to "
                             + to.getAbsolutePath() + " as it isn't a file");
             return;
         }
         if (!from.exists()) {
-            LauncherFrame.settings.getConsole().log(
+            App.settings.getConsole().log(
                     "File " + from.getAbsolutePath() + " cannot be copied to "
                             + to.getAbsolutePath() + " as it doesn't exist");
             return;
@@ -491,7 +488,7 @@ public class Utils {
     // }
 
     public static void cleanTempDirectory() {
-        File file = LauncherFrame.settings.getTempDir();
+        File file = App.settings.getTempDir();
         String[] myFiles;
         if (file.isDirectory()) {
             myFiles = file.list();
@@ -509,10 +506,10 @@ public class Utils {
         boolean deleted = file.delete();
         if (!deleted) {
             if (file.isFile())
-                LauncherFrame.settings.getConsole().log(
+                App.settings.getConsole().log(
                         "File " + file.getAbsolutePath() + " couldn't be deleted");
             if (file.isDirectory())
-                LauncherFrame.settings.getConsole().log(
+                App.settings.getConsole().log(
                         "Folder " + file.getAbsolutePath() + " couldn't be deleted");
         }
     }

@@ -48,12 +48,12 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.atlauncher.App;
 import com.atlauncher.Update;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.BottomBar;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.Utils;
 
@@ -92,6 +92,7 @@ public class Settings {
     private File jarsDir = new File(configsDir, "Jars");
     private File resourcesDir = new File(configsDir, "Resources");
     private File librariesDir = new File(configsDir, "Libraries");
+    private File languagesDir = new File(configsDir, "Languages");
     private File downloadsDir = new File(baseDir, "Downloads");
     private File instancesDir = new File(baseDir, "Instances");
     private File tempDir = new File(baseDir, "Temp");
@@ -102,7 +103,7 @@ public class Settings {
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
-    private LauncherConsole console = new LauncherConsole(); // The Launcher's Console
+    private LauncherConsole console; // The Launcher's Console
     private ArrayList<Language> languages = new ArrayList<Language>(); // Languages for the Launcher
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private InstancesPanel instancesPanel; // The instances panel
@@ -132,6 +133,7 @@ public class Settings {
         loadInstances(); // Load the users installed Instances
         loadAccounts(); // Load the saved Accounts
         loadProperties(); // Load the users Properties
+        console = new LauncherConsole(); // Load the Launcher's Console
     }
 
     public void downloadUpdate() {
@@ -214,12 +216,12 @@ public class Settings {
                     } else if (type.equalsIgnoreCase("Skins")) {
                         file = new File(skinsDir, name);
                         name = "skins/" + name;
+                    } else if (type.equalsIgnoreCase("Languages")) {
+                        file = new File(languagesDir, name);
+                        name = "languages/" + name;
                     } else if (type.equalsIgnoreCase("Launcher")) {
                         String version = element.getAttribute("version");
                         if (!getVersion().equalsIgnoreCase(version)) {
-                            getConsole().log(
-                                    "New Launcher version detected. Old: " + getVersion()
-                                            + ", New: " + version);
                             if (getVersion().equalsIgnoreCase("%VERSION%")) {
                                 continue; // Don't even think about updating my unbuilt copy
                             }
@@ -227,6 +229,8 @@ public class Settings {
                         } else {
                             continue;
                         }
+                    } else {
+                        continue; // Don't know what to do with this file so ignore it
                     }
                     boolean download = false; // If we have to download the file or not
                     if (!file.exists()) {
@@ -257,10 +261,9 @@ public class Settings {
      */
     private void checkFolders() {
         File[] files = { backupsDir, configsDir, imagesDir, skinsDir, jarsDir, resourcesDir,
-                librariesDir, downloadsDir, instancesDir, tempDir };
+                librariesDir, languagesDir, downloadsDir, instancesDir, tempDir };
         for (File file : files) {
             if (!file.exists()) {
-                console.log("Folder " + file.getAbsolutePath() + " doesn't exist. Creating now");
                 file.mkdir();
             }
         }
@@ -336,6 +339,15 @@ public class Settings {
      */
     public File getLibrariesDir() {
         return this.librariesDir;
+    }
+
+    /**
+     * Returns the languages directory
+     * 
+     * @return File object for the languages directory
+     */
+    public File getLanguagesDir() {
+        return this.languagesDir;
     }
 
     /**
@@ -560,59 +572,61 @@ public class Settings {
      * Tests the servers for availability and best connection
      */
     private void testServers() {
-        double[] responseTimes = new double[servers.size()];
-        int count = 0;
-        int up = 0;
-        for (Server server : servers) {
-            if (server.isAuto())
-                continue; // Don't scan the Auto server
-            double startTime = System.currentTimeMillis();
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(server.getTestURL())
-                        .openConnection();
-                connection.setRequestMethod("HEAD");
-                connection.setConnectTimeout(3000);
-                int responseCode = connection.getResponseCode();
-                if (responseCode != 200) {
-                    responseTimes[count] = 1000000.0;
-                    console.log("Server " + server.getName() + " isn't available!");
-                    server.disableServer();
-                } else {
-                    double endTime = System.currentTimeMillis();
-                    responseTimes[count] = endTime - startTime;
-                    console.log("Server " + server.getName() + " is available! ("
-                            + responseTimes[count] + ")");
-                    up++;
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                double[] responseTimes = new double[servers.size()];
+                int count = 0;
+                int up = 0;
+                for (Server server : servers) {
+                    if (server.isAuto())
+                        continue; // Don't scan the Auto server
+                    double startTime = System.currentTimeMillis();
+                    try {
+                        HttpURLConnection connection = (HttpURLConnection) new URL(
+                                server.getTestURL()).openConnection();
+                        connection.setRequestMethod("HEAD");
+                        connection.setConnectTimeout(3000);
+                        int responseCode = connection.getResponseCode();
+                        if (responseCode != 200) {
+                            responseTimes[count] = 1000000.0;
+                            server.disableServer();
+                        } else {
+                            double endTime = System.currentTimeMillis();
+                            responseTimes[count] = endTime - startTime;
+                            up++;
+                        }
+                    } catch (SocketTimeoutException e) {
+                        responseTimes[count] = 1000000.0;
+                        server.disableServer();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    count++;
                 }
-            } catch (SocketTimeoutException e) {
-                responseTimes[count] = 1000000.0;
-                console.log("Server " + server.getName() + " isn't available!");
-                server.disableServer();
-            } catch (IOException e) {
-                e.printStackTrace();
+                int best = 0;
+                double bestTime = 10000000.0;
+                for (int i = 0; i < responseTimes.length; i++) {
+                    if (responseTimes[i] < bestTime) {
+                        best = i;
+                        bestTime = responseTimes[i];
+                    }
+                }
+                if (up != 0) {
+                    bestConnectedServer = servers.get(best);
+                } else {
+                    JOptionPane.showMessageDialog(null,
+                            "<html><center>There was an issue connecting to ATLauncher "
+                                    + "Servers<br/><br/>Offline mode is now enabled.<br/><br/>"
+                                    + "To install packs again, please try connecting later"
+                                    + "</center></html>", "Error Connecting To ATLauncher Servers",
+                            JOptionPane.ERROR_MESSAGE);
+                    offlineMode = true; // Set offline mode to be true
+                }
             }
-            count++;
-        }
-        int best = 0;
-        double bestTime = 10000000.0;
-        for (int i = 0; i < responseTimes.length; i++) {
-            if (responseTimes[i] < bestTime) {
-                best = i;
-                bestTime = responseTimes[i];
-            }
-        }
-        if (up != 0) {
-            console.log("The best connected server is " + servers.get(best).getName());
-            this.bestConnectedServer = servers.get(best);
-        } else {
-            JOptionPane.showMessageDialog(null,
-                    "<html><center>There was an issue connecting to ATLauncher "
-                            + "Servers<br/><br/>Offline mode is now enabled.<br/><br/>"
-                            + "To install packs again, please try connecting later"
-                            + "</center></html>", "Error Connecting To ATLauncher Servers",
-                    JOptionPane.ERROR_MESSAGE);
-            this.offlineMode = true; // Set offline mode to be true
-        }
+
+        };
+        thread.start();
     }
 
     /**
@@ -632,9 +646,7 @@ public class Settings {
                     Element element = (Element) node;
                     String name = element.getAttribute("name");
                     String localizedName = element.getAttribute("localizedname");
-                    String file = element.getAttribute("file");
-                    String author = element.getAttribute("author");
-                    language = new Language(name, localizedName, file, author);
+                    language = new Language(name, localizedName);
                     languages.add(language);
                 }
             }
@@ -1050,7 +1062,7 @@ public class Settings {
                             conn.getInputStream()));
                     String line;
                     while ((line = rd.readLine()) != null) {
-                        LauncherFrame.settings.getConsole().log("API Call Response:" + line);
+                        App.settings.getConsole().log("API Call Response: " + line);
                     }
                 }
                 wr.close();
@@ -1061,11 +1073,11 @@ public class Settings {
     }
 
     public void apiCall(String username, String action, String extra1, String extra2) {
-        apiCall(username, action, extra1, extra2, true);
+        apiCall(username, action, extra1, extra2, false);
     }
 
     public void apiCall(String username, String action, String extra1) {
-        apiCall(username, action, extra1, "", true);
+        apiCall(username, action, extra1, "", false);
     }
 
     /**
@@ -1377,7 +1389,11 @@ public class Settings {
      * @return URL of the file
      */
     public String getFileURL(String filename) {
-        return this.server.getFileURL(filename, bestConnectedServer);
+        if (bestConnectedServer == null && this.server.isAuto()) {
+            return servers.get(3).getFileURL(filename, null);
+        } else {
+            return this.server.getFileURL(filename, bestConnectedServer);
+        }
     }
 
     /**
@@ -1532,6 +1548,14 @@ public class Settings {
 
     public String getVersion() {
         return this.version;
+    }
+
+    public String getLocalizedString(String string) {
+        return language.getString(string);
+    }
+
+    public String getLocalizedString(String string, String replace) {
+        return language.getString(string).replace("%s", replace);
     }
 
 }

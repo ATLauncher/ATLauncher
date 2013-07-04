@@ -11,34 +11,32 @@
 package com.atlauncher.data;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
+import com.atlauncher.App;
 
 public class Language {
 
     private String name;
     private String localizedName;
-    private String author;
     private File file;
+    private Properties properties;
 
     public Language(String name, String localizedName) {
         this.name = name;
         this.localizedName = localizedName;
-        this.author = "Anonymous";
-        this.file = new File(name + ".lang");
-    }
-
-    public Language(String name, String localizedName, String author) {
-        this.name = name;
-        this.localizedName = localizedName;
-        this.author = author;
-        this.file = new File(name + ".lang");
-    }
-
-    public Language(String name, String localizedName, String file,
-            String author) {
-        this.name = name;
-        this.localizedName = localizedName;
-        this.author = author;
-        this.file = new File(file);
+        this.file = new File(App.settings.getLanguagesDir(), name.toLowerCase() + ".lang");
+        properties = new Properties();
+        try {
+            properties.load(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getName() {
@@ -49,12 +47,12 @@ public class Language {
         return this.localizedName;
     }
 
-    public String getAuthor() {
-        return this.author;
-    }
-
     public File getFile() {
         return file;
+    }
+
+    public String getString(String property) {
+        return properties.getProperty(property, "Unknown Property: " + property);
     }
 
     public String toString() {

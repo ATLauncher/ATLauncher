@@ -10,7 +10,7 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.App;
 
 public class Server {
 
@@ -47,7 +47,7 @@ public class Server {
 
     private String getFileURL(String file) {
         if (this.isAuto) {
-            return LauncherFrame.settings.getBestConnectedServer().getFileURL(file);
+            return App.settings.getBestConnectedServer().getFileURL(file);
         }
         return "http://" + this.baseURL + "/" + file;
     }
