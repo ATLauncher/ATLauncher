@@ -28,7 +28,7 @@ public class Downloadable implements Runnable {
     private String md5;
     private HttpURLConnection connection;
     private InstanceInstaller instanceInstaller;
-    
+
     public Downloadable(String url, File file, String md5, InstanceInstaller instanceInstaller) {
         this.url = url;
         this.file = file;
@@ -118,9 +118,31 @@ public class Downloadable implements Runnable {
         return etag;
     }
 
+    public void downloadFile() {
+        try {
+            InputStream in = null;
+            URL downloadURL = getRedirect(this.url);
+            if (this.connection == null) {
+                this.connection = (HttpURLConnection) downloadURL.openConnection();
+            }
+            in = this.connection.getInputStream();
+            FileOutputStream writer = new FileOutputStream(this.file);
+            byte[] buffer = new byte[1024];
+            int bytesRead = 0;
+            while ((bytesRead = in.read(buffer)) > 0) {
+                writer.write(buffer, 0, bytesRead);
+                buffer = new byte[1024];
+            }
+            writer.close();
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void run() {
-        if(instanceInstaller.isCancelled()){
+        if (instanceInstaller.isCancelled()) {
             return;
         }
         instanceInstaller.setDoing("Downloading " + file.getName());
@@ -130,25 +152,13 @@ public class Downloadable implements Runnable {
         // Create the directory structure
         new File(file.getAbsolutePath().substring(0,
                 file.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
-        while (!Utils.getMD5(this.file).equalsIgnoreCase(this.md5)) {
-            try {
-                InputStream in = null;
-                URL downloadURL = getRedirect(this.url);
-                if (this.connection == null) {
-                    this.connection = (HttpURLConnection) downloadURL.openConnection();
-                }
-                in = this.connection.getInputStream();
-                FileOutputStream writer = new FileOutputStream(this.file);
-                byte[] buffer = new byte[1024];
-                int bytesRead = 0;
-                while ((bytesRead = in.read(buffer)) > 0) {
-                    writer.write(buffer, 0, bytesRead);
-                    buffer = new byte[1024];
-                }
-                writer.close();
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (this.md5.equalsIgnoreCase("-")) {
+            downloadFile(); // Only download the file once since we have no MD5 to check
+        } else {
+            int tries = 0;
+            while (!Utils.getMD5(this.file).equalsIgnoreCase(this.md5) && tries <= 3) {
+                tries++;
+                downloadFile(); // Keep downloading file until it matches MD5, up to 3 times
             }
         }
     }

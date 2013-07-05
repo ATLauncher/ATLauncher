@@ -69,7 +69,6 @@ public class NewMCLauncher {
         arguments.add("--height=" + App.settings.getWindowHeight());
         if (instance.hasMinecraftArguments()) {
             String args = instance.getMinecraftArguments();
-            System.out.println(args);
             if (args.contains(" ")) {
                 for (String arg : args.split(" ")) {
                     arguments.add(arg);
@@ -80,7 +79,6 @@ public class NewMCLauncher {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
-        System.out.println(processBuilder.command());
         processBuilder.redirectErrorStream(true);
         return processBuilder.start();
     }

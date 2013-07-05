@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import java.util.jar.JarOutputStream;
 import javax.swing.SwingWorker;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -35,6 +37,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
@@ -265,7 +269,48 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             e.printStackTrace();
         }
 
-        // Now read in the library jars needed
+        // Now read in the library jars needed from the pack
+
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(pack.getXML(version)));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("library");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    String name = element.getAttribute("name");
+                    String version = element.getAttribute("version");
+                    String url = element.getAttribute("url");
+                    String file = element.getAttribute("file");
+                    String md5 = element.getAttribute("md5");
+                    if (librariesNeeded == null) {
+                        this.librariesNeeded = file;
+                    } else {
+                        this.librariesNeeded += "," + file;
+                    }
+                    if (element.hasAttribute("md5")) {
+                        downloads.add(new Downloadable(url, new File(
+                                App.settings.getLibrariesDir(), file), element.getAttribute("md5"),
+                                this));
+                    } else {
+                        downloads.add(new Downloadable(url, new File(
+                                App.settings.getLibrariesDir(), file), "-", this));
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Now read in the library jars needed from Mojang
 
         JSONParser parser = new JSONParser();
 
