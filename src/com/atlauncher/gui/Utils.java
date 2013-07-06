@@ -36,7 +36,6 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -146,12 +145,10 @@ public class Utils {
         Font font = null;
         try {
             font = Font.createFont(Font.TRUETYPE_FONT,
-                    new File(System.class.getResource("/resources/" + name + ".ttf").toURI()));
+                    System.class.getResource("/resources/" + name + ".ttf").openStream());
         } catch (FontFormatException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         return font;
