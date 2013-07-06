@@ -172,6 +172,9 @@ public class ModsChooser extends JDialog {
         int count2 = 0;
 
         for (Mod mod : installer.getMods()) {
+            if(installer.isServer() && !mod.installOnServer()){
+                continue;
+            }
             ModsJCheckBox checkBox = null;
             ModDescriptionJLabel label = null;
             int nameSize = getFontMetrics(getFont()).stringWidth(mod.getName());

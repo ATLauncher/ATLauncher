@@ -88,7 +88,7 @@ public class PackDisplay extends CollapsiblePanel {
         newInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.getAccount() == null) {
-                    String[] options = { App.settings.getLocalizedString("global.ok") };
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
                             App.settings.getLocalizedString("instance.cannotcreate"),
                             App.settings.getLocalizedString("instance.noaccountselected"),
@@ -101,6 +101,20 @@ public class PackDisplay extends CollapsiblePanel {
         });
 
         createServer = new JButton(App.settings.getLocalizedString("common.createserver"));
+        createServer.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (App.settings.getAccount() == null) {
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.cannotcreate"),
+                            App.settings.getLocalizedString("instance.noaccountselected"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
+                } else {
+                    new InstanceInstallerDialog(pack, true);
+                }
+            }
+        });
 
         support = new JButton(App.settings.getLocalizedString("common.support"));
         support.addActionListener(new ActionListener() {

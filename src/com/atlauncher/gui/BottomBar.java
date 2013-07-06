@@ -186,7 +186,11 @@ public class BottomBar extends JPanel {
         for (Account account : App.settings.getAccounts()) {
             username.addItem(account);
         }
-        username.setSelectedItem(App.settings.getAccount());
+        if (App.settings.getAccount() == null) {
+            username.setSelectedIndex(0);
+        } else {
+            username.setSelectedItem(App.settings.getAccount());
+        }
         dontSave = false;
     }
 }

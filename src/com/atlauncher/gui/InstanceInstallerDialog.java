@@ -41,6 +41,7 @@ import com.atlauncher.workers.InstanceInstaller;
 public class InstanceInstallerDialog extends JDialog {
 
     private boolean isReinstall = false;
+    private boolean isServer = false;
     private Pack pack = null;
     private Instance instance = null;
 
@@ -61,14 +62,23 @@ public class InstanceInstallerDialog extends JDialog {
     private JCheckBox useLatestLWJGL;
 
     public InstanceInstallerDialog(Object object) {
-        this(object, false);
+        this(object, false, false);
     }
 
-    public InstanceInstallerDialog(Object object, boolean isUpdate) {
+    public InstanceInstallerDialog(Pack pack, boolean isServer) {
+        this((Object) pack, false, true);
+    }
+
+    public InstanceInstallerDialog(Object object, boolean isUpdate, final boolean isServer) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
         if (object instanceof Pack) {
             pack = (Pack) object;
             setTitle(App.settings.getLocalizedString("common.installing") + " " + pack.getName());
+            if (isServer) {
+                setTitle(App.settings.getLocalizedString("common.installing") + " "
+                        + pack.getName() + " " + App.settings.getLocalizedString("common.server"));
+                this.isServer = true;
+            }
         } else {
             instance = (Instance) object;
             pack = instance.getRealPack();
@@ -93,21 +103,23 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        instanceNameLabel = new JLabel(App.settings.getLocalizedString("instance.name") + ": ");
-        middle.add(instanceNameLabel, gbc);
+        if (!this.isServer) {
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            instanceNameLabel = new JLabel(App.settings.getLocalizedString("instance.name") + ": ");
+            middle.add(instanceNameLabel, gbc);
 
-        gbc.gridx++;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        instanceNameField = new JTextField(17);
-        instanceNameField.setText(((isReinstall) ? instance.getName() : pack.getName()));
-        if (isReinstall) {
-            instanceNameField.setEnabled(false);
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            instanceNameField = new JTextField(17);
+            instanceNameField.setText(((isReinstall) ? instance.getName() : pack.getName()));
+            if (isReinstall) {
+                instanceNameField.setEnabled(false);
+            }
+            middle.add(instanceNameField, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy++;
         }
-        middle.add(instanceNameField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         versionLabel = new JLabel(App.settings.getLocalizedString("instance.versiontoinstall")
                 + ": ");
@@ -134,32 +146,34 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         middle.add(versionsDropDown, gbc);
 
-        if (!isReinstall) {
-            gbc.gridx = 0;
-            gbc.gridy++;
-            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-            installForLabel = new JLabel(
-                    App.settings.getLocalizedString("instance.installjustforme") + "? ");
-            middle.add(installForLabel, gbc);
+        if (!this.isServer) {
+            if (!isReinstall) {
+                gbc.gridx = 0;
+                gbc.gridy++;
+                gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+                installForLabel = new JLabel(
+                        App.settings.getLocalizedString("instance.installjustforme") + "? ");
+                middle.add(installForLabel, gbc);
 
-            gbc.gridx++;
-            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-            installForMe = new JCheckBox();
-            middle.add(installForMe, gbc);
-        }
+                gbc.gridx++;
+                gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+                installForMe = new JCheckBox();
+                middle.add(installForMe, gbc);
+            }
 
-        if ((isReinstall && !instance.isNewLaunchMethod()) || !isReinstall) {
-            gbc.gridx = 0;
-            gbc.gridy++;
-            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-            useLatestLWJGLLabel = new JLabel(
-                    App.settings.getLocalizedString("instance.uselatestlwjgl") + "? ");
-            middle.add(useLatestLWJGLLabel, gbc);
+            if ((isReinstall && !instance.isNewLaunchMethod()) || !isReinstall) {
+                gbc.gridx = 0;
+                gbc.gridy++;
+                gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+                useLatestLWJGLLabel = new JLabel(
+                        App.settings.getLocalizedString("instance.uselatestlwjgl") + "? ");
+                middle.add(useLatestLWJGLLabel, gbc);
 
-            gbc.gridx++;
-            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-            useLatestLWJGL = new JCheckBox();
-            middle.add(useLatestLWJGL, gbc);
+                gbc.gridx++;
+                gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+                useLatestLWJGL = new JCheckBox();
+                middle.add(useLatestLWJGL, gbc);
+            }
         }
 
         // Bottom Panel Stuff
@@ -171,7 +185,8 @@ public class InstanceInstallerDialog extends JDialog {
                         : App.settings.getLocalizedString("common.install")));
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (!isReinstall && App.settings.isInstance(instanceNameField.getText())) {
+                if (!isReinstall && !isServer
+                        && App.settings.isInstance(instanceNameField.getText())) {
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><center>"
@@ -216,9 +231,10 @@ public class InstanceInstallerDialog extends JDialog {
                 dialog.add(topPanel, BorderLayout.CENTER);
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-                final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceNameField
-                        .getText(), pack, version, (useLatestLWJGL == null ? false : useLatestLWJGL
-                        .isSelected()), isReinstall) {
+                final InstanceInstaller instanceInstaller = new InstanceInstaller((isServer ? ""
+                        : instanceNameField.getText()), pack, version,
+                        (useLatestLWJGL == null ? false : useLatestLWJGL.isSelected()),
+                        isReinstall, isServer) {
 
                     protected void done() {
                         Boolean success = false;
@@ -288,6 +304,8 @@ public class InstanceInstallerDialog extends JDialog {
                                     if (!instance.isPlayable()) {
                                         instance.setPlayable();
                                     }
+                                } else if (isServer) {
+                                    
                                 } else {
                                     App.settings.getInstances().add(
                                             new Instance(instanceNameField.getText(), pack

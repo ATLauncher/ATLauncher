@@ -95,6 +95,7 @@ public class Settings {
     private File languagesDir = new File(configsDir, "Languages");
     private File downloadsDir = new File(baseDir, "Downloads");
     private File instancesDir = new File(baseDir, "Instances");
+    private File serversDir = new File(baseDir, "Servers");
     private File tempDir = new File(baseDir, "Temp");
     private File instancesDataFile = new File(configsDir, "instancesdata");
     private File userDataFile = new File(configsDir, "userdata");
@@ -137,7 +138,6 @@ public class Settings {
     }
 
     public void downloadUpdate() {
-        System.out.println("Downloading Update");
         try {
             File thisFile = new File(Update.class.getProtectionDomain().getCodeSource()
                     .getLocation().getPath());
@@ -160,7 +160,6 @@ public class Settings {
     }
 
     public void runUpdate(String currentPath, String temporaryUpdatePath) {
-        System.out.println("Running Update");
         List<String> arguments = new ArrayList<String>();
 
         String path = System.getProperty("java.home") + File.separator + "bin" + File.separator
@@ -177,7 +176,6 @@ public class Settings {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(arguments);
-        System.out.println("Updating ATLauncher with command: " + processBuilder.command());
 
         try {
             processBuilder.start();
@@ -261,7 +259,7 @@ public class Settings {
      */
     private void checkFolders() {
         File[] files = { backupsDir, configsDir, imagesDir, skinsDir, jarsDir, resourcesDir,
-                librariesDir, languagesDir, downloadsDir, instancesDir, tempDir };
+                librariesDir, languagesDir, downloadsDir, instancesDir, serversDir, tempDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -358,7 +356,7 @@ public class Settings {
     public File getDownloadsDir() {
         return this.downloadsDir;
     }
-
+    
     /**
      * Returns the instances directory
      * 
@@ -366,6 +364,15 @@ public class Settings {
      */
     public File getInstancesDir() {
         return this.instancesDir;
+    }
+
+    /**
+     * Returns the servers directory
+     * 
+     * @return File object for the servers directory
+     */
+    public File getServersDir() {
+        return this.serversDir;
     }
 
     /**
@@ -472,7 +479,6 @@ public class Settings {
                     "enableleaderboards", "false"));
 
             String lastAccountTemp = properties.getProperty("lastaccount", "");
-            System.out.println(lastAccountTemp);
             if (!lastAccountTemp.isEmpty()) {
                 if (isAccountByName(lastAccountTemp)) {
                     this.account = getAccountByName(lastAccountTemp);
@@ -540,6 +546,7 @@ public class Settings {
         }
         reloadPacksPanel();
         reloadInstancesPanel();
+        reloadAccounts();
         try {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("language", this.language.getName());

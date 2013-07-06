@@ -102,8 +102,21 @@ public class Mod {
         return this.description;
     }
 
+    public boolean installOnServer() {
+        if (this.serverFile == null) {
+            return this.server;
+        } else {
+            return true;
+        }
+    }
+
     public void download(InstanceInstaller installer) {
-        File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
+        File fileLocation;
+        if (serverFile == null) {
+            fileLocation = new File(App.settings.getDownloadsDir(), getFile());
+        } else {
+            fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
+        }
         if (fileLocation.exists()) {
             if (hasMD5()) {
                 if (compareMD5(Utils.getMD5(fileLocation))) {
@@ -116,27 +129,43 @@ public class Mod {
             }
         }
         if (isDirectDownload()) {
-            if (getURL().contains("http://newfiles.atlauncher.com/")) {
-                new Downloader(App.settings.getFileURL(getURL().replace(
-                        "http://newfiles.atlauncher.com/", "")), fileLocation.getAbsolutePath(),
-                        installer).run();
+            if (serverURL == null) {
+                if (getURL().contains("http://newfiles.atlauncher.com/")) {
+                    new Downloader(App.settings.getFileURL(getURL().replace(
+                            "http://newfiles.atlauncher.com/", "")),
+                            fileLocation.getAbsolutePath(), installer).run();
+                } else {
+                    new Downloader(getURL(), fileLocation.getAbsolutePath(), installer).run();
+                }
             } else {
-                new Downloader(getURL(), fileLocation.getAbsolutePath(), installer).run();
+                if (getServerURL().contains("http://newfiles.atlauncher.com/")) {
+                    new Downloader(App.settings.getFileURL(getServerURL().replace(
+                            "http://newfiles.atlauncher.com/", "")),
+                            fileLocation.getAbsolutePath(), installer).run();
+                } else {
+                    new Downloader(getServerURL(), fileLocation.getAbsolutePath(), installer).run();
+                }
             }
         } else {
             while (!fileLocation.exists()) {
-                Utils.openBrowser(getURL());
+                if (serverURL == null) {
+                    Utils.openBrowser(getURL());
+                } else {
+                    Utils.openBrowser(getServerURL());
+                }
                 String[] options = new String[] { App.settings
                         .getLocalizedString("instance.ivedownloaded") };
                 int retValue = JOptionPane.showOptionDialog(
                         App.settings.getParent(),
                         "<html><center>"
                                 + App.settings.getLocalizedString("instance.browseropened",
-                                        getFile()) + "<br/><br/>"
+                                        (serverFile == null ? getFile() : getServerFile()))
+                                + "<br/><br/>"
                                 + App.settings.getLocalizedString("instance.pleasesave")
                                 + "<br/><br/>" + App.settings.getDownloadsDir().getAbsolutePath()
                                 + "</center></html>",
-                        App.settings.getLocalizedString("common.downloading") + " " + getFile(),
+                        App.settings.getLocalizedString("common.downloading") + " "
+                                + (serverFile == null ? getFile() : getServerFile()),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
                         options[0]);
                 if (retValue == JOptionPane.CLOSED_OPTION) {
@@ -161,6 +190,14 @@ public class Mod {
         File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
         switch (type) {
             case jar:
+            case forge:
+                if (installer.isServer() && type == Type.forge) {
+                    Utils.copyFile(fileLocation, installer.getRootDirectory());
+                    break;
+                }else if (installer.isServer() && type == Type.jar) {
+                    Utils.unzip(fileLocation, installer.getTempJarDirectory());
+                    break;
+                }
                 Utils.copyFile(fileLocation, installer.getJarModsDirectory());
                 installer.addToJarOrder(getFile());
                 break;
@@ -261,6 +298,14 @@ public class Mod {
 
     public String getFile() {
         return this.file;
+    }
+
+    public String getServerURL() {
+        return this.serverURL;
+    }
+
+    public String getServerFile() {
+        return this.serverFile;
     }
 
 }

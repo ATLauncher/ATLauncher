@@ -199,7 +199,7 @@ public class Pack {
         return null;
     }
 
-    public ArrayList<Mod> getMods(String versionToInstall) {
+    public ArrayList<Mod> getMods(String versionToInstall, boolean isServer) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
         String xml = getXML(versionToInstall);
         try {
@@ -232,15 +232,17 @@ public class Pack {
                         decompType = DecompType.valueOf(element.getAttribute("decomptype")
                                 .toLowerCase());
                     }
-                    boolean server = false;
+                    boolean server = true;
                     String serverURL = null;
                     String serverFile = null;
                     Type serverType = null;
                     if (element.getAttribute("server").equalsIgnoreCase("seperate")) {
-                        server = true;
+                        server = false;
                         serverURL = element.getAttribute("serverurl");
                         serverFile = element.getAttribute("serverfile");
                         serverType = Type.valueOf(element.getAttribute("servertype").toLowerCase());
+                    }else if (element.getAttribute("server").equalsIgnoreCase("no")) {
+                        continue;
                     }
                     boolean optional = false;
                     if (element.getAttribute("optional").equalsIgnoreCase("yes")) {

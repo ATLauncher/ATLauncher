@@ -265,7 +265,7 @@ public class InstanceDisplay extends CollapsiblePanel {
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 } else {
-                    new InstanceInstallerDialog(instance, true);
+                    new InstanceInstallerDialog(instance, true, false);
                 }
             }
         });
