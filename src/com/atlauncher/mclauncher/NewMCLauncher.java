@@ -55,6 +55,12 @@ public class NewMCLauncher {
         arguments.add("-Xmx" + App.settings.getMemory() + "M");
         arguments.add("-XX:MaxPermSize=" + App.settings.getPermGen() + "M");
 
+        if (!App.settings.getJavaParameters().isEmpty()) {
+            for (String arg : App.settings.getJavaParameters().split(" ")) {
+                arguments.add(arg);
+            }
+        }
+
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());

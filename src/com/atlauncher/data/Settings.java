@@ -475,8 +475,8 @@ public class Settings {
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty(
                     "enableleaderboards", "false"));
 
-            String lastAccountTemp = properties.getProperty("lastaccount", null);
-            if (lastAccountTemp != null) {
+            String lastAccountTemp = properties.getProperty("lastaccount", "");
+            if (!lastAccountTemp.isEmpty()) {
                 if (isAccountByName(lastAccountTemp)) {
                     this.account = getAccountByName(lastAccountTemp);
                 } else {
@@ -510,6 +510,11 @@ public class Settings {
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
+            if(account != null) {
+                properties.setProperty("lastaccount", account.getUsername());
+            }else{
+                properties.setProperty("lastaccount", "");
+            }
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
