@@ -180,12 +180,12 @@ public class BottomBar extends JPanel {
     }
 
     public void reloadAccounts() {
+        dontSave = true;
         username.removeAllItems();
         username.addItem(fillerAccount);
         for (Account account : App.settings.getAccounts()) {
             username.addItem(account);
         }
-        dontSave = true;
         username.setSelectedItem(App.settings.getAccount());
         dontSave = false;
     }

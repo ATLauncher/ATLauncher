@@ -443,13 +443,11 @@ public class Settings {
             if (isLanguageByName(lang)) {
                 this.language = getLanguageByName(lang);
             } else {
-                console.log("Language " + lang + " is invalid");
                 this.language = getLanguageByName("English"); // Language not found, use default
             }
 
             this.ram = Integer.parseInt(properties.getProperty("ram", "512"));
             if (this.ram > Utils.getMaximumRam()) {
-                console.log("Cannot allocate " + this.ram + "MB of Ram");
                 this.ram = 512; // User tried to allocate too much ram, set it back to 0.5GB
             }
 
@@ -457,13 +455,11 @@ public class Settings {
 
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             if (this.windowWidth > Utils.getMaximumWindowWidth()) {
-                console.log("Cannot set screen width to " + this.windowWidth);
                 this.windowWidth = 854; // User tried to make screen size wider than they have
             }
 
             this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
             if (this.windowHeight > Utils.getMaximumWindowHeight()) {
-                console.log("Cannot set screen height to " + this.windowHeight);
                 this.windowHeight = 480; // User tried to make screen size wider than they have
             }
 
@@ -476,11 +472,11 @@ public class Settings {
                     "enableleaderboards", "false"));
 
             String lastAccountTemp = properties.getProperty("lastaccount", "");
+            System.out.println(lastAccountTemp);
             if (!lastAccountTemp.isEmpty()) {
                 if (isAccountByName(lastAccountTemp)) {
                     this.account = getAccountByName(lastAccountTemp);
                 } else {
-                    console.log("Account " + lastAccountTemp + " not found");
                     this.account = null; // Account not found
                 }
             }
@@ -510,9 +506,9 @@ public class Settings {
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
-            if(account != null) {
+            if (account != null) {
                 properties.setProperty("lastaccount", account.getUsername());
-            }else{
+            } else {
                 properties.setProperty("lastaccount", "");
             }
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
@@ -530,12 +526,17 @@ public class Settings {
      *            Account to switch to
      */
     public void switchAccount(Account account) {
-        if (account.isReal()) {
-            getConsole().log("Changed account to " + account);
-            this.account = account;
-        } else {
+        if (account == null) {
             getConsole().log("Logging out of account");
             this.account = null;
+        } else {
+            if (account.isReal()) {
+                getConsole().log("Changed account to " + account);
+                this.account = account;
+            } else {
+                getConsole().log("Logging out of account");
+                this.account = null;
+            }
         }
         reloadPacksPanel();
         reloadInstancesPanel();
@@ -551,7 +552,11 @@ public class Settings {
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
-            properties.setProperty("lastaccount", account.getUsername());
+            if(account == null){
+                properties.setProperty("lastaccount", "");
+            }else{
+                properties.setProperty("lastaccount", account.getUsername());
+            }
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -870,6 +875,15 @@ public class Settings {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void removeAccount(Account account) {
+        if (this.account == account) {
+            switchAccount(null);
+        }
+        accounts.remove(account);
+        saveAccounts();
+        reloadAccounts();
     }
 
     /**
@@ -1517,6 +1531,7 @@ public class Settings {
     public Account getAccount() {
         return this.account;
     }
+
     /**
      * If the user has selected to show the console always or not
      * 

@@ -256,9 +256,7 @@ public class AccountPanel extends JPanel {
                             App.settings.getLocalizedString("account.delete"),
                             JOptionPane.YES_NO_OPTION);
                     if (res == JOptionPane.YES_OPTION) {
-                        App.settings.getAccounts().remove(account);
-                        App.settings.saveAccounts();
-                        App.settings.reloadAccounts();
+                        App.settings.removeAccount(account);
                         accountsComboBox.removeAllItems();
                         accountsComboBox.addItem(fillerAccount);
                         for (Account accountt : App.settings.getAccounts()) {
