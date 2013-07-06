@@ -1517,11 +1517,6 @@ public class Settings {
     public Account getAccount() {
         return this.account;
     }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
     /**
      * If the user has selected to show the console always or not
      * 

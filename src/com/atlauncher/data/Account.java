@@ -17,6 +17,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -35,7 +38,8 @@ public class Account implements Serializable {
     private boolean remember; // Remember the users password or not
     private transient boolean isReal; // If this is a real user
     private ArrayList<String> collapsedPacks; // Array of packs collapsed in the Packs Tab
-    private ArrayList<String> collapsedInstances; // Array of instances collapsed in the Instances Tab
+    private ArrayList<String> collapsedInstances; // Array of instances collapsed in the Instances
+                                                  // Tab
 
     public Account(String username, String password, String minecraftUsername, boolean remember) {
         this.username = username;
@@ -60,14 +64,30 @@ public class Account implements Serializable {
     }
 
     public ImageIcon getMinecraftHead() {
-        File file;
+        File file = null;
         if (isReal()) {
             file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
             if (!file.exists()) {
-                new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername
-                        + ".png", file.getAbsolutePath()).run();
+                try {
+                    HttpURLConnection conn = (HttpURLConnection) new URL(
+                            "http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png")
+                            .openConnection();
+                    if (conn.getResponseCode() == 200) {
+                        new Downloader("http://s3.amazonaws.com/MinecraftSkins/"
+                                + minecraftUsername + ".png", file.getAbsolutePath()).run();
+                    } else {
+                        Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file,
+                                true);
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
+        }
+
+        if (file == null || !file.exists()) {
             file = new File(App.settings.getSkinsDir(), "default.png");
         }
 
@@ -91,15 +111,31 @@ public class Account implements Serializable {
     }
 
     public ImageIcon getMinecraftSkin() {
-        File file;
-        if (this.username.isEmpty()) {
-            file = new File(App.settings.getSkinsDir(), "default.png");
-        } else {
+        File file = null;
+        if (isReal()) {
             file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
+            if (!file.exists()) {
+                try {
+                    HttpURLConnection conn = (HttpURLConnection) new URL(
+                            "http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png")
+                            .openConnection();
+                    if (conn.getResponseCode() == 200) {
+                        new Downloader("http://s3.amazonaws.com/MinecraftSkins/"
+                                + minecraftUsername + ".png", file.getAbsolutePath()).run();
+                    } else {
+                        Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file,
+                                true);
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        if (!file.exists()) {
-            new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png",
-                    file.getAbsolutePath()).run();
+
+        if (file == null || !file.exists()) {
+            file = new File(App.settings.getSkinsDir(), "default.png");
         }
 
         BufferedImage image = null;
@@ -181,16 +217,16 @@ public class Account implements Serializable {
         }
         isReal = true;
     }
-    
-    public ArrayList<String> getCollapsedPacks(){
-        if(this.collapsedPacks == null){
+
+    public ArrayList<String> getCollapsedPacks() {
+        if (this.collapsedPacks == null) {
             this.collapsedPacks = new ArrayList<String>();
         }
         return this.collapsedPacks;
     }
-    
-    public ArrayList<String> getCollapsedInstances(){
-        if(this.collapsedInstances == null){
+
+    public ArrayList<String> getCollapsedInstances() {
+        if (this.collapsedInstances == null) {
             this.collapsedInstances = new ArrayList<String>();
         }
         return this.collapsedInstances;

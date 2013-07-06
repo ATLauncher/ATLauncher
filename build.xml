@@ -2,9 +2,9 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0a21
-- Java Parameters now show up when launching Minecraft
-- Fixed an issue with loading the configs when no account was set
+3.0.0a22
+- Fixed issue switching to a newly created account
+- Fix for issue when user has no skin set
 
 -->
 
@@ -16,7 +16,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0a21" />
+	<property name="atlauncher.version" value="3.0.0a22" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

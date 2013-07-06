@@ -211,7 +211,7 @@ public class AccountPanel extends JPanel {
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
                                 options, options[0]);
                         if (ret == 0) {
-                            App.settings.setAccount(account);
+                            App.settings.switchAccount(account);
                         }
                     } else {
                         account = (Account) accountsComboBox.getSelectedItem();
