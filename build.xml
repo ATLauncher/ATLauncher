@@ -2,8 +2,10 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0a18
-- Added in Libraries for packs
+3.0.0a19
+- Switched from Images for the tabs to a font
+- Removed Addons Tab until it's ready
+- Added filtering/searching options to Packs and Instances Tabs
 
 -->
 
@@ -15,7 +17,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0a18" />
+	<property name="atlauncher.version" value="3.0.0a19" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

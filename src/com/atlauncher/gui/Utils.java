@@ -142,7 +142,7 @@ public class Utils {
         }
     }
 
-    public static Font makeFont(String name, Float point) {
+    public static Font makeFont(String name) {
         Font font = null;
         try {
             font = Font.createFont(Font.TRUETYPE_FONT,
@@ -154,7 +154,6 @@ public class Utils {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        font.deriveFont(point);
         return font;
     }
 

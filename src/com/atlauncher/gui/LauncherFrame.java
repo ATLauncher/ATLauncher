@@ -105,12 +105,13 @@ public class LauncherFrame extends JFrame {
         accountPanel = new AccountPanel();
         settingsPanel = new SettingsPanel();
 
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/NewsTab.png"), newsPanel);
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/PacksTab.png"), packsPanel);
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/AddonsTab.png"), addonsPanel);
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/InstancesTab.png"), instancesPanel);
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/AccountTab.png"), accountPanel);
-        tabbedPane.addTab(null, Utils.getIconImage("/resources/SettingsTab.png"), settingsPanel);
+        tabbedPane.setFont(Utils.makeFont("Oswald-Regular").deriveFont((float) 34));
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.news"), newsPanel);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsPanel);
+//        tabbedPane.addTab(App.settings.getLocalizedString("tabs.addons"), addonsPanel);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesPanel);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountPanel);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsPanel);
         tabbedPane.setBackground(BASE_COLOR.brighter());
         tabbedPane.setOpaque(true);
     }
