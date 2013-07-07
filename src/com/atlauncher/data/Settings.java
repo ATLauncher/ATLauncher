@@ -104,7 +104,7 @@ public class Settings {
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
-    private LauncherConsole console; // The Launcher's Console
+    private LauncherConsole console = new LauncherConsole(); // Load the Launcher's Console
     private ArrayList<Language> languages = new ArrayList<Language>(); // Languages for the Launcher
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private InstancesPanel instancesPanel; // The instances panel
@@ -134,7 +134,7 @@ public class Settings {
         loadInstances(); // Load the users installed Instances
         loadAccounts(); // Load the saved Accounts
         loadProperties(); // Load the users Properties
-        console = new LauncherConsole(); // Load the Launcher's Console
+        console.setupLanguage(); // Setup language on the console
     }
 
     public void downloadUpdate() {
@@ -155,7 +155,7 @@ public class Settings {
                                                                                                 // it
             runUpdate(path, newFile.getAbsolutePath());
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -180,7 +180,7 @@ public class Settings {
         try {
             processBuilder.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
 
         System.exit(0);
@@ -246,11 +246,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -419,7 +419,7 @@ public class Settings {
                 propertiesFile.createNewFile();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         try {
             this.properties.load(new FileInputStream(propertiesFile));
@@ -431,9 +431,9 @@ public class Settings {
                 this.server = getServerByName("Auto"); // Server not found, use default of Auto
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -489,9 +489,9 @@ public class Settings {
 
             this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -519,9 +519,9 @@ public class Settings {
             }
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -566,9 +566,9 @@ public class Settings {
             }
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -617,7 +617,7 @@ public class Settings {
                         responseTimes[count] = 1000000.0;
                         server.disableServer();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        App.settings.getConsole().logStackTrace(e);
                     }
                     count++;
                 }
@@ -668,11 +668,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -727,11 +727,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -771,13 +771,13 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (InvalidPack e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -810,7 +810,7 @@ public class Settings {
                     in.close();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
             }
         }
     }
@@ -825,13 +825,13 @@ public class Settings {
                 objOut.writeObject(instance);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } finally {
             try {
                 objOut.close();
                 out.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
             }
         }
     }
@@ -858,7 +858,7 @@ public class Settings {
                     in.close();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
             }
         }
     }
@@ -873,13 +873,13 @@ public class Settings {
                 objOut.writeObject(account);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } finally {
             try {
                 objOut.close();
                 out.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
             }
         }
     }
@@ -917,11 +917,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return null;
     }
@@ -946,11 +946,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return null;
     }
@@ -1093,7 +1093,7 @@ public class Settings {
                 }
                 wr.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
             }
         }
     }

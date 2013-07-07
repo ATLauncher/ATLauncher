@@ -157,7 +157,7 @@ public class InstanceDisplay extends CollapsiblePanel {
                                 auth = (String) jsonObject.get("errorMessage");
                             }
                         } catch (ParseException e1) {
-                            e1.printStackTrace();
+                            App.settings.getConsole().logStackTrace(e1);
                         }
                     } else {
                         try {
@@ -165,7 +165,7 @@ public class InstanceDisplay extends CollapsiblePanel {
                                     + URLEncoder.encode(username, "UTF-8") + "&password="
                                     + URLEncoder.encode(password, "UTF-8") + "&version=999";
                         } catch (UnsupportedEncodingException e1) {
-                            e1.printStackTrace();
+                            App.settings.getConsole().logStackTrace(e1);
                         }
                         auth = Utils.urlToString(url);
                         if (auth.contains(":")) {
@@ -224,7 +224,7 @@ public class InstanceDisplay extends CollapsiblePanel {
                                                 ((end - start) / 1000) + "");
                                     }
                                 } catch (IOException e1) {
-                                    e1.printStackTrace();
+                                    App.settings.getConsole().logStackTrace(e1);
                                 }
                             }
                         };
@@ -403,7 +403,7 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return response.toString();
     }

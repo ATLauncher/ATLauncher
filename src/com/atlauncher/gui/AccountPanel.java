@@ -180,7 +180,7 @@ public class AccountPanel extends JPanel {
                             + URLEncoder.encode(username, "UTF-8") + "&password="
                             + URLEncoder.encode(password, "UTF-8") + "&version=999";
                 } catch (UnsupportedEncodingException e1) {
-                    e1.printStackTrace();
+                    App.settings.getConsole().logStackTrace(e1);
                 }
                 String auth = Utils.urlToString(url);
                 if (auth.contains(":")) {

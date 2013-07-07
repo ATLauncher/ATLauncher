@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import com.atlauncher.App;
 import com.atlauncher.gui.Utils;
 
 public class Downloadable implements Runnable {
@@ -105,9 +106,9 @@ public class Downloadable implements Runnable {
             this.connection.setRequestProperty("Pragma", "no-cache");
             this.connection.connect();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         String etag = this.connection.getHeaderField("ETag");
         if (etag == null) {
@@ -136,7 +137,7 @@ public class Downloadable implements Runnable {
             writer.close();
             in.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 

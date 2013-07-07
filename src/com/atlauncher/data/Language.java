@@ -33,9 +33,9 @@ public class Language {
         try {
             properties.load(new FileInputStream(file));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 

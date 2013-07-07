@@ -136,7 +136,7 @@ public class LauncherFrame extends JFrame {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
 
         // For some reason Mac OS makes text bigger then it should be

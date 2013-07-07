@@ -80,9 +80,9 @@ public class Account implements Serializable {
                                 true);
                     }
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    App.settings.getConsole().logStackTrace(e);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    App.settings.getConsole().logStackTrace(e);
                 }
             }
         }
@@ -95,7 +95,7 @@ public class Account implements Serializable {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         BufferedImage main = image.getSubimage(8, 8, 8, 8);
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
@@ -127,9 +127,9 @@ public class Account implements Serializable {
                                 true);
                     }
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    App.settings.getConsole().logStackTrace(e);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    App.settings.getConsole().logStackTrace(e);
                 }
             }
         }
@@ -142,7 +142,7 @@ public class Account implements Serializable {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
 
         BufferedImage head = image.getSubimage(8, 8, 8, 8);

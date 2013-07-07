@@ -313,7 +313,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
             }
         }
         // Now read in the library jars needed from the pack
@@ -359,11 +359,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
 
         // Now read in the library jars needed from Mojang
@@ -420,7 +420,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
 
             } catch (ParseException e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
             }
         }
 
@@ -574,7 +574,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             inputFile.delete();
             outputTmpFile.renameTo(inputFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 

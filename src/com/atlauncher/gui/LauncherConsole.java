@@ -50,6 +50,8 @@ public class LauncherConsole extends JFrame {
     private ConsoleBottomBar bottomBar;
     private JPopupMenu contextMenu; // Right click menu
 
+    private JMenuItem copy;
+
     public LauncherConsole() {
         setSize(WINDOW_SIZE);
         setTitle("ATLauncher Console %VERSION%");
@@ -101,7 +103,7 @@ public class LauncherConsole extends JFrame {
     private void setupContextMenu() {
         contextMenu = new JPopupMenu();
 
-        JMenuItem copy = new JMenuItem(App.settings.getLocalizedString("common.copy"));
+        copy = new JMenuItem("Copy Log");
         copy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 StringSelection text = new StringSelection(console.getSelectedText());
@@ -131,7 +133,7 @@ public class LauncherConsole extends JFrame {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
 
         UIManager.put("control", BASE_COLOR);
@@ -157,6 +159,23 @@ public class LauncherConsole extends JFrame {
             console.setText(console.getText() + "\n[" + timestamp + "] " + text);
         }
         console.setCaretPosition(console.getDocument().getLength());
+    }
+
+    /**
+     * Logs a stack trace to the console window
+     * 
+     * @param text
+     *            The text to show in the console
+     */
+    public void logStackTrace(Exception e) {
+        e.printStackTrace();
+        log(e.getMessage());
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement element : e.getStackTrace()) {
+            if (element.toString() != null) {
+                log(element.toString());
+            }
+        }
     }
 
     /**
@@ -189,5 +208,10 @@ public class LauncherConsole extends JFrame {
 
     public void hideKillMinecraft() {
         bottomBar.hideKillMinecraft();
+    }
+
+    public void setupLanguage() {
+        copy.setText(App.settings.getLocalizedString("common.copy"));
+        bottomBar.setupLanguage();
     }
 }

@@ -54,6 +54,7 @@ public class App {
 
         settings = new Settings(); // Setup the Settings and wait for it to finish
 
+        settings.getConsole().log("Showing splash screen and loading everything");
         SplashScreen ss = new SplashScreen(); // Show Splash Screen
         settings.loadEverything(); // Loads everything that needs to be loaded
         ss.close(); // Close the Splash Screen

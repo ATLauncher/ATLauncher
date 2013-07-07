@@ -94,7 +94,7 @@ public class Utils {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         BufferedImage main = image.getSubimage(8, 8, 8, 8);
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
@@ -126,7 +126,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().browse(new URI(URL));
             } catch (Exception e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
             }
         }
     }
@@ -136,7 +136,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().browse(URL.toURI());
             } catch (Exception e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
             }
         }
     }
@@ -147,9 +147,9 @@ public class Utils {
             font = Font.createFont(Font.TRUETYPE_FONT,
                     System.class.getResource("/resources/" + name + ".ttf").openStream());
         } catch (FontFormatException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return font;
     }
@@ -235,15 +235,15 @@ public class Utils {
                 ram = 1024;
             }
         } catch (SecurityException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return ram;
     }
@@ -295,7 +295,7 @@ public class Utils {
             writer.close();
             reader.close();
         } catch (IOException e1) {
-            e1.printStackTrace();
+            App.settings.getConsole().logStackTrace(e1);
         }
         return result;
     }
@@ -324,11 +324,11 @@ public class Utils {
                 sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
             }
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return sb.toString();
     }
@@ -360,7 +360,7 @@ public class Utils {
         try {
             to.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
 
         FileChannel source = null;
@@ -371,7 +371,7 @@ public class Utils {
             destination = new FileOutputStream(to).getChannel();
             destination.transferFrom(source, 0, source.size());
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } finally {
             try {
                 if (source != null) {
@@ -381,7 +381,7 @@ public class Utils {
                     destination.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
             }
         }
     }
@@ -412,7 +412,7 @@ public class Utils {
                 out.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -448,7 +448,7 @@ public class Utils {
             }
             zipFile.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -479,7 +479,7 @@ public class Utils {
     // inputFile.delete();
     // outputTmpFile.renameTo(inputFile);
     // } catch (IOException e) {
-    // e.printStackTrace();
+    // App.settings.getConsole().logStackTrace(e);
     // }
     // }
 
@@ -551,7 +551,7 @@ public class Utils {
                 res.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 
@@ -585,7 +585,7 @@ public class Utils {
             byte[] encVal = c.doFinal(Data.getBytes());
             encryptedValue = Base64.encodeBytes(encVal);
         } catch (Exception e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return encryptedValue;
     }
@@ -601,7 +601,7 @@ public class Utils {
             byte[] decValue = c.doFinal(decordedValue);
             decryptedValue = new String(decValue);
         } catch (Exception e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return decryptedValue;
     }
@@ -625,7 +625,7 @@ public class Utils {
                 response.append(inputLine);
             in.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return response.toString();
     }

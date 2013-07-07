@@ -270,9 +270,9 @@ public class InstanceInstallerDialog extends JDialog {
                             try {
                                 success = get();
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                App.settings.getConsole().logStackTrace(e);
                             } catch (ExecutionException e) {
-                                e.printStackTrace();
+                                App.settings.getConsole().logStackTrace(e);
                             }
                             if (success) {
                                 type = JOptionPane.INFORMATION_MESSAGE;

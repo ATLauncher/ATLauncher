@@ -65,8 +65,7 @@ public class Pack {
     }
 
     public ImageIcon getImage() {
-        File imageFile = new File(App.settings.getImagesDir(), getSafeName()
-                .toLowerCase() + ".png");
+        File imageFile = new File(App.settings.getImagesDir(), getSafeName().toLowerCase() + ".png");
         if (!imageFile.exists()) {
             imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
         }
@@ -111,7 +110,7 @@ public class Pack {
         if (this.xml == null || !this.xmlVersion.equalsIgnoreCase(version) || isTester()) {
             String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.xml";
             String versionURL = App.settings.getFileURL(path); // The XML with path on
-                                                                         // server
+                                                               // server
             this.xml = Utils.urlToString(versionURL);
             this.xmlVersion = version;
         }
@@ -136,11 +135,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return null;
     }
@@ -163,11 +162,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return null;
     }
@@ -190,11 +189,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return null;
     }
@@ -241,8 +240,11 @@ public class Pack {
                         serverURL = element.getAttribute("serverurl");
                         serverFile = element.getAttribute("serverfile");
                         serverType = Type.valueOf(element.getAttribute("servertype").toLowerCase());
-                    }else if (element.getAttribute("server").equalsIgnoreCase("no")) {
-                        continue;
+                    } else if (element.getAttribute("server").equalsIgnoreCase("no")) {
+                        server = false;
+                        if (isServer) {
+                            continue;
+                        }
                     }
                     boolean optional = false;
                     if (element.getAttribute("optional").equalsIgnoreCase("yes")) {
@@ -260,11 +262,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         return mods;
     }
@@ -310,8 +312,8 @@ public class Pack {
     }
 
     public boolean isNewInstallMethod(String version) {
-        if (App.settings.getMinecraftInstallMethod(getMinecraftVersion(version))
-                .equalsIgnoreCase("new")) {
+        if (App.settings.getMinecraftInstallMethod(getMinecraftVersion(version)).equalsIgnoreCase(
+                "new")) {
             return true;
         } else {
             return false;

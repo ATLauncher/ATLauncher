@@ -141,10 +141,10 @@ public class ConsoleBottomBar extends JPanel {
      * Creates the JButton's for use in the bar
      */
     private void createButtons() {
-        copyLog = new JButton(App.settings.getLocalizedString("console.copy"));
-        uploadLog = new JButton(App.settings.getLocalizedString("console.upload"));
+        copyLog = new JButton("Copy Log");
+        uploadLog = new JButton("Upload Log");
 
-        killMinecraft = new JButton(App.settings.getLocalizedString("console.kill"));
+        killMinecraft = new JButton("Kill Minecraft");
         killMinecraft.setVisible(false);
 
         facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));
@@ -169,5 +169,11 @@ public class ConsoleBottomBar extends JPanel {
 
     public void hideKillMinecraft() {
         killMinecraft.setVisible(false);
+    }
+
+    public void setupLanguage() {
+        copyLog.setText(App.settings.getLocalizedString("console.copy"));
+        uploadLog.setText(App.settings.getLocalizedString("console.upload"));
+        killMinecraft.setText(App.settings.getLocalizedString("console.kill"));
     }
 }

@@ -87,11 +87,11 @@ public class NewsPanel extends JPanel {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            App.settings.getConsole().logStackTrace(e);
         }
         newsArea.setText(news + "</html>");
         newsArea.setCaretPosition(0);

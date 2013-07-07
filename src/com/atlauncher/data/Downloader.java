@@ -13,6 +13,7 @@ package com.atlauncher.data;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import com.atlauncher.App;
 import com.atlauncher.workers.DownloadWorker;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -82,7 +83,7 @@ public class Downloader {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                App.settings.getConsole().logStackTrace(e);
                 worker.cancel(true);
             }
         }
