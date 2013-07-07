@@ -222,8 +222,11 @@ public class Settings {
                         if (!getVersion().equalsIgnoreCase(version)) {
                             if (getVersion().equalsIgnoreCase("%VERSION%")) {
                                 continue; // Don't even think about updating my unbuilt copy
+                            } else if (!version.contains("a")) {
+                                continue; // Don't update past alpha
+                            } else {
+                                downloadUpdate();
                             }
-                            downloadUpdate();
                         } else {
                             continue;
                         }
@@ -356,7 +359,7 @@ public class Settings {
     public File getDownloadsDir() {
         return this.downloadsDir;
     }
-    
+
     /**
      * Returns the instances directory
      * 
@@ -559,9 +562,9 @@ public class Settings {
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
-            if(account == null){
+            if (account == null) {
                 properties.setProperty("lastaccount", "");
-            }else{
+            } else {
                 properties.setProperty("lastaccount", account.getUsername());
             }
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
@@ -1083,11 +1086,10 @@ public class Settings {
                 OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
                 wr.write(data);
                 wr.flush();
-                if (debug) {
-                    BufferedReader rd = new BufferedReader(new InputStreamReader(
-                            conn.getInputStream()));
-                    String line;
-                    while ((line = rd.readLine()) != null) {
+                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = rd.readLine()) != null) {
+                    if (debug) {
                         App.settings.getConsole().log("API Call Response: " + line);
                     }
                 }
