@@ -23,6 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.SwingWorker;
 import javax.xml.parsers.DocumentBuilder;
@@ -385,38 +387,85 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 JSONArray msg = (JSONArray) jsonObject.get("libraries");
                 Iterator<JSONObject> iterator = msg.iterator();
                 while (iterator.hasNext()) {
+                    boolean shouldDownload = false;
                     JSONObject object = iterator.next();
+                    String libraryName = (String) object.get("name");
                     String[] parts = ((String) object.get("name")).split(":");
                     String dir = parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2];
-                    String filename;
-                    if (object.containsKey("natives")) {
-                        JSONObject nativesObject = (JSONObject) object.get("natives");
-                        String nativesName;
-                        if (Utils.isWindows()) {
-                            nativesName = (String) nativesObject.get("windows");
-                        } else if (Utils.isMac()) {
-                            nativesName = (String) nativesObject.get("osx");
-                        } else {
-                            nativesName = (String) nativesObject.get("linux");
-                        }
-                        filename = parts[1] + "-" + parts[2] + "-" + nativesName + ".jar";
-                        if (nativesNeeded == null) {
-                            this.nativesNeeded = filename;
-                        } else {
-                            this.nativesNeeded += "," + filename;
+                    String filename = null;
+                    if (object.containsKey("rules")) {
+                        JSONArray ruless = (JSONArray) object.get("rules");
+                        Iterator<JSONObject> itt = ruless.iterator();
+                        while (itt.hasNext()) {
+                            JSONObject rules = itt.next();
+                            if (((String) rules.get("action")).equalsIgnoreCase("allow")) {
+                                if (rules.containsKey("os")) {
+                                    JSONObject rule = (JSONObject) rules.get("os");
+                                    if (((String) rule.get("name")).equalsIgnoreCase(Utils
+                                            .getOSName())) {
+                                        Pattern pattern = Pattern.compile((String) rule
+                                                .get("version"));
+                                        Matcher matcher = pattern.matcher(System
+                                                .getProperty("os.version"));
+                                        if (matcher.matches()) {
+                                            shouldDownload = true;
+                                        }
+                                    }
+                                } else {
+                                    shouldDownload = true;
+                                }
+                            } else if (((String) rules.get("action")).equalsIgnoreCase("disallow")) {
+                                if (rules.containsKey("os")) {
+                                    JSONObject rule = (JSONObject) rules.get("os");
+                                    if (((String) rule.get("name")).equalsIgnoreCase(Utils
+                                            .getOSName())) {
+                                        Pattern pattern = Pattern.compile((String) rule
+                                                .get("version"));
+                                        Matcher matcher = pattern.matcher(System
+                                                .getProperty("os.version"));
+                                        if (matcher.matches()) {
+                                            shouldDownload = false;
+                                        }
+                                    }
+                                }
+                            } else {
+                                shouldDownload = true;
+                            }
                         }
                     } else {
-                        filename = parts[1] + "-" + parts[2] + ".jar";
-                        if (librariesNeeded == null) {
-                            this.librariesNeeded = filename;
-                        } else {
-                            this.librariesNeeded += "," + filename;
-                        }
+                        shouldDownload = true;
                     }
-                    String url = "https://s3.amazonaws.com/Minecraft.Download/libraries/" + dir
-                            + "/" + filename;
-                    File file = new File(App.settings.getLibrariesDir(), filename);
-                    downloads.add(new Downloadable(url, file, null, this));
+
+                    if (shouldDownload) {
+                        if (object.containsKey("natives")) {
+                            JSONObject nativesObject = (JSONObject) object.get("natives");
+                            String nativesName;
+                            if (Utils.isWindows()) {
+                                nativesName = (String) nativesObject.get("windows");
+                            } else if (Utils.isMac()) {
+                                nativesName = (String) nativesObject.get("osx");
+                            } else {
+                                nativesName = (String) nativesObject.get("linux");
+                            }
+                            filename = parts[1] + "-" + parts[2] + "-" + nativesName + ".jar";
+                            if (nativesNeeded == null) {
+                                this.nativesNeeded = filename;
+                            } else {
+                                this.nativesNeeded += "," + filename;
+                            }
+                        } else {
+                            filename = parts[1] + "-" + parts[2] + ".jar";
+                            if (librariesNeeded == null) {
+                                this.librariesNeeded = filename;
+                            } else {
+                                this.librariesNeeded += "," + filename;
+                            }
+                        }
+                        String url = "https://s3.amazonaws.com/Minecraft.Download/libraries/" + dir
+                                + "/" + filename;
+                        File file = new File(App.settings.getLibrariesDir(), filename);
+                        downloads.add(new Downloadable(url, file, null, this));
+                    }
                 }
 
             } catch (ParseException e) {
@@ -650,7 +699,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     App.settings.getLocalizedString("server.extractingjar"));
             firePropertyChange("subprogressint", null, 0);
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
-        }else{
+        } else {
             deleteMetaInf();
         }
         if (mods.size() != 0) {

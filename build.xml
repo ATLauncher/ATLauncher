@@ -2,9 +2,10 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0a26
-- Fix API calls not working
-- Final Alpha Update. Won't update past this version
+3.0.0b1
+- The installer now follows exclude and include rules for libraries
+- Removed unnecessay loading code in old Miencraft launching code
+- Added ability for users to install jarmods manually after install
 
 -->
 
@@ -16,7 +17,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0a26" />
+	<property name="atlauncher.version" value="3.0.0b1" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

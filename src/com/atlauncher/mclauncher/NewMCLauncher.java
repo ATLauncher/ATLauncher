@@ -13,6 +13,7 @@ package com.atlauncher.mclauncher;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.atlauncher.App;
@@ -28,9 +29,21 @@ public class NewMCLauncher {
 
         File jarMods = instance.getJarModsDirectory();
         if (jarMods.exists() && instance.hasJarMods()) {
-            for (String mod : instance.getJarOrder().split(",")) {
+            ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance.getJarOrder()
+                    .split(",")));
+            for (String mod : jarmods) {
+                File thisFile = new File(jarMods, mod);
+                if (thisFile.exists()) {
+                    cpb.append(File.pathSeparator);
+                    cpb.append(thisFile);
+                }
+            }
+            for (File file : jarMods.listFiles()) {
+                if (jarmods.contains(file.getName())) {
+                    continue;
+                }
                 cpb.append(File.pathSeparator);
-                cpb.append(new File(jarMods, mod));
+                cpb.append(file);
             }
         }
 

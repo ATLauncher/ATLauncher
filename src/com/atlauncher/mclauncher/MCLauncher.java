@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -41,9 +42,21 @@ public class MCLauncher {
         StringBuilder cpb = new StringBuilder("");
         File jarMods = instance.getJarModsDirectory();
         if (jarMods.exists() && instance.hasJarMods()) {
-            for (String mod : instance.getJarOrder().split(",")) {
+            ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance.getJarOrder()
+                    .split(",")));
+            for (String mod : jarmods) {
+                File thisFile = new File(jarMods, mod);
+                if (thisFile.exists()) {
+                    cpb.append(File.pathSeparator);
+                    cpb.append(thisFile);
+                }
+            }
+            for (File file : jarMods.listFiles()) {
+                if (jarmods.contains(file.getName())) {
+                    continue;
+                }
                 cpb.append(File.pathSeparator);
-                cpb.append(new File(jarMods, mod));
+                cpb.append(file);
             }
         }
 
@@ -81,9 +94,6 @@ public class MCLauncher {
         arguments.add(account.getMinecraftUsername()); // Username
         arguments.add(session); // Session
         arguments.add(instance.getName()); // Instance Name
-        if (instance.hasJarMods()) {
-            arguments.add(instance.getJarOrder()); // Jar Order
-        }
         arguments.add(App.settings.getWindowWidth() + ""); // Window Width
         arguments.add(App.settings.getWindowHeight() + ""); // Window Height
 
@@ -97,18 +107,8 @@ public class MCLauncher {
         String username = args[1];
         String session = args[2];
         String instanceName = args[3];
-        int screenWidth, screenHeight;
-        String jarOrder = null;
-        if (args.length == 7) {
-            // Has JarOrder
-            jarOrder = args[4];
-            screenWidth = Integer.parseInt(args[5]);
-            screenHeight = Integer.parseInt(args[6]);
-        } else {
-            // Has No JarOrder
-            screenWidth = Integer.parseInt(args[4]);
-            screenHeight = Integer.parseInt(args[5]);
-        }
+        int screenWidth = Integer.parseInt(args[4]);
+        int screenHeight = Integer.parseInt(args[5]);
 
         Dimension winSize = new Dimension(screenWidth, screenHeight);
         boolean maximize = false;
@@ -124,22 +124,13 @@ public class MCLauncher {
             String[] lwjglJars = new String[] { "lwjgl.jar", "lwjgl_util.jar", "jinput.jar" };
 
             URL[] urls = new URL[4];
-            try {
-                if (jarOrder != null) {
-                    File jarModsDir = new File(cwd, "jarmods");
-                    String[] mods = jarOrder.split(",");
-                    for (String mod : mods) {
-                        File f = new File(jarModsDir, mod);
-                        urls[0] = f.toURI().toURL();
-                        System.out.println("Loading URL: " + urls[0].toString());
-                    }
-                }
 
+            try {
                 File f = new File(binDir, "minecraft.jar");
                 urls[0] = f.toURI().toURL();
                 System.out.println("Loading URL: " + urls[0].toString());
 
-                for (int i = 1; i < urls.length; i++) {
+                for (int i = 1; i <= lwjglJars.length; i++) {
                     File jar = new File(lwjglDir, lwjglJars[i - 1]);
                     urls[i] = jar.toURI().toURL();
                     System.out.println("Loading URL: " + urls[i].toString());

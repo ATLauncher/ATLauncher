@@ -117,13 +117,13 @@ public class Settings {
     private String version = "%VERSION%"; // Version of the Launcher
 
     public Settings() {
+        setupServers(); // Setup the servers available to use in the Launcher
+        testServers(); // Test servers for best connected one
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
     }
 
     public void loadEverything() {
-        setupServers(); // Setup the servers available to use in the Launcher
-        testServers(); // Test servers for best connected one
         loadServerProperty(); // Get users Server preference
         if (!isInOfflineMode()) {
             checkForUpdatedFiles(); // Checks for updated files on the server
@@ -222,8 +222,6 @@ public class Settings {
                         if (!getVersion().equalsIgnoreCase(version)) {
                             if (getVersion().equalsIgnoreCase("%VERSION%")) {
                                 continue; // Don't even think about updating my unbuilt copy
-                            } else if (!version.contains("a")) {
-                                continue; // Don't update past alpha
                             } else {
                                 downloadUpdate();
                             }
@@ -583,9 +581,9 @@ public class Settings {
      */
     private void setupServers() {
         servers.add(new Server("Auto", ""));
-        servers.add(new Server("Europe", "eu.atlcdn.net"));
-        servers.add(new Server("US East", "useast.atlcdn.net"));
         servers.add(new Server("US West", "uswest.atlcdn.net"));
+        servers.add(new Server("US East", "useast.atlcdn.net"));
+        servers.add(new Server("Europe", "eu.atlcdn.net"));
     }
 
     /**
@@ -1418,7 +1416,7 @@ public class Settings {
      */
     public String getFileURL(String filename) {
         if (bestConnectedServer == null && this.server.isAuto()) {
-            return servers.get(3).getFileURL(filename, null);
+            return servers.get(1).getFileURL(filename, servers.get(2));
         } else {
             return this.server.getFileURL(filename, bestConnectedServer);
         }
