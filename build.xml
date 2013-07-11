@@ -10,6 +10,7 @@ REMEMBER - Change the atlauncher.version property below
 - Disabled installing packs in offline mode
 - Added in Backup functionality
 - Removed Restore functionality
+- Changed API calls to secure url
 
 -->
 

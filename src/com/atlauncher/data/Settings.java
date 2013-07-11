@@ -1031,7 +1031,7 @@ public class Settings {
                 data += "&" + URLEncoder.encode("extra2", "UTF-8") + "="
                         + URLEncoder.encode(extra2, "UTF-8");
 
-                URL url = new URL("http://api.atlauncher.com/log.php");
+                URL url = new URL("https://api.atlauncher.com/log.php");
                 URLConnection conn = url.openConnection();
                 conn.setDoOutput(true);
                 OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
