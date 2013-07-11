@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -423,7 +424,15 @@ public class Settings {
                 propertiesFile.createNewFile();
             }
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            String[] options = { "OK" };
+            JOptionPane.showOptionDialog(null,
+                    "<html><center>Cannot create the config file.<br/><br/>Make sure"
+                            + " you are running the Launcher from somewhere with<br/>write"
+                            + " permissions for your user account such as your Home/Users folder"
+                            + " or desktop.</center></html>", "Warning",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                    options[0]);
+            System.exit(0);
         }
         try {
             this.properties.load(new FileInputStream(propertiesFile));
@@ -462,7 +471,7 @@ public class Settings {
                 this.ram = 512; // User tried to allocate too much ram, set it back to 0.5GB
             }
 
-            this.permGen = Integer.parseInt(properties.getProperty("permGen", "64"));
+            this.permGen = Integer.parseInt(properties.getProperty("permGen", "128"));
 
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             if (this.windowWidth > Utils.getMaximumWindowWidth()) {
