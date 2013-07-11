@@ -623,10 +623,14 @@ public class Utils {
     }
 
     public static String urlToString(String url) {
+        if (App.settings.isInOfflineMode()) {
+            return null;
+        }
         StringBuilder response = null;
         try {
             URL urll = new URL(url);
             URLConnection connection = urll.openConnection();
+            connection.setConnectTimeout(3000);
             BufferedReader in;
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             response = new StringBuilder();
@@ -637,6 +641,7 @@ public class Utils {
             in.close();
         } catch (IOException e) {
             App.settings.getConsole().logStackTrace(e);
+            return null;
         }
         return response.toString();
     }

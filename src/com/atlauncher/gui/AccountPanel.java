@@ -158,85 +158,94 @@ public class AccountPanel extends JPanel {
         leftButton = new JButton(App.settings.getLocalizedString("common.add"));
         leftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Account account;
-                boolean loggedIn = false;
-                String url = null;
-                String username = usernameField.getText();
-                String minecraftUsername = null;
-                String password = new String(passwordField.getPassword());
-                boolean remember = rememberField.isSelected();
-                if (App.settings.isAccountByName(username)
-                        && accountsComboBox.getSelectedIndex() == 0) {
+                if (App.settings.isInOfflineMode()) {
                     String[] options = { App.settings.getLocalizedString("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("account.exists"),
-                            App.settings.getLocalizedString("account.notadded"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                    return;
-                }
-                try {
-                    url = "https://login.minecraft.net/?user="
-                            + URLEncoder.encode(username, "UTF-8") + "&password="
-                            + URLEncoder.encode(password, "UTF-8") + "&version=999";
-                } catch (UnsupportedEncodingException e1) {
-                    App.settings.getConsole().logStackTrace(e1);
-                }
-                String auth = Utils.urlToString(url);
-                if (auth.contains(":")) {
-                    String[] parts = auth.split(":");
-                    if (parts.length == 5) {
-                        loggedIn = true;
-                        minecraftUsername = parts[2];
-                    }
-                }
-                if (!loggedIn) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
-                            + App.settings.getLocalizedString("account.incorrect") + "<br/><br/>"
-                            + auth + "</center></html>",
-                            App.settings.getLocalizedString("account.notadded"),
+                            App.settings.getLocalizedString("account.offlinemode"),
+                            App.settings.getLocalizedString("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 } else {
-                    if (accountsComboBox.getSelectedIndex() == 0) {
-                        account = new Account(username, password, minecraftUsername, remember);
-                        App.settings.getAccounts().add(account);
-                        App.settings.getConsole().log("Added Account " + account);
-                        String[] options = { App.settings.getLocalizedString("common.yes"),
-                                App.settings.getLocalizedString("common.no") };
-                        int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("account.addedswitch"),
-                                App.settings.getLocalizedString("account.added"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
-                                options, options[0]);
-                        if (ret == 0) {
-                            App.settings.switchAccount(account);
-                        }
-                    } else {
-                        account = (Account) accountsComboBox.getSelectedItem();
-                        account.setUsername(username);
-                        account.setMinecraftUsername(minecraftUsername);
-                        if (remember) {
-                            account.setPassword(password);
-                        }
-                        account.setRemember(remember);
-                        App.settings.getConsole().log("Edited Account " + account);
+                    Account account;
+                    boolean loggedIn = false;
+                    String url = null;
+                    String username = usernameField.getText();
+                    String minecraftUsername = null;
+                    String password = new String(passwordField.getPassword());
+                    boolean remember = rememberField.isSelected();
+                    if (App.settings.isAccountByName(username)
+                            && accountsComboBox.getSelectedIndex() == 0) {
                         String[] options = { App.settings.getLocalizedString("common.ok") };
                         JOptionPane.showOptionDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("account.editeddone"),
-                                App.settings.getLocalizedString("account.edited"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                                App.settings.getLocalizedString("account.exists"),
+                                App.settings.getLocalizedString("account.notadded"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
+                        return;
                     }
-                    App.settings.saveAccounts();
-                    App.settings.reloadAccounts();
-                    accountsComboBox.removeAllItems();
-                    accountsComboBox.addItem(fillerAccount);
-                    for (Account accountt : App.settings.getAccounts()) {
-                        accountsComboBox.addItem(accountt);
+                    try {
+                        url = "https://login.minecraft.net/?user="
+                                + URLEncoder.encode(username, "UTF-8") + "&password="
+                                + URLEncoder.encode(password, "UTF-8") + "&version=999";
+                    } catch (UnsupportedEncodingException e1) {
+                        App.settings.getConsole().logStackTrace(e1);
                     }
-                    accountsComboBox.setSelectedItem(account);
+                    String auth = Utils.urlToString(url);
+                    if (auth.contains(":")) {
+                        String[] parts = auth.split(":");
+                        if (parts.length == 5) {
+                            loggedIn = true;
+                            minecraftUsername = parts[2];
+                        }
+                    }
+                    if (!loggedIn) {
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
+                        JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
+                                + App.settings.getLocalizedString("account.incorrect")
+                                + "<br/><br/>" + auth + "</center></html>",
+                                App.settings.getLocalizedString("account.notadded"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
+                    } else {
+                        if (accountsComboBox.getSelectedIndex() == 0) {
+                            account = new Account(username, password, minecraftUsername, remember);
+                            App.settings.getAccounts().add(account);
+                            App.settings.getConsole().log("Added Account " + account);
+                            String[] options = { App.settings.getLocalizedString("common.yes"),
+                                    App.settings.getLocalizedString("common.no") };
+                            int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                                    App.settings.getLocalizedString("account.addedswitch"),
+                                    App.settings.getLocalizedString("account.added"),
+                                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                                    null, options, options[0]);
+                            if (ret == 0) {
+                                App.settings.switchAccount(account);
+                            }
+                        } else {
+                            account = (Account) accountsComboBox.getSelectedItem();
+                            account.setUsername(username);
+                            account.setMinecraftUsername(minecraftUsername);
+                            if (remember) {
+                                account.setPassword(password);
+                            }
+                            account.setRemember(remember);
+                            App.settings.getConsole().log("Edited Account " + account);
+                            String[] options = { App.settings.getLocalizedString("common.ok") };
+                            JOptionPane.showOptionDialog(App.settings.getParent(),
+                                    App.settings.getLocalizedString("account.editeddone"),
+                                    App.settings.getLocalizedString("account.edited"),
+                                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                                    null, options, options[0]);
+                        }
+                        App.settings.saveAccounts();
+                        App.settings.reloadAccounts();
+                        accountsComboBox.removeAllItems();
+                        accountsComboBox.addItem(fillerAccount);
+                        for (Account accountt : App.settings.getAccounts()) {
+                            accountsComboBox.addItem(accountt);
+                        }
+                        accountsComboBox.setSelectedItem(account);
+                    }
                 }
             }
         });

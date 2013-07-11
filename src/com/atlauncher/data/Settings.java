@@ -23,8 +23,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -36,7 +34,6 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -111,23 +108,19 @@ public class Settings {
     private PacksPanel packsPanel; // The packs panel
     private BottomBar bottomBar; // The bottom bar
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
-    private Server bestConnectedServer; // The best connected server for Auto selection
     private boolean offlineMode = false; // If offline mode is enabled
     private Process minecraftProcess = null; // The process minecraft is running on
     private String version = "%VERSION%"; // Version of the Launcher
 
     public Settings() {
-        setupServers(); // Setup the servers available to use in the Launcher
-        testServers(); // Test servers for best connected one
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
     }
 
     public void loadEverything() {
+        setupServers(); // Setup the servers available to use in the Launcher
         loadServerProperty(); // Get users Server preference
-        if (!isInOfflineMode()) {
-            checkForUpdatedFiles(); // Checks for updated files on the server
-        }
+        checkForUpdatedFiles(); // Checks for updated files on the server
         loadLanguages(); // Load the Languages available in the Launcher
         loadPacks(); // Load the Packs available in the Launcher
         loadAddons(); // Load the Addons available in the Launcher
@@ -191,7 +184,17 @@ public class Settings {
      * what the user has
      */
     private void checkForUpdatedFiles() {
-        String hashes = Utils.urlToString(getFileURL("launcher/hashes.xml"));
+        String hashes = null;
+        while (hashes == null) {
+            hashes = Utils.urlToString(getFileURL("launcher/hashes.xml"));
+            if (hashes == null) {
+                boolean changed = disableServerGetNext(); // Disable the server and get the next one
+                if (!changed) {
+                    this.offlineMode = true;
+                    return;
+                }
+            }
+        }
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -580,71 +583,21 @@ public class Settings {
      * files
      */
     private void setupServers() {
-        servers.add(new Server("Auto", ""));
+        servers.add(new Server("Auto", "files.atlcdn.net"));
         servers.add(new Server("US West", "uswest.atlcdn.net"));
         servers.add(new Server("US East", "useast.atlcdn.net"));
         servers.add(new Server("Europe", "eu.atlcdn.net"));
     }
 
-    /**
-     * Tests the servers for availability and best connection
-     */
-    private void testServers() {
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                double[] responseTimes = new double[servers.size()];
-                int count = 0;
-                int up = 0;
-                for (Server server : servers) {
-                    if (server.isAuto())
-                        continue; // Don't scan the Auto server
-                    double startTime = System.currentTimeMillis();
-                    try {
-                        HttpURLConnection connection = (HttpURLConnection) new URL(
-                                server.getTestURL()).openConnection();
-                        connection.setRequestMethod("HEAD");
-                        connection.setConnectTimeout(3000);
-                        int responseCode = connection.getResponseCode();
-                        if (responseCode != 200) {
-                            responseTimes[count] = 1000000.0;
-                            server.disableServer();
-                        } else {
-                            double endTime = System.currentTimeMillis();
-                            responseTimes[count] = endTime - startTime;
-                            up++;
-                        }
-                    } catch (SocketTimeoutException e) {
-                        responseTimes[count] = 1000000.0;
-                        server.disableServer();
-                    } catch (IOException e) {
-                        App.settings.getConsole().logStackTrace(e);
-                    }
-                    count++;
-                }
-                int best = 0;
-                double bestTime = 10000000.0;
-                for (int i = 0; i < responseTimes.length; i++) {
-                    if (responseTimes[i] < bestTime) {
-                        best = i;
-                        bestTime = responseTimes[i];
-                    }
-                }
-                if (up != 0) {
-                    bestConnectedServer = servers.get(best);
-                } else {
-                    JOptionPane.showMessageDialog(null,
-                            "<html><center>There was an issue connecting to ATLauncher "
-                                    + "Servers<br/><br/>Offline mode is now enabled.<br/><br/>"
-                                    + "To install packs again, please try connecting later"
-                                    + "</center></html>", "Error Connecting To ATLauncher Servers",
-                            JOptionPane.ERROR_MESSAGE);
-                    offlineMode = true; // Set offline mode to be true
-                }
+    public boolean disableServerGetNext() {
+        this.server.disableServer(); // Disable the server
+        for (Server server : this.servers) {
+            if (!server.isDisabled()) {
+                this.server = server; // Setup next available server
+                return true;
             }
-
-        };
-        thread.start();
+        }
+        return false;
     }
 
     /**
@@ -1415,11 +1368,7 @@ public class Settings {
      * @return URL of the file
      */
     public String getFileURL(String filename) {
-        if (bestConnectedServer == null && this.server.isAuto()) {
-            return servers.get(1).getFileURL(filename, servers.get(2));
-        } else {
-            return this.server.getFileURL(filename, bestConnectedServer);
-        }
+        return this.server.getFileURL(filename);
     }
 
     /**
@@ -1446,15 +1395,6 @@ public class Settings {
             this.minecraftProcess.destroy();
             this.minecraftProcess = null;
         }
-    }
-
-    /**
-     * Returns the best connected server
-     * 
-     * @return The server that the user was best connected to
-     */
-    public Server getBestConnectedServer() {
-        return this.bestConnectedServer;
     }
 
     /**

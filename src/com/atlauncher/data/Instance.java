@@ -128,6 +128,10 @@ public class Instance implements Serializable {
         return new File(getRootDirectory(), ".minecraft");
     }
 
+    public File getSavesDirectory() {
+        return new File(getMinecraftDirectory(), "saves");
+    }
+
     public File getModsDirectory() {
         return new File(getMinecraftDirectory(), "mods");
     }

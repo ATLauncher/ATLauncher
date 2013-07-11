@@ -11,11 +11,15 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,14 +27,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JProgressBar;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
@@ -65,7 +73,6 @@ public class InstanceDisplay extends CollapsiblePanel {
     private JButton update; // Update button
     private JButton backup; // Backup button
     private JButton delete; // Delete button
-    private JButton restore; // Restore button
 
     public InstanceDisplay(final Instance instance) {
         super(instance);
@@ -141,40 +148,46 @@ public class InstanceDisplay extends CollapsiblePanel {
                     String url = null;
                     String sess = null;
                     String auth = null;
-                    if (instance.isNewLaunchMethod()) {
-                        String result = newLogin(username, password);
-                        JSONParser parser = new JSONParser();
-                        try {
-                            Object obj = parser.parse(result);
-                            JSONObject jsonObject = (JSONObject) obj;
-                            if (jsonObject.containsKey("accessToken")) {
-                                String accessToken = (String) jsonObject.get("accessToken");
-                                JSONObject profile = (JSONObject) jsonObject.get("selectedProfile");
-                                String profileID = (String) profile.get("id");
-                                sess = "token:" + accessToken + ":" + profileID;
-                                loggedIn = true;
-                            } else {
-                                auth = (String) jsonObject.get("errorMessage");
+                    if (!App.settings.isInOfflineMode()) {
+                        if (instance.isNewLaunchMethod()) {
+                            String result = newLogin(username, password);
+                            JSONParser parser = new JSONParser();
+                            try {
+                                Object obj = parser.parse(result);
+                                JSONObject jsonObject = (JSONObject) obj;
+                                if (jsonObject.containsKey("accessToken")) {
+                                    String accessToken = (String) jsonObject.get("accessToken");
+                                    JSONObject profile = (JSONObject) jsonObject
+                                            .get("selectedProfile");
+                                    String profileID = (String) profile.get("id");
+                                    sess = "token:" + accessToken + ":" + profileID;
+                                    loggedIn = true;
+                                } else {
+                                    auth = (String) jsonObject.get("errorMessage");
+                                }
+                            } catch (ParseException e1) {
+                                App.settings.getConsole().logStackTrace(e1);
                             }
-                        } catch (ParseException e1) {
-                            App.settings.getConsole().logStackTrace(e1);
+                        } else {
+                            try {
+                                url = "https://login.minecraft.net/?user="
+                                        + URLEncoder.encode(username, "UTF-8") + "&password="
+                                        + URLEncoder.encode(password, "UTF-8") + "&version=999";
+                            } catch (UnsupportedEncodingException e1) {
+                                App.settings.getConsole().logStackTrace(e1);
+                            }
+                            auth = Utils.urlToString(url);
+                            if (auth.contains(":")) {
+                                String[] parts = auth.split(":");
+                                if (parts.length == 5) {
+                                    loggedIn = true;
+                                    sess = parts[3];
+                                }
+                            }
                         }
                     } else {
-                        try {
-                            url = "https://login.minecraft.net/?user="
-                                    + URLEncoder.encode(username, "UTF-8") + "&password="
-                                    + URLEncoder.encode(password, "UTF-8") + "&version=999";
-                        } catch (UnsupportedEncodingException e1) {
-                            App.settings.getConsole().logStackTrace(e1);
-                        }
-                        auth = Utils.urlToString(url);
-                        if (auth.contains(":")) {
-                            String[] parts = auth.split(":");
-                            if (parts.length == 5) {
-                                loggedIn = true;
-                                sess = parts[3];
-                            }
-                        }
+                        loggedIn = true;
+                        sess = "0";
                     }
                     if (!loggedIn) {
                         String[] options = { App.settings.getLocalizedString("common.ok") };
@@ -211,17 +224,19 @@ public class InstanceDisplay extends CollapsiblePanel {
                                     App.settings.hideKillMinecraft();
                                     App.settings.getParent().setVisible(true);
                                     long end = System.currentTimeMillis();
-                                    if (App.settings.enableLeaderboards()) {
-                                        App.settings.apiCall(account.getMinecraftUsername(),
-                                                "addleaderboardtime",
-                                                (instance.getRealPack() == null ? "0" : instance
-                                                        .getRealPack().getID() + ""),
-                                                ((end - start) / 1000) + "");
-                                    } else {
-                                        App.settings.apiCall("NULL", "addleaderboardtime",
-                                                (instance.getRealPack() == null ? "0" : instance
-                                                        .getRealPack().getID() + ""),
-                                                ((end - start) / 1000) + "");
+                                    if (!App.settings.isInOfflineMode()) {
+                                        if (App.settings.enableLeaderboards()) {
+                                            App.settings.apiCall(account.getMinecraftUsername(),
+                                                    "addleaderboardtime",
+                                                    (instance.getRealPack() == null ? "0"
+                                                            : instance.getRealPack().getID() + ""),
+                                                    ((end - start) / 1000) + "");
+                                        } else {
+                                            App.settings.apiCall("NULL", "addleaderboardtime",
+                                                    (instance.getRealPack() == null ? "0"
+                                                            : instance.getRealPack().getID() + ""),
+                                                    ((end - start) / 1000) + "");
+                                        }
                                     }
                                 } catch (IOException e1) {
                                     App.settings.getConsole().logStackTrace(e1);
@@ -276,6 +291,70 @@ public class InstanceDisplay extends CollapsiblePanel {
         // Backup Button
 
         backup = new JButton(App.settings.getLocalizedString("common.backup"));
+        backup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><center>"
+                        + App.settings.getLocalizedString("backup.sure", "<br/><br/>")
+                        + "</center></html>",
+                        App.settings.getLocalizedString("backup.backingup", instance.getName()),
+                        JOptionPane.YES_NO_OPTION);
+                if (ret == JOptionPane.YES_OPTION) {
+                    final JDialog dialog = new JDialog(App.settings.getParent(), App.settings
+                            .getLocalizedString("backup.backingup", instance.getName()),
+                            ModalityType.APPLICATION_MODAL);
+                    dialog.setSize(300, 100);
+                    dialog.setLocationRelativeTo(App.settings.getParent());
+                    dialog.setResizable(false);
+
+                    JPanel topPanel = new JPanel();
+                    topPanel.setLayout(new BorderLayout());
+                    JLabel doing = new JLabel(App.settings.getLocalizedString("backup.backingup",
+                            instance.getName()));
+                    doing.setHorizontalAlignment(JLabel.CENTER);
+                    doing.setVerticalAlignment(JLabel.TOP);
+                    topPanel.add(doing);
+
+                    JPanel bottomPanel = new JPanel();
+                    bottomPanel.setLayout(new BorderLayout());
+                    JProgressBar progressBar = new JProgressBar();
+                    bottomPanel.add(progressBar, BorderLayout.NORTH);
+                    progressBar.setIndeterminate(true);
+
+                    dialog.add(topPanel, BorderLayout.CENTER);
+                    dialog.add(bottomPanel, BorderLayout.SOUTH);
+
+                    final Thread backupThread = new Thread() {
+                        public void run() {
+                            Timestamp timestamp = new Timestamp(new Date().getTime());
+                            String time = timestamp.toString().replaceAll("[^0-9]", "_");
+                            String filename = instance.getSafeName() + "-"
+                                    + time.substring(0, time.lastIndexOf("_")) + ".zip";
+                            Utils.zip(instance.getSavesDirectory(),
+                                    new File(App.settings.getBackupsDir(), filename));
+                            dialog.dispose();
+                            String[] options = { App.settings.getLocalizedString("common.ok") };
+                            JOptionPane.showOptionDialog(
+                                    App.settings.getParent(),
+                                    "<html><center>"
+                                            + App.settings.getLocalizedString(
+                                                    "backup.backupcomplete", "<br/><br/>"
+                                                            + filename) + "</center></html>",
+                                    App.settings.getLocalizedString("backup.complete"),
+                                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                                    null, options, options[0]);
+                        }
+                    };
+                    backupThread.start();
+                    dialog.addWindowListener(new WindowAdapter() {
+                        public void windowClosing(WindowEvent e) {
+                            backupThread.interrupt();
+                            dialog.dispose();
+                        }
+                    });
+                    dialog.setVisible(true);
+                }
+            }
+        });
 
         // Delete Button
 
@@ -291,10 +370,6 @@ public class InstanceDisplay extends CollapsiblePanel {
                 }
             }
         });
-
-        // Restore Button
-
-        restore = new JButton(App.settings.getLocalizedString("common.restore"));
 
         // Check if pack can be installed and remove buttons if not
 
@@ -331,15 +406,31 @@ public class InstanceDisplay extends CollapsiblePanel {
                             options[0]);
                 }
             });
-            for (ActionListener al : restore.getActionListeners()) {
-                restore.removeActionListener(al);
+        }
+
+        if (App.settings.isInOfflineMode()) {
+            for (ActionListener al : reinstall.getActionListeners()) {
+                reinstall.removeActionListener(al);
             }
-            restore.addActionListener(new ActionListener() {
+            reinstall.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     String[] options = { App.settings.getLocalizedString("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.corruptrestore"),
-                            App.settings.getLocalizedString("instance.corrupt"),
+                            App.settings.getLocalizedString("instance.offlinereinstall"),
+                            App.settings.getLocalizedString("common.offline"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
+                }
+            });
+            for (ActionListener al : update.getActionListeners()) {
+                update.removeActionListener(al);
+            }
+            update.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.offlineupdate"),
+                            App.settings.getLocalizedString("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 }
@@ -354,7 +445,6 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         instanceActionsBottom.add(backup);
         instanceActionsBottom.add(delete);
-        instanceActionsBottom.add(restore);
 
         // Add panels to other panels
 

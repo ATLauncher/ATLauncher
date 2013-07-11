@@ -87,15 +87,24 @@ public class PackDisplay extends CollapsiblePanel {
         newInstance = new JButton(App.settings.getLocalizedString("common.newinstance"));
         newInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.getAccount() == null) {
+                if (App.settings.isInOfflineMode()) {
                     String[] options = { App.settings.getLocalizedString("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.cannotcreate"),
-                            App.settings.getLocalizedString("instance.noaccountselected"),
+                            App.settings.getLocalizedString("pack.offlinenewinstance"),
+                            App.settings.getLocalizedString("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 } else {
-                    new InstanceInstallerDialog(pack);
+                    if (App.settings.getAccount() == null) {
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
+                        JOptionPane.showOptionDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("instance.cannotcreate"),
+                                App.settings.getLocalizedString("instance.noaccountselected"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
+                    } else {
+                        new InstanceInstallerDialog(pack);
+                    }
                 }
             }
         });
@@ -103,15 +112,24 @@ public class PackDisplay extends CollapsiblePanel {
         createServer = new JButton(App.settings.getLocalizedString("common.createserver"));
         createServer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.getAccount() == null) {
+                if (App.settings.isInOfflineMode()) {
                     String[] options = { App.settings.getLocalizedString("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.cannotcreate"),
-                            App.settings.getLocalizedString("instance.noaccountselected"),
+                            App.settings.getLocalizedString("pack.offlinecreateserver"),
+                            App.settings.getLocalizedString("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 } else {
-                    new InstanceInstallerDialog(pack, true);
+                    if (App.settings.getAccount() == null) {
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
+                        JOptionPane.showOptionDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("instance.cannotcreate"),
+                                App.settings.getLocalizedString("instance.noaccountselected"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
+                    } else {
+                        new InstanceInstallerDialog(pack, true);
+                    }
                 }
             }
         });

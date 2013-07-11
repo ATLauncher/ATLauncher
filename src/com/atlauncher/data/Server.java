@@ -10,23 +10,17 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
 
 public class Server {
 
     private String name;
     private String baseURL;
     private boolean disabled;
-    private boolean isAuto;
 
     public Server(String name, String baseURL) {
         this.name = name;
         this.baseURL = baseURL;
         this.disabled = false;
-        this.isAuto = false;
-        if (name.equalsIgnoreCase("Auto")) {
-            this.isAuto = true;
-        }
     }
 
     public void disableServer() {
@@ -37,28 +31,11 @@ public class Server {
         return this.disabled;
     }
 
-    public boolean isAuto() {
-        return this.isAuto;
-    }
-
     public String getName() {
         return this.name;
     }
 
-    private String getFileURL(String file) {
-        if (this.isAuto) {
-            return App.settings.getBestConnectedServer().getFileURL(file);
-        }
-        return "http://" + this.baseURL + "/" + file;
-    }
-
-    public String getFileURL(String file, Server bestConnectedServer) {
-        if (this.isAuto) {
-            return bestConnectedServer.getFileURL(file);
-        }
-        if(this.isDisabled()){
-            return bestConnectedServer.getFileURL(file);
-        }
+    public String getFileURL(String file) {
         return "http://" + this.baseURL + "/" + file;
     }
 
