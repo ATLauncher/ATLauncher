@@ -153,10 +153,11 @@ public class LauncherConsole extends JFrame {
      */
     public void log(String text) {
         Timestamp timestamp = new Timestamp(new Date().getTime());
+        String time = timestamp.toString().substring(0, timestamp.toString().lastIndexOf("."));
         if (console.getText().isEmpty()) {
-            console.setText("[" + timestamp + "] " + text);
+            console.setText("[" + time + "] " + text);
         } else {
-            console.setText(console.getText() + "\n[" + timestamp + "] " + text);
+            console.setText(console.getText() + "\n[" + time + "] " + text);
         }
         console.setCaretPosition(console.getDocument().getLength());
     }

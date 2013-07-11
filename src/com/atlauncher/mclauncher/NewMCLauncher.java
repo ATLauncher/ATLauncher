@@ -73,6 +73,10 @@ public class NewMCLauncher {
                 arguments.add(arg);
             }
         }
+        
+        if(instance.isNewLaunchMethod()){
+            arguments.add("-Dfml.ignorePatchDiscrepancies=true");
+        }
 
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());
         arguments.add("-cp");

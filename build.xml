@@ -2,15 +2,10 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0b2
-- Changed the way servers are detected as offline. Should work better now
-- Fixed minecraft not launching in offline mode
-- Disabled updating and reinstalling insances in offline mode
-- Disabled adding and editing accounts in offline mode
-- Disabled installing packs in offline mode
-- Added in Backup functionality
-- Removed Restore functionality
-- Changed API calls to secure url
+3.0.0b3
+- Changed console time logs to remove milliseconds
+- Fixed deleting meta-inf for Minecraft >1.6
+- Fixed OptiFine not working with Minecraft >1.6
 
 -->
 
@@ -22,7 +17,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0b2" />
+	<property name="atlauncher.version" value="3.0.0b3" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

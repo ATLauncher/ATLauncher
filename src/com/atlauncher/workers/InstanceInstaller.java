@@ -700,7 +700,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             firePropertyChange("subprogressint", null, 0);
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         } else {
-            deleteMetaInf();
+            if(!isNewLaunchMethod()){
+                deleteMetaInf();
+            }
         }
         if (mods.size() != 0) {
             int amountPer = 40 / mods.size();
