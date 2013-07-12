@@ -105,6 +105,8 @@ public class App {
         // }
         // }
         settings.getConsole().log("Launcher opening");
+        settings.getConsole().log("Made By Bob*");
+        settings.getConsole().log("*(Not Actually)");
         new LauncherFrame(); // Open the Launcher
     }
 
