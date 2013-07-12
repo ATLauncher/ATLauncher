@@ -177,7 +177,7 @@ public class ModsChooser extends JDialog {
             }
             ModsJCheckBox checkBox = null;
             ModDescriptionJLabel label = null;
-            int nameSize = getFontMetrics(getFont()).stringWidth(mod.getName());
+            int nameSize = getFontMetrics(Utils.getFont()).stringWidth(mod.getName());
             if (mod.isOptional()) {
                 checkBox = new ModsJCheckBox(mod);
                 checkBox.setEnabled(true);

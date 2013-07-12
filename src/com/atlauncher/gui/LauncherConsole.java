@@ -13,6 +13,7 @@ package com.atlauncher.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -36,6 +37,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -50,6 +52,7 @@ public class LauncherConsole extends JFrame {
     private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
     private final Color BASE_COLOR = new Color(40, 45, 50);
 
+    private JScrollPane scrollPane;
     private JEditorPane console;
     private ConsoleBottomBar bottomBar;
     private JPopupMenu contextMenu; // Right click menu
@@ -78,8 +81,9 @@ public class LauncherConsole extends JFrame {
 
         bottomBar = new ConsoleBottomBar();
 
-        add(new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+        scrollPane = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
 
         // Make sure the size doesn't go below the minimum size
@@ -171,7 +175,15 @@ public class LauncherConsole extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        console.setCaretPosition(console.getDocument().getLength());
+        scrollPaneToBottom();
+    }
+
+    private void scrollPaneToBottom() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                console.scrollRectToVisible(new Rectangle(0, console.getHeight() - 2, 1, 1));
+            }
+        });
     }
 
     /**
@@ -203,7 +215,7 @@ public class LauncherConsole extends JFrame {
         } else {
             console.setText(console.getText() + "\n" + text);
         }
-        console.setCaretPosition(console.getDocument().getLength());
+        scrollPaneToBottom();
     }
 
     /**

@@ -10,8 +10,15 @@
  */
 package com.atlauncher.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JWindow;
 
 public class SplashScreen extends JWindow {
@@ -20,7 +27,7 @@ public class SplashScreen extends JWindow {
 
     public SplashScreen() {
         setLayout(null);
-        JButton background = new JButton(icon);
+        final JButton background = new JButton(icon);
         background.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
         background.setFocusable(false);
         background.setContentAreaFilled(false);
@@ -30,6 +37,24 @@ public class SplashScreen extends JWindow {
         setSize(icon.getIconWidth(), icon.getIconHeight());
         setVisible(true);
         setLocationRelativeTo(null);
+
+        final JPopupMenu contextMenu = new JPopupMenu();
+
+        JMenuItem forceQuit = new JMenuItem("Force Quit");
+        forceQuit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        contextMenu.add(forceQuit);
+
+        background.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    contextMenu.show(background, e.getX(), e.getY());
+                }
+            }
+        });
     }
 
     /**

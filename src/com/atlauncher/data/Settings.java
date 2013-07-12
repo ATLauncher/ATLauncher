@@ -118,6 +118,7 @@ public class Settings {
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
         rotateLogFiles(); // Rotates the log files
+        loadConsoleProperty(); // Get users Server preference
     }
 
     public void loadEverything() {
@@ -450,6 +451,28 @@ public class Settings {
      */
     public void loadServerProperty() {
         try {
+            this.properties.load(new FileInputStream(propertiesFile));
+            String serv = properties.getProperty("server", "Auto");
+            if (isServerByName(serv)) {
+                this.server = getServerByName(serv);
+                this.originalServer = this.server;
+            } else {
+                console.log("Server " + serv + " is invalid");
+                this.server = getServerByName("Auto"); // Server not found, use default of Auto
+                this.originalServer = this.server;
+            }
+        } catch (FileNotFoundException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
+    }
+
+    /**
+     * Load the users Console preference from file
+     */
+    public void loadConsoleProperty() {
+        try {
             if (!propertiesFile.exists()) {
                 propertiesFile.createNewFile();
             }
@@ -466,15 +489,8 @@ public class Settings {
         }
         try {
             this.properties.load(new FileInputStream(propertiesFile));
-            String serv = properties.getProperty("server", "Auto");
-            if (isServerByName(serv)) {
-                this.server = getServerByName(serv);
-                this.originalServer = this.server;
-            } else {
-                console.log("Server " + serv + " is invalid");
-                this.server = getServerByName("Auto"); // Server not found, use default of Auto
-                this.originalServer = this.server;
-            }
+            this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
+                    "true"));
         } catch (FileNotFoundException e) {
             App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {

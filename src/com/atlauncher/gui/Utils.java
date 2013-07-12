@@ -83,6 +83,14 @@ public class Utils {
         return icon;
     }
 
+    public static Font getFont() {
+        if (isMac()) {
+            return new Font("SansSerif", Font.PLAIN, 11);
+        } else {
+            return new Font("SansSerif", Font.PLAIN, 12);
+        }
+    }
+
     public static ImageIcon getMinecraftHead(String user) {
         File file = new File(App.settings.getSkinsDir(), user + ".png");
         if (!file.exists()) {
@@ -119,6 +127,16 @@ public class Utils {
         ImageIcon icon = new ImageIcon(url);
 
         return icon.getImage();
+    }
+
+    public static void openExplorer(File file) {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().open(file);
+            } catch (Exception e) {
+                App.settings.getConsole().logStackTrace(e);
+            }
+        }
     }
 
     public static void openBrowser(String URL) {

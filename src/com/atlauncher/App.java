@@ -10,14 +10,19 @@
  */
 package com.atlauncher;
 
+import java.awt.Image;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import javax.swing.JOptionPane;
 
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SetupDialog;
 import com.atlauncher.gui.SplashScreen;
+import com.atlauncher.gui.Utils;
 
 public class App {
 
@@ -54,6 +59,32 @@ public class App {
 
         settings = new Settings(); // Setup the Settings and wait for it to finish
 
+        if (Utils.isMac()) {
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "ATLauncher "
+                    + settings.getVersion());
+            try {
+                Class util = Class.forName("com.apple.eawt.Application");
+                Method getApplication = util.getMethod("getApplication", new Class[0]);
+                Object application = getApplication.invoke(util);
+                Class params[] = new Class[1];
+                params[0] = Image.class;
+                Method setDockIconImage = util.getMethod("setDockIconImage", params);
+                setDockIconImage.invoke(application, Utils.getImage("/resources/Icon.png"));
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (App.settings.enableConsole()) {
+            App.settings.getConsole().setVisible(true);
+        }
+        
         settings.getConsole().log("Showing splash screen and loading everything");
         SplashScreen ss = new SplashScreen(); // Show Splash Screen
         settings.loadEverything(); // Loads everything that needs to be loaded
@@ -65,11 +96,13 @@ public class App {
             new SetupDialog(settings);
         }
 
-        // if (autoLaunch != null) {
-        // if (settings.isInstanceByName(autoLaunch)) {
-        // Instance instance = settings.getInstanceByName(autoLaunch);
-        // }
-        // }
+//        if (autoLaunch != null) {
+//            if (settings.isInstanceByName(autoLaunch)) {
+//                Instance instance = settings.getInstanceByName(autoLaunch);
+//                instance.launch();
+//                System.exit();
+//            }
+//        }
         settings.getConsole().log("Launcher opening");
         new LauncherFrame(); // Open the Launcher
     }
