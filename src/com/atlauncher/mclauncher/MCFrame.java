@@ -27,7 +27,7 @@ public class MCFrame extends Frame implements WindowListener {
 
     public MCFrame(String title) {
         super(title);
-        setIconImage(Utils.getImage("/resources/Icon.png"));
+        setIconImage(Utils.getImage("/resources/OldMinecraftIcon.png"));
         this.addWindowListener(this);
     }
 

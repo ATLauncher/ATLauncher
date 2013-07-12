@@ -2,14 +2,10 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0b6
-- Added name and icon for Mac OSX
-- Console now shows earlier in the launching process
-- Added Force Quit button to right click menu of the Splash Screen
-- Fixed the help icons showing further away from the mod name in the mod selection screen on Mac
-- Fixed backups not working when there was no saves folder present
-- Added Open Folder button in the instances tab to open up the .minecraft folder
-- Kind of fixed the Launcher Console flickering issue, still happens but a bit less now ?
+3.0.0b7
+- Fixed Dock Name and Icon for Minecraft when launched in Mac OSX
+- Fixed issue with custom jar mods not loading if no jar mods were installed before hand
+- Added in Common configs. Any files located in the /Configs/Common folder will be copied over to all instances installed, updated or reinstalled
 
 -->
 
@@ -21,7 +17,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0b6" />
+	<property name="atlauncher.version" value="3.0.0b7" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

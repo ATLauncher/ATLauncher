@@ -41,22 +41,29 @@ public class MCLauncher {
                 "jinput.jar" };
         StringBuilder cpb = new StringBuilder("");
         File jarMods = instance.getJarModsDirectory();
-        if (jarMods.exists() && instance.hasJarMods()) {
-            ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance.getJarOrder()
-                    .split(",")));
-            for (String mod : jarmods) {
-                File thisFile = new File(jarMods, mod);
-                if (thisFile.exists()) {
+        if (jarMods.exists() && (instance.hasJarMods() || jarMods.listFiles().length != 0)) {
+            if (instance.hasJarMods()) {
+                ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance
+                        .getJarOrder().split(",")));
+                for (String mod : jarmods) {
+                    File thisFile = new File(jarMods, mod);
+                    if (thisFile.exists()) {
+                        cpb.append(File.pathSeparator);
+                        cpb.append(thisFile);
+                    }
+                }
+                for (File file : jarMods.listFiles()) {
+                    if (jarmods.contains(file.getName())) {
+                        continue;
+                    }
                     cpb.append(File.pathSeparator);
-                    cpb.append(thisFile);
+                    cpb.append(file);
                 }
-            }
-            for (File file : jarMods.listFiles()) {
-                if (jarmods.contains(file.getName())) {
-                    continue;
+            } else {
+                for (File file : jarMods.listFiles()) {
+                    cpb.append(File.pathSeparator);
+                    cpb.append(file);
                 }
-                cpb.append(File.pathSeparator);
-                cpb.append(file);
             }
         }
 
@@ -82,6 +89,14 @@ public class MCLauncher {
             for (String arg : App.settings.getJavaParameters().split(" ")) {
                 arguments.add(arg);
             }
+        }
+
+        if (Utils.isMac()) {
+            arguments.add("-Dapple.laf.useScreenMenuBar=true");
+            arguments.add("-Xdock:icon="
+                    + new File(App.settings.getImagesDir(), "OldMinecraftIcon.png")
+                            .getAbsolutePath());
+            arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
         arguments.add("-cp");

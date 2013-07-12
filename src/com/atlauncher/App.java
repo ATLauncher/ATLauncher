@@ -60,6 +60,7 @@ public class App {
         settings = new Settings(); // Setup the Settings and wait for it to finish
 
         if (Utils.isMac()) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "ATLauncher "
                     + settings.getVersion());
             try {
@@ -84,7 +85,7 @@ public class App {
         if (App.settings.enableConsole()) {
             App.settings.getConsole().setVisible(true);
         }
-        
+
         settings.getConsole().log("Showing splash screen and loading everything");
         SplashScreen ss = new SplashScreen(); // Show Splash Screen
         settings.loadEverything(); // Loads everything that needs to be loaded
@@ -96,13 +97,13 @@ public class App {
             new SetupDialog(settings);
         }
 
-//        if (autoLaunch != null) {
-//            if (settings.isInstanceByName(autoLaunch)) {
-//                Instance instance = settings.getInstanceByName(autoLaunch);
-//                instance.launch();
-//                System.exit();
-//            }
-//        }
+        // if (autoLaunch != null) {
+        // if (settings.isInstanceByName(autoLaunch)) {
+        // Instance instance = settings.getInstanceByName(autoLaunch);
+        // instance.launch();
+        // System.exit();
+        // }
+        // }
         settings.getConsole().log("Launcher opening");
         new LauncherFrame(); // Open the Launcher
     }

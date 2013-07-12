@@ -636,6 +636,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         new Downloader(configsURL, configs.getAbsolutePath(), this).run();
         Utils.unzip(configs, getMinecraftDirectory());
         configs.delete();
+        if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
+            Utils.copyDirectory(App.settings.getCommonConfigsDir(), getMinecraftDirectory());
+        }
     }
 
     public ArrayList<Mod> getMods() {
@@ -700,7 +703,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             firePropertyChange("subprogressint", null, 0);
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         } else {
-            if(!isNewLaunchMethod()){
+            if (!isNewLaunchMethod()) {
                 deleteMetaInf();
             }
         }

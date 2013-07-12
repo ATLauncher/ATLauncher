@@ -88,6 +88,7 @@ public class Settings {
     private File imagesDir = new File(configsDir, "Images");
     private File skinsDir = new File(imagesDir, "Skins");
     private File jarsDir = new File(configsDir, "Jars");
+    private File commonConfigsDir = new File(configsDir, "Common");
     private File resourcesDir = new File(configsDir, "Resources");
     private File librariesDir = new File(configsDir, "Libraries");
     private File languagesDir = new File(configsDir, "Languages");
@@ -266,7 +267,7 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, imagesDir, skinsDir, jarsDir, resourcesDir,
+        File[] files = { backupsDir, configsDir, commonConfigsDir, imagesDir, skinsDir, jarsDir, resourcesDir,
                 librariesDir, languagesDir, downloadsDir, instancesDir, serversDir, tempDir };
         for (File file : files) {
             if (!file.exists()) {
@@ -300,6 +301,15 @@ public class Settings {
      */
     public File getConfigsDir() {
         return this.configsDir;
+    }
+    
+    /**
+     * Returns the common configs directory
+     * 
+     * @return File object for the common configs directory
+     */
+    public File getCommonConfigsDir() {
+        return this.commonConfigsDir;
     }
 
     /**
