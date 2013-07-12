@@ -146,7 +146,7 @@ public class SettingsPanel extends JPanel {
         for (Server serverr : App.settings.getServers()) {
             server.addItem(serverr);
         }
-        server.setSelectedItem(App.settings.getServer());
+        server.setSelectedItem(App.settings.getOriginalServer());
         topPanel.add(server, gbc);
 
         // Memory Settings
@@ -414,6 +414,12 @@ public class SettingsPanel extends JPanel {
                 App.settings.setEnableLogs(enableLogs.isSelected());
                 App.settings.saveProperties();
                 App.settings.getConsole().log("Settings Saved!");
+                String[] options = { App.settings.getLocalizedString("common.ok") };
+                JOptionPane.showOptionDialog(App.settings.getParent(),
+                        App.settings.getLocalizedString("settings.saved"),
+                        App.settings.getLocalizedString("settings.saved"),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
+                        options[0]);
             }
         });
         bottomPanel.add(saveButton);

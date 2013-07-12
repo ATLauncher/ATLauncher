@@ -24,6 +24,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -146,10 +150,10 @@ public class LauncherConsole extends JFrame {
     }
 
     /**
-     * Logs text to the console window
+     * Logs text to the console window and to file
      * 
      * @param text
-     *            The text to show in the console
+     *            The text to show in the console and file
      */
     public void log(String text) {
         Timestamp timestamp = new Timestamp(new Date().getTime());
@@ -158,6 +162,14 @@ public class LauncherConsole extends JFrame {
             console.setText("[" + time + "] " + text);
         } else {
             console.setText(console.getText() + "\n[" + time + "] " + text);
+        }
+        try {
+            PrintWriter out = new PrintWriter(new FileWriter(new File(App.settings.getBaseDir(),
+                    "ATLauncher-Log-1.txt"), true));
+            out.println("[" + time + "] " + text);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         console.setCaretPosition(console.getDocument().getLength());
     }

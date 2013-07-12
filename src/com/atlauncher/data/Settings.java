@@ -111,11 +111,13 @@ public class Settings {
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private boolean offlineMode = false; // If offline mode is enabled
     private Process minecraftProcess = null; // The process minecraft is running on
+    private Server originalServer = null; // Original Server user has saved
     private String version = "%VERSION%"; // Version of the Launcher
 
     public Settings() {
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
+        rotateLogFiles(); // Rotates the log files
     }
 
     public void loadEverything() {
@@ -396,6 +398,34 @@ public class Settings {
         Utils.deleteContents(getTempDir());
     }
 
+    public void rotateLogFiles() {
+        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
+        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
+        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
+        if (logFile3.exists()) {
+            Utils.delete(logFile3);
+        }
+        if (logFile2.exists()) {
+            logFile2.renameTo(logFile3);
+        }
+        if (logFile1.exists()) {
+            logFile1.renameTo(logFile2);
+        }
+        try {
+            logFile1.createNewFile();
+        } catch (IOException e) {
+            String[] options = { "OK" };
+            JOptionPane.showOptionDialog(null,
+                    "<html><center>Cannot create the log file.<br/><br/>Make sure"
+                            + " you are running the Launcher from somewhere with<br/>write"
+                            + " permissions for your user account such as your Home/Users folder"
+                            + " or desktop.</center></html>", "Warning",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                    options[0]);
+            System.exit(0);
+        }
+    }
+
     /**
      * Returns the instancesdata file
      * 
@@ -439,9 +469,11 @@ public class Settings {
             String serv = properties.getProperty("server", "Auto");
             if (isServerByName(serv)) {
                 this.server = getServerByName(serv);
+                this.originalServer = this.server;
             } else {
                 console.log("Server " + serv + " is invalid");
                 this.server = getServerByName("Auto"); // Server not found, use default of Auto
+                this.originalServer = this.server;
             }
         } catch (FileNotFoundException e) {
             App.settings.getConsole().logStackTrace(e);
@@ -1435,6 +1467,15 @@ public class Settings {
     }
 
     /**
+     * Gets the users saved Server
+     * 
+     * @return The users saved server
+     */
+    public Server getOriginalServer() {
+        return this.originalServer;
+    }
+
+    /**
      * Sets the users current active Server
      * 
      * @param server
@@ -1442,6 +1483,7 @@ public class Settings {
      */
     public void setServer(Server server) {
         this.server = server;
+        this.originalServer = server;
     }
 
     public int getMemory() {
