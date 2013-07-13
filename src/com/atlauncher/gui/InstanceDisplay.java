@@ -17,19 +17,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.UUID;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -37,20 +27,12 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import com.atlauncher.App;
-import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
-import com.atlauncher.mclauncher.MCLauncher;
-import com.atlauncher.mclauncher.NewMCLauncher;
 
 /**
  * Class for displaying instances in the Instance Tab
@@ -117,136 +99,7 @@ public class InstanceDisplay extends CollapsiblePanel {
         play = new JButton(App.settings.getLocalizedString("common.play"));
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                final Account account = App.settings.getAccount();
-                if (account == null) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.noaccount"),
-                            App.settings.getLocalizedString("instance.noaccountselected"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                } else {
-                    String username = account.getUsername();
-                    String password = account.getPassword();
-                    if (!account.isRemembered()) {
-                        JPanel panel = new JPanel();
-                        panel.setLayout(new BorderLayout());
-                        JLabel passwordLabel = new JLabel(App.settings.getLocalizedString(
-                                "instance.enterpassword", account.getMinecraftUsername()));
-                        JPasswordField passwordField = new JPasswordField();
-                        panel.add(passwordLabel, BorderLayout.NORTH);
-                        panel.add(passwordField, BorderLayout.CENTER);
-                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
-                                App.settings.getLocalizedString("instance.enterpasswordtitle"),
-                                JOptionPane.OK_CANCEL_OPTION);
-                        if (ret == JOptionPane.OK_OPTION) {
-                            password = new String(passwordField.getPassword());
-                        } else {
-                            return;
-                        }
-                    }
-                    boolean loggedIn = false;
-                    String url = null;
-                    String sess = null;
-                    String auth = null;
-                    if (!App.settings.isInOfflineMode()) {
-                        if (instance.isNewLaunchMethod()) {
-                            String result = newLogin(username, password);
-                            JSONParser parser = new JSONParser();
-                            try {
-                                Object obj = parser.parse(result);
-                                JSONObject jsonObject = (JSONObject) obj;
-                                if (jsonObject.containsKey("accessToken")) {
-                                    String accessToken = (String) jsonObject.get("accessToken");
-                                    JSONObject profile = (JSONObject) jsonObject
-                                            .get("selectedProfile");
-                                    String profileID = (String) profile.get("id");
-                                    sess = "token:" + accessToken + ":" + profileID;
-                                    loggedIn = true;
-                                } else {
-                                    auth = (String) jsonObject.get("errorMessage");
-                                }
-                            } catch (ParseException e1) {
-                                App.settings.getConsole().logStackTrace(e1);
-                            }
-                        } else {
-                            try {
-                                url = "https://login.minecraft.net/?user="
-                                        + URLEncoder.encode(username, "UTF-8") + "&password="
-                                        + URLEncoder.encode(password, "UTF-8") + "&version=999";
-                            } catch (UnsupportedEncodingException e1) {
-                                App.settings.getConsole().logStackTrace(e1);
-                            }
-                            auth = Utils.urlToString(url);
-                            if (auth.contains(":")) {
-                                String[] parts = auth.split(":");
-                                if (parts.length == 5) {
-                                    loggedIn = true;
-                                    sess = parts[3];
-                                }
-                            }
-                        }
-                    } else {
-                        loggedIn = true;
-                        sess = "0";
-                    }
-                    if (!loggedIn) {
-                        String[] options = { App.settings.getLocalizedString("common.ok") };
-                        JOptionPane.showOptionDialog(
-                                App.settings.getParent(),
-                                "<html><center>"
-                                        + App.settings.getLocalizedString(
-                                                "instance.errorloggingin", "<br/><br/>" + auth)
-                                        + "</center></html>", App.settings
-                                        .getLocalizedString("instance.errorloggingintitle"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
-                    } else {
-                        final String session = sess;
-                        Thread launcher = new Thread() {
-                            public void run() {
-                                try {
-                                    long start = System.currentTimeMillis();
-                                    App.settings.getParent().setVisible(false);
-                                    Process process = null;
-                                    if (instance.isNewLaunchMethod()) {
-                                        process = NewMCLauncher.launch(account, instance, session);
-                                    } else {
-                                        process = MCLauncher.launch(account, instance, session);
-                                    }
-                                    App.settings.showKillMinecraft(process);
-                                    InputStream is = process.getInputStream();
-                                    InputStreamReader isr = new InputStreamReader(is);
-                                    BufferedReader br = new BufferedReader(isr);
-                                    String line;
-                                    while ((line = br.readLine()) != null) {
-                                        App.settings.getConsole().logMinecraft(line);
-                                    }
-                                    App.settings.hideKillMinecraft();
-                                    App.settings.getParent().setVisible(true);
-                                    long end = System.currentTimeMillis();
-                                    if (!App.settings.isInOfflineMode()) {
-                                        if (App.settings.enableLeaderboards()) {
-                                            App.settings.apiCall(account.getMinecraftUsername(),
-                                                    "addleaderboardtime",
-                                                    (instance.getRealPack() == null ? "0"
-                                                            : instance.getRealPack().getID() + ""),
-                                                    ((end - start) / 1000) + "");
-                                        } else {
-                                            App.settings.apiCall("NULL", "addleaderboardtime",
-                                                    (instance.getRealPack() == null ? "0"
-                                                            : instance.getRealPack().getID() + ""),
-                                                    ((end - start) / 1000) + "");
-                                        }
-                                    }
-                                } catch (IOException e1) {
-                                    App.settings.getConsole().logStackTrace(e1);
-                                }
-                            }
-                        };
-                        launcher.start();
-                    }
-                }
+                instance.launch();
             }
         });
 
@@ -382,7 +235,7 @@ public class InstanceDisplay extends CollapsiblePanel {
                 }
             }
         });
-        
+
         // Open Folder Button
 
         openFolder = new JButton(App.settings.getLocalizedString("common.openfolder"));
@@ -475,48 +328,5 @@ public class InstanceDisplay extends CollapsiblePanel {
         rightPanel.add(instanceActions, BorderLayout.SOUTH);
 
         panel.add(splitPane, BorderLayout.CENTER);
-    }
-
-    public String newLogin(String username, String password) {
-        StringBuilder response = null;
-        try {
-            URL url = new URL("https://authserver.mojang.com/authenticate");
-            String request = "{\"agent\":{\"name\":\"Minecraft\",\"version\":10},\"username\":\""
-                    + username + "\",\"password\":\"" + password + "\",\"clientToken\":\""
-                    + UUID.randomUUID() + "\"}";
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(15000);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-
-            connection.setRequestProperty("Content-Length", "" + request.getBytes().length);
-            connection.setRequestProperty("Content-Language", "en-US");
-
-            connection.setUseCaches(false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-
-            DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-            writer.write(request.getBytes());
-            writer.flush();
-            writer.close();
-
-            // Read the result
-
-            BufferedReader reader = null;
-            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-                response.append('\r');
-            }
-            reader.close();
-        } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
-        }
-        return response.toString();
     }
 }

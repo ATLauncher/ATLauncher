@@ -36,6 +36,8 @@ public class Pack {
     private String name;
     private boolean createServer;
     private String[] versions;
+    private String[] minecraftVersions;
+    private String devMinecraftVersion;
     private String[] testers;
     private String description;
     private String supportURL;
@@ -44,13 +46,16 @@ public class Pack {
     private String xml; // The XML
     private String xmlVersion; // The version the XML is for
 
-    public Pack(int id, String name, boolean createServer, String[] versions, String[] testers,
+    public Pack(int id, String name, boolean createServer, String[] versions,
+            String[] minecraftVersions, String devMinecraftVersion, String[] testers,
             String description, String supportURL, String websiteURL) {
         this.id = id;
         this.name = name;
         this.createServer = createServer;
         this.versions = versions;
         this.testers = testers;
+        this.minecraftVersions = minecraftVersions;
+        this.devMinecraftVersion = devMinecraftVersion;
         this.description = description;
         this.supportURL = supportURL;
         this.websiteURL = websiteURL;
@@ -104,6 +109,14 @@ public class Pack {
 
     public String getVersion(int index) {
         return this.versions[index];
+    }
+
+    public String getMinecraftVersion(int index) {
+        if (index == -1) {
+            return this.devMinecraftVersion;
+        } else {
+            return this.minecraftVersions[index];
+        }
     }
 
     public String getXML(String version) {

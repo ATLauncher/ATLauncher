@@ -16,9 +16,11 @@ public class PrivatePack extends Pack {
 
     private String[] allowedPlayers;
 
-    public PrivatePack(int id, String name, boolean createServer, String[] versions, String[] testers,
+    public PrivatePack(int id, String name, boolean createServer, String[] versions,
+            String[] minecraftVersions, String devMinecraftVersion, String[] testers,
             String description, String supportURL, String websiteURL, String[] allowedPlayers) {
-        super(id, name, createServer, versions, testers, description, supportURL, websiteURL);
+        super(id, name, createServer, versions, minecraftVersions, devMinecraftVersion, testers,
+                description, supportURL, websiteURL);
         this.allowedPlayers = allowedPlayers;
     }
 
@@ -34,11 +36,11 @@ public class PrivatePack extends Pack {
         }
         return false;
     }
-    
+
     public boolean canInstall() {
-        if(super.isTester() || (super.hasVersions() && isAllowedPlayer())){
+        if (super.isTester() || (super.hasVersions() && isAllowedPlayer())) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

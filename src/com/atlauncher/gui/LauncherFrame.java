@@ -44,7 +44,10 @@ public class LauncherFrame extends JFrame {
 
     private BottomBar bottomBar;
 
-    public LauncherFrame() {
+    public LauncherFrame(boolean show) {
+        App.settings.getConsole().log("Launcher opening");
+        App.settings.getConsole().log("Made By Bob*");
+        App.settings.getConsole().log("*(Not Actually)");
         App.settings.setParentFrame(this);
         setSize(new Dimension(800, 500));
         setTitle("ATLauncher %VERSION%");
@@ -74,8 +77,11 @@ public class LauncherFrame extends JFrame {
                 dispose();
             }
         });
-        App.settings.getConsole().log("Showing Launcher");
-        setVisible(true);
+
+        if (show) {
+            App.settings.getConsole().log("Showing Launcher");
+            setVisible(true);
+        }
 
         App.settings.getConsole().addComponentListener(new ComponentAdapter() {
             public void componentHidden(ComponentEvent e) {
@@ -105,7 +111,7 @@ public class LauncherFrame extends JFrame {
         tabbedPane.setFont(Utils.makeFont("Oswald-Regular").deriveFont((float) 34));
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.news"), newsPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsPanel);
-//        tabbedPane.addTab(App.settings.getLocalizedString("tabs.addons"), addonsPanel);
+        // tabbedPane.addTab(App.settings.getLocalizedString("tabs.addons"), addonsPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsPanel);

@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 
 import javax.swing.JOptionPane;
 
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SetupDialog;
@@ -107,17 +108,17 @@ public class App {
             new SetupDialog(settings);
         }
 
-        // if (autoLaunch != null) {
-        // if (settings.isInstanceByName(autoLaunch)) {
-        // Instance instance = settings.getInstanceByName(autoLaunch);
-        // instance.launch();
-        // System.exit();
-        // }
-        // }
-        settings.getConsole().log("Launcher opening");
-        settings.getConsole().log("Made By Bob*");
-        settings.getConsole().log("*(Not Actually)");
-        new LauncherFrame(); // Open the Launcher
+        boolean open = true;
+
+        if (autoLaunch != null) {
+            if (settings.isInstanceBySafeName(autoLaunch)) {
+                Instance instance = settings.getInstanceBySafeName(autoLaunch);
+                settings.getConsole().log("Opening Instance " + instance.getName());
+                instance.launch();
+                open = false;
+            }
+        }
+        new LauncherFrame(open); // Open the Launcher
     }
 
 }

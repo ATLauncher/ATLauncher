@@ -2,8 +2,11 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0b9
-- Fixed issues with Linux and always installing in root of users Home directory
+3.0.0b10
+- Show update messages in the console
+- Added in Enabling Leaderboards in the Setup Dialog
+- Allowed launching an instance from the command line with the - -launch=INSTANCE_FOLDER_NAME command
+- Removed option for using latest LWJGL on Minecraft >1.6 as it
 
 -->
 
@@ -15,7 +18,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0b9" />
+	<property name="atlauncher.version" value="3.0.0b10" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

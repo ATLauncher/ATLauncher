@@ -144,6 +144,22 @@ public class InstanceInstallerDialog extends JDialog {
             versionsDropDown.setSelectedItem(instance.getVersion());
         }
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
+        versionsDropDown.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int index = versionsDropDown.getSelectedIndex();
+                if (pack.isTester()) {
+                    index--;
+                }
+                if (App.settings.getMinecraftInstallMethod(pack.getMinecraftVersion(index))
+                        .equalsIgnoreCase("new")) {
+                    useLatestLWJGLLabel.setVisible(false);
+                    useLatestLWJGL.setVisible(false);
+                } else {
+                    useLatestLWJGLLabel.setVisible(true);
+                    useLatestLWJGL.setVisible(true);
+                }
+            }
+        });
         middle.add(versionsDropDown, gbc);
 
         if (!this.isServer) {
@@ -160,20 +176,30 @@ public class InstanceInstallerDialog extends JDialog {
                 installForMe = new JCheckBox();
                 middle.add(installForMe, gbc);
             }
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            useLatestLWJGLLabel = new JLabel(
+                    App.settings.getLocalizedString("instance.uselatestlwjgl") + "? ");
+            middle.add(useLatestLWJGLLabel, gbc);
 
-            if ((isReinstall && !instance.isNewLaunchMethod()) || !isReinstall) {
-                gbc.gridx = 0;
-                gbc.gridy++;
-                gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-                useLatestLWJGLLabel = new JLabel(
-                        App.settings.getLocalizedString("instance.uselatestlwjgl") + "? ");
-                middle.add(useLatestLWJGLLabel, gbc);
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            useLatestLWJGL = new JCheckBox();
+            middle.add(useLatestLWJGL, gbc);
+        }
 
-                gbc.gridx++;
-                gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-                useLatestLWJGL = new JCheckBox();
-                middle.add(useLatestLWJGL, gbc);
-            }
+        int index = versionsDropDown.getSelectedIndex();
+        if (pack.isTester()) {
+            index--;
+        }
+        if (App.settings.getMinecraftInstallMethod(pack.getMinecraftVersion(index))
+                .equalsIgnoreCase("new")) {
+            useLatestLWJGLLabel.setVisible(false);
+            useLatestLWJGL.setVisible(false);
+        } else {
+            useLatestLWJGLLabel.setVisible(true);
+            useLatestLWJGL.setVisible(true);
         }
 
         // Bottom Panel Stuff
@@ -305,7 +331,7 @@ public class InstanceInstallerDialog extends JDialog {
                                         instance.setPlayable();
                                     }
                                 } else if (isServer) {
-                                    
+
                                 } else {
                                     App.settings.getInstances().add(
                                             new Instance(instanceNameField.getText(), pack

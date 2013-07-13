@@ -20,6 +20,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -37,6 +38,9 @@ public class SetupDialog extends JDialog {
 
     private JLabel languageLabel;
     private JComboBox<Language> language;
+
+    private JLabel enableLeaderboardsLabel;
+    private JCheckBox enableLeaderboards;
 
     private JButton saveButton;
     private Settings settings;
@@ -75,6 +79,17 @@ public class SetupDialog extends JDialog {
         language.setSelectedItem(settings.getLanguage());
         middle.add(language, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        enableLeaderboardsLabel = new JLabel("Enable Leaderboards? ");
+        middle.add(enableLeaderboardsLabel, gbc);
+
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        enableLeaderboards = new JCheckBox();
+        middle.add(enableLeaderboards, gbc);
+
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
@@ -82,6 +97,7 @@ public class SetupDialog extends JDialog {
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 settings.setLanguage((Language) language.getSelectedItem());
+                settings.setEnableLeaderboards(enableLeaderboards.isSelected());
                 settings.saveProperties();
                 setVisible(false);
                 dispose();

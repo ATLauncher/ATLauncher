@@ -22,6 +22,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,6 +36,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -46,6 +48,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -660,6 +663,49 @@ public class Utils {
         } catch (IOException e) {
             App.settings.getConsole().logStackTrace(e);
             return null;
+        }
+        return response.toString();
+    }
+
+    public static String newLogin(String username, String password) {
+        StringBuilder response = null;
+        try {
+            URL url = new URL("https://authserver.mojang.com/authenticate");
+            String request = "{\"agent\":{\"name\":\"Minecraft\",\"version\":10},\"username\":\""
+                    + username + "\",\"password\":\"" + password + "\",\"clientToken\":\""
+                    + UUID.randomUUID() + "\"}";
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
+            connection.setRequestProperty("Content-Length", "" + request.getBytes().length);
+            connection.setRequestProperty("Content-Language", "en-US");
+
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+            writer.write(request.getBytes());
+            writer.flush();
+            writer.close();
+
+            // Read the result
+
+            BufferedReader reader = null;
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+            reader.close();
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
         }
         return response.toString();
     }

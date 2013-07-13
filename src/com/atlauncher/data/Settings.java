@@ -165,6 +165,7 @@ public class Settings {
                 toget = "jar";
             }
             File newFile = new File(getTempDir(), saveAs);
+            console.log("Downloading Launcher Update");
             new Downloader(getFileURL("ATLauncher." + toget), newFile.getAbsolutePath()).run(); // Download
                                                                                                 // it
             runUpdate(path, newFile.getAbsolutePath());
@@ -190,6 +191,8 @@ public class Settings {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(arguments);
+
+        console.log("Running Launcher Update");
 
         try {
             processBuilder.start();
@@ -247,6 +250,8 @@ public class Settings {
                             if (getVersion().equalsIgnoreCase("%VERSION%")) {
                                 continue; // Don't even think about updating my unbuilt copy
                             } else {
+                                console.log("Update to Launcher found. Current version: "
+                                        + this.version + ", New version: " + version);
                                 downloadUpdate();
                             }
                         } else {
@@ -738,6 +743,13 @@ public class Settings {
                     } else {
                         versions = element.getAttribute("versions").split(",");
                     }
+                    String[] minecraftVersions;
+                    if (element.getAttribute("minecraftversions").isEmpty()) {
+                        minecraftVersions = new String[0];
+                    } else {
+                        minecraftVersions = element.getAttribute("minecraftversions").split(",");
+                    }
+                    String devMinecraftVersion = element.getAttribute("devminecraftversion");
                     String[] testers;
                     if (element.getAttribute("testers").isEmpty()) {
                         testers = new String[0];
@@ -756,11 +768,12 @@ public class Settings {
                     String supportURL = element.getAttribute("supporturl");
                     String websiteURL = element.getAttribute("websiteurl");
                     if (element.getAttribute("type").equalsIgnoreCase("private")) {
-                        packs.add(new PrivatePack(id, name, createServer, versions, testers,
-                                description, supportURL, websiteURL, allowedPlayers));
+                        packs.add(new PrivatePack(id, name, createServer, versions,
+                                minecraftVersions, devMinecraftVersion, testers, description,
+                                supportURL, websiteURL, allowedPlayers));
                     } else {
-                        packs.add(new Pack(id, name, createServer, versions, testers, description,
-                                supportURL, websiteURL));
+                        packs.add(new Pack(id, name, createServer, versions, minecraftVersions,
+                                devMinecraftVersion, testers, description, supportURL, websiteURL));
                     }
                 }
             }
@@ -1333,6 +1346,22 @@ public class Settings {
     }
 
     /**
+     * Checks if there is an instance by the given name
+     * 
+     * @param name
+     *            name of the Instance to find
+     * @return True if the instance is found from the name
+     */
+    public boolean isInstanceBySafeName(String name) {
+        for (Instance instance : instances) {
+            if (instance.getSafeName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Finds a Instance from the given name
      * 
      * @param name
@@ -1342,6 +1371,22 @@ public class Settings {
     public Instance getInstanceByName(String name) {
         for (Instance instance : instances) {
             if (instance.getName().equalsIgnoreCase(name)) {
+                return instance;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds a Instance from the given name
+     * 
+     * @param name
+     *            name of the Instance to find
+     * @return Instance if the instance is found from the name
+     */
+    public Instance getInstanceBySafeName(String name) {
+        for (Instance instance : instances) {
+            if (instance.getSafeName().equalsIgnoreCase(name)) {
                 return instance;
             }
         }
