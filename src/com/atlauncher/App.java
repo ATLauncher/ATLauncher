@@ -14,10 +14,10 @@ import java.awt.Image;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 
 import javax.swing.JOptionPane;
 
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SetupDialog;
@@ -39,7 +39,17 @@ public class App {
             }
         }
 
-        File config = new File(System.getProperty("user.dir"), "Configs");
+        File config;
+        if (Utils.isLinux()) {
+            try {
+                config = new File(App.class.getClassLoader().getResource("").toURI());
+            } catch (URISyntaxException e) {
+                config = new File(System.getProperty("user.dir"), "ATLauncher");
+            }
+        } else {
+            config = new File(System.getProperty("user.dir"));
+        }
+        config = new File(config, "Configs");
         if (!config.exists()) {
             int files = config.getParentFile().list().length;
             if (files != 1) {

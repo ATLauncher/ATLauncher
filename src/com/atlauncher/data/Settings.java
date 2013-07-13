@@ -23,6 +23,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -82,23 +83,9 @@ public class Settings {
     private ArrayList<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
 
     // Directories and Files for the Launcher
-    private File baseDir = new File(System.getProperty("user.dir"));
-    private File backupsDir = new File(baseDir, "Backups");
-    private File configsDir = new File(baseDir, "Configs");
-    private File imagesDir = new File(configsDir, "Images");
-    private File skinsDir = new File(imagesDir, "Skins");
-    private File jarsDir = new File(configsDir, "Jars");
-    private File commonConfigsDir = new File(configsDir, "Common");
-    private File resourcesDir = new File(configsDir, "Resources");
-    private File librariesDir = new File(configsDir, "Libraries");
-    private File languagesDir = new File(configsDir, "Languages");
-    private File downloadsDir = new File(baseDir, "Downloads");
-    private File instancesDir = new File(baseDir, "Instances");
-    private File serversDir = new File(baseDir, "Servers");
-    private File tempDir = new File(baseDir, "Temp");
-    private File instancesDataFile = new File(configsDir, "instancesdata");
-    private File userDataFile = new File(configsDir, "userdata");
-    private File propertiesFile = new File(configsDir, "ATLauncher.conf"); // File for properties
+    private File baseDir, backupsDir, configsDir, imagesDir, skinsDir, jarsDir, commonConfigsDir,
+            resourcesDir, librariesDir, languagesDir, downloadsDir, instancesDir, serversDir,
+            tempDir, instancesDataFile, userDataFile, propertiesFile;
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -116,10 +103,39 @@ public class Settings {
     private String version = "%VERSION%"; // Version of the Launcher
 
     public Settings() {
+        setupFiles(); // Setup all the file and directory variables
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
         rotateLogFiles(); // Rotates the log files
-        loadConsoleProperty(); // Get users Server preference
+        loadConsoleProperty(); // Get users Console preference
+    }
+
+    public void setupFiles() {
+        if (Utils.isLinux()) {
+            try {
+                baseDir = new File(getClass().getClassLoader().getResource("").toURI());
+            } catch (URISyntaxException e) {
+                baseDir = new File(System.getProperty("user.dir"), "ATLauncher");
+            }
+        } else {
+            baseDir = new File(System.getProperty("user.dir"));
+        }
+        backupsDir = new File(baseDir, "Backups");
+        configsDir = new File(baseDir, "Configs");
+        imagesDir = new File(configsDir, "Images");
+        skinsDir = new File(imagesDir, "Skins");
+        jarsDir = new File(configsDir, "Jars");
+        commonConfigsDir = new File(configsDir, "Common");
+        resourcesDir = new File(configsDir, "Resources");
+        librariesDir = new File(configsDir, "Libraries");
+        languagesDir = new File(configsDir, "Languages");
+        downloadsDir = new File(baseDir, "Downloads");
+        instancesDir = new File(baseDir, "Instances");
+        serversDir = new File(baseDir, "Servers");
+        tempDir = new File(baseDir, "Temp");
+        instancesDataFile = new File(configsDir, "instancesdata");
+        userDataFile = new File(configsDir, "userdata");
+        propertiesFile = new File(configsDir, "ATLauncher.conf");
     }
 
     public void loadEverything() {
@@ -267,8 +283,9 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, commonConfigsDir, imagesDir, skinsDir, jarsDir, resourcesDir,
-                librariesDir, languagesDir, downloadsDir, instancesDir, serversDir, tempDir };
+        File[] files = { backupsDir, configsDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
+                resourcesDir, librariesDir, languagesDir, downloadsDir, instancesDir, serversDir,
+                tempDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -302,7 +319,7 @@ public class Settings {
     public File getConfigsDir() {
         return this.configsDir;
     }
-    
+
     /**
      * Returns the common configs directory
      * 
