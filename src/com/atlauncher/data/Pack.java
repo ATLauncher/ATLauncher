@@ -267,11 +267,12 @@ public class Pack {
                     if (element.getAttribute("directdownload").equalsIgnoreCase("yes")) {
                         directDownload = true;
                     }
+                    String group = element.getAttribute("group");
                     String linked = element.getAttribute("linked");
                     String description = element.getAttribute("description");
                     mods.add(new Mod(name, version, url, file, website, donation, md5, type,
                             extractTo, decompFile, decompType, server, serverURL, serverFile,
-                            serverType, optional, directDownload, linked, description));
+                            serverType, optional, directDownload, group, linked, description));
                 }
             }
         } catch (SAXException e) {

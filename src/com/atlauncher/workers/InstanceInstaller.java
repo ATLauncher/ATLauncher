@@ -202,6 +202,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return linkedMods;
     }
 
+    public ArrayList<Mod> getGroupedMods(Mod mod) {
+        ArrayList<Mod> groupedMods = new ArrayList<Mod>();
+        for (Mod modd : allMods) {
+            if (modd.getGroup().equalsIgnoreCase(mod.getGroup())) {
+                if (modd != mod) {
+                    groupedMods.add(modd);
+                }
+            }
+        }
+        return groupedMods;
+    }
+
     private void makeDirectories() {
         if (isReinstall) {
             // We're reinstalling so delete these folders

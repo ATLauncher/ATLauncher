@@ -37,13 +37,14 @@ public class Mod {
     private Type serverType;
     private boolean optional;
     private boolean directDownload;
+    private String group;
     private String linked;
     private String description;
 
     public Mod(String name, String version, String url, String file, String website,
             String donation, String md5, Type type, ExtractTo extractTo, String decompFile,
             DecompType decompType, boolean server, String serverURL, String serverFile,
-            Type serverType, boolean optional, boolean directDownload, String linked,
+            Type serverType, boolean optional, boolean directDownload, String group, String linked,
             String description) {
         this.name = name;
         this.version = version;
@@ -62,6 +63,7 @@ public class Mod {
         this.serverType = serverType;
         this.optional = optional;
         this.directDownload = directDownload;
+        this.group = group;
         this.linked = linked;
         this.description = description;
     }
@@ -218,7 +220,7 @@ public class Mod {
                         Utils.copyDirectory(tempDirExtract, installer.getModsDirectory());
                         break;
                     case root:
-                        Utils.copyDirectory(tempDirExtract, installer.getRootDirectory());
+                        Utils.copyDirectory(tempDirExtract, installer.getMinecraftDirectory());
                         break;
                     default:
                         App.settings.getConsole().log(
@@ -298,6 +300,14 @@ public class Mod {
 
     public String getFile() {
         return this.file;
+    }
+    
+    public boolean hasGroup() {
+        return !(this.group.isEmpty());
+    }
+    
+    public String getGroup() {
+        return this.group;
     }
 
     public String getServerURL() {

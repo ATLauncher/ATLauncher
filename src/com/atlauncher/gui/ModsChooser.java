@@ -69,15 +69,6 @@ public class ModsChooser extends JDialog {
         labelsTop.setEnabled(false);
         split.setLeftComponent(labelsTop);
 
-        // JLabel topLabelTop = new JLabel("Select Configuration: ");
-        // topLabelTop.setHorizontalAlignment(SwingConstants.CENTER);
-        // labelsTop.setLeftComponent(topLabelTop);
-        //
-        // JComboBox<String> configs = new JComboBox<String>();
-        // configs.addItem("Custom Configuration");
-        // configs.setSelectedIndex(0);
-        // labelsTop.setRightComponent(configs);
-
         JSplitPane labels = new JSplitPane();
         labels.setDividerLocation(275);
         labels.setDividerSize(0);
@@ -172,7 +163,7 @@ public class ModsChooser extends JDialog {
         int count2 = 0;
 
         for (Mod mod : installer.getMods()) {
-            if(installer.isServer() && !mod.installOnServer()){
+            if (installer.isServer() && !mod.installOnServer()) {
                 continue;
             }
             ModsJCheckBox checkBox = null;
@@ -241,6 +232,16 @@ public class ModsChooser extends JDialog {
                                 }
                             }
                         }
+                        if (a.getMod().hasGroup()) {
+                            ArrayList<Mod> groupMods = modsInGroup(a.getMod());
+                            for (Mod mod : groupMods) {
+                                for (ModsJCheckBox check : modCheckboxes) {
+                                    if (check.getMod() == mod) {
+                                        check.setSelected(false);
+                                    }
+                                }
+                            }
+                        }
                     } else {
                         ArrayList<Mod> linkedMods = modsToChange(a.getMod());
                         for (Mod mod : linkedMods) {
@@ -278,6 +279,10 @@ public class ModsChooser extends JDialog {
 
     private ArrayList<Mod> modsToChange(Mod mod) {
         return installer.getLinkedMods(mod);
+    }
+
+    private ArrayList<Mod> modsInGroup(Mod mod) {
+        return installer.getGroupedMods(mod);
     }
 
     public ArrayList<Mod> getSelectedMods() {

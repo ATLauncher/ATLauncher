@@ -1,5 +1,7 @@
 package com.atlauncher.gui;
 
+import java.awt.Color;
+
 import javax.swing.JCheckBox;
 
 import com.atlauncher.data.Mod;
