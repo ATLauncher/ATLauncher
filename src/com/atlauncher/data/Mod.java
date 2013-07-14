@@ -38,6 +38,7 @@ public class Mod {
     private boolean optional;
     private boolean directDownload;
     private boolean hidden;
+    private boolean library;
     private String group;
     private String linked;
     private String[] depends;
@@ -47,7 +48,7 @@ public class Mod {
             String donation, String md5, Type type, ExtractTo extractTo, String decompFile,
             DecompType decompType, boolean server, String serverURL, String serverFile,
             Type serverType, boolean optional, boolean directDownload, boolean hidden,
-            String group, String linked, String[] depends, String description) {
+            boolean library, String group, String linked, String[] depends, String description) {
         this.name = name;
         this.version = version;
         this.url = url;
@@ -66,6 +67,7 @@ public class Mod {
         this.optional = optional;
         this.directDownload = directDownload;
         this.hidden = hidden;
+        this.library = library;
         this.group = group;
         this.linked = linked;
         this.depends = depends;
@@ -333,14 +335,18 @@ public class Mod {
     public String[] getDependancies() {
         return this.depends;
     }
-    
+
     public boolean isADependancy(Mod mod) {
-        for(String name : depends){
-            if(name.equalsIgnoreCase(mod.getName())){
+        for (String name : depends) {
+            if (name.equalsIgnoreCase(mod.getName())) {
                 return true;
             }
         }
         return false;
+    }
+    
+    public boolean isLibrary() {
+        return this.library;
     }
 
 }

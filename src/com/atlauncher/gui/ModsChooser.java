@@ -195,7 +195,7 @@ public class ModsChooser extends JDialog {
                         }
                     }
                 }
-                if (mod.isHidden()) {
+                if (mod.isHidden() || mod.isLibrary()) {
                     checkBox.setVisible(false);
                     if (!mod.getDescription().isEmpty()) {
                         label.setVisible(false);
@@ -212,7 +212,7 @@ public class ModsChooser extends JDialog {
                 }
                 checkBox.setSelected(true);
                 checkBox.setEnabled(false);
-                
+
                 if (mod.isHidden()) {
                     checkBox.setVisible(false);
                     if (!mod.getDescription().isEmpty()) {
@@ -278,7 +278,6 @@ public class ModsChooser extends JDialog {
                             }
                         }
                         if (hasADependancy(a.getMod())) {
-                            System.out.println("1");
                             ArrayList<Mod> dependedMods = dependedMods(a.getMod());
                             for (Mod mod : dependedMods) {
                                 for (ModsJCheckBox check : modCheckboxes) {
@@ -287,13 +286,14 @@ public class ModsChooser extends JDialog {
                                     }
                                 }
                             }
-                        }else{
-                            System.out.println("2");
+                        } else {
                             ArrayList<Mod> dependsMods = modsDependancies(a.getMod());
                             for (Mod mod : dependsMods) {
                                 for (ModsJCheckBox check : modCheckboxes) {
                                     if (check.getMod() == mod) {
-                                        check.setSelected(false);
+                                        if (check.getMod().isLibrary()) {
+                                            check.setSelected(false);
+                                        }
                                     }
                                 }
                             }
@@ -326,7 +326,7 @@ public class ModsChooser extends JDialog {
     private ArrayList<Mod> modsToChange(Mod mod) {
         return installer.getLinkedMods(mod);
     }
-    
+
     private ArrayList<Mod> modsInGroup(Mod mod) {
         return installer.getGroupedMods(mod);
     }
