@@ -119,9 +119,10 @@ public class ModsChooser extends JDialog {
         selectAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
-                    if (check.getMod().isOptional()) {
+                    if (check.getMod().isOptional() && !check.getMod().hasGroup()) {
                         check.setSelected(true);
                         check.setEnabled(true);
+                        sortOutMods(check);
                     }
                 }
             }
@@ -139,7 +140,6 @@ public class ModsChooser extends JDialog {
                             for (ModsJCheckBox check1 : modCheckboxes) {
                                 if (check1.getMod() == mod) {
                                     check1.setEnabled(false);
-                                    check1.setSelected(false);
                                 }
                             }
                         }
@@ -238,67 +238,7 @@ public class ModsChooser extends JDialog {
             checkBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     ModsJCheckBox a = (ModsJCheckBox) e.getSource();
-                    if (a.isSelected()) {
-                        ArrayList<Mod> linkedMods = modsToChange(a.getMod());
-                        for (Mod mod : linkedMods) {
-                            for (ModsJCheckBox check : modCheckboxes) {
-                                if (check.getMod() == mod) {
-                                    check.setEnabled(true);
-                                }
-                            }
-                        }
-                        if (a.getMod().hasGroup()) {
-                            ArrayList<Mod> groupMods = modsInGroup(a.getMod());
-                            for (Mod mod : groupMods) {
-                                for (ModsJCheckBox check : modCheckboxes) {
-                                    if (check.getMod() == mod) {
-                                        check.setSelected(false);
-                                    }
-                                }
-                            }
-                        }
-                        if (a.getMod().hasDepends()) {
-                            ArrayList<Mod> dependsMods = modsDependancies(a.getMod());
-                            for (Mod mod : dependsMods) {
-                                for (ModsJCheckBox check : modCheckboxes) {
-                                    if (check.getMod() == mod) {
-                                        check.setSelected(true);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        ArrayList<Mod> linkedMods = modsToChange(a.getMod());
-                        for (Mod mod : linkedMods) {
-                            for (ModsJCheckBox check : modCheckboxes) {
-                                if (check.getMod() == mod) {
-                                    check.setEnabled(false);
-                                    check.setSelected(false);
-                                }
-                            }
-                        }
-                        if (hasADependancy(a.getMod())) {
-                            ArrayList<Mod> dependedMods = dependedMods(a.getMod());
-                            for (Mod mod : dependedMods) {
-                                for (ModsJCheckBox check : modCheckboxes) {
-                                    if (check.getMod() == mod) {
-                                        check.setSelected(false);
-                                    }
-                                }
-                            }
-                        } else {
-                            ArrayList<Mod> dependsMods = modsDependancies(a.getMod());
-                            for (Mod mod : dependsMods) {
-                                for (ModsJCheckBox check : modCheckboxes) {
-                                    if (check.getMod() == mod) {
-                                        if (check.getMod().isLibrary()) {
-                                            check.setSelected(false);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    sortOutMods(a);
                 }
             });
             modCheckboxes.add(checkBox);
@@ -341,6 +281,70 @@ public class ModsChooser extends JDialog {
 
     private boolean hasADependancy(Mod mod) {
         return installer.hasADependancy(mod);
+    }
+    
+    public void sortOutMods(ModsJCheckBox a) {
+        if (a.isSelected()) {
+            ArrayList<Mod> linkedMods = modsToChange(a.getMod());
+            for (Mod mod : linkedMods) {
+                for (ModsJCheckBox check : modCheckboxes) {
+                    if (check.getMod() == mod) {
+                        check.setEnabled(true);
+                    }
+                }
+            }
+            if (a.getMod().hasGroup()) {
+                ArrayList<Mod> groupMods = modsInGroup(a.getMod());
+                for (Mod mod : groupMods) {
+                    for (ModsJCheckBox check : modCheckboxes) {
+                        if (check.getMod() == mod) {
+                            check.setSelected(false);
+                        }
+                    }
+                }
+            }
+            if (a.getMod().hasDepends()) {
+                ArrayList<Mod> dependsMods = modsDependancies(a.getMod());
+                for (Mod mod : dependsMods) {
+                    for (ModsJCheckBox check : modCheckboxes) {
+                        if (check.getMod() == mod) {
+                            check.setSelected(true);
+                        }
+                    }
+                }
+            }
+        } else {
+            ArrayList<Mod> linkedMods = modsToChange(a.getMod());
+            for (Mod mod : linkedMods) {
+                for (ModsJCheckBox check : modCheckboxes) {
+                    if (check.getMod() == mod) {
+                        check.setEnabled(false);
+                        check.setSelected(false);
+                    }
+                }
+            }
+            if (hasADependancy(a.getMod())) {
+                ArrayList<Mod> dependedMods = dependedMods(a.getMod());
+                for (Mod mod : dependedMods) {
+                    for (ModsJCheckBox check : modCheckboxes) {
+                        if (check.getMod() == mod) {
+                            check.setSelected(false);
+                        }
+                    }
+                }
+            } else {
+                ArrayList<Mod> dependsMods = modsDependancies(a.getMod());
+                for (Mod mod : dependsMods) {
+                    for (ModsJCheckBox check : modCheckboxes) {
+                        if (check.getMod() == mod) {
+                            if (check.getMod().isLibrary()) {
+                                check.setSelected(false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public ArrayList<Mod> getSelectedMods() {

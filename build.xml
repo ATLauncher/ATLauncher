@@ -2,8 +2,8 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0b12
-- Added in Depends and Hidden attributes for mods
+3.0.0b13
+- Fixed Select All and Clear All on the mods selection screen inteferring with libraries and dependancies
 
 -->
 
@@ -15,7 +15,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0b12" />
+	<property name="atlauncher.version" value="3.0.0b13" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />
