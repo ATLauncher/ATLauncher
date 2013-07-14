@@ -267,12 +267,28 @@ public class Pack {
                     if (element.getAttribute("directdownload").equalsIgnoreCase("yes")) {
                         directDownload = true;
                     }
+                    boolean hidden = false;
+                    if (element.getAttribute("hidden").equalsIgnoreCase("yes")) {
+                        hidden = true;
+                    }
                     String group = element.getAttribute("group");
                     String linked = element.getAttribute("linked");
+                    String[] depends;
+                    if (element.hasAttribute("depends")) {
+                        String dependTemp = element.getAttribute("depends");
+                        if (dependTemp.contains(",")) {
+                            depends = dependTemp.split(",");
+                        } else {
+                            depends = new String[] { dependTemp };
+                        }
+                    }else{
+                        depends = null;
+                    }
                     String description = element.getAttribute("description");
                     mods.add(new Mod(name, version, url, file, website, donation, md5, type,
                             extractTo, decompFile, decompType, server, serverURL, serverFile,
-                            serverType, optional, directDownload, group, linked, description));
+                            serverType, optional, directDownload, hidden, group, linked, depends,
+                            description));
                 }
             }
         } catch (SAXException e) {

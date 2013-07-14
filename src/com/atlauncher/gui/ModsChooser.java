@@ -195,7 +195,14 @@ public class ModsChooser extends JDialog {
                         }
                     }
                 }
-                count1++;
+                if (mod.isHidden()) {
+                    checkBox.setVisible(false);
+                    if (!mod.getDescription().isEmpty()) {
+                        label.setVisible(false);
+                    }
+                } else {
+                    count1++;
+                }
             } else {
                 checkBox = new ModsJCheckBox(mod);
                 checkBox.setBounds(0, (count2 * 20), nameSize + 23, 20);
@@ -205,7 +212,15 @@ public class ModsChooser extends JDialog {
                 }
                 checkBox.setSelected(true);
                 checkBox.setEnabled(false);
-                count2++;
+                
+                if (mod.isHidden()) {
+                    checkBox.setVisible(false);
+                    if (!mod.getDescription().isEmpty()) {
+                        label.setVisible(false);
+                    }
+                } else {
+                    count2++;
+                }
             }
             if (installer.wasModInstalled(mod.getName())) {
                 if (mod.isOptional()) {
@@ -242,6 +257,16 @@ public class ModsChooser extends JDialog {
                                 }
                             }
                         }
+                        if (a.getMod().hasDepends()) {
+                            ArrayList<Mod> dependsMods = modsDependancies(a.getMod());
+                            for (Mod mod : dependsMods) {
+                                for (ModsJCheckBox check : modCheckboxes) {
+                                    if (check.getMod() == mod) {
+                                        check.setSelected(true);
+                                    }
+                                }
+                            }
+                        }
                     } else {
                         ArrayList<Mod> linkedMods = modsToChange(a.getMod());
                         for (Mod mod : linkedMods) {
@@ -249,6 +274,27 @@ public class ModsChooser extends JDialog {
                                 if (check.getMod() == mod) {
                                     check.setEnabled(false);
                                     check.setSelected(false);
+                                }
+                            }
+                        }
+                        if (hasADependancy(a.getMod())) {
+                            System.out.println("1");
+                            ArrayList<Mod> dependedMods = dependedMods(a.getMod());
+                            for (Mod mod : dependedMods) {
+                                for (ModsJCheckBox check : modCheckboxes) {
+                                    if (check.getMod() == mod) {
+                                        check.setSelected(false);
+                                    }
+                                }
+                            }
+                        }else{
+                            System.out.println("2");
+                            ArrayList<Mod> dependsMods = modsDependancies(a.getMod());
+                            for (Mod mod : dependsMods) {
+                                for (ModsJCheckBox check : modCheckboxes) {
+                                    if (check.getMod() == mod) {
+                                        check.setSelected(false);
+                                    }
                                 }
                             }
                         }
@@ -280,9 +326,21 @@ public class ModsChooser extends JDialog {
     private ArrayList<Mod> modsToChange(Mod mod) {
         return installer.getLinkedMods(mod);
     }
-
+    
     private ArrayList<Mod> modsInGroup(Mod mod) {
         return installer.getGroupedMods(mod);
+    }
+
+    private ArrayList<Mod> modsDependancies(Mod mod) {
+        return installer.getModsDependancies(mod);
+    }
+
+    private ArrayList<Mod> dependedMods(Mod mod) {
+        return installer.dependedMods(mod);
+    }
+
+    private boolean hasADependancy(Mod mod) {
+        return installer.hasADependancy(mod);
     }
 
     public ArrayList<Mod> getSelectedMods() {

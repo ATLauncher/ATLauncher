@@ -37,15 +37,17 @@ public class Mod {
     private Type serverType;
     private boolean optional;
     private boolean directDownload;
+    private boolean hidden;
     private String group;
     private String linked;
+    private String[] depends;
     private String description;
 
     public Mod(String name, String version, String url, String file, String website,
             String donation, String md5, Type type, ExtractTo extractTo, String decompFile,
             DecompType decompType, boolean server, String serverURL, String serverFile,
-            Type serverType, boolean optional, boolean directDownload, String group, String linked,
-            String description) {
+            Type serverType, boolean optional, boolean directDownload, boolean hidden,
+            String group, String linked, String[] depends, String description) {
         this.name = name;
         this.version = version;
         this.url = url;
@@ -63,8 +65,10 @@ public class Mod {
         this.serverType = serverType;
         this.optional = optional;
         this.directDownload = directDownload;
+        this.hidden = hidden;
         this.group = group;
         this.linked = linked;
+        this.depends = depends;
         this.description = description;
     }
 
@@ -196,7 +200,7 @@ public class Mod {
                 if (installer.isServer() && type == Type.forge) {
                     Utils.copyFile(fileLocation, installer.getRootDirectory());
                     break;
-                }else if (installer.isServer() && type == Type.jar) {
+                } else if (installer.isServer() && type == Type.jar) {
                     Utils.unzip(fileLocation, installer.getTempJarDirectory());
                     break;
                 }
@@ -301,11 +305,15 @@ public class Mod {
     public String getFile() {
         return this.file;
     }
-    
+
     public boolean hasGroup() {
         return !(this.group.isEmpty());
     }
-    
+
+    public boolean hasDepends() {
+        return (this.depends != null);
+    }
+
     public String getGroup() {
         return this.group;
     }
@@ -316,6 +324,23 @@ public class Mod {
 
     public String getServerFile() {
         return this.serverFile;
+    }
+
+    public boolean isHidden() {
+        return this.hidden;
+    }
+
+    public String[] getDependancies() {
+        return this.depends;
+    }
+    
+    public boolean isADependancy(Mod mod) {
+        for(String name : depends){
+            if(name.equalsIgnoreCase(mod.getName())){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

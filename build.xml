@@ -2,9 +2,8 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0b11
-- Fixes extracting files to the root directory
-- Added in grouped mods so only one mod from a group can be selected
+3.0.0b12
+- Added in Depends and Hidden attributes for mods
 
 -->
 
@@ -16,7 +15,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0b11" />
+	<property name="atlauncher.version" value="3.0.0b12" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

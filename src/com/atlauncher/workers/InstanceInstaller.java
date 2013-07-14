@@ -214,6 +214,46 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return groupedMods;
     }
 
+    public ArrayList<Mod> getModsDependancies(Mod mod) {
+        ArrayList<Mod> dependsMods = new ArrayList<Mod>();
+        for (String name : mod.getDependancies()) {
+            inner: {
+                for (Mod modd : allMods) {
+                    if (modd.getName().equalsIgnoreCase(name)) {
+                        dependsMods.add(modd);
+                        break inner;
+                    }
+                }
+            }
+        }
+        return dependsMods;
+    }
+
+    public ArrayList<Mod> dependedMods(Mod mod) {
+        ArrayList<Mod> dependedMods = new ArrayList<Mod>();
+        for (Mod modd : allMods) {
+            if (!modd.hasDepends()) {
+                continue;
+            }
+            if (modd.isADependancy(mod)) {
+                dependedMods.add(modd);
+            }
+        }
+        return dependedMods;
+    }
+
+    public boolean hasADependancy(Mod mod) {
+        for (Mod modd : allMods) {
+            if (!modd.hasDepends()) {
+                continue;
+            }
+            if (modd.isADependancy(mod)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void makeDirectories() {
         if (isReinstall) {
             // We're reinstalling so delete these folders
