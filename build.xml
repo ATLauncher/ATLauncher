@@ -2,8 +2,8 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0b13
-- Fixed Select All and Clear All on the mods selection screen inteferring with libraries and dependancies
+3.0.0b14
+- Added in Mac OSX Application
 
 -->
 
@@ -12,10 +12,11 @@ REMEMBER - Change the atlauncher.version property below
 
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
+	<property name="macapp.dir" value="macapp" />
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0b13" />
+	<property name="atlauncher.version" value="3.0.0b14" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />
@@ -47,12 +48,28 @@ REMEMBER - Change the atlauncher.version property below
 		</manifest>
 		<fileset dir="${bin.dir}" />
 	</jar>
+	
+	<chmod file="C:/Users/Ryan/Desktop/ATLauncher.jar" perm="ugo+rwx"/>
 
 	<exec executable="cmd">
 		<arg value="/c" />
 		<arg value="..\launch4j\launch4jc.exe" />
 		<arg value="launch4j.xml" />
 	</exec>
+	
+	<mkdir dir="C:/Users/Ryan/Desktop/ATLauncher.app" />
+	<copy todir="C:/Users/Ryan/Desktop/ATLauncher.app">
+		<fileset dir="${macapp.dir}" includes="**" />
+	</copy>
+	<copyfile src="C:/Users/Ryan/Desktop/ATLauncher.jar" dest="C:/Users/Ryan/Desktop/ATLauncher.app/Contents/Resources/Java/ATLauncher.jar"/>
+	<replace file="C:/Users/Ryan/Desktop/ATLauncher.app/Contents/Info.plist" token="%VERSION%" value="${atlauncher.version}" />
+	
+	<zip destfile="C:/Users/Ryan/Desktop/ATLauncher.zip">
+	    <zipfileset dir="C:/Users/Ryan/Desktop/" includes="ATLauncher.app/**" excludes="ATLauncher.app/Contents/MacOS/JavaApplicationStub" />
+	    <zipfileset dir="C:/Users/Ryan/Desktop/" includes="ATLauncher.app/Contents/MacOS/JavaApplicationStub" filemode="755" />
+	</zip>
+	
+	<delete dir="C:/Users/Ryan/Desktop/ATLauncher.app"/>
 	
 	<delete dir="${build.dir}" />
 </project>
