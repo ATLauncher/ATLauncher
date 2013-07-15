@@ -263,10 +263,7 @@ public class Pack {
                     if (element.getAttribute("optional").equalsIgnoreCase("yes")) {
                         optional = true;
                     }
-                    boolean directDownload = false;
-                    if (element.getAttribute("directdownload").equalsIgnoreCase("yes")) {
-                        directDownload = true;
-                    }
+                    Download download = Download.valueOf(element.getAttribute("download").toLowerCase());
                     boolean hidden = false;
                     if (element.getAttribute("hidden").equalsIgnoreCase("yes")) {
                         hidden = true;
@@ -291,7 +288,7 @@ public class Pack {
                     String description = element.getAttribute("description");
                     mods.add(new Mod(name, version, url, file, website, donation, md5, type,
                             extractTo, decompFile, decompType, server, serverURL, serverFile,
-                            serverType, optional, directDownload, hidden, library, group, linked,
+                            serverType, optional, download, hidden, library, group, linked,
                             depends, description));
                 }
             }

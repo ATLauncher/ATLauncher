@@ -36,7 +36,7 @@ public class Mod {
     private String serverFile;
     private Type serverType;
     private boolean optional;
-    private boolean directDownload;
+    private Download download;
     private boolean hidden;
     private boolean library;
     private String group;
@@ -47,8 +47,8 @@ public class Mod {
     public Mod(String name, String version, String url, String file, String website,
             String donation, String md5, Type type, ExtractTo extractTo, String decompFile,
             DecompType decompType, boolean server, String serverURL, String serverFile,
-            Type serverType, boolean optional, boolean directDownload, boolean hidden,
-            boolean library, String group, String linked, String[] depends, String description) {
+            Type serverType, boolean optional, Download download, boolean hidden, boolean library,
+            String group, String linked, String[] depends, String description) {
         this.name = name;
         this.version = version;
         this.url = url;
@@ -65,7 +65,7 @@ public class Mod {
         this.serverFile = serverFile;
         this.serverType = serverType;
         this.optional = optional;
-        this.directDownload = directDownload;
+        this.download = download;
         this.hidden = hidden;
         this.library = library;
         this.group = group;
@@ -118,6 +118,18 @@ public class Mod {
         }
     }
 
+    public boolean isBrowserDownload() {
+        return (this.download == Download.browser);
+    }
+
+    public boolean isDirectDownload() {
+        return (this.download == Download.direct);
+    }
+
+    public boolean isServerDownload() {
+        return (this.download == Download.server);
+    }
+
     public void download(InstanceInstaller installer) {
         File fileLocation;
         if (serverFile == null) {
@@ -136,51 +148,52 @@ public class Mod {
                 return; // No MD5, but file is there, can only assume it's fine
             }
         }
-        if (isDirectDownload()) {
-            if (serverURL == null) {
-                if (getURL().contains("http://newfiles.atlauncher.com/")) {
-                    new Downloader(App.settings.getFileURL(getURL().replace(
-                            "http://newfiles.atlauncher.com/", "")),
-                            fileLocation.getAbsolutePath(), installer).run();
-                } else {
-                    new Downloader(getURL(), fileLocation.getAbsolutePath(), installer).run();
+        switch (download) {
+            case browser:
+                while (!fileLocation.exists()) {
+                    if (serverURL == null) {
+                        Utils.openBrowser(getURL());
+                    } else {
+                        Utils.openBrowser(getServerURL());
+                    }
+                    String[] options = new String[] { App.settings
+                            .getLocalizedString("instance.ivedownloaded") };
+                    int retValue = JOptionPane.showOptionDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString("instance.browseropened",
+                                            (serverFile == null ? getFile() : getServerFile()))
+                                    + "<br/><br/>"
+                                    + App.settings.getLocalizedString("instance.pleasesave")
+                                    + "<br/><br/>"
+                                    + App.settings.getDownloadsDir().getAbsolutePath()
+                                    + "</center></html>",
+                            App.settings.getLocalizedString("common.downloading") + " "
+                                    + (serverFile == null ? getFile() : getServerFile()),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                            options, options[0]);
+                    if (retValue == JOptionPane.CLOSED_OPTION) {
+                        installer.cancel(true);
+                        return;
+                    }
                 }
-            } else {
-                if (getServerURL().contains("http://newfiles.atlauncher.com/")) {
-                    new Downloader(App.settings.getFileURL(getServerURL().replace(
-                            "http://newfiles.atlauncher.com/", "")),
-                            fileLocation.getAbsolutePath(), installer).run();
+                break;
+            case direct:
+                if (serverURL == null) {
+                    new Downloader(getURL(), fileLocation.getAbsolutePath(), installer).run();
                 } else {
                     new Downloader(getServerURL(), fileLocation.getAbsolutePath(), installer).run();
                 }
-            }
-        } else {
-            while (!fileLocation.exists()) {
+                break;
+            case server:
                 if (serverURL == null) {
-                    Utils.openBrowser(getURL());
+                    new Downloader(App.settings.getFileURL(getURL()),
+                            fileLocation.getAbsolutePath(), installer).run();
                 } else {
-                    Utils.openBrowser(getServerURL());
+                    new Downloader(App.settings.getFileURL(getServerURL()),
+                            fileLocation.getAbsolutePath(), installer).run();
                 }
-                String[] options = new String[] { App.settings
-                        .getLocalizedString("instance.ivedownloaded") };
-                int retValue = JOptionPane.showOptionDialog(
-                        App.settings.getParent(),
-                        "<html><center>"
-                                + App.settings.getLocalizedString("instance.browseropened",
-                                        (serverFile == null ? getFile() : getServerFile()))
-                                + "<br/><br/>"
-                                + App.settings.getLocalizedString("instance.pleasesave")
-                                + "<br/><br/>" + App.settings.getDownloadsDir().getAbsolutePath()
-                                + "</center></html>",
-                        App.settings.getLocalizedString("common.downloading") + " "
-                                + (serverFile == null ? getFile() : getServerFile()),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
-                        options[0]);
-                if (retValue == JOptionPane.CLOSED_OPTION) {
-                    installer.cancel(true);
-                    return;
-                }
-            }
+                break;
         }
         if (hasMD5()) {
             if (compareMD5(Utils.getMD5(fileLocation))) {
@@ -296,10 +309,6 @@ public class Mod {
         }
     }
 
-    public boolean isDirectDownload() {
-        return this.directDownload;
-    }
-
     public String getURL() {
         return this.url;
     }
@@ -344,7 +353,7 @@ public class Mod {
         }
         return false;
     }
-    
+
     public boolean isLibrary() {
         return this.library;
     }

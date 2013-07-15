@@ -225,14 +225,7 @@ public class ModsChooser extends JDialog {
             if (installer.wasModInstalled(mod.getName())) {
                 if (mod.isOptional()) {
                     checkBox.setSelected(true);
-                    ArrayList<Mod> linkedMods = modsToChange(mod);
-                    for (Mod modd : linkedMods) {
-                        for (ModsJCheckBox check : modCheckboxes) {
-                            if (check.getMod() == modd) {
-                                check.setEnabled(true);
-                            }
-                        }
-                    }
+                    checkBox.setEnabled(true);
                 }
             }
             checkBox.addActionListener(new ActionListener() {
@@ -282,7 +275,7 @@ public class ModsChooser extends JDialog {
     private boolean hasADependancy(Mod mod) {
         return installer.hasADependancy(mod);
     }
-    
+
     public void sortOutMods(ModsJCheckBox a) {
         if (a.isSelected()) {
             ArrayList<Mod> linkedMods = modsToChange(a.getMod());
@@ -332,7 +325,7 @@ public class ModsChooser extends JDialog {
                         }
                     }
                 }
-            } else {
+            } else if (a.getMod().hasDepends()) {
                 ArrayList<Mod> dependsMods = modsDependancies(a.getMod());
                 for (Mod mod : dependsMods) {
                     for (ModsJCheckBox check : modCheckboxes) {

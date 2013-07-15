@@ -69,6 +69,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private ArrayList<Mod> allMods;
     private int totalResources = 0; // Total number of Resources to download for Minecraft >=1.6
     private int doneResources = 0; // Total number of Resources downloaded for Minecraft >=1.6
+    private int totalDownloads = 0; // Total number of mods to download
+    private int doneDownloads = 0; // Total number of mods downloaded
     private Instance instance = null;
     private String[] modsInstalled;
 
@@ -279,15 +281,71 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
+    private ArrayList<ATLauncherDownloadable> getDownloadableMods() {
+        ArrayList<ATLauncherDownloadable> mods = new ArrayList<ATLauncherDownloadable>();
+
+        for (Mod mod : this.allMods) {
+            if (mod.isServerDownload()) {
+                ATLauncherDownloadable downloadable;
+                if (mod.hasMD5()) {
+                    downloadable = new ATLauncherDownloadable(
+                            App.settings.getFileURL(mod.getURL()), new File(
+                                    App.settings.getDownloadsDir(), mod.getFile()), mod.getMD5(),
+                            this);
+                } else {
+                    downloadable = new ATLauncherDownloadable(
+                            App.settings.getFileURL(mod.getURL()), new File(
+                                    App.settings.getDownloadsDir(), mod.getFile()), this);
+                }
+                mods.add(downloadable);
+            }
+        }
+
+        return mods;
+    }
+
+    private void downloadMods(ArrayList<Mod> mods) {
+        firePropertyChange("subprogressint", null, null);
+        ExecutorService executor = Executors.newFixedThreadPool(8);
+        ArrayList<ATLauncherDownloadable> downloads = getDownloadableMods();
+        totalDownloads = downloads.size();
+
+        for (ATLauncherDownloadable download : downloads) {
+            executor.execute(download);
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        for (Mod mod : mods) {
+            if (!downloads.contains(mod) && !isCancelled()) {
+                firePropertyChange("doing", null,
+                        App.settings.getLocalizedString("common.downloading") + " " + mod.getFile());
+                mod.download(this);
+            }
+        }
+    }
+
+    private void installMods(ArrayList<Mod> mods) {
+        for (Mod mod : mods) {
+            if (!isCancelled()) {
+                firePropertyChange("doing", null,
+                        App.settings.getLocalizedString("common.installing") + " " + mod.getName());
+                addPercent(mods.size() / 40);
+                mod.install(this);
+            }
+        }
+    }
+
     private void downloadMojangStuffNew() {
         firePropertyChange("doing", null,
                 App.settings.getLocalizedString("instance.downloadingresources"));
         firePropertyChange("subprogressint", null, null);
         ExecutorService executor = Executors.newFixedThreadPool(8);
-        ArrayList<Downloadable> downloads = getNeededResources();
+        ArrayList<MojangDownloadable> downloads = getNeededResources();
         totalResources = downloads.size();
 
-        for (Downloadable download : downloads) {
+        for (MojangDownloadable download : downloads) {
             executor.execute(download);
         }
         executor.shutdown();
@@ -320,8 +378,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
-    private ArrayList<Downloadable> getNeededResources() {
-        ArrayList<Downloadable> downloads = new ArrayList<Downloadable>(); // All the files
+    private ArrayList<MojangDownloadable> getNeededResources() {
+        ArrayList<MojangDownloadable> downloads = new ArrayList<MojangDownloadable>(); // All the
+                                                                                       // files
 
         // Read in the resources needed
 
@@ -360,7 +419,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                 filename = file.getName();
                             }
                             if (!Utils.getMD5(file).equalsIgnoreCase(etag))
-                                downloads.add(new Downloadable(
+                                downloads.add(new MojangDownloadable(
                                         "https://s3.amazonaws.com/Minecraft.Resources/" + key,
                                         file, etag, this));
                         }
@@ -405,10 +464,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         downloadTo = new File(App.settings.getLibrariesDir(), file);
                     }
                     if (element.hasAttribute("md5")) {
-                        downloads.add(new Downloadable(url, downloadTo,
-                                element.getAttribute("md5"), this));
+                        downloads.add(new MojangDownloadable(url, downloadTo, element
+                                .getAttribute("md5"), this));
                     } else {
-                        downloads.add(new Downloadable(url, downloadTo, "-", this));
+                        downloads.add(new MojangDownloadable(url, downloadTo, "-", this));
                     }
                 }
             }
@@ -516,7 +575,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         String url = "https://s3.amazonaws.com/Minecraft.Download/libraries/" + dir
                                 + "/" + filename;
                         File file = new File(App.settings.getLibrariesDir(), filename);
-                        downloads.add(new Downloadable(url, file, null, this));
+                        downloads.add(new MojangDownloadable(url, file, null, this));
                     }
                 }
 
@@ -526,15 +585,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (isServer) {
-            downloads.add(new Downloadable(
+            downloads.add(new MojangDownloadable(
                     "https://s3.amazonaws.com/Minecraft.Download/versions/" + this.minecraftVersion
                             + "/minecraft_server." + this.minecraftVersion + ".jar", new File(
                             App.settings.getJarsDir(), "minecraft_server." + this.minecraftVersion
                                     + ".jar"), null, this));
         } else {
-            downloads.add(new Downloadable("https://s3.amazonaws.com/Minecraft.Download/versions/"
-                    + this.minecraftVersion + "/" + this.minecraftVersion + ".jar", new File(
-                    App.settings.getJarsDir(), this.minecraftVersion + ".jar"), null, this));
+            downloads.add(new MojangDownloadable(
+                    "https://s3.amazonaws.com/Minecraft.Download/versions/" + this.minecraftVersion
+                            + "/" + this.minecraftVersion + ".jar", new File(App.settings
+                            .getJarsDir(), this.minecraftVersion + ".jar"), null, this));
         }
         return downloads;
     }
@@ -740,8 +800,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else {
             modsInstalled = new String[0];
         }
-        addPercent(0);
         makeDirectories();
+        addPercent(5);
         if (pack.isNewInstallMethod(this.version)) {
             this.newLaunchMethod = true;
             downloadMojangStuffNew();
@@ -749,6 +809,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             this.newLaunchMethod = false;
             downloadMojangStuffOld();
         }
+        addPercent(5);
         if (isServer) {
             firePropertyChange("doing", null,
                     App.settings.getLocalizedString("server.extractingjar"));
@@ -759,30 +820,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 deleteMetaInf();
             }
         }
+        addPercent(5);
         if (mods.size() != 0) {
-            int amountPer = 40 / mods.size();
-            for (Mod mod : mods) {
-                if (!isCancelled()) {
-                    firePropertyChange(
-                            "doing",
-                            null,
-                            App.settings.getLocalizedString("common.downloading") + " "
-                                    + mod.getName());
-                    addPercent(amountPer);
-                    mod.download(this);
-                }
-            }
-            for (Mod mod : mods) {
-                if (!isCancelled()) {
-                    firePropertyChange(
-                            "doing",
-                            null,
-                            App.settings.getLocalizedString("common.installing") + " "
-                                    + mod.getName());
-                    addPercent(amountPer);
-                    mod.install(this);
-                }
-            }
+            addPercent(40);
+            downloadMods(mods);
+            addPercent(40);
+            installMods(mods);
         } else {
             addPercent(80);
         }
@@ -807,10 +850,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         firePropertyChange("subprogress", null, percent);
     }
 
-    public void setDoing(String doing) {
+    public void setDoingResources(String doing) {
         firePropertyChange("doing", null, doing);
         doneResources++;
         int progress = (100 * doneResources) / totalResources;
+        firePropertyChange("subprogress", null, progress);
+    }
+
+    public void setDoingDownloads(String doing) {
+        firePropertyChange("doing", null, doing);
+        doneDownloads++;
+        int progress = (100 * doneDownloads) / totalDownloads;
         firePropertyChange("subprogress", null, progress);
     }
 
