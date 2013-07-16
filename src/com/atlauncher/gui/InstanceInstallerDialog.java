@@ -198,17 +198,19 @@ public class InstanceInstallerDialog extends JDialog {
         if (pack.isTester()) {
             index--;
         }
-        if (App.settings.getMinecraftInstallMethod(pack.getMinecraftVersion(index))
-                .equalsIgnoreCase("new")) {
-            useLatestLWJGLLabel.setVisible(false);
-            useLatestLWJGL.setVisible(false);
-        } else if (pack.isLatestLWJGLEnabled()) {
-            useLatestLWJGLLabel.setVisible(false);
-            useLatestLWJGL.setVisible(false);
-            useLatestLWJGL.setSelected(true);
-        } else {
-            useLatestLWJGLLabel.setVisible(true);
-            useLatestLWJGL.setVisible(true);
+        if (!isServer) {
+            if (App.settings.getMinecraftInstallMethod(pack.getMinecraftVersion(index))
+                    .equalsIgnoreCase("new")) {
+                useLatestLWJGLLabel.setVisible(false);
+                useLatestLWJGL.setVisible(false);
+            } else if (pack.isLatestLWJGLEnabled()) {
+                useLatestLWJGLLabel.setVisible(false);
+                useLatestLWJGL.setVisible(false);
+                useLatestLWJGL.setSelected(true);
+            } else {
+                useLatestLWJGLLabel.setVisible(true);
+                useLatestLWJGL.setVisible(true);
+            }
         }
 
         // Bottom Panel Stuff

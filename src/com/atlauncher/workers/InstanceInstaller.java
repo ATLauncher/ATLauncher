@@ -67,6 +67,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String mainClass = null;
     private int percent = 0; // Percent done installing
     private ArrayList<Mod> allMods;
+    private ArrayList<Mod> selectedMods;
     private int totalResources = 0; // Total number of Resources to download for Minecraft >=1.6
     private int doneResources = 0; // Total number of Resources downloaded for Minecraft >=1.6
     private int totalDownloads = 0; // Total number of mods to download
@@ -270,14 +271,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         File[] directories;
         if (isServer) {
             directories = new File[] { getRootDirectory(), getModsDirectory(),
-                    getCoreModsDirectory(), getLibrariesDirectory() };
+                    getLibrariesDirectory() };
         } else {
             directories = new File[] { getRootDirectory(), getMinecraftDirectory(),
-                    getModsDirectory(), getCoreModsDirectory(), getJarModsDirectory(),
-                    getBinDirectory(), getNativesDirectory() };
+                    getModsDirectory(), getJarModsDirectory(), getBinDirectory(),
+                    getNativesDirectory() };
         }
         for (File directory : directories) {
             directory.mkdir();
+        }
+        if (!isNewLaunchMethod()) {
+            getCoreModsDirectory().mkdir();
         }
     }
 
@@ -429,6 +433,79 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 App.settings.getConsole().logStackTrace(e);
             }
         }
+
+        // Now lets see if we have custom mainclass and extraarguments
+
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(pack.getXML(version)));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("mainclass");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    if (element.hasAttribute("depends")) {
+                        boolean found = false;
+                        for (Mod mod : selectedMods) {
+                            if (element.getAttribute("depends").equalsIgnoreCase(mod.getName())) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            break;
+                        }
+                    }
+                    NodeList nodeList1 = element.getChildNodes();
+                    this.mainClass = nodeList1.item(0).getNodeValue();
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
+
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(pack.getXML(version)));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("extraarguments");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    if (element.hasAttribute("depends")) {
+                        boolean found = false;
+                        for (Mod mod : selectedMods) {
+                            if (element.getAttribute("depends").equalsIgnoreCase(mod.getName())) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            break;
+                        }
+                    }
+                    NodeList nodeList1 = element.getChildNodes();
+                    this.minecraftArguments = nodeList1.item(0).getNodeValue();
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
+
         // Now read in the library jars needed from the pack
 
         try {
@@ -444,6 +521,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     Element element = (Element) node;
                     String url = element.getAttribute("url");
                     String file = element.getAttribute("file");
+                    if (element.hasAttribute("depends")) {
+                        boolean found = false;
+                        for (Mod mod : selectedMods) {
+                            if (element.getAttribute("depends").equalsIgnoreCase(mod.getName())) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            continue;
+                        }
+                    }
                     if (librariesNeeded == null) {
                         this.librariesNeeded = file;
                     } else {
@@ -488,12 +577,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         .urlToString("https://s3.amazonaws.com/Minecraft.Download/versions/"
                                 + this.minecraftVersion + "/" + this.minecraftVersion + ".json"));
                 JSONObject jsonObject = (JSONObject) obj;
-                this.minecraftArguments = pack.getExtraArguments(version);
-                String mc = pack.getMainClass(version);
-                if (mc == null) {
+                if (this.mainClass == null) {
                     this.mainClass = (String) jsonObject.get("mainClass");
-                } else {
-                    this.mainClass = mc;
                 }
                 JSONArray msg = (JSONArray) jsonObject.get("libraries");
                 Iterator<JSONObject> iterator = msg.iterator();
@@ -783,19 +868,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (this.minecraftVersion == null) {
             this.cancel(true);
         }
-        ArrayList<Mod> mods = new ArrayList<Mod>();
+        selectedMods = new ArrayList<Mod>();
         if (allMods.size() != 0) {
             ModsChooser modsChooser = new ModsChooser(this);
             modsChooser.setVisible(true);
             if (modsChooser.wasClosed()) {
                 this.cancel(true);
             }
-            mods = modsChooser.getSelectedMods();
+            selectedMods = modsChooser.getSelectedMods();
         }
-        if (mods.size() != 0) {
-            modsInstalled = new String[mods.size()];
-            for (int i = 0; i < mods.size(); i++) {
-                modsInstalled[i] = mods.get(i).getName();
+        if (selectedMods.size() != 0) {
+            modsInstalled = new String[selectedMods.size()];
+            for (int i = 0; i < selectedMods.size(); i++) {
+                modsInstalled[i] = selectedMods.get(i).getName();
             }
         } else {
             modsInstalled = new String[0];
@@ -821,11 +906,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
         addPercent(5);
-        if (mods.size() != 0) {
+        if (selectedMods.size() != 0) {
             addPercent(40);
-            downloadMods(mods);
+            downloadMods(selectedMods);
             addPercent(40);
-            installMods(mods);
+            installMods(selectedMods);
         } else {
             addPercent(80);
         }

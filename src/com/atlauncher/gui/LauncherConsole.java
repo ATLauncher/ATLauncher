@@ -13,7 +13,6 @@ package com.atlauncher.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -29,6 +28,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -37,9 +37,11 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
 
@@ -54,6 +56,8 @@ public class LauncherConsole extends JFrame {
 
     private JScrollPane scrollPane;
     private JEditorPane console;
+    private HTMLEditorKit kit;
+    private HTMLDocument doc;
     private ConsoleBottomBar bottomBar;
     private JPopupMenu contextMenu; // Right click menu
 
@@ -69,13 +73,17 @@ public class LauncherConsole extends JFrame {
 
         setupLookAndFeel(); // Setup the look and feel for the Console
 
-        console = new JEditorPane("text/plain", "") {
+        console = new JEditorPane("text/html", "") {
             public boolean getScrollableTracksViewportWidth() {
                 return true; // Fixes issues with resizing from big to small and text not shrinking
             }
         };
+        kit = new HTMLEditorKit();
+        doc = new HTMLDocument();
         console.setEditable(false);
         console.setSelectionColor(Color.GRAY);
+        console.setEditorKit(kit);
+        console.setDocument(doc);
 
         setupContextMenu(); // Setup the right click menu
 
@@ -153,37 +161,44 @@ public class LauncherConsole extends JFrame {
         UIManager.put("info", BASE_COLOR);
     }
 
+    public void log(String text) {
+        log(text, false);
+    }
+
     /**
      * Logs text to the console window and to file
      * 
      * @param text
      *            The text to show in the console and file
      */
-    public void log(String text) {
-        Timestamp timestamp = new Timestamp(new Date().getTime());
-        String time = timestamp.toString().substring(0, timestamp.toString().lastIndexOf("."));
-        if (console.getText().isEmpty()) {
-            console.setText("[" + time + "] " + text);
-        } else {
-            console.setText(console.getText() + "\n[" + time + "] " + text);
-        }
-        try {
-            PrintWriter out = new PrintWriter(new FileWriter(new File(App.settings.getBaseDir(),
-                    "ATLauncher-Log-1.txt"), true));
-            out.println("[" + time + "] " + text);
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        scrollPaneToBottom();
-    }
-
-    private void scrollPaneToBottom() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                console.scrollRectToVisible(new Rectangle(0, console.getHeight() - 2, 1, 1));
+    public void log(String text, boolean stackTrace) {
+        synchronized (kit) {
+            Timestamp timestamp = new Timestamp(new Date().getTime());
+            String time = timestamp.toString().substring(0, timestamp.toString().lastIndexOf("."));
+            try {
+                if (stackTrace) {
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#EE2222\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else {
+                    if (doc.getLength() == 0) {
+                        kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
+                                + "]</font></b> " + text, 0, 0, null);
+                    } else {
+                        kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
+                                + "]</font></b> " + text + "<br/>", 0, 0, null);
+                    }
+                }
+                PrintWriter out = new PrintWriter(new FileWriter(new File(
+                        App.settings.getBaseDir(), "ATLauncher-Log-1.txt"), true));
+                out.println("[" + time + "] " + text);
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (BadLocationException e) {
+                e.printStackTrace();
             }
-        });
+            console.setCaretPosition(console.getDocument().getLength());
+        }
     }
 
     /**
@@ -194,7 +209,7 @@ public class LauncherConsole extends JFrame {
      */
     public void logStackTrace(Exception e) {
         e.printStackTrace();
-        log(e.getMessage());
+        log(e.getMessage(), true);
         StringBuilder sb = new StringBuilder();
         for (StackTraceElement element : e.getStackTrace()) {
             if (element.toString() != null) {
@@ -210,12 +225,33 @@ public class LauncherConsole extends JFrame {
      *            The text to show in the console
      */
     public void logMinecraft(String text) {
-        if (console.getText().isEmpty()) {
-            console.setText(text);
-        } else {
-            console.setText(console.getText() + "\n" + text);
+        synchronized (kit) {
+            Timestamp timestamp = new Timestamp(new Date().getTime());
+            String time = timestamp.toString().substring(0, timestamp.toString().lastIndexOf("."));
+            try {
+                if (text.contains("[INFO]")) {
+                    text = text.substring(text.indexOf("[INFO]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[WARNING]")) {
+                    text = text.substring(text.indexOf("[WARNING]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[SEVERE]")) {
+                    text = text.substring(text.indexOf("[SEVERE]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#EE2222\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else {
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+            console.setCaretPosition(console.getDocument().getLength());
         }
-        scrollPaneToBottom();
     }
 
     /**
@@ -224,7 +260,16 @@ public class LauncherConsole extends JFrame {
      * @return String Console Text
      */
     public String getLog() {
-        return console.getText();
+        Html2Text parser = new Html2Text();
+        StringReader in = new StringReader(console.getText());
+        try {
+            parser.parse(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            in.close();
+        }
+        return parser.getText();
     }
 
     public void showKillMinecraft() {

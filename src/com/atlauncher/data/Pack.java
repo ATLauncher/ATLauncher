@@ -164,60 +164,6 @@ public class Pack {
         return null;
     }
 
-    public String getMainClass(String version) {
-        String xml = getXML(version);
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(xml));
-            Document document = builder.parse(is);
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("mainclass");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    NodeList nodeList1 = element.getChildNodes();
-                    return nodeList1.item(0).getNodeValue();
-                }
-            }
-        } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
-        }
-        return null;
-    }
-
-    public String getExtraArguments(String version) {
-        String xml = getXML(version);
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(xml));
-            Document document = builder.parse(is);
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("extraarguments");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    NodeList nodeList1 = element.getChildNodes();
-                    return nodeList1.item(0).getNodeValue();
-                }
-            }
-        } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
-        }
-        return null;
-    }
-
     public ArrayList<Mod> getMods(String versionToInstall, boolean isServer) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
         String xml = getXML(versionToInstall);

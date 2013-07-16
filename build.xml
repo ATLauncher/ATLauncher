@@ -2,8 +2,11 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0b21
-- Fix Mac App updating
+3.0.0b22
+- Added in depends xml attribute for libraries which wont install them unless the mod name defined is installed
+- Stopped coremods folder being created on Minecraft >=1.6
+- Fixed console flickering problems
+- Added in colors to console to indicate when things are good, and when things go horribly, horribly wrong
 
 -->
 
@@ -16,7 +19,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0b21" />
+	<property name="atlauncher.version" value="3.0.0b22" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />
