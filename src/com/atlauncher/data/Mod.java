@@ -187,7 +187,7 @@ public class Mod {
                                     getServerFile());
                         }
                         if (macFile.exists()) {
-                            Utils.copyFile(macFile, fileLocation);
+                            Utils.copyFile(macFile, fileLocation, true);
                             Utils.delete(macFile);
                         }
                     }

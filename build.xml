@@ -2,9 +2,9 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0b18
-- Mac App users now save files to their users download folder which then transfers file to the .app folder for portability
-- Added in forcing use of latest LWJGL on packs with Minecraft versions <1.6
+3.0.0b19
+- Fix Mac App icon properly this time
+- Fix Mac App downloads not working corectly
 
 -->
 
@@ -17,7 +17,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0b18" />
+	<property name="atlauncher.version" value="3.0.0b19" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />
