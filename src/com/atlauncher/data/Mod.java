@@ -166,7 +166,9 @@ public class Mod {
                                     + "<br/><br/>"
                                     + App.settings.getLocalizedString("instance.pleasesave")
                                     + "<br/><br/>"
-                                    + App.settings.getDownloadsDir().getAbsolutePath()
+                                    + (App.settings.isUsingMacApp() ? App.settings
+                                            .getMacAppDownloadsDir().getAbsolutePath()
+                                            : App.settings.getDownloadsDir().getAbsolutePath())
                                     + "</center></html>",
                             App.settings.getLocalizedString("common.downloading") + " "
                                     + (serverFile == null ? getFile() : getServerFile()),
@@ -175,6 +177,19 @@ public class Mod {
                     if (retValue == JOptionPane.CLOSED_OPTION) {
                         installer.cancel(true);
                         return;
+                    }
+                    if (App.settings.isUsingMacApp()) {
+                        File macFile;
+                        if (serverFile == null) {
+                            macFile = new File(App.settings.getMacAppDownloadsDir(), getFile());
+                        } else {
+                            macFile = new File(App.settings.getMacAppDownloadsDir(),
+                                    getServerFile());
+                        }
+                        if (macFile.exists()) {
+                            Utils.copyFile(macFile, fileLocation);
+                            Utils.delete(macFile);
+                        }
                     }
                 }
                 break;

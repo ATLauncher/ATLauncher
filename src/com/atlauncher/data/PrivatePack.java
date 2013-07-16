@@ -17,11 +17,12 @@ public class PrivatePack extends Pack {
     private String[] allowedPlayers;
 
     public PrivatePack(int id, String name, boolean createServer, boolean leaderboards,
-            boolean logging, String[] versions, String[] minecraftVersions,
+            boolean logging, boolean latestlwjgl, String[] versions, String[] minecraftVersions,
             String devMinecraftVersion, String[] testers, String description, String supportURL,
             String websiteURL, String[] allowedPlayers) {
-        super(id, name, createServer, leaderboards, logging, versions, minecraftVersions, devMinecraftVersion, testers,
-                description, supportURL, websiteURL);
+        super(id, name, createServer, leaderboards, logging, latestlwjgl, versions,
+                minecraftVersions, devMinecraftVersion, testers, description, supportURL,
+                websiteURL);
         this.allowedPlayers = allowedPlayers;
     }
 

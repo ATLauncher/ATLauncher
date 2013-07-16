@@ -37,6 +37,7 @@ public class Pack {
     private boolean createServer;
     private boolean leaderboards;
     private boolean logging;
+    private boolean latestlwjgl;
     private String[] versions;
     private String[] minecraftVersions;
     private String devMinecraftVersion;
@@ -49,13 +50,15 @@ public class Pack {
     private String xmlVersion; // The version the XML is for
 
     public Pack(int id, String name, boolean createServer, boolean leaderboards, boolean logging,
-            String[] versions, String[] minecraftVersions, String devMinecraftVersion,
-            String[] testers, String description, String supportURL, String websiteURL) {
+            boolean latestlwjgl, String[] versions, String[] minecraftVersions,
+            String devMinecraftVersion, String[] testers, String description, String supportURL,
+            String websiteURL) {
         this.id = id;
         this.name = name;
         this.createServer = createServer;
         this.leaderboards = leaderboards;
         this.logging = logging;
+        this.latestlwjgl = latestlwjgl;
         this.versions = versions;
         this.testers = testers;
         this.minecraftVersions = minecraftVersions;
@@ -359,12 +362,16 @@ public class Pack {
     public String getLatestVersion() {
         return this.versions[0];
     }
-    
+
     public boolean isLeaderboardsEnabled() {
         return this.leaderboards;
     }
-    
+
     public boolean isLoggingEnabled() {
         return this.logging;
+    }
+
+    public boolean isLatestLWJGLEnabled() {
+        return this.latestlwjgl;
     }
 }

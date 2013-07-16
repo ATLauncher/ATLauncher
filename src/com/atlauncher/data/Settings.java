@@ -84,8 +84,8 @@ public class Settings {
 
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, imagesDir, skinsDir, jarsDir, commonConfigsDir,
-            resourcesDir, librariesDir, languagesDir, downloadsDir, instancesDir, serversDir,
-            tempDir, instancesDataFile, userDataFile, propertiesFile;
+            resourcesDir, librariesDir, languagesDir, downloadsDir, macAppDownloadsDir,
+            instancesDir, serversDir, tempDir, instancesDataFile, userDataFile, propertiesFile;
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -98,6 +98,7 @@ public class Settings {
     private BottomBar bottomBar; // The bottom bar
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private boolean offlineMode = false; // If offline mode is enabled
+    private boolean usingMacApp = false; // If the user is using the Mac App
     private Process minecraftProcess = null; // The process minecraft is running on
     private Server originalServer = null; // Original Server user has saved
     private String version = "%VERSION%"; // Version of the Launcher
@@ -119,6 +120,10 @@ public class Settings {
             }
         } else {
             baseDir = new File(System.getProperty("user.dir"));
+        }
+        if (Utils.isMac() && new File(baseDir.getParentFile().getParentFile(), "MacOS").exists()) {
+            usingMacApp = true;
+            macAppDownloadsDir = new File(System.getProperty("user.home"), "Downloads");
         }
         backupsDir = new File(baseDir, "Backups");
         configsDir = new File(baseDir, "Configs");
@@ -395,6 +400,15 @@ public class Settings {
      */
     public File getDownloadsDir() {
         return this.downloadsDir;
+    }
+
+    /**
+     * Returns the downloads directory for the Mac App
+     * 
+     * @return File object for the downloads directory for the Mac App
+     */
+    public File getMacAppDownloadsDir() {
+        return this.macAppDownloadsDir;
     }
 
     /**
@@ -740,6 +754,7 @@ public class Settings {
                     boolean leaderboards = Boolean.parseBoolean(element
                             .getAttribute("leaderboards"));
                     boolean logging = Boolean.parseBoolean(element.getAttribute("logging"));
+                    boolean latestlwjgl = Boolean.parseBoolean(element.getAttribute("latestlwjgl"));
                     String[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
                         versions = new String[0];
@@ -772,12 +787,12 @@ public class Settings {
                     String websiteURL = element.getAttribute("websiteurl");
                     if (element.getAttribute("type").equalsIgnoreCase("private")) {
                         packs.add(new PrivatePack(id, name, createServer, leaderboards, logging,
-                                versions, minecraftVersions, devMinecraftVersion, testers,
-                                description, supportURL, websiteURL, allowedPlayers));
+                                latestlwjgl, versions, minecraftVersions, devMinecraftVersion,
+                                testers, description, supportURL, websiteURL, allowedPlayers));
                     } else {
-                        packs.add(new Pack(id, name, createServer, leaderboards, logging, versions,
-                                minecraftVersions, devMinecraftVersion, testers, description,
-                                supportURL, websiteURL));
+                        packs.add(new Pack(id, name, createServer, leaderboards, logging,
+                                latestlwjgl, versions, minecraftVersions, devMinecraftVersion,
+                                testers, description, supportURL, websiteURL));
                     }
                 }
             }
@@ -1059,6 +1074,10 @@ public class Settings {
             saveAccounts();
             reloadPacksPanel();
         }
+    }
+
+    public boolean isUsingMacApp() {
+        return this.usingMacApp;
     }
 
     public void setInstanceVisbility(Instance instance, boolean collapsed) {

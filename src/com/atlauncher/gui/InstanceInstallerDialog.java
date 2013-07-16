@@ -154,6 +154,11 @@ public class InstanceInstallerDialog extends JDialog {
                         .equalsIgnoreCase("new")) {
                     useLatestLWJGLLabel.setVisible(false);
                     useLatestLWJGL.setVisible(false);
+                    useLatestLWJGL.setSelected(false);
+                } else if (pack.isLatestLWJGLEnabled()) {
+                    useLatestLWJGLLabel.setVisible(false);
+                    useLatestLWJGL.setVisible(false);
+                    useLatestLWJGL.setSelected(true);
                 } else {
                     useLatestLWJGLLabel.setVisible(true);
                     useLatestLWJGL.setVisible(true);
@@ -197,6 +202,10 @@ public class InstanceInstallerDialog extends JDialog {
                 .equalsIgnoreCase("new")) {
             useLatestLWJGLLabel.setVisible(false);
             useLatestLWJGL.setVisible(false);
+        } else if (pack.isLatestLWJGLEnabled()) {
+            useLatestLWJGLLabel.setVisible(false);
+            useLatestLWJGL.setVisible(false);
+            useLatestLWJGL.setSelected(true);
         } else {
             useLatestLWJGLLabel.setVisible(true);
             useLatestLWJGL.setVisible(true);
