@@ -737,6 +737,9 @@ public class Settings {
                     String name = element.getAttribute("name");
                     boolean createServer = Boolean.parseBoolean(element
                             .getAttribute("createserver"));
+                    boolean leaderboards = Boolean.parseBoolean(element
+                            .getAttribute("leaderboards"));
+                    boolean logging = Boolean.parseBoolean(element.getAttribute("logging"));
                     String[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
                         versions = new String[0];
@@ -768,12 +771,13 @@ public class Settings {
                     String supportURL = element.getAttribute("supporturl");
                     String websiteURL = element.getAttribute("websiteurl");
                     if (element.getAttribute("type").equalsIgnoreCase("private")) {
-                        packs.add(new PrivatePack(id, name, createServer, versions,
-                                minecraftVersions, devMinecraftVersion, testers, description,
-                                supportURL, websiteURL, allowedPlayers));
+                        packs.add(new PrivatePack(id, name, createServer, leaderboards, logging,
+                                versions, minecraftVersions, devMinecraftVersion, testers,
+                                description, supportURL, websiteURL, allowedPlayers));
                     } else {
-                        packs.add(new Pack(id, name, createServer, versions, minecraftVersions,
-                                devMinecraftVersion, testers, description, supportURL, websiteURL));
+                        packs.add(new Pack(id, name, createServer, leaderboards, logging, versions,
+                                minecraftVersions, devMinecraftVersion, testers, description,
+                                supportURL, websiteURL));
                     }
                 }
             }
@@ -1117,34 +1121,32 @@ public class Settings {
     }
 
     public void apiCall(String username, String action, String extra1, String extra2, boolean debug) {
-        if (enableLogs) {
-            try {
-                String data = URLEncoder.encode("username", "UTF-8") + "="
-                        + URLEncoder.encode(username, "UTF-8");
-                data += "&" + URLEncoder.encode("action", "UTF-8") + "="
-                        + URLEncoder.encode(action, "UTF-8");
-                data += "&" + URLEncoder.encode("extra1", "UTF-8") + "="
-                        + URLEncoder.encode(extra1, "UTF-8");
-                data += "&" + URLEncoder.encode("extra2", "UTF-8") + "="
-                        + URLEncoder.encode(extra2, "UTF-8");
+        try {
+            String data = URLEncoder.encode("username", "UTF-8") + "="
+                    + URLEncoder.encode(username, "UTF-8");
+            data += "&" + URLEncoder.encode("action", "UTF-8") + "="
+                    + URLEncoder.encode(action, "UTF-8");
+            data += "&" + URLEncoder.encode("extra1", "UTF-8") + "="
+                    + URLEncoder.encode(extra1, "UTF-8");
+            data += "&" + URLEncoder.encode("extra2", "UTF-8") + "="
+                    + URLEncoder.encode(extra2, "UTF-8");
 
-                URL url = new URL("https://api.atlauncher.com/log.php");
-                URLConnection conn = url.openConnection();
-                conn.setDoOutput(true);
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                wr.write(data);
-                wr.flush();
-                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String line;
-                while ((line = rd.readLine()) != null) {
-                    if (debug) {
-                        App.settings.getConsole().log("API Call Response: " + line);
-                    }
+            URL url = new URL("https://api.atlauncher.com/log.php");
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(data);
+            wr.flush();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = rd.readLine()) != null) {
+                if (debug) {
+                    App.settings.getConsole().log("API Call Response: " + line);
                 }
-                wr.close();
-            } catch (Exception e) {
-                App.settings.getConsole().logStackTrace(e);
             }
+            wr.close();
+        } catch (Exception e) {
+            App.settings.getConsole().logStackTrace(e);
         }
     }
 

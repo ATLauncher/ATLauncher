@@ -35,6 +35,8 @@ public class Pack {
     private int id;
     private String name;
     private boolean createServer;
+    private boolean leaderboards;
+    private boolean logging;
     private String[] versions;
     private String[] minecraftVersions;
     private String devMinecraftVersion;
@@ -46,12 +48,14 @@ public class Pack {
     private String xml; // The XML
     private String xmlVersion; // The version the XML is for
 
-    public Pack(int id, String name, boolean createServer, String[] versions,
-            String[] minecraftVersions, String devMinecraftVersion, String[] testers,
-            String description, String supportURL, String websiteURL) {
+    public Pack(int id, String name, boolean createServer, boolean leaderboards, boolean logging,
+            String[] versions, String[] minecraftVersions, String devMinecraftVersion,
+            String[] testers, String description, String supportURL, String websiteURL) {
         this.id = id;
         this.name = name;
         this.createServer = createServer;
+        this.leaderboards = leaderboards;
+        this.logging = logging;
         this.versions = versions;
         this.testers = testers;
         this.minecraftVersions = minecraftVersions;
@@ -263,7 +267,8 @@ public class Pack {
                     if (element.getAttribute("optional").equalsIgnoreCase("yes")) {
                         optional = true;
                     }
-                    Download download = Download.valueOf(element.getAttribute("download").toLowerCase());
+                    Download download = Download.valueOf(element.getAttribute("download")
+                            .toLowerCase());
                     boolean hidden = false;
                     if (element.getAttribute("hidden").equalsIgnoreCase("yes")) {
                         hidden = true;
@@ -353,5 +358,13 @@ public class Pack {
 
     public String getLatestVersion() {
         return this.versions[0];
+    }
+    
+    public boolean isLeaderboardsEnabled() {
+        return this.leaderboards;
+    }
+    
+    public boolean isLoggingEnabled() {
+        return this.logging;
     }
 }

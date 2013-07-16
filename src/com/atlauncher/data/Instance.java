@@ -129,6 +129,22 @@ public class Instance implements Serializable {
         }
     }
 
+    public boolean isLeaderboardsEnabled() {
+        if (this.realPack != null) {
+            return this.realPack.isLeaderboardsEnabled();
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isLoggingEnabled() {
+        if (this.realPack != null) {
+            return this.realPack.isLoggingEnabled();
+        } else {
+            return false;
+        }
+    }
+
     public String getVersion() {
         return version;
     }
@@ -410,7 +426,7 @@ public class Instance implements Serializable {
                                 App.settings.getParent().setVisible(true);
                             }
                             long end = System.currentTimeMillis();
-                            if (!App.settings.isInOfflineMode()) {
+                            if (!App.settings.isInOfflineMode() || !isLeaderboardsEnabled()) {
                                 if (App.settings.enableLeaderboards()) {
                                     App.settings.apiCall(account.getMinecraftUsername(),
                                             "addleaderboardtime", (getRealPack() == null ? "0"

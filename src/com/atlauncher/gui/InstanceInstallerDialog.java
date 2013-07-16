@@ -345,9 +345,11 @@ public class InstanceInstallerDialog extends JDialog {
                                 }
                                 App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();
-                                App.settings.apiCall(App.settings.getAccount()
-                                        .getMinecraftUsername(), "packinstalled",
-                                        pack.getID() + "", version);
+                                if (pack.isLoggingEnabled() && App.settings.enableLogs()) {
+                                    App.settings.apiCall(App.settings.getAccount()
+                                            .getMinecraftUsername(), "packinstalled", pack.getID()
+                                            + "", version);
+                                }
                             } else {
                                 if (isReinstall) {
                                     type = JOptionPane.ERROR_MESSAGE;
