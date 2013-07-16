@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import com.atlauncher.gui.Utils;
 
 public class Update {
@@ -28,14 +30,23 @@ public class Update {
 
         List<String> arguments = new ArrayList<String>();
 
-        String path = System.getProperty("java.home") + File.separator + "bin" + File.separator
-                + "java";
-        if (Utils.isWindows()) {
-            path += "w";
+        if (Utils.isMac()
+                && new File(new File(System.getProperty("user.dir")).getParentFile()
+                        .getParentFile(), "MacOS").exists()) {
+            arguments.add("open");
+            arguments.add(new File(System.getProperty("user.dir")).getParentFile().getParentFile()
+                    .getParentFile().getAbsolutePath());
+            
+        } else {
+            String path = System.getProperty("java.home") + File.separator + "bin" + File.separator
+                    + "java";
+            if (Utils.isWindows()) {
+                path += "w";
+            }
+            arguments.add(path);
+            arguments.add("-jar");
+            arguments.add(launcherPath);
         }
-        arguments.add(path);
-        arguments.add("-jar");
-        arguments.add(launcherPath);
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(arguments);
