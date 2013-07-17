@@ -213,7 +213,7 @@ public class LauncherConsole extends JFrame {
         StringBuilder sb = new StringBuilder();
         for (StackTraceElement element : e.getStackTrace()) {
             if (element.toString() != null) {
-                log(element.toString());
+                log(element.toString(), true);
             }
         }
     }
@@ -229,7 +229,11 @@ public class LauncherConsole extends JFrame {
             Timestamp timestamp = new Timestamp(new Date().getTime());
             String time = timestamp.toString().substring(0, timestamp.toString().lastIndexOf("."));
             try {
-                if (text.contains("[INFO]")) {
+                if (text.contains("[INFO] [STDERR]")) {
+                    text = text.substring(text.indexOf("[INFO] [STDERR]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[INFO]")) {
                     text = text.substring(text.indexOf("[INFO]"));
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
                             + "]</font></b> " + text + "<br/>", 0, 0, null);

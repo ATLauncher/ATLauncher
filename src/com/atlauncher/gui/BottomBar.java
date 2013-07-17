@@ -40,6 +40,7 @@ public class BottomBar extends JPanel {
     private boolean dontSave = false;
 
     private JButton toggleConsole;
+    private JButton openFolder;
     private JComboBox<Account> username;
     private JButton facebookIcon;
     private JButton twitterIcon;
@@ -66,6 +67,8 @@ public class BottomBar extends JPanel {
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 0, 0, 5);
         leftSide.add(toggleConsole, gbc);
+        gbc.gridx++;
+        leftSide.add(openFolder, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
@@ -101,6 +104,11 @@ public class BottomBar extends JPanel {
                     App.settings.getConsole().setVisible(true);
                     toggleConsole.setText(App.settings.getLocalizedString("console.hide"));
                 }
+            }
+        });
+        openFolder.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Utils.openExplorer(App.settings.getBaseDir());
             }
         });
         username.addItemListener(new ItemListener() {
@@ -141,6 +149,8 @@ public class BottomBar extends JPanel {
         } else {
             toggleConsole = new JButton(App.settings.getLocalizedString("console.show"));
         }
+        
+        openFolder = new JButton(App.settings.getLocalizedString("common.openfolder"));
 
         username = new JComboBox<Account>();
         username.setRenderer(new AccountsDropDownRenderer());

@@ -862,11 +862,37 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.mainClass;
     }
 
+    public ArrayList<Mod> sortMods(ArrayList<Mod> original) {
+        ArrayList<Mod> mods = new ArrayList<Mod>(original);
+
+        for (Mod mod : original) {
+            if (mod.isOptional()) {
+                if (!mod.getLinked().isEmpty()) {
+                    for (Mod mod1 : original) {
+                        if (mod1.getName().equalsIgnoreCase(mod.getLinked())) {
+                            mods.remove(mod);
+                            int index = mods.indexOf(mod1) + 1;
+                            mods.add(index, mod);
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return mods;
+    }
+
     protected Boolean doInBackground() throws Exception {
-        this.allMods = this.pack.getMods(this.version, isServer);
+        this.allMods = sortMods(this.pack.getMods(this.version, isServer));
         this.minecraftVersion = this.pack.getMinecraftVersion(this.version);
         if (this.minecraftVersion == null) {
             this.cancel(true);
+        }
+        if (pack.isNewInstallMethod(this.version)) {
+            this.newLaunchMethod = true;
+        } else {
+            this.newLaunchMethod = false;
         }
         selectedMods = new ArrayList<Mod>();
         if (allMods.size() != 0) {
@@ -887,11 +913,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         makeDirectories();
         addPercent(5);
-        if (pack.isNewInstallMethod(this.version)) {
-            this.newLaunchMethod = true;
+        if (this.newLaunchMethod) {
             downloadMojangStuffNew();
         } else {
-            this.newLaunchMethod = false;
             downloadMojangStuffOld();
         }
         addPercent(5);

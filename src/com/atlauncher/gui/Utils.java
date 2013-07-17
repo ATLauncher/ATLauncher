@@ -484,37 +484,6 @@ public class Utils {
         }
     }
 
-    // public static void deleteMetaInf(String pack) {
-    // File inputFile = new File(PackUtils.getMinecraftJar(pack));
-    // File outputTmpFile = new File(PackUtils.getMinecraftJar(pack) + ".tmp");
-    // try {
-    // JarInputStream input = new JarInputStream(new FileInputStream(inputFile));
-    // JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile));
-    // JarEntry entry;
-    //
-    // while ((entry = input.getNextJarEntry()) != null) {
-    // if (entry.getName().contains("META-INF")) {
-    // continue;
-    // }
-    // output.putNextEntry(entry);
-    // byte buffer[] = new byte[1024];
-    // int amo;
-    // while ((amo = input.read(buffer, 0, 1024)) != -1) {
-    // output.write(buffer, 0, amo);
-    // }
-    // output.closeEntry();
-    // }
-    //
-    // input.close();
-    // output.close();
-    //
-    // inputFile.delete();
-    // outputTmpFile.renameTo(inputFile);
-    // } catch (IOException e) {
-    // App.settings.getConsole().logStackTrace(e);
-    // }
-    // }
-
     public static void cleanTempDirectory() {
         File file = App.settings.getTempDir();
         String[] myFiles;
