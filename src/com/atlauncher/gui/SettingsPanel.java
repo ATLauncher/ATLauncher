@@ -420,7 +420,6 @@ public class SettingsPanel extends JPanel {
                 App.settings.getConsole().log("Settings Saved!");
                 if (reboot) {
                     App.settings.restartLauncher();
-                    System.exit(0);
                 }
                 String[] options = { App.settings.getLocalizedString("common.ok") };
                 JOptionPane.showOptionDialog(App.settings.getParent(),

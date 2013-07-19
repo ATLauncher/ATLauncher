@@ -2,10 +2,8 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0b24
-- Allow setting of minimum amount of PermGen per pack
-- When Launcher first starts up, it now prints a bunch more stuff to the console about the users system
-- When Langauge is changed the Launcher now restarts
+3.0.0b25
+- Fix Mac OSX Application restarting bug
 
 -->
 
@@ -18,7 +16,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0b24" />
+	<property name="atlauncher.version" value="3.0.0b25" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

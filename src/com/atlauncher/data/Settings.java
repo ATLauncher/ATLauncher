@@ -1696,12 +1696,10 @@ public class Settings {
 
         List<String> arguments = new ArrayList<String>();
 
-        if (Utils.isMac()
-                && new File(new File(System.getProperty("user.dir")).getParentFile()
-                        .getParentFile(), "MacOS").exists()) {
+        if (usingMacApp) {
             arguments.add("open");
-            arguments.add(new File(System.getProperty("user.dir")).getParentFile().getParentFile()
-                    .getParentFile().getAbsolutePath());
+            arguments.add("-n");
+            arguments.add(baseDir.getParentFile().getParentFile().getParentFile().getAbsolutePath());
 
         } else {
             String jpath = System.getProperty("java.home") + File.separator + "bin"
@@ -1722,6 +1720,6 @@ public class Settings {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.exit(0);
     }
-
 }
