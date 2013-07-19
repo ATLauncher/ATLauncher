@@ -23,6 +23,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -1678,6 +1679,49 @@ public class Settings {
 
     public String getLocalizedString(String string, String replace) {
         return language.getString(string).replace("%s", replace);
+    }
+
+    public void restartLauncher() {
+        File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
+                .getPath());
+        String path = null;
+        try {
+            path = thisFile.getCanonicalPath();
+            path = URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            getConsole().logStackTrace(e);
+        }
+
+        List<String> arguments = new ArrayList<String>();
+
+        if (Utils.isMac()
+                && new File(new File(System.getProperty("user.dir")).getParentFile()
+                        .getParentFile(), "MacOS").exists()) {
+            arguments.add("open");
+            arguments.add(new File(System.getProperty("user.dir")).getParentFile().getParentFile()
+                    .getParentFile().getAbsolutePath());
+
+        } else {
+            String jpath = System.getProperty("java.home") + File.separator + "bin"
+                    + File.separator + "java";
+            if (Utils.isWindows()) {
+                jpath += "w";
+            }
+            arguments.add(jpath);
+            arguments.add("-jar");
+            arguments.add(path);
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(arguments);
+
+        try {
+            processBuilder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

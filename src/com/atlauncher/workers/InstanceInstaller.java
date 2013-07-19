@@ -61,6 +61,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String minecraftVersion;
     private String jarOrder;
     private boolean newLaunchMethod;
+    private int permgen = 0;
     private String librariesNeeded = null;
     private String nativesNeeded = null;
     private String minecraftArguments = null;
@@ -846,6 +847,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.minecraftVersion;
     }
 
+    public int getPermGen() {
+        return this.permgen;
+    }
+
     public boolean isNewLaunchMethod() {
         return this.newLaunchMethod;
     }
@@ -886,6 +891,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     protected Boolean doInBackground() throws Exception {
         this.allMods = sortMods(this.pack.getMods(this.version, isServer));
         this.minecraftVersion = this.pack.getMinecraftVersion(this.version);
+        this.permgen = this.pack.getPermGen(this.version);
         if (this.minecraftVersion == null) {
             this.cancel(true);
         }

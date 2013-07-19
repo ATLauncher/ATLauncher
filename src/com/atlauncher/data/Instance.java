@@ -43,6 +43,7 @@ public class Instance implements Serializable {
     private String installedBy;
     private String version;
     private String minecraftVersion;
+    private int permgen = 0;
     private String jarOrder;
     private String librariesNeeded = null;
     private String minecraftArguments = null;
@@ -53,14 +54,15 @@ public class Instance implements Serializable {
     private String[] modsInstalled;
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
-            String version, String minecraftVersion, String[] modsInstalled, String jarOrder,
-            String librariesNeeded, String minecraftArguments, String mainClass,
+            String version, String minecraftVersion, int permgen, String[] modsInstalled,
+            String jarOrder, String librariesNeeded, String minecraftArguments, String mainClass,
             boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
         this.version = version;
         this.minecraftVersion = minecraftVersion;
+        this.permgen = permgen;
         this.modsInstalled = modsInstalled;
         this.jarOrder = jarOrder;
         if (newLaunchMethod) {
@@ -79,10 +81,10 @@ public class Instance implements Serializable {
     }
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
-            String version, String minecraftVersion, String[] modsInstalled, String jarOrder,
+            String version, String minecraftVersion, int permgen, String[] modsInstalled, String jarOrder,
             String librariesNeeded, String minecraftArguments, String mainClass,
             boolean newLaunchMethod) {
-        this(name, pack, realPack, installJustForMe, version, minecraftVersion, modsInstalled,
+        this(name, pack, realPack, installJustForMe, version, minecraftVersion, permgen, modsInstalled,
                 jarOrder, librariesNeeded, minecraftArguments, mainClass, true, newLaunchMethod);
     }
 
@@ -100,6 +102,10 @@ public class Instance implements Serializable {
 
     public String getJarOrder() {
         return this.jarOrder;
+    }
+    
+    public int getPermGen() {
+        return this.permgen;
     }
 
     /**

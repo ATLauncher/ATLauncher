@@ -348,7 +348,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             new Instance(instanceNameField.getText(), pack
                                                     .getName(), pack, installForMe.isSelected(),
                                                     version, this.getMinecraftVersion(), this
-                                                            .getModsInstalled(),
+                                                            .getPermGen(), this.getModsInstalled(),
                                                     this.getJarOrder(), this.getLibrariesNeeded(),
                                                     this.getMinecraftArguments(), this
                                                             .getMainClass(), this

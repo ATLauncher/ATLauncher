@@ -398,6 +398,10 @@ public class SettingsPanel extends JPanel {
         saveButton = new JButton(App.settings.getLocalizedString("common.save"));
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
+                boolean reboot = false;
+                if (language.getSelectedItem() != App.settings.getLanguage()) {
+                    reboot = true;
+                }
                 App.settings.setLanguage((Language) language.getSelectedItem());
                 App.settings.setServer((Server) server.getSelectedItem());
                 App.settings.setMemory(Integer.parseInt(((String) memory.getSelectedItem())
@@ -414,6 +418,10 @@ public class SettingsPanel extends JPanel {
                 App.settings.setEnableLogs(enableLogs.isSelected());
                 App.settings.saveProperties();
                 App.settings.getConsole().log("Settings Saved!");
+                if (reboot) {
+                    App.settings.restartLauncher();
+                    System.exit(0);
+                }
                 String[] options = { App.settings.getLocalizedString("common.ok") };
                 JOptionPane.showOptionDialog(App.settings.getParent(),
                         App.settings.getLocalizedString("settings.saved"),

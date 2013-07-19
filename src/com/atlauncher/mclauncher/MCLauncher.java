@@ -83,7 +83,11 @@ public class MCLauncher {
 
         arguments.add("-Xms256M");
         arguments.add("-Xmx" + App.settings.getMemory() + "M");
-        arguments.add("-XX:MaxPermSize=" + App.settings.getPermGen() + "M");
+        if (App.settings.getPermGen() < instance.getPermGen()) {
+            arguments.add("-XX:MaxPermSize=" + instance.getPermGen() + "M");
+        } else {
+            arguments.add("-XX:MaxPermSize=" + App.settings.getPermGen() + "M");
+        }
 
         if (!App.settings.getJavaParameters().isEmpty()) {
             for (String arg : App.settings.getJavaParameters().split(" ")) {

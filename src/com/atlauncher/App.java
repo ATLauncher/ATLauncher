@@ -70,6 +70,12 @@ public class App {
 
         settings = new Settings(); // Setup the Settings and wait for it to finish
 
+        settings.getConsole().log("ATLauncher Version: " + settings.getVersion());
+        settings.getConsole().log("Operating System: " + System.getProperty("os.name"));
+        settings.getConsole().log("Java Version: " + Utils.getJavaVersion());
+        settings.getConsole().log("64 Bit Java: " + Utils.is64Bit());
+        settings.getConsole().log("Launcher Directory: " + settings.getBaseDir());
+
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "ATLauncher "
