@@ -2,8 +2,8 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.0b25
-- Fix Mac OSX Application restarting bug
+3.0.0b26
+- Last beta update. Removed Update functionality temporarily
 
 -->
 
@@ -16,7 +16,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.0b25" />
+	<property name="atlauncher.version" value="3.0.0b26" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

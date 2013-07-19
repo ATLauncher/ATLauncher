@@ -258,7 +258,7 @@ public class Settings {
                             } else {
                                 console.log("Update to Launcher found. Current version: "
                                         + this.version + ", New version: " + version);
-                                downloadUpdate();
+                                //downloadUpdate();
                             }
                         } else {
                             continue;
