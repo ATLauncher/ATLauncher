@@ -47,6 +47,9 @@ public class DownloadWorker extends SwingWorker<Void, String> {
         URL downloadURL = new URL(url);
         URLConnection c = downloadURL.openConnection();
         do {
+            c.setRequestProperty(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
             if (c instanceof HttpURLConnection) {
                 ((HttpURLConnection) c).setInstanceFollowRedirects(false);
             }
@@ -88,6 +91,10 @@ public class DownloadWorker extends SwingWorker<Void, String> {
             StringBuilder response = null;
             URL downloadURL = getRedirect(this.url);
             URLConnection connection = downloadURL.openConnection();
+            connection
+                    .setRequestProperty(
+                            "User-Agent",
+                            "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     connection.getInputStream()));
             response = new StringBuilder();
@@ -101,6 +108,9 @@ public class DownloadWorker extends SwingWorker<Void, String> {
             InputStream in = null;
             URL downloadURL = getRedirect(this.url);
             URLConnection conn = downloadURL.openConnection();
+            conn.setRequestProperty(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
             int size = conn.getContentLength();
             int downloaded = 0;
             in = conn.getInputStream();

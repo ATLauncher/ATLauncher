@@ -620,6 +620,10 @@ public class Utils {
         try {
             URL urll = new URL(url);
             URLConnection connection = urll.openConnection();
+            connection
+            .setRequestProperty(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
             connection.setConnectTimeout(3000);
             BufferedReader in;
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));

@@ -109,7 +109,7 @@ public class MCLauncher {
         arguments.add(MCLauncher.class.getCanonicalName());
 
         // Start or passed in arguments
-        arguments.add(instance.getMinecraftDirectory().getAbsolutePath()); // Path
+        arguments.add(instance.getRootDirectory().getAbsolutePath()); // Path
         arguments.add(account.getMinecraftUsername()); // Username
         arguments.add(session); // Session
         arguments.add(instance.getName()); // Instance Name

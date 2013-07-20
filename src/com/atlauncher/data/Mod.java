@@ -254,7 +254,7 @@ public class Mod {
                         Utils.copyDirectory(tempDirExtract, installer.getModsDirectory());
                         break;
                     case root:
-                        Utils.copyDirectory(tempDirExtract, installer.getMinecraftDirectory());
+                        Utils.copyDirectory(tempDirExtract, installer.getRootDirectory());
                         break;
                     default:
                         App.settings.getConsole().log(
@@ -298,10 +298,9 @@ public class Mod {
                             break;
                         case root:
                             if (tempFileDecomp.isFile()) {
-                                Utils.copyFile(tempFileDecomp, installer.getMinecraftDirectory());
+                                Utils.copyFile(tempFileDecomp, installer.getRootDirectory());
                             } else {
-                                Utils.copyDirectory(tempFileDecomp,
-                                        installer.getMinecraftDirectory());
+                                Utils.copyDirectory(tempFileDecomp, installer.getRootDirectory());
                             }
                             break;
                         default:

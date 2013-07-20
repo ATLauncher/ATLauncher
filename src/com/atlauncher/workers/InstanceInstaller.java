@@ -122,31 +122,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 + version.replaceAll("[^A-Za-z0-9]", "") + "_JarTemp");
     }
 
-    public File getMinecraftDirectory() {
-        if (isServer) {
-            return getRootDirectory();
-        }
-        return new File(getRootDirectory(), ".minecraft");
-    }
-
     public File getLibrariesDirectory() {
-        return new File(getMinecraftDirectory(), "libraries");
+        return new File(getRootDirectory(), "libraries");
     }
 
     public File getModsDirectory() {
-        return new File(getMinecraftDirectory(), "mods");
+        return new File(getRootDirectory(), "mods");
     }
 
     public File getCoreModsDirectory() {
-        return new File(getMinecraftDirectory(), "coremods");
+        return new File(getRootDirectory(), "coremods");
     }
 
     public File getJarModsDirectory() {
-        return new File(getMinecraftDirectory(), "jarmods");
+        return new File(getRootDirectory(), "jarmods");
     }
 
     public File getBinDirectory() {
-        return new File(getMinecraftDirectory(), "bin");
+        return new File(getRootDirectory(), "bin");
     }
 
     public File getNativesDirectory() {
@@ -274,9 +267,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             directories = new File[] { getRootDirectory(), getModsDirectory(),
                     getLibrariesDirectory() };
         } else {
-            directories = new File[] { getRootDirectory(), getMinecraftDirectory(),
-                    getModsDirectory(), getJarModsDirectory(), getBinDirectory(),
-                    getNativesDirectory() };
+            directories = new File[] { getRootDirectory(), getModsDirectory(),
+                    getJarModsDirectory(), getBinDirectory(), getNativesDirectory() };
         }
         for (File directory : directories) {
             directory.mkdir();
@@ -289,7 +281,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private ArrayList<ATLauncherDownloadable> getDownloadableMods() {
         ArrayList<ATLauncherDownloadable> mods = new ArrayList<ATLauncherDownloadable>();
 
-        for (Mod mod : this.allMods) {
+        for (Mod mod : this.selectedMods) {
             if (mod.isServerDownload()) {
                 ATLauncherDownloadable downloadable;
                 if (mod.hasMD5()) {
@@ -832,10 +824,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         String path = "packs/" + pack.getSafeName() + "/versions/" + version + "/Configs.zip";
         String configsURL = App.settings.getFileURL(path); // The zip on the server
         new Downloader(configsURL, configs.getAbsolutePath(), this).run();
-        Utils.unzip(configs, getMinecraftDirectory());
+        Utils.unzip(configs, getRootDirectory());
         configs.delete();
         if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
-            Utils.copyDirectory(App.settings.getCommonConfigsDir(), getMinecraftDirectory());
+            Utils.copyDirectory(App.settings.getCommonConfigsDir(), getRootDirectory());
         }
     }
 

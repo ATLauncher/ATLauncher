@@ -258,7 +258,7 @@ public class Settings {
                             } else {
                                 console.log("Update to Launcher found. Current version: "
                                         + this.version + ", New version: " + version);
-                                //downloadUpdate();
+                                downloadUpdate();
                             }
                         } else {
                             continue;
@@ -688,9 +688,10 @@ public class Settings {
      */
     private void setupServers() {
         servers.add(new Server("Auto", "files.atlcdn.net"));
-        servers.add(new Server("US West", "uswest.atlcdn.net"));
-        servers.add(new Server("US East", "useast.atlcdn.net"));
         servers.add(new Server("Europe", "eu.atlcdn.net"));
+        servers.add(new Server("US Central", "uscentral.atlcdn.net"));
+        servers.add(new Server("US East", "useast.atlcdn.net"));
+        servers.add(new Server("US West", "uswest.atlcdn.net"));
     }
 
     public boolean disableServerGetNext() {

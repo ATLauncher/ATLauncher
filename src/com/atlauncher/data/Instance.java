@@ -163,28 +163,24 @@ public class Instance implements Serializable {
         return new File(App.settings.getInstancesDir(), getSafeName());
     }
 
-    public File getMinecraftDirectory() {
-        return new File(getRootDirectory(), ".minecraft");
-    }
-
     public File getSavesDirectory() {
-        return new File(getMinecraftDirectory(), "saves");
+        return new File(getRootDirectory(), "saves");
     }
 
     public File getModsDirectory() {
-        return new File(getMinecraftDirectory(), "mods");
+        return new File(getRootDirectory(), "mods");
     }
 
     public File getCoreModsDirectory() {
-        return new File(getMinecraftDirectory(), "coremods");
+        return new File(getRootDirectory(), "coremods");
     }
 
     public File getJarModsDirectory() {
-        return new File(getMinecraftDirectory(), "jarmods");
+        return new File(getRootDirectory(), "jarmods");
     }
 
     public File getBinDirectory() {
-        return new File(getMinecraftDirectory(), "bin");
+        return new File(getRootDirectory(), "bin");
     }
 
     public File getNativesDirectory() {

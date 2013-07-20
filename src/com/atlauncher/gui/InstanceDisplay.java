@@ -241,7 +241,7 @@ public class InstanceDisplay extends CollapsiblePanel {
         openFolder = new JButton(App.settings.getLocalizedString("common.openfolder"));
         openFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Utils.openExplorer(instance.getMinecraftDirectory());
+                Utils.openExplorer(instance.getRootDirectory());
             }
         });
 

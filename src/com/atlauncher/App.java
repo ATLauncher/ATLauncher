@@ -124,6 +124,7 @@ public class App {
                 open = false;
             }
         }
+
         new LauncherFrame(open); // Open the Launcher
     }
 
