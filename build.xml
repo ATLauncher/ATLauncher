@@ -2,9 +2,8 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.1
-- Fixed issues directly downloading files hosted through CloudFlare
-- Fixed issues with optional mods downloading when not selected
+3.0.2
+- Fixed German display (Thanks to Togetherfreaks3 for the translation)
 
 -->
 
@@ -17,7 +16,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.1" />
+	<property name="atlauncher.version" value="3.0.2" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />
