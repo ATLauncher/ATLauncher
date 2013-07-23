@@ -2,8 +2,12 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.2
-- Fixed German display (Thanks to Togetherfreaks3 for the translation)
+3.0.3
+- Fix Launcher sending off leaderboard stats when the pack disables it
+- Fixed non transparent Minecraft skins showing up as white
+- Fixed Minecraft being able to be Launched more than once
+- Added in right click menu on the Account tab to reload users skin
+- Launcher now shows the english strings if the localized string isn't found
 
 -->
 
@@ -16,7 +20,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.2" />
+	<property name="atlauncher.version" value="3.0.3" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

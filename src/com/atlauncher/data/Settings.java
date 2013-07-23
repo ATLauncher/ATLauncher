@@ -102,6 +102,7 @@ public class Settings {
     private boolean usingMacApp = false; // If the user is using the Mac App
     private Process minecraftProcess = null; // The process minecraft is running on
     private Server originalServer = null; // Original Server user has saved
+    private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private String version = "%VERSION%"; // Version of the Launcher
 
     public Settings() {
@@ -1034,6 +1035,14 @@ public class Settings {
      */
     public boolean isFirstTimeRun() {
         return this.firstTimeRun;
+    }
+    
+    public boolean isMinecraftLaunched() {
+        return this.minecraftLaunched;
+    }
+    
+    public void setMinecraftLaunched(boolean launched) {
+        this.minecraftLaunched = launched;
     }
 
     /**

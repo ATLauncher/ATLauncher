@@ -10,6 +10,7 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -101,9 +102,20 @@ public class Account implements Serializable {
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
         BufferedImage head = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
 
+        int count = 0;
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                if (helmet.getRGB(x, y) == -1) {
+                    count++;
+                }
+            }
+        }
+
         Graphics g = head.getGraphics();
         g.drawImage(main, 0, 0, null);
-        g.drawImage(helmet, 0, 0, null);
+        if (count <= 32) {
+            g.drawImage(helmet, 0, 0, null);
+        }
 
         ImageIcon icon = new ImageIcon(head.getScaledInstance(32, 32, Image.SCALE_SMOOTH));
 
@@ -152,9 +164,20 @@ public class Account implements Serializable {
         BufferedImage leg = image.getSubimage(4, 20, 4, 12);
         BufferedImage skin = new BufferedImage(16, 32, BufferedImage.TYPE_INT_ARGB);
 
+        int count = 0;
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                if (helmet.getRGB(x, y) == -1) {
+                    count++;
+                }
+            }
+        }
+
         Graphics g = skin.getGraphics();
         g.drawImage(head, 4, 0, null);
-        g.drawImage(helmet, 4, 0, null);
+        if (count <= 32) {
+            g.drawImage(helmet, 4, 0, null);
+        }
         g.drawImage(arm, 0, 8, null);
         g.drawImage(arm, 12, 8, null);
         g.drawImage(body, 4, 8, null);
@@ -234,6 +257,26 @@ public class Account implements Serializable {
 
     public String toString() {
         return this.minecraftUsername;
+    }
+
+    public void updateSkin() {
+        File file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
+        Utils.delete(file);
+        try {
+            HttpURLConnection conn = (HttpURLConnection) new URL(
+                    "http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png")
+                    .openConnection();
+            if (conn.getResponseCode() == 200) {
+                new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername
+                        + ".png", file.getAbsolutePath()).run();
+            } else {
+                Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+            }
+        } catch (MalformedURLException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
     }
 
 }

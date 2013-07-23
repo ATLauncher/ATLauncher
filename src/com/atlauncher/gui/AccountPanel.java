@@ -19,6 +19,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -27,9 +29,11 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
@@ -51,6 +55,8 @@ public class AccountPanel extends JPanel {
     private JButton leftButton;
     private JButton rightButton;
     private JPanel bottomPanel;
+    private JMenuItem updateSkin;
+    private JPopupMenu contextMenu; // Right click menu
 
     private Account fillerAccount;
 
@@ -283,10 +289,30 @@ public class AccountPanel extends JPanel {
         rightPanel.add(topPanel, BorderLayout.NORTH);
         rightPanel.add(bottomPanel, BorderLayout.CENTER);
 
+        contextMenu = new JPopupMenu();
+
+        updateSkin = new JMenuItem(App.settings.getLocalizedString("account.reloadskin"));
+        updateSkin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ((Account) accountsComboBox.getSelectedItem()).updateSkin();
+                userSkin.setIcon(((Account) accountsComboBox.getSelectedItem()).getMinecraftSkin());
+                App.settings.reloadAccounts();
+            }
+        });
+        contextMenu.add(updateSkin);
+
         userSkin = new JLabel(fillerAccount.getMinecraftSkin());
+        userSkin.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (((Account) accountsComboBox.getSelectedItem()) != fillerAccount) {
+                    if (e.getButton() == MouseEvent.BUTTON3) {
+                        contextMenu.show(userSkin, e.getX(), e.getY());
+                    }
+                }
+            }
+        });
         userSkin.setBorder(BorderFactory.createEmptyBorder(0, 60, 0, 0));
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
     }
-
 }

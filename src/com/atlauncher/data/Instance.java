@@ -428,7 +428,7 @@ public class Instance implements Serializable {
                                 App.settings.getParent().setVisible(true);
                             }
                             long end = System.currentTimeMillis();
-                            if (!App.settings.isInOfflineMode() || !isLeaderboardsEnabled()) {
+                            if (!App.settings.isInOfflineMode() && isLeaderboardsEnabled()) {
                                 if (App.settings.enableLeaderboards()) {
                                     App.settings.apiCall(account.getMinecraftUsername(),
                                             "addleaderboardtime", (getRealPack() == null ? "0"
@@ -440,6 +440,7 @@ public class Instance implements Serializable {
                                                     + ""), ((end - start) / 1000) + "");
                                 }
                             }
+                            App.settings.setMinecraftLaunched(false);
                         } catch (IOException e1) {
                             App.settings.getConsole().logStackTrace(e1);
                         }

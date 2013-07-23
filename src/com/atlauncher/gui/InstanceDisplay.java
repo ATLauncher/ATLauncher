@@ -99,7 +99,10 @@ public class InstanceDisplay extends CollapsiblePanel {
         play = new JButton(App.settings.getLocalizedString("common.play"));
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                instance.launch();
+                if (!App.settings.isMinecraftLaunched()) {
+                    App.settings.setMinecraftLaunched(true);
+                    instance.launch();
+                }
             }
         });
 
