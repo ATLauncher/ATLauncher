@@ -95,6 +95,8 @@ public class MCLauncher {
             }
         }
 
+        arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
+
         if (Utils.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
             arguments.add("-Xdock:icon="

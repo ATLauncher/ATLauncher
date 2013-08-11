@@ -2,11 +2,12 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.4
-- Added in serveroptional attribute for mods
-- Packs are now displayed by popularity by default. Can be changed in settings
-- Item conflicts and item overriding show up as colours in console now
-- Clear button now shows on console bottom bar allowing clearing of the console
+3.0.5
+- Added in client attribute for mods which allows not installing a mod on the client and only on the server
+- Added in recommended mods which when a mod isn't recommended won't be selected when user presses Select All on mod selection screen
+- Added in colours for mods on the mod selection screen
+- Fixed issue with XML redownloading for testers of a pack when not necessary
+- Added in setting to control the amount of logging sent back from Forge Mod Loader to the console
 
 -->
 
@@ -19,7 +20,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.4" />
+	<property name="atlauncher.version" value="3.0.5" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

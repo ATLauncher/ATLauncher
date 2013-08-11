@@ -10,6 +10,7 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -127,7 +128,12 @@ public class Pack {
     }
 
     public String getXML(String version) {
-        if (this.xml == null || !this.xmlVersion.equalsIgnoreCase(version) || isTester()) {
+        return getXML(version, true);
+    }
+
+    public String getXML(String version, boolean redownload) {
+        if (this.xml == null || !this.xmlVersion.equalsIgnoreCase(version)
+                || (isTester() && redownload)) {
             String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.xml";
             String versionURL = App.settings.getFileURL(path); // The XML with path on
                                                                // server
@@ -138,7 +144,7 @@ public class Pack {
     }
 
     public String getMinecraftVersion(String version) {
-        String xml = getXML(version);
+        String xml = getXML(version, false);
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -165,7 +171,7 @@ public class Pack {
     }
 
     public int getPermGen(String version) {
-        String xml = getXML(version);
+        String xml = getXML(version, false);
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -191,6 +197,34 @@ public class Pack {
         return 0;
     }
 
+    public String getColour(String version, String name) {
+        String xml = getXML(version, false);
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(xml));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("colour");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    if (element.getAttribute("name").equalsIgnoreCase(name)) {
+                        return element.getAttribute("code").replace("#", "");
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
+        return null;
+    }
+
     public ArrayList<Mod> getMods(String versionToInstall, boolean isServer) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
         String xml = getXML(versionToInstall);
@@ -211,6 +245,22 @@ public class Pack {
                     String file = element.getAttribute("file");
                     String website = element.getAttribute("website");
                     String donation = element.getAttribute("donation");
+                    Color colour = null;
+                    if (element.hasAttribute("colour")) {
+                        String tempColour = getColour(versionToInstall,
+                                element.getAttribute("colour"));
+                        if (tempColour != null && tempColour.length() == 6) {
+                            int r, g, b;
+                            try {
+                                r = Integer.parseInt(tempColour.substring(0, 2), 16);
+                                g = Integer.parseInt(tempColour.substring(2, 4), 16);
+                                b = Integer.parseInt(tempColour.substring(4, 6), 16);
+                                colour = new Color(r, g, b);
+                            } catch (NumberFormatException e) {
+                                colour = null;
+                            }
+                        }
+                    }
                     String md5 = element.getAttribute("md5");
                     Type type = Type.valueOf(element.getAttribute("type").toLowerCase());
                     ExtractTo extractTo = null;
@@ -223,6 +273,13 @@ public class Pack {
                         decompFile = element.getAttribute("decompFile");
                         decompType = DecompType.valueOf(element.getAttribute("decomptype")
                                 .toLowerCase());
+                    }
+                    boolean client = true;
+                    if (element.getAttribute("client").equalsIgnoreCase("no")) {
+                        client = false;
+                        if (!isServer) {
+                            continue; // Don't add this mod as its specified as server only
+                        }
                     }
                     boolean server = true;
                     String serverURL = null;
@@ -246,7 +303,7 @@ public class Pack {
                     boolean serverOptional = optional;
                     if (element.getAttribute("serveroptional").equalsIgnoreCase("yes")) {
                         serverOptional = true;
-                    }else if (element.getAttribute("serveroptional").equalsIgnoreCase("no")) {
+                    } else if (element.getAttribute("serveroptional").equalsIgnoreCase("no")) {
                         serverOptional = false;
                     }
                     Download download = Download.valueOf(element.getAttribute("download")
@@ -272,11 +329,16 @@ public class Pack {
                     } else {
                         depends = null;
                     }
+                    boolean recommended = true;
+                    if (element.getAttribute("recommended").equalsIgnoreCase("no")) {
+                        recommended = false;
+                    }
+
                     String description = element.getAttribute("description");
-                    mods.add(new Mod(name, version, url, file, website, donation, md5, type,
-                            extractTo, decompFile, decompType, server, serverURL, serverFile,
-                            serverType, optional, serverOptional, download, hidden, library, group,
-                            linked, depends, description));
+                    mods.add(new Mod(name, version, url, file, website, donation, colour, md5,
+                            type, extractTo, decompFile, decompType, client, server, serverURL,
+                            serverFile, serverType, optional, serverOptional, download, hidden,
+                            library, group, linked, depends, recommended, description));
                 }
             }
         } catch (SAXException e) {

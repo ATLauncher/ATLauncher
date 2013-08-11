@@ -67,6 +67,7 @@ public class Settings {
     // Users Settings
     private Language language; // Language for the Launcher
     private Server server; // Server to use for the Launcher
+    private String forgeLoggingLevel; // Logging level to use when running Minecraft with Forge
     private int ram; // RAM to use when launching Minecraft
     private int permGen; // PermGenSize to use when launching Minecraft in MB
     private int windowWidth; // Width of the Minecraft window
@@ -563,6 +564,18 @@ public class Settings {
                 this.language = getLanguageByName("English"); // Language not found, use default
             }
 
+            this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
+            if (!this.forgeLoggingLevel.equalsIgnoreCase("SEVERE")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("WARNING")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("INFO")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("CONFIG")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("FINE")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("FINER")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("FINEST")) {
+                System.out.println("Invalid Forge Logging level: " + this.forgeLoggingLevel);
+                this.forgeLoggingLevel = "INFO";
+            }
+
             this.ram = Integer.parseInt(properties.getProperty("ram", "512"));
             if (this.ram > Utils.getMaximumRam()) {
                 this.ram = 512; // User tried to allocate too much ram, set it back to 0.5GB
@@ -581,9 +594,9 @@ public class Settings {
             }
 
             this.javaParamaters = properties.getProperty("javaparameters", "");
-            
-            this.sortPacksAlphabetically = Boolean.parseBoolean(properties.getProperty("sortpacksalphabetically",
-                    "false"));
+
+            this.sortPacksAlphabetically = Boolean.parseBoolean(properties.getProperty(
+                    "sortpacksalphabetically", "false"));
 
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
@@ -616,12 +629,14 @@ public class Settings {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("language", this.language.getName());
             properties.setProperty("server", this.server.getName());
+            properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
             properties.setProperty("ram", this.ram + "");
             properties.setProperty("permGen", this.permGen + "");
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
             properties.setProperty("javaparameters", this.javaParamaters);
-            properties.setProperty("sortpacksalphabetically", (this.sortPacksAlphabetically) ? "true" : "false");
+            properties.setProperty("sortpacksalphabetically",
+                    (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
@@ -669,7 +684,8 @@ public class Settings {
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
             properties.setProperty("javaparameters", this.javaParamaters);
-            properties.setProperty("sortpacksalphabetically", (this.sortPacksAlphabetically) ? "true" : "false");
+            properties.setProperty("sortpacksalphabetically",
+                    (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
@@ -1042,11 +1058,11 @@ public class Settings {
     public boolean isFirstTimeRun() {
         return this.firstTimeRun;
     }
-    
+
     public boolean isMinecraftLaunched() {
         return this.minecraftLaunched;
     }
-    
+
     public void setMinecraftLaunched(boolean launched) {
         this.minecraftLaunched = launched;
     }
@@ -1602,6 +1618,22 @@ public class Settings {
     }
 
     /**
+     * Gets the users setting for Forge Logging Level
+     * 
+     * @return The users setting for Forge Logging Level
+     */
+    public String getForgeLoggingLevel() {
+        return this.forgeLoggingLevel;
+    }
+
+    /**
+     * Sets the users setting for Forge Logging Level
+     */
+    public void setForgeLoggingLevel(String forgeLoggingLevel) {
+        this.forgeLoggingLevel = forgeLoggingLevel;
+    }
+
+    /**
      * Sets the users current active Server
      * 
      * @param server
@@ -1655,7 +1687,7 @@ public class Settings {
     public Account getAccount() {
         return this.account;
     }
-    
+
     /**
      * If the user has selected to display packs alphabetically or nto
      * 
@@ -1664,7 +1696,7 @@ public class Settings {
     public boolean sortPacksAlphabetically() {
         return this.sortPacksAlphabetically;
     }
-    
+
     public void setSortPacksAlphabetically(boolean sortPacksAlphabetically) {
         this.sortPacksAlphabetically = sortPacksAlphabetically;
     }
@@ -1728,7 +1760,8 @@ public class Settings {
         if (usingMacApp) {
             arguments.add("open");
             arguments.add("-n");
-            arguments.add(baseDir.getParentFile().getParentFile().getParentFile().getAbsolutePath());
+            arguments
+                    .add(baseDir.getParentFile().getParentFile().getParentFile().getAbsolutePath());
 
         } else {
             String jpath = System.getProperty("java.home") + File.separator + "bin"

@@ -120,7 +120,7 @@ public class ModsChooser extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod()
-                            .isOptional()) && !check.getMod().hasGroup()) {
+                            .isOptional()) && !check.getMod().hasGroup() && check.getMod().isRecommeneded()) {
                         check.setSelected(true);
                         check.setEnabled(true);
                         sortOutMods(check);

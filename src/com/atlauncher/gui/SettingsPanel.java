@@ -48,6 +48,9 @@ public class SettingsPanel extends JPanel {
     private JLabel downloadServerLabel;
     private JComboBox<Server> server;
 
+    private JLabel forgeLoggingLevelLabel;
+    private JComboBox<String> forgeLoggingLevel;
+
     private JLabel memoryLabel;
     private JComboBox<String> memory;
 
@@ -118,6 +121,47 @@ public class SettingsPanel extends JPanel {
         }
         language.setSelectedItem(App.settings.getLanguage());
         topPanel.add(language, gbc);
+
+        // Forge Logging Level
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        forgeLoggingLevelLabel = new JLabel(
+                App.settings.getLocalizedString("settings.forgelogginglevel") + ":");
+        forgeLoggingLevelLabel.setIcon(helpIcon);
+        forgeLoggingLevelLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString(
+                                                "settings.forgelogginglevelhelp", "<br/><br/>")
+                                        + "</center></html>", App.settings
+                                        .getLocalizedString("settings.help"),
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
+        topPanel.add(forgeLoggingLevelLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        forgeLoggingLevel = new JComboBox<String>();
+        forgeLoggingLevel.addItem("SEVERE");
+        forgeLoggingLevel.addItem("WARNING");
+        forgeLoggingLevel.addItem("INFO");
+        forgeLoggingLevel.addItem("CONFIG");
+        forgeLoggingLevel.addItem("FINE");
+        forgeLoggingLevel.addItem("FINER");
+        forgeLoggingLevel.addItem("FINEST");
+        forgeLoggingLevel.setSelectedItem(App.settings.getForgeLoggingLevel());
+        topPanel.add(forgeLoggingLevel, gbc);
 
         // Download Server
         gbc.gridx = 0;
@@ -444,6 +488,7 @@ public class SettingsPanel extends JPanel {
                 }
                 App.settings.setLanguage((Language) language.getSelectedItem());
                 App.settings.setServer((Server) server.getSelectedItem());
+                App.settings.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
                 App.settings.setMemory(Integer.parseInt(((String) memory.getSelectedItem())
                         .replace(" MB", "")));
                 App.settings.setPermGen(Integer

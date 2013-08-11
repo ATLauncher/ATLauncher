@@ -10,6 +10,7 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Color;
 import java.io.File;
 
 import javax.swing.JOptionPane;
@@ -26,11 +27,13 @@ public class Mod {
     private String file;
     private String website;
     private String donation;
+    private Color colour;
     private String md5;
     private Type type;
     private ExtractTo extractTo;
     private String decompFile;
     private DecompType decompType;
+    private boolean client;
     private boolean server;
     private String serverURL;
     private String serverFile;
@@ -43,24 +46,28 @@ public class Mod {
     private String group;
     private String linked;
     private String[] depends;
+    private boolean recommended;
     private String description;
 
     public Mod(String name, String version, String url, String file, String website,
-            String donation, String md5, Type type, ExtractTo extractTo, String decompFile,
-            DecompType decompType, boolean server, String serverURL, String serverFile,
-            Type serverType, boolean optional, boolean serverOptional, Download download, boolean hidden, boolean library,
-            String group, String linked, String[] depends, String description) {
+            String donation, Color colour, String md5, Type type, ExtractTo extractTo,
+            String decompFile, DecompType decompType, boolean client, boolean server,
+            String serverURL, String serverFile, Type serverType, boolean optional,
+            boolean serverOptional, Download download, boolean hidden, boolean library,
+            String group, String linked, String[] depends, boolean recommended, String description) {
         this.name = name;
         this.version = version;
         this.url = url;
         this.file = file;
         this.website = website;
         this.donation = donation;
+        this.colour = colour;
         this.md5 = md5;
         this.type = type;
         this.extractTo = extractTo;
         this.decompFile = decompFile;
         this.decompType = decompType;
+        this.client = client;
         this.server = server;
         this.serverURL = serverURL;
         this.serverFile = serverFile;
@@ -73,6 +80,7 @@ public class Mod {
         this.group = group;
         this.linked = linked;
         this.depends = depends;
+        this.recommended = recommended;
         this.description = description;
     }
 
@@ -99,13 +107,29 @@ public class Mod {
     public boolean hasMD5() {
         return !this.md5.isEmpty();
     }
-    
+
     public boolean isOptional() {
         return this.optional;
+    }
+    
+    public boolean isRecommeneded() {
+        return this.recommended;
+    }
+    
+    public Color getColour() {
+        return this.colour;
     }
 
     public boolean isServerOptional() {
         return this.serverOptional;
+    }
+
+    public boolean hasColour() {
+        if (this.colour == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public String getLinked() {
@@ -114,6 +138,10 @@ public class Mod {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public boolean installOnClient() {
+        return this.client;
     }
 
     public boolean installOnServer() {
