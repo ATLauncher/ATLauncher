@@ -138,7 +138,8 @@ public class PacksPanel extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for (Pack pack : App.settings.getPacksSorted()) {
+        for (Pack pack : (App.settings.sortPacksAlphabetically() ? App.settings.getPacksSorted()
+                : App.settings.getPacks())) {
             if (pack.canInstall()) {
                 if (keepFilters) {
                     boolean showPack = true;

@@ -2,12 +2,11 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.3
-- Fix Launcher sending off leaderboard stats when the pack disables it
-- Fixed non transparent Minecraft skins showing up as white
-- Fixed Minecraft being able to be Launched more than once
-- Added in right click menu on the Account tab to reload users skin
-- Launcher now shows the english strings if the localized string isn't found
+3.0.4
+- Added in serveroptional attribute for mods
+- Packs are now displayed by popularity by default. Can be changed in settings
+- Item conflicts and item overriding show up as colours in console now
+- Clear button now shows on console bottom bar allowing clearing of the console
 
 -->
 
@@ -20,7 +19,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.3" />
+	<property name="atlauncher.version" value="3.0.4" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

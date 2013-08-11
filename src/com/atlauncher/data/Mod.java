@@ -36,6 +36,7 @@ public class Mod {
     private String serverFile;
     private Type serverType;
     private boolean optional;
+    private boolean serverOptional;
     private Download download;
     private boolean hidden;
     private boolean library;
@@ -47,7 +48,7 @@ public class Mod {
     public Mod(String name, String version, String url, String file, String website,
             String donation, String md5, Type type, ExtractTo extractTo, String decompFile,
             DecompType decompType, boolean server, String serverURL, String serverFile,
-            Type serverType, boolean optional, Download download, boolean hidden, boolean library,
+            Type serverType, boolean optional, boolean serverOptional, Download download, boolean hidden, boolean library,
             String group, String linked, String[] depends, String description) {
         this.name = name;
         this.version = version;
@@ -65,6 +66,7 @@ public class Mod {
         this.serverFile = serverFile;
         this.serverType = serverType;
         this.optional = optional;
+        this.serverOptional = serverOptional;
         this.download = download;
         this.hidden = hidden;
         this.library = library;
@@ -97,9 +99,13 @@ public class Mod {
     public boolean hasMD5() {
         return !this.md5.isEmpty();
     }
-
+    
     public boolean isOptional() {
         return this.optional;
+    }
+
+    public boolean isServerOptional() {
+        return this.serverOptional;
     }
 
     public String getLinked() {

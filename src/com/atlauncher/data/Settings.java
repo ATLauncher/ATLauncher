@@ -72,6 +72,7 @@ public class Settings {
     private int windowWidth; // Width of the Minecraft window
     private int windowHeight; // Height of the Minecraft window
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
+    private boolean sortPacksAlphabetically; // If to sort packs default alphabetically
     private boolean enableConsole; // If to show the console by default
     private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
@@ -580,6 +581,9 @@ public class Settings {
             }
 
             this.javaParamaters = properties.getProperty("javaparameters", "");
+            
+            this.sortPacksAlphabetically = Boolean.parseBoolean(properties.getProperty("sortpacksalphabetically",
+                    "false"));
 
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
@@ -617,6 +621,7 @@ public class Settings {
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
             properties.setProperty("javaparameters", this.javaParamaters);
+            properties.setProperty("sortpacksalphabetically", (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
@@ -664,6 +669,7 @@ public class Settings {
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
             properties.setProperty("javaparameters", this.javaParamaters);
+            properties.setProperty("sortpacksalphabetically", (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
@@ -1648,6 +1654,19 @@ public class Settings {
 
     public Account getAccount() {
         return this.account;
+    }
+    
+    /**
+     * If the user has selected to display packs alphabetically or nto
+     * 
+     * @return true if yes, false if not
+     */
+    public boolean sortPacksAlphabetically() {
+        return this.sortPacksAlphabetically;
+    }
+    
+    public void setSortPacksAlphabetically(boolean sortPacksAlphabetically) {
+        this.sortPacksAlphabetically = sortPacksAlphabetically;
     }
 
     /**

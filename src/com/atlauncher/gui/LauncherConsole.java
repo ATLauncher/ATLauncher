@@ -50,7 +50,7 @@ public class LauncherConsole extends JFrame {
     // Size of initial window
     private final Dimension WINDOW_SIZE = new Dimension(600, 400);
     // Minimum size the window can be
-    private final Dimension MINIMUM_SIZE = new Dimension(350, 200);
+    private final Dimension MINIMUM_SIZE = new Dimension(400, 200);
     private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
     private final Color BASE_COLOR = new Color(40, 45, 50);
 
@@ -235,8 +235,16 @@ public class LauncherConsole extends JFrame {
                             + "]</font></b> " + text + "<br/>", 0, 0, null);
                 } else if (text.contains("[INFO]")) {
                     text = text.substring(text.indexOf("[INFO]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                    if (text.contains("CONFLICT")) {
+                        kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#EE2222\">[" + time
+                                + "]</font></b> " + text + "<br/>", 0, 0, null);
+                    } else if (text.contains("overwriting existing item")) {
+                        kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
+                                + "]</font></b> " + text + "<br/>", 0, 0, null);
+                    } else {
+                        kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
+                                + "]</font></b> " + text + "<br/>", 0, 0, null);
+                    }
                 } else if (text.contains("[WARNING]")) {
                     text = text.substring(text.indexOf("[WARNING]"));
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
@@ -287,5 +295,9 @@ public class LauncherConsole extends JFrame {
     public void setupLanguage() {
         copy.setText(App.settings.getLocalizedString("common.copy"));
         bottomBar.setupLanguage();
+    }
+
+    public void clearConsole() {
+        console.setText(null);
     }
 }

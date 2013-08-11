@@ -35,6 +35,7 @@ public class ConsoleBottomBar extends JPanel {
     private JPanel leftSide;
     private JPanel rightSide;
 
+    private JButton clear;
     private JButton copyLog;
     private JButton uploadLog;
     private JButton killMinecraft;
@@ -60,6 +61,8 @@ public class ConsoleBottomBar extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 5, 0, 0);
+        leftSide.add(clear, gbc);
+        gbc.gridx++;
         leftSide.add(copyLog, gbc);
         gbc.gridx++;
         leftSide.add(uploadLog, gbc);
@@ -83,6 +86,12 @@ public class ConsoleBottomBar extends JPanel {
      * Sets up the action listeners on the buttons
      */
     private void setupActionListeners() {
+        clear.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                App.settings.getConsole().clearConsole();
+                App.settings.getConsole().log("Console Cleared");
+            }
+        });
         copyLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 App.settings.getConsole().log("Copied Log To Clipboard");
@@ -142,6 +151,7 @@ public class ConsoleBottomBar extends JPanel {
      * Creates the JButton's for use in the bar
      */
     private void createButtons() {
+        clear = new JButton("Clear");
         copyLog = new JButton("Copy Log");
         uploadLog = new JButton("Upload Log");
 
@@ -173,6 +183,7 @@ public class ConsoleBottomBar extends JPanel {
     }
 
     public void setupLanguage() {
+        clear.setText(App.settings.getLocalizedString("console.clear"));
         copyLog.setText(App.settings.getLocalizedString("console.copy"));
         uploadLog.setText(App.settings.getLocalizedString("console.upload"));
         killMinecraft.setText(App.settings.getLocalizedString("console.kill"));

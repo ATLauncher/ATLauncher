@@ -243,6 +243,12 @@ public class Pack {
                     if (element.getAttribute("optional").equalsIgnoreCase("yes")) {
                         optional = true;
                     }
+                    boolean serverOptional = optional;
+                    if (element.getAttribute("serveroptional").equalsIgnoreCase("yes")) {
+                        serverOptional = true;
+                    }else if (element.getAttribute("serveroptional").equalsIgnoreCase("no")) {
+                        serverOptional = false;
+                    }
                     Download download = Download.valueOf(element.getAttribute("download")
                             .toLowerCase());
                     boolean hidden = false;
@@ -269,8 +275,8 @@ public class Pack {
                     String description = element.getAttribute("description");
                     mods.add(new Mod(name, version, url, file, website, donation, md5, type,
                             extractTo, decompFile, decompType, server, serverURL, serverFile,
-                            serverType, optional, download, hidden, library, group, linked,
-                            depends, description));
+                            serverType, optional, serverOptional, download, hidden, library, group,
+                            linked, depends, description));
                 }
             }
         } catch (SAXException e) {

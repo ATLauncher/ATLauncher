@@ -119,7 +119,8 @@ public class ModsChooser extends JDialog {
         selectAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
-                    if (check.getMod().isOptional() && !check.getMod().hasGroup()) {
+                    if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod()
+                            .isOptional()) && !check.getMod().hasGroup()) {
                         check.setSelected(true);
                         check.setEnabled(true);
                         sortOutMods(check);
@@ -133,7 +134,8 @@ public class ModsChooser extends JDialog {
         clearAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
-                    if (check.getMod().isOptional()) {
+                    if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod()
+                            .isOptional())) {
                         check.setSelected(false);
                         ArrayList<Mod> linkedMods = modsToChange(check.getMod());
                         for (Mod mod : linkedMods) {
@@ -169,7 +171,7 @@ public class ModsChooser extends JDialog {
             ModsJCheckBox checkBox = null;
             ModDescriptionJLabel label = null;
             int nameSize = getFontMetrics(Utils.getFont()).stringWidth(mod.getName());
-            if (mod.isOptional()) {
+            if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
                 checkBox = new ModsJCheckBox(mod);
                 checkBox.setEnabled(true);
                 if (mod.getLinked().isEmpty()) {
@@ -180,7 +182,8 @@ public class ModsChooser extends JDialog {
                     }
                 } else {
                     Mod linkedMod = installer.getModByName(mod.getLinked());
-                    if (linkedMod.isOptional()) {
+                    if ((installer.isServer() ? linkedMod.isServerOptional() : linkedMod
+                            .isOptional())) {
                         checkBox.setEnabled(false);
                         checkBox.setBounds(20, (count1 * 20), nameSize + 23, 20);
                         if (!mod.getDescription().isEmpty()) {
@@ -223,7 +226,7 @@ public class ModsChooser extends JDialog {
                 }
             }
             if (installer.wasModInstalled(mod.getName())) {
-                if (mod.isOptional()) {
+                if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
                     checkBox.setSelected(true);
                     checkBox.setEnabled(true);
                 }
@@ -240,7 +243,8 @@ public class ModsChooser extends JDialog {
         for (int i = 0; i < modCheckboxes.size(); i++) {
             ModsJCheckBox checkBox = modCheckboxes.get(i);
             ModDescriptionJLabel label = modLabels.get(i);
-            if (checkBox.getMod().isOptional()) {
+            if ((installer.isServer() ? checkBox.getMod().isServerOptional() : checkBox.getMod()
+                    .isOptional())) {
                 if (!checkBox.getMod().getDescription().isEmpty()) {
                     checkBoxPanel1.add(label);
                 }

@@ -62,6 +62,9 @@ public class SettingsPanel extends JPanel {
     private JLabel javaParametersLabel;
     private JTextField javaParameters;
 
+    private JLabel sortPacksAlphabeticallyLabel;
+    private JCheckBox sortPacksAlphabetically;
+
     private JLabel enableConsoleLabel;
     private JCheckBox enableConsole;
 
@@ -294,6 +297,39 @@ public class SettingsPanel extends JPanel {
         javaParameters.setText(App.settings.getJavaParameters());
         topPanel.add(javaParameters, gbc);
 
+        // Sort Packs Alphabetically
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        sortPacksAlphabeticallyLabel = new JLabel(
+                App.settings.getLocalizedString("settings.sortpacksalphabetically") + "?");
+        sortPacksAlphabeticallyLabel.setIcon(helpIcon);
+        sortPacksAlphabeticallyLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(App.settings.getParent(), App.settings
+                                .getLocalizedString("settings.sortpacksalphabeticallyhelp"),
+                                App.settings.getLocalizedString("settings.help"),
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
+        topPanel.add(sortPacksAlphabeticallyLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        sortPacksAlphabetically = new JCheckBox();
+        if (App.settings.sortPacksAlphabetically()) {
+            sortPacksAlphabetically.setSelected(true);
+        }
+        topPanel.add(sortPacksAlphabetically, gbc);
+
         // Enable Console
 
         gbc.gridx = 0;
@@ -399,8 +435,12 @@ public class SettingsPanel extends JPanel {
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 boolean reboot = false;
+                boolean reloadPacksPanel = false;
                 if (language.getSelectedItem() != App.settings.getLanguage()) {
                     reboot = true;
+                }
+                if (sortPacksAlphabetically.isSelected() != App.settings.sortPacksAlphabetically()) {
+                    reloadPacksPanel = true;
                 }
                 App.settings.setLanguage((Language) language.getSelectedItem());
                 App.settings.setServer((Server) server.getSelectedItem());
@@ -413,6 +453,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll(
                         "[^0-9]", "")));
                 App.settings.setJavaParameters(javaParameters.getText());
+                App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
                 App.settings.setEnableConsole(enableConsole.isSelected());
                 App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
                 App.settings.setEnableLogs(enableLogs.isSelected());
@@ -420,6 +461,9 @@ public class SettingsPanel extends JPanel {
                 App.settings.getConsole().log("Settings Saved!");
                 if (reboot) {
                     App.settings.restartLauncher();
+                }
+                if (reloadPacksPanel) {
+                    App.settings.reloadPacksPanel();
                 }
                 String[] options = { App.settings.getLocalizedString("common.ok") };
                 JOptionPane.showOptionDialog(App.settings.getParent(),
