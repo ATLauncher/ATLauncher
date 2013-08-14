@@ -10,6 +10,8 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
 import java.awt.Window;
 import java.io.BufferedReader;
 import java.io.EOFException;
@@ -35,7 +37,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -54,6 +58,7 @@ import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.BottomBar;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
+import com.atlauncher.gui.NewsPanel;
 import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.Utils;
 
@@ -97,6 +102,7 @@ public class Settings {
     private ArrayList<Language> languages = new ArrayList<Language>(); // Languages for the Launcher
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private InstancesPanel instancesPanel; // The instances panel
+    private NewsPanel newsPanel; // The news panel
     private PacksPanel packsPanel; // The packs panel
     private BottomBar bottomBar; // The bottom bar
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
@@ -291,6 +297,111 @@ public class Settings {
         } catch (IOException e) {
             App.settings.getConsole().logStackTrace(e);
         }
+    }
+
+    /**
+     * This checks the servers hashes.xml file and looks for new/updated files that differ from what
+     * the user has
+     */
+    public boolean isUpdatedFiles() {
+        if (isInOfflineMode()) {
+            return false;
+        }
+        String hashes = null;
+        while (hashes == null) {
+            hashes = Utils.urlToString(getFileURL("launcher/hashes.xml"));
+            if (hashes == null) {
+                boolean changed = disableServerGetNext(); // Disable the server and get the next one
+                if (!changed) {
+                    this.offlineMode = true;
+                    return false;
+                }
+            }
+        }
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new InputSource(new StringReader(hashes)));
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("hash");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    String name = element.getAttribute("name");
+                    String type = element.getAttribute("type");
+                    String md5 = element.getAttribute("md5");
+                    File file = null;
+                    if (type.equalsIgnoreCase("Root")) {
+                        file = new File(configsDir, name);
+                    } else if (type.equalsIgnoreCase("Images")) {
+                        file = new File(imagesDir, name);
+                        name = "images/" + name;
+                    } else if (type.equalsIgnoreCase("Skins")) {
+                        file = new File(skinsDir, name);
+                        name = "skins/" + name;
+                    } else if (type.equalsIgnoreCase("Languages")) {
+                        file = new File(languagesDir, name);
+                        name = "languages/" + name;
+                    } else if (type.equalsIgnoreCase("Launcher")) {
+                        String version = element.getAttribute("version");
+                        if (!getVersion().equalsIgnoreCase(version)) {
+                            if (getVersion().equalsIgnoreCase("%VERSION%")) {
+                                continue; // Don't even think about updating my unbuilt copy
+                            } else {
+                                console.log("Update to Launcher found. Current version: "
+                                        + this.version + ", New version: " + version);
+                                downloadUpdate();
+                            }
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue; // Don't know what to do with this file so ignore it
+                    }
+                    if (!file.exists()) {
+                        return true; // Something updated
+                    } else {
+                        if (!Utils.getMD5(file).equalsIgnoreCase(md5)) {
+                            return true; // Something updated
+                        }
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
+        return false; // No updates
+    }
+
+    public void reloadLauncherData() {
+        console.log("Updating Launcher Data");
+        final JDialog dialog = new JDialog(this.parent, ModalityType.APPLICATION_MODAL);
+        dialog.setSize(300, 100);
+        dialog.setTitle("Updating Launcher");
+        dialog.setLocationRelativeTo(App.settings.getParent());
+        dialog.setLayout(new FlowLayout());
+        dialog.setResizable(false);
+        dialog.add(new JLabel("Updating Launcher... Please Wait"));
+        Thread updateThread = new Thread() {
+            public void run() {
+                checkForUpdatedFiles(); // Download all updated files
+                reloadNewsPanel(); // Reload news panel
+                loadPacks(); // Load the Packs available in the Launcher
+                reloadPacksPanel(); // Reload packs panel
+                loadAddons(); // Load the Addons available in the Launcher
+                loadInstances(); // Load the users installed Instances
+                reloadInstancesPanel(); // Reload instances panel
+                dialog.setVisible(false); // Remove the dialog
+                dialog.dispose(); // Dispose the dialog
+            };
+        };
+        updateThread.start();
+        dialog.setVisible(true);
     }
 
     /**
@@ -762,6 +873,9 @@ public class Settings {
      * Loads the Packs for use in the Launcher
      */
     private void loadPacks() {
+        if (this.packs.size() != 0) {
+            this.packs = new ArrayList<Pack>();
+        }
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -834,6 +948,9 @@ public class Settings {
      * Loads the Addons for use in the Launcher
      */
     private void loadAddons() {
+        if (this.addons.size() != 0) {
+            this.addons = new ArrayList<Addon>();
+        }
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -880,6 +997,9 @@ public class Settings {
      * Loads the user installed Instances
      */
     private void loadInstances() {
+        if (this.instances.size() != 0) {
+            this.instances = new ArrayList<Instance>();
+        }
         if (instancesDataFile.exists()) {
             try {
                 FileInputStream in = new FileInputStream(instancesDataFile);
@@ -1291,6 +1411,23 @@ public class Settings {
      */
     public void setPacksPanel(PacksPanel packsPanel) {
         this.packsPanel = packsPanel;
+    }
+
+    /**
+     * Sets the panel used for News
+     * 
+     * @param newsPanel
+     *            News Panel
+     */
+    public void setNewsPanel(NewsPanel newsPanel) {
+        this.newsPanel = newsPanel;
+    }
+
+    /**
+     * Reloads the panel used for News
+     */
+    public void reloadNewsPanel() {
+        this.newsPanel.reload(); // Reload the news panel
     }
 
     /**

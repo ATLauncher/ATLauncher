@@ -114,16 +114,31 @@ public class ModsChooser extends JDialog {
         JPanel bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
 
-        selectAllButton = new JButton(App.settings.getLocalizedString("instance.selectall"));
+        selectAllButton = new JButton();
+
+        if (installer.hasRecommendedMods()) {
+            selectAllButton.setText(App.settings.getLocalizedString("instance.selectrecommended"));
+        } else {
+            selectAllButton.setText(App.settings.getLocalizedString("instance.selectall"));
+        }
 
         selectAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod()
-                            .isOptional()) && !check.getMod().hasGroup() && check.getMod().isRecommeneded()) {
-                        check.setSelected(true);
-                        check.setEnabled(true);
-                        sortOutMods(check);
+                            .isOptional()) && check.getMod().isRecommeneded()) {
+                        if (check.getMod().hasGroup()) {
+                            if (check.getMod().isRecommeneded()
+                                    && installer.isOnlyRecommendedInGroup(check.getMod())) {
+                                check.setSelected(true);
+                                check.setEnabled(true);
+                                sortOutMods(check);
+                            }
+                        } else {
+                            check.setSelected(true);
+                            check.setEnabled(true);
+                            sortOutMods(check);
+                        }
                     }
                 }
             }

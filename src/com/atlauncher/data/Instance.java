@@ -441,6 +441,9 @@ public class Instance implements Serializable {
                                 }
                             }
                             App.settings.setMinecraftLaunched(false);
+                            if(App.settings.isUpdatedFiles()){
+                                App.settings.reloadLauncherData();
+                            }
                         } catch (IOException e1) {
                             App.settings.getConsole().logStackTrace(e1);
                         }

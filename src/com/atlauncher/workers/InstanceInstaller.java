@@ -334,6 +334,29 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
+    public boolean hasRecommendedMods() {
+        for (Mod mod : allMods) {
+            if (!mod.isRecommeneded()) {
+                return true; // One of the mods is marked as not recommended, so return true
+            }
+        }
+        return false; // No non recommended mods found
+    }
+
+    public boolean isOnlyRecommendedInGroup(Mod mod) {
+        for (Mod modd : allMods) {
+            if (modd == mod) {
+                continue;
+            }
+            if (modd.getGroup().equalsIgnoreCase(mod.getGroup())) {
+                if (modd.isRecommeneded()) {
+                    return false; // Another mod is recommended. Don't check anything
+                }
+            }
+        }
+        return true; // No other recommended mods found in the group
+    }
+
     private void downloadMojangStuffNew() {
         firePropertyChange("doing", null,
                 App.settings.getLocalizedString("instance.downloadingresources"));

@@ -41,6 +41,10 @@ public class NewsPanel extends JPanel {
 
     public NewsPanel() {
         setLayout(new BorderLayout());
+        loadContent();
+    }
+
+    private void loadContent() {
         newsArea = new JEditorPane("text/html", "");
         newsArea.setEditable(false);
         newsArea.setSelectionColor(Color.GRAY);
@@ -73,16 +77,31 @@ public class NewsPanel extends JPanel {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     if (i == nodeList.getLength() - 1) {
-                        news += "<p id=\"newsHeader\">" + element.getAttribute("posted")
-                                + " - <a href=\"" + element.getAttribute("link") + "\">"
-                                + element.getAttribute("title") + "</a></p>"
-                                + "<p id=\"newsBody\">" + element.getTextContent() + "</p><br/>";
+                        news += "<p id=\"newsHeader\">"
+                                + element.getAttribute("posted")
+                                + " - <a href=\""
+                                + element.getAttribute("link")
+                                + "\">"
+                                + element.getAttribute("title")
+                                + "</a> ("
+                                + element.getAttribute("comments")
+                                + " "
+                                + (Integer.parseInt(element.getAttribute("comments")) == 1 ? "comment"
+                                        : "comments") + ")</p>" + "<p id=\"newsBody\">"
+                                + element.getTextContent() + "</p><br/>";
                     } else {
-                        news += "<p id=\"newsHeader\">" + element.getAttribute("posted")
-                                + " - <a href=\"" + element.getAttribute("link") + "\">"
-                                + element.getAttribute("title") + "</a></p>"
-                                + "<p id=\"newsBody\">" + element.getTextContent()
-                                + "</p><br/><hr/>";
+                        news += "<p id=\"newsHeader\">"
+                                + element.getAttribute("posted")
+                                + " - <a href=\""
+                                + element.getAttribute("link")
+                                + "\">"
+                                + element.getAttribute("title")
+                                + "</a> ("
+                                + element.getAttribute("comments")
+                                + " "
+                                + (Integer.parseInt(element.getAttribute("comments")) == 1 ? "comment"
+                                        : "comments") + ")</p>" + "<p id=\"newsBody\">"
+                                + element.getTextContent() + "</p><br/><hr/>";
                     }
                 }
             }
@@ -95,6 +114,13 @@ public class NewsPanel extends JPanel {
         }
         newsArea.setText(news + "</html>");
         newsArea.setCaretPosition(0);
+    }
+
+    public void reload() {
+        removeAll();
+        loadContent();
+        validate();
+        repaint();
     }
 
 }

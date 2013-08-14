@@ -104,6 +104,7 @@ public class LauncherFrame extends JFrame {
         tabbedPane.setBackground(BASE_COLOR);
 
         newsPanel = new NewsPanel();
+        App.settings.setNewsPanel(newsPanel);
         packsPanel = new PacksPanel();
         App.settings.setPacksPanel(packsPanel);
         addonsPanel = new AddonsPanel();

@@ -50,7 +50,7 @@ public class LauncherConsole extends JFrame {
     // Size of initial window
     private final Dimension WINDOW_SIZE = new Dimension(600, 400);
     // Minimum size the window can be
-    private final Dimension MINIMUM_SIZE = new Dimension(400, 200);
+    private final Dimension MINIMUM_SIZE = new Dimension(500, 200);
     private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
     private final Color BASE_COLOR = new Color(40, 45, 50);
 

@@ -2,12 +2,11 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.5
-- Added in client attribute for mods which allows not installing a mod on the client and only on the server
-- Added in recommended mods which when a mod isn't recommended won't be selected when user presses Select All on mod selection screen
-- Added in colours for mods on the mod selection screen
-- Fixed issue with XML redownloading for testers of a pack when not necessary
-- Added in setting to control the amount of logging sent back from Forge Mod Loader to the console
+3.0.6
+- Launcher now checks when files update on the server and updates the Launcher without having to reopen it
+- Mod Selection Screen now selects the recommended mod out of the group if it is the only recommended one
+- Mod Selection Screen now displays different text on the Select All button if it has recommended and non recommended mods
+- News panel now shows the number of comments on that particular news item
 
 -->
 
@@ -20,7 +19,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.5" />
+	<property name="atlauncher.version" value="3.0.6" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />
