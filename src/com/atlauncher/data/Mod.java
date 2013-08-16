@@ -258,6 +258,9 @@ public class Mod {
 
     public void install(InstanceInstaller installer) {
         File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
+        if(installer.isNewLaunchMethod() && type==Type.coremods){
+            type = Type.mods;
+        }
         switch (type) {
             case jar:
             case forge:

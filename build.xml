@@ -2,11 +2,9 @@
 
 REMEMBER - Change the atlauncher.version property below
 
-3.0.6
-- Launcher now checks when files update on the server and updates the Launcher without having to reopen it
-- Mod Selection Screen now selects the recommended mod out of the group if it is the only recommended one
-- Mod Selection Screen now displays different text on the Select All button if it has recommended and non recommended mods
-- News panel now shows the number of comments on that particular news item
+3.0.7
+- Fixed issue with instance files being created in the Root directory rather than the Instance Directory
+- Fixed issue with coremods trying to be installed in >=1.6 Minecraft
 
 -->
 
@@ -19,7 +17,7 @@ REMEMBER - Change the atlauncher.version property below
 	<property name="release.dir" value="${build.dir}/release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
-	<property name="atlauncher.version" value="3.0.6" />
+	<property name="atlauncher.version" value="3.0.7" />
 
 	<mkdir dir="${build.dir}" />
 	<mkdir dir="${release.dir}" />

@@ -121,6 +121,7 @@ public class NewMCLauncher {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+        processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
         return processBuilder.start();
     }
