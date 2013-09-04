@@ -1,12 +1,8 @@
 /**
  * Copyright 2013 by ATLauncher and Contributors
  *
- * ATLauncher is licensed under CC BY-NC-ND 3.0 which allows others you to
- * share this software with others as long as you credit us by linking to our
- * website at http://www.atlauncher.com. You also cannot modify the application
- * in any way or make commercial use of this software.
- *
- * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
+ * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
 package com.atlauncher.data;
 
@@ -34,6 +30,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -45,6 +42,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -164,6 +165,25 @@ public class Settings {
         loadAccounts(); // Load the saved Accounts
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
+    }
+
+    public void checkMojangStatus() {
+        JSONParser parser = new JSONParser();
+        try {
+            Object obj = parser.parse(Utils.urlToString("http://status.mojang.com/check"));
+            JSONArray jsonObject = (JSONArray) obj;
+            Iterator<JSONObject> iterator = jsonObject.iterator();
+            while (iterator.hasNext()) {
+                JSONObject object = iterator.next();
+                if (object.containsKey("login.minecraft.net")) {
+                    System.out.println(object.get("login.minecraft.net"));
+                } else if (object.containsKey("session.minecraft.net")) {
+                    System.out.println(object.get("session.minecraft.net"));
+                }
+            }
+        } catch (ParseException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
     }
 
     public void downloadUpdate() {
