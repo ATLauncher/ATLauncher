@@ -57,6 +57,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String minecraftVersion;
     private String jarOrder;
     private boolean newLaunchMethod;
+    private boolean savedReis = false; // If Reis Minimap stuff was found and saved
     private int permgen = 0;
     private String librariesNeeded = null;
     private String nativesNeeded = null;
@@ -111,6 +112,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     + version.replaceAll("[^A-Za-z0-9]", ""));
         }
         return new File(App.settings.getInstancesDir(), getInstanceSafeName());
+    }
+
+    public File getTempDirectory() {
+        return new File(App.settings.getTempDir(), pack.getSafeName() + "_"
+                + version.replaceAll("[^A-Za-z0-9]", ""));
     }
 
     public File getTempJarDirectory() {
@@ -928,6 +934,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else {
             modsInstalled = new String[0];
         }
+        File reis = new File(getModsDirectory(), "rei_minimap");
+        if (reis.exists() && reis.isDirectory()) {
+            savedReis = true;
+            Utils.copyDirectory(reis, getTempDirectory(), true);
+        }
         makeDirectories();
         addPercent(5);
         if (this.newLaunchMethod) {
@@ -959,6 +970,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.zip(getTempJarDirectory(), getMinecraftJar());
         }
         configurePack();
+        if (savedReis) {
+            Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"), reis);
+        }
         return true;
     }
 

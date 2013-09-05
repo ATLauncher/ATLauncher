@@ -415,10 +415,17 @@ public class Utils {
     }
 
     public static void copyDirectory(File sourceLocation, File targetLocation) {
+        copyDirectory(sourceLocation, targetLocation, false);
+    }
+
+    public static void copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
+        if (copyFolder) {
+            targetLocation = new File(targetLocation, sourceLocation.getName());
+        }
         try {
             if (sourceLocation.isDirectory()) {
                 if (!targetLocation.exists()) {
-                    targetLocation.mkdir();
+                    targetLocation.mkdirs();
                 }
 
                 String[] children = sourceLocation.list();
@@ -617,9 +624,9 @@ public class Utils {
             URL urll = new URL(url);
             URLConnection connection = urll.openConnection();
             connection
-            .setRequestProperty(
-                    "User-Agent",
-                    "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+                    .setRequestProperty(
+                            "User-Agent",
+                            "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
             connection.setConnectTimeout(3000);
             BufferedReader in;
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
