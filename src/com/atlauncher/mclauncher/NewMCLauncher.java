@@ -82,6 +82,7 @@ public class NewMCLauncher {
         }
 
         arguments.add("-Dfml.ignorePatchDiscrepancies=true");
+        arguments.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
         
         arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
 
