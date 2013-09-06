@@ -77,11 +77,12 @@ public class Instance implements Serializable {
     }
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
-            String version, String minecraftVersion, int permgen, String[] modsInstalled, String jarOrder,
-            String librariesNeeded, String minecraftArguments, String mainClass,
+            String version, String minecraftVersion, int permgen, String[] modsInstalled,
+            String jarOrder, String librariesNeeded, String minecraftArguments, String mainClass,
             boolean newLaunchMethod) {
-        this(name, pack, realPack, installJustForMe, version, minecraftVersion, permgen, modsInstalled,
-                jarOrder, librariesNeeded, minecraftArguments, mainClass, true, newLaunchMethod);
+        this(name, pack, realPack, installJustForMe, version, minecraftVersion, permgen,
+                modsInstalled, jarOrder, librariesNeeded, minecraftArguments, mainClass, true,
+                newLaunchMethod);
     }
 
     public String getName() {
@@ -99,7 +100,7 @@ public class Instance implements Serializable {
     public String getJarOrder() {
         return this.jarOrder;
     }
-    
+
     public int getPermGen() {
         return this.permgen;
     }
@@ -283,7 +284,7 @@ public class Instance implements Serializable {
     public boolean hasUpdate() {
         if (realPack != null) {
             if (realPack.hasVersions() && !this.version.equalsIgnoreCase("Dev")) {
-                if (!realPack.getLatestVersion().equalsIgnoreCase(this.version)) {
+                if (!realPack.getLatestVersion().equalsIgnoreCase(this.version) && !realPack.isLatestVersionNoUpdate()) {
                     return true;
                 }
             }
@@ -437,7 +438,7 @@ public class Instance implements Serializable {
                                 }
                             }
                             App.settings.setMinecraftLaunched(false);
-                            if(App.settings.isUpdatedFiles()){
+                            if (App.settings.isUpdatedFiles()) {
                                 App.settings.reloadLauncherData();
                             }
                         } catch (IOException e1) {

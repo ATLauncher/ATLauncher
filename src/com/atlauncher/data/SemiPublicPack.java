@@ -11,16 +11,17 @@ import com.atlauncher.App;
 public class SemiPublicPack extends Pack {
 
     public SemiPublicPack(int id, String name, boolean createServer, boolean leaderboards,
-            boolean logging, boolean latestlwjgl, String[] versions, String[] minecraftVersions,
-            String devMinecraftVersion, String[] testers, String description, String supportURL,
-            String websiteURL) {
+            boolean logging, boolean latestlwjgl, String[] versions, String[] noUpdateVersions,
+            String[] minecraftVersions, String devMinecraftVersion, String[] testers,
+            String description, String supportURL, String websiteURL) {
         super(id, name, createServer, leaderboards, logging, latestlwjgl, versions,
-                minecraftVersions, devMinecraftVersion, testers, description, supportURL,
-                websiteURL);
+                noUpdateVersions, minecraftVersions, devMinecraftVersion, testers, description,
+                supportURL, websiteURL);
     }
 
     public boolean canInstall() {
-        if (super.isTester() || (super.hasVersions() && App.settings.canViewSemiPublicPack(super.getName()))) {
+        if (super.isTester()
+                || (super.hasVersions() && App.settings.canViewSemiPublicPack(super.getName()))) {
             return true;
         } else {
             return false;

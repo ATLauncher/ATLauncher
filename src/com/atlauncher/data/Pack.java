@@ -36,6 +36,7 @@ public class Pack {
     private boolean logging;
     private boolean latestlwjgl;
     private String[] versions;
+    private String[] noUpdateVersions;
     private String[] minecraftVersions;
     private String devMinecraftVersion;
     private String[] testers;
@@ -47,9 +48,9 @@ public class Pack {
     private String xmlVersion; // The version the XML is for
 
     public Pack(int id, String name, boolean createServer, boolean leaderboards, boolean logging,
-            boolean latestlwjgl, String[] versions, String[] minecraftVersions,
-            String devMinecraftVersion, String[] testers, String description, String supportURL,
-            String websiteURL) {
+            boolean latestlwjgl, String[] versions, String[] noUpdateVersions,
+            String[] minecraftVersions, String devMinecraftVersion, String[] testers,
+            String description, String supportURL, String websiteURL) {
         this.id = id;
         this.name = name;
         this.createServer = createServer;
@@ -57,6 +58,7 @@ public class Pack {
         this.logging = logging;
         this.latestlwjgl = latestlwjgl;
         this.versions = versions;
+        this.noUpdateVersions = noUpdateVersions;
         this.testers = testers;
         this.minecraftVersions = minecraftVersions;
         this.devMinecraftVersion = devMinecraftVersion;
@@ -394,6 +396,15 @@ public class Pack {
         } else {
             return false;
         }
+    }
+
+    public boolean isLatestVersionNoUpdate() {
+        for (String version : noUpdateVersions) {
+            if (getLatestVersion().equalsIgnoreCase(version)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getLatestVersion() {
