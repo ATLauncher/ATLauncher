@@ -128,6 +128,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return new File(getRootDirectory(), "libraries");
     }
 
+    public File getTexturePacksDirectory() {
+        return new File(getRootDirectory(), "texturepacks");
+    }
+
+    public File getResourcePacksDirectory() {
+        return new File(getRootDirectory(), "resourcepacks");
+    }
+
     public File getModsDirectory() {
         return new File(getRootDirectory(), "mods");
     }

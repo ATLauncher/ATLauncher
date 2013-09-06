@@ -107,11 +107,11 @@ public class Mod {
     public boolean isOptional() {
         return this.optional;
     }
-    
+
     public boolean isRecommeneded() {
         return this.recommended;
     }
-    
+
     public Color getColour() {
         return this.colour;
     }
@@ -254,7 +254,7 @@ public class Mod {
 
     public void install(InstanceInstaller installer) {
         File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
-        if(installer.isNewLaunchMethod() && type==Type.coremods){
+        if (installer.isNewLaunchMethod() && type == Type.coremods) {
             type = Type.mods;
         }
         switch (type) {
@@ -269,6 +269,12 @@ public class Mod {
                 }
                 Utils.copyFile(fileLocation, installer.getJarModsDirectory());
                 installer.addToJarOrder(getFile());
+                break;
+            case texturepack:
+                Utils.copyFile(fileLocation, installer.getTexturePacksDirectory());
+                break;
+            case resourcepack:
+                Utils.copyFile(fileLocation, installer.getResourcePacksDirectory());
                 break;
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
