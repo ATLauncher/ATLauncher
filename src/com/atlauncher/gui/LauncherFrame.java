@@ -46,9 +46,9 @@ public class LauncherFrame extends JFrame {
         App.settings.getConsole().log("*(Not Actually)");
         App.settings.setParentFrame(this);
         if (App.settings.getLanguage().getName().equalsIgnoreCase("German")) {
-            setSize(new Dimension(875, 500));
+            setSize(new Dimension(925, 500));
         } else {
-            setSize(new Dimension(800, 500));
+            setSize(new Dimension(850, 500));
         }
         setTitle("ATLauncher %VERSION%");
         setLocationRelativeTo(null);

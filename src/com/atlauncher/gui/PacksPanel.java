@@ -31,6 +31,7 @@ import com.atlauncher.data.PrivatePack;
 public class PacksPanel extends JPanel {
 
     private JPanel topPanel;
+    private JButton addPackButton;
     private JButton clearButton;
     private JTextField searchBox;
     private JButton searchButton;
@@ -55,6 +56,15 @@ public class PacksPanel extends JPanel {
     public void loadContent(boolean keepFilters) {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        addPackButton = new JButton(App.settings.getLocalizedString("pack.addpack"));
+        addPackButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new AddPackDialog();
+                reload();
+            }
+        });
+        topPanel.add(addPackButton);
 
         clearButton = new JButton(App.settings.getLocalizedString("common.clear"));
         clearButton.addActionListener(new ActionListener() {

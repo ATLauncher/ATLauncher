@@ -84,6 +84,7 @@ public class Settings {
     private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
     private Account account; // Account using the Launcher
+    private String addedPacks; // The Semi Public packs the user has added to the Launcher
 
     // Packs, Addons, Instances and Accounts
     private ArrayList<Pack> packs = new ArrayList<Pack>(); // Packs in the Launcher
@@ -735,6 +736,8 @@ public class Settings {
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty(
                     "enableleaderboards", "false"));
 
+            this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
+
             String lastAccountTemp = properties.getProperty("lastaccount", "");
             if (!lastAccountTemp.isEmpty()) {
                 if (isAccountByName(lastAccountTemp)) {
@@ -744,7 +747,7 @@ public class Settings {
                 }
             }
 
-            this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
+            this.addedPacks = properties.getProperty("addedpacks", "");
         } catch (FileNotFoundException e) {
             App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
@@ -777,6 +780,7 @@ public class Settings {
             } else {
                 properties.setProperty("lastaccount", "");
             }
+            properties.setProperty("addedpacks", this.addedPacks);
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
             App.settings.getConsole().logStackTrace(e);
@@ -826,6 +830,7 @@ public class Settings {
             } else {
                 properties.setProperty("lastaccount", account.getUsername());
             }
+            properties.setProperty("addedpacks", this.addedPacks);
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
             App.settings.getConsole().logStackTrace(e);
@@ -948,6 +953,11 @@ public class Settings {
                         packs.add(new PrivatePack(id, name, createServer, leaderboards, logging,
                                 latestlwjgl, versions, minecraftVersions, devMinecraftVersion,
                                 testers, description, supportURL, websiteURL, allowedPlayers));
+                    } else if (element.getAttribute("type").equalsIgnoreCase("semipublic")) {
+                        System.out.println("The pack " + name + " is Semi Public");
+                        packs.add(new SemiPublicPack(id, name, createServer, leaderboards, logging,
+                                latestlwjgl, versions, minecraftVersions, devMinecraftVersion,
+                                testers, description, supportURL, websiteURL));
                     } else {
                         packs.add(new Pack(id, name, createServer, leaderboards, logging,
                                 latestlwjgl, versions, minecraftVersions, devMinecraftVersion,
@@ -1348,6 +1358,46 @@ public class Settings {
 
     public void apiCall(String username, String action, String extra1) {
         apiCall(username, action, extra1, "", false);
+    }
+
+    public boolean canViewSemiPublicPack(String name) {
+        for (String packName : this.addedPacks.split(",")) {
+            if (packName.equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean semiPublicPackExistsFromName(String packName) {
+        for (Pack pack : this.packs) {
+            if (pack.getName().equalsIgnoreCase(packName) && pack instanceof SemiPublicPack) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean addPack(String packName) {
+        for (Pack pack : this.packs) {
+            if (pack.getName().equalsIgnoreCase(packName)) {
+                if (pack instanceof SemiPublicPack && !App.settings.canViewSemiPublicPack(packName)) {
+                    this.addedPacks += packName + ",";
+                    this.saveProperties();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void removePack(String name) {
+        for (String packName : this.addedPacks.split(",")) {
+            if (packName.equalsIgnoreCase(name)) {
+                this.addedPacks = this.addedPacks.replace(name + ",", ""); // Remove the string
+                this.saveProperties();
+            }
+        }
     }
 
     /**

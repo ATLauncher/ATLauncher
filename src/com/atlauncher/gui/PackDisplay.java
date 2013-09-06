@@ -21,6 +21,7 @@ import javax.swing.JTextArea;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.SemiPublicPack;
 
 /**
  * Class for displaying packs in the Pack Tab
@@ -40,6 +41,7 @@ public class PackDisplay extends CollapsiblePanel {
     private JPanel packActionsBottom; // All the actions that can be performed on the pack
     private JButton newInstance; // New Instance button
     private JButton createServer; // Create Server button
+    private JButton removePack; // Remove Pack button
     private JButton support; // Support button
     private JButton website; // Website button
 
@@ -130,6 +132,14 @@ public class PackDisplay extends CollapsiblePanel {
             }
         });
 
+        removePack = new JButton("Remove Pack");
+        removePack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                App.settings.removePack(pack.getName());
+                App.settings.reloadPacksPanel();
+            }
+        });
+
         support = new JButton(App.settings.getLocalizedString("common.support"));
         support.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -150,6 +160,9 @@ public class PackDisplay extends CollapsiblePanel {
 
         packActionsTop.add(newInstance);
         packActionsTop.add(createServer);
+        if (pack instanceof SemiPublicPack) {
+            packActionsTop.add(removePack);
+        }
         packActionsBottom.add(support);
         packActionsBottom.add(website);
 
