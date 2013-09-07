@@ -1539,7 +1539,7 @@ public class Settings {
      */
     public boolean isInstance(String name) {
         for (Instance instance : instances) {
-            if (instance.getName().equalsIgnoreCase(name)) {
+            if (instance.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", ""))) {
                 return true;
             }
         }
