@@ -7,9 +7,7 @@ REMEMBER - Change the atlauncher.version property below
 
 -->
 
-<project name="ATLauncher 3.0" basedir=".">
-	<!--<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="C:/Users/Ryan/Documents/Eclipse Workspace/ant/lib/ant-contrib-1.0b3.jar" />-->
-
+<project name="ATLauncher" basedir=".">
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="macapp.dir" value="macapp" />

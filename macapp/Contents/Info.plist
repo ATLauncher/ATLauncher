@@ -7,7 +7,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.atlauncher.App</string>
 	<key>CFBundleVersion</key>
-	<string>%VERSION%</string>
+	<string>3.0.7</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<string>true</string>
 	<key>CFBundleExecutable</key>
