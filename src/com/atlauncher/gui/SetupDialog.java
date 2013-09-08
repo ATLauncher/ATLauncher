@@ -43,6 +43,7 @@ public class SetupDialog extends JDialog {
 
     public SetupDialog(Settings set) {
         super(null, "ATLauncher Setup", ModalityType.APPLICATION_MODAL);
+        this.requestFocus();
         this.settings = set;
         setSize(400, 200);
         setLocationRelativeTo(null);
