@@ -150,7 +150,6 @@ public class ATLauncherDownloadable implements Runnable {
         if (instanceInstaller.isCancelled()) {
             return;
         }
-        instanceInstaller.setDoingDownloads("Downloading " + file.getName());
         if (this.md5 == null) {
             this.md5 = getMD5FromURL(this.url);
         }
@@ -166,5 +165,6 @@ public class ATLauncherDownloadable implements Runnable {
                 downloadFile(); // Keep downloading file until it matches MD5, up to 3 times
             }
         }
+        instanceInstaller.setDownloadDone();
     }
 }

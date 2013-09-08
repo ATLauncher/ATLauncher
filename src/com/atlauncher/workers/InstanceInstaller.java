@@ -966,6 +966,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         addPercent(5);
         if (selectedMods.size() != 0) {
             addPercent(40);
+            firePropertyChange("doing", null, App.settings.getLocalizedString("instance.downloadingmods"));
             downloadMods(selectedMods);
             addPercent(40);
             installMods(selectedMods);
@@ -1003,8 +1004,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         firePropertyChange("subprogress", null, progress);
     }
 
-    public void setDoingDownloads(String doing) {
-        firePropertyChange("doing", null, doing);
+    public void setDownloadDone() {
         doneDownloads++;
         int progress = (100 * doneDownloads) / totalDownloads;
         firePropertyChange("subprogress", null, progress);
