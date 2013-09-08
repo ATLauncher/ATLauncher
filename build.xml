@@ -8,12 +8,12 @@ REMEMBER - Change the atlauncher.version property below
 -->
 
 <project name="ATLauncher 3.0" basedir=".">
-	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="C:/Users/Ryan/Documents/Eclipse Workspace/ant/lib/ant-contrib-1.0b3.jar" />
+	<!--<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="C:/Users/Ryan/Documents/Eclipse Workspace/ant/lib/ant-contrib-1.0b3.jar" />-->
 
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="macapp.dir" value="macapp" />
-	<property name="release.dir" value="${build.dir}/release" />
+	<property name="release.dir" value="release" />
 	<property name="buildsrc.dir" value="${build.dir}/src" />
 	<property name="bin.dir" value="${build.dir}/compiled" />
 	<property name="atlauncher.version" value="3.0.8" />
@@ -26,6 +26,8 @@ REMEMBER - Change the atlauncher.version property below
 
 	<mkdir dir="${buildsrc.dir}" />
 	<mkdir dir="${bin.dir}" />
+
+	<mkdir dir="${macapp.dir}" />
 
 	<copy todir="${buildsrc.dir}">
 		<fileset dir="${src.dir}" />
@@ -41,7 +43,7 @@ REMEMBER - Change the atlauncher.version property below
 		<fileset dir="${buildsrc.dir}/resources" includes="**" />
 	</copy>
 
-	<jar destfile="C:/Users/Ryan/Desktop/ATLauncher.jar" filesetmanifest="mergewithoutmain">
+	<jar destfile="${bin.dir}/ATLauncher.jar" filesetmanifest="mergewithoutmain">
 		<manifest>
 			<attribute name="Main-Class" value="com.atlauncher.App" />
 			<attribute name="Class-Path" value="." />
@@ -49,27 +51,36 @@ REMEMBER - Change the atlauncher.version property below
 		<fileset dir="${bin.dir}" />
 	</jar>
 	
-	<chmod file="C:/Users/Ryan/Desktop/ATLauncher.jar" perm="ugo+rwx"/>
+	<chmod file="${bin.dir}/ATLauncher.jar" perm="ugo+rwx"/>
+	<copy file="${bin.dir}/ATLauncher.jar" tofile="${release.dir}/ATLauncher.jar"/>
 
-	<exec executable="cmd">
+	<exec os="win" executable="cmd">
 		<arg value="/c" />
-		<arg value="..\launch4j\launch4jc.exe" />
+		<arg value="launch4jc.exe" />
+		<arg value=".\launch4j.xml" />
+	</exec>
+
+	<exec os="mac" executable="launch4jc">
+		<arg value=".\launch4j.xml" />
+	</exec>
+
+	<exec os="nix" executable="launch4jc">
 		<arg value=".\launch4j.xml" />
 	</exec>
 	
-	<mkdir dir="C:/Users/Ryan/Desktop/ATLauncher.app" />
-	<copy todir="C:/Users/Ryan/Desktop/ATLauncher.app">
+	<mkdir dir="${bin.dir}/ATLauncher.app" />
+	<copy todir="${bin.dir}/ATLauncher.app">
 		<fileset dir="${macapp.dir}" includes="**" />
 	</copy>
-	<copyfile src="C:/Users/Ryan/Desktop/ATLauncher.jar" dest="C:/Users/Ryan/Desktop/ATLauncher.app/Contents/Resources/Java/ATLauncher.jar"/>
-	<replace file="C:/Users/Ryan/Desktop/ATLauncher.app/Contents/Info.plist" token="%VERSION%" value="${atlauncher.version}" />
+	<copy file="${bin.dir}/ATLauncher.jar" tofile="${bin.dir}/ATLauncher.app/Contents/Resources/Java/ATLauncher.jar"/>
+	<!--<replace file="${bin.dir}/ATLauncher.app/Contents/Info.plist" token="%VERSION%" value="${atlauncher.version}" />-->
 	
-	<zip destfile="C:/Users/Ryan/Desktop/ATLauncher.zip">
-	    <zipfileset dir="C:/Users/Ryan/Desktop/" includes="ATLauncher.app/**" excludes="ATLauncher.app/Contents/MacOS/JavaApplicationStub" />
-	    <zipfileset dir="C:/Users/Ryan/Desktop/" includes="ATLauncher.app/Contents/MacOS/JavaApplicationStub" filemode="755" />
+	<zip destfile="${release.dir}/ATLauncher.zip">
+	    <zipfileset dir="${bin.dir}/" includes="ATLauncher.app/**" excludes="ATLauncher.app/Contents/MacOS/JavaApplicationStub" />
+	    <zipfileset dir="${bin.dir}/" includes="ATLauncher.app/Contents/MacOS/JavaApplicationStub" filemode="755" />
 	</zip>
 	
-	<delete dir="C:/Users/Ryan/Desktop/ATLauncher.app"/>
+	<delete dir="${bin.dir}/ATLauncher.app"/>
 	
 	<delete dir="${build.dir}" />
 </project>

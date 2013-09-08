@@ -13,17 +13,32 @@ Other than that, I am releasing this as an Open Source project in hopes that oth
 
 ### Coding Standards
 
+Please keep all line lengths to 100 characters and use 4 spaces rather than tab characters
+
 ### Building
 
 #### Windows
 
 ##### Requirements
 
+###### Java Development Kit (JDK)
+
+Download and install the latest version from [Oracle's Java Downloads page](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
+
 ###### Apache Ant
 
-Download the zip binary distribution of [Apache Ant](http://ant.apache.org/bindownload.cgi).
+Install Apache Ant via the official [Apache Ant Install Docs](http://ant.apache.org/manual/install.html).
 
-Please keep all line lengths to 100 characters and use 4 spaces rather than tab characters
+###### launch4j
+
+Download and install [launch4j](http://sourceforge.net/projects/launch4j/files/launch4j-3/3.1.0-beta2/).
+
+Make sure to add the directory containing launch4jc to your executable path which for me on 64bit Windows was:
+
+```
+C:\Program Files (x86)\Launch4j
+```
+
 
 ### LICENSE
 
