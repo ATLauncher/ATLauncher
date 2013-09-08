@@ -84,9 +84,9 @@ REMEMBER - Change the atlauncher.version property below
 	<copy todir="${bin.dir}/ATLauncher.app">
 		<fileset dir="${macapp.dir}" includes="**" />
 	</copy>
-	<delete dir="${macapp.dir}"/>
 	<copy file="${bin.dir}/ATLauncher.jar" tofile="${bin.dir}/ATLauncher.app/Contents/Resources/Java/ATLauncher.jar"/>
-	<!--<replace file="${bin.dir}/ATLauncher.app/Contents/Info.plist" token="%VERSION%" value="${atlauncher.version}" />-->
+	<copy file="${src.dir}/resources/Icon.icns" tofile="${bin.dir}/ATLauncher.app/Contents/Resources/Icon.icns"/>
+	<replace file="${bin.dir}/ATLauncher.app/Contents/Info.plist" token="%VERSION%" value="${atlauncher.version}" />
 	
 	<zip destfile="${release.dir}/ATLauncher.zip">
 	    <zipfileset dir="${bin.dir}/" includes="ATLauncher.app/**" excludes="ATLauncher.app/Contents/MacOS/JavaApplicationStub" />
