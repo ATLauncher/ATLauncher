@@ -13,6 +13,16 @@ Other than that, I am releasing this as an Open Source project in hopes that oth
 
 ### Coding Standards
 
+### Building
+
+#### Windows
+
+##### Requirements
+
+###### Apache Ant
+
+Download the zip binary distribution of [Apache Ant](http://ant.apache.org/bindownload.cgi).
+
 Please keep all line lengths to 100 characters and use 4 spaces rather than tab characters
 
 ### LICENSE
