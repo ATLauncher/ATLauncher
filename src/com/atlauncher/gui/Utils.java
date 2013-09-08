@@ -500,17 +500,20 @@ public class Utils {
 
     public static void delete(File file) {
         if (file.isDirectory()) {
-            for (File c : file.listFiles())
+            for (File c : file.listFiles()) {
                 delete(c);
+            }
         }
         boolean deleted = file.delete();
         if (!deleted) {
-            if (file.isFile())
+            if (file.isFile()) {
                 App.settings.getConsole().log(
                         "File " + file.getAbsolutePath() + " couldn't be deleted");
-            if (file.isDirectory())
+            }
+            if (file.isDirectory()) {
                 App.settings.getConsole().log(
                         "Folder " + file.getAbsolutePath() + " couldn't be deleted");
+            }
         }
     }
 

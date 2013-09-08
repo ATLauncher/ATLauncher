@@ -136,6 +136,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return new File(getRootDirectory(), "resourcepacks");
     }
 
+    public File getConfigDirectory() {
+        return new File(getRootDirectory(), "config");
+    }
+
     public File getModsDirectory() {
         return new File(getRootDirectory(), "mods");
     }
@@ -262,15 +266,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void makeDirectories() {
-        if (isReinstall) {
-            // We're reinstalling so delete these folders
+        if (isReinstall || isServer) {
+            // We're reinstalling or installing a server so delete these folders
             Utils.delete(getBinDirectory());
+            Utils.delete(getConfigDirectory());
             Utils.delete(getModsDirectory());
             Utils.delete(getCoreModsDirectory());
-            Utils.delete(getJarModsDirectory());
-        } else if (isServer) {
-            // We're installing a server so delete the whole folder
-            Utils.delete(getRootDirectory());
+            if (isReinstall) {
+                Utils.delete(getJarModsDirectory()); // Only delete if it's not a server
+            }
         }
         File[] directories;
         if (isServer) {
@@ -966,7 +970,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         addPercent(5);
         if (selectedMods.size() != 0) {
             addPercent(40);
-            firePropertyChange("doing", null, App.settings.getLocalizedString("instance.downloadingmods"));
+            firePropertyChange("doing", null,
+                    App.settings.getLocalizedString("instance.downloadingmods"));
             downloadMods(selectedMods);
             addPercent(40);
             installMods(selectedMods);
