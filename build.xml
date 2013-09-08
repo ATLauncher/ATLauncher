@@ -73,11 +73,11 @@ REMEMBER - Change the atlauncher.version property below
 	</exec>
 
 	<exec os="Mac OS X" executable="launch4j">
-		<arg value=".\launch4j.xml" />
+		<arg value="launch4j.xml" />
 	</exec>
 
 	<exec os="Linux" executable="launch4j">
-		<arg value=".\launch4j.xml" />
+		<arg value="launch4j.xml" />
 	</exec>
 	
 	<mkdir dir="${bin.dir}/ATLauncher.app" />
