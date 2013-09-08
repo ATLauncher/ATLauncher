@@ -54,17 +54,29 @@ REMEMBER - Change the atlauncher.version property below
 	<chmod file="${bin.dir}/ATLauncher.jar" perm="ugo+rwx"/>
 	<copy file="${bin.dir}/ATLauncher.jar" tofile="${release.dir}/ATLauncher.jar"/>
 
-	<exec os="win" executable="cmd">
+	<exec os="Windows NT" executable="cmd">
 		<arg value="/c" />
 		<arg value="launch4jc.exe" />
 		<arg value=".\launch4j.xml" />
 	</exec>
 
-	<exec os="mac" executable="launch4jc">
+	<exec os="Windows 8" executable="cmd">
+		<arg value="/c" />
+		<arg value="launch4jc.exe" />
 		<arg value=".\launch4j.xml" />
 	</exec>
 
-	<exec os="nix" executable="launch4jc">
+	<exec os="Windows XP" executable="cmd">
+		<arg value="/c" />
+		<arg value="launch4jc.exe" />
+		<arg value=".\launch4j.xml" />
+	</exec>
+
+	<exec os="Mac OS X" executable="launch4jc">
+		<arg value=".\launch4j.xml" />
+	</exec>
+
+	<exec os="Linux" executable="launch4jc">
 		<arg value=".\launch4j.xml" />
 	</exec>
 	
@@ -72,6 +84,7 @@ REMEMBER - Change the atlauncher.version property below
 	<copy todir="${bin.dir}/ATLauncher.app">
 		<fileset dir="${macapp.dir}" includes="**" />
 	</copy>
+	<delete dir="${macapp.dir}"/>
 	<copy file="${bin.dir}/ATLauncher.jar" tofile="${bin.dir}/ATLauncher.app/Contents/Resources/Java/ATLauncher.jar"/>
 	<!--<replace file="${bin.dir}/ATLauncher.app/Contents/Info.plist" token="%VERSION%" value="${atlauncher.version}" />-->
 	
