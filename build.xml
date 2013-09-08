@@ -72,11 +72,11 @@ REMEMBER - Change the atlauncher.version property below
 		<arg value=".\launch4j.xml" />
 	</exec>
 
-	<exec os="Mac OS X" executable="launch4jc">
+	<exec os="Mac OS X" executable="launch4j">
 		<arg value=".\launch4j.xml" />
 	</exec>
 
-	<exec os="Linux" executable="launch4jc">
+	<exec os="Linux" executable="launch4j">
 		<arg value=".\launch4j.xml" />
 	</exec>
 	
