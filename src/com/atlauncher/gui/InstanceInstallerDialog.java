@@ -32,6 +32,7 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.Version;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class InstanceInstallerDialog extends JDialog {
@@ -51,7 +52,7 @@ public class InstanceInstallerDialog extends JDialog {
     private JLabel instanceNameLabel;
     private JTextField instanceNameField;
     private JLabel versionLabel;
-    private JComboBox<String> versionsDropDown;
+    private JComboBox<Version> versionsDropDown;
     private JLabel installForLabel;
     private JCheckBox installForMe;
     private JLabel useLatestLWJGLLabel;
@@ -123,30 +124,27 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        versionsDropDown = new JComboBox<String>();
+        versionsDropDown = new JComboBox<Version>();
         if (pack.isTester()) {
-            versionsDropDown.addItem("Dev");
+            for (int i = 0; i < pack.getDevVersionCount(); i++) {
+                versionsDropDown.addItem(new Version(true, pack.getDevVersion(i), pack
+                        .getDevMinecraftVersion(i)));
+            }
         }
         for (int i = 0; i < pack.getVersionCount(); i++) {
-            versionsDropDown.addItem(pack.getVersion(i));
+            versionsDropDown.addItem(new Version(false, pack.getVersion(i), pack
+                    .getMinecraftVersion(i)));
         }
         if (isUpdate) {
-            if (pack.isTester()) {
-                versionsDropDown.setSelectedIndex(1);
-            } else {
-                versionsDropDown.setSelectedIndex(0);
-            }
+            versionsDropDown.setSelectedIndex(0);
         } else if (isReinstall) {
             versionsDropDown.setSelectedItem(instance.getVersion());
         }
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         versionsDropDown.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int index = versionsDropDown.getSelectedIndex();
-                if (pack.isTester()) {
-                    index--;
-                }
-                if (App.settings.getMinecraftInstallMethod(pack.getMinecraftVersion(index))
+                Version selected = (Version) versionsDropDown.getSelectedItem();
+                if (App.settings.getMinecraftInstallMethod(selected.getMinecraftVersion())
                         .equalsIgnoreCase("new")) {
                     useLatestLWJGLLabel.setVisible(false);
                     useLatestLWJGL.setVisible(false);
@@ -190,12 +188,9 @@ public class InstanceInstallerDialog extends JDialog {
             middle.add(useLatestLWJGL, gbc);
         }
 
-        int index = versionsDropDown.getSelectedIndex();
-        if (pack.isTester()) {
-            index--;
-        }
+        Version selected = (Version) versionsDropDown.getSelectedItem();
         if (!isServer) {
-            if (App.settings.getMinecraftInstallMethod(pack.getMinecraftVersion(index))
+            if (App.settings.getMinecraftInstallMethod(selected.getMinecraftVersion())
                     .equalsIgnoreCase("new")) {
                 useLatestLWJGLLabel.setVisible(false);
                 useLatestLWJGL.setVisible(false);
@@ -231,12 +226,13 @@ public class InstanceInstallerDialog extends JDialog {
                                     .getLocalizedString("common.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                final String version = (String) versionsDropDown.getSelectedItem();
+                final Version version = (Version) versionsDropDown.getSelectedItem();
                 final JDialog dialog = new JDialog(App.settings.getParent(),
                         ((isReinstall) ? App.settings.getLocalizedString("common.reinstalling")
                                 : App.settings.getLocalizedString("common.installing"))
                                 + " "
-                                + pack.getName() + " " + version, ModalityType.DOCUMENT_MODAL);
+                                + pack.getName() + " " + version.getVersion(),
+                        ModalityType.DOCUMENT_MODAL);
                 dialog.setLocationRelativeTo(App.settings.getParent());
                 dialog.setSize(300, 100);
                 dialog.setResizable(false);
@@ -265,9 +261,9 @@ public class InstanceInstallerDialog extends JDialog {
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller((isServer ? ""
-                        : instanceNameField.getText()), pack, version,
-                        (useLatestLWJGL == null ? false : useLatestLWJGL.isSelected()),
-                        isReinstall, isServer) {
+                        : instanceNameField.getText()), pack, version.getVersion(), version
+                        .getMinecraftVersion(), (useLatestLWJGL == null ? false : useLatestLWJGL
+                        .isSelected()), isReinstall, isServer) {
 
                     protected void done() {
                         Boolean success = false;
@@ -324,7 +320,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 title = pack.getName() + " " + version + " "
                                         + App.settings.getLocalizedString("common.installed");
                                 if (isReinstall) {
-                                    instance.setVersion(version);
+                                    instance.setVersion(version.getVersion());
                                     instance.setMinecraftVersion(this.getMinecraftVersion());
                                     instance.setModsInstalled(this.getModsInstalled());
                                     instance.setJarOrder(this.getJarOrder());
@@ -333,6 +329,11 @@ public class InstanceInstallerDialog extends JDialog {
                                         instance.setLibrariesNeeded(this.getLibrariesNeeded());
                                         instance.setMinecraftArguments(this.getMinecraftArguments());
                                         instance.setMainClass(this.getMainClass());
+                                    }
+                                    if (version.isDevVersion()) {
+                                        instance.setDevVersion();
+                                    } else {
+                                        instance.setNotDevVersion();
                                     }
                                     if (!instance.isPlayable()) {
                                         instance.setPlayable();
@@ -343,11 +344,13 @@ public class InstanceInstallerDialog extends JDialog {
                                     App.settings.getInstances().add(
                                             new Instance(instanceNameField.getText(), pack
                                                     .getName(), pack, installForMe.isSelected(),
-                                                    version, this.getMinecraftVersion(), this
+                                                    version.getVersion(), this
+                                                            .getMinecraftVersion(), this
                                                             .getPermGen(), this.getModsInstalled(),
                                                     this.getJarOrder(), this.getLibrariesNeeded(),
                                                     this.getMinecraftArguments(), this
-                                                            .getMainClass(), this
+                                                            .getMainClass(),
+                                                    version.isDevVersion(), this
                                                             .isNewLaunchMethod())); // Add It
                                 }
                                 App.settings.saveInstances();
@@ -355,7 +358,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 if (pack.isLoggingEnabled() && App.settings.enableLogs()) {
                                     App.settings.apiCall(App.settings.getAccount()
                                             .getMinecraftUsername(), "packinstalled", pack.getID()
-                                            + "", version);
+                                            + "", version.getVersion());
                                 }
                             } else {
                                 if (isReinstall) {

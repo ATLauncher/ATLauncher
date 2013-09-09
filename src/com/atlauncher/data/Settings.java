@@ -937,7 +937,19 @@ public class Settings {
                     } else {
                         minecraftVersions = element.getAttribute("minecraftversions").split(",");
                     }
-                    String devMinecraftVersion = element.getAttribute("devminecraftversion");
+                    String[] devVersions;
+                    if (element.getAttribute("devversions").isEmpty()) {
+                        devVersions = new String[0];
+                    } else {
+                        devVersions = element.getAttribute("devversions").split(",");
+                    }
+                    String[] devMinecraftVersions;
+                    if (element.getAttribute("devminecraftversions").isEmpty()) {
+                        devMinecraftVersions = new String[0];
+                    } else {
+                        devMinecraftVersions = element.getAttribute("devminecraftversions").split(
+                                ",");
+                    }
                     String[] testers;
                     if (element.getAttribute("testers").isEmpty()) {
                         testers = new String[0];
@@ -958,16 +970,18 @@ public class Settings {
                     if (element.getAttribute("type").equalsIgnoreCase("private")) {
                         packs.add(new PrivatePack(id, name, createServer, leaderboards, logging,
                                 latestlwjgl, versions, noUpdateVersions, minecraftVersions,
-                                devMinecraftVersion, testers, description, supportURL, websiteURL,
-                                allowedPlayers));
+                                devVersions, devMinecraftVersions, testers, description,
+                                supportURL, websiteURL, allowedPlayers));
                     } else if (element.getAttribute("type").equalsIgnoreCase("semipublic")) {
                         packs.add(new SemiPublicPack(id, name, createServer, leaderboards, logging,
                                 latestlwjgl, versions, noUpdateVersions, minecraftVersions,
-                                devMinecraftVersion, testers, description, supportURL, websiteURL));
+                                devVersions, devMinecraftVersions, testers, description,
+                                supportURL, websiteURL));
                     } else {
                         packs.add(new Pack(id, name, createServer, leaderboards, logging,
                                 latestlwjgl, versions, noUpdateVersions, minecraftVersions,
-                                devMinecraftVersion, testers, description, supportURL, websiteURL));
+                                devVersions, devMinecraftVersions, testers, description,
+                                supportURL, websiteURL));
                     }
                 }
             }

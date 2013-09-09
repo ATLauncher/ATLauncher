@@ -310,6 +310,10 @@ public class InstanceDisplay extends CollapsiblePanel {
             });
         }
 
+        if (instance.isDev()) {
+            update.setVisible(false);
+        }
+
         // Add buttons to panels
 
         instanceActionsTop.add(play);

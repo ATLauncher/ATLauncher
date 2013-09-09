@@ -38,7 +38,8 @@ public class Pack {
     private String[] versions;
     private String[] noUpdateVersions;
     private String[] minecraftVersions;
-    private String devMinecraftVersion;
+    private String[] devVersions;
+    private String[] devMinecraftVersions;
     private String[] testers;
     private String description;
     private String supportURL;
@@ -49,8 +50,8 @@ public class Pack {
 
     public Pack(int id, String name, boolean createServer, boolean leaderboards, boolean logging,
             boolean latestlwjgl, String[] versions, String[] noUpdateVersions,
-            String[] minecraftVersions, String devMinecraftVersion, String[] testers,
-            String description, String supportURL, String websiteURL) {
+            String[] minecraftVersions, String[] devVersions, String[] devMinecraftVersions,
+            String[] testers, String description, String supportURL, String websiteURL) {
         this.id = id;
         this.name = name;
         this.createServer = createServer;
@@ -61,7 +62,8 @@ public class Pack {
         this.noUpdateVersions = noUpdateVersions;
         this.testers = testers;
         this.minecraftVersions = minecraftVersions;
-        this.devMinecraftVersion = devMinecraftVersion;
+        this.devVersions = devVersions;
+        this.devMinecraftVersions = devMinecraftVersions;
         this.description = description;
         this.supportURL = supportURL;
         this.websiteURL = websiteURL;
@@ -113,16 +115,24 @@ public class Pack {
         return this.versions.length;
     }
 
+    public int getDevVersionCount() {
+        return this.devVersions.length;
+    }
+
     public String getVersion(int index) {
         return this.versions[index];
     }
 
+    public String getDevVersion(int index) {
+        return this.devVersions[index];
+    }
+
     public String getMinecraftVersion(int index) {
-        if (index == -1) {
-            return this.devMinecraftVersion;
-        } else {
-            return this.minecraftVersions[index];
-        }
+        return this.minecraftVersions[index];
+    }
+
+    public String getDevMinecraftVersion(int index) {
+        return this.devMinecraftVersions[index];
     }
 
     public String getXML(String version) {

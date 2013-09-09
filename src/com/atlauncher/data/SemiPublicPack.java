@@ -12,11 +12,11 @@ public class SemiPublicPack extends Pack {
 
     public SemiPublicPack(int id, String name, boolean createServer, boolean leaderboards,
             boolean logging, boolean latestlwjgl, String[] versions, String[] noUpdateVersions,
-            String[] minecraftVersions, String devMinecraftVersion, String[] testers,
-            String description, String supportURL, String websiteURL) {
+            String[] minecraftVersions, String[] devVersions, String[] devMinecraftVersions,
+            String[] testers, String description, String supportURL, String websiteURL) {
         super(id, name, createServer, leaderboards, logging, latestlwjgl, versions,
-                noUpdateVersions, minecraftVersions, devMinecraftVersion, testers, description,
-                supportURL, websiteURL);
+                noUpdateVersions, minecraftVersions, devVersions, devMinecraftVersions, testers,
+                description, supportURL, websiteURL);
     }
 
     public boolean canInstall() {

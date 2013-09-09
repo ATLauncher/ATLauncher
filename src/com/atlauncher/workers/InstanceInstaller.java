@@ -74,13 +74,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String[] modsInstalled;
 
     public InstanceInstaller(String instanceName, Pack pack, String version,
-            boolean useLatestLWJGL, boolean isReinstall, boolean isServer) {
+            String minecraftVersion, boolean useLatestLWJGL, boolean isReinstall, boolean isServer) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
-        if (this.version.equalsIgnoreCase("Dev")) {
-            this.version = "dev";
-        }
+        this.minecraftVersion = minecraftVersion;
         this.useLatestLWJGL = useLatestLWJGL;
         this.isReinstall = isReinstall;
         this.isServer = isServer;
@@ -919,7 +917,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     protected Boolean doInBackground() throws Exception {
         this.allMods = sortMods(this.pack.getMods(this.version, isServer));
-        this.minecraftVersion = this.pack.getMinecraftVersion(this.version);
         this.permgen = this.pack.getPermGen(this.version);
         if (this.minecraftVersion == null) {
             this.cancel(true);

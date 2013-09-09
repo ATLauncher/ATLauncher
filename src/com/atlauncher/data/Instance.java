@@ -45,6 +45,7 @@ public class Instance implements Serializable {
     private String minecraftArguments = null;
     private String mainClass = null;
     private transient Pack realPack;
+    private boolean isDev;
     private boolean isPlayable;
     private boolean newLaunchMethod;
     private String[] modsInstalled;
@@ -52,7 +53,7 @@ public class Instance implements Serializable {
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int permgen, String[] modsInstalled,
             String jarOrder, String librariesNeeded, String minecraftArguments, String mainClass,
-            boolean isPlayable, boolean newLaunchMethod) {
+            boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -67,6 +68,7 @@ public class Instance implements Serializable {
             this.jarOrder = jarOrder;
             this.minecraftArguments = minecraftArguments;
         }
+        this.isDev = isDev;
         this.isPlayable = isPlayable;
         this.newLaunchMethod = newLaunchMethod;
         if (installJustForMe) {
@@ -79,10 +81,10 @@ public class Instance implements Serializable {
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int permgen, String[] modsInstalled,
             String jarOrder, String librariesNeeded, String minecraftArguments, String mainClass,
-            boolean newLaunchMethod) {
+            boolean isDev, boolean newLaunchMethod) {
         this(name, pack, realPack, installJustForMe, version, minecraftVersion, permgen,
-                modsInstalled, jarOrder, librariesNeeded, minecraftArguments, mainClass, true,
-                newLaunchMethod);
+                modsInstalled, jarOrder, librariesNeeded, minecraftArguments, mainClass, isDev,
+                true, newLaunchMethod);
     }
 
     public String getName() {
@@ -230,6 +232,18 @@ public class Instance implements Serializable {
     public void setUnplayable() {
         this.isPlayable = false;
     }
+    
+    public void setDevVersion() {
+        this.isDev = true;
+    }
+    
+    public void setNotDevVersion() {
+        this.isDev = false;
+    }
+
+    public boolean isDev() {
+        return this.isDev;
+    }
 
     public boolean isPlayable() {
         return this.isPlayable;
@@ -284,7 +298,8 @@ public class Instance implements Serializable {
     public boolean hasUpdate() {
         if (realPack != null) {
             if (realPack.hasVersions() && !this.version.equalsIgnoreCase("Dev")) {
-                if (!realPack.getLatestVersion().equalsIgnoreCase(this.version) && !realPack.isLatestVersionNoUpdate()) {
+                if (!realPack.getLatestVersion().equalsIgnoreCase(this.version)
+                        && !realPack.isLatestVersionNoUpdate()) {
                     return true;
                 }
             }
