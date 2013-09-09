@@ -961,9 +961,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     App.settings.getLocalizedString("server.extractingjar"));
             firePropertyChange("subprogressint", null, 0);
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
-        } else {
-            deleteMetaInf();
         }
+        deleteMetaInf();
         addPercent(5);
         if (selectedMods.size() != 0) {
             addPercent(40);
