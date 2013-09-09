@@ -272,6 +272,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.delete(getCoreModsDirectory());
             if (isReinstall) {
                 Utils.delete(getJarModsDirectory()); // Only delete if it's not a server
+            }else{
+                Utils.delete(getLibrariesDirectory()); // Only delete if it's a server
             }
         }
         File[] directories;
