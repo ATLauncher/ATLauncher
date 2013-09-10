@@ -310,7 +310,7 @@ public class Utils {
             urlParameters += "language=" + URLEncoder.encode("text", "ISO-8859-1") + "&";
             urlParameters += "private=" + URLEncoder.encode("1", "ISO-8859-1") + "&";
             urlParameters += "text=" + URLEncoder.encode(log, "ISO-8859-1");
-            URL url = new URL("http://paste.atlauncher.com/api/create");
+            URL url = new URL("%PASTEAPIURL%");
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
             OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());

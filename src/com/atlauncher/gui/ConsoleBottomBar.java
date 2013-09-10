@@ -100,7 +100,7 @@ public class ConsoleBottomBar extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String result = Utils.uploadPaste("ATLauncher Log", App.settings.getConsole()
                         .getLog());
-                if (result.contains("http://paste.atlauncher.com")) {
+                if (result.contains("%PASTECHECKURL%")) {
                     App.settings.getConsole().log(
                             "Log uploaded and link copied to clipboard: " + result);
                     StringSelection text = new StringSelection(result);

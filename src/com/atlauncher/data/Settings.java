@@ -846,11 +846,7 @@ public class Settings {
      * files
      */
     private void setupServers() {
-        servers.add(new Server("Auto", "files.atlcdn.net"));
-        servers.add(new Server("Europe", "eu.atlcdn.net"));
-        servers.add(new Server("US Central", "uscentral.atlcdn.net"));
-        servers.add(new Server("US East", "useast.atlcdn.net"));
-        servers.add(new Server("US West", "uswest.atlcdn.net"));
+        // INSERT SERVERS HERE
     }
 
     public boolean disableServerGetNext() {
@@ -1353,7 +1349,7 @@ public class Settings {
             data += "&" + URLEncoder.encode("extra2", "UTF-8") + "="
                     + URLEncoder.encode(extra2, "UTF-8");
 
-            URL url = new URL("https://api.atlauncher.com/log.php");
+            URL url = new URL("%APIURL%");
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
