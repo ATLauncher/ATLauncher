@@ -8,8 +8,11 @@ ATLauncher is a Launcher for Minecraft which integrates multiple different ModPa
 
 ### Links
 [ATLauncher Website](http://www.atlauncher.com)
+
 [ATLauncher Facebook](http://www.facebook.com/ATLauncher)
+
 [ATLauncher Reddit](http://www.reddit.com/r/ATLauncher)
+
 [ATLauncher Twitter](http://twitter.com/ATLauncher)
 
 
