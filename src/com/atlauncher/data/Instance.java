@@ -452,7 +452,6 @@ public class Instance implements Serializable {
                                                     + ""), ((end - start) / 1000) + "");
                                 }
                             }
-                            App.settings.setMinecraftLaunched(false);
                             if (App.settings.isUpdatedFiles()) {
                                 App.settings.reloadLauncherData();
                             }
