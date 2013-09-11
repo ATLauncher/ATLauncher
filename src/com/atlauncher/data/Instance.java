@@ -232,11 +232,11 @@ public class Instance implements Serializable {
     public void setUnplayable() {
         this.isPlayable = false;
     }
-    
+
     public void setDevVersion() {
         this.isDev = true;
     }
-    
+
     public void setNotDevVersion() {
         this.isDev = false;
     }
@@ -338,6 +338,7 @@ public class Instance implements Serializable {
                     App.settings.getLocalizedString("instance.noaccountselected"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                     options[0]);
+            App.settings.setMinecraftLaunched(false);
         } else {
             String username = account.getUsername();
             String password = account.getPassword();
@@ -355,6 +356,7 @@ public class Instance implements Serializable {
                 if (ret == JOptionPane.OK_OPTION) {
                     password = new String(passwordField.getPassword());
                 } else {
+                    App.settings.setMinecraftLaunched(false);
                     return;
                 }
             }
@@ -412,6 +414,7 @@ public class Instance implements Serializable {
                         App.settings.getLocalizedString("instance.errorloggingintitle"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                         options[0]);
+                App.settings.setMinecraftLaunched(false);
             } else {
                 final String session = sess;
                 Thread launcher = new Thread() {
@@ -452,6 +455,7 @@ public class Instance implements Serializable {
                                                     + ""), ((end - start) / 1000) + "");
                                 }
                             }
+                            App.settings.setMinecraftLaunched(false);
                             if (App.settings.isUpdatedFiles()) {
                                 App.settings.reloadLauncherData();
                             }

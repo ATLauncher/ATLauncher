@@ -98,7 +98,6 @@ public class InstanceDisplay extends CollapsiblePanel {
                 if (!App.settings.isMinecraftLaunched()) {
                     App.settings.setMinecraftLaunched(true);
                     instance.launch();
-                    App.settings.setMinecraftLaunched(false);
                 }
             }
         });
