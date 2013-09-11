@@ -276,6 +276,13 @@ public class Mod {
             case resourcepack:
                 Utils.copyFile(fileLocation, installer.getResourcePacksDirectory());
                 break;
+            case texturepackextract:
+                Utils.unzip(fileLocation, installer.getTempTexturePackDirectory());
+                installer.setTexturePackExtracted();
+                break;
+            case resourcepackextract:
+                Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
+                break;
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
                 break;

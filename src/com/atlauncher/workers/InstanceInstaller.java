@@ -58,6 +58,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String jarOrder;
     private boolean newLaunchMethod;
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
+    private boolean extractedTexturePack = false; // If there is an extracted texturepack
+    private boolean extractedResourcePack = false; // If there is an extracted resourcepack
     private int permgen = 0;
     private String librariesNeeded = null;
     private String nativesNeeded = null;
@@ -122,6 +124,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 + version.replaceAll("[^A-Za-z0-9]", "") + "_JarTemp");
     }
 
+    public File getTempTexturePackDirectory() {
+        return new File(App.settings.getTempDir(), pack.getSafeName() + "_"
+                + version.replaceAll("[^A-Za-z0-9]", "") + "_TexturePackTemp");
+    }
+
+    public File getTempResourcePackDirectory() {
+        return new File(App.settings.getTempDir(), pack.getSafeName() + "_"
+                + version.replaceAll("[^A-Za-z0-9]", "") + "_ResourcePackTemp");
+    }
+
     public File getLibrariesDirectory() {
         return new File(getRootDirectory(), "libraries");
     }
@@ -171,6 +183,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public String getJarOrder() {
         return this.jarOrder;
+    }
+
+    public void setTexturePackExtracted() {
+        this.extractedTexturePack = true;
+    }
+
+    public void setResourcePackExtracted() {
+        this.extractedResourcePack = true;
     }
 
     public void addToJarOrder(String file) {
@@ -272,7 +292,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.delete(getCoreModsDirectory());
             if (isReinstall) {
                 Utils.delete(getJarModsDirectory()); // Only delete if it's not a server
-            }else{
+                Utils.delete(new File(getTexturePacksDirectory(), "TexturePack.zip"));
+                Utils.delete(new File(getResourcePacksDirectory(), "ResourcePack.zip"));
+            } else {
                 Utils.delete(getLibrariesDirectory()); // Only delete if it's a server
             }
         }
@@ -980,6 +1002,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             firePropertyChange("doing", null, App.settings.getLocalizedString("server.zippingjar"));
             firePropertyChange("subprogressint", null, 0);
             Utils.zip(getTempJarDirectory(), getMinecraftJar());
+        }
+        if (extractedTexturePack) {
+            firePropertyChange("doing", null, App.settings.getLocalizedString("instance.zippingtexturepackfiles"));
+            firePropertyChange("subprogressint", null, 0);
+            Utils.zip(getTempTexturePackDirectory(), new File(getTexturePacksDirectory(), "TexturePack.zip"));
+        }
+        if (extractedResourcePack) {
+            firePropertyChange("doing", null, App.settings.getLocalizedString("instance.zippingresourcepackfiles"));
+            firePropertyChange("subprogressint", null, 0);
+            Utils.zip(getTempResourcePackDirectory(), new File(getResourcePacksDirectory(), "ResourcePack.zip"));
         }
         configurePack();
         if (savedReis) {
