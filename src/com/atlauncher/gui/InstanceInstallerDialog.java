@@ -274,7 +274,7 @@ public class InstanceInstallerDialog extends JDialog {
                             type = JOptionPane.ERROR_MESSAGE;
                             text = pack.getName()
                                     + " "
-                                    + version
+                                    + version.getVersion()
                                     + " "
                                     + App.settings.getLocalizedString("common.wasnt")
                                     + " "
@@ -285,7 +285,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     + App.settings.getLocalizedString("instance.actioncancelled");
                             title = pack.getName()
                                     + " "
-                                    + version
+                                    + version.getVersion()
                                     + " "
                                     + App.settings.getLocalizedString("common.not")
                                     + " "
@@ -307,7 +307,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 type = JOptionPane.INFORMATION_MESSAGE;
                                 text = pack.getName()
                                         + " "
-                                        + version
+                                        + version.getVersion()
                                         + " "
                                         + App.settings.getLocalizedString("common.hasbeen")
                                         + " "
@@ -317,7 +317,7 @@ public class InstanceInstallerDialog extends JDialog {
                                                         .getLocalizedString("common.installed"))
                                         + "<br/><br/>"
                                         + App.settings.getLocalizedString("instance.findit");
-                                title = pack.getName() + " " + version + " "
+                                title = pack.getName() + " " + version.getVersion() + " "
                                         + App.settings.getLocalizedString("common.installed");
                                 if (isReinstall) {
                                     instance.setVersion(version.getVersion());
@@ -365,7 +365,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     type = JOptionPane.ERROR_MESSAGE;
                                     text = pack.getName()
                                             + " "
-                                            + version
+                                            + version.getVersion()
                                             + " "
                                             + App.settings.getLocalizedString("common.wasnt")
                                             + " "
@@ -377,7 +377,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             + App.settings
                                                     .getLocalizedString("instance.checkerrorlogs")
                                             + "!";
-                                    title = pack.getName() + " " + version + " "
+                                    title = pack.getName() + " " + version.getVersion() + " "
                                             + App.settings.getLocalizedString("common.not") + " "
                                             + App.settings.getLocalizedString("common.reinstalled");
                                     App.settings.setInstanceUnplayable(instance);
@@ -387,7 +387,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     type = JOptionPane.ERROR_MESSAGE;
                                     text = pack.getName()
                                             + " "
-                                            + version
+                                            + version.getVersion()
                                             + " "
                                             + App.settings.getLocalizedString("common.wasnt")
                                             + " "
@@ -396,7 +396,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             + App.settings
                                                     .getLocalizedString("instance.checkerrorlogs")
                                             + "!";
-                                    title = pack.getName() + " " + version + " "
+                                    title = pack.getName() + " " + version.getVersion() + " "
                                             + App.settings.getLocalizedString("common.not") + " "
                                             + App.settings.getLocalizedString("common.installed");
                                 }
