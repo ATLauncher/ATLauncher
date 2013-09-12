@@ -12,8 +12,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
@@ -81,17 +81,11 @@ public class PacksPanel extends JPanel {
         if (keepFilters) {
             searchBox.setText(this.searchText);
         }
-        searchBox.addKeyListener(new KeyListener() {
+        searchBox.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     reload();
                 }
-            }
-
-            public void keyTyped(KeyEvent e) {
-            }
-
-            public void keyReleased(KeyEvent e) {
             }
         });
         topPanel.add(searchBox);

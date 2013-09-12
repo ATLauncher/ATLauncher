@@ -42,8 +42,7 @@ public class ConsoleBottomBar extends JPanel {
     public ConsoleBottomBar() {
         setBorder(BorderFactory.createEtchedBorder());
         setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(0, 50)); // Make the bottom bar at least
-                                                // 50 pixels high
+        setPreferredSize(new Dimension(0, 50)); // Make the bottom bar at least 50 pixels high
 
         createButtons(); // Create the buttons
         setupActionListeners(); // Setup Action Listeners
