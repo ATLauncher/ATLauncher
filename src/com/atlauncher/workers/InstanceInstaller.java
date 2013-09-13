@@ -39,6 +39,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloader;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Mod;
@@ -573,6 +574,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     Element element = (Element) node;
                     String url = element.getAttribute("url");
                     String file = element.getAttribute("file");
+                    Download download = Download.direct;
+                    if (element.hasAttribute("download")) {
+                        download = Download.valueOf(element.getAttribute("download"));
+                    }
+                    String md5 = "-";
+                    if (element.hasAttribute("md5")) {
+                        md5 = element.getAttribute("md5");
+                    }
                     if (element.hasAttribute("depends")) {
                         boolean found = false;
                         for (Mod mod : selectedMods) {
@@ -604,11 +613,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     } else {
                         downloadTo = new File(App.settings.getLibrariesDir(), file);
                     }
-                    if (element.hasAttribute("md5")) {
-                        downloads.add(new MojangDownloadable(url, downloadTo, element
-                                .getAttribute("md5"), this));
+                    if (download == Download.server) {
+                        downloads.add(new MojangDownloadable(App.settings.getFileURL(url),
+                                downloadTo, md5, this));
                     } else {
-                        downloads.add(new MojangDownloadable(url, downloadTo, "-", this));
+                        downloads.add(new MojangDownloadable(url, downloadTo, md5, this));
                     }
                 }
             }
@@ -1004,14 +1013,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.zip(getTempJarDirectory(), getMinecraftJar());
         }
         if (extractedTexturePack) {
-            firePropertyChange("doing", null, App.settings.getLocalizedString("instance.zippingtexturepackfiles"));
+            firePropertyChange("doing", null,
+                    App.settings.getLocalizedString("instance.zippingtexturepackfiles"));
             firePropertyChange("subprogressint", null, 0);
-            Utils.zip(getTempTexturePackDirectory(), new File(getTexturePacksDirectory(), "TexturePack.zip"));
+            Utils.zip(getTempTexturePackDirectory(), new File(getTexturePacksDirectory(),
+                    "TexturePack.zip"));
         }
         if (extractedResourcePack) {
-            firePropertyChange("doing", null, App.settings.getLocalizedString("instance.zippingresourcepackfiles"));
+            firePropertyChange("doing", null,
+                    App.settings.getLocalizedString("instance.zippingresourcepackfiles"));
             firePropertyChange("subprogressint", null, 0);
-            Utils.zip(getTempResourcePackDirectory(), new File(getResourcePacksDirectory(), "ResourcePack.zip"));
+            Utils.zip(getTempResourcePackDirectory(), new File(getResourcePacksDirectory(),
+                    "ResourcePack.zip"));
         }
         configurePack();
         if (savedReis) {
