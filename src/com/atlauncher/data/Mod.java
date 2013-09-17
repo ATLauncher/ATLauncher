@@ -282,6 +282,7 @@ public class Mod {
                 break;
             case resourcepackextract:
                 Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
+                installer.setResourcePackExtracted();
                 break;
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());

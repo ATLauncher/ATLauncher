@@ -1016,6 +1016,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             firePropertyChange("doing", null,
                     App.settings.getLocalizedString("instance.zippingtexturepackfiles"));
             firePropertyChange("subprogressint", null, 0);
+            if (!getTexturePacksDirectory().exists()) {
+                getTexturePacksDirectory().mkdir();
+            }
             Utils.zip(getTempTexturePackDirectory(), new File(getTexturePacksDirectory(),
                     "TexturePack.zip"));
         }
@@ -1023,6 +1026,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             firePropertyChange("doing", null,
                     App.settings.getLocalizedString("instance.zippingresourcepackfiles"));
             firePropertyChange("subprogressint", null, 0);
+            if (!getResourcePacksDirectory().exists()) {
+                getResourcePacksDirectory().mkdir();
+            }
             Utils.zip(getTempResourcePackDirectory(), new File(getResourcePacksDirectory(),
                     "ResourcePack.zip"));
         }
