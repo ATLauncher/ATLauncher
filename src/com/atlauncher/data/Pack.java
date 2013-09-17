@@ -142,8 +142,7 @@ public class Pack {
     public String getXML(String version, boolean redownload) {
         if (this.xml == null || !this.xmlVersion.equalsIgnoreCase(version)
                 || (isTester() && redownload)) {
-            String path = "packs/" + getSafeName() + "/versions/"
-                    + version.replaceAll("[^A-Za-z0-9]", "") + "/Configs.xml";
+            String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.xml";
             String versionURL = App.settings.getFileURL(path); // The XML with path on
                                                                // server
             this.xml = Utils.urlToString(versionURL);
