@@ -367,21 +367,26 @@ public class Instance implements Serializable {
             if (!App.settings.isInOfflineMode()) {
                 if (isNewLaunchMethod()) {
                     String result = Utils.newLogin(username, password);
-                    JSONParser parser = new JSONParser();
-                    try {
-                        Object obj = parser.parse(result);
-                        JSONObject jsonObject = (JSONObject) obj;
-                        if (jsonObject.containsKey("accessToken")) {
-                            String accessToken = (String) jsonObject.get("accessToken");
-                            JSONObject profile = (JSONObject) jsonObject.get("selectedProfile");
-                            String profileID = (String) profile.get("id");
-                            sess = "token:" + accessToken + ":" + profileID;
-                            loggedIn = true;
-                        } else {
-                            auth = (String) jsonObject.get("errorMessage");
+                    if (result == null) {
+                        loggedIn = true;
+                        sess = "0";
+                    } else {
+                        JSONParser parser = new JSONParser();
+                        try {
+                            Object obj = parser.parse(result);
+                            JSONObject jsonObject = (JSONObject) obj;
+                            if (jsonObject.containsKey("accessToken")) {
+                                String accessToken = (String) jsonObject.get("accessToken");
+                                JSONObject profile = (JSONObject) jsonObject.get("selectedProfile");
+                                String profileID = (String) profile.get("id");
+                                sess = "token:" + accessToken + ":" + profileID;
+                                loggedIn = true;
+                            } else {
+                                auth = (String) jsonObject.get("errorMessage");
+                            }
+                        } catch (ParseException e1) {
+                            App.settings.getConsole().logStackTrace(e1);
                         }
-                    } catch (ParseException e1) {
-                        App.settings.getConsole().logStackTrace(e1);
                     }
                 } else {
                     try {
@@ -392,11 +397,16 @@ public class Instance implements Serializable {
                         App.settings.getConsole().logStackTrace(e1);
                     }
                     auth = Utils.urlToString(url);
-                    if (auth.contains(":")) {
-                        String[] parts = auth.split(":");
-                        if (parts.length == 5) {
-                            loggedIn = true;
-                            sess = parts[3];
+                    if (auth == null) {
+                        loggedIn = true;
+                        sess = "0";
+                    } else {
+                        if (auth.contains(":")) {
+                            String[] parts = auth.split(":");
+                            if (parts.length == 5) {
+                                loggedIn = true;
+                                sess = parts[3];
+                            }
                         }
                     }
                 }

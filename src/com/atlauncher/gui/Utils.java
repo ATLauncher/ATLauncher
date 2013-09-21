@@ -685,6 +685,7 @@ public class Utils {
             reader.close();
         } catch (IOException e) {
             App.settings.getConsole().logStackTrace(e);
+            return null;
         }
         return response.toString();
     }
