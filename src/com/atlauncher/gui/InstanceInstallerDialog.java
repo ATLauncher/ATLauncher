@@ -17,6 +17,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
@@ -53,6 +54,7 @@ public class InstanceInstallerDialog extends JDialog {
     private JTextField instanceNameField;
     private JLabel versionLabel;
     private JComboBox<Version> versionsDropDown;
+    private ArrayList<Version> versions = new ArrayList<Version>();
     private JLabel installForLabel;
     private JCheckBox installForMe;
     private JLabel useLatestLWJGLLabel;
@@ -127,18 +129,28 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown = new JComboBox<Version>();
         if (pack.isTester()) {
             for (int i = 0; i < pack.getDevVersionCount(); i++) {
-                versionsDropDown.addItem(new Version(true, pack.getDevVersion(i), pack
+                versions.add(new Version(true, pack.getDevVersion(i), pack
                         .getDevMinecraftVersion(i)));
             }
         }
         for (int i = 0; i < pack.getVersionCount(); i++) {
-            versionsDropDown.addItem(new Version(false, pack.getVersion(i), pack
-                    .getMinecraftVersion(i)));
+            versions.add(new Version(false, pack.getVersion(i), pack.getMinecraftVersion(i)));
+        }
+        for (Version version : versions) {
+            versionsDropDown.addItem(version);
         }
         if (isUpdate) {
-            versionsDropDown.setSelectedIndex(0);
+            if (pack.isTester()) {
+                versionsDropDown.setSelectedIndex(1);
+            } else {
+                versionsDropDown.setSelectedIndex(0);
+            }
         } else if (isReinstall) {
-            versionsDropDown.setSelectedItem(instance.getVersion());
+            for (Version version : versions) {
+                if (version.getVersion().equalsIgnoreCase(instance.getVersion())) {
+                    versionsDropDown.setSelectedItem(version);
+                }
+            }
         }
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         versionsDropDown.addActionListener(new ActionListener() {
