@@ -1338,7 +1338,9 @@ public class Settings {
         }
     }
 
-    public void apiCall(String username, String action, String extra1, String extra2, boolean debug) {
+    public String apiCall(String username, String action, String extra1, String extra2,
+            boolean debug) {
+        String response = "";
         try {
             String data = URLEncoder.encode("username", "UTF-8") + "="
                     + URLEncoder.encode(username, "UTF-8");
@@ -1358,6 +1360,7 @@ public class Settings {
             BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
             while ((line = rd.readLine()) != null) {
+                response += line;
                 if (debug) {
                     App.settings.getConsole().log("API Call Response: " + line);
                 }
@@ -1366,6 +1369,7 @@ public class Settings {
         } catch (Exception e) {
             App.settings.getConsole().logStackTrace(e);
         }
+        return response;
     }
 
     public void apiCall(String username, String action, String extra1, String extra2) {
@@ -1374,6 +1378,22 @@ public class Settings {
 
     public void apiCall(String username, String action, String extra1) {
         apiCall(username, action, extra1, "", false);
+    }
+
+    public void apiCall(String username, String action) {
+        apiCall(username, action, "", "", false);
+    }
+
+    public String apiCallReturn(String username, String action, String extra1, String extra2) {
+        return apiCall(username, action, extra1, extra2, false);
+    }
+
+    public String apiCallReturn(String username, String action, String extra1) {
+        return apiCall(username, action, extra1, "", false);
+    }
+
+    public String apiCallReturn(String username, String action) {
+        return apiCall(username, action, "", "", false);
     }
 
     public boolean canViewSemiPublicPack(String name) {
