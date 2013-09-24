@@ -124,6 +124,33 @@ public class MojangDownloadable implements Runnable {
         }
         return etag;
     }
+    
+    public String getMD5FromURL(String url) {
+        try {
+            this.connection = (HttpURLConnection) new URL(url).openConnection();
+            this.connection.setUseCaches(false);
+            this.connection.setDefaultUseCaches(false);
+            this.connection
+                    .setRequestProperty(
+                            "User-Agent",
+                            "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+            this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+            this.connection.setRequestProperty("Expires", "0");
+            this.connection.setRequestProperty("Pragma", "no-cache");
+            this.connection.connect();
+        } catch (MalformedURLException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
+        String etag = this.connection.getHeaderField("ATLauncher-MD5");
+        if (etag == null) {
+            etag = "-";
+        } else if ((etag.startsWith("\"")) && (etag.endsWith("\""))) {
+            etag = etag.substring(1, etag.length() - 1);
+        }
+        return etag;
+    }
 
     public void downloadFile() {
         try {
@@ -149,11 +176,15 @@ public class MojangDownloadable implements Runnable {
         } catch (FileNotFoundException e) {
             if (!restarted) {
                 if (file.getName().equalsIgnoreCase("scala-library-2.10.2.jar")) {
-                    restarted = true;
-                    url = App.settings.getFileURL("forge/scala-library-2.10.2.jar");
+                    this.restarted = true;
+                    this.connection = null;
+                    this.url = App.settings.getFileURL("forge/scala-library-2.10.2.jar");
+                    this.md5 = getMD5FromURL(this.url);
                 } else if (file.getName().equalsIgnoreCase("scala-compiler-2.10.2.jar")) {
-                    restarted = true;
-                    url = App.settings.getFileURL("forge/scala-compiler-2.10.2.jar");
+                    this.restarted = true;
+                    this.connection = null;
+                    this.url = App.settings.getFileURL("forge/scala-compiler-2.10.2.jar");
+                    this.md5 = getMD5FromURL(this.url);
                 }
                 if (!restarted) {
                     App.settings.getConsole().logStackTrace(e);
