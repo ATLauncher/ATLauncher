@@ -26,6 +26,7 @@ public class App {
     public static Settings settings;
 
     public static void main(String[] args) {
+        System.setProperty("java.net.preferIPv4Stack" , "true");
         String autoLaunch = null;
         if (args != null) {
             for (String arg : args) {
