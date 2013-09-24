@@ -361,6 +361,29 @@ public class Utils {
         return sb.toString();
     }
 
+    public static String getMD5(String string) {
+        if (string == null) {
+            return "0"; // String null so return 0
+        }
+        StringBuffer sb = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] bytesOfMessage = string.getBytes("UTF-8");
+            byte[] mdbytes = md.digest(bytesOfMessage);
+
+            // convert the byte to hex format method 1
+            sb = new StringBuffer();
+            for (int i = 0; i < mdbytes.length; i++) {
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+        } catch (NoSuchAlgorithmException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
+        return sb.toString();
+    }
+
     public static void copyFile(File from, File to) {
         copyFile(from, to, false);
     }

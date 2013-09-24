@@ -31,8 +31,8 @@ public class AddPackDialog extends JDialog {
     private JPanel middle;
     private JPanel bottom;
 
-    private JLabel packNameLabel;
-    private JTextField packName;
+    private JLabel packCodeLabel;
+    private JTextField packCode;
 
     private JButton saveButton;
 
@@ -57,13 +57,13 @@ public class AddPackDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        packNameLabel = new JLabel(App.settings.getLocalizedString("pack.packname") + ": ");
-        middle.add(packNameLabel, gbc);
+        packCodeLabel = new JLabel(App.settings.getLocalizedString("pack.packcode") + ": ");
+        middle.add(packCodeLabel, gbc);
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        packName = new JTextField(16);
-        middle.add(packName, gbc);
+        packCode = new JTextField(16);
+        middle.add(packCode, gbc);
 
         // Bottom Panel Stuff
         bottom = new JPanel();
@@ -71,15 +71,15 @@ public class AddPackDialog extends JDialog {
         saveButton = new JButton(App.settings.getLocalizedString("common.save"));
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.semiPublicPackExistsFromName(packName.getText())) {
-                    if (App.settings.addPack(packName.getText())) {
+                if (App.settings.semiPublicPackExistsFromCode(packCode.getText())) {
+                    if (App.settings.addPack(packCode.getText())) {
                         JOptionPane.showMessageDialog(AddPackDialog.this,
                                 App.settings.getLocalizedString("pack.packaddedmessage"),
                                 App.settings.getLocalizedString("pack.packadded"),
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(AddPackDialog.this,
-                                App.settings.getLocalizedString("pack.packakreadyaddedmessage"),
+                                App.settings.getLocalizedString("pack.packalreadyaddedmessage"),
                                 App.settings.getLocalizedString("pack.packalreadyadded"),
                                 JOptionPane.ERROR_MESSAGE);
                     }

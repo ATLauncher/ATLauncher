@@ -132,14 +132,6 @@ public class PackDisplay extends CollapsiblePanel {
             }
         });
 
-        removePack = new JButton("Remove Pack");
-        removePack.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                App.settings.removePack(pack.getName());
-                App.settings.reloadPacksPanel();
-            }
-        });
-
         support = new JButton(App.settings.getLocalizedString("common.support"));
         support.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -161,6 +153,13 @@ public class PackDisplay extends CollapsiblePanel {
         packActionsTop.add(newInstance);
         packActionsTop.add(createServer);
         if (pack instanceof SemiPublicPack) {
+            removePack = new JButton("Remove Pack");
+            removePack.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    App.settings.removePack(((SemiPublicPack)pack).getCode());
+                    App.settings.reloadPacksPanel();
+                }
+            });
             packActionsTop.add(removePack);
         }
         packActionsBottom.add(support);

@@ -179,12 +179,12 @@ public class Settings {
             while (iterator.hasNext()) {
                 JSONObject object = iterator.next();
                 if (object.containsKey("login.minecraft.net")) {
-                    if(((String) object.get("login.minecraft.net")).equalsIgnoreCase("green")){
+                    if (((String) object.get("login.minecraft.net")).equalsIgnoreCase("green")) {
                         minecraftLoginServerUp = true;
                     }
                 } else if (object.containsKey("session.minecraft.net")) {
-                    if(((String) object.get("session.minecraft.net")).equalsIgnoreCase("green")){
-                       minecraftSessionServerUp = true; 
+                    if (((String) object.get("session.minecraft.net")).equalsIgnoreCase("green")) {
+                        minecraftSessionServerUp = true;
                     }
                 }
             }
@@ -975,10 +975,13 @@ public class Settings {
                                 devVersions, devMinecraftVersions, testers, description,
                                 supportURL, websiteURL, allowedPlayers));
                     } else if (element.getAttribute("type").equalsIgnoreCase("semipublic")) {
-                        packs.add(new SemiPublicPack(id, name, createServer, leaderboards, logging,
-                                latestlwjgl, versions, noUpdateVersions, minecraftVersions,
-                                devVersions, devMinecraftVersions, testers, description,
-                                supportURL, websiteURL));
+                        if (element.hasAttribute("code")) {
+                            packs.add(new SemiPublicPack(id, name, element.getAttribute("code"),
+                                    createServer, leaderboards, logging, latestlwjgl, versions,
+                                    noUpdateVersions, minecraftVersions, devVersions,
+                                    devMinecraftVersions, testers, description, supportURL,
+                                    websiteURL));
+                        }
                     } else {
                         packs.add(new Pack(id, name, createServer, leaderboards, logging,
                                 latestlwjgl, versions, noUpdateVersions, minecraftVersions,
@@ -1402,29 +1405,32 @@ public class Settings {
         return apiCall(username, action, "", "", false);
     }
 
-    public boolean canViewSemiPublicPack(String name) {
-        for (String packName : this.addedPacks.split(",")) {
-            if (packName.equalsIgnoreCase(name)) {
+    public boolean canViewSemiPublicPackByCode(String code) {
+        for (String packCode : this.addedPacks.split(",")) {
+            if (packCode.equalsIgnoreCase(code)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean semiPublicPackExistsFromName(String packName) {
+    public boolean semiPublicPackExistsFromCode(String packCode) {
         for (Pack pack : this.packs) {
-            if (pack.getName().equalsIgnoreCase(packName) && pack instanceof SemiPublicPack) {
-                return true;
+            if (pack instanceof SemiPublicPack) {
+                if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(Utils.getMD5(packCode))) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    public boolean addPack(String packName) {
+    public boolean addPack(String packCode) {
+        packCode = Utils.getMD5(packCode);
         for (Pack pack : this.packs) {
-            if (pack.getName().equalsIgnoreCase(packName)) {
-                if (pack instanceof SemiPublicPack && !App.settings.canViewSemiPublicPack(packName)) {
-                    this.addedPacks += packName + ",";
+            if (pack instanceof SemiPublicPack && !App.settings.canViewSemiPublicPackByCode(packCode)) {
+                if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(packCode)) {
+                    this.addedPacks += packCode + ",";
                     this.saveProperties();
                     return true;
                 }
@@ -1433,10 +1439,10 @@ public class Settings {
         return false;
     }
 
-    public void removePack(String name) {
-        for (String packName : this.addedPacks.split(",")) {
-            if (packName.equalsIgnoreCase(name)) {
-                this.addedPacks = this.addedPacks.replace(name + ",", ""); // Remove the string
+    public void removePack(String code) {
+        for (String packCode : this.addedPacks.split(",")) {
+            if (packCode.equalsIgnoreCase(code)) {
+                this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
             }
         }
