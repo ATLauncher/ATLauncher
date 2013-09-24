@@ -7,6 +7,7 @@
 package com.atlauncher.workers;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Download;
 import com.atlauncher.gui.Utils;
 
 public class MojangDownloadable implements Runnable {
@@ -25,6 +27,7 @@ public class MojangDownloadable implements Runnable {
     private String md5;
     private HttpURLConnection connection;
     private InstanceInstaller instanceInstaller;
+    private boolean restarted = false;
 
     public MojangDownloadable(String url, File file, String md5, InstanceInstaller instanceInstaller) {
         this.url = url;
@@ -143,6 +146,23 @@ public class MojangDownloadable implements Runnable {
             }
             writer.close();
             in.close();
+        } catch (FileNotFoundException e) {
+            if (!restarted) {
+                if (file.getName().equalsIgnoreCase("scala-library-2.10.2.jar")) {
+                    restarted = true;
+                    url = App.settings.getFileURL("forge/scala-library-2.10.2.jar");
+                } else if (file.getName().equalsIgnoreCase("scala-compiler-2.10.2.jar")) {
+                    restarted = true;
+                    url = App.settings.getFileURL("forge/scala-compiler-2.10.2.jar");
+                }
+                if (!restarted) {
+                    App.settings.getConsole().logStackTrace(e);
+                    instanceInstaller.cancel(true);
+                }
+            } else {
+                App.settings.getConsole().logStackTrace(e);
+                instanceInstaller.cancel(true);
+            }
         } catch (IOException e) {
             App.settings.getConsole().logStackTrace(e);
         }
