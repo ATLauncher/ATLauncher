@@ -114,6 +114,8 @@ public class Settings {
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private String version = "%VERSION%"; // Version of the Launcher
+    private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
+    private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
 
     public Settings() {
         setupFiles(); // Setup all the file and directory variables
@@ -177,9 +179,13 @@ public class Settings {
             while (iterator.hasNext()) {
                 JSONObject object = iterator.next();
                 if (object.containsKey("login.minecraft.net")) {
-                    System.out.println(object.get("login.minecraft.net"));
+                    if(((String) object.get("login.minecraft.net")).equalsIgnoreCase("green")){
+                        minecraftLoginServerUp = true;
+                    }
                 } else if (object.containsKey("session.minecraft.net")) {
-                    System.out.println(object.get("session.minecraft.net"));
+                    if(((String) object.get("session.minecraft.net")).equalsIgnoreCase("green")){
+                       minecraftSessionServerUp = true; 
+                    }
                 }
             }
         } catch (ParseException e) {
