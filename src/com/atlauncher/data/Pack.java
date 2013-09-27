@@ -178,6 +178,33 @@ public class Pack {
         return null;
     }
 
+    public int getMemory(String version) {
+        String xml = getXML(version, false);
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(xml));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("memory");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    NodeList nodeList1 = element.getChildNodes();
+                    return Integer.parseInt(nodeList1.item(0).getNodeValue());
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
+        return 0;
+    }
+
     public int getPermGen(String version) {
         String xml = getXML(version, false);
         try {

@@ -78,7 +78,15 @@ public class MCLauncher {
         arguments.add(path);
 
         arguments.add("-Xms256M");
-        arguments.add("-Xmx" + App.settings.getMemory() + "M");
+        if (App.settings.getMemory() < instance.getMemory()) {
+            if (Utils.getMaximumRam() < instance.getMemory()) {
+                arguments.add("-Xmx" + App.settings.getMemory() + "M");
+            } else {
+                arguments.add("-Xmx" + instance.getMemory() + "M");
+            }
+        } else {
+            arguments.add("-Xmx" + App.settings.getMemory() + "M");
+        }
         if (App.settings.getPermGen() < instance.getPermGen()) {
             arguments.add("-XX:MaxPermSize=" + instance.getPermGen() + "M");
         } else {

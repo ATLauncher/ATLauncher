@@ -62,6 +62,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private boolean extractedTexturePack = false; // If there is an extracted texturepack
     private boolean extractedResourcePack = false; // If there is an extracted resourcepack
     private int permgen = 0;
+    private int memory = 0;
     private String librariesNeeded = null;
     private String nativesNeeded = null;
     private String minecraftArguments = null;
@@ -911,6 +912,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.permgen;
     }
 
+    public int getMemory() {
+        return this.memory;
+    }
+
     public boolean isNewLaunchMethod() {
         return this.newLaunchMethod;
     }
@@ -951,6 +956,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     protected Boolean doInBackground() throws Exception {
         this.allMods = sortMods(this.pack.getMods(this.version, isServer));
         this.permgen = this.pack.getPermGen(this.version);
+        this.memory = this.pack.getMemory(this.version);
         if (this.minecraftVersion == null) {
             this.cancel(true);
         }

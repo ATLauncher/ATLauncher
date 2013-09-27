@@ -39,6 +39,7 @@ public class Instance implements Serializable {
     private String installedBy;
     private String version;
     private String minecraftVersion;
+    private int memory = 0;
     private int permgen = 0;
     private String jarOrder;
     private String librariesNeeded = null;
@@ -51,14 +52,16 @@ public class Instance implements Serializable {
     private String[] modsInstalled;
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
-            String version, String minecraftVersion, int permgen, String[] modsInstalled,
-            String jarOrder, String librariesNeeded, String minecraftArguments, String mainClass,
-            boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
+            String version, String minecraftVersion, int memory, int permgen,
+            String[] modsInstalled, String jarOrder, String librariesNeeded,
+            String minecraftArguments, String mainClass, boolean isDev, boolean isPlayable,
+            boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
         this.version = version;
         this.minecraftVersion = minecraftVersion;
+        this.memory = memory;
         this.permgen = permgen;
         this.modsInstalled = modsInstalled;
         this.jarOrder = jarOrder;
@@ -79,10 +82,10 @@ public class Instance implements Serializable {
     }
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
-            String version, String minecraftVersion, int permgen, String[] modsInstalled,
-            String jarOrder, String librariesNeeded, String minecraftArguments, String mainClass,
-            boolean isDev, boolean newLaunchMethod) {
-        this(name, pack, realPack, installJustForMe, version, minecraftVersion, permgen,
+            String version, String minecraftVersion, int memory, int permgen,
+            String[] modsInstalled, String jarOrder, String librariesNeeded,
+            String minecraftArguments, String mainClass, boolean isDev, boolean newLaunchMethod) {
+        this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen,
                 modsInstalled, jarOrder, librariesNeeded, minecraftArguments, mainClass, isDev,
                 true, newLaunchMethod);
     }
@@ -101,6 +104,10 @@ public class Instance implements Serializable {
 
     public String getJarOrder() {
         return this.jarOrder;
+    }
+
+    public int getMemory() {
+        return this.memory;
     }
 
     public int getPermGen() {
