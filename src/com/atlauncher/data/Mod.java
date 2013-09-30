@@ -8,6 +8,7 @@ package com.atlauncher.data;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FilenameFilter;
 
 import javax.swing.JOptionPane;
 
@@ -294,6 +295,27 @@ public class Mod {
             case resourcepackextract:
                 Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
                 installer.setResourcePackExtracted();
+                break;
+            case millenaire:
+                File tempDirMillenaire = new File(App.settings.getTempDir(), getSafeName());
+                Utils.unzip(fileLocation, tempDirMillenaire);
+                for(String folder : tempDirMillenaire.list()){
+                    File thisFolder = new File(tempDirMillenaire, folder);
+                    for(String dir : thisFolder.list(new FilenameFilter() {
+                        @Override
+                        public boolean accept(File dir, String name) {
+                            File thisFile = new File(dir, name);
+                            if(thisFile.isDirectory()){
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        }
+                    })){
+                        Utils.copyDirectory(new File(thisFolder, dir), installer.getModsDirectory());
+                    }
+                }
+                Utils.delete(tempDirMillenaire);
                 break;
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
