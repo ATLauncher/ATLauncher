@@ -65,7 +65,7 @@ public class Mod {
         this.decompType = decompType;
         this.client = client;
         this.server = server;
-        this.serverURL = serverURL.replace("&amp;", "&");
+        this.serverURL = (serverURL==null) ? null : serverURL.replace("&amp;", "&");
         this.serverFile = serverFile;
         this.serverType = serverType;
         this.optional = optional;
@@ -283,6 +283,12 @@ public class Mod {
             case resourcepackextract:
                 Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
                 installer.setResourcePackExtracted();
+                break;
+            case millenaire:
+                File tempDirMillenaire = new File(App.settings.getTempDir(), getSafeName() + "-millenaire");
+                Utils.unzip(fileLocation, tempDirMillenaire);
+                System.exit(0);
+                Utils.delete(tempDirMillenaire);
                 break;
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
