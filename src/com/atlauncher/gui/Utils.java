@@ -531,11 +531,11 @@ public class Utils {
         if (!deleted) {
             if (file.isFile()) {
                 App.settings.getConsole().log(
-                        "File " + file.getAbsolutePath() + " couldn't be deleted");
+                        "File " + file.getAbsolutePath() + " couldn't be deleted", true);
             }
             if (file.isDirectory()) {
                 App.settings.getConsole().log(
-                        "Folder " + file.getAbsolutePath() + " couldn't be deleted");
+                        "Folder " + file.getAbsolutePath() + " couldn't be deleted", true);
             }
         }
     }
