@@ -356,7 +356,7 @@ public class Mod {
                                             + this.decompType);
                             break;
                     }
-                } else {
+                } else { 
                     App.settings.getConsole().log(
                             "Couldn't find decomp file " + this.decompFile + " for mod "
                                     + this.name);
