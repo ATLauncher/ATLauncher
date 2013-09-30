@@ -53,7 +53,7 @@ public class Mod {
             String group, String linked, String[] depends, boolean recommended, String description) {
         this.name = name;
         this.version = version;
-        this.url = url;
+        this.url = url.replace("&amp;", "&");
         this.file = file;
         this.website = website;
         this.donation = donation;
@@ -65,7 +65,7 @@ public class Mod {
         this.decompType = decompType;
         this.client = client;
         this.server = server;
-        this.serverURL = serverURL;
+        this.serverURL = serverURL.replace("&amp;", "&");
         this.serverFile = serverFile;
         this.serverType = serverType;
         this.optional = optional;
