@@ -182,9 +182,9 @@ public class Mod {
             case browser:
                 while (!fileLocation.exists()) {
                     if (serverURL == null) {
-                        Utils.openBrowser(getURL());
+                        Utils.openBrowser(getURL().replace("&amp;", "&"));
                     } else {
-                        Utils.openBrowser(getServerURL());
+                        Utils.openBrowser(getServerURL().replace("&amp;", "&"));
                     }
                     String[] options = new String[] { App.settings
                             .getLocalizedString("instance.ivedownloaded") };
