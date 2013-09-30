@@ -65,7 +65,7 @@ public class Mod {
         this.decompType = decompType;
         this.client = client;
         this.server = server;
-        this.serverURL = (serverURL==null) ? null : serverURL.replace("&amp;", "&");
+        this.serverURL = (serverURL == null) ? null : serverURL.replace("&amp;", "&");
         this.serverFile = serverFile;
         this.serverType = serverType;
         this.optional = optional;
@@ -161,6 +161,10 @@ public class Mod {
     }
 
     public void download(InstanceInstaller installer) {
+        download(installer, 1);
+    }
+
+    public void download(InstanceInstaller installer, int attempt) {
         File fileLocation;
         if (serverFile == null) {
             fileLocation = new File(App.settings.getDownloadsDir(), getFile());
@@ -172,7 +176,7 @@ public class Mod {
                 if (compareMD5(Utils.getMD5(fileLocation))) {
                     return; // File already exists and matches hash, don't download it
                 } else {
-                    fileLocation.delete(); // File exists but is corrupt, delete it
+                    Utils.delete(fileLocation); // File exists but is corrupt, delete it
                 }
             } else {
                 return; // No MD5, but file is there, can only assume it's fine
@@ -182,9 +186,9 @@ public class Mod {
             case browser:
                 while (!fileLocation.exists()) {
                     if (serverURL == null) {
-                        Utils.openBrowser(getURL().replace("&amp;", "&"));
+                        Utils.openBrowser(getURL());
                     } else {
-                        Utils.openBrowser(getServerURL().replace("&amp;", "&"));
+                        Utils.openBrowser(getServerURL());
                     }
                     String[] options = new String[] { App.settings
                             .getLocalizedString("instance.ivedownloaded") };
@@ -244,8 +248,15 @@ public class Mod {
             if (compareMD5(Utils.getMD5(fileLocation))) {
                 return; // MD5 hash matches
             } else {
-                fileLocation.delete(); // MD5 hash doesn't match, delete it
-                download(installer); // download again
+                if (attempt < 5) {
+                    Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
+                    download(installer, ++attempt); // download again
+                } else {
+                    App.settings.getConsole().log(
+                            "Cannot download " + fileLocation.getAbsolutePath()
+                                    + ". Aborting install", true);
+                    installer.cancel(true);
+                }
             }
         } else {
             return; // No MD5, but file is there, can only assume it's fine
@@ -283,12 +294,6 @@ public class Mod {
             case resourcepackextract:
                 Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
                 installer.setResourcePackExtracted();
-                break;
-            case millenaire:
-                File tempDirMillenaire = new File(App.settings.getTempDir(), getSafeName() + "-millenaire");
-                Utils.unzip(fileLocation, tempDirMillenaire);
-                System.exit(0);
-                Utils.delete(tempDirMillenaire);
                 break;
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
@@ -362,7 +367,7 @@ public class Mod {
                                             + this.decompType);
                             break;
                     }
-                } else { 
+                } else {
                     App.settings.getConsole().log(
                             "Couldn't find decomp file " + this.decompFile + " for mod "
                                     + this.name);
