@@ -227,7 +227,7 @@ public class ModsChooser extends JDialog {
                 checkBox.setSelected(true);
                 checkBox.setEnabled(false);
 
-                if (mod.isHidden()) {
+                if (mod.isHidden() || mod.isLibrary()) {
                     checkBox.setVisible(false);
                     if (!mod.getDescription().isEmpty()) {
                         label.setVisible(false);
