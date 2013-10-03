@@ -94,7 +94,7 @@ public class Settings {
 
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, imagesDir, skinsDir, jarsDir, commonConfigsDir,
-            resourcesDir, librariesDir, languagesDir, downloadsDir, macAppDownloadsDir,
+            resourcesDir, librariesDir, languagesDir, downloadsDir, usersDownloadsFolder,
             instancesDir, serversDir, tempDir, instancesDataFile, userDataFile, propertiesFile;
 
     // Launcher Settings
@@ -137,8 +137,8 @@ public class Settings {
         }
         if (Utils.isMac() && new File(baseDir.getParentFile().getParentFile(), "MacOS").exists()) {
             usingMacApp = true;
-            macAppDownloadsDir = new File(System.getProperty("user.home"), "Downloads");
         }
+        usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
         backupsDir = new File(baseDir, "Backups");
         configsDir = new File(baseDir, "Configs");
         imagesDir = new File(configsDir, "Images");
@@ -545,12 +545,12 @@ public class Settings {
     }
 
     /**
-     * Returns the downloads directory for the Mac App
+     * Returns the downloads directory for the user
      * 
-     * @return File object for the downloads directory for the Mac App
+     * @return File object for the downloads directory for the users account
      */
-    public File getMacAppDownloadsDir() {
-        return this.macAppDownloadsDir;
+    public File getUsersDownloadsDir() {
+        return this.usersDownloadsFolder;
     }
 
     /**
@@ -859,7 +859,9 @@ public class Settings {
         this.server.disableServer(); // Disable the server
         for (Server server : this.servers) {
             if (!server.isDisabled()) {
-                getConsole().log(this.server.getName() + " Server Not Available Switching To " + server.getName(), true);
+                getConsole().log(
+                        this.server.getName() + " Server Not Available Switching To "
+                                + server.getName(), true);
                 this.server = server; // Setup next available server
                 return true;
             }
@@ -1429,7 +1431,8 @@ public class Settings {
     public boolean addPack(String packCode) {
         packCode = Utils.getMD5(packCode);
         for (Pack pack : this.packs) {
-            if (pack instanceof SemiPublicPack && !App.settings.canViewSemiPublicPackByCode(packCode)) {
+            if (pack instanceof SemiPublicPack
+                    && !App.settings.canViewSemiPublicPackByCode(packCode)) {
                 if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(packCode)) {
                     this.addedPacks += packCode + ",";
                     this.saveProperties();

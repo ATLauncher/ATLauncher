@@ -185,6 +185,17 @@ public class Mod {
         }
         switch (download) {
             case browser:
+                File downloadsFolderFile;
+                if (serverFile == null) {
+                    downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(), getFile());
+                } else {
+                    downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(),
+                            getServerFile());
+                }
+                if (downloadsFolderFile.exists()) {
+                    Utils.copyFile(downloadsFolderFile, fileLocation, true);
+                    Utils.delete(downloadsFolderFile);
+                }
                 while (!fileLocation.exists()) {
                     if (serverURL == null) {
                         Utils.openBrowser(getURL());
@@ -202,8 +213,10 @@ public class Mod {
                                     + App.settings.getLocalizedString("instance.pleasesave")
                                     + "<br/><br/>"
                                     + (App.settings.isUsingMacApp() ? App.settings
-                                            .getMacAppDownloadsDir().getAbsolutePath()
-                                            : App.settings.getDownloadsDir().getAbsolutePath())
+                                            .getUsersDownloadsDir().getAbsolutePath()
+                                            : App.settings.getDownloadsDir().getAbsolutePath()
+                                                    + " or<br/>"
+                                                    + App.settings.getUsersDownloadsDir())
                                     + "</center></html>",
                             App.settings.getLocalizedString("common.downloading") + " "
                                     + (serverFile == null ? getFile() : getServerFile()),
@@ -213,17 +226,11 @@ public class Mod {
                         installer.cancel(true);
                         return;
                     }
-                    if (App.settings.isUsingMacApp()) {
-                        File macFile;
-                        if (serverFile == null) {
-                            macFile = new File(App.settings.getMacAppDownloadsDir(), getFile());
-                        } else {
-                            macFile = new File(App.settings.getMacAppDownloadsDir(),
-                                    getServerFile());
-                        }
-                        if (macFile.exists()) {
-                            Utils.copyFile(macFile, fileLocation, true);
-                            Utils.delete(macFile);
+                    if (!fileLocation.exists()) {
+                        // Check users downloads folder to see if it's there
+                        if (downloadsFolderFile.exists()) {
+                            Utils.copyFile(downloadsFolderFile, fileLocation, true);
+                            Utils.delete(downloadsFolderFile);
                         }
                     }
                 }
@@ -299,19 +306,19 @@ public class Mod {
             case millenaire:
                 File tempDirMillenaire = new File(App.settings.getTempDir(), getSafeName());
                 Utils.unzip(fileLocation, tempDirMillenaire);
-                for(String folder : tempDirMillenaire.list()){
+                for (String folder : tempDirMillenaire.list()) {
                     File thisFolder = new File(tempDirMillenaire, folder);
-                    for(String dir : thisFolder.list(new FilenameFilter() {
+                    for (String dir : thisFolder.list(new FilenameFilter() {
                         @Override
                         public boolean accept(File dir, String name) {
                             File thisFile = new File(dir, name);
-                            if(thisFile.isDirectory()){
+                            if (thisFile.isDirectory()) {
                                 return true;
-                            }else{
+                            } else {
                                 return false;
                             }
                         }
-                    })){
+                    })) {
                         Utils.copyDirectory(new File(thisFolder, dir), installer.getModsDirectory());
                     }
                 }
