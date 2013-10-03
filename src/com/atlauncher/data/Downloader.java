@@ -25,6 +25,7 @@ public class Downloader {
     private DownloadWorker worker; // The download worker process
     private String response; // The response from the worker process
     private InstanceInstaller installer;
+    private boolean downloaded = false; // If the file was downloaded
 
     public Downloader(String url, String destination, InstanceInstaller installerr) {
         this.url = url;
@@ -71,6 +72,10 @@ public class Downloader {
         this.destination = destination;
     }
 
+    public boolean downloaded() {
+        return downloaded;
+    }
+
     public void run() {
         if (worker != null) {
             worker.execute(); // Run the worker process
@@ -83,5 +88,6 @@ public class Downloader {
                 worker.cancel(true);
             }
         }
+        downloaded = worker.wasDownloaded();
     }
 }

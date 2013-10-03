@@ -323,14 +323,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (mod.isServerDownload()) {
                 ATLauncherDownloadable downloadable;
                 if (mod.hasMD5()) {
-                    downloadable = new ATLauncherDownloadable(
-                            App.settings.getFileURL(mod.getURL()), new File(
-                                    App.settings.getDownloadsDir(), mod.getFile()), mod.getMD5(),
-                            this);
+                    downloadable = new ATLauncherDownloadable(mod.getURL(), new File(
+                            App.settings.getDownloadsDir(), mod.getFile()), mod.getMD5(), this);
                 } else {
-                    downloadable = new ATLauncherDownloadable(
-                            App.settings.getFileURL(mod.getURL()), new File(
-                                    App.settings.getDownloadsDir(), mod.getFile()), this);
+                    downloadable = new ATLauncherDownloadable(mod.getURL(), new File(
+                            App.settings.getDownloadsDir(), mod.getFile()), this);
                 }
                 mods.add(downloadable);
             }
@@ -887,12 +884,27 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public void configurePack() {
+        Boolean configsDownloaded = false; // If the configs were downloaded
         firePropertyChange("doing", null,
                 App.settings.getLocalizedString("instance.extractingconfigs"));
         File configs = new File(App.settings.getTempDir(), "Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version + "/Configs.zip";
         String configsURL = App.settings.getFileURL(path); // The zip on the server
-        new Downloader(configsURL, configs.getAbsolutePath(), this).run();
+        Downloader configsDownloader = new Downloader(configsURL, configs.getAbsolutePath(), this);
+        configsDownloader.run();
+        configsDownloaded = configsDownloader.downloaded();
+        while (!configsDownloaded) {
+            if (App.settings.disableServerGetNext()) {
+                configsURL = App.settings.getFileURL(path); // The zip on the server
+                configsDownloader = new Downloader(configsURL, configs.getAbsolutePath(), this);
+                configsDownloader.run();
+                configsDownloaded = configsDownloader.downloaded();
+            } else {
+                App.settings.getConsole().log("Couldn't Download Configs For " + pack.getName(),
+                        true);
+                cancel(true);
+            }
+        }
         Utils.unzip(configs, getRootDirectory());
         configs.delete();
         if (App.settings.getCommonConfigsDir().listFiles().length != 0) {

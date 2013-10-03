@@ -16,10 +16,12 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Downloader;
 import com.atlauncher.gui.Utils;
 
 public class ATLauncherDownloadable implements Runnable {
 
+    private String beforeURL;
     private String url;
     private File file;
     private String md5;
@@ -28,7 +30,8 @@ public class ATLauncherDownloadable implements Runnable {
 
     public ATLauncherDownloadable(String url, File file, String md5,
             InstanceInstaller instanceInstaller) {
-        this.url = url;
+        this.beforeURL = url;
+        this.url = App.settings.getFileURL(url);
         this.file = file;
         this.md5 = md5;
         this.instanceInstaller = instanceInstaller;
@@ -52,7 +55,21 @@ public class ATLauncherDownloadable implements Runnable {
         InputStream in = null;
         URL target = null;
         URL downloadURL = new URL(url);
-        URLConnection c = downloadURL.openConnection();
+        URLConnection c = null;
+        try {
+            c = downloadURL.openConnection();
+        } catch (IOException e) {
+            App.settings.getConsole().log("Cannot Connect To URL " + downloadURL, true);
+            App.settings.getConsole().logStackTrace(e);
+            if (App.settings.disableServerGetNext()) {
+                this.url = App.settings.getFileURL(this.beforeURL);
+                return getRedirect(this.url);
+            } else {
+                App.settings.getConsole().log("Couldn't Get Redirected URL From " + this.url, true);
+                instanceInstaller.cancel(true);
+                return downloadURL;
+            }
+        }
         do {
             c.setRequestProperty(
                     "User-Agent",
@@ -94,7 +111,19 @@ public class ATLauncherDownloadable implements Runnable {
 
     public String getMD5FromURL(String url) {
         try {
-            this.connection = (HttpURLConnection) new URL(url).openConnection();
+            try {
+                this.connection = (HttpURLConnection) new URL(url).openConnection();
+            } catch (IOException e) {
+                App.settings.getConsole().log("Cannot Connect To URL " + url, true);
+                App.settings.getConsole().logStackTrace(e);
+                if (App.settings.disableServerGetNext()) {
+                    this.url = App.settings.getFileURL(this.beforeURL);
+                    getMD5FromURL(this.url);
+                } else {
+                    App.settings.getConsole().log("Couldn't Get MD5 From " + this.url, true);
+                    instanceInstaller.cancel(true);
+                }
+            }
             this.connection.setUseCaches(false);
             this.connection.setDefaultUseCaches(false);
             this.connection
@@ -124,7 +153,20 @@ public class ATLauncherDownloadable implements Runnable {
             InputStream in = null;
             URL downloadURL = getRedirect(this.url);
             if (this.connection == null) {
-                this.connection = (HttpURLConnection) downloadURL.openConnection();
+                try {
+                    this.connection = (HttpURLConnection) downloadURL.openConnection();
+                } catch (IOException e) {
+                    App.settings.getConsole().log("Cannot Connect To URL " + downloadURL, true);
+                    App.settings.getConsole().logStackTrace(e);
+                    if (App.settings.disableServerGetNext()) {
+                        this.url = App.settings.getFileURL(this.beforeURL);
+                        downloadFile();
+                    } else {
+                        App.settings.getConsole().log("Couldn't Download File " + file.getName(),
+                                true);
+                        instanceInstaller.cancel(true);
+                    }
+                }
                 this.connection
                         .setRequestProperty(
                                 "User-Agent",
