@@ -490,7 +490,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(pack.getXML(version)));
+            InputSource is = new InputSource(new StringReader(pack.getXML(version), false));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("mainclass");
@@ -525,7 +525,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(pack.getXML(version)));
+            InputSource is = new InputSource(new StringReader(pack.getXML(version), false));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("extraarguments");
@@ -562,7 +562,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(pack.getXML(version)));
+            InputSource is = new InputSource(new StringReader(pack.getXML(version), false));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("library");
