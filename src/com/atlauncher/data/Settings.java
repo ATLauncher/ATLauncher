@@ -699,6 +699,7 @@ public class Settings {
             if (isLanguageByName(lang)) {
                 this.language = getLanguageByName(lang);
             } else {
+                getConsole().log("Invalid language " + lang + ". Defaulting to English!", true);
                 this.language = getLanguageByName("English"); // Language not found, use default
             }
 
@@ -710,12 +711,17 @@ public class Settings {
                     && !this.forgeLoggingLevel.equalsIgnoreCase("FINE")
                     && !this.forgeLoggingLevel.equalsIgnoreCase("FINER")
                     && !this.forgeLoggingLevel.equalsIgnoreCase("FINEST")) {
-                System.out.println("Invalid Forge Logging level: " + this.forgeLoggingLevel);
+                getConsole().log(
+                        "Invalid Forge Logging level " + this.forgeLoggingLevel
+                                + ". Defaulting to INFO!", true);
                 this.forgeLoggingLevel = "INFO";
             }
 
             this.ram = Integer.parseInt(properties.getProperty("ram", "512"));
             if (this.ram > Utils.getMaximumRam()) {
+                getConsole().log(
+                        "Tried to allocate " + this.ram + "MB of Ram but only "
+                                + Utils.getMaximumRam() + " is available to use!", true);
                 this.ram = 512; // User tried to allocate too much ram, set it back to 0.5GB
             }
 
@@ -723,11 +729,19 @@ public class Settings {
 
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             if (this.windowWidth > Utils.getMaximumWindowWidth()) {
+                getConsole().log(
+                        "Tried to set window width to " + this.windowWidth
+                                + " pixels but the maximum is " + Utils.getMaximumWindowWidth()
+                                + " pixels!", true);
                 this.windowWidth = 854; // User tried to make screen size wider than they have
             }
 
             this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
             if (this.windowHeight > Utils.getMaximumWindowHeight()) {
+                getConsole().log(
+                        "Tried to set window height to " + this.windowHeight
+                                + " pixels but the maximum is " + Utils.getMaximumWindowHeight()
+                                + " pixels!", true);
                 this.windowHeight = 480; // User tried to make screen size wider than they have
             }
 
@@ -749,6 +763,9 @@ public class Settings {
                 if (isAccountByName(lastAccountTemp)) {
                     this.account = getAccountByName(lastAccountTemp);
                 } else {
+                    getConsole().log(
+                            "The Account " + lastAccountTemp
+                                    + " is no longer available. Logging out of Account!", true);
                     this.account = null; // Account not found
                 }
             }
