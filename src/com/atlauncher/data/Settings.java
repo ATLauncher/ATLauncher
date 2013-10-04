@@ -733,7 +733,8 @@ public class Settings {
                         "Tried to set window width to " + this.windowWidth
                                 + " pixels but the maximum is " + Utils.getMaximumWindowWidth()
                                 + " pixels!", true);
-                this.windowWidth = 854; // User tried to make screen size wider than they have
+                this.windowWidth = Utils.getMaximumWindowWidth(); // User tried to make screen size
+                                                                  // wider than they have
             }
 
             this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
@@ -742,7 +743,8 @@ public class Settings {
                         "Tried to set window height to " + this.windowHeight
                                 + " pixels but the maximum is " + Utils.getMaximumWindowHeight()
                                 + " pixels!", true);
-                this.windowHeight = 480; // User tried to make screen size wider than they have
+                this.windowHeight = Utils.getMaximumWindowHeight(); // User tried to make screen
+                                                                    // size wider than they have
             }
 
             this.javaParamaters = properties.getProperty("javaparameters", "");
