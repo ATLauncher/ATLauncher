@@ -938,6 +938,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean hasJarMods() {
         for (Mod mod : selectedMods) {
+            if (!mod.installOnServer() && isServer) {
+                continue;
+            }
             if (mod.getType() == Type.jar) {
                 return true;
             } else if (mod.getType() == Type.decomp) {
@@ -1051,7 +1054,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             firePropertyChange("doing", null,
                     App.settings.getLocalizedString("server.extractingjar"));
             firePropertyChange("subprogressint", null, 0);
-                Utils.unzip(getMinecraftJar(), getTempJarDirectory());
+            Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
         deleteMetaInf();
         addPercent(5);
