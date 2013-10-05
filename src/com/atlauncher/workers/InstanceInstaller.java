@@ -78,6 +78,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private int doneDownloads = 0; // Total number of mods downloaded
     private Instance instance = null;
     private String[] modsInstalled;
+    private ArrayList<File> serverLibraries;
 
     public InstanceInstaller(String instanceName, Pack pack, String version,
             String minecraftVersion, boolean useLatestLWJGL, boolean isReinstall, boolean isServer) {
@@ -88,6 +89,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.useLatestLWJGL = useLatestLWJGL;
         this.isReinstall = isReinstall;
         this.isServer = isServer;
+        if(isServer){
+            serverLibraries = new ArrayList<File>();
+        }
     }
 
     public void setInstance(Instance instance) {
@@ -613,15 +617,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         if (!element.hasAttribute("server")) {
                             continue;
                         }
-                        downloadTo = new File(new File(getLibrariesDirectory(), element
+                        serverLibraries.add(new File(new File(getLibrariesDirectory(), element
                                 .getAttribute("server").substring(0,
                                         element.getAttribute("server").lastIndexOf('/'))), element
                                 .getAttribute("server").substring(
                                         element.getAttribute("server").lastIndexOf('/'),
-                                        element.getAttribute("server").length()));
-                    } else {
-                        downloadTo = new File(App.settings.getLibrariesDir(), file);
+                                        element.getAttribute("server").length())));
                     }
+                    downloadTo = new File(App.settings.getLibrariesDir(), file);
                     if (download == Download.server) {
                         downloads.add(new MojangDownloadable(App.settings.getFileURL(url),
                                 downloadTo, md5, this));
@@ -1046,6 +1049,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         addPercent(5);
         if (this.newLaunchMethod) {
             downloadMojangStuffNew();
+            if(isServer){
+                for(File file : serverLibraries){
+                    file.mkdirs();
+                    Utils.copyFile(new File(App.settings.getLibrariesDir(), file.getName()), file, true);
+                }
+            }
         } else {
             downloadMojangStuffOld();
         }

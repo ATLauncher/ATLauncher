@@ -343,7 +343,6 @@ public class InstanceInstallerDialog extends JDialog {
                                                         .getLocalizedString("instance.findit"));
                                 title = pack.getName() + " " + version.getVersion() + " "
                                         + App.settings.getLocalizedString("common.installed");
-                                System.out.println(isServer);
                                 if (isReinstall) {
                                     instance.setVersion(version.getVersion());
                                     instance.setMinecraftVersion(this.getMinecraftVersion());
