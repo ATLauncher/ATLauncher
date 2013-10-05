@@ -928,7 +928,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 return mod.getFile();
             }
         }
-        return "minecraft_server.jar";
+        if (isNewLaunchMethod()) {
+            return "minecraft_server.jar";
+        } else {
+            return "minecraft.jar";
+        }
     }
 
     public ArrayList<Mod> getMods() {
