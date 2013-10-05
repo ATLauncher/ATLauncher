@@ -243,8 +243,11 @@ public class InstanceInstallerDialog extends JDialog {
                         ((isReinstall) ? App.settings.getLocalizedString("common.reinstalling")
                                 : App.settings.getLocalizedString("common.installing"))
                                 + " "
-                                + pack.getName() + " " + version.getVersion(),
-                        ModalityType.DOCUMENT_MODAL);
+                                + pack.getName()
+                                + " "
+                                + version.getVersion()
+                                + ((isServer) ? " " + App.settings.getLocalizedString("common.server")
+                                        : ""), ModalityType.DOCUMENT_MODAL);
                 dialog.setLocationRelativeTo(App.settings.getParent());
                 dialog.setSize(300, 100);
                 dialog.setResizable(false);
@@ -328,9 +331,16 @@ public class InstanceInstallerDialog extends JDialog {
                                                 : App.settings
                                                         .getLocalizedString("common.installed"))
                                         + "<br/><br/>"
-                                        + App.settings.getLocalizedString("instance.findit");
+                                        + ((isServer) ? App.settings
+                                                .getLocalizedString("instance.finditserver",
+                                                        "<br/><br/>"
+                                                                + this.getRootDirectory()
+                                                                        .getAbsolutePath())
+                                                : App.settings
+                                                        .getLocalizedString("instance.findit"));
                                 title = pack.getName() + " " + version.getVersion() + " "
                                         + App.settings.getLocalizedString("common.installed");
+                                System.out.println(isServer);
                                 if (isReinstall) {
                                     instance.setVersion(version.getVersion());
                                     instance.setMinecraftVersion(this.getMinecraftVersion());
