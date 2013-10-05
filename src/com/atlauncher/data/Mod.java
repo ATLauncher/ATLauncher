@@ -97,6 +97,10 @@ public class Mod {
         return this.type;
     }
 
+    public DecompType getDecompType() {
+        return this.decompType;
+    }
+
     public String getMD5() {
         return this.md5;
     }

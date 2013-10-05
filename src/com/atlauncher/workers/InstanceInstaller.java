@@ -39,6 +39,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
+import com.atlauncher.data.DecompType;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloader;
 import com.atlauncher.data.Instance;
@@ -935,6 +936,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
+    public boolean hasJarMods() {
+        for (Mod mod : selectedMods) {
+            if (mod.getType() == Type.jar) {
+                return true;
+            } else if (mod.getType() == Type.decomp) {
+                if (mod.getDecompType() == DecompType.jar) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public ArrayList<Mod> getMods() {
         return this.allMods;
     }
@@ -1033,11 +1047,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             downloadMojangStuffOld();
         }
         addPercent(5);
-        if (isServer) {
+        if (isServer && hasJarMods()) {
             firePropertyChange("doing", null,
                     App.settings.getLocalizedString("server.extractingjar"));
             firePropertyChange("subprogressint", null, 0);
-            Utils.unzip(getMinecraftJar(), getTempJarDirectory());
+                Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
         deleteMetaInf();
         addPercent(5);
@@ -1051,7 +1065,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else {
             addPercent(80);
         }
-        if (isServer) {
+        if (isServer && hasJarMods()) {
             firePropertyChange("doing", null, App.settings.getLocalizedString("server.zippingjar"));
             firePropertyChange("subprogressint", null, 0);
             Utils.zip(getTempJarDirectory(), getMinecraftJar());
