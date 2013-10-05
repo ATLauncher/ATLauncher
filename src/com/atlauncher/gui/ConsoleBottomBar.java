@@ -36,6 +36,7 @@ public class ConsoleBottomBar extends JPanel {
     private JButton uploadLog;
     private JButton killMinecraft;
     private JButton facebookIcon;
+    private JButton githubIcon;
     private JButton twitterIcon;
     private JButton redditIcon;
 
@@ -68,6 +69,8 @@ public class ConsoleBottomBar extends JPanel {
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 0, 0, 5);
         rightSide.add(facebookIcon, gbc);
+        gbc.gridx++;
+        rightSide.add(githubIcon, gbc);
         gbc.gridx++;
         rightSide.add(redditIcon, gbc);
         gbc.gridx++;
@@ -128,6 +131,12 @@ public class ConsoleBottomBar extends JPanel {
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
+        githubIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                App.settings.getConsole().log("Opening Up ATLauncher GitHub Page");
+                Utils.openBrowser("https://github.com/RyanTheAllmighty/ATLauncher");
+            }
+        });
         redditIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 App.settings.getConsole().log("Opening Up ATLauncher Reddit Page");
@@ -152,11 +161,16 @@ public class ConsoleBottomBar extends JPanel {
 
         killMinecraft = new JButton("Kill Minecraft");
         killMinecraft.setVisible(false);
-
+        
         facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());
         facebookIcon.setContentAreaFilled(false);
         facebookIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        githubIcon = new JButton(Utils.getIconImage("/resources/GitHubIcon.png"));
+        githubIcon.setBorder(BorderFactory.createEmptyBorder());
+        githubIcon.setContentAreaFilled(false);
+        githubIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         redditIcon = new JButton(Utils.getIconImage("/resources/RedditIcon.png"));
         redditIcon.setBorder(BorderFactory.createEmptyBorder());

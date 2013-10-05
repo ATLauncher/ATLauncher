@@ -39,6 +39,7 @@ public class BottomBar extends JPanel {
     private JButton openFolder;
     private JComboBox<Account> username;
     private JButton facebookIcon;
+    private JButton githubIcon;
     private JButton twitterIcon;
     private JButton redditIcon;
 
@@ -75,6 +76,8 @@ public class BottomBar extends JPanel {
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 0, 0, 5);
         rightSide.add(facebookIcon, gbc);
+        gbc.gridx++;
+        rightSide.add(githubIcon, gbc);
         gbc.gridx++;
         rightSide.add(redditIcon, gbc);
         gbc.gridx++;
@@ -122,6 +125,12 @@ public class BottomBar extends JPanel {
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
+        githubIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                App.settings.getConsole().log("Opening Up ATLauncher GitHub Page");
+                Utils.openBrowser("https://github.com/RyanTheAllmighty/ATLauncher");
+            }
+        });
         redditIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 App.settings.getConsole().log("Opening Up ATLauncher Reddit Page");
@@ -166,6 +175,11 @@ public class BottomBar extends JPanel {
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());
         facebookIcon.setContentAreaFilled(false);
         facebookIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        githubIcon = new JButton(Utils.getIconImage("/resources/GitHubIcon.png"));
+        githubIcon.setBorder(BorderFactory.createEmptyBorder());
+        githubIcon.setContentAreaFilled(false);
+        githubIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         redditIcon = new JButton(Utils.getIconImage("/resources/RedditIcon.png"));
         redditIcon.setBorder(BorderFactory.createEmptyBorder());
