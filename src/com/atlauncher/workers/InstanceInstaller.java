@@ -89,7 +89,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.useLatestLWJGL = useLatestLWJGL;
         this.isReinstall = isReinstall;
         this.isServer = isServer;
-        if(isServer){
+        if (isServer) {
             serverLibraries = new ArrayList<File>();
         }
     }
@@ -183,7 +183,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (isNewLaunchMethod()) {
                 return new File(getRootDirectory(), "minecraft_server." + minecraftVersion + ".jar");
             } else {
-                return new File(getRootDirectory(), "minecraft.jar");
+                return new File(getRootDirectory(), "minecraft_server.jar");
             }
         }
         return new File(getBinDirectory(), "minecraft.jar");
@@ -933,9 +933,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
         if (isNewLaunchMethod()) {
-            return "minecraft_server.jar";
+            return "minecraft_server." + minecraftVersion + ".jar";
         } else {
-            return "minecraft.jar";
+            return "minecraft_server.jar";
         }
     }
 
@@ -1049,10 +1049,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         addPercent(5);
         if (this.newLaunchMethod) {
             downloadMojangStuffNew();
-            if(isServer){
-                for(File file : serverLibraries){
+            if (isServer) {
+                for (File file : serverLibraries) {
                     file.mkdirs();
-                    Utils.copyFile(new File(App.settings.getLibrariesDir(), file.getName()), file, true);
+                    Utils.copyFile(new File(App.settings.getLibrariesDir(), file.getName()), file,
+                            true);
                 }
             }
         } else {
@@ -1065,7 +1066,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             firePropertyChange("subprogressint", null, 0);
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
-        deleteMetaInf();
+        if (!isServer) {
+            deleteMetaInf();
+        }
         addPercent(5);
         if (selectedMods.size() != 0) {
             addPercent(40);
