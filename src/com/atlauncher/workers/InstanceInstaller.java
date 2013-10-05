@@ -335,6 +335,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         return mods;
     }
+    
+    private boolean hasOptionalMods() {
+        for(Mod mod : allMods){
+            if(mod.isOptional()){
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void downloadMods(ArrayList<Mod> mods) {
         firePropertyChange("subprogressint", null, null);
@@ -978,13 +987,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             this.newLaunchMethod = false;
         }
         selectedMods = new ArrayList<Mod>();
-        if (allMods.size() != 0) {
+        if (allMods.size() != 0 && hasOptionalMods()) {
             ModsChooser modsChooser = new ModsChooser(this);
             modsChooser.setVisible(true);
             if (modsChooser.wasClosed()) {
                 this.cancel(true);
             }
             selectedMods = modsChooser.getSelectedMods();
+        }
+        if(!hasOptionalMods()){
+            selectedMods = allMods;
         }
         if (selectedMods.size() != 0) {
             modsInstalled = new String[selectedMods.size()];
