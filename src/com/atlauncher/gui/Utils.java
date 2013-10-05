@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,6 +44,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Deque;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -711,5 +713,30 @@ public class Utils {
             return null;
         }
         return response.toString();
+    }
+
+    public static void replaceText(File originalFile, File destinationFile, String replaceThis,
+            String withThis) throws IOException {
+
+        FileInputStream fs = new FileInputStream(originalFile);
+        BufferedReader br = new BufferedReader(new InputStreamReader(fs));
+
+        FileWriter writer1 = new FileWriter(destinationFile);
+
+        int count = 1;
+        String line = br.readLine();
+        while (line != null) {
+            if (line.contains(replaceThis)) {
+                line = line.replace(replaceThis, withThis);
+            }
+            writer1.write(line);
+            writer1.write(System.getProperty("line.separator"));
+            line = br.readLine();
+            count++;
+        }
+        writer1.flush();
+        writer1.close();
+        br.close();
+        fs.close();
     }
 }

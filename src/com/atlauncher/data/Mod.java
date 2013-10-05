@@ -93,6 +93,10 @@ public class Mod {
         return this.version;
     }
 
+    public Type getType() {
+        return this.type;
+    }
+
     public String getMD5() {
         return this.md5;
     }

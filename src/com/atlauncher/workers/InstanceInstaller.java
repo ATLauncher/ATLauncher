@@ -44,6 +44,7 @@ import com.atlauncher.data.Downloader;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.Type;
 import com.atlauncher.gui.ModsChooser;
 import com.atlauncher.gui.Utils;
 
@@ -335,10 +336,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         return mods;
     }
-    
+
     private boolean hasOptionalMods() {
-        for(Mod mod : allMods){
-            if(mod.isOptional()){
+        for (Mod mod : allMods) {
+            if (mod.isOptional()) {
                 return true;
             }
         }
@@ -921,6 +922,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
+    public String getServerJar() {
+        for (Mod mod : selectedMods) {
+            if (mod.getType() == Type.forge) {
+                return mod.getFile();
+            }
+        }
+        return "minecraft_server.jar";
+    }
+
     public ArrayList<Mod> getMods() {
         return this.allMods;
     }
@@ -995,7 +1005,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             selectedMods = modsChooser.getSelectedMods();
         }
-        if(!hasOptionalMods()){
+        if (!hasOptionalMods()) {
             selectedMods = allMods;
         }
         if (selectedMods.size() != 0) {
@@ -1065,6 +1075,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         configurePack();
         if (savedReis) {
             Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"), reis);
+        }
+        if (isServer) {
+            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"),
+                    new File(getRootDirectory(), "LaunchServer.bat"), "%%SERVERJAR%%",
+                    getServerJar());
+            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.sh"),
+                    new File(getRootDirectory(), "LaunchServer.sh"), "%%SERVERJAR%%",
+                    getServerJar());
         }
         return true;
     }
