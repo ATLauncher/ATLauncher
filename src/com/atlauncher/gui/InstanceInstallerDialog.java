@@ -155,19 +155,21 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         versionsDropDown.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Version selected = (Version) versionsDropDown.getSelectedItem();
-                if (App.settings.getMinecraftInstallMethod(selected.getMinecraftVersion())
-                        .equalsIgnoreCase("new")) {
-                    useLatestLWJGLLabel.setVisible(false);
-                    useLatestLWJGL.setVisible(false);
-                    useLatestLWJGL.setSelected(false);
-                } else if (pack.isLatestLWJGLEnabled()) {
-                    useLatestLWJGLLabel.setVisible(false);
-                    useLatestLWJGL.setVisible(false);
-                    useLatestLWJGL.setSelected(true);
-                } else {
-                    useLatestLWJGLLabel.setVisible(true);
-                    useLatestLWJGL.setVisible(true);
+                if (!isServer) {
+                    Version selected = (Version) versionsDropDown.getSelectedItem();
+                    if (App.settings.getMinecraftInstallMethod(selected.getMinecraftVersion())
+                            .equalsIgnoreCase("new")) {
+                        useLatestLWJGLLabel.setVisible(false);
+                        useLatestLWJGL.setVisible(false);
+                        useLatestLWJGL.setSelected(false);
+                    } else if (pack.isLatestLWJGLEnabled()) {
+                        useLatestLWJGLLabel.setVisible(false);
+                        useLatestLWJGL.setVisible(false);
+                        useLatestLWJGL.setSelected(true);
+                    } else {
+                        useLatestLWJGLLabel.setVisible(true);
+                        useLatestLWJGL.setVisible(true);
+                    }
                 }
             }
         });
@@ -246,8 +248,9 @@ public class InstanceInstallerDialog extends JDialog {
                                 + pack.getName()
                                 + " "
                                 + version.getVersion()
-                                + ((isServer) ? " " + App.settings.getLocalizedString("common.server")
-                                        : ""), ModalityType.DOCUMENT_MODAL);
+                                + ((isServer) ? " "
+                                        + App.settings.getLocalizedString("common.server") : ""),
+                        ModalityType.DOCUMENT_MODAL);
                 dialog.setLocationRelativeTo(App.settings.getParent());
                 dialog.setSize(300, 100);
                 dialog.setResizable(false);
