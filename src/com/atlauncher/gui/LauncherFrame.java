@@ -45,12 +45,7 @@ public class LauncherFrame extends JFrame {
         App.settings.getConsole().log("Made By Bob*");
         App.settings.getConsole().log("*(Not Actually)");
         App.settings.setParentFrame(this);
-        if (App.settings.getLanguage().getName().equalsIgnoreCase("German")
-                || App.settings.getLanguage().getName().equalsIgnoreCase("Italian")) {
-            setSize(new Dimension(925, 500));
-        } else {
-            setSize(new Dimension(850, 500));
-        }
+        setSize(new Dimension(925, 550));
         setTitle("ATLauncher %VERSION%");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
