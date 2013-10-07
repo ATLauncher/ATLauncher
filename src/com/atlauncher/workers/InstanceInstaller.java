@@ -352,7 +352,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void downloadMods(ArrayList<Mod> mods) {
-        firePropertyChange("subprogressint", null, null);
+        fireSubProgressUnknown();
         ExecutorService executor = Executors.newFixedThreadPool(8);
         ArrayList<ATLauncherDownloadable> downloads = getDownloadableMods();
         totalDownloads = downloads.size();
@@ -366,8 +366,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                firePropertyChange("doing", null,
-                        App.settings.getLocalizedString("common.downloading") + " " + mod.getFile());
+                fireTask(App.settings.getLocalizedString("common.downloading") + " " + mod.getFile());
                 mod.download(this);
             }
         }
@@ -376,8 +375,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void installMods(ArrayList<Mod> mods) {
         for (Mod mod : mods) {
             if (!isCancelled()) {
-                firePropertyChange("doing", null,
-                        App.settings.getLocalizedString("common.installing") + " " + mod.getName());
+                fireTask(App.settings.getLocalizedString("common.installing") + " " + mod.getName());
                 addPercent(mods.size() / 40);
                 mod.install(this);
             }
@@ -408,9 +406,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void downloadMojangStuffNew() {
-        firePropertyChange("doing", null,
-                App.settings.getLocalizedString("instance.downloadingresources"));
-        firePropertyChange("subprogressint", null, null);
+        fireTask(App.settings.getLocalizedString("instance.downloadingresources"));
+        fireSubProgressUnknown();
         ExecutorService executor = Executors.newFixedThreadPool(8);
         ArrayList<MojangDownloadable> downloads = getNeededResources();
         totalResources = downloads.size();
@@ -422,9 +419,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         while (!executor.isTerminated()) {
         }
         if (!isCancelled()) {
-            firePropertyChange("doing", null,
-                    App.settings.getLocalizedString("instance.organisinglibraries"));
-            firePropertyChange("subprogress", null, 0);
+            fireTask(App.settings.getLocalizedString("instance.organisinglibraries"));
+            fireSubProgress(0);
             if (!isServer) {
                 String[] libraries = librariesNeeded.split(",");
                 for (String libraryFile : libraries) {
@@ -824,10 +820,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             for (int i = 0; i < 5; i++) {
                 addPercent(5);
                 while (!Utils.getMD5(files[i]).equalsIgnoreCase(hashes[i])) {
-                    firePropertyChange(
-                            "doing",
-                            null,
-                            App.settings.getLocalizedString("common.downloading") + " "
+                    fireTask(App.settings.getLocalizedString("common.downloading") + " "
                                     + files[i].getName());
                     new com.atlauncher.data.Downloader(urls[i], files[i].getAbsolutePath(), this)
                             .run();
@@ -854,10 +847,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     + "/minecraft_server.jar";
             addPercent(25);
             while (!Utils.getMD5(file).equalsIgnoreCase(hash)) {
-                firePropertyChange(
-                        "doing",
-                        null,
-                        App.settings.getLocalizedString("common.downloading") + " "
+                fireTask(App.settings.getLocalizedString("common.downloading") + " "
                                 + file.getName());
                 new com.atlauncher.data.Downloader(url, file.getAbsolutePath(), this).run();
             }
@@ -899,8 +889,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public void configurePack() {
         Boolean configsDownloaded = false; // If the configs were downloaded
-        firePropertyChange("doing", null,
-                App.settings.getLocalizedString("instance.extractingconfigs"));
+        fireTask(App.settings.getLocalizedString("instance.extractingconfigs"));
         File configs = new File(App.settings.getTempDir(), "Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version + "/Configs.zip";
         String configsURL = App.settings.getFileURL(path); // The zip on the server
@@ -1061,9 +1050,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         addPercent(5);
         if (isServer && hasJarMods()) {
-            firePropertyChange("doing", null,
-                    App.settings.getLocalizedString("server.extractingjar"));
-            firePropertyChange("subprogressint", null, 0);
+            fireTask(App.settings.getLocalizedString("server.extractingjar"));
+            fireSubProgressUnknown();
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
         if (!isServer) {
@@ -1072,8 +1060,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         addPercent(5);
         if (selectedMods.size() != 0) {
             addPercent(40);
-            firePropertyChange("doing", null,
-                    App.settings.getLocalizedString("instance.downloadingmods"));
+            fireTask(App.settings.getLocalizedString("instance.downloadingmods"));
             downloadMods(selectedMods);
             addPercent(40);
             installMods(selectedMods);
@@ -1081,14 +1068,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             addPercent(80);
         }
         if (isServer && hasJarMods()) {
-            firePropertyChange("doing", null, App.settings.getLocalizedString("server.zippingjar"));
-            firePropertyChange("subprogressint", null, 0);
+            fireTask(App.settings.getLocalizedString("server.zippingjar"));
+            fireSubProgressUnknown();
             Utils.zip(getTempJarDirectory(), getMinecraftJar());
         }
         if (extractedTexturePack) {
-            firePropertyChange("doing", null,
-                    App.settings.getLocalizedString("instance.zippingtexturepackfiles"));
-            firePropertyChange("subprogressint", null, 0);
+            fireTask(App.settings.getLocalizedString("instance.zippingtexturepackfiles"));
+            fireSubProgressUnknown();
             if (!getTexturePacksDirectory().exists()) {
                 getTexturePacksDirectory().mkdir();
             }
@@ -1096,9 +1082,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     "TexturePack.zip"));
         }
         if (extractedResourcePack) {
-            firePropertyChange("doing", null,
-                    App.settings.getLocalizedString("instance.zippingresourcepackfiles"));
-            firePropertyChange("subprogressint", null, 0);
+            fireTask(App.settings.getLocalizedString("instance.zippingresourcepackfiles"));
+            fireSubProgressUnknown();
             if (!getResourcePacksDirectory().exists()) {
                 getResourcePacksDirectory().mkdir();
             }
@@ -1119,30 +1104,46 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         return true;
     }
+    
+    private void fireTask(String name) {
+        firePropertyChange("doing", null, name);
+    }
+    
+    private void fireProgress(int percent) {
+        firePropertyChange("progress", null, percent);
+    }
+    
+    private void fireSubProgress(int percent) {
+        firePropertyChange("subprogress", null, percent);
+    }
+    
+    private void fireSubProgressUnknown() {
+        firePropertyChange("subprogressint", null, null);
+    }
 
     private void addPercent(int percent) {
         this.percent = this.percent + percent;
         if (this.percent > 100) {
             this.percent = 100;
         }
-        firePropertyChange("progress", null, this.percent);
+        fireProgress(this.percent);
     }
 
     public void setSubPercent(int percent) {
-        firePropertyChange("subprogress", null, percent);
+        fireSubProgress(percent);
     }
 
     public void setDoingResources(String doing) {
-        firePropertyChange("doing", null, doing);
+        fireTask(doing);
         doneResources++;
         int progress = (100 * doneResources) / totalResources;
-        firePropertyChange("subprogress", null, progress);
+        fireSubProgress(progress);
     }
 
     public void setDownloadDone() {
         doneDownloads++;
         int progress = (100 * doneDownloads) / totalDownloads;
-        firePropertyChange("subprogress", null, progress);
+        fireSubProgress(progress);
     }
 
 }
