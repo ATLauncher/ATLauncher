@@ -1119,6 +1119,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         return true;
     }
+    
+    private void fireTask(String name) {
+        firePropertyChange("doing", null, name);
+    }
+    
+    private void fireProgress(int percent) {
+        firePropertyChange("progress", null, percent);
+    }
+    
+    private void fireSubProgress(int percent) {
+        firePropertyChange("subprogress", null, percent);
+    }
+    
+    private void fireSubProgressUnknown() {
+        firePropertyChange("subprogressint", null, null);
+    }
 
     private void addPercent(int percent) {
         this.percent = this.percent + percent;
