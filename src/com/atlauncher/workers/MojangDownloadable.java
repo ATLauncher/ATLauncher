@@ -63,6 +63,7 @@ public class MojangDownloadable implements Runnable {
             c.setRequestProperty(
                     "User-Agent",
                     "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+            c.setConnectTimeout(5000);
             if (c instanceof HttpURLConnection) {
                 ((HttpURLConnection) c).setInstanceFollowRedirects(false);
             }
@@ -107,6 +108,7 @@ public class MojangDownloadable implements Runnable {
                     .setRequestProperty(
                             "User-Agent",
                             "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+            this.connection.setConnectTimeout(5000);
             this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
             this.connection.setRequestProperty("Expires", "0");
             this.connection.setRequestProperty("Pragma", "no-cache");
@@ -124,7 +126,7 @@ public class MojangDownloadable implements Runnable {
         }
         return etag;
     }
-    
+
     public String getMD5FromURL(String url) {
         try {
             this.connection = (HttpURLConnection) new URL(url).openConnection();
@@ -134,6 +136,7 @@ public class MojangDownloadable implements Runnable {
                     .setRequestProperty(
                             "User-Agent",
                             "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+            this.connection.setConnectTimeout(5000);
             this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
             this.connection.setRequestProperty("Expires", "0");
             this.connection.setRequestProperty("Pragma", "no-cache");
@@ -162,6 +165,7 @@ public class MojangDownloadable implements Runnable {
                         .setRequestProperty(
                                 "User-Agent",
                                 "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+                this.connection.setConnectTimeout(5000);
             }
             in = this.connection.getInputStream();
             FileOutputStream writer = new FileOutputStream(this.file);
