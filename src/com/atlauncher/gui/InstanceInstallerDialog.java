@@ -229,16 +229,42 @@ public class InstanceInstallerDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 if (!isReinstall && !isServer
                         && App.settings.isInstance(instanceNameField.getText())) {
-                    JOptionPane.showMessageDialog(
-                            App.settings.getParent(),
-                            "<html><center>"
-                                    + App.settings.getLocalizedString("common.error")
-                                    + "<br/><br/>"
-                                    + App.settings.getLocalizedString("instance.alreadyinstance",
-                                            instanceNameField.getText() + "<br/><br/>")
-                                    + "</center></html>", App.settings
-                                    .getLocalizedString("common.error"), JOptionPane.ERROR_MESSAGE);
-                    return;
+                    instance = App.settings.getInstanceByName(instanceNameField.getText());
+                    String instanceText = App.settings.getLocalizedString(
+                            "instance.alreadyinstance", instanceNameField.getText() + "<br/><br/>");
+                    if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
+                        int ret = JOptionPane.showConfirmDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString("common.error")
+                                        + "<br/><br/>"
+                                        + App.settings.getLocalizedString(
+                                                "instance.alreadyinstance1",
+                                                instanceNameField.getText() + "<br/><br/>")
+                                        + "</center></html>", App.settings
+                                        .getLocalizedString("common.error"),
+                                JOptionPane.ERROR_MESSAGE);
+                        if (ret != JOptionPane.YES_OPTION) {
+                            return;
+                        }
+                        isReinstall = true;
+                        if (instance == null) {
+                            return;
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString("common.error")
+                                        + "<br/><br/>"
+                                        + App.settings.getLocalizedString(
+                                                "instance.alreadyinstance",
+                                                instanceNameField.getText() + "<br/><br/>")
+                                        + "</center></html>", App.settings
+                                        .getLocalizedString("common.error"),
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
                 }
                 final Version version = (Version) versionsDropDown.getSelectedItem();
                 final JDialog dialog = new JDialog(App.settings.getParent(),
