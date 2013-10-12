@@ -48,7 +48,6 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.Type;
 import com.atlauncher.gui.ModsChooser;
 import com.atlauncher.gui.Utils;
-import com.sun.org.apache.bcel.internal.generic.ISUB;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
@@ -63,6 +62,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private boolean newLaunchMethod;
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
     private boolean savedZans = false; // If Zans Minimap stuff was found and saved
+    private boolean savedNEICfg = false; // If NEI Config was found and saved
     private boolean extractedTexturePack = false; // If there is an extracted texturepack
     private boolean extractedResourcePack = false; // If there is an extracted resourcepack
     private int permgen = 0;
@@ -368,7 +368,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(App.settings.getLocalizedString("common.downloading") + " " + mod.getFile());
+                fireTask(App.settings.getLocalizedString("common.downloading") + " "
+                        + mod.getFile());
                 mod.download(this);
             }
         }
@@ -823,7 +824,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 addPercent(5);
                 while (!Utils.getMD5(files[i]).equalsIgnoreCase(hashes[i])) {
                     fireTask(App.settings.getLocalizedString("common.downloading") + " "
-                                    + files[i].getName());
+                            + files[i].getName());
                     new com.atlauncher.data.Downloader(urls[i], files[i].getAbsolutePath(), this)
                             .run();
                 }
@@ -850,7 +851,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             addPercent(25);
             while (!Utils.getMD5(file).equalsIgnoreCase(hash)) {
                 fireTask(App.settings.getLocalizedString("common.downloading") + " "
-                                + file.getName());
+                        + file.getName());
                 new com.atlauncher.data.Downloader(url, file.getAbsolutePath(), this).run();
             }
             Utils.copyFile(file, getMinecraftJar(), true);
@@ -1041,6 +1042,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             savedZans = true;
             Utils.copyDirectory(zans, getTempDirectory(), true);
         }
+        File neiCfg = new File(getConfigDirectory(), "NEI.cfg");
+        if (neiCfg.exists() && neiCfg.isFile()) {
+            savedNEICfg = true;
+            Utils.copyFile(neiCfg, getTempDirectory());
+        }
         makeDirectories();
         addPercent(5);
         if (this.newLaunchMethod) {
@@ -1104,6 +1110,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (savedZans) {
             Utils.copyDirectory(new File(getTempDirectory(), "VoxelMods"), zans);
         }
+        if (savedNEICfg) {
+            Utils.copyFile(new File(getTempDirectory(), "NEI.cfg"), neiCfg, true);
+        }
         if (isServer) {
             Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"),
                     new File(getRootDirectory(), "LaunchServer.bat"), "%%SERVERJAR%%",
@@ -1114,19 +1123,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         return true;
     }
-    
+
     private void fireTask(String name) {
         firePropertyChange("doing", null, name);
     }
-    
+
     private void fireProgress(int percent) {
         firePropertyChange("progress", null, percent);
     }
-    
+
     private void fireSubProgress(int percent) {
         firePropertyChange("subprogress", null, percent);
     }
-    
+
     private void fireSubProgressUnknown() {
         firePropertyChange("subprogressint", null, null);
     }
