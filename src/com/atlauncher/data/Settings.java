@@ -720,15 +720,28 @@ public class Settings {
                 this.forgeLoggingLevel = "INFO";
             }
 
-            this.ram = Integer.parseInt(properties.getProperty("ram", "512"));
-            if (this.ram > Utils.getMaximumRam()) {
-                getConsole().log(
-                        "Tried to allocate " + this.ram + "MB of Ram but only "
-                                + Utils.getMaximumRam() + " is available to use!", true);
-                this.ram = 512; // User tried to allocate too much ram, set it back to 0.5GB
+            if (Utils.is64Bit()) {
+                this.ram = Integer.parseInt(properties.getProperty("ram",
+                        ((Utils.getMaximumRam() / 1000 / 2) * 512) + ""));
+                if (this.ram > Utils.getMaximumRam()) {
+                    getConsole().log(
+                            "Tried to allocate " + this.ram + "MB of Ram but only "
+                                    + Utils.getMaximumRam() + " is available to use!", true);
+                    this.ram = ((Utils.getMaximumRam() / 1000 / 2) * 512); // User tried to allocate
+                                                                           // too much ram, set it
+                                                                           // back to half
+                }
+            } else {
+                this.ram = Integer.parseInt(properties.getProperty("ram", "1024"));
+                if (this.ram > Utils.getMaximumRam()) {
+                    getConsole().log(
+                            "Tried to allocate " + this.ram + "MB of Ram but only "
+                                    + Utils.getMaximumRam() + " is available to use!", true);
+                    this.ram = 1024; // User tried to allocate too much ram, set it back to 1GB
+                }
             }
 
-            this.permGen = Integer.parseInt(properties.getProperty("permGen", "128"));
+            this.permGen = Integer.parseInt(properties.getProperty("permGen", "256"));
 
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             if (this.windowWidth > Utils.getMaximumWindowWidth()) {
