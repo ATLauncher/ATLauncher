@@ -48,6 +48,7 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.Type;
 import com.atlauncher.gui.ModsChooser;
 import com.atlauncher.gui.Utils;
+import com.sun.org.apache.bcel.internal.generic.ISUB;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
@@ -61,6 +62,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String jarOrder;
     private boolean newLaunchMethod;
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
+    private boolean savedZans = false; // If Zans Minimap stuff was found and saved
     private boolean extractedTexturePack = false; // If there is an extracted texturepack
     private boolean extractedResourcePack = false; // If there is an extracted resourcepack
     private int permgen = 0;
@@ -1034,6 +1036,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             savedReis = true;
             Utils.copyDirectory(reis, getTempDirectory(), true);
         }
+        File zans = new File(getModsDirectory(), "VoxelMods");
+        if (zans.exists() && zans.isDirectory()) {
+            savedZans = true;
+            Utils.copyDirectory(zans, getTempDirectory(), true);
+        }
         makeDirectories();
         addPercent(5);
         if (this.newLaunchMethod) {
@@ -1093,6 +1100,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         configurePack();
         if (savedReis) {
             Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"), reis);
+        }
+        if (savedZans) {
+            Utils.copyDirectory(new File(getTempDirectory(), "VoxelMods"), zans);
         }
         if (isServer) {
             Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"),
