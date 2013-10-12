@@ -193,6 +193,13 @@ public class ModsChooser extends JDialog {
                     }
                 } else {
                     Mod linkedMod = installer.getModByName(mod.getLinked());
+                    if (linkedMod == null) {
+                        App.settings.getConsole().log(
+                                "The mod " + mod.getName() + " tried to reference a linked mod "
+                                        + mod.getLinked() + " which doesn't exist!", true);
+                        installer.cancel(true);
+                        return;
+                    }
                     if ((installer.isServer() ? linkedMod.isServerOptional() : linkedMod
                             .isOptional())) {
                         checkBox.setEnabled(false);
