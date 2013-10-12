@@ -44,7 +44,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Deque;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -386,22 +385,22 @@ public class Utils {
         return sb.toString();
     }
 
-    public static void copyFile(File from, File to) {
-        copyFile(from, to, false);
+    public static boolean copyFile(File from, File to) {
+        return copyFile(from, to, false);
     }
 
-    public static void copyFile(File from, File to, boolean withFilename) {
+    public static boolean copyFile(File from, File to, boolean withFilename) {
         if (!from.isFile()) {
             App.settings.getConsole().log(
                     "File " + from.getAbsolutePath() + " cannot be copied to "
                             + to.getAbsolutePath() + " as it isn't a file");
-            return;
+            return false;
         }
         if (!from.exists()) {
             App.settings.getConsole().log(
                     "File " + from.getAbsolutePath() + " cannot be copied to "
                             + to.getAbsolutePath() + " as it doesn't exist");
-            return;
+            return false;
         }
         if (!withFilename) {
             to = new File(to, from.getName());
@@ -414,6 +413,7 @@ public class Utils {
             to.createNewFile();
         } catch (IOException e) {
             App.settings.getConsole().logStackTrace(e);
+            return false;
         }
 
         FileChannel source = null;
@@ -425,6 +425,7 @@ public class Utils {
             destination.transferFrom(source, 0, source.size());
         } catch (IOException e) {
             App.settings.getConsole().logStackTrace(e);
+            return false;
         } finally {
             try {
                 if (source != null) {
@@ -435,15 +436,17 @@ public class Utils {
                 }
             } catch (IOException e) {
                 App.settings.getConsole().logStackTrace(e);
+                return false;
             }
         }
+        return true;
     }
 
-    public static void copyDirectory(File sourceLocation, File targetLocation) {
-        copyDirectory(sourceLocation, targetLocation, false);
+    public static boolean copyDirectory(File sourceLocation, File targetLocation) {
+        return copyDirectory(sourceLocation, targetLocation, false);
     }
 
-    public static void copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
+    public static boolean copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
         if (copyFolder) {
             targetLocation = new File(targetLocation, sourceLocation.getName());
         }
@@ -473,7 +476,9 @@ public class Utils {
             }
         } catch (IOException e) {
             App.settings.getConsole().logStackTrace(e);
+            return false;
         }
+        return true;
     }
 
     public static void unzip(File in, File out) {

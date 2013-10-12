@@ -323,6 +323,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (!isNewLaunchMethod()) {
             getCoreModsDirectory().mkdir();
         }
+        getTempDirectory().mkdir();
     }
 
     private ArrayList<ATLauncherDownloadable> getDownloadableMods() {
@@ -1035,18 +1036,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         File reis = new File(getModsDirectory(), "rei_minimap");
         if (reis.exists() && reis.isDirectory()) {
-            savedReis = true;
-            Utils.copyDirectory(reis, getTempDirectory(), true);
+            if (Utils.copyDirectory(reis, getTempDirectory(), true)) {
+                savedReis = true;
+            }
         }
         File zans = new File(getModsDirectory(), "VoxelMods");
         if (zans.exists() && zans.isDirectory()) {
-            savedZans = true;
-            Utils.copyDirectory(zans, getTempDirectory(), true);
+            if (Utils.copyDirectory(zans, getTempDirectory(), true)) {
+                savedZans = true;
+            }
         }
         File neiCfg = new File(getConfigDirectory(), "NEI.cfg");
         if (neiCfg.exists() && neiCfg.isFile()) {
-            savedNEICfg = true;
-            Utils.copyFile(neiCfg, getTempDirectory());
+            System.out.println(neiCfg.getAbsolutePath() + " exists!");
+            if (Utils.copyFile(neiCfg, getTempDirectory())) {
+                savedNEICfg = true;
+            }
         }
         File portalGunSounds = new File(getModsDirectory(), "PortalGunSounds.pak");
         if (portalGunSounds.exists() && portalGunSounds.isFile()) {
@@ -1120,7 +1125,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.copyFile(new File(getTempDirectory(), "NEI.cfg"), neiCfg, true);
         }
         if (savedPortalGunSounds) {
-            Utils.copyFile(new File(getTempDirectory(), "PortalGunSounds.pak"), portalGunSounds, true);
+            Utils.copyFile(new File(getTempDirectory(), "PortalGunSounds.pak"), portalGunSounds,
+                    true);
         }
         if (isServer) {
             Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"),
@@ -1130,6 +1136,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     new File(getRootDirectory(), "LaunchServer.sh"), "%%SERVERJAR%%",
                     getServerJar());
         }
+        getConfigDirectory().delete();
         return true;
     }
 
