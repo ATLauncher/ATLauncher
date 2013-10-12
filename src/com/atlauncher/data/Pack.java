@@ -306,11 +306,17 @@ public class Pack {
                     String md5 = element.getAttribute("md5");
                     Type type = Type.valueOf(element.getAttribute("type").toLowerCase());
                     ExtractTo extractTo = null;
+                    String extractFolder = null;
                     String decompFile = null;
                     DecompType decompType = null;
                     if (type == Type.extract) {
                         extractTo = ExtractTo.valueOf(element.getAttribute("extractto")
                                 .toLowerCase());
+                        if (element.hasAttribute("extractfolder")) {
+                            extractFolder = element.getAttribute("extractfolder");
+                        }else{
+                            extractFolder = "/";
+                        }
                     } else if (type == Type.decomp) {
                         decompFile = element.getAttribute("decompFile");
                         decompType = DecompType.valueOf(element.getAttribute("decomptype")
@@ -378,9 +384,9 @@ public class Pack {
 
                     String description = element.getAttribute("description");
                     mods.add(new Mod(name, version, url, file, website, donation, colour, md5,
-                            type, extractTo, decompFile, decompType, client, server, serverURL,
-                            serverFile, serverType, optional, serverOptional, download, hidden,
-                            library, group, linked, depends, recommended, description));
+                            type, extractTo, extractFolder, decompFile, decompType, client, server,
+                            serverURL, serverFile, serverType, optional, serverOptional, download,
+                            hidden, library, group, linked, depends, recommended, description));
                 }
             }
         } catch (SAXException e) {

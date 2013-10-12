@@ -28,6 +28,7 @@ public class Mod {
     private String md5;
     private Type type;
     private ExtractTo extractTo;
+    private String extractFolder;
     private String decompFile;
     private DecompType decompType;
     private boolean client;
@@ -48,8 +49,8 @@ public class Mod {
 
     public Mod(String name, String version, String url, String file, String website,
             String donation, Color colour, String md5, Type type, ExtractTo extractTo,
-            String decompFile, DecompType decompType, boolean client, boolean server,
-            String serverURL, String serverFile, Type serverType, boolean optional,
+            String extractFolder, String decompFile, DecompType decompType, boolean client,
+            boolean server, String serverURL, String serverFile, Type serverType, boolean optional,
             boolean serverOptional, Download download, boolean hidden, boolean library,
             String group, String linked, String[] depends, boolean recommended, String description) {
         this.name = name;
@@ -62,6 +63,7 @@ public class Mod {
         this.md5 = md5;
         this.type = type;
         this.extractTo = extractTo;
+        this.extractFolder = extractFolder;
         this.decompFile = decompFile;
         this.decompType = decompType;
         this.client = client;
@@ -298,9 +300,15 @@ public class Mod {
                 installer.addToJarOrder(getFile());
                 break;
             case texturepack:
+                if (!installer.getTexturePacksDirectory().exists()) {
+                    installer.getTexturePacksDirectory().mkdir();
+                }
                 Utils.copyFile(fileLocation, installer.getTexturePacksDirectory());
                 break;
             case resourcepack:
+                if (!installer.getResourcePacksDirectory().exists()) {
+                    installer.getResourcePacksDirectory().mkdir();
+                }
                 Utils.copyFile(fileLocation, installer.getResourcePacksDirectory());
                 break;
             case texturepackextract:
@@ -338,18 +346,26 @@ public class Mod {
             case coremods:
                 Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
                 break;
+            case shaderpack:
+                if (!installer.getShaderPacksDirectory().exists()) {
+                    installer.getShaderPacksDirectory().mkdir();
+                }
+                Utils.copyFile(fileLocation, installer.getShaderPacksDirectory());
+                break;
             case extract:
                 File tempDirExtract = new File(App.settings.getTempDir(), getSafeName());
                 Utils.unzip(fileLocation, tempDirExtract);
+                File folder = new File(new File(App.settings.getTempDir(), getSafeName()),
+                        this.extractFolder);
                 switch (extractTo) {
                     case coremods:
-                        Utils.copyDirectory(tempDirExtract, installer.getCoreModsDirectory());
+                        Utils.copyDirectory(folder, installer.getCoreModsDirectory());
                         break;
                     case mods:
-                        Utils.copyDirectory(tempDirExtract, installer.getModsDirectory());
+                        Utils.copyDirectory(folder, installer.getModsDirectory());
                         break;
                     case root:
-                        Utils.copyDirectory(tempDirExtract, installer.getRootDirectory());
+                        Utils.copyDirectory(folder, installer.getRootDirectory());
                         break;
                     default:
                         App.settings.getConsole().log(

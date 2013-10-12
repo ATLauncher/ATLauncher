@@ -153,6 +153,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return new File(getRootDirectory(), "texturepacks");
     }
 
+    public File getShaderPacksDirectory() {
+        return new File(getRootDirectory(), "shaderpacks");
+    }
+
     public File getResourcePacksDirectory() {
         return new File(getRootDirectory(), "resourcepacks");
     }
@@ -1048,7 +1052,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         File neiCfg = new File(getConfigDirectory(), "NEI.cfg");
         if (neiCfg.exists() && neiCfg.isFile()) {
-            System.out.println(neiCfg.getAbsolutePath() + " exists!");
             if (Utils.copyFile(neiCfg, getTempDirectory())) {
                 savedNEICfg = true;
             }
