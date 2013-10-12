@@ -63,6 +63,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
     private boolean savedZans = false; // If Zans Minimap stuff was found and saved
     private boolean savedNEICfg = false; // If NEI Config was found and saved
+    private boolean savedPortalGunSounds = false; // If Portal Gun Sounds was found and saved
     private boolean extractedTexturePack = false; // If there is an extracted texturepack
     private boolean extractedResourcePack = false; // If there is an extracted resourcepack
     private int permgen = 0;
@@ -1047,6 +1048,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             savedNEICfg = true;
             Utils.copyFile(neiCfg, getTempDirectory());
         }
+        File portalGunSounds = new File(getModsDirectory(), "PortalGunSounds.pak");
+        if (portalGunSounds.exists() && portalGunSounds.isFile()) {
+            savedPortalGunSounds = true;
+            Utils.copyFile(portalGunSounds, getTempDirectory());
+        }
         makeDirectories();
         addPercent(5);
         if (this.newLaunchMethod) {
@@ -1112,6 +1118,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         if (savedNEICfg) {
             Utils.copyFile(new File(getTempDirectory(), "NEI.cfg"), neiCfg, true);
+        }
+        if (savedPortalGunSounds) {
+            Utils.copyFile(new File(getTempDirectory(), "PortalGunSounds.pak"), portalGunSounds, true);
         }
         if (isServer) {
             Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"),
