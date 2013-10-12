@@ -722,12 +722,12 @@ public class Settings {
 
             if (Utils.is64Bit()) {
                 this.ram = Integer.parseInt(properties.getProperty("ram",
-                        ((Utils.getMaximumRam() / 1000 / 2) * 512) + ""));
+                        ((Utils.getMaximumRam() / 1000) * 512) + ""));
                 if (this.ram > Utils.getMaximumRam()) {
                     getConsole().log(
                             "Tried to allocate " + this.ram + "MB of Ram but only "
                                     + Utils.getMaximumRam() + " is available to use!", true);
-                    this.ram = ((Utils.getMaximumRam() / 1000 / 2) * 512); // User tried to allocate
+                    this.ram = ((Utils.getMaximumRam() / 1000) * 512); // User tried to allocate
                                                                            // too much ram, set it
                                                                            // back to half
                 }
