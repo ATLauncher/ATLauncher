@@ -63,7 +63,8 @@ public class Mod {
         this.md5 = md5;
         this.type = type;
         this.extractTo = extractTo;
-        this.extractFolder = extractFolder;
+        this.extractFolder = (extractFolder == null) ? null : extractFolder.replace("%s%",
+                File.separator);
         this.decompFile = decompFile;
         this.decompType = decompType;
         this.client = client;
