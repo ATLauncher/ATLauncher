@@ -51,7 +51,7 @@ public class Pack {
     public Pack(int id, String name, boolean createServer, boolean leaderboards, boolean logging,
             boolean latestlwjgl, String[] versions, String[] noUpdateVersions,
             String[] minecraftVersions, String[] devVersions, String[] devMinecraftVersions,
-            String[] testers, String description, String supportURL, String websiteURL) {
+            String description, String supportURL, String websiteURL) {
         this.id = id;
         this.name = name;
         this.createServer = createServer;
@@ -60,7 +60,6 @@ public class Pack {
         this.latestlwjgl = latestlwjgl;
         this.versions = versions;
         this.noUpdateVersions = noUpdateVersions;
-        this.testers = testers;
         this.minecraftVersions = minecraftVersions;
         this.devVersions = devVersions;
         this.devMinecraftVersions = devMinecraftVersions;
@@ -125,6 +124,10 @@ public class Pack {
 
     public String getDevVersion(int index) {
         return this.devVersions[index];
+    }
+
+    public void addTesters(String[] players) {
+        this.testers = players;
     }
 
     public String getMinecraftVersion(int index) {
@@ -314,7 +317,7 @@ public class Pack {
                                 .toLowerCase());
                         if (element.hasAttribute("extractfolder")) {
                             extractFolder = element.getAttribute("extractfolder");
-                        }else{
+                        } else {
                             extractFolder = "/";
                         }
                     } else if (type == Type.decomp) {
@@ -418,6 +421,9 @@ public class Pack {
     public boolean isTester() {
         Account account = App.settings.getAccount();
         if (account == null) {
+            return false;
+        }
+        if (this.testers == null) {
             return false;
         }
         for (String tester : testers) {

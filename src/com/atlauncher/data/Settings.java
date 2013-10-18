@@ -163,6 +163,7 @@ public class Settings {
         checkForUpdatedFiles(); // Checks for updated files on the server
         loadLanguages(); // Load the Languages available in the Launcher
         loadPacks(); // Load the Packs available in the Launcher
+        loadUsers(); // Load the Testers and Allowed Players for the packs
         loadAddons(); // Load the Addons available in the Launcher
         loadInstances(); // Load the users installed Instances
         loadAccounts(); // Load the saved Accounts
@@ -376,7 +377,7 @@ public class Settings {
                     } else if (type.equalsIgnoreCase("Languages")) {
                         file = new File(languagesDir, name);
                         name = "languages/" + name;
-                    }  else if (type.equalsIgnoreCase("Libraries")) {
+                    } else if (type.equalsIgnoreCase("Libraries")) {
                         file = new File(librariesDir, name);
                         name = "libraries/" + name;
                     } else if (type.equalsIgnoreCase("Launcher")) {
@@ -428,6 +429,7 @@ public class Settings {
                 checkForUpdatedFiles(); // Download all updated files
                 reloadNewsPanel(); // Reload news panel
                 loadPacks(); // Load the Packs available in the Launcher
+                loadUsers(); // Load the Testers and Allowed Players for the packs
                 reloadPacksPanel(); // Reload packs panel
                 loadAddons(); // Load the Addons available in the Launcher
                 loadInstances(); // Load the users installed Instances
@@ -996,41 +998,69 @@ public class Settings {
                         devMinecraftVersions = element.getAttribute("devminecraftversions").split(
                                 ",");
                     }
-                    String[] testers;
-                    if (element.getAttribute("testers").isEmpty()) {
-                        testers = new String[0];
-                    } else {
-                        testers = new String(Base64.decode(element.getAttribute("testers")))
-                                .split(",");
-                    }
-                    String[] allowedPlayers;
-                    if (element.getAttribute("allowedplayers").isEmpty()) {
-                        allowedPlayers = new String[0];
-                    } else {
-                        allowedPlayers = new String(Base64.decode(element
-                                .getAttribute("allowedplayers"))).split(",");
-                    }
                     String description = element.getAttribute("description");
                     String supportURL = element.getAttribute("supporturl");
                     String websiteURL = element.getAttribute("websiteurl");
                     if (element.getAttribute("type").equalsIgnoreCase("private")) {
                         packs.add(new PrivatePack(id, name, createServer, leaderboards, logging,
                                 latestlwjgl, versions, noUpdateVersions, minecraftVersions,
-                                devVersions, devMinecraftVersions, testers, description,
-                                supportURL, websiteURL, allowedPlayers));
+                                devVersions, devMinecraftVersions, description, supportURL,
+                                websiteURL));
                     } else if (element.getAttribute("type").equalsIgnoreCase("semipublic")) {
                         if (element.hasAttribute("code")) {
                             packs.add(new SemiPublicPack(id, name, element.getAttribute("code"),
                                     createServer, leaderboards, logging, latestlwjgl, versions,
                                     noUpdateVersions, minecraftVersions, devVersions,
-                                    devMinecraftVersions, testers, description, supportURL,
-                                    websiteURL));
+                                    devMinecraftVersions, description, supportURL, websiteURL));
                         }
                     } else {
                         packs.add(new Pack(id, name, createServer, leaderboards, logging,
                                 latestlwjgl, versions, noUpdateVersions, minecraftVersions,
-                                devVersions, devMinecraftVersions, testers, description,
-                                supportURL, websiteURL));
+                                devVersions, devMinecraftVersions, description, supportURL,
+                                websiteURL));
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
+    }
+
+    /**
+     * Loads the Testers and Allowed Players for the packs in the Launcher
+     */
+    private void loadUsers() {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(
+                    Utils.urlToString(getFileURL("launcher/users.xml"))));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("pack");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    int id = Integer.parseInt(element.getAttribute("id"));
+                    Pack pack;
+                    try {
+                        pack = getPackByID(id);
+                    } catch (InvalidPack e) {
+                        getConsole().logStackTrace(e);
+                        continue;
+                    }
+                    if (!element.getAttribute("testers").isEmpty()) {
+                        pack.addTesters(element.getAttribute("testers").split(","));
+                    }
+                    if (pack instanceof PrivatePack) {
+                        if (!element.getAttribute("allowedplayers").isEmpty()) {
+                            pack.addTesters(element.getAttribute("allowedplayers").split(","));
+                        }
                     }
                 }
             }

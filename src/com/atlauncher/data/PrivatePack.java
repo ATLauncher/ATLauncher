@@ -15,17 +15,22 @@ public class PrivatePack extends Pack {
     public PrivatePack(int id, String name, boolean createServer, boolean leaderboards,
             boolean logging, boolean latestlwjgl, String[] versions, String[] noUpdateVersions,
             String[] minecraftVersions, String[] devVersions, String[] devMinecraftVersions,
-            String[] testers, String description, String supportURL, String websiteURL,
-            String[] allowedPlayers) {
+            String description, String supportURL, String websiteURL) {
         super(id, name, createServer, leaderboards, logging, latestlwjgl, versions,
-                noUpdateVersions, minecraftVersions, devVersions, devMinecraftVersions, testers,
+                noUpdateVersions, minecraftVersions, devVersions, devMinecraftVersions,
                 description, supportURL, websiteURL);
-        this.allowedPlayers = allowedPlayers;
+    }
+
+    public void addAllowedPlayers(String[] players) {
+        this.allowedPlayers = players;
     }
 
     public boolean isAllowedPlayer() {
         Account account = App.settings.getAccount();
         if (account == null) {
+            return false;
+        }
+        if (this.allowedPlayers == null) {
             return false;
         }
         for (String player : allowedPlayers) {
