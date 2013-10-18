@@ -315,6 +315,9 @@ public class Settings {
                     }
 
                     if (download) {
+                        if (!file.canWrite()) {
+                            file.delete();
+                        }
                         new Downloader(getFileURL("launcher/" + name), file.getAbsolutePath())
                                 .run();
                     }
@@ -728,8 +731,8 @@ public class Settings {
                             "Tried to allocate " + this.ram + "MB of Ram but only "
                                     + Utils.getMaximumRam() + " is available to use!", true);
                     this.ram = ((Utils.getMaximumRam() / 1000) * 512); // User tried to allocate
-                                                                           // too much ram, set it
-                                                                           // back to half
+                                                                       // too much ram, set it
+                                                                       // back to half
                 }
             } else {
                 this.ram = Integer.parseInt(properties.getProperty("ram", "1024"));
