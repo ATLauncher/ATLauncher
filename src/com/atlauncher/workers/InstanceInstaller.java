@@ -169,6 +169,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return new File(getRootDirectory(), "mods");
     }
 
+    public File getPluginsDirectory() {
+        return new File(getRootDirectory(), "plugins");
+    }
+
     public File getCoreModsDirectory() {
         return new File(getRootDirectory(), "coremods");
     }

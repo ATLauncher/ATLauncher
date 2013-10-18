@@ -8,6 +8,6 @@ package com.atlauncher.data;
 
 public enum Type {
 
-    jar, forge, mcpc, mods, coremods, extract, decomp, millenaire, texturepack, resourcepack, texturepackextract, resourcepackextract, shaderpack
+    jar, forge, mcpc, mods, plugins, coremods, extract, decomp, millenaire, texturepack, resourcepack, texturepackextract, resourcepackextract, shaderpack
 
 }

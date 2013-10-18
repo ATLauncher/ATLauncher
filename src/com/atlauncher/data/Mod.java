@@ -351,6 +351,9 @@ public class Mod {
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
                 break;
+            case plugins:
+                Utils.copyFile(fileLocation, installer.getPluginsDirectory());
+                break;
             case coremods:
                 Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
                 break;
