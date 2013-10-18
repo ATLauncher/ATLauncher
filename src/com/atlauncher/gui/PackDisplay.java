@@ -152,7 +152,7 @@ public class PackDisplay extends CollapsiblePanel {
 
         packActionsTop.add(newInstance);
         packActionsTop.add(createServer);
-        if (pack instanceof SemiPublicPack) {
+        if (pack instanceof SemiPublicPack && !pack.isTester()) {
             removePack = new JButton("Remove Pack");
             removePack.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
