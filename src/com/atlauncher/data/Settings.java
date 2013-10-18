@@ -376,6 +376,9 @@ public class Settings {
                     } else if (type.equalsIgnoreCase("Languages")) {
                         file = new File(languagesDir, name);
                         name = "languages/" + name;
+                    }  else if (type.equalsIgnoreCase("Libraries")) {
+                        file = new File(librariesDir, name);
+                        name = "libraries/" + name;
                     } else if (type.equalsIgnoreCase("Launcher")) {
                         String version = element.getAttribute("version");
                         if (!getVersion().equalsIgnoreCase(version)) {
