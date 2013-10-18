@@ -1507,6 +1507,7 @@ public class Settings {
                 if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(packCode)) {
                     this.addedPacks += packCode + ",";
                     this.saveProperties();
+                    this.reloadInstancesPanel();
                     return true;
                 }
             }
@@ -1519,6 +1520,7 @@ public class Settings {
             if (packCode.equalsIgnoreCase(code)) {
                 this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
+                this.reloadInstancesPanel();
             }
         }
     }
