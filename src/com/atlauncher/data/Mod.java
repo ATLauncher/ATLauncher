@@ -69,7 +69,8 @@ public class Mod {
         this.decompType = decompType;
         this.client = client;
         this.server = server;
-        this.serverURL = (serverURL == null) ? null : serverURL.replace("&amp;", "&").replace(" ", "%20");
+        this.serverURL = (serverURL == null) ? null : serverURL.replace("&amp;", "&").replace(" ",
+                "%20");
         this.serverFile = serverFile;
         this.serverType = serverType;
         this.optional = optional;
@@ -299,6 +300,12 @@ public class Mod {
                 }
                 Utils.copyFile(fileLocation, installer.getJarModsDirectory());
                 installer.addToJarOrder(getFile());
+                break;
+            case mcpc:
+                if (installer.isServer()) {
+                    Utils.copyFile(fileLocation, installer.getRootDirectory());
+                    break;
+                }
                 break;
             case texturepack:
                 if (!installer.getTexturePacksDirectory().exists()) {

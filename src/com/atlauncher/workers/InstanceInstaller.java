@@ -925,15 +925,25 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public String getServerJar() {
+        Mod forge = null; // The Forge Mod
+        Mod mcpc = null; // The MCPC Mod
         for (Mod mod : selectedMods) {
             if (mod.getType() == Type.forge) {
-                return mod.getFile();
+                forge = mod;
+            } else if (mod.getType() == Type.mcpc) {
+                mcpc = mod;
             }
         }
-        if (isNewLaunchMethod()) {
-            return "minecraft_server." + minecraftVersion + ".jar";
+        if (mcpc != null) {
+            return mcpc.getFile();
+        } else if (forge != null) {
+            return forge.getFile();
         } else {
-            return "minecraft_server.jar";
+            if (isNewLaunchMethod()) {
+                return "minecraft_server." + minecraftVersion + ".jar";
+            } else {
+                return "minecraft_server.jar";
+            }
         }
     }
 
