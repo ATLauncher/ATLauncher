@@ -1914,7 +1914,6 @@ public class Settings {
      * @return URL of the file
      */
     public String getFileURL(String filename) {
-        System.out.println(this.server.getFileURL(filename));
         return this.server.getFileURL(filename);
     }
 

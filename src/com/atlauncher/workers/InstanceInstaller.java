@@ -1175,7 +1175,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     new File(getRootDirectory(), "LaunchServer.sh"), "%%SERVERJAR%%",
                     getServerJar());
         }
-        getConfigDirectory().delete();
         return true;
     }
 
