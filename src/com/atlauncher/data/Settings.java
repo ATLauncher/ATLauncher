@@ -1076,7 +1076,7 @@ public class Settings {
                     }
                     if (pack instanceof PrivatePack) {
                         if (!element.getAttribute("allowedplayers").isEmpty()) {
-                            pack.addTesters(element.getAttribute("allowedplayers").split(","));
+                            ((PrivatePack) pack).addAllowedPlayers(element.getAttribute("allowedplayers").split(","));
                         }
                     }
                 }
