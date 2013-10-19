@@ -967,6 +967,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return false;
     }
 
+    public boolean hasForge() {
+        for (Mod mod : selectedMods) {
+            if (!mod.installOnServer() && isServer) {
+                continue;
+            }
+            if (mod.getType() == Type.forge) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public ArrayList<Mod> getMods() {
         return this.allMods;
     }
@@ -1095,7 +1107,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             fireSubProgressUnknown();
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
-        if (!isServer) {
+        if (!isServer && (hasJarMods() && !hasForge())) {
             deleteMetaInf();
         }
         addPercent(5);
