@@ -37,6 +37,10 @@ public class ATLauncherDownloadable implements Runnable {
         this.instanceInstaller = instanceInstaller;
     }
 
+    public ATLauncherDownloadable(String url, File file, String md5) {
+        this(url, file, md5, null);
+    }
+
     public ATLauncherDownloadable(String url, File file, InstanceInstaller instanceInstaller) {
         this(url, file, null, instanceInstaller);
     }
@@ -66,7 +70,9 @@ public class ATLauncherDownloadable implements Runnable {
                 return getRedirect(this.url);
             } else {
                 App.settings.getConsole().log("Couldn't Get Redirected URL From " + this.url, true);
-                instanceInstaller.cancel(true);
+                if (this.instanceInstaller != null) {
+                    instanceInstaller.cancel(true);
+                }
                 return downloadURL;
             }
         }
@@ -122,7 +128,9 @@ public class ATLauncherDownloadable implements Runnable {
                     getMD5FromURL(this.url);
                 } else {
                     App.settings.getConsole().log("Couldn't Get MD5 From " + this.url, true);
-                    instanceInstaller.cancel(true);
+                    if (this.instanceInstaller != null) {
+                        instanceInstaller.cancel(true);
+                    }
                 }
             }
             this.connection.setUseCaches(false);
@@ -166,7 +174,9 @@ public class ATLauncherDownloadable implements Runnable {
                     } else {
                         App.settings.getConsole().log("Couldn't Download File " + file.getName(),
                                 true);
-                        instanceInstaller.cancel(true);
+                        if (this.instanceInstaller != null) {
+                            instanceInstaller.cancel(true);
+                        }
                     }
                 }
                 this.connection
@@ -192,8 +202,10 @@ public class ATLauncherDownloadable implements Runnable {
 
     @Override
     public void run() {
-        if (instanceInstaller.isCancelled()) {
-            return;
+        if (this.instanceInstaller != null) {
+            if (instanceInstaller.isCancelled()) {
+                return;
+            }
         }
         if (this.md5 == null) {
             this.md5 = getMD5FromURL(this.url);
@@ -210,6 +222,8 @@ public class ATLauncherDownloadable implements Runnable {
                 downloadFile(); // Keep downloading file until it matches MD5, up to 3 times
             }
         }
-        instanceInstaller.setDownloadDone();
+        if (this.instanceInstaller != null) {
+            instanceInstaller.setDownloadDone();
+        }
     }
 }

@@ -33,6 +33,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -62,6 +64,7 @@ import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.NewsPanel;
 import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.Utils;
+import com.atlauncher.workers.ATLauncherDownloadable;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user
@@ -262,6 +265,7 @@ public class Settings {
                 }
             }
         }
+        ArrayList<ATLauncherDownloadable> downloads = new ArrayList<ATLauncherDownloadable>();
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -319,8 +323,7 @@ public class Settings {
                         if (!file.canWrite()) {
                             file.delete();
                         }
-                        new Downloader(getFileURL("launcher/" + name), file.getAbsolutePath())
-                                .run();
+                        downloads.add(new ATLauncherDownloadable("launcher/" + name, file, md5));
                     }
                 }
             }
@@ -330,6 +333,13 @@ public class Settings {
             App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
             App.settings.getConsole().logStackTrace(e);
+        }
+        ExecutorService executor = Executors.newFixedThreadPool(8);
+        for (ATLauncherDownloadable download : downloads) {
+            executor.execute(download);
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
         }
     }
 
