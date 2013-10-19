@@ -662,7 +662,14 @@ public class Settings {
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             String serv = properties.getProperty("server", "Auto");
-            if (isServerByName(serv)) {
+            if (isPackTester()) {
+                this.server = getServerByName("Master"); // If tester use Master Server
+                if (isServerByName(serv)) {
+                    this.originalServer = this.server;
+                } else {
+                    this.server = getServerByName("Auto"); // Server not found, use default of Auto
+                }
+            } else if (isServerByName(serv)) {
                 this.server = getServerByName(serv);
                 this.originalServer = this.server;
             } else {
@@ -1710,6 +1717,20 @@ public class Settings {
     }
 
     /**
+     * Checks if the user is a tester of any packs
+     * 
+     * @return True if they are, false otherwise
+     */
+    public boolean isPackTester() {
+        for (Pack pack : packs) {
+            if (pack.isTester()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Finds a Pack from the given name
      * 
      * @param name
@@ -1893,6 +1914,7 @@ public class Settings {
      * @return URL of the file
      */
     public String getFileURL(String filename) {
+        System.out.println(this.server.getFileURL(filename));
         return this.server.getFileURL(filename);
     }
 

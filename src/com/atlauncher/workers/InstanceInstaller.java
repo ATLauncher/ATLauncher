@@ -63,6 +63,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
     private boolean savedZans = false; // If Zans Minimap stuff was found and saved
     private boolean savedNEICfg = false; // If NEI Config was found and saved
+    private boolean savedOptionsTxt = false; // If Options.txt was found and saved
     private boolean savedPortalGunSounds = false; // If Portal Gun Sounds was found and saved
     private boolean extractedTexturePack = false; // If there is an extracted texturepack
     private boolean extractedResourcePack = false; // If there is an extracted resourcepack
@@ -1082,6 +1083,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 savedNEICfg = true;
             }
         }
+        File optionsTXT = new File(getRootDirectory(), "options.txt");
+        if (optionsTXT.exists() && optionsTXT.isFile()) {
+            if (Utils.copyFile(optionsTXT, getTempDirectory())) {
+                savedOptionsTxt = true;
+            }
+        }
         File portalGunSounds = new File(getModsDirectory(), "PortalGunSounds.pak");
         if (portalGunSounds.exists() && portalGunSounds.isFile()) {
             savedPortalGunSounds = true;
@@ -1152,6 +1159,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         if (savedNEICfg) {
             Utils.copyFile(new File(getTempDirectory(), "NEI.cfg"), neiCfg, true);
+        }
+        if (savedOptionsTxt) {
+            Utils.copyFile(new File(getTempDirectory(), "options.txt"), optionsTXT, true);
         }
         if (savedPortalGunSounds) {
             Utils.copyFile(new File(getTempDirectory(), "PortalGunSounds.pak"), portalGunSounds,
