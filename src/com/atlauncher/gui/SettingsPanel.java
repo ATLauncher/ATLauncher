@@ -61,6 +61,9 @@ public class SettingsPanel extends JPanel {
     private JLabel javaParametersLabel;
     private JTextField javaParameters;
 
+    private JLabel startMinecraftMaximisedLabel;
+    private JCheckBox startMinecraftMaximised;
+
     private JLabel sortPacksAlphabeticallyLabel;
     private JCheckBox sortPacksAlphabetically;
 
@@ -337,6 +340,39 @@ public class SettingsPanel extends JPanel {
         javaParameters.setText(App.settings.getJavaParameters());
         topPanel.add(javaParameters, gbc);
 
+        // Start Minecraft Maximised
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        startMinecraftMaximisedLabel = new JLabel(
+                App.settings.getLocalizedString("settings.startminecraftmaximised") + "?");
+        startMinecraftMaximisedLabel.setIcon(helpIcon);
+        startMinecraftMaximisedLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(App.settings.getParent(), App.settings
+                                .getLocalizedString("settings.startminecraftmaximisedhelp"),
+                                App.settings.getLocalizedString("settings.help"),
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
+        topPanel.add(startMinecraftMaximisedLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        startMinecraftMaximised = new JCheckBox();
+        if (App.settings.startMinecraftMaximised()) {
+            startMinecraftMaximised.setSelected(true);
+        }
+        topPanel.add(startMinecraftMaximised, gbc);
+
         // Sort Packs Alphabetically
 
         gbc.gridx = 0;
@@ -494,6 +530,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll(
                         "[^0-9]", "")));
                 App.settings.setJavaParameters(javaParameters.getText());
+                App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
                 App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
                 App.settings.setEnableConsole(enableConsole.isSelected());
                 App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());

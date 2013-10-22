@@ -81,6 +81,7 @@ public class Settings {
     private int permGen; // PermGenSize to use when launching Minecraft in MB
     private int windowWidth; // Width of the Minecraft window
     private int windowHeight; // Height of the Minecraft window
+    private boolean maximiseMinecraft; // If Minecraft should start maximised
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
     private boolean sortPacksAlphabetically; // If to sort packs default alphabetically
     private boolean enableConsole; // If to show the console by default
@@ -790,6 +791,9 @@ public class Settings {
 
             this.javaParamaters = properties.getProperty("javaparameters", "");
 
+            this.maximiseMinecraft = Boolean.parseBoolean(properties.getProperty(
+                    "maximiseminecraft", "false"));
+
             this.sortPacksAlphabetically = Boolean.parseBoolean(properties.getProperty(
                     "sortpacksalphabetically", "false"));
 
@@ -835,6 +839,8 @@ public class Settings {
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
             properties.setProperty("javaparameters", this.javaParamaters);
+            properties
+                    .setProperty("maximiseminecraft", (this.maximiseMinecraft) ? "true" : "false");
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
@@ -885,6 +891,8 @@ public class Settings {
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
             properties.setProperty("javaparameters", this.javaParamaters);
+            properties
+                    .setProperty("maximiseminecraft", (this.maximiseMinecraft) ? "true" : "false");
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
@@ -1076,7 +1084,8 @@ public class Settings {
                     }
                     if (pack instanceof PrivatePack) {
                         if (!element.getAttribute("allowedplayers").isEmpty()) {
-                            ((PrivatePack) pack).addAllowedPlayers(element.getAttribute("allowedplayers").split(","));
+                            ((PrivatePack) pack).addAllowedPlayers(element.getAttribute(
+                                    "allowedplayers").split(","));
                         }
                     }
                 }
@@ -2049,6 +2058,19 @@ public class Settings {
 
     public Account getAccount() {
         return this.account;
+    }
+
+    /**
+     * If the user has selected to start Minecraft maximised
+     * 
+     * @return true if yes, false if not
+     */
+    public boolean startMinecraftMaximised() {
+        return this.maximiseMinecraft;
+    }
+
+    public void setStartMinecraftMaximised(boolean maximiseMinecraft) {
+        this.maximiseMinecraft = maximiseMinecraft;
     }
 
     /**

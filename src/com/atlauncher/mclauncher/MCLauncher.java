@@ -119,8 +119,13 @@ public class MCLauncher {
         arguments.add(account.getMinecraftUsername()); // Username
         arguments.add(session); // Session
         arguments.add(instance.getName()); // Instance Name
-        arguments.add(App.settings.getWindowWidth() + ""); // Window Width
-        arguments.add(App.settings.getWindowHeight() + ""); // Window Height
+        if (App.settings.startMinecraftMaximised()) {
+            arguments.add(Utils.getMaximumWindowWidth() + ""); // Window Width
+            arguments.add(Utils.getMaximumWindowHeight() + ""); // Window Height
+        } else {
+            arguments.add(App.settings.getWindowWidth() + ""); // Window Width
+            arguments.add(App.settings.getWindowHeight() + ""); // Window Height
+        }
 
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());

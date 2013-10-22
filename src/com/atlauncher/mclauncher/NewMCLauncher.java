@@ -92,7 +92,7 @@ public class NewMCLauncher {
 
         arguments.add("-Dfml.ignorePatchDiscrepancies=true");
         arguments.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
-        
+
         arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
 
         if (Utils.isMac()) {
@@ -113,8 +113,13 @@ public class NewMCLauncher {
         arguments.add("--version=" + instance.getMinecraftVersion());
         arguments.add("--gameDir=" + instance.getRootDirectory());
         arguments.add("--assetsDir=" + App.settings.getResourcesDir());
-        arguments.add("--width=" + App.settings.getWindowWidth());
-        arguments.add("--height=" + App.settings.getWindowHeight());
+        if (App.settings.startMinecraftMaximised()) {
+            arguments.add("--width=" + Utils.getMaximumWindowWidth());
+            arguments.add("--height=" + Utils.getMaximumWindowHeight());
+        } else {
+            arguments.add("--width=" + App.settings.getWindowWidth());
+            arguments.add("--height=" + App.settings.getWindowHeight());
+        }
         if (instance.hasMinecraftArguments()) {
             String args = instance.getMinecraftArguments();
             if (args.contains(" ")) {
