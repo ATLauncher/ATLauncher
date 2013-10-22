@@ -88,9 +88,9 @@ public class MCLauncher {
             arguments.add("-Xmx" + App.settings.getMemory() + "M");
         }
         if (App.settings.getPermGen() < instance.getPermGen()) {
-            arguments.add("-XX:MaxPermSize=" + instance.getPermGen() + "M");
+            arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
         } else {
-            arguments.add("-XX:MaxPermSize=" + App.settings.getPermGen() + "M");
+            arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
         }
 
         if (!App.settings.getJavaParameters().isEmpty()) {
