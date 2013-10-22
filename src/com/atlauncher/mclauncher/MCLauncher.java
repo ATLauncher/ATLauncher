@@ -119,12 +119,12 @@ public class MCLauncher {
         arguments.add(account.getMinecraftUsername()); // Username
         arguments.add(session); // Session
         arguments.add(instance.getName()); // Instance Name
+        arguments.add(App.settings.getWindowWidth() + ""); // Window Width
+        arguments.add(App.settings.getWindowHeight() + ""); // Window Height
         if (App.settings.startMinecraftMaximised()) {
-            arguments.add(Utils.getMaximumWindowWidth() + ""); // Window Width
-            arguments.add(Utils.getMaximumWindowHeight() + ""); // Window Height
+            arguments.add("true"); // Maximised
         } else {
-            arguments.add(App.settings.getWindowWidth() + ""); // Window Width
-            arguments.add(App.settings.getWindowHeight() + ""); // Window Height
+            arguments.add("false"); // Not Maximised
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
@@ -140,9 +140,9 @@ public class MCLauncher {
         String instanceName = args[3];
         int screenWidth = Integer.parseInt(args[4]);
         int screenHeight = Integer.parseInt(args[5]);
+        boolean maximize = Boolean.parseBoolean(args[6]);
 
         Dimension winSize = new Dimension(screenWidth, screenHeight);
-        boolean maximize = false;
         boolean compatMode = false;
 
         File cwd = new File(workingDirectory);
