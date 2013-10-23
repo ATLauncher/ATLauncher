@@ -1114,7 +1114,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             fireSubProgressUnknown();
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
-        if (!isServer && (hasJarMods() && !hasForge())) {
+        if ((isNewLaunchMethod() && !isServer && (hasJarMods() && !hasForge()))
+                || !isNewLaunchMethod()) {
             deleteMetaInf();
         }
         addPercent(5);
