@@ -249,6 +249,38 @@ public class LauncherConsole extends JFrame {
                     text = text.substring(text.indexOf("[SEVERE]"));
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#EE2222\">[" + time
                             + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[MCO Availability Checker #1/ERROR]")) {
+                    text = text.substring(text.indexOf("[MCO Availability Checker #1/ERROR]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#EE2222\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[MCO Availability Checker #1/INFO]")) {
+                    text = text.substring(text.indexOf("[MCO Availability Checker #1/INFO]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[Client thread/INFO]")) {
+                    text = text.substring(text.indexOf("[Client thread/INFO]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[Client thread/WARN]")) {
+                    text = text.substring(text.indexOf("[Client thread/WARN]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[Server thread/INFO]")) {
+                    text = text.substring(text.indexOf("[Server thread/INFO]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[Server thread/WARN]")) {
+                    text = text.substring(text.indexOf("[Server thread/WARN]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[main/INFO]")) {
+                    text = text.substring(text.indexOf("[main/INFO]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                } else if (text.contains("[main/WARN]")) {
+                    text = text.substring(text.indexOf("[main/WARN]"));
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
+                            + "]</font></b> " + text + "<br/>", 0, 0, null);
                 } else {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
                             + "]</font></b> " + text + "<br/>", 0, 0, null);
