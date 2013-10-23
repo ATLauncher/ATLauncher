@@ -112,8 +112,8 @@ public class NewMCLauncher {
         arguments.add("--session=" + session);
         arguments.add("--accessToken=" + session);
         arguments.add("--version=" + instance.getMinecraftVersion());
-        arguments.add("--gameDir=" + instance.getRootDirectory());
-        arguments.add("--assetsDir=" + App.settings.getResourcesDir());
+        arguments.add("--gameDir=" + instance.getRootDirectory().getAbsolutePath());
+        arguments.add("--assetsDir=" + App.settings.getResourcesDir().getAbsolutePath());
         if (App.settings.startMinecraftMaximised()) {
             arguments.add("--width=" + Utils.getMaximumWindowWidth());
             arguments.add("--height=" + Utils.getMaximumWindowHeight());

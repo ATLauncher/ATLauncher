@@ -466,45 +466,58 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (!isServer) {
             try {
-                URL resourceUrl = new URL("https://s3.amazonaws.com/Minecraft.Resources/");
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                Document doc = db.parse(resourceUrl.openStream());
-                NodeList nodeLst = doc.getElementsByTagName("Contents");
+                boolean isTruncated;
+                String marker = null;
+                String add;
+                do {
+                    if (marker == null) {
+                        add = "";
+                    } else {
+                        add = "?marker=" + marker;
+                    }
+                    URL resourceUrl = new URL("https://s3.amazonaws.com/Minecraft.Resources/" + add);
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+                    Document doc = db.parse(resourceUrl.openStream());
+                    isTruncated = Boolean.parseBoolean(doc.getElementsByTagName("IsTruncated")
+                            .item(0).getTextContent());
+                    NodeList nodeLst = doc.getElementsByTagName("Contents");
+                    for (int i = 0; i < nodeLst.getLength(); i++) {
+                        Node node = nodeLst.item(i);
 
-                for (int i = 0; i < nodeLst.getLength(); i++) {
-                    Node node = nodeLst.item(i);
+                        if (node.getNodeType() == 1) {
+                            Element element = (Element) node;
+                            String key = element.getElementsByTagName("Key").item(0)
+                                    .getChildNodes().item(0).getNodeValue();
+                            String etag = element.getElementsByTagName("ETag") != null ? element
+                                    .getElementsByTagName("ETag").item(0).getChildNodes().item(0)
+                                    .getNodeValue() : "-";
+                            etag = getEtag(etag);
+                            marker = key;
+                            long size = Long.parseLong(element.getElementsByTagName("Size").item(0)
+                                    .getChildNodes().item(0).getNodeValue());
 
-                    if (node.getNodeType() == 1) {
-                        Element element = (Element) node;
-                        String key = element.getElementsByTagName("Key").item(0).getChildNodes()
-                                .item(0).getNodeValue();
-                        String etag = element.getElementsByTagName("ETag") != null ? element
-                                .getElementsByTagName("ETag").item(0).getChildNodes().item(0)
-                                .getNodeValue() : "-";
-                        etag = getEtag(etag);
-                        long size = Long.parseLong(element.getElementsByTagName("Size").item(0)
-                                .getChildNodes().item(0).getNodeValue());
-
-                        if (size > 0L) {
-                            File file;
-                            String filename;
-                            if (key.contains("/")) {
-                                filename = key.substring(key.lastIndexOf('/') + 1, key.length());
-                                File directory = new File(App.settings.getResourcesDir(),
-                                        key.substring(0, key.lastIndexOf('/')));
-                                file = new File(directory, filename);
-                            } else {
-                                file = new File(App.settings.getResourcesDir(), key);
-                                filename = file.getName();
+                            if (size > 0L) {
+                                File file;
+                                String filename;
+                                if (key.contains("/")) {
+                                    filename = key
+                                            .substring(key.lastIndexOf('/') + 1, key.length());
+                                    File directory = new File(App.settings.getResourcesDir(),
+                                            key.substring(0, key.lastIndexOf('/')));
+                                    file = new File(directory, filename);
+                                } else {
+                                    file = new File(App.settings.getResourcesDir(), key);
+                                    filename = file.getName();
+                                }
+                                if (!Utils.getMD5(file).equalsIgnoreCase(etag))
+                                    downloads.add(new MojangDownloadable(
+                                            "https://s3.amazonaws.com/Minecraft.Resources/" + key,
+                                            file, etag, this));
                             }
-                            if (!Utils.getMD5(file).equalsIgnoreCase(etag))
-                                downloads.add(new MojangDownloadable(
-                                        "https://s3.amazonaws.com/Minecraft.Resources/" + key,
-                                        file, etag, this));
                         }
                     }
-                }
+                } while (isTruncated);
             } catch (Exception e) {
                 App.settings.getConsole().logStackTrace(e);
             }
