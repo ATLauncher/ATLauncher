@@ -110,6 +110,7 @@ public class NewMCLauncher {
         arguments.add(instance.getMainClass());
         arguments.add("--username=" + account.getMinecraftUsername());
         arguments.add("--session=" + session);
+        arguments.add("--accessToken=" + session);
         arguments.add("--version=" + instance.getMinecraftVersion());
         arguments.add("--gameDir=" + instance.getRootDirectory());
         arguments.add("--assetsDir=" + App.settings.getResourcesDir());
