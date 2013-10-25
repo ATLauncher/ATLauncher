@@ -460,7 +460,9 @@ public class Instance implements Serializable {
                                 App.settings.getParent().setVisible(true);
                             }
                             long end = System.currentTimeMillis();
-                            App.settings.checkOnlineStatus();
+                            if (App.settings.isInOfflineMode()) {
+                                App.settings.checkOnlineStatus();
+                            }
                             App.settings.setMinecraftLaunched(false);
                             if (!App.settings.isInOfflineMode() && isLeaderboardsEnabled()) {
                                 App.settings.apiCall(account.getMinecraftUsername(),
