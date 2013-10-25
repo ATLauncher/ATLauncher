@@ -461,22 +461,17 @@ public class Instance implements Serializable {
                             }
                             long end = System.currentTimeMillis();
                             App.settings.checkOnlineStatus();
-                            if (!App.settings.isInOfflineMode() && isLeaderboardsEnabled()) {
-                                if (App.settings.enableLeaderboards()) {
-                                    App.settings.apiCall(account.getMinecraftUsername(),
-                                            "addleaderboardtime", (getRealPack() == null ? "0"
-                                                    : getRealPack().getID() + ""),
-                                            ((end - start) / 1000) + "");
-                                } else {
-                                    App.settings.apiCall(account.getMinecraftUsername(),
-                                            "addleaderboardtimegeneric",
-                                            (getRealPack() == null ? "0" : getRealPack().getID()
-                                                    + ""), ((end - start) / 1000) + "");
-                                }
-                            }
                             App.settings.setMinecraftLaunched(false);
-                            if (App.settings.isUpdatedFiles()) {
-                                App.settings.reloadLauncherData();
+                            if (!App.settings.isInOfflineMode() && isLeaderboardsEnabled()) {
+                                App.settings.apiCall(account.getMinecraftUsername(),
+                                        "addleaderboardtime"
+                                                + (App.settings.enableLeaderboards() ? ""
+                                                        : "generic"), (getRealPack() == null ? "0"
+                                                : getRealPack().getID() + ""),
+                                        ((end - start) / 1000) + "");
+                                if (App.settings.isUpdatedFiles()) {
+                                    App.settings.reloadLauncherData();
+                                }
                             }
                         } catch (IOException e1) {
                             App.settings.getConsole().logStackTrace(e1);
