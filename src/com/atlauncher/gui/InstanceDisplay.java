@@ -256,7 +256,8 @@ public class InstanceDisplay extends CollapsiblePanel {
         }
 
         // Check if pack is a private pack and if the user can play it
-        if (pack instanceof PrivatePack && !((PrivatePack) pack).isAllowedPlayer()) {
+        if (pack instanceof PrivatePack && !App.settings.isInOfflineMode()
+                && !((PrivatePack) pack).isAllowedPlayer()) {
             for (ActionListener al : play.getActionListeners()) {
                 play.removeActionListener(al);
             }
