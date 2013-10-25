@@ -106,11 +106,16 @@ public class NewMCLauncher {
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
-
         arguments.add(instance.getMainClass());
         arguments.add("--username=" + account.getMinecraftUsername());
         arguments.add("--session=" + session);
-        arguments.add("--accessToken=" + session);
+
+        // This is for 1.7
+        String[] parts = session.split(":");
+        arguments.add("--accessToken=" + parts[1]);
+        arguments.add("--uuid=" + parts[2]);
+        // End of stuff for 1.7
+
         arguments.add("--version=" + instance.getMinecraftVersion());
         arguments.add("--gameDir=" + instance.getRootDirectory().getAbsolutePath());
         arguments.add("--assetsDir=" + App.settings.getResourcesDir().getAbsolutePath());
