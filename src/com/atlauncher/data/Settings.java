@@ -1606,6 +1606,31 @@ public class Settings {
         return this.offlineMode;
     }
 
+    public void checkOnlineStatus() {
+        for (Server server : servers) {
+            server.enableServer();
+        }
+        this.offlineMode = false;
+        String test = null;
+        while (test == null) {
+            test = Utils.urlToString(getFileURL("ping"));
+            if (test == null) {
+                boolean changed = disableServerGetNext(); // Disable the server and get the next one
+                if (!changed) {
+                    this.offlineMode = true;
+                    return;
+                }
+            }
+        }
+        if (test.equalsIgnoreCase("pong")) {
+            this.offlineMode = false;
+            reloadPacksPanel();
+            reloadInstancesPanel();
+        } else {
+            this.offlineMode = true;
+        }
+    }
+
     /**
      * Sets the launcher to offline mode
      */

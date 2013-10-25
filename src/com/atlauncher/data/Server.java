@@ -23,6 +23,10 @@ public class Server {
         this.disabled = true;
     }
 
+    public void enableServer() {
+        this.disabled = false;
+    }
+
     public boolean isDisabled() {
         return this.disabled;
     }
