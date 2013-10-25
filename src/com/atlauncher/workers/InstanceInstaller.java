@@ -930,8 +930,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 configsDownloader.run();
                 configsDownloaded = configsDownloader.downloaded();
             } else {
-                App.settings.getConsole().log("Couldn't Download Configs For " + pack.getName(),
-                        true);
+                App.settings.getConsole().log(
+                        "Couldn't Download Configs For " + pack.getName()
+                                + ". Switching To Offline Mode!", true);
+                App.settings.setOfflineMode();
                 cancel(true);
             }
         }

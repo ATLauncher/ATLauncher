@@ -153,6 +153,7 @@ public class Pack {
                     versionURL = App.settings.getFileURL(path); // The XML with path on server
                     this.xml = Utils.urlToString(versionURL); // Try again with another server
                 } else {
+                    App.settings.setOfflineMode();
                     return null;
                 }
             }

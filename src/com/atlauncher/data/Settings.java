@@ -1597,6 +1597,20 @@ public class Settings {
     }
 
     /**
+     * Sets the launcher to offline mode
+     */
+    public void setOfflineMode() {
+        this.offlineMode = true;
+    }
+
+    /**
+     * Sets the launcher to online mode
+     */
+    public void setOnlineMode() {
+        this.offlineMode = false;
+    }
+
+    /**
      * Returns the JFrame reference of the main Launcher
      * 
      * @return Main JFrame of the Launcher

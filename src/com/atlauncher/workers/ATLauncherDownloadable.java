@@ -69,7 +69,8 @@ public class ATLauncherDownloadable implements Runnable {
                 this.url = App.settings.getFileURL(this.beforeURL);
                 return getRedirect(this.url);
             } else {
-                App.settings.getConsole().log("Couldn't Get Redirected URL From " + this.url, true);
+                App.settings.getConsole().log("Couldn't Get Redirected URL From " + this.url + ". Switching To Offine Mode!", true);
+                App.settings.setOfflineMode();
                 if (this.instanceInstaller != null) {
                     instanceInstaller.cancel(true);
                 }
@@ -127,7 +128,10 @@ public class ATLauncherDownloadable implements Runnable {
                     this.url = App.settings.getFileURL(this.beforeURL);
                     getMD5FromURL(this.url);
                 } else {
-                    App.settings.getConsole().log("Couldn't Get MD5 From " + this.url, true);
+                    App.settings.getConsole().log(
+                            "Couldn't Get MD5 From " + this.url + ". Switching To Offline Mode!",
+                            true);
+                    App.settings.setOfflineMode();
                     if (this.instanceInstaller != null) {
                         instanceInstaller.cancel(true);
                     }
@@ -172,8 +176,10 @@ public class ATLauncherDownloadable implements Runnable {
                         this.url = App.settings.getFileURL(this.beforeURL);
                         downloadFile();
                     } else {
-                        App.settings.getConsole().log("Couldn't Download File " + file.getName(),
-                                true);
+                        App.settings.getConsole().log(
+                                "Couldn't Download File " + file.getName()
+                                        + ". Switching To Offline Mode!", true);
+                        App.settings.setOfflineMode();
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);
                         }
