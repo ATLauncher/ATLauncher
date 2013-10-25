@@ -1059,11 +1059,21 @@ public class Settings {
      * Loads the Testers and Allowed Players for the packs in the Launcher
      */
     private void loadUsers() {
+        String xml = null;
+        while (xml == null) {
+            xml = Utils.urlToString(getFileURL("launcher/users.xml"));
+            if (xml == null) {
+                boolean changed = disableServerGetNext(); // Disable the server and get the next one
+                if (!changed) {
+                    this.offlineMode = true;
+                    return;
+                }
+            }
+        }
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(
-                    Utils.urlToString(getFileURL("launcher/users.xml"))));
+            InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("pack");

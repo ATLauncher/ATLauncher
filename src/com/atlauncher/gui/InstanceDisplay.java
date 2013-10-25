@@ -273,6 +273,7 @@ public class InstanceDisplay extends CollapsiblePanel {
         }
 
         // Check is instance is playable and disable buttons if not
+
         if (!instance.isPlayable()) {
             for (ActionListener al : play.getActionListeners()) {
                 play.removeActionListener(al);
