@@ -467,7 +467,8 @@ public class Instance implements Serializable {
                                                     : getRealPack().getID() + ""),
                                             ((end - start) / 1000) + "");
                                 } else {
-                                    App.settings.apiCall("NULL", "addleaderboardtime",
+                                    App.settings.apiCall(account.getMinecraftUsername(),
+                                            "addleaderboardtimegeneric",
                                             (getRealPack() == null ? "0" : getRealPack().getID()
                                                     + ""), ((end - start) / 1000) + "");
                                 }
