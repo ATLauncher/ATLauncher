@@ -1458,7 +1458,7 @@ public class Settings {
     }
 
     public String apiCall(String username, String action, String extra1, String extra2,
-            boolean debug) {
+            String extra3, boolean debug) {
         String response = "";
         try {
             String data = URLEncoder.encode("username", "UTF-8") + "="
@@ -1469,6 +1469,8 @@ public class Settings {
                     + URLEncoder.encode(extra1, "UTF-8");
             data += "&" + URLEncoder.encode("extra2", "UTF-8") + "="
                     + URLEncoder.encode(extra2, "UTF-8");
+            data += "&" + URLEncoder.encode("extra3", "UTF-8") + "="
+                    + URLEncoder.encode(extra3, "UTF-8");
 
             URL url = new URL("%APIURL%");
             URLConnection conn = url.openConnection();
@@ -1491,28 +1493,37 @@ public class Settings {
         return response;
     }
 
+    public void apiCall(String username, String action, String extra1, String extra2, String extra3) {
+        apiCall(username, action, extra1, extra2, extra3, false);
+    }
+
     public void apiCall(String username, String action, String extra1, String extra2) {
-        apiCall(username, action, extra1, extra2, false);
+        apiCall(username, action, extra1, extra2, "", false);
     }
 
     public void apiCall(String username, String action, String extra1) {
-        apiCall(username, action, extra1, "", false);
+        apiCall(username, action, extra1, "", "", false);
     }
 
     public void apiCall(String username, String action) {
-        apiCall(username, action, "", "", false);
+        apiCall(username, action, "", "", "", false);
+    }
+
+    public String apiCallReturn(String username, String action, String extra1, String extra2,
+            String extra3) {
+        return apiCall(username, action, extra1, extra2, extra3, false);
     }
 
     public String apiCallReturn(String username, String action, String extra1, String extra2) {
-        return apiCall(username, action, extra1, extra2, false);
+        return apiCall(username, action, extra1, extra2, "", false);
     }
 
     public String apiCallReturn(String username, String action, String extra1) {
-        return apiCall(username, action, extra1, "", false);
+        return apiCall(username, action, extra1, "", "", false);
     }
 
     public String apiCallReturn(String username, String action) {
-        return apiCall(username, action, "", "", false);
+        return apiCall(username, action, "", "", "", false);
     }
 
     public boolean canViewSemiPublicPackByCode(String code) {
