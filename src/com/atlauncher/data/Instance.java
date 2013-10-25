@@ -465,12 +465,16 @@ public class Instance implements Serializable {
                             }
                             App.settings.setMinecraftLaunched(false);
                             if (!App.settings.isInOfflineMode() && isLeaderboardsEnabled()) {
-                                App.settings.apiCall(account.getMinecraftUsername(),
-                                        "addleaderboardtime"
-                                                + (App.settings.enableLeaderboards() ? ""
-                                                        : "generic"), (getRealPack() == null ? "0"
-                                                : getRealPack().getID() + ""),
-                                        ((end - start) / 1000) + "");
+                                App.settings
+                                        .apiCall(
+                                                account.getMinecraftUsername(),
+                                                "addleaderboardtime"
+                                                        + (App.settings.enableLeaderboards() ? ""
+                                                                : "generic"),
+                                                (getRealPack() == null ? "0" : getRealPack()
+                                                        .getID() + ""),
+                                                ((end - start) / 1000) + "", (isDev ? "dev"
+                                                        : getVersion()));
                                 if (App.settings.isUpdatedFiles()) {
                                     App.settings.reloadLauncherData();
                                 }

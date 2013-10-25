@@ -410,7 +410,8 @@ public class InstanceInstallerDialog extends JDialog {
                                     App.settings.apiCall(App.settings.getAccount()
                                             .getMinecraftUsername(), "packinstalled"
                                             + (App.settings.enableLogs() ? "" : "generic"),
-                                            pack.getID() + "", version.getVersion());
+                                            pack.getID() + "", version.getVersion(), (version
+                                                    .isDevVersion() ? "dev" : version.getVersion()));
                                 }
                             } else {
                                 if (isReinstall) {
