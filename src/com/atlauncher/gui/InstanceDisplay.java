@@ -29,6 +29,8 @@ import javax.swing.JTextArea;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Pack;
+import com.atlauncher.data.PrivatePack;
 
 /**
  * Class for displaying instances in the Instance Tab
@@ -52,9 +54,11 @@ public class InstanceDisplay extends CollapsiblePanel {
     private JButton backup; // Backup button
     private JButton delete; // Delete button
     private JButton openFolder; // Open Folder button
+    private Pack pack; // The pack this instance is
 
     public InstanceDisplay(final Instance instance) {
         super(instance);
+        pack = instance.getRealPack();
         JPanel panel = super.getContentPane();
         panel.setLayout(new BorderLayout());
 
@@ -249,6 +253,23 @@ public class InstanceDisplay extends CollapsiblePanel {
         if (!instance.canInstall()) {
             reinstall.setVisible(false);
             update.setVisible(false);
+        }
+
+        // Check if pack is a private pack and if the user can play it
+        if (pack instanceof PrivatePack && !((PrivatePack) pack).isAllowedPlayer()) {
+            for (ActionListener al : play.getActionListeners()) {
+                play.removeActionListener(al);
+            }
+            play.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.notauthorizedplay"),
+                            App.settings.getLocalizedString("instance.notauthorized"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
+                }
+            });
         }
 
         // Check is instance is playable and disable buttons if not
