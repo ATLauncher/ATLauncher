@@ -419,7 +419,7 @@ public class Instance implements Serializable {
                 }
             } else {
                 loggedIn = true;
-                sess = "0";
+                sess = "token:0:0";
             }
             if (!loggedIn) {
                 String[] options = { App.settings.getLocalizedString("common.ok") };
