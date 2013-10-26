@@ -376,7 +376,7 @@ public class Instance implements Serializable {
                     String result = Utils.newLogin(username, password);
                     if (result == null) {
                         loggedIn = true;
-                        sess = "0";
+                        sess = "token:0:0";
                     } else {
                         JSONParser parser = new JSONParser();
                         try {
