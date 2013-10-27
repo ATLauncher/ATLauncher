@@ -2179,6 +2179,16 @@ public class Settings {
         return this.enableConsole;
     }
 
+    /**
+     * Set the Launcher console's visibility
+     * 
+     * @param visible
+     *            The Launcher console's visibility
+     */
+    public void setConsoleVisible(boolean visible) {
+        this.console.setVisible(visible);
+    }
+
     public void setEnableConsole(boolean enableConsole) {
         this.enableConsole = enableConsole;
     }

@@ -7,7 +7,6 @@
 package com.atlauncher;
 
 import java.awt.Image;
-import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -103,8 +102,8 @@ public class App {
             }
         }
 
-        if (App.settings.enableConsole()) {
-            App.settings.getConsole().setVisible(true);
+        if (settings.enableConsole()) {
+            settings.setConsoleVisible(true);
         }
 
         settings.log("Showing splash screen and loading everything");
