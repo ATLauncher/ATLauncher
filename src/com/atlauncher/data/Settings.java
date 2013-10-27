@@ -224,7 +224,7 @@ public class Settings {
                                                                                                 // it
             runUpdate(path, newFile.getAbsolutePath());
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -336,11 +336,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
         ExecutorService executor = Executors.newFixedThreadPool(8);
         for (ATLauncherDownloadable download : downloads) {
@@ -424,11 +424,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
         return false; // No updates
     }
@@ -686,9 +686,9 @@ public class Settings {
                 this.originalServer = this.server;
             }
         } catch (FileNotFoundException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -717,9 +717,9 @@ public class Settings {
                     "true"));
             this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
         } catch (FileNotFoundException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -968,11 +968,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -1056,11 +1056,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -1095,7 +1095,7 @@ public class Settings {
                     try {
                         pack = getPackByID(id);
                     } catch (InvalidPack e) {
-                        getConsole().logStackTrace(e);
+                        log(e.getMessage(), LogMessageType.error, false);
                         continue;
                     }
                     if (!element.getAttribute("testers").isEmpty()) {
@@ -1241,7 +1241,7 @@ public class Settings {
                     in.close();
                 }
             } catch (Exception e) {
-                App.settings.getConsole().logStackTrace(e);
+                this.console.logStackTrace(e);
             }
         }
         if (wasConversion) {
@@ -1259,13 +1259,13 @@ public class Settings {
                 objOut.writeObject(instance);
             }
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } finally {
             try {
                 objOut.close();
                 out.close();
             } catch (IOException e) {
-                App.settings.getConsole().logStackTrace(e);
+                this.console.logStackTrace(e);
             }
         }
     }
@@ -1292,7 +1292,7 @@ public class Settings {
                     in.close();
                 }
             } catch (Exception e) {
-                App.settings.getConsole().logStackTrace(e);
+                this.console.logStackTrace(e);
             }
         }
     }
@@ -1307,13 +1307,13 @@ public class Settings {
                 objOut.writeObject(account);
             }
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } finally {
             try {
                 objOut.close();
                 out.close();
             } catch (IOException e) {
-                App.settings.getConsole().logStackTrace(e);
+                this.console.logStackTrace(e);
             }
         }
     }
@@ -2229,9 +2229,9 @@ public class Settings {
             path = thisFile.getCanonicalPath();
             path = URLDecoder.decode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
 
         List<String> arguments = new ArrayList<String>();
