@@ -1518,9 +1518,9 @@ public class Settings {
         return apiCall(username, action, "", "", "", false);
     }
 
-    public boolean canViewSemiPublicPackByCode(String code) {
-        for (String packCode : this.addedPacks.split(",")) {
-            if (packCode.equalsIgnoreCase(code)) {
+    public boolean canViewSemiPublicPackByCode(String packCode) {
+        for (String code : this.addedPacks.split(",")) {
+            if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
                 return true;
             }
         }
@@ -1537,9 +1537,10 @@ public class Settings {
     }
 
     public boolean semiPublicPackExistsFromCode(String packCode) {
+        String packCodeMD5 = Utils.getMD5(packCode);
         for (Pack pack : this.packs) {
             if (pack instanceof SemiPublicPack) {
-                if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(Utils.getMD5(packCode))) {
+                if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(packCodeMD5)) {
                     return true;
                 }
             }
@@ -1548,11 +1549,11 @@ public class Settings {
     }
 
     public boolean addPack(String packCode) {
-        packCode = Utils.getMD5(packCode);
+        String packCodeMD5 = Utils.getMD5(packCode);
         for (Pack pack : this.packs) {
             if (pack instanceof SemiPublicPack
-                    && !App.settings.canViewSemiPublicPackByCode(packCode)) {
-                if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(packCode)) {
+                    && !App.settings.canViewSemiPublicPackByCode(packCodeMD5)) {
+                if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(packCodeMD5)) {
                     this.addedPacks += packCode + ",";
                     this.saveProperties();
                     this.reloadInstancesPanel();
@@ -1563,9 +1564,9 @@ public class Settings {
         return false;
     }
 
-    public void removePack(String code) {
-        for (String packCode : this.addedPacks.split(",")) {
-            if (packCode.equalsIgnoreCase(code)) {
+    public void removePack(String packCode) {
+        for (String code : this.addedPacks.split(",")) {
+            if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
                 this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
                 this.reloadInstancesPanel();
