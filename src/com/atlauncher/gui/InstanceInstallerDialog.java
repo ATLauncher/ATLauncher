@@ -57,8 +57,6 @@ public class InstanceInstallerDialog extends JDialog {
     private ArrayList<Version> versions = new ArrayList<Version>();
     private JLabel installForLabel;
     private JCheckBox installForMe;
-    private JLabel useLatestLWJGLLabel;
-    private JCheckBox useLatestLWJGL;
 
     public InstanceInstallerDialog(Object object) {
         this(object, false, false);
@@ -153,26 +151,6 @@ public class InstanceInstallerDialog extends JDialog {
             }
         }
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
-        versionsDropDown.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!isServer) {
-                    Version selected = (Version) versionsDropDown.getSelectedItem();
-                    if (App.settings.getMinecraftInstallMethod(selected.getMinecraftVersion())
-                            .equalsIgnoreCase("new")) {
-                        useLatestLWJGLLabel.setVisible(false);
-                        useLatestLWJGL.setVisible(false);
-                        useLatestLWJGL.setSelected(false);
-                    } else if (pack.isLatestLWJGLEnabled()) {
-                        useLatestLWJGLLabel.setVisible(false);
-                        useLatestLWJGL.setVisible(false);
-                        useLatestLWJGL.setSelected(true);
-                    } else {
-                        useLatestLWJGLLabel.setVisible(true);
-                        useLatestLWJGL.setVisible(true);
-                    }
-                }
-            }
-        });
         middle.add(versionsDropDown, gbc);
 
         if (!this.isServer) {
@@ -189,33 +167,6 @@ public class InstanceInstallerDialog extends JDialog {
                 installForMe = new JCheckBox();
                 middle.add(installForMe, gbc);
             }
-            gbc.gridx = 0;
-            gbc.gridy++;
-            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-            useLatestLWJGLLabel = new JLabel(
-                    App.settings.getLocalizedString("instance.uselatestlwjgl") + "? ");
-            middle.add(useLatestLWJGLLabel, gbc);
-
-            gbc.gridx++;
-            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-            useLatestLWJGL = new JCheckBox();
-            middle.add(useLatestLWJGL, gbc);
-        }
-
-        Version selected = (Version) versionsDropDown.getSelectedItem();
-        if (!isServer) {
-            if (App.settings.getMinecraftInstallMethod(selected.getMinecraftVersion())
-                    .equalsIgnoreCase("new")) {
-                useLatestLWJGLLabel.setVisible(false);
-                useLatestLWJGL.setVisible(false);
-            } else if (pack.isLatestLWJGLEnabled()) {
-                useLatestLWJGLLabel.setVisible(false);
-                useLatestLWJGL.setVisible(false);
-                useLatestLWJGL.setSelected(true);
-            } else {
-                useLatestLWJGLLabel.setVisible(true);
-                useLatestLWJGL.setVisible(true);
-            }
         }
 
         // Bottom Panel Stuff
@@ -230,8 +181,6 @@ public class InstanceInstallerDialog extends JDialog {
                 if (!isReinstall && !isServer
                         && App.settings.isInstance(instanceNameField.getText())) {
                     instance = App.settings.getInstanceByName(instanceNameField.getText());
-                    String instanceText = App.settings.getLocalizedString(
-                            "instance.alreadyinstance", instanceNameField.getText() + "<br/><br/>");
                     if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
                         int ret = JOptionPane.showConfirmDialog(
                                 App.settings.getParent(),
@@ -306,8 +255,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller((isServer ? ""
                         : instanceNameField.getText()), pack, version.getVersion(), version
-                        .getMinecraftVersion(), (useLatestLWJGL == null ? false : useLatestLWJGL
-                        .isSelected()), isReinstall, isServer) {
+                        .getMinecraftVersion(), isReinstall, isServer) {
 
                     protected void done() {
                         Boolean success = false;
@@ -374,12 +322,10 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setMinecraftVersion(this.getMinecraftVersion());
                                     instance.setModsInstalled(this.getModsInstalled());
                                     instance.setJarOrder(this.getJarOrder());
-                                    instance.setIsNewLaunchMethod(this.isNewLaunchMethod());
-                                    if (this.isNewLaunchMethod()) {
-                                        instance.setLibrariesNeeded(this.getLibrariesNeeded());
-                                        instance.setMinecraftArguments(this.getMinecraftArguments());
-                                        instance.setMainClass(this.getMainClass());
-                                    }
+                                    instance.setIsNewLaunchMethod(true);
+                                    instance.setLibrariesNeeded(this.getLibrariesNeeded());
+                                    instance.setMinecraftArguments(this.getMinecraftArguments());
+                                    instance.setMainClass(this.getMainClass());
                                     if (version.isDevVersion()) {
                                         instance.setDevVersion();
                                     } else {
@@ -399,10 +345,10 @@ public class InstanceInstallerDialog extends JDialog {
                                                             .getMemory(), this.getPermGen(), this
                                                             .getModsInstalled(),
                                                     this.getJarOrder(), this.getLibrariesNeeded(),
-                                                    this.getMinecraftArguments(), this
+                                                    this.getExtraArguments(), this
+                                                            .getMinecraftArguments(), this
                                                             .getMainClass(),
-                                                    version.isDevVersion(), this
-                                                            .isNewLaunchMethod())); // Add It
+                                                    version.isDevVersion(), true)); // Add It
                                 }
                                 App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();

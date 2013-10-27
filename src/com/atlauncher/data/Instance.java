@@ -43,8 +43,10 @@ public class Instance implements Serializable {
     private int permgen = 0;
     private String jarOrder;
     private String librariesNeeded = null;
+    private String extraArguments = null;
     private String minecraftArguments = null;
     private String mainClass = null;
+    private boolean isConverted = false;
     private transient Pack realPack;
     private boolean isDev;
     private boolean isPlayable;
@@ -53,7 +55,7 @@ public class Instance implements Serializable {
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int memory, int permgen,
-            String[] modsInstalled, String jarOrder, String librariesNeeded,
+            String[] modsInstalled, String jarOrder, String librariesNeeded, String extraArguments,
             String minecraftArguments, String mainClass, boolean isDev, boolean isPlayable,
             boolean newLaunchMethod) {
         this.name = name;
@@ -65,12 +67,11 @@ public class Instance implements Serializable {
         this.permgen = permgen;
         this.modsInstalled = modsInstalled;
         this.jarOrder = jarOrder;
-        if (newLaunchMethod) {
-            this.librariesNeeded = librariesNeeded;
-            this.mainClass = mainClass;
-            this.jarOrder = jarOrder;
-            this.minecraftArguments = minecraftArguments;
-        }
+        this.librariesNeeded = librariesNeeded;
+        this.mainClass = mainClass;
+        this.jarOrder = jarOrder;
+        this.extraArguments = extraArguments;
+        this.minecraftArguments = minecraftArguments;
         this.isDev = isDev;
         this.isPlayable = isPlayable;
         this.newLaunchMethod = newLaunchMethod;
@@ -79,15 +80,16 @@ public class Instance implements Serializable {
         } else {
             this.installedBy = null;
         }
+        this.isConverted = true;
     }
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int memory, int permgen,
-            String[] modsInstalled, String jarOrder, String librariesNeeded,
+            String[] modsInstalled, String jarOrder, String librariesNeeded, String extraArguments,
             String minecraftArguments, String mainClass, boolean isDev, boolean newLaunchMethod) {
         this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen,
-                modsInstalled, jarOrder, librariesNeeded, minecraftArguments, mainClass, isDev,
-                true, newLaunchMethod);
+                modsInstalled, jarOrder, librariesNeeded, extraArguments, minecraftArguments,
+                mainClass, isDev, true, newLaunchMethod);
     }
 
     public String getName() {
@@ -141,6 +143,10 @@ public class Instance implements Serializable {
         }
     }
 
+    public boolean hasBeenConverted() {
+        return isConverted;
+    }
+
     public boolean isLeaderboardsEnabled() {
         if (this.realPack != null) {
             return this.realPack.isLeaderboardsEnabled();
@@ -155,6 +161,14 @@ public class Instance implements Serializable {
         } else {
             return false;
         }
+    }
+
+    public void convert() {
+        if (this.minecraftArguments != null) {
+            this.extraArguments = this.minecraftArguments;
+            this.minecraftArguments = null;
+        }
+        this.isConverted = true;
     }
 
     public String getVersion() {
@@ -272,6 +286,10 @@ public class Instance implements Serializable {
         this.librariesNeeded = librariesNeeded;
     }
 
+    public String getExtraArguments() {
+        return this.extraArguments;
+    }
+
     public String getMinecraftArguments() {
         return this.minecraftArguments;
     }
@@ -327,6 +345,13 @@ public class Instance implements Serializable {
 
     public void setModsInstalled(String[] modsInstalled) {
         this.modsInstalled = modsInstalled;
+    }
+
+    public boolean hasExtraArguments() {
+        if (this.extraArguments != null) {
+            return true;
+        }
+        return false;
     }
 
     public boolean hasMinecraftArguments() {

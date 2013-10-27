@@ -54,12 +54,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String instanceName;
     private Pack pack;
     private String version;
-    private boolean useLatestLWJGL;
     private boolean isReinstall;
     private boolean isServer;
     private String minecraftVersion;
     private String jarOrder;
-    private boolean newLaunchMethod;
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
     private boolean savedZans = false; // If Zans Minimap stuff was found and saved
     private boolean savedNEICfg = false; // If NEI Config was found and saved
@@ -71,6 +69,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private int memory = 0;
     private String librariesNeeded = null;
     private String nativesNeeded = null;
+    private String extraArguments = null;
     private String minecraftArguments = null;
     private String mainClass = null;
     private int percent = 0; // Percent done installing
@@ -85,12 +84,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private ArrayList<File> serverLibraries;
 
     public InstanceInstaller(String instanceName, Pack pack, String version,
-            String minecraftVersion, boolean useLatestLWJGL, boolean isReinstall, boolean isServer) {
+            String minecraftVersion, boolean isReinstall, boolean isServer) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
         this.minecraftVersion = minecraftVersion;
-        this.useLatestLWJGL = useLatestLWJGL;
         this.isReinstall = isReinstall;
         this.isServer = isServer;
         if (isServer) {
@@ -192,11 +190,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public File getMinecraftJar() {
         if (isServer) {
-            if (isNewLaunchMethod()) {
-                return new File(getRootDirectory(), "minecraft_server." + minecraftVersion + ".jar");
-            } else {
-                return new File(getRootDirectory(), "minecraft_server.jar");
-            }
+            return new File(getRootDirectory(), "minecraft_server." + minecraftVersion + ".jar");
         }
         return new File(getBinDirectory(), "minecraft.jar");
     }
@@ -217,11 +211,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (jarOrder == null) {
             jarOrder = file;
         } else {
-            if (newLaunchMethod) {
-                jarOrder = jarOrder + "," + file;
-            } else {
-                jarOrder = file + "," + jarOrder;
-            }
+            jarOrder = jarOrder + "," + file;
         }
     }
 
@@ -329,9 +319,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         for (File directory : directories) {
             directory.mkdir();
         }
-        if (!isNewLaunchMethod()) {
-            getCoreModsDirectory().mkdir();
-        }
+        getCoreModsDirectory().mkdir();
         getTempDirectory().mkdir();
     }
 
@@ -584,7 +572,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         }
                     }
                     NodeList nodeList1 = element.getChildNodes();
-                    this.minecraftArguments = nodeList1.item(0).getNodeValue();
+                    this.extraArguments = nodeList1.item(0).getNodeValue();
                 }
             }
         } catch (SAXException e) {
@@ -676,6 +664,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.mainClass == null) {
                     this.mainClass = (String) jsonObject.get("mainClass");
                 }
+                this.minecraftArguments = (String) jsonObject.get("minecraftArguments");
                 JSONArray msg = (JSONArray) jsonObject.get("libraries");
                 Iterator<JSONObject> iterator = msg.iterator();
                 while (iterator.hasNext()) {
@@ -789,99 +778,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return etag;
     }
 
-    private void downloadMojangStuffOld() {
-        if (!isServer) {
-            File nativesFile = null;
-            String nativesRoot = null;
-            String nativesURL = null;
-            if (Utils.isWindows()) {
-                nativesFile = new File(App.settings.getJarsDir(),
-                        ((this.useLatestLWJGL) ? "latest_" : "") + "windows_natives.jar");
-                nativesRoot = "windowsnatives";
-                nativesURL = "windows_natives";
-            } else if (Utils.isMac()) {
-                nativesFile = new File(App.settings.getJarsDir(),
-                        ((this.useLatestLWJGL) ? "latest_" : "") + "macosx_natives.jar");
-                nativesRoot = "macosxnatives";
-                nativesURL = "macosx_natives";
-            } else {
-                nativesFile = new File(App.settings.getJarsDir(),
-                        ((this.useLatestLWJGL) ? "latest_" : "") + "linux_natives.jar");
-                nativesRoot = "linuxnatives";
-                nativesURL = "linux_natives";
-            }
-            File[] files = {
-                    new File(App.settings.getJarsDir(), minecraftVersion.replace(".", "_")
-                            + "_minecraft.jar"),
-                    new File(App.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_" : "")
-                            + "lwjgl.jar"),
-                    new File(App.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_" : "")
-                            + "lwjgl_util.jar"),
-                    new File(App.settings.getJarsDir(), ((this.useLatestLWJGL) ? "latest_" : "")
-                            + "jinput.jar"), nativesFile };
-            String[] hashes = {
-                    App.settings.getMinecraftHash("minecraft", minecraftVersion, "client"),
-                    App.settings.getMinecraftHash("lwjgl", (this.useLatestLWJGL) ? "latest"
-                            : "mojang", "client"),
-                    App.settings.getMinecraftHash("lwjglutil", (this.useLatestLWJGL) ? "latest"
-                            : "mojang", "client"),
-                    App.settings.getMinecraftHash("jinput", (this.useLatestLWJGL) ? "latest"
-                            : "mojang", "client"),
-                    App.settings.getMinecraftHash(nativesRoot, (this.useLatestLWJGL) ? "latest"
-                            : "mojang", "client") };
-            String[] urls = {
-                    "http://assets.minecraft.net/" + minecraftVersion.replace(".", "_")
-                            + "/minecraft.jar",
-                    (this.useLatestLWJGL) ? App.settings
-                            .getFileURL("launcher/lwjgl/latest_lwjgl.jar")
-                            : "http://s3.amazonaws.com/MinecraftDownload/lwjgl.jar",
-                    (this.useLatestLWJGL) ? App.settings
-                            .getFileURL("launcher/lwjgl/latest_lwjgl_util.jar")
-                            : "http://s3.amazonaws.com/MinecraftDownload/lwjgl_util.jar",
-                    (this.useLatestLWJGL) ? App.settings
-                            .getFileURL("launcher/lwjgl/latest_jinput.jar")
-                            : "http://s3.amazonaws.com/MinecraftDownload/jinput.jar",
-                    (this.useLatestLWJGL) ? App.settings.getFileURL("launcher/lwjgl/latest_"
-                            + nativesURL + ".jar") : "http://s3.amazonaws.com/MinecraftDownload/"
-                            + nativesURL + ".jar" };
-            for (int i = 0; i < 5; i++) {
-                addPercent(5);
-                while (!Utils.getMD5(files[i]).equalsIgnoreCase(hashes[i])) {
-                    fireTask(App.settings.getLocalizedString("common.downloading") + " "
-                            + files[i].getName());
-                    new com.atlauncher.data.Downloader(urls[i], files[i].getAbsolutePath(), this)
-                            .run();
-                }
-                if (i == 0) {
-                    Utils.copyFile(files[i], getMinecraftJar(), true);
-                } else if (i == 4) {
-                    Utils.unzip(files[i], getNativesDirectory());
-                    Utils.delete(new File(getNativesDirectory(), "META-INF"));
-                } else {
-                    if (useLatestLWJGL) {
-                        Utils.copyFile(files[i], new File(getBinDirectory(), files[i].getName()
-                                .replace("latest_", "")), true);
-                    } else {
-                        Utils.copyFile(files[i], getBinDirectory());
-                    }
-                }
-            }
-        } else {
-            String hash = App.settings.getMinecraftHash("minecraft", minecraftVersion, "server");
-            File file = new File(App.settings.getJarsDir(), minecraftVersion.replace(".", "_")
-                    + "_minecraft_server.jar");
-            String url = "http://assets.minecraft.net/" + minecraftVersion.replace(".", "_")
-                    + "/minecraft_server.jar";
-            addPercent(25);
-            while (!Utils.getMD5(file).equalsIgnoreCase(hash)) {
-                fireTask(App.settings.getLocalizedString("common.downloading") + " "
-                        + file.getName());
-                new com.atlauncher.data.Downloader(url, file.getAbsolutePath(), this).run();
-            }
-            Utils.copyFile(file, getMinecraftJar(), true);
-        }
-    }
-
     public void deleteMetaInf() {
         File inputFile = getMinecraftJar();
         File outputTmpFile = new File(App.settings.getTempDir(), pack.getSafeName()
@@ -959,11 +855,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else if (forge != null) {
             return forge.getFile();
         } else {
-            if (isNewLaunchMethod()) {
-                return "minecraft_server." + minecraftVersion + ".jar";
-            } else {
-                return "minecraft_server.jar";
-            }
+            return "minecraft_server." + minecraftVersion + ".jar";
         }
     }
 
@@ -1011,12 +903,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.memory;
     }
 
-    public boolean isNewLaunchMethod() {
-        return this.newLaunchMethod;
-    }
-
     public String getLibrariesNeeded() {
         return this.librariesNeeded;
+    }
+    
+    public String getExtraArguments() {
+        return this.extraArguments;
     }
 
     public String getMinecraftArguments() {
@@ -1054,11 +946,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.memory = this.pack.getMemory(this.version);
         if (this.minecraftVersion == null) {
             this.cancel(true);
-        }
-        if (pack.isNewInstallMethod(this.version)) {
-            this.newLaunchMethod = true;
-        } else {
-            this.newLaunchMethod = false;
         }
         selectedMods = new ArrayList<Mod>();
         if (allMods.size() != 0 && hasOptionalMods()) {
@@ -1111,17 +998,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             savedPortalGunSounds = true;
             Utils.copyFile(portalGunSounds, getTempDirectory());
         }
-        if (this.newLaunchMethod) {
-            downloadMojangStuffNew();
-            if (isServer) {
-                for (File file : serverLibraries) {
-                    file.mkdirs();
-                    Utils.copyFile(new File(App.settings.getLibrariesDir(), file.getName()), file,
-                            true);
-                }
+        downloadMojangStuffNew();
+        if (isServer) {
+            for (File file : serverLibraries) {
+                file.mkdirs();
+                Utils.copyFile(new File(App.settings.getLibrariesDir(), file.getName()), file, true);
             }
-        } else {
-            downloadMojangStuffOld();
         }
         addPercent(5);
         if (isServer && hasJarMods()) {
@@ -1129,8 +1011,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             fireSubProgressUnknown();
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
-        if ((isNewLaunchMethod() && !isServer && (hasJarMods() && !hasForge()))
-                || !isNewLaunchMethod()) {
+        if ((!isServer && hasJarMods() && !hasForge())) {
             deleteMetaInf();
         }
         addPercent(5);

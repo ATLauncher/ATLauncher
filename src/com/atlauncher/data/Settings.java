@@ -1165,6 +1165,7 @@ public class Settings {
         if (this.instances.size() != 0) {
             this.instances = new ArrayList<Instance>();
         }
+        boolean wasConversion = false;
         if (instancesDataFile.exists()) {
             try {
                 FileInputStream in = new FileInputStream(instancesDataFile);
@@ -1175,10 +1176,15 @@ public class Settings {
                         if (obj instanceof Instance) {
                             File dir = new File(getInstancesDir(), ((Instance) obj).getSafeName());
                             if (dir.exists()) {
-                                instances.add((Instance) obj);
-                                if (isPackByName(((Instance) obj).getPackName())) {
-                                    ((Instance) obj).setRealPack(getPackByName(((Instance) obj)
-                                            .getPackName()));
+                                Instance instance = (Instance) obj;
+                                if(!instance.hasBeenConverted()){
+                                    console.log("Instance " + instance.getName() + " is being converted! This is normal and should only appear once!");
+                                    instance.convert();
+                                    wasConversion = true;
+                                }
+                                instances.add(instance);
+                                if (isPackByName(instance.getPackName())) {
+                                    instance.setRealPack(getPackByName(instance.getPackName()));
                                 }
                             }
                         }
@@ -1192,6 +1198,9 @@ public class Settings {
             } catch (Exception e) {
                 App.settings.getConsole().logStackTrace(e);
             }
+        }
+        if(wasConversion){
+            saveInstances();
         }
     }
 
@@ -1280,7 +1289,7 @@ public class Settings {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(configsDir, "minecraft.xml"));
+            Document document = builder.parse(new File(configsDir, "newminecraft.xml"));
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName(root);
             for (int i = 0; i < nodeList.getLength(); i++) {

@@ -107,18 +107,36 @@ public class NewMCLauncher {
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
         arguments.add(instance.getMainClass());
-        arguments.add("--username=" + account.getMinecraftUsername());
-        arguments.add("--session=" + session);
+        String[] loginParts = session.split(":");
+        if (instance.hasMinecraftArguments()) {
+            String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
+            for (String argument : minecraftArguments) {
+                argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
+                argument = argument.replace("${profile_name}", instance.getName());
+                argument = argument.replace("${version_name}", instance.getMinecraftVersion());
+                argument = argument.replace("${game_directory}", instance.getRootDirectory()
+                        .getAbsolutePath());
+                argument = argument.replace("${game_assets}", App.settings.getResourcesDir()
+                        .getAbsolutePath());
+                argument = argument.replace("${auth_uuid}", loginParts[2]);
+                argument = argument.replace("${auth_access_token}", loginParts[1]);
+                argument = argument.replace("${auth_session}", session);
+                arguments.add(argument);
+            }
+        } else {
+            arguments.add("--username=" + account.getMinecraftUsername());
+            arguments.add("--session=" + session);
 
-        // This is for 1.7
-        String[] parts = session.split(":");
-        arguments.add("--accessToken=" + parts[1]);
-        arguments.add("--uuid=" + parts[2]);
-        // End of stuff for 1.7
+            // This is for 1.7
+            String[] parts = session.split(":");
+            arguments.add("--accessToken=" + parts[1]);
+            arguments.add("--uuid=" + parts[2]);
+            // End of stuff for 1.7
 
-        arguments.add("--version=" + instance.getMinecraftVersion());
-        arguments.add("--gameDir=" + instance.getRootDirectory().getAbsolutePath());
-        arguments.add("--assetsDir=" + App.settings.getResourcesDir().getAbsolutePath());
+            arguments.add("--version=" + instance.getMinecraftVersion());
+            arguments.add("--gameDir=" + instance.getRootDirectory().getAbsolutePath());
+            arguments.add("--assetsDir=" + App.settings.getResourcesDir().getAbsolutePath());
+        }
         if (App.settings.startMinecraftMaximised()) {
             arguments.add("--width=" + Utils.getMaximumWindowWidth());
             arguments.add("--height=" + Utils.getMaximumWindowHeight());
@@ -126,8 +144,8 @@ public class NewMCLauncher {
             arguments.add("--width=" + App.settings.getWindowWidth());
             arguments.add("--height=" + App.settings.getWindowHeight());
         }
-        if (instance.hasMinecraftArguments()) {
-            String args = instance.getMinecraftArguments();
+        if (instance.hasExtraArguments()) {
+            String args = instance.getExtraArguments();
             if (args.contains(" ")) {
                 for (String arg : args.split(" ")) {
                     arguments.add(arg);
@@ -137,6 +155,8 @@ public class NewMCLauncher {
             }
         }
 
+        App.settings.getConsole().log(
+                "Launching Minecraft with the following arguments: " + arguments);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
