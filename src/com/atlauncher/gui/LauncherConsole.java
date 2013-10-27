@@ -40,6 +40,7 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
+import com.atlauncher.data.LogMessageType;
 
 public class LauncherConsole extends JFrame {
 
@@ -158,36 +159,33 @@ public class LauncherConsole extends JFrame {
     }
 
     public void log(String text) {
-        log(text, false);
+        log(text, LogMessageType.info, false);
     }
 
-    /**
-     * Logs text to the console window and to file
-     * 
-     * @param text
-     *            The text to show in the console and file
-     */
-    public void log(String text, boolean stackTrace) {
+    public void log(String text, boolean error) {
+        log(text, LogMessageType.error, false);
+    }
+
+    public void log(String text, LogMessageType type, boolean isMinecraft) {
         synchronized (kit) {
             Timestamp timestamp = new Timestamp(new Date().getTime());
             String time = timestamp.toString().substring(0, timestamp.toString().lastIndexOf("."));
             try {
-                if (stackTrace) {
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#EE2222\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
+                if (doc.getLength() == 0) {
+                    kit.insertHTML(doc, doc.getLength(),
+                            "<b><font color=\"#" + type.getColourCode() + "\">[" + time
+                                    + "]</font></b> " + text, 0, 0, null);
                 } else {
-                    if (doc.getLength() == 0) {
-                        kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
-                                + "]</font></b> " + text, 0, 0, null);
-                    } else {
-                        kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
-                                + "]</font></b> " + text + "<br/>", 0, 0, null);
-                    }
+                    kit.insertHTML(doc, doc.getLength(),
+                            "<b><font color=\"#" + type.getColourCode() + "\">[" + time
+                                    + "]</font></b> " + text + "<br/>", 0, 0, null);
                 }
-                PrintWriter out = new PrintWriter(new FileWriter(new File(
-                        App.settings.getBaseDir(), "ATLauncher-Log-1.txt"), true));
-                out.println("[" + time + "] " + text);
-                out.close();
+                if (!isMinecraft) {
+                    PrintWriter out = new PrintWriter(new FileWriter(new File(
+                            App.settings.getBaseDir(), "ATLauncher-Log-1.txt"), true));
+                    out.println("[" + time + "] " + text);
+                    out.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (BadLocationException e) {
@@ -205,11 +203,11 @@ public class LauncherConsole extends JFrame {
      */
     public void logStackTrace(Exception e) {
         e.printStackTrace();
-        log(e.getMessage(), true);
+        log(e.getMessage(), LogMessageType.error, false);
         StringBuilder sb = new StringBuilder();
         for (StackTraceElement element : e.getStackTrace()) {
             if (element.toString() != null) {
-                log(element.toString(), true);
+                log(element.toString(), LogMessageType.error, false);
             }
         }
     }
@@ -221,77 +219,69 @@ public class LauncherConsole extends JFrame {
      *            The text to show in the console
      */
     public void logMinecraft(String text) {
-        synchronized (kit) {
-            Timestamp timestamp = new Timestamp(new Date().getTime());
-            String time = timestamp.toString().substring(0, timestamp.toString().lastIndexOf("."));
-            try {
-                if (text.contains("[INFO] [STDERR]")) {
-                    text = text.substring(text.indexOf("[INFO] [STDERR]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else if (text.contains("[INFO]")) {
-                    text = text.substring(text.indexOf("[INFO]"));
-                    if (text.contains("CONFLICT")) {
-                        kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#EE2222\">[" + time
-                                + "]</font></b> " + text + "<br/>", 0, 0, null);
-                    } else if (text.contains("overwriting existing item")) {
-                        kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
-                                + "]</font></b> " + text + "<br/>", 0, 0, null);
-                    } else {
-                        kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
-                                + "]</font></b> " + text + "<br/>", 0, 0, null);
-                    }
-                } else if (text.contains("[WARNING]")) {
-                    text = text.substring(text.indexOf("[WARNING]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else if (text.contains("[SEVERE]")) {
-                    text = text.substring(text.indexOf("[SEVERE]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#EE2222\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else if (text.contains("[MCO Availability Checker #1/ERROR]")) {
-                    text = text.substring(text.indexOf("[MCO Availability Checker #1/ERROR]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#EE2222\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else if (text.contains("[MCO Availability Checker #1/INFO]")) {
-                    text = text.substring(text.indexOf("[MCO Availability Checker #1/INFO]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else if (text.contains("[Client thread/INFO]")) {
-                    text = text.substring(text.indexOf("[Client thread/INFO]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else if (text.contains("[Client thread/WARN]")) {
-                    text = text.substring(text.indexOf("[Client thread/WARN]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else if (text.contains("[Server thread/INFO]")) {
-                    text = text.substring(text.indexOf("[Server thread/INFO]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else if (text.contains("[Server thread/WARN]")) {
-                    text = text.substring(text.indexOf("[Server thread/WARN]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else if (text.contains("[main/INFO]")) {
-                    text = text.substring(text.indexOf("[main/INFO]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else if (text.contains("[main/WARN]")) {
-                    text = text.substring(text.indexOf("[main/WARN]"));
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#FFFF4C\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                } else {
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"#89c236\">[" + time
-                            + "]</font></b> " + text + "<br/>", 0, 0, null);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (BadLocationException e) {
-                e.printStackTrace();
+        String message = null; // The log message
+        LogMessageType type = null; // The log message type
+        if (text.contains("[INFO] [STDERR]")) {
+            message = text.substring(text.indexOf("[INFO] [STDERR]"));
+            type = LogMessageType.warning;
+        } else if (text.contains("[INFO]")) {
+            message = text.substring(text.indexOf("[INFO]"));
+            if (message.contains("CONFLICT")) {
+                type = LogMessageType.error;
+            } else if (message.contains("overwriting existing item")) {
+                type = LogMessageType.warning;
+            } else {
+                type = LogMessageType.info;
             }
-            console.setCaretPosition(console.getDocument().getLength());
+        } else if (text.contains("[WARNING]")) {
+            message = text.substring(text.indexOf("[WARNING]"));
+            type = LogMessageType.warning;
+        } else if (text.contains("WARNING:")) {
+            message = text.substring(text.indexOf("WARNING:"));
+            type = LogMessageType.warning;
+        } else if (text.contains("INFO:")) {
+            message = text.substring(text.indexOf("INFO:"));
+            type = LogMessageType.info;
+        } else if (text.contains("Exception")) {
+            message = text;
+            type = LogMessageType.error;
+        } else if (text.contains("[SEVERE]")) {
+            message = text.substring(text.indexOf("[SEVERE]"));
+            type = LogMessageType.error;
+        } else if (text.contains("[Sound Library Loader/ERROR]")) {
+            message = text.substring(text.indexOf("[Sound Library Loader/ERROR]"));
+            type = LogMessageType.error;
+        } else if (text.contains("[Sound Library Loader/INFO]")) {
+            message = text.substring(text.indexOf("[Sound Library Loader/INFO]"));
+            type = LogMessageType.info;
+        } else if (text.contains("[MCO Availability Checker #1/ERROR]")) {
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/ERROR]"));
+            type = LogMessageType.error;
+        } else if (text.contains("[MCO Availability Checker #1/INFO]")) {
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/INFO]"));
+            type = LogMessageType.info;
+        } else if (text.contains("[Client thread/INFO]")) {
+            message = text.substring(text.indexOf("[Client thread/INFO]"));
+            type = LogMessageType.info;
+        } else if (text.contains("[Client thread/WARN]")) {
+            message = text.substring(text.indexOf("[Client thread/WARN]"));
+            type = LogMessageType.warning;
+        } else if (text.contains("[Server thread/INFO]")) {
+            message = text.substring(text.indexOf("[Server thread/INFO]"));
+            type = LogMessageType.info;
+        } else if (text.contains("[Server thread/WARN]")) {
+            message = text.substring(text.indexOf("[Server thread/WARN]"));
+            type = LogMessageType.warning;
+        } else if (text.contains("[main/INFO]")) {
+            message = text.substring(text.indexOf("[main/INFO]"));
+            type = LogMessageType.info;
+        } else if (text.contains("[main/WARN]")) {
+            message = text.substring(text.indexOf("[main/WARN]"));
+        } else {
+            message = text;
+            type = LogMessageType.info;
         }
+        log(message, type, true);
     }
 
     /**
