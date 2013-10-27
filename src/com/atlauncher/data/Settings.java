@@ -1554,6 +1554,9 @@ public class Settings {
             if (pack instanceof SemiPublicPack
                     && !App.settings.canViewSemiPublicPackByCode(packCodeMD5)) {
                 if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(packCodeMD5)) {
+                    if (pack.isTester()) {
+                        return false;
+                    }
                     this.addedPacks += packCode + ",";
                     this.saveProperties();
                     this.reloadInstancesPanel();
