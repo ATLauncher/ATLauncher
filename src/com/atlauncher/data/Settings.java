@@ -93,6 +93,7 @@ public class Settings {
     // Packs, Addons, Instances and Accounts
     private ArrayList<Pack> packs = new ArrayList<Pack>(); // Packs in the Launcher
     private ArrayList<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
+    private ArrayList<MinecraftVersion> minecraftVersions = new ArrayList<MinecraftVersion>(); // Minecraft
     private ArrayList<Addon> addons = new ArrayList<Addon>(); // Addons in the Launcher
     private ArrayList<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
 
@@ -168,6 +169,7 @@ public class Settings {
         loadLanguages(); // Load the Languages available in the Launcher
         loadPacks(); // Load the Packs available in the Launcher
         loadUsers(); // Load the Testers and Allowed Players for the packs
+        loadMinecraftVersions(); // Load info about the different Minecraft versions
         loadAddons(); // Load the Addons available in the Launcher
         loadInstances(); // Load the users installed Instances
         loadAccounts(); // Load the saved Accounts
@@ -1110,6 +1112,38 @@ public class Settings {
     }
 
     /**
+     * Loads info about the different Minecraft versions
+     */
+    private void loadMinecraftVersions() {
+        if (this.minecraftVersions.size() != 0) {
+            this.minecraftVersions = new ArrayList<MinecraftVersion>();
+        }
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new File(configsDir, "minecraftversions.xml"));
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("minecraft");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    String version = element.getAttribute("version");
+                    String type = element.getAttribute("type");
+                    boolean server = Boolean.parseBoolean(element.getAttribute("server"));
+                    minecraftVersions.add(new MinecraftVersion(version, type, server));
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.getConsole().logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.getConsole().logStackTrace(e);
+        }
+    }
+
+    /**
      * Loads the Addons for use in the Launcher
      */
     private void loadAddons() {
@@ -1177,8 +1211,10 @@ public class Settings {
                             File dir = new File(getInstancesDir(), ((Instance) obj).getSafeName());
                             if (dir.exists()) {
                                 Instance instance = (Instance) obj;
-                                if(!instance.hasBeenConverted()){
-                                    console.log("Instance " + instance.getName() + " is being converted! This is normal and should only appear once!");
+                                if (!instance.hasBeenConverted()) {
+                                    console.log("Instance "
+                                            + instance.getName()
+                                            + " is being converted! This is normal and should only appear once!");
                                     instance.convert();
                                     wasConversion = true;
                                 }
@@ -1199,7 +1235,7 @@ public class Settings {
                 App.settings.getConsole().logStackTrace(e);
             }
         }
-        if(wasConversion){
+        if (wasConversion) {
             saveInstances();
         }
     }
@@ -1280,68 +1316,6 @@ public class Settings {
         accounts.remove(account);
         saveAccounts();
         reloadAccounts();
-    }
-
-    /**
-     * Gets the MD5 hash for a minecraft.jar or minecraft_server.jar
-     */
-    public String getMinecraftHash(String root, String version, String type) {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(configsDir, "newminecraft.xml"));
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName(root);
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    if (element.getAttribute("version").equalsIgnoreCase(version)) {
-                        if (type.equalsIgnoreCase("client")) {
-                            return element.getAttribute("client");
-                        } else {
-                            return element.getAttribute("server");
-                        }
-                    }
-                }
-            }
-        } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
-        }
-        return null;
-    }
-
-    /**
-     * Gets the install method for a minecraft version
-     */
-    public String getMinecraftInstallMethod(String version) {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(configsDir, "minecraft.xml"));
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("minecraft");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    if (element.getAttribute("version").equalsIgnoreCase(version)) {
-                        return element.getAttribute("installmethod");
-                    }
-                }
-            }
-        } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
-        }
-        return null;
     }
 
     /**
