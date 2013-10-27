@@ -17,7 +17,7 @@ import java.net.URLConnection;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Downloader;
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 
 public class ATLauncherDownloadable implements Runnable {
 

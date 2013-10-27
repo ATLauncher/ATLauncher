@@ -22,6 +22,7 @@ import javax.swing.JTextArea;
 import com.atlauncher.App;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.SemiPublicPack;
+import com.atlauncher.utils.Utils;
 
 /**
  * Class for displaying packs in the Pack Tab

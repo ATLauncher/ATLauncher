@@ -29,6 +29,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class NewsPanel extends JPanel {

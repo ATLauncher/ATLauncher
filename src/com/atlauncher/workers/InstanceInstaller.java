@@ -48,7 +48,7 @@ import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Type;
 import com.atlauncher.gui.ModsChooser;
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 

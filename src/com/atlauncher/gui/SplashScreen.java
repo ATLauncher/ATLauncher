@@ -17,6 +17,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JWindow;
 
+import com.atlauncher.utils.Utils;
+
 public class SplashScreen extends JWindow {
 
     private ImageIcon icon = Utils.getIconImage("/resources/SplashScreen.png");

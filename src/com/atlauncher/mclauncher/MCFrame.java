@@ -16,7 +16,7 @@ import java.net.URL;
 
 import net.minecraft.Launcher;
 
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 
 public class MCFrame extends Frame implements WindowListener {
     private Launcher appletWrap = null;

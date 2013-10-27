@@ -13,7 +13,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 
 public class Update {
 

@@ -27,7 +27,7 @@ import java.util.zip.ZipFile;
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 
 public class MCLauncher {
 

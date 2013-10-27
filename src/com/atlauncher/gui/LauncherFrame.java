@@ -22,6 +22,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {

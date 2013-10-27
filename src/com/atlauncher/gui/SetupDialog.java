@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Settings;
+import com.atlauncher.utils.Utils;
 
 public class SetupDialog extends JDialog {
 

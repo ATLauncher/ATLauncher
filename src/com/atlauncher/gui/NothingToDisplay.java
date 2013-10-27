@@ -18,6 +18,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
 
 /**
  * Class for displaying packs in the Pack Tab

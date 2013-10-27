@@ -31,6 +31,7 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PrivatePack;
+import com.atlauncher.utils.Utils;
 
 /**
  * Class for displaying instances in the Instance Tab

@@ -20,6 +20,7 @@ import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Addon;
+import com.atlauncher.utils.Utils;
 
 /**
  * Class for displaying addons in the Addons Tab

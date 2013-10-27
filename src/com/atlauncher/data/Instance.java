@@ -27,9 +27,9 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.atlauncher.App;
-import com.atlauncher.gui.Utils;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.mclauncher.NewMCLauncher;
+import com.atlauncher.utils.Utils;
 
 public class Instance implements Serializable {
 

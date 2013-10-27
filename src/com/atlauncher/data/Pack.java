@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 
 public class Pack {
 

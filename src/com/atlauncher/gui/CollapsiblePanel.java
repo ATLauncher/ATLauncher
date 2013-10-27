@@ -35,6 +35,7 @@ import javax.swing.border.TitledBorder;
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
+import com.atlauncher.utils.Utils;
 
 /**
  * The user-triggered collapsible panel containing the component (trigger) in the titled border

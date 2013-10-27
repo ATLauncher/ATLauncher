@@ -18,7 +18,7 @@ import java.net.URLConnection;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Download;
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 
 public class MojangDownloadable implements Runnable {
 

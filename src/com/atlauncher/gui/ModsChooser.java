@@ -25,6 +25,7 @@ import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Mod;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class ModsChooser extends JDialog {

@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class ConsoleBottomBar extends JPanel {

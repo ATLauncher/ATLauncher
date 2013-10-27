@@ -34,6 +34,7 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
+import com.atlauncher.utils.Utils;
 
 public class AccountPanel extends JPanel {
 

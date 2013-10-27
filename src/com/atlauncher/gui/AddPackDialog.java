@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
 
 public class AddPackDialog extends JDialog {
 

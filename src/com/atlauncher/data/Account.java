@@ -23,7 +23,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 
 public class Account implements Serializable {
 

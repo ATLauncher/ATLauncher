@@ -30,6 +30,7 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class SettingsPanel extends JPanel {

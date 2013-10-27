@@ -41,6 +41,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
 import com.atlauncher.data.LogMessageType;
+import com.atlauncher.utils.Utils;
 
 public class LauncherConsole extends JFrame {
 

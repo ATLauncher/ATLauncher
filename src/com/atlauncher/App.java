@@ -20,7 +20,7 @@ import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SetupDialog;
 import com.atlauncher.gui.SplashScreen;
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 
 public class App {
 

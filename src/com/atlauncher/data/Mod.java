@@ -13,7 +13,7 @@ import java.io.FilenameFilter;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class Mod {

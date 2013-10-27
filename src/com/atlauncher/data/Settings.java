@@ -64,7 +64,7 @@ import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.NewsPanel;
 import com.atlauncher.gui.PacksPanel;
-import com.atlauncher.gui.Utils;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.ATLauncherDownloadable;
 
 /**

@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class BottomBar extends JPanel {

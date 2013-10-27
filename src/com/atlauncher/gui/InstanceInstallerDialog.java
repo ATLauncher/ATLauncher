@@ -36,6 +36,7 @@ import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Version;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class InstanceInstallerDialog extends JDialog {
