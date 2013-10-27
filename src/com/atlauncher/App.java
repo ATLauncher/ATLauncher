@@ -7,6 +7,7 @@
 package com.atlauncher;
 
 import java.awt.Image;
+import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,6 +27,7 @@ public class App {
 
     public static Settings settings;
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void main(String[] args) {
         System.setProperty("java.net.preferIPv4Stack", "true");
         String autoLaunch = null;
@@ -68,15 +70,15 @@ public class App {
 
         settings = new Settings(); // Setup the Settings and wait for it to finish
 
-        settings.getConsole().log("ATLauncher Version: " + settings.getVersion());
-        settings.getConsole().log("Operating System: " + System.getProperty("os.name"));
-        settings.getConsole().log("Java Version: " + Utils.getJavaVersion());
+        settings.log("ATLauncher Version: " + settings.getVersion());
+        settings.log("Operating System: " + System.getProperty("os.name"));
+        settings.log("Java Version: " + Utils.getJavaVersion(), LogMessageType.info, false);
         if (!Utils.getJavaHome().equalsIgnoreCase(settings.getJavaPath())) {
-            settings.getConsole().log("Custom Java Path Set!", LogMessageType.warning, false);
+            settings.log("Custom Java Path Set!", LogMessageType.warning, false);
         }
-        settings.getConsole().log("Java Path: " + settings.getJavaPath());
-        settings.getConsole().log("64 Bit Java: " + Utils.is64Bit());
-        settings.getConsole().log("Launcher Directory: " + settings.getBaseDir());
+        settings.log("Java Path: " + settings.getJavaPath());
+        settings.log("64 Bit Java: " + Utils.is64Bit());
+        settings.log("Launcher Directory: " + settings.getBaseDir());
 
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -105,14 +107,14 @@ public class App {
             App.settings.getConsole().setVisible(true);
         }
 
-        settings.getConsole().log("Showing splash screen and loading everything");
+        settings.log("Showing splash screen and loading everything");
         SplashScreen ss = new SplashScreen(); // Show Splash Screen
         settings.loadEverything(); // Loads everything that needs to be loaded
         ss.close(); // Close the Splash Screen
-        settings.getConsole().log("Launcher finished loading everything");
+        settings.log("Launcher finished loading everything");
 
         if (settings.isFirstTimeRun()) {
-            settings.getConsole().log("Launcher not setup. Loading Setup Dialog");
+            settings.log("Launcher not setup. Loading Setup Dialog", LogMessageType.warning, false);
             new SetupDialog(settings);
         }
 
@@ -121,7 +123,7 @@ public class App {
         if (autoLaunch != null) {
             if (settings.isInstanceBySafeName(autoLaunch)) {
                 Instance instance = settings.getInstanceBySafeName(autoLaunch);
-                settings.getConsole().log("Opening Instance " + instance.getName());
+                settings.log("Opening Instance " + instance.getName());
                 instance.launch();
                 open = false;
             }
@@ -129,5 +131,4 @@ public class App {
 
         new LauncherFrame(open); // Open the Launcher
     }
-
 }

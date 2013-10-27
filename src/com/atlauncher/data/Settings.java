@@ -121,7 +121,9 @@ public class Settings {
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private String version = "%VERSION%"; // Version of the Launcher
+    @SuppressWarnings("unused")
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
+    @SuppressWarnings("unused")
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
 
     public Settings() {
@@ -179,6 +181,7 @@ public class Settings {
         console.setupLanguage(); // Setup language on the console
     }
 
+    @SuppressWarnings("unchecked")
     public void checkMojangStatus() {
         JSONParser parser = new JSONParser();
         try {
@@ -198,7 +201,7 @@ public class Settings {
                 }
             }
         } catch (ParseException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -216,7 +219,7 @@ public class Settings {
                 toget = "jar";
             }
             File newFile = new File(getTempDir(), saveAs);
-            console.log("Downloading Launcher Update");
+            log("Downloading Launcher Update");
             new Downloader(getFileURL("ATLauncher." + toget), newFile.getAbsolutePath()).run(); // Download
                                                                                                 // it
             runUpdate(path, newFile.getAbsolutePath());
@@ -243,12 +246,12 @@ public class Settings {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(arguments);
 
-        console.log("Running Launcher Update");
+        log("Running launcher update with command " + arguments);
 
         try {
             processBuilder.start();
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
 
         System.exit(0);
@@ -305,8 +308,8 @@ public class Settings {
                             if (getVersion().equalsIgnoreCase("%VERSION%")) {
                                 continue; // Don't even think about updating my unbuilt copy
                             } else {
-                                console.log("Update to Launcher found. Current version: "
-                                        + this.version + ", New version: " + version);
+                                log("Update to Launcher found. Current version: " + this.version
+                                        + ", New version: " + version);
                                 downloadUpdate();
                             }
                         } else {
@@ -401,8 +404,8 @@ public class Settings {
                             if (getVersion().equalsIgnoreCase("%VERSION%")) {
                                 continue; // Don't even think about updating my unbuilt copy
                             } else {
-                                console.log("Update to Launcher found. Current version: "
-                                        + this.version + ", New version: " + version);
+                                log("Update to Launcher found. Current version: " + this.version
+                                        + ", New version: " + version);
                                 downloadUpdate();
                             }
                         } else {
@@ -431,7 +434,7 @@ public class Settings {
     }
 
     public void reloadLauncherData() {
-        console.log("Updating Launcher Data");
+        log("Updating Launcher Data");
         final JDialog dialog = new JDialog(this.parent, ModalityType.APPLICATION_MODAL);
         dialog.setSize(300, 100);
         dialog.setTitle("Updating Launcher");
@@ -678,7 +681,7 @@ public class Settings {
                 this.server = getServerByName(serv);
                 this.originalServer = this.server;
             } else {
-                console.log("Server " + serv + " is invalid");
+                log("Server " + serv + " is invalid", LogMessageType.warning, false);
                 this.server = getServerByName("Auto"); // Server not found, use default of Auto
                 this.originalServer = this.server;
             }
@@ -733,7 +736,8 @@ public class Settings {
             if (isLanguageByName(lang)) {
                 this.language = getLanguageByName(lang);
             } else {
-                getConsole().log("Invalid language " + lang + ". Defaulting to English!", true);
+                log("Invalid language " + lang + ". Defaulting to English!",
+                        LogMessageType.warning, false);
                 this.language = getLanguageByName("English"); // Language not found, use default
             }
 
@@ -745,9 +749,8 @@ public class Settings {
                     && !this.forgeLoggingLevel.equalsIgnoreCase("FINE")
                     && !this.forgeLoggingLevel.equalsIgnoreCase("FINER")
                     && !this.forgeLoggingLevel.equalsIgnoreCase("FINEST")) {
-                getConsole().log(
-                        "Invalid Forge Logging level " + this.forgeLoggingLevel
-                                + ". Defaulting to INFO!", true);
+                log("Invalid Forge Logging level " + this.forgeLoggingLevel
+                        + ". Defaulting to INFO!", LogMessageType.warning, false);
                 this.forgeLoggingLevel = "INFO";
             }
 
@@ -755,9 +758,9 @@ public class Settings {
                 this.ram = Integer.parseInt(properties.getProperty("ram",
                         ((Utils.getMaximumRam() / 1000) * 512) + ""));
                 if (this.ram > Utils.getMaximumRam()) {
-                    getConsole().log(
-                            "Tried to allocate " + this.ram + "MB of Ram but only "
-                                    + Utils.getMaximumRam() + " is available to use!", true);
+                    log("Tried to allocate " + this.ram + "MB of Ram but only "
+                            + Utils.getMaximumRam() + " is available to use!",
+                            LogMessageType.warning, false);
                     this.ram = ((Utils.getMaximumRam() / 1000) * 512); // User tried to allocate
                                                                        // too much ram, set it
                                                                        // back to half
@@ -765,9 +768,9 @@ public class Settings {
             } else {
                 this.ram = Integer.parseInt(properties.getProperty("ram", "1024"));
                 if (this.ram > Utils.getMaximumRam()) {
-                    getConsole().log(
-                            "Tried to allocate " + this.ram + "MB of Ram but only "
-                                    + Utils.getMaximumRam() + " is available to use!", true);
+                    log("Tried to allocate " + this.ram + "MB of Ram but only "
+                            + Utils.getMaximumRam() + " is available to use!",
+                            LogMessageType.warning, false);
                     this.ram = 1024; // User tried to allocate too much ram, set it back to 1GB
                 }
             }
@@ -776,20 +779,18 @@ public class Settings {
 
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             if (this.windowWidth > Utils.getMaximumWindowWidth()) {
-                getConsole().log(
-                        "Tried to set window width to " + this.windowWidth
-                                + " pixels but the maximum is " + Utils.getMaximumWindowWidth()
-                                + " pixels!", true);
+                log("Tried to set window width to " + this.windowWidth
+                        + " pixels but the maximum is " + Utils.getMaximumWindowWidth()
+                        + " pixels!", LogMessageType.warning, false);
                 this.windowWidth = Utils.getMaximumWindowWidth(); // User tried to make screen size
                                                                   // wider than they have
             }
 
             this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
             if (this.windowHeight > Utils.getMaximumWindowHeight()) {
-                getConsole().log(
-                        "Tried to set window height to " + this.windowHeight
-                                + " pixels but the maximum is " + Utils.getMaximumWindowHeight()
-                                + " pixels!", true);
+                log("Tried to set window height to " + this.windowHeight
+                        + " pixels but the maximum is " + Utils.getMaximumWindowHeight()
+                        + " pixels!", LogMessageType.warning, false);
                 this.windowHeight = Utils.getMaximumWindowHeight(); // User tried to make screen
                                                                     // size wider than they have
             }
@@ -817,18 +818,18 @@ public class Settings {
                 if (isAccountByName(lastAccountTemp)) {
                     this.account = getAccountByName(lastAccountTemp);
                 } else {
-                    getConsole().log(
-                            "The Account " + lastAccountTemp
-                                    + " is no longer available. Logging out of Account!", true);
+                    log("The Account " + lastAccountTemp
+                            + " is no longer available. Logging out of Account!",
+                            LogMessageType.warning, false);
                     this.account = null; // Account not found
                 }
             }
 
             this.addedPacks = properties.getProperty("addedpacks", "");
         } catch (FileNotFoundException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -863,9 +864,9 @@ public class Settings {
             properties.setProperty("addedpacks", this.addedPacks);
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -877,14 +878,14 @@ public class Settings {
      */
     public void switchAccount(Account account) {
         if (account == null) {
-            getConsole().log("Logging out of account");
+            log("Logging out of account");
             this.account = null;
         } else {
             if (account.isReal()) {
-                getConsole().log("Changed account to " + account);
+                log("Changed account to " + account);
                 this.account = account;
             } else {
-                getConsole().log("Logging out of account");
+                log("Logging out of account");
                 this.account = null;
             }
         }
@@ -916,9 +917,9 @@ public class Settings {
             properties.setProperty("addedpacks", this.addedPacks);
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -936,9 +937,8 @@ public class Settings {
         this.server.disableServer(); // Disable the server
         for (Server server : this.servers) {
             if (!server.isDisabled()) {
-                getConsole().log(
-                        this.server.getName() + " Server Not Available Switching To "
-                                + server.getName(), true);
+                log("Server" + this.server.getName() + " Not Available! Switching To "
+                        + server.getName(), LogMessageType.warning, true);
                 this.server = server; // Setup next available server
                 return true;
             }
@@ -1110,11 +1110,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -1142,11 +1142,11 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
     }
 
@@ -1181,7 +1181,8 @@ public class Settings {
                     if (pack != null) {
                         forPack = pack;
                     } else {
-                        getConsole().log("Addon " + name + " is not available for any packs!");
+                        log("Addon " + name + " is not available for any packs!",
+                                LogMessageType.warning, false);
                         continue;
                     }
                     Addon addon = new Addon(id, name, versions, description, forPack);
@@ -1189,13 +1190,13 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         } catch (InvalidPack e) {
-            App.settings.getConsole().logStackTrace(e);
+            log(e.getMessage(), LogMessageType.error, false);
         }
     }
 
@@ -1219,9 +1220,10 @@ public class Settings {
                             if (dir.exists()) {
                                 Instance instance = (Instance) obj;
                                 if (!instance.hasBeenConverted()) {
-                                    console.log("Instance "
+                                    log("Instance "
                                             + instance.getName()
-                                            + " is being converted! This is normal and should only appear once!");
+                                            + " is being converted! This is normal and should only appear once!",
+                                            LogMessageType.warning, false);
                                     instance.convert();
                                     wasConversion = true;
                                 }
@@ -1473,12 +1475,12 @@ public class Settings {
             while ((line = rd.readLine()) != null) {
                 response += line;
                 if (debug) {
-                    App.settings.getConsole().log("API Call Response: " + line);
+                    log("API Call Response: " + line);
                 }
             }
             wr.close();
         } catch (Exception e) {
-            App.settings.getConsole().logStackTrace(e);
+            this.console.logStackTrace(e);
         }
         return response;
     }
@@ -1996,6 +1998,13 @@ public class Settings {
     }
 
     /**
+     * Log a non minecraft related info message to the console
+     */
+    public void log(String message) {
+        this.console.log(message, LogMessageType.info, false);
+    }
+
+    /**
      * Log something to the console
      */
     public void log(String message, LogMessageType type, boolean isMinecraft) {
@@ -2004,16 +2013,16 @@ public class Settings {
 
     public void showKillMinecraft(Process minecraft) {
         this.minecraftProcess = minecraft;
-        getConsole().showKillMinecraft();
+        this.console.showKillMinecraft();
     }
 
     public void hideKillMinecraft() {
-        getConsole().hideKillMinecraft();
+        this.console.hideKillMinecraft();
     }
 
     public void killMinecraft() {
         if (this.minecraftProcess != null) {
-            getConsole().log("Killing Minecraft");
+            log("Killing Minecraft", LogMessageType.error, false);
             this.minecraftProcess.destroy();
             this.minecraftProcess = null;
         }
