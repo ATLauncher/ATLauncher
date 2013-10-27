@@ -57,6 +57,7 @@ import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
 import com.atlauncher.Update;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.BottomBar;
 import com.atlauncher.gui.InstancesPanel;
@@ -1516,6 +1517,15 @@ public class Settings {
             }
         }
         return false;
+    }
+
+    public MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
+        for (MinecraftVersion minecraftVersion : minecraftVersions) {
+            if (minecraftVersion.getVersion().equalsIgnoreCase(version)) {
+                return minecraftVersion;
+            }
+        }
+        throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
     }
 
     public boolean semiPublicPackExistsFromCode(String packCode) {

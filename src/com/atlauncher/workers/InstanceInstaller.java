@@ -43,6 +43,7 @@ import com.atlauncher.data.DecompType;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloader;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Type;
@@ -56,7 +57,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String version;
     private boolean isReinstall;
     private boolean isServer;
-    private String minecraftVersion;
+    private MinecraftVersion minecraftVersion;
     private String jarOrder;
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
     private boolean savedZans = false; // If Zans Minimap stuff was found and saved
@@ -84,7 +85,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private ArrayList<File> serverLibraries;
 
     public InstanceInstaller(String instanceName, Pack pack, String version,
-            String minecraftVersion, boolean isReinstall, boolean isServer) {
+            MinecraftVersion minecraftVersion, boolean isReinstall, boolean isServer) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
@@ -891,7 +892,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.allMods;
     }
 
-    public String getMinecraftVersion() {
+    public MinecraftVersion getMinecraftVersion() {
         return this.minecraftVersion;
     }
 
@@ -906,7 +907,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public String getLibrariesNeeded() {
         return this.librariesNeeded;
     }
-    
+
     public String getExtraArguments() {
         return this.extraArguments;
     }

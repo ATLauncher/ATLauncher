@@ -446,15 +446,6 @@ public class Pack {
         return this.createServer;
     }
 
-    public boolean isNewInstallMethod(String version) {
-        if (App.settings.getMinecraftInstallMethod(getMinecraftVersion(version)).equalsIgnoreCase(
-                "new")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public boolean isLatestVersionNoUpdate() {
         for (String version : noUpdateVersions) {
             if (getLatestVersion().equalsIgnoreCase(version)) {

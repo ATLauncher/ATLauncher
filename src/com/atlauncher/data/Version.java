@@ -10,28 +10,28 @@ public class Version {
 
     private boolean isDev;
     private String version;
-    private String minecraftVersion;
-    
-    public Version(boolean isDev, String version, String minecraftVersion) {
+    private MinecraftVersion minecraftVersion;
+
+    public Version(boolean isDev, String version, MinecraftVersion minecraftVersion) {
         this.isDev = isDev;
         this.version = version;
         this.minecraftVersion = minecraftVersion;
     }
-    
+
     public boolean isDevVersion() {
         return this.isDev;
     }
-    
+
     public String getVersion() {
         return this.version;
     }
-    
-    public String getMinecraftVersion() {
+
+    public MinecraftVersion getMinecraftVersion() {
         return this.minecraftVersion;
     }
-    
+
     public String toString() {
-        return this.version + " (Minecraft " + this.minecraftVersion + ")";
+        return this.version + " (Minecraft " + this.minecraftVersion.getVersion() + ")";
     }
-    
+
 }

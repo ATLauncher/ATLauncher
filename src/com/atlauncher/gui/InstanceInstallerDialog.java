@@ -32,8 +32,10 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Version;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class InstanceInstallerDialog extends JDialog {
@@ -127,12 +129,25 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown = new JComboBox<Version>();
         if (pack.isTester()) {
             for (int i = 0; i < pack.getDevVersionCount(); i++) {
-                versions.add(new Version(true, pack.getDevVersion(i), pack
-                        .getDevMinecraftVersion(i)));
+                MinecraftVersion mcVersion;
+                try {
+                    mcVersion = App.settings.getMinecraftVersion(pack.getDevMinecraftVersion(i));
+                } catch (InvalidMinecraftVersion e1) {
+                    App.settings.getConsole().log(e1.getMessage(), true);
+                    continue;
+                }
+                versions.add(new Version(true, pack.getDevVersion(i), mcVersion));
             }
         }
         for (int i = 0; i < pack.getVersionCount(); i++) {
-            versions.add(new Version(false, pack.getVersion(i), pack.getMinecraftVersion(i)));
+            MinecraftVersion mcVersion;
+            try {
+                mcVersion = App.settings.getMinecraftVersion(pack.getMinecraftVersion(i));
+            } catch (InvalidMinecraftVersion e1) {
+                App.settings.getConsole().log(e1.getMessage(), true);
+                continue;
+            }
+            versions.add(new Version(false, pack.getVersion(i), mcVersion));
         }
         for (Version version : versions) {
             versionsDropDown.addItem(version);
@@ -319,7 +334,8 @@ public class InstanceInstallerDialog extends JDialog {
                                         + App.settings.getLocalizedString("common.installed");
                                 if (isReinstall) {
                                     instance.setVersion(version.getVersion());
-                                    instance.setMinecraftVersion(this.getMinecraftVersion());
+                                    instance.setMinecraftVersion(this.getMinecraftVersion()
+                                            .getVersion());
                                     instance.setModsInstalled(this.getModsInstalled());
                                     instance.setJarOrder(this.getJarOrder());
                                     instance.setIsNewLaunchMethod(true);
@@ -341,8 +357,8 @@ public class InstanceInstallerDialog extends JDialog {
                                             new Instance(instanceNameField.getText(), pack
                                                     .getName(), pack, installForMe.isSelected(),
                                                     version.getVersion(), this
-                                                            .getMinecraftVersion(), this
-                                                            .getMemory(), this.getPermGen(), this
+                                                            .getMinecraftVersion().getVersion(),
+                                                    this.getMemory(), this.getPermGen(), this
                                                             .getModsInstalled(),
                                                     this.getJarOrder(), this.getLibrariesNeeded(),
                                                     this.getExtraArguments(), this
