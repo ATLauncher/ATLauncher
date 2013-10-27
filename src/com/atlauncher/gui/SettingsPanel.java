@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -57,6 +58,11 @@ public class SettingsPanel extends JPanel {
     private JLabel windowSizeLabel;
     private JTextField widthField;
     private JTextField heightField;
+
+    private JPanel javaPathPanel;
+    private JLabel javaPathLabel;
+    private JTextField javaPath;
+    private JButton javaPathResetButton;
 
     private JLabel javaParametersLabel;
     private JTextField javaParameters;
@@ -304,10 +310,52 @@ public class SettingsPanel extends JPanel {
         windowSizePanel.add(new JLabel("x"));
         windowSizePanel.add(heightField);
         topPanel.add(windowSizePanel, gbc);
-        windowSizePanel.setPreferredSize(new Dimension(137,
-                windowSizePanel.getPreferredSize().height));
         windowSizeLabel.setPreferredSize(new Dimension(windowSizeLabel.getPreferredSize().width,
                 windowSizePanel.getPreferredSize().height));
+
+        // Java Path
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        javaPathLabel = new JLabel(App.settings.getLocalizedString("settings.javapath") + ":");
+        javaPathLabel.setIcon(helpIcon);
+        javaPathLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html><center>"
+                                + App.settings.getLocalizedString("settings.javapathhelp", "<br/>")
+                                + "</center></html>",
+                                App.settings.getLocalizedString("settings.help"),
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
+        topPanel.add(javaPathLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        javaPathPanel = new JPanel();
+        javaPathPanel.setLayout(new FlowLayout());
+        javaPath = new JTextField(20);
+        javaPath.setText(App.settings.getJavaPath());
+        javaPathResetButton = new JButton(App.settings.getLocalizedString("settings.javapathreset"));
+        javaPathResetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                javaPath.setText(Utils.getJavaHome());
+            }
+        });
+        javaPathPanel.add(javaPath);
+        javaPathPanel.add(javaPathResetButton);
+        topPanel.add(javaPathPanel, gbc);
+        javaPathLabel.setPreferredSize(new Dimension(javaPathLabel.getPreferredSize().width,
+                javaPathPanel.getPreferredSize().height));
 
         // Java Paramaters
 
@@ -510,6 +558,14 @@ public class SettingsPanel extends JPanel {
         saveButton = new JButton(App.settings.getLocalizedString("common.save"));
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
+                File jPath = new File(javaPath.getText(), "bin");
+                if (!jPath.exists()) {
+                    JOptionPane.showMessageDialog(App.settings.getParent(), "<html><center>"
+                            + App.settings.getLocalizedString("settings.javapathincorrect", "<br/><br/>")
+                            + "</center></html>", App.settings.getLocalizedString("settings.help"),
+                            JOptionPane.PLAIN_MESSAGE);
+                    return;
+                }
                 boolean reboot = false;
                 boolean reloadPacksPanel = false;
                 if (language.getSelectedItem() != App.settings.getLanguage()) {
@@ -529,6 +585,7 @@ public class SettingsPanel extends JPanel {
                         "[^0-9]", "")));
                 App.settings.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll(
                         "[^0-9]", "")));
+                App.settings.setJavaPath(javaPath.getText());
                 App.settings.setJavaParameters(javaParameters.getText());
                 App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
                 App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
@@ -556,5 +613,4 @@ public class SettingsPanel extends JPanel {
         add(topPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
     }
-
 }

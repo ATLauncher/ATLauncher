@@ -83,6 +83,7 @@ public class Settings {
     private int windowWidth; // Width of the Minecraft window
     private int windowHeight; // Height of the Minecraft window
     private boolean maximiseMinecraft; // If Minecraft should start maximised
+    private String javaPath; // Users path to Java
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
     private boolean sortPacksAlphabetically; // If to sort packs default alphabetically
     private boolean enableConsole; // If to show the console by default
@@ -128,7 +129,7 @@ public class Settings {
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
         rotateLogFiles(); // Rotates the log files
-        loadConsoleProperty(); // Get users Console preference
+        loadStartingProperties(); // Get users Console preference and Java Path
     }
 
     public void setupFiles() {
@@ -691,7 +692,7 @@ public class Settings {
     /**
      * Load the users Console preference from file
      */
-    public void loadConsoleProperty() {
+    public void loadStartingProperties() {
         try {
             if (!propertiesFile.exists()) {
                 propertiesFile.createNewFile();
@@ -711,6 +712,7 @@ public class Settings {
             this.properties.load(new FileInputStream(propertiesFile));
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
+            this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
         } catch (FileNotFoundException e) {
             App.settings.getConsole().logStackTrace(e);
         } catch (IOException e) {
@@ -792,6 +794,8 @@ public class Settings {
                                                                     // size wider than they have
             }
 
+            this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+
             this.javaParamaters = properties.getProperty("javaparameters", "");
 
             this.maximiseMinecraft = Boolean.parseBoolean(properties.getProperty(
@@ -841,6 +845,7 @@ public class Settings {
             properties.setProperty("permGen", this.permGen + "");
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
+            properties.setProperty("javapath", this.javaPath);
             properties.setProperty("javaparameters", this.javaParamaters);
             properties
                     .setProperty("maximiseminecraft", (this.maximiseMinecraft) ? "true" : "false");
@@ -893,6 +898,7 @@ public class Settings {
             properties.setProperty("ram", this.ram + "");
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
+            properties.setProperty("javapath", this.javaPath);
             properties.setProperty("javaparameters", this.javaParamaters);
             properties
                     .setProperty("maximiseminecraft", (this.maximiseMinecraft) ? "true" : "false");
@@ -2099,6 +2105,14 @@ public class Settings {
 
     public void setWindowHeight(int windowHeight) {
         this.windowHeight = windowHeight;
+    }
+
+    public String getJavaPath() {
+        return this.javaPath;
+    }
+
+    public void setJavaPath(String javaPath) {
+        this.javaPath = javaPath;
     }
 
     public String getJavaParameters() {

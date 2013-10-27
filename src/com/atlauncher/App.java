@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SetupDialog;
@@ -26,7 +27,7 @@ public class App {
     public static Settings settings;
 
     public static void main(String[] args) {
-        System.setProperty("java.net.preferIPv4Stack" , "true");
+        System.setProperty("java.net.preferIPv4Stack", "true");
         String autoLaunch = null;
         if (args != null) {
             for (String arg : args) {
@@ -70,6 +71,10 @@ public class App {
         settings.getConsole().log("ATLauncher Version: " + settings.getVersion());
         settings.getConsole().log("Operating System: " + System.getProperty("os.name"));
         settings.getConsole().log("Java Version: " + Utils.getJavaVersion());
+        if (!Utils.getJavaHome().equalsIgnoreCase(settings.getJavaPath())) {
+            settings.getConsole().log("Custom Java Path Set!", LogMessageType.warning, false);
+        }
+        settings.getConsole().log("Java Path: " + settings.getJavaPath());
         settings.getConsole().log("64 Bit Java: " + Utils.is64Bit());
         settings.getConsole().log("Launcher Directory: " + settings.getBaseDir());
 

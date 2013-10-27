@@ -213,6 +213,10 @@ public class Utils {
             return "linux";
         }
     }
+    
+    public static String getJavaHome() {
+        return System.getProperty("java.home");
+    }
 
     public static String getJavaVersion() {
         return System.getProperty("java.runtime.version");

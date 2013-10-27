@@ -70,8 +70,7 @@ public class MCLauncher {
 
         List<String> arguments = new ArrayList<String>();
 
-        String path = System.getProperty("java.home") + File.separator + "bin" + File.separator
-                + "java";
+        String path = App.settings.getJavaPath() + File.separator + "bin" + File.separator + "java";
         if (Utils.isWindows()) {
             path += "w";
         }
