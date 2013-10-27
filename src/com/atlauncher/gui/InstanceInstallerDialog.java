@@ -133,7 +133,7 @@ public class InstanceInstallerDialog extends JDialog {
                 try {
                     mcVersion = App.settings.getMinecraftVersion(pack.getDevMinecraftVersion(i));
                 } catch (InvalidMinecraftVersion e1) {
-                    App.settings.getConsole().log(e1.getMessage(), true);
+                    App.settings.getConsole().logStackTrace(e1);
                     continue;
                 }
                 versions.add(new Version(true, pack.getDevVersion(i), mcVersion));

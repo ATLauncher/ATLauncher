@@ -25,6 +25,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.Utils;
 
 public class Pack {
@@ -443,7 +444,32 @@ public class Pack {
     }
 
     public boolean canCreateServer() {
-        return this.createServer;
+        if (!this.createServer) {
+            return false;
+        }
+        if (isTester()) {
+            for (String version : devMinecraftVersions) {
+                try {
+                    if (App.settings.getMinecraftVersion(version).canCreateServer()) {
+                        return true; // Can make a server
+                    }
+                } catch (InvalidMinecraftVersion e) {
+                    App.settings.getConsole().log(e.getMessage(), true);
+                    continue;
+                }
+            }
+        }
+        for (String version : minecraftVersions) {
+            try {
+                if (App.settings.getMinecraftVersion(version).canCreateServer()) {
+                    return true; // Can make a server
+                }
+            } catch (InvalidMinecraftVersion e) {
+                App.settings.getConsole().log(e.getMessage(), true);
+                continue;
+            }
+        }
+        return false; // Cannot create a server of this pack
     }
 
     public boolean isLatestVersionNoUpdate() {
