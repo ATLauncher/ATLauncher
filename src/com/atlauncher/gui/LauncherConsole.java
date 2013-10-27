@@ -158,10 +158,12 @@ public class LauncherConsole extends JFrame {
         UIManager.put("info", BASE_COLOR);
     }
 
+    @Deprecated
     public void log(String text) {
         log(text, LogMessageType.info, false);
     }
 
+    @Deprecated
     public void log(String text, boolean error) {
         log(text, LogMessageType.error, false);
     }

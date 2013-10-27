@@ -1990,8 +1990,16 @@ public class Settings {
      * 
      * @return The Launcher's Console instance
      */
+    @Deprecated
     public LauncherConsole getConsole() {
         return this.console;
+    }
+
+    /**
+     * Log something to the console
+     */
+    public void log(String message, LogMessageType type, boolean isMinecraft) {
+        this.console.log(message, type, isMinecraft);
     }
 
     public void showKillMinecraft(Process minecraft) {
