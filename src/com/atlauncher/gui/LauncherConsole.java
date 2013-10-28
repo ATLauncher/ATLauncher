@@ -207,10 +207,12 @@ public class LauncherConsole extends JFrame {
     public void logStackTrace(Exception e) {
         e.printStackTrace();
         log(e.getMessage(), LogMessageType.error, false);
-        StringBuilder sb = new StringBuilder();
-        for (StackTraceElement element : e.getStackTrace()) {
-            if (element.toString() != null) {
-                log(element.toString(), LogMessageType.error, false);
+        if (App.settings.enableDebugConsole()) {
+            StringBuilder sb = new StringBuilder();
+            for (StackTraceElement element : e.getStackTrace()) {
+                if (element.toString() != null) {
+                    log(element.toString(), LogMessageType.error, false);
+                }
             }
         }
     }

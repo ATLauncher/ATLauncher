@@ -87,6 +87,7 @@ public class Settings {
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
     private boolean sortPacksAlphabetically; // If to sort packs default alphabetically
     private boolean enableConsole; // If to show the console by default
+    private boolean enableDebugConsole; // If to enable debugging console
     private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
     private Account account; // Account using the Launcher
@@ -715,6 +716,8 @@ public class Settings {
             this.properties.load(new FileInputStream(propertiesFile));
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
+            this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty("enabledebugconsole",
+                    "false"));
             this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
         } catch (FileNotFoundException e) {
             this.console.logStackTrace(e);
@@ -808,6 +811,9 @@ public class Settings {
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
 
+            this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty("enabledebugconsole",
+                    "false"));
+
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty(
                     "enableleaderboards", "false"));
 
@@ -853,6 +859,7 @@ public class Settings {
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
+            properties.setProperty("enabledebugconsole", (this.enableDebugConsole) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
@@ -906,6 +913,7 @@ public class Settings {
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
+            properties.setProperty("enabledebugconsole", (this.enableDebugConsole) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
@@ -2183,6 +2191,16 @@ public class Settings {
         return this.enableConsole;
     }
 
+
+    /**
+     * If the user has selected to see debug messages in the console
+     * 
+     * @return true if yes, false if not
+     */
+    public boolean enableDebugConsole() {
+        return this.enableDebugConsole;
+    }
+
     /**
      * Set the Launcher console's visibility
      * 
@@ -2192,9 +2210,13 @@ public class Settings {
     public void setConsoleVisible(boolean visible) {
         this.console.setVisible(visible);
     }
-
+    
     public void setEnableConsole(boolean enableConsole) {
         this.enableConsole = enableConsole;
+    }
+
+    public void setEnableDebugConsole(boolean enableDebugConsole) {
+        this.enableDebugConsole = enableDebugConsole;
     }
 
     public boolean enableLeaderboards() {

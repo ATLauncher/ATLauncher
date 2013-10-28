@@ -77,6 +77,9 @@ public class SettingsPanel extends JPanel {
     private JLabel enableConsoleLabel;
     private JCheckBox enableConsole;
 
+    private JLabel enableDebugConsoleLabel;
+    private JCheckBox enableDebugConsole;
+
     private JLabel enableLeaderboardsLabel;
     private JCheckBox enableLeaderboards;
 
@@ -487,6 +490,39 @@ public class SettingsPanel extends JPanel {
         }
         topPanel.add(enableConsole, gbc);
 
+        // Enable Debug Console
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        enableDebugConsoleLabel = new JLabel(
+                App.settings.getLocalizedString("settings.debugconsole") + "?");
+        enableDebugConsoleLabel.setIcon(helpIcon);
+        enableDebugConsoleLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getX() < 16 && e.getY() < 16) {
+                        JOptionPane.showMessageDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("settings.debugconsolehelp"),
+                                App.settings.getLocalizedString("settings.help"),
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
+        topPanel.add(enableDebugConsoleLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        enableDebugConsole = new JCheckBox();
+        if (App.settings.enableDebugConsole()) {
+            enableDebugConsole.setSelected(true);
+        }
+        topPanel.add(enableDebugConsole, gbc);
+
         // Enable Leaderboards
 
         gbc.gridx = 0;
@@ -594,10 +630,11 @@ public class SettingsPanel extends JPanel {
                 App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
                 App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
                 App.settings.setEnableConsole(enableConsole.isSelected());
+                App.settings.setEnableDebugConsole(enableDebugConsole.isSelected());
                 App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
                 App.settings.setEnableLogs(enableLogs.isSelected());
                 App.settings.saveProperties();
-                App.settings.getConsole().log("Settings Saved!");
+                App.settings.log("Settings Saved!");
                 if (reboot) {
                     App.settings.restartLauncher();
                 }
