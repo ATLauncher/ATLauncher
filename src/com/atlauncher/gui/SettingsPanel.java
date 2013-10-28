@@ -327,7 +327,7 @@ public class SettingsPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
+                    if (e.getX() < 16 && (e.getY() > 10 && e.getY() < 26)) {
                         JOptionPane.showMessageDialog(App.settings.getParent(), "<html><center>"
                                 + App.settings.getLocalizedString("settings.javapathhelp", "<br/>")
                                 + "</center></html>",
@@ -561,9 +561,12 @@ public class SettingsPanel extends JPanel {
             public void actionPerformed(ActionEvent arg0) {
                 File jPath = new File(javaPath.getText(), "bin");
                 if (!jPath.exists()) {
-                    JOptionPane.showMessageDialog(App.settings.getParent(), "<html><center>"
-                            + App.settings.getLocalizedString("settings.javapathincorrect", "<br/><br/>")
-                            + "</center></html>", App.settings.getLocalizedString("settings.help"),
+                    JOptionPane.showMessageDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString("settings.javapathincorrect",
+                                            "<br/><br/>") + "</center></html>",
+                            App.settings.getLocalizedString("settings.help"),
                             JOptionPane.PLAIN_MESSAGE);
                     return;
                 }
