@@ -59,6 +59,7 @@ public class SettingsPanel extends JPanel {
     private JLabel windowSizeLabel;
     private JTextField widthField;
     private JTextField heightField;
+    private JComboBox<String> commonScreenSizes;
 
     private JPanel javaPathPanel;
     private JLabel javaPathLabel;
@@ -310,9 +311,36 @@ public class SettingsPanel extends JPanel {
         widthField.setText(App.settings.getWindowWidth() + "");
         heightField = new JTextField(4);
         heightField.setText(App.settings.getWindowHeight() + "");
+        commonScreenSizes = new JComboBox<String>();
+        commonScreenSizes.addItem("Select An Option");
+        commonScreenSizes.addItem("854x480");
+        if (Utils.getMaximumWindowWidth() >= 1280 && Utils.getMaximumWindowHeight() >= 720) {
+            commonScreenSizes.addItem("1280x720");
+        }
+        if (Utils.getMaximumWindowWidth() >= 1600 && Utils.getMaximumWindowHeight() >= 900) {
+            commonScreenSizes.addItem("1600x900");
+        }
+        if (Utils.getMaximumWindowWidth() >= 1920 && Utils.getMaximumWindowHeight() >= 1080) {
+            commonScreenSizes.addItem("1920x1080");
+        }
+        commonScreenSizes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selected = (String) commonScreenSizes.getSelectedItem();
+                if (selected.contains("x")) {
+                    String[] parts = selected.split("x");
+                    widthField.setText(parts[0]);
+                    heightField.setText(parts[1]);
+                }
+            }
+        });
+        commonScreenSizes.setPreferredSize(new Dimension(
+                commonScreenSizes.getPreferredSize().width + 10, commonScreenSizes
+                        .getPreferredSize().height));
         windowSizePanel.add(widthField);
         windowSizePanel.add(new JLabel("x"));
         windowSizePanel.add(heightField);
+        windowSizePanel.add(commonScreenSizes);
         topPanel.add(windowSizePanel, gbc);
         windowSizeLabel.setPreferredSize(new Dimension(windowSizeLabel.getPreferredSize().width,
                 windowSizePanel.getPreferredSize().height));
