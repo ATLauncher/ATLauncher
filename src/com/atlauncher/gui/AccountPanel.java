@@ -300,19 +300,20 @@ public class AccountPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 final Account account = ((Account) accountsComboBox.getSelectedItem());
                 App.settings.log("Reloading Minecraft skin for " + account.getMinecraftUsername());
-                Thread updateThread = new Thread() {
+                final ProgressDialog dialog = new ProgressDialog(App.settings
+                        .getLocalizedString("account.downloadingskin"), 0, App.settings
+                        .getLocalizedString("account.downloadingminecraftskin",
+                                account.getMinecraftUsername()),
+                        "Aborting downloading Minecraft skin for " + account.getMinecraftUsername());
+                dialog.addThread(new Thread() {
                     public void run() {
-                        System.out.println("Starting");
                         account.updateSkin();
                         userSkin.setIcon(account.getMinecraftSkin());
                         App.settings.reloadAccounts();
-                        System.out.println("Done");
+                        dialog.close();
                     };
-                };
-                new ProgressDialog(App.settings.getLocalizedString("account.downloadingskin"), 0,
-                        App.settings.getLocalizedString("account.downloadingminecraftskin",
-                                account.getMinecraftUsername()), updateThread,
-                        "Aborting downloading Minecraft skin for " + account.getMinecraftUsername());
+                });
+                dialog.start();
             }
         });
         contextMenu.add(updateSkin);
