@@ -43,9 +43,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import sun.text.normalizer.ICUBinary.Authenticate;
+
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.LogMessageType;
+import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
 public class AccountPanel extends JPanel {
@@ -204,7 +207,7 @@ public class AccountPanel extends JPanel {
                     JSONParser parser = new JSONParser();
                     JSONObject object = null;
                     try {
-                        auth = Utils.newLogin(username, password);
+                        auth = Authentication.checkAccount(username, password);
                         object = (JSONObject) parser.parse(auth);
                         if (object.containsKey("errorMessage")) {
                             authError = (String) object.get("errorMessage");

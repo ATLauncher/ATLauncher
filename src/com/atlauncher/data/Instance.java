@@ -29,6 +29,7 @@ import org.json.simple.parser.ParseException;
 import com.atlauncher.App;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.mclauncher.NewMCLauncher;
+import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
 public class Instance implements Serializable {
@@ -400,7 +401,7 @@ public class Instance implements Serializable {
                 if (isNewLaunchMethod()) {
                     String result = null;
                     try {
-                        result = Utils.newLogin(username, password);
+                        result = Authentication.checkAccount(username, password);
                     } catch (IOException e) {
                         App.settings.logStackTrace(e);
                     }
