@@ -204,6 +204,7 @@ public class LauncherConsole extends JFrame {
      * @param text
      *            The text to show in the console
      */
+    @Deprecated
     public void logStackTrace(Exception e) {
         e.printStackTrace();
         log(e.getMessage(), LogMessageType.error, false);

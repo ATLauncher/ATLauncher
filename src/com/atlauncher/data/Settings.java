@@ -716,8 +716,8 @@ public class Settings {
             this.properties.load(new FileInputStream(propertiesFile));
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
-            this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty("enabledebugconsole",
-                    "false"));
+            this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty(
+                    "enabledebugconsole", "false"));
             this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
         } catch (FileNotFoundException e) {
             this.console.logStackTrace(e);
@@ -811,8 +811,8 @@ public class Settings {
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
 
-            this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty("enabledebugconsole",
-                    "false"));
+            this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty(
+                    "enabledebugconsole", "false"));
 
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty(
                     "enableleaderboards", "false"));
@@ -859,7 +859,8 @@ public class Settings {
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
-            properties.setProperty("enabledebugconsole", (this.enableDebugConsole) ? "true" : "false");
+            properties.setProperty("enabledebugconsole", (this.enableDebugConsole) ? "true"
+                    : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
@@ -913,7 +914,8 @@ public class Settings {
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
-            properties.setProperty("enabledebugconsole", (this.enableDebugConsole) ? "true" : "false");
+            properties.setProperty("enabledebugconsole", (this.enableDebugConsole) ? "true"
+                    : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
@@ -2017,6 +2019,24 @@ public class Settings {
     }
 
     /**
+     * Logs a stack trace to the console window
+     * 
+     * @param exception
+     *            The exception to show in the console
+     */
+    public void logStackTrace(Exception exception) {
+        exception.printStackTrace();
+        log(exception.getMessage(), LogMessageType.error, false);
+        if (enableDebugConsole()) {
+            for (StackTraceElement element : exception.getStackTrace()) {
+                if (element.toString() != null) {
+                    log(element.toString(), LogMessageType.error, false);
+                }
+            }
+        }
+    }
+
+    /**
      * Log something to the console
      */
     public void log(String message, LogMessageType type, boolean isMinecraft) {
@@ -2191,7 +2211,6 @@ public class Settings {
         return this.enableConsole;
     }
 
-
     /**
      * If the user has selected to see debug messages in the console
      * 
@@ -2210,7 +2229,7 @@ public class Settings {
     public void setConsoleVisible(boolean visible) {
         this.console.setVisible(visible);
     }
-    
+
     public void setEnableConsole(boolean enableConsole) {
         this.enableConsole = enableConsole;
     }
