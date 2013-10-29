@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.data.ExtractTo;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 import com.atlauncher.utils.Utils;
@@ -629,6 +630,16 @@ public class SettingsPanel extends JPanel {
                             App.settings.getParent(),
                             "<html><center>"
                                     + App.settings.getLocalizedString("settings.javapathincorrect",
+                                            "<br/><br/>") + "</center></html>",
+                            App.settings.getLocalizedString("settings.help"),
+                            JOptionPane.PLAIN_MESSAGE);
+                    return;
+                }
+                if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx") || javaParameters.getText().contains("-XX:PermSize")) {
+                    JOptionPane.showMessageDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString("settings.javaparametersincorrect",
                                             "<br/><br/>") + "</center></html>",
                             App.settings.getLocalizedString("settings.help"),
                             JOptionPane.PLAIN_MESSAGE);
