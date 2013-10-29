@@ -11,12 +11,15 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -24,16 +27,20 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Utils;
 
 public class AccountPanel extends JPanel {
@@ -291,9 +298,21 @@ public class AccountPanel extends JPanel {
         updateSkin = new JMenuItem(App.settings.getLocalizedString("account.reloadskin"));
         updateSkin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ((Account) accountsComboBox.getSelectedItem()).updateSkin();
-                userSkin.setIcon(((Account) accountsComboBox.getSelectedItem()).getMinecraftSkin());
-                App.settings.reloadAccounts();
+                final Account account = ((Account) accountsComboBox.getSelectedItem());
+                App.settings.log("Reloading Minecraft skin for " + account.getMinecraftUsername());
+                Thread updateThread = new Thread() {
+                    public void run() {
+                        System.out.println("Starting");
+                        account.updateSkin();
+                        userSkin.setIcon(account.getMinecraftSkin());
+                        App.settings.reloadAccounts();
+                        System.out.println("Done");
+                    };
+                };
+                new ProgressDialog(App.settings.getLocalizedString("account.downloadingskin"), 0,
+                        App.settings.getLocalizedString("account.downloadingminecraftskin",
+                                account.getMinecraftUsername()), updateThread,
+                        "Aborting downloading Minecraft skin for " + account.getMinecraftUsername());
             }
         });
         contextMenu.add(updateSkin);

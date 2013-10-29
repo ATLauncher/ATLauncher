@@ -635,14 +635,16 @@ public class SettingsPanel extends JPanel {
                             JOptionPane.PLAIN_MESSAGE);
                     return;
                 }
-                if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx") || javaParameters.getText().contains("-XX:PermSize")) {
+                if (javaParameters.getText().contains("-Xms")
+                        || javaParameters.getText().contains("-Xmx")
+                        || javaParameters.getText().contains("-XX:PermSize")) {
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><center>"
-                                    + App.settings.getLocalizedString("settings.javaparametersincorrect",
-                                            "<br/><br/>") + "</center></html>",
-                            App.settings.getLocalizedString("settings.help"),
-                            JOptionPane.PLAIN_MESSAGE);
+                                    + App.settings.getLocalizedString(
+                                            "settings.javaparametersincorrect", "<br/><br/>")
+                                    + "</center></html>", App.settings
+                                    .getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
                     return;
                 }
                 boolean reboot = false;
