@@ -210,7 +210,8 @@ public class AccountPanel extends JPanel {
                         auth = Authentication.checkAccount(username, password);
                         object = (JSONObject) parser.parse(auth);
                         if (object.containsKey("errorMessage")) {
-                            authError = (String) object.get("errorMessage");
+                            authError = ((String) object.get("errorMessage")).replace(
+                                    "Invalid credentials. ", "");
                         } else if (object.containsKey("accessToken")) {
                             accessToken = (String) object.get("accessToken");
                             JSONObject selectedProfileObject = (JSONObject) object

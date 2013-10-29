@@ -14,9 +14,18 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.UUID;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import com.atlauncher.App;
 
 public class Authentication {
 
@@ -62,4 +71,84 @@ public class Authentication {
         return response.toString();
     }
 
+    public static String checkAccountOld(String username, String password) {
+        StringBuilder response = null;
+        try {
+            URL urll = new URL("https://login.minecraft.net/?user="
+                    + URLEncoder.encode(username, "UTF-8") + "&password="
+                    + URLEncoder.encode(password, "UTF-8") + "&version=999");
+            URLConnection connection = urll.openConnection();
+            connection.setConnectTimeout(5000);
+            BufferedReader in;
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            response = new StringBuilder();
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null)
+                response.append(inputLine);
+            in.close();
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+            return null;
+        }
+        return response.toString();
+    }
+
+    public static String getSessionToken(boolean isNewLoginMethod, String username, String password) {
+        String authToken = null;
+        String auth = null;
+        String authError = null;
+        if (App.settings.isInOfflineMode()) {
+            authToken = "token:0:0";
+        } else if (!isNewLoginMethod) {
+            auth = checkAccountOld(username, password);
+            if (auth == null) {
+                authToken = "token:0:0";
+            } else {
+                if (auth.contains(":")) {
+                    String[] parts = auth.split(":");
+                    if (parts.length == 5) {
+                        authToken = "token:" + parts[3] + ":0";
+                    }else{
+                        authError = auth;
+                    }
+                }else{
+                    authError = auth;
+                }
+            }
+        } else {
+            try {
+                auth = checkAccount(username, password);
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+            }
+            if (auth == null) {
+                authToken = "token:0:0";
+            } else {
+                JSONParser parser = new JSONParser();
+                JSONObject object = null;
+                try {
+                    object = (JSONObject) parser.parse(auth);
+                } catch (ParseException e) {
+                    App.settings.logStackTrace(e);
+                    return "An unknown error occured!";
+                }
+                if (object.containsKey("errorMessage")) {
+                    authError = (String) object.get("errorMessage");
+                } else if (object.containsKey("accessToken")) {
+                    String accessToken = (String) object.get("accessToken");
+                    JSONObject selectedProfileObject = (JSONObject) object.get("selectedProfile");
+                    String profileID = (String) selectedProfileObject.get("id");
+                    authToken = "token:" + accessToken + ":" + profileID;
+                } else {
+                    authError = "An unknown error occured!";
+                }
+            }
+        }
+        if (authError == null) {
+            return authToken;
+        } else {
+            return authError.replace("Invalid credentials. ", "");
+        }
+    }
 }

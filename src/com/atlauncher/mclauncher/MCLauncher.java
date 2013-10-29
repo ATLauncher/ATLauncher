@@ -116,7 +116,8 @@ public class MCLauncher {
         // Start or passed in arguments
         arguments.add(instance.getRootDirectory().getAbsolutePath()); // Path
         arguments.add(account.getMinecraftUsername()); // Username
-        arguments.add(session); // Session
+        String[] loginParts = session.split(":");
+        arguments.add(loginParts[1]); // Session
         arguments.add(instance.getName()); // Instance Name
         arguments.add(App.settings.getWindowWidth() + ""); // Window Width
         arguments.add(App.settings.getWindowHeight() + ""); // Window Height
