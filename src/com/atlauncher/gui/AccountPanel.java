@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -37,6 +38,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
@@ -193,26 +198,36 @@ public class AccountPanel extends JPanel {
                                 options, options[0]);
                         return;
                     }
+                    String auth;
+                    String authError = null;
+                    String accessToken = null;
+                    JSONParser parser = new JSONParser();
+                    JSONObject object = null;
                     try {
-                        url = "https://login.minecraft.net/?user="
-                                + URLEncoder.encode(username, "UTF-8") + "&password="
-                                + URLEncoder.encode(password, "UTF-8") + "&version=999";
-                    } catch (UnsupportedEncodingException e1) {
-                        App.settings.getConsole().logStackTrace(e1);
-                    }
-                    String auth = Utils.urlToString(url);
-                    if (auth.contains(":")) {
-                        String[] parts = auth.split(":");
-                        if (parts.length == 5) {
-                            loggedIn = true;
-                            minecraftUsername = parts[2];
+                        auth = Utils.newLogin(username, password);
+                        object = (JSONObject) parser.parse(auth);
+                        if (object.containsKey("errorMessage")) {
+                            authError = (String) object.get("errorMessage");
+                        } else if (object.containsKey("accessToken")) {
+                            accessToken = (String) object.get("accessToken");
+                            JSONObject selectedProfileObject = (JSONObject) object
+                                    .get("selectedProfile");
+                            minecraftUsername = (String) selectedProfileObject.get("name");
+                        } else {
+                            authError = "An unknown error occured!";
                         }
+                    } catch (IOException e1) {
+                        App.settings.logStackTrace(e1);
+                        authError = "An unknown error occured!";
+                    } catch (ParseException e1) {
+                        App.settings.logStackTrace(e1);
+                        authError = "An unknown error occured!";
                     }
-                    if (!loggedIn) {
+                    if (authError != null) {
                         String[] options = { App.settings.getLocalizedString("common.ok") };
                         JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
                                 + App.settings.getLocalizedString("account.incorrect")
-                                + "<br/><br/>" + auth + "</center></html>",
+                                + "<br/><br/>" + authError + "</center></html>",
                                 App.settings.getLocalizedString("account.notadded"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);

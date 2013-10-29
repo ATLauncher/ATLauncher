@@ -398,7 +398,12 @@ public class Instance implements Serializable {
             String auth = null;
             if (!App.settings.isInOfflineMode()) {
                 if (isNewLaunchMethod()) {
-                    String result = Utils.newLogin(username, password);
+                    String result = null;
+                    try {
+                        result = Utils.newLogin(username, password);
+                    } catch (IOException e) {
+                        App.settings.logStackTrace(e);
+                    }
                     if (result == null) {
                         loggedIn = true;
                         sess = "token:0:0";
