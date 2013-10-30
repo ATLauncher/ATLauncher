@@ -37,6 +37,7 @@ import org.json.simple.parser.ParseException;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Authentication;
 
 public class AccountPanel extends JPanel {
@@ -230,6 +231,7 @@ public class AccountPanel extends JPanel {
                     }
 
                     if (authError != null) {
+                        App.settings.log(authError, LogMessageType.error, false);
                         String[] options = { App.settings.getLocalizedString("common.ok") };
                         JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
                                 + App.settings.getLocalizedString("account.incorrect")
@@ -320,21 +322,8 @@ public class AccountPanel extends JPanel {
         updateSkin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Account account = ((Account) accountsComboBox.getSelectedItem());
-                App.settings.log("Reloading Minecraft skin for " + account.getMinecraftUsername());
-                final ProgressDialog dialog = new ProgressDialog(App.settings
-                        .getLocalizedString("account.downloadingskin"), 0, App.settings
-                        .getLocalizedString("account.downloadingminecraftskin",
-                                account.getMinecraftUsername()),
-                        "Aborting downloading Minecraft skin for " + account.getMinecraftUsername());
-                dialog.addThread(new Thread() {
-                    public void run() {
-                        account.updateSkin();
-                        userSkin.setIcon(account.getMinecraftSkin());
-                        App.settings.reloadAccounts();
-                        dialog.close();
-                    };
-                });
-                dialog.start();
+                account.updateSkin();
+                userSkin.setIcon(account.getMinecraftSkin());
             }
         });
         contextMenu.add(updateSkin);

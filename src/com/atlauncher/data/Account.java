@@ -6,7 +6,6 @@
  */
 package com.atlauncher.data;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -23,6 +22,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
+import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
 public class Account implements Serializable {
@@ -37,6 +37,7 @@ public class Account implements Serializable {
     private ArrayList<String> collapsedPacks; // Array of packs collapsed in the Packs Tab
     private ArrayList<String> collapsedInstances; // Array of instances collapsed in the Instances
                                                   // Tab
+    private boolean skinUpdating = false; // If the skin is being updated
 
     public Account(String username, String password, String minecraftUsername, boolean remember) {
         this.username = username;
@@ -65,22 +66,7 @@ public class Account implements Serializable {
         if (isReal()) {
             file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
             if (!file.exists()) {
-                try {
-                    HttpURLConnection conn = (HttpURLConnection) new URL(
-                            "http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png")
-                            .openConnection();
-                    if (conn.getResponseCode() == 200) {
-                        new Downloader("http://s3.amazonaws.com/MinecraftSkins/"
-                                + minecraftUsername + ".png", file.getAbsolutePath()).run();
-                    } else {
-                        Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file,
-                                true);
-                    }
-                } catch (MalformedURLException e) {
-                    App.settings.getConsole().logStackTrace(e);
-                } catch (IOException e) {
-                    App.settings.getConsole().logStackTrace(e);
-                }
+                updateSkin();
             }
         }
 
@@ -92,7 +78,7 @@ public class Account implements Serializable {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         BufferedImage main = image.getSubimage(8, 8, 8, 8);
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
@@ -123,22 +109,7 @@ public class Account implements Serializable {
         if (isReal()) {
             file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
             if (!file.exists()) {
-                try {
-                    HttpURLConnection conn = (HttpURLConnection) new URL(
-                            "http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png")
-                            .openConnection();
-                    if (conn.getResponseCode() == 200) {
-                        new Downloader("http://s3.amazonaws.com/MinecraftSkins/"
-                                + minecraftUsername + ".png", file.getAbsolutePath()).run();
-                    } else {
-                        Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file,
-                                true);
-                    }
-                } catch (MalformedURLException e) {
-                    App.settings.getConsole().logStackTrace(e);
-                } catch (IOException e) {
-                    App.settings.getConsole().logStackTrace(e);
-                }
+                updateSkin();
             }
         }
 
@@ -150,7 +121,7 @@ public class Account implements Serializable {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
 
         BufferedImage head = image.getSubimage(8, 8, 8, 8);
@@ -256,22 +227,42 @@ public class Account implements Serializable {
     }
 
     public void updateSkin() {
-        File file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
-        Utils.delete(file);
-        try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(
-                    "http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername + ".png")
-                    .openConnection();
-            if (conn.getResponseCode() == 200) {
-                new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername
-                        + ".png", file.getAbsolutePath()).run();
-            } else {
-                Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+        if (!skinUpdating) {
+            skinUpdating = true;
+            final File file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
+            if (file.exists()) {
+                Utils.delete(file);
             }
-        } catch (MalformedURLException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.log("Downloading skin for " + getMinecraftUsername());
+            final ProgressDialog dialog = new ProgressDialog(
+                    App.settings.getLocalizedString("account.downloadingskin"), 0,
+                    App.settings.getLocalizedString("account.downloadingminecraftskin",
+                            getMinecraftUsername()), "Aborting downloading Minecraft skin for "
+                            + getMinecraftUsername());
+            dialog.addThread(new Thread() {
+                public void run() {
+                    try {
+                        HttpURLConnection conn = (HttpURLConnection) new URL(
+                                "http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername
+                                        + ".png").openConnection();
+                        if (conn.getResponseCode() == 200) {
+                            new Downloader("http://s3.amazonaws.com/MinecraftSkins/"
+                                    + minecraftUsername + ".png", file.getAbsolutePath()).run();
+                        } else {
+                            Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"),
+                                    file, true);
+                        }
+                    } catch (MalformedURLException e) {
+                        App.settings.logStackTrace(e);
+                    } catch (IOException e) {
+                        App.settings.logStackTrace(e);
+                    }
+                    App.settings.reloadAccounts();
+                    dialog.close();
+                };
+            });
+            dialog.start();
+            skinUpdating = false;
         }
     }
 
