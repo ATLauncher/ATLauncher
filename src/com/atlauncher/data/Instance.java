@@ -395,7 +395,7 @@ public class Instance implements Serializable {
             }
             boolean loggedIn = false;
             String sess = Authentication.getSessionToken(isNewLaunchMethod(), username, password);
-            if (!sess.substring(0, 5).equalsIgnoreCase("token:")) {
+            if (!sess.substring(0, 6).equalsIgnoreCase("token:")) {
                 String[] options = { App.settings.getLocalizedString("common.ok") };
                 JOptionPane.showOptionDialog(
                         App.settings.getParent(),
