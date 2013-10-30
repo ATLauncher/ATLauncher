@@ -10,15 +10,12 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,8 +30,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -46,18 +41,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Downloader;
+import com.atlauncher.data.LogMessageType;
 
 public class Utils {
 
@@ -65,7 +58,8 @@ public class Utils {
         URL url = System.class.getResource(path);
 
         if (url == null) {
-            System.err.println("Unable to load image: " + path);
+            App.settings.log("Unable to load resource " + path, LogMessageType.error, false);
+            return null;
         }
 
         ImageIcon icon = new ImageIcon(url);
@@ -75,7 +69,9 @@ public class Utils {
 
     public static ImageIcon getIconImage(File file) {
         if (!file.exists()) {
-            System.err.println("Unable to load image: " + file.getAbsolutePath());
+            App.settings.log("Unable to load file " + file.getAbsolutePath(), LogMessageType.error,
+                    false);
+            return null;
         }
 
         ImageIcon icon = new ImageIcon(file.getAbsolutePath());
@@ -91,37 +87,12 @@ public class Utils {
         }
     }
 
-    public static ImageIcon getMinecraftHead(String user) {
-        File file = new File(App.settings.getSkinsDir(), user + ".png");
-        if (!file.exists()) {
-            new Downloader("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png",
-                    file.getAbsolutePath()).run();
-        }
-
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(file);
-        } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
-        }
-        BufferedImage main = image.getSubimage(8, 8, 8, 8);
-        BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
-        BufferedImage head = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics g = head.getGraphics();
-        g.drawImage(main, 0, 0, null);
-        g.drawImage(helmet, 0, 0, null);
-
-        ImageIcon icon = new ImageIcon(head.getScaledInstance(32, 32, Image.SCALE_SMOOTH));
-
-        return icon;
-    }
-
     public static Image getImage(String path) {
         URL url = System.class.getResource(path);
 
         if (url == null) {
-            System.err.println("Unable to load image: " + path);
+            App.settings.log("Unable to load resource " + path, LogMessageType.error, false);
+            return null;
         }
 
         ImageIcon icon = new ImageIcon(url);
@@ -134,7 +105,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().open(file);
             } catch (Exception e) {
-                App.settings.getConsole().logStackTrace(e);
+                App.settings.logStackTrace(e);
             }
         }
     }
@@ -144,7 +115,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().browse(new URI(URL));
             } catch (Exception e) {
-                App.settings.getConsole().logStackTrace(e);
+                App.settings.logStackTrace(e);
             }
         }
     }
@@ -154,7 +125,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().browse(URL.toURI());
             } catch (Exception e) {
-                App.settings.getConsole().logStackTrace(e);
+                App.settings.logStackTrace(e);
             }
         }
     }
@@ -165,9 +136,9 @@ public class Utils {
             font = Font.createFont(Font.TRUETYPE_FONT,
                     System.class.getResource("/resources/" + name + ".ttf").openStream());
         } catch (FontFormatException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return font;
     }
@@ -268,15 +239,15 @@ public class Utils {
                 ram = 1024;
             }
         } catch (SecurityException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (NoSuchMethodException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IllegalArgumentException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IllegalAccessException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (InvocationTargetException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return ram;
     }
@@ -328,13 +299,16 @@ public class Utils {
             writer.close();
             reader.close();
         } catch (IOException e1) {
-            App.settings.getConsole().logStackTrace(e1);
+            App.settings.logStackTrace(e1);
         }
         return result;
     }
 
     public static String getMD5(File file) {
         if (!file.exists()) {
+            App.settings.log(
+                    "Cannot get MD5 of " + file.getAbsolutePath() + " as it doesn't exist",
+                    LogMessageType.error, false);
             return "0"; // File doesn't exists so MD5 is nothing
         }
         StringBuffer sb = null;
@@ -351,23 +325,27 @@ public class Utils {
             ;
             byte[] mdbytes = md.digest();
 
-            // convert the byte to hex format method 1
             sb = new StringBuffer();
             for (int i = 0; i < mdbytes.length; i++) {
                 sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
             }
+
+            if (fis != null) {
+                fis.close();
+            }
         } catch (NoSuchAlgorithmException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (FileNotFoundException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return sb.toString();
     }
 
     public static String getMD5(String string) {
         if (string == null) {
+            App.settings.log("Cannot get MD5 of null", LogMessageType.error, false);
             return "0"; // String null so return 0
         }
         StringBuffer sb = null;
@@ -382,9 +360,9 @@ public class Utils {
                 sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
             }
         } catch (NoSuchAlgorithmException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return sb.toString();
     }
@@ -395,15 +373,17 @@ public class Utils {
 
     public static boolean copyFile(File from, File to, boolean withFilename) {
         if (!from.isFile()) {
-            App.settings.getConsole().log(
+            App.settings.log(
                     "File " + from.getAbsolutePath() + " cannot be copied to "
-                            + to.getAbsolutePath() + " as it isn't a file");
+                            + to.getAbsolutePath() + " as it isn't a file", LogMessageType.error,
+                    false);
             return false;
         }
         if (!from.exists()) {
-            App.settings.getConsole().log(
+            App.settings.log(
                     "File " + from.getAbsolutePath() + " cannot be copied to "
-                            + to.getAbsolutePath() + " as it doesn't exist");
+                            + to.getAbsolutePath() + " as it doesn't exist", LogMessageType.error,
+                    false);
             return false;
         }
         if (!withFilename) {
@@ -416,7 +396,7 @@ public class Utils {
         try {
             to.createNewFile();
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
             return false;
         }
 
@@ -428,7 +408,7 @@ public class Utils {
             destination = new FileOutputStream(to).getChannel();
             destination.transferFrom(source, 0, source.size());
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
             return false;
         } finally {
             try {
@@ -439,7 +419,7 @@ public class Utils {
                     destination.close();
                 }
             } catch (IOException e) {
-                App.settings.getConsole().logStackTrace(e);
+                App.settings.logStackTrace(e);
                 return false;
             }
         }
@@ -479,7 +459,7 @@ public class Utils {
                 out.close();
             }
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
             return false;
         }
         return true;
@@ -517,7 +497,7 @@ public class Utils {
             }
             zipFile.close();
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
     }
 
@@ -541,12 +521,12 @@ public class Utils {
         boolean deleted = file.delete();
         if (!deleted) {
             if (file.isFile()) {
-                App.settings.getConsole().log(
-                        "File " + file.getAbsolutePath() + " couldn't be deleted", true);
+                App.settings.log("File " + file.getAbsolutePath() + " couldn't be deleted",
+                        LogMessageType.error, false);
             }
             if (file.isDirectory()) {
-                App.settings.getConsole().log(
-                        "Folder " + file.getAbsolutePath() + " couldn't be deleted", true);
+                App.settings.log("Folder " + file.getAbsolutePath() + " couldn't be deleted",
+                        LogMessageType.error, false);
             }
         }
     }
@@ -592,7 +572,7 @@ public class Utils {
                 res.close();
             }
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
     }
 
@@ -626,7 +606,7 @@ public class Utils {
             byte[] encVal = c.doFinal(Data.getBytes());
             encryptedValue = Base64.encodeBytes(encVal);
         } catch (Exception e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return encryptedValue;
     }
@@ -642,7 +622,7 @@ public class Utils {
             byte[] decValue = c.doFinal(decordedValue);
             decryptedValue = new String(decValue);
         } catch (Exception e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return decryptedValue;
     }
@@ -674,7 +654,7 @@ public class Utils {
                 response.append(inputLine);
             in.close();
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
             return null;
         }
         return response.toString();
@@ -688,7 +668,6 @@ public class Utils {
 
         FileWriter writer1 = new FileWriter(destinationFile);
 
-        int count = 1;
         String line = br.readLine();
         while (line != null) {
             if (line.contains(replaceThis)) {
@@ -697,7 +676,6 @@ public class Utils {
             writer1.write(line);
             writer1.write(System.getProperty("line.separator"));
             line = br.readLine();
-            count++;
         }
         writer1.flush();
         writer1.close();

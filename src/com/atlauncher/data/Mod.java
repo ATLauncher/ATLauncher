@@ -272,9 +272,8 @@ public class Mod {
                     Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
                     download(installer, ++attempt); // download again
                 } else {
-                    App.settings.getConsole().log(
-                            "Cannot download " + fileLocation.getAbsolutePath()
-                                    + ". Aborting install", true);
+                    App.settings.log("Cannot download " + fileLocation.getAbsolutePath()
+                            + ". Aborting install!", LogMessageType.error, false);
                     installer.cancel(true);
                 }
             }
@@ -376,9 +375,8 @@ public class Mod {
                         Utils.copyDirectory(folder, installer.getRootDirectory());
                         break;
                     default:
-                        App.settings.getConsole().log(
-                                "No known way to extract mod " + this.name + " with type "
-                                        + this.extractTo);
+                        App.settings.log("No known way to extract mod " + this.name + " with type "
+                                + this.extractTo, LogMessageType.error, false);
                         break;
                 }
                 Utils.delete(tempDirExtract);
@@ -423,21 +421,19 @@ public class Mod {
                             }
                             break;
                         default:
-                            App.settings.getConsole().log(
-                                    "No known way to decomp mod " + this.name + " with type "
-                                            + this.decompType);
+                            App.settings.log("No known way to decomp mod " + this.name
+                                    + " with type " + this.decompType, LogMessageType.error, false);
                             break;
                     }
                 } else {
-                    App.settings.getConsole().log(
-                            "Couldn't find decomp file " + this.decompFile + " for mod "
-                                    + this.name);
+                    App.settings.log("Couldn't find decomp file " + this.decompFile + " for mod "
+                            + this.name, LogMessageType.error, false);
                 }
                 Utils.delete(tempDirDecomp);
                 break;
             default:
-                App.settings.getConsole().log(
-                        "No known way to install mod " + this.name + " with type " + this.type);
+                App.settings.log("No known way to install mod " + this.name + " with type "
+                        + this.type, LogMessageType.error, false);
                 break;
         }
     }
