@@ -195,7 +195,7 @@ public class AccountPanel extends JPanel {
                     final ProgressDialog dialog = new ProgressDialog(App.settings
                             .getLocalizedString("account.loggingin"), 0, App.settings
                             .getLocalizedString("account.loggingin"),
-                            "Aborting downloading Minecraft skin for " + usernameField.getText());
+                            "Aborting login for " + usernameField.getText());
                     dialog.addThread(new Thread() {
                         public void run() {
                             try {

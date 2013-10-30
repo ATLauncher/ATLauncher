@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
 import com.atlauncher.App;
+import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.mclauncher.NewMCLauncher;
 import com.atlauncher.utils.Authentication;
@@ -367,7 +368,6 @@ public class Instance implements Serializable {
                     options[0]);
             App.settings.setMinecraftLaunched(false);
         } else {
-            String username = account.getUsername();
             String password = account.getPassword();
             if (!account.isRemembered()) {
                 JPanel panel = new JPanel();
@@ -383,12 +383,29 @@ public class Instance implements Serializable {
                 if (ret == JOptionPane.OK_OPTION) {
                     password = new String(passwordField.getPassword());
                 } else {
+                    App.settings.log("Aborting login for " + account.getMinecraftUsername(),
+                            LogMessageType.error, false);
                     App.settings.setMinecraftLaunched(false);
                     return;
                 }
             }
-            String sess = Authentication.getSessionToken(isNewLaunchMethod(), username, password);
+            App.settings.log("Logging into Minecraft!");
+            final String pass = password;
+            final ProgressDialog dialog = new ProgressDialog(
+                    App.settings.getLocalizedString("account.loggingin"), 0,
+                    App.settings.getLocalizedString("account.loggingin"), "Aborting login for "
+                            + account.getMinecraftUsername());
+            dialog.addThread(new Thread() {
+                public void run() {
+                    dialog.setReturnValue(Authentication.getSessionToken(isNewLaunchMethod(),
+                            account.getUsername(), pass));
+                    dialog.close();
+                };
+            });
+            dialog.start();
+            String sess = dialog.getReturnValue();
             if (!sess.substring(0, 6).equalsIgnoreCase("token:")) {
+                App.settings.log(sess, LogMessageType.error, false);
                 String[] options = { App.settings.getLocalizedString("common.ok") };
                 JOptionPane.showOptionDialog(
                         App.settings.getParent(),
