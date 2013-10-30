@@ -11,45 +11,33 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import sun.text.normalizer.ICUBinary.Authenticate;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Authentication;
-import com.atlauncher.utils.Utils;
 
 public class AccountPanel extends JPanel {
 
@@ -201,32 +189,46 @@ public class AccountPanel extends JPanel {
                                 options, options[0]);
                         return;
                     }
-                    String auth;
+
+                    App.settings.log("Logging into Minecraft!");
+                    final ProgressDialog dialog = new ProgressDialog(App.settings
+                            .getLocalizedString("account.loggingin"), 0, App.settings
+                            .getLocalizedString("account.loggingin"),
+                            "Aborting downloading Minecraft skin for " + usernameField.getText());
+                    dialog.addThread(new Thread() {
+                        public void run() {
+                            try {
+                                dialog.setReturnValue(Authentication.checkAccount(
+                                        usernameField.getText(),
+                                        new String(passwordField.getPassword())));
+                            } catch (IOException e1) {
+                                App.settings.logStackTrace(e1);
+                                dialog.setReturnValue("An unknown error occured!");
+                            }
+                            dialog.close();
+                        };
+                    });
+                    dialog.start();
                     String authError = null;
-                    String accessToken = null;
+                    String auth = dialog.getReturnValue();
                     JSONParser parser = new JSONParser();
                     JSONObject object = null;
                     try {
-                        auth = Authentication.checkAccount(username, password);
                         object = (JSONObject) parser.parse(auth);
                         if (object.containsKey("errorMessage")) {
                             authError = ((String) object.get("errorMessage")).replace(
                                     "Invalid credentials. ", "");
                         } else if (object.containsKey("accessToken")) {
-                            accessToken = (String) object.get("accessToken");
                             JSONObject selectedProfileObject = (JSONObject) object
                                     .get("selectedProfile");
                             minecraftUsername = (String) selectedProfileObject.get("name");
                         } else {
                             authError = "An unknown error occured!";
                         }
-                    } catch (IOException e1) {
-                        App.settings.logStackTrace(e1);
-                        authError = "An unknown error occured!";
                     } catch (ParseException e1) {
-                        App.settings.logStackTrace(e1);
-                        authError = "An unknown error occured!";
+                        authError = auth;
                     }
+
                     if (authError != null) {
                         String[] options = { App.settings.getLocalizedString("common.ok") };
                         JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
@@ -239,7 +241,7 @@ public class AccountPanel extends JPanel {
                         if (accountsComboBox.getSelectedIndex() == 0) {
                             account = new Account(username, password, minecraftUsername, remember);
                             App.settings.getAccounts().add(account);
-                            App.settings.getConsole().log("Added Account " + account);
+                            App.settings.log("Added Account " + account);
                             String[] options = { App.settings.getLocalizedString("common.yes"),
                                     App.settings.getLocalizedString("common.no") };
                             int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
@@ -258,7 +260,7 @@ public class AccountPanel extends JPanel {
                                 account.setPassword(password);
                             }
                             account.setRemember(remember);
-                            App.settings.getConsole().log("Edited Account " + account);
+                            App.settings.log("Edited Account " + account);
                             String[] options = { App.settings.getLocalizedString("common.ok") };
                             JOptionPane.showOptionDialog(App.settings.getParent(),
                                     App.settings.getLocalizedString("account.editeddone"),

@@ -29,6 +29,7 @@ public class ProgressDialog extends JDialog {
     private int max; // The maximum the progress bar should get to
     private Thread thread = null; // The Thread were optionally running
     private String closedLogMessage; // The message to log to the console when dialog closed
+    private String returnValue = null; // The value returned
 
     public ProgressDialog(String title, int initMax, String initLabelText,
             String initClosedLogMessage) {
@@ -72,6 +73,14 @@ public class ProgressDialog extends JDialog {
             thread.start();
         }
         setVisible(true);
+    }
+
+    public void setReturnValue(String returnValue) {
+        this.returnValue = returnValue;
+    }
+
+    public String getReturnValue() {
+        return this.returnValue;
     }
 
     public void close() {

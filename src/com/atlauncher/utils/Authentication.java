@@ -109,10 +109,10 @@ public class Authentication {
                     String[] parts = auth.split(":");
                     if (parts.length == 5) {
                         authToken = "token:" + parts[3] + ":0";
-                    }else{
+                    } else {
                         authError = auth;
                     }
-                }else{
+                } else {
                     authError = auth;
                 }
             }
