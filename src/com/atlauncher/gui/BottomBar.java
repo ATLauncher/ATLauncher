@@ -95,13 +95,13 @@ public class BottomBar extends JPanel {
     private void setupListeners() {
         toggleConsole.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.getConsole().isVisible()) {
-                    App.settings.getConsole().log("Hiding console");
-                    App.settings.getConsole().setVisible(false);
+                if (App.settings.isConsoleVisible()) {
+                    App.settings.log("Hiding console");
+                    App.settings.setConsoleVisible(false);
                     toggleConsole.setText(App.settings.getLocalizedString("console.show"));
                 } else {
-                    App.settings.getConsole().log("Showing console");
-                    App.settings.getConsole().setVisible(true);
+                    App.settings.log("Showing console");
+                    App.settings.setConsoleVisible(true);
                     toggleConsole.setText(App.settings.getLocalizedString("console.hide"));
                 }
             }
@@ -122,25 +122,25 @@ public class BottomBar extends JPanel {
         });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
+                App.settings.log("Opening Up ATLauncher Facebook Page");
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
         githubIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().log("Opening Up ATLauncher GitHub Page");
+                App.settings.log("Opening Up ATLauncher GitHub Page");
                 Utils.openBrowser("https://github.com/RyanTheAllmighty/ATLauncher");
             }
         });
         redditIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().log("Opening Up ATLauncher Reddit Page");
+                App.settings.log("Opening Up ATLauncher Reddit Page");
                 Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
             }
         });
         twitterIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().log("Opening Up ATLauncher Twitter Page");
+                App.settings.log("Opening Up ATLauncher Twitter Page");
                 Utils.openBrowser("http://www.twitter.com/ATLauncher");
             }
         });
@@ -150,12 +150,12 @@ public class BottomBar extends JPanel {
      * Creates the JButton's for use in the bar
      */
     private void createButtons() {
-        if (App.settings.getConsole().isVisible()) {
+        if (App.settings.isConsoleVisible()) {
             toggleConsole = new JButton(App.settings.getLocalizedString("console.hide"));
         } else {
             toggleConsole = new JButton(App.settings.getLocalizedString("console.show"));
         }
-        
+
         openFolder = new JButton(App.settings.getLocalizedString("common.openfolder"));
 
         username = new JComboBox<Account>();

@@ -8,9 +8,6 @@ package com.atlauncher.data;
 
 public enum DecompType {
 
-    jar,
-    mods,
-    coremods,
-    root
-    
+    jar, mods, coremods, root
+
 }

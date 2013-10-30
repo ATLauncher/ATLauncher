@@ -13,18 +13,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import com.atlauncher.App;
 import com.atlauncher.mclauncher.MCLauncher;
@@ -393,7 +387,6 @@ public class Instance implements Serializable {
                     return;
                 }
             }
-            boolean loggedIn = false;
             String sess = Authentication.getSessionToken(isNewLaunchMethod(), username, password);
             if (!sess.substring(0, 6).equalsIgnoreCase("token:")) {
                 String[] options = { App.settings.getLocalizedString("common.ok") };
@@ -427,7 +420,7 @@ public class Instance implements Serializable {
                             BufferedReader br = new BufferedReader(isr);
                             String line;
                             while ((line = br.readLine()) != null) {
-                                App.settings.getConsole().logMinecraft(line);
+                                App.settings.logMinecraft(line);
                             }
                             App.settings.hideKillMinecraft();
                             if (App.settings.getParent() != null) {
@@ -454,7 +447,7 @@ public class Instance implements Serializable {
                                 }
                             }
                         } catch (IOException e1) {
-                            App.settings.getConsole().logStackTrace(e1);
+                            App.settings.logStackTrace(e1);
                         }
                     }
                 };

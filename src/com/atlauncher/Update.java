@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import com.atlauncher.utils.Utils;
 
 public class Update {
@@ -32,7 +30,7 @@ public class Update {
             arguments.add("open");
             arguments.add(new File(System.getProperty("user.dir")).getParentFile().getParentFile()
                     .getParentFile().getAbsolutePath());
-            
+
         } else {
             String path = System.getProperty("java.home") + File.separator + "bin" + File.separator
                     + "java";

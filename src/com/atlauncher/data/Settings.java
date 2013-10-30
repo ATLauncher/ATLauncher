@@ -2002,6 +2002,15 @@ public class Settings {
     }
 
     /**
+     * Finds out if the Launcher Console is visible or not
+     * 
+     * @return true if the console is visible, false if it's been hidden
+     */
+    public boolean isConsoleVisible() {
+        return this.console.isVisible();
+    }
+
+    /**
      * Gets the Launcher's current Console instance
      * 
      * @return The Launcher's Console instance
@@ -2012,10 +2021,17 @@ public class Settings {
     }
 
     /**
-     * Log a non minecraft related info message to the console
+     * Log a non Minecraft related info message to the console
      */
     public void log(String message) {
         this.console.log(message, LogMessageType.info, false);
+    }
+
+    /**
+     * Log a Minecraft related message to the console
+     */
+    public void logMinecraft(String message) {
+        this.console.logMinecraft(message);
     }
 
     /**
