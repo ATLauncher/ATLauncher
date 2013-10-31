@@ -330,7 +330,7 @@ public class Settings {
 
                     if (download) {
                         if (!file.canWrite()) {
-                            file.delete();
+                            Utils.delete(file);
                         }
                         downloads.add(new ATLauncherDownloadable("launcher/" + name, file, md5));
                     }

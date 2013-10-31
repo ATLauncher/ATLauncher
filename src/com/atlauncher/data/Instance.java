@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -48,6 +49,7 @@ public class Instance implements Serializable {
     private boolean isPlayable;
     private boolean newLaunchMethod;
     private String[] modsInstalled;
+    private ArrayList<String> ignoredUpdates;
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int memory, int permgen,
@@ -157,6 +159,35 @@ public class Instance implements Serializable {
         } else {
             return false;
         }
+    }
+
+    public void ignoreUpdate() {
+        if (this.ignoredUpdates == null) {
+            this.ignoredUpdates = new ArrayList<String>();
+        }
+        String version = getLatestVersion();
+        if (!hasUpdateBeenIgnored(version)) {
+            this.ignoredUpdates.add(version);
+            App.settings.saveInstances();
+        }
+    }
+
+    public boolean hasUpdateBeenIgnored(String version) {
+        if (version == null) {
+            return true;
+        }
+        if (ignoredUpdates == null) {
+            return false;
+        }
+        if (ignoredUpdates.size() == 0) {
+            return false;
+        }
+        for (String vers : ignoredUpdates) {
+            if (vers.equalsIgnoreCase(version)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void convert() {
@@ -326,6 +357,15 @@ public class Instance implements Serializable {
             }
         }
         return false;
+    }
+
+    public String getLatestVersion() {
+        if (realPack != null) {
+            if (realPack.hasVersions()) {
+                return realPack.getLatestVersion();
+            }
+        }
+        return null;
     }
 
     public boolean wasModInstalled(String name) {

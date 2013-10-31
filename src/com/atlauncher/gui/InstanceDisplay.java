@@ -100,9 +100,47 @@ public class InstanceDisplay extends CollapsiblePanel {
         play = new JButton(App.settings.getLocalizedString("common.play"));
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (!App.settings.isMinecraftLaunched()) {
-                    App.settings.setMinecraftLaunched(true);
-                    instance.launch();
+                if (instance.hasUpdate()
+                        && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())) {
+                    String[] options = { App.settings.getLocalizedString("common.yes"),
+                            App.settings.getLocalizedString("common.no"),
+                            App.settings.getLocalizedString("instance.dontremindmeagain") };
+                    int ret = JOptionPane.showOptionDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString("instance.updatenow",
+                                            "<br/><br/>") + "</center></html>",
+                            App.settings.getLocalizedString("instance.updateavailable"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
+                    if (ret == 0) {
+                        if (App.settings.getAccount() == null) {
+                            String[] optionss = { App.settings.getLocalizedString("common.ok") };
+                            JOptionPane.showOptionDialog(App.settings.getParent(),
+                                    App.settings.getLocalizedString("instance.cantupdate"),
+                                    App.settings.getLocalizedString("instance.noaccountselected"),
+                                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                    optionss, optionss[0]);
+                        } else {
+                            new InstanceInstallerDialog(instance, true, false);
+                        }
+                    } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
+                        if (!App.settings.isMinecraftLaunched()) {
+                            App.settings.setMinecraftLaunched(true);
+                            instance.launch();
+                        }
+                    } else if (ret == 2) {
+                        instance.ignoreUpdate();
+                        if (!App.settings.isMinecraftLaunched()) {
+                            App.settings.setMinecraftLaunched(true);
+                            instance.launch();
+                        }
+                    }
+                } else {
+                    if (!App.settings.isMinecraftLaunched()) {
+                        App.settings.setMinecraftLaunched(true);
+                        instance.launch();
+                    }
                 }
             }
         });
