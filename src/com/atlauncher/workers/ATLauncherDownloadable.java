@@ -234,6 +234,11 @@ public class ATLauncherDownloadable implements Runnable {
             while (!fileMD5.equalsIgnoreCase(this.md5) && tries <= 3) {
                 tries++;
                 downloadFile(); // Keep downloading file until it matches MD5, up to 3 times
+                if (this.file.exists()) {
+                    fileMD5 = Utils.getMD5(this.file);
+                } else {
+                    fileMD5 = "0";
+                }
             }
         }
         if (this.instanceInstaller != null) {
