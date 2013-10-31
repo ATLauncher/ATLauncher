@@ -218,8 +218,14 @@ public class MojangDownloadable implements Runnable {
         if (this.md5.equalsIgnoreCase("-")) {
             downloadFile(); // Only download the file once since we have no MD5 to check
         } else {
+            String fileMD5;
+            if (this.file.exists()) {
+                fileMD5 = Utils.getMD5(this.file);
+            } else {
+                fileMD5 = "0";
+            }
             int tries = 0;
-            while (!Utils.getMD5(this.file).equalsIgnoreCase(this.md5) && tries <= 3) {
+            while (!fileMD5.equalsIgnoreCase(this.md5) && tries <= 3) {
                 tries++;
                 downloadFile(); // Keep downloading file until it matches MD5, up to 3 times
             }

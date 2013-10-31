@@ -69,7 +69,9 @@ public class ATLauncherDownloadable implements Runnable {
                 this.url = App.settings.getFileURL(this.beforeURL);
                 return getRedirect(this.url);
             } else {
-                App.settings.getConsole().log("Couldn't Get Redirected URL From " + this.url + ". Switching To Offine Mode!", true);
+                App.settings.getConsole().log(
+                        "Couldn't Get Redirected URL From " + this.url
+                                + ". Switching To Offine Mode!", true);
                 App.settings.setOfflineMode();
                 if (this.instanceInstaller != null) {
                     instanceInstaller.cancel(true);
@@ -222,8 +224,14 @@ public class ATLauncherDownloadable implements Runnable {
         if (this.md5.equalsIgnoreCase("-")) {
             downloadFile(); // Only download the file once since we have no MD5 to check
         } else {
+            String fileMD5;
             int tries = 0;
-            while (!Utils.getMD5(this.file).equalsIgnoreCase(this.md5) && tries <= 3) {
+            if (this.file.exists()) {
+                fileMD5 = Utils.getMD5(this.file);
+            } else {
+                fileMD5 = "0";
+            }
+            while (!fileMD5.equalsIgnoreCase(this.md5) && tries <= 3) {
                 tries++;
                 downloadFile(); // Keep downloading file until it matches MD5, up to 3 times
             }
