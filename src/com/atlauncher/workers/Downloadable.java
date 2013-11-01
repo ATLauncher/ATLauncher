@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 import com.atlauncher.App;
@@ -19,26 +20,27 @@ import com.atlauncher.utils.Utils;
 
 public class Downloadable {
 
+    private String beforeURL;
     private String url;
     private File file;
     private String md5;
     private HttpURLConnection connection;
     private InstanceInstaller instanceInstaller;
+    private boolean isATLauncherDownload;
     private int attempts = 0;
 
-    public Downloadable(String url, File file, String md5, InstanceInstaller instanceInstaller) {
-        this.url = url;
+    public Downloadable(String url, File file, String md5, InstanceInstaller instanceInstaller,
+            boolean isATLauncherDownload) {
+        if (isATLauncherDownload) {
+            this.url = App.settings.getFileURL(url);
+        } else {
+            this.url = url;
+        }
+        this.beforeURL = url;
         this.file = file;
         this.md5 = md5;
         this.instanceInstaller = instanceInstaller;
-    }
-
-    public Downloadable(String url, File file, String md5) {
-        this(url, file, md5, null);
-    }
-
-    public Downloadable(String url, File file) {
-        this(url, file, null, null);
+        this.isATLauncherDownload = isATLauncherDownload;
     }
 
     public String getMD5FromURL() throws IOException {
@@ -64,11 +66,14 @@ public class Downloadable {
         if (needToDownload()) {
             String size = getConnection().getHeaderField("Content-Length");
             if (size == null) {
+                System.out.println(this.url + ": No Content-Length Header!");
                 return 0;
             } else {
+                System.out.println(this.url + ": Size is " + Integer.parseInt(size) + " bytes!");
                 return Integer.parseInt(size);
             }
         } else {
+            System.out.println(this.url + ": Don't Need To Download!");
             return 0;
         }
     }
@@ -105,6 +110,7 @@ public class Downloadable {
                 this.connection = (HttpURLConnection) new URL(this.url).openConnection();
                 this.connection.setUseCaches(false);
                 this.connection.setDefaultUseCaches(false);
+                this.connection.setConnectTimeout(5000);
                 this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
                 this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
                 this.connection.setRequestProperty("Expires", "0");
@@ -114,6 +120,19 @@ public class Downloadable {
                 App.settings.log("Cannot make a connection to " + this.url, LogMessageType.error,
                         false);
                 App.settings.logStackTrace(e);
+                if (this.isATLauncherDownload) {
+                    if (App.settings.disableServerGetNext()) {
+                        this.url = App.settings.getFileURL(this.beforeURL);
+                        getConnection();
+                    } else {
+                        App.settings.log("Failed to download file " + this.file.getName()
+                                + " from all ATLauncher servers. Cancelling install!",
+                                LogMessageType.error, false);
+                        if (this.instanceInstaller != null) {
+                            instanceInstaller.cancel(true);
+                        }
+                    }
+                }
             }
         }
         return this.connection;
@@ -155,19 +174,42 @@ public class Downloadable {
                                              // check
         } else {
             String fileMD5;
-            if (this.file.exists()) {
-                fileMD5 = Utils.getMD5(this.file);
-            } else {
-                fileMD5 = "0";
-            }
-            while (!fileMD5.equalsIgnoreCase(getMD5()) && attempts <= 3) {
+            boolean done = false;
+            while (attempts <= 3) {
                 attempts++;
-                downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5, up
-                                                 // to 3 times
                 if (this.file.exists()) {
                     fileMD5 = Utils.getMD5(this.file);
                 } else {
                     fileMD5 = "0";
+                }
+                if (fileMD5.equalsIgnoreCase(getMD5())) {
+                    done = true;
+                    break; // MD5 matches, file is good
+                }
+                downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
+            }
+            if (!done) {
+                if (this.isATLauncherDownload) {
+                    if (App.settings.disableServerGetNext()) {
+                        App.settings.log("Error downloading " + this.file.getName() + " from "
+                                + this.url + ". Trying another server!", LogMessageType.warning,
+                                false);
+                        this.url = App.settings.getFileURL(this.beforeURL);
+                        getConnection();
+                    } else {
+                        App.settings.log("Failed to download file " + this.file.getName()
+                                + " from all ATLauncher servers. Cancelling install!",
+                                LogMessageType.error, false);
+                        if (this.instanceInstaller != null) {
+                            instanceInstaller.cancel(true);
+                        }
+                    }
+                } else {
+                    App.settings.log("Error downloading " + this.file.getName() + " from "
+                            + this.url + ". Cancelling install!", LogMessageType.error, false);
+                    if (this.instanceInstaller != null) {
+                        instanceInstaller.cancel(true);
+                    }
                 }
             }
         }
