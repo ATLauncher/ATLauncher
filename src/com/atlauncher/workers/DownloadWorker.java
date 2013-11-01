@@ -29,7 +29,7 @@ public class DownloadWorker extends SwingWorker<Void, String> {
         this.url = url; // Set the url
         this.destination = destination; // Set the destination
     }
-    
+
     public Boolean wasDownloaded() {
         return this.downloaded;
     }
@@ -57,9 +57,7 @@ public class DownloadWorker extends SwingWorker<Void, String> {
             cancel(true);
         }
         do {
-            c.setRequestProperty(
-                    "User-Agent",
-                    "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+            c.setRequestProperty("User-Agent", App.settings.getUserAgent());
             c.setConnectTimeout(5000);
             if (c instanceof HttpURLConnection) {
                 ((HttpURLConnection) c).setInstanceFollowRedirects(false);
@@ -109,10 +107,7 @@ public class DownloadWorker extends SwingWorker<Void, String> {
                 App.settings.getConsole().logStackTrace(e);
                 cancel(true);
             }
-            connection
-                    .setRequestProperty(
-                            "User-Agent",
-                            "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+            connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     connection.getInputStream()));
             response = new StringBuilder();
@@ -133,9 +128,7 @@ public class DownloadWorker extends SwingWorker<Void, String> {
                 App.settings.getConsole().logStackTrace(e);
                 cancel(true);
             }
-            conn.setRequestProperty(
-                    "User-Agent",
-                    "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+            conn.setRequestProperty("User-Agent", App.settings.getUserAgent());
             int size = conn.getContentLength();
             int downloaded = 0;
             in = conn.getInputStream();

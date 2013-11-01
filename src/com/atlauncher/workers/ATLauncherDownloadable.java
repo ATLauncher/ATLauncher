@@ -16,7 +16,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Downloader;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Utils;
 
 public class ATLauncherDownloadable implements Runnable {
@@ -56,22 +56,20 @@ public class ATLauncherDownloadable implements Runnable {
     public URL getRedirect(String url) throws IOException {
         boolean redir;
         int redirects = 0;
-        InputStream in = null;
         URL target = null;
         URL downloadURL = new URL(url);
         URLConnection c = null;
         try {
             c = downloadURL.openConnection();
         } catch (IOException e) {
-            App.settings.getConsole().log("Cannot Connect To URL " + downloadURL, true);
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.log("Cannot Connect To URL " + downloadURL, LogMessageType.error, false);
+            App.settings.logStackTrace(e);
             if (App.settings.disableServerGetNext()) {
                 this.url = App.settings.getFileURL(this.beforeURL);
                 return getRedirect(this.url);
             } else {
-                App.settings.getConsole().log(
-                        "Couldn't Get Redirected URL From " + this.url
-                                + ". Switching To Offine Mode!", true);
+                App.settings.log("Couldn't Get Redirected URL From " + this.url
+                        + ". Switching To Offine Mode!", LogMessageType.error, false);
                 App.settings.setOfflineMode();
                 if (this.instanceInstaller != null) {
                     instanceInstaller.cancel(true);
@@ -80,14 +78,11 @@ public class ATLauncherDownloadable implements Runnable {
             }
         }
         do {
-            c.setRequestProperty(
-                    "User-Agent",
-                    "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+            c.setRequestProperty("User-Agent", App.settings.getUserAgent());
             c.setConnectTimeout(5000);
             if (c instanceof HttpURLConnection) {
                 ((HttpURLConnection) c).setInstanceFollowRedirects(false);
             }
-            in = c.getInputStream();
             redir = false;
             if (c instanceof HttpURLConnection) {
                 HttpURLConnection http = (HttpURLConnection) c;
@@ -124,15 +119,14 @@ public class ATLauncherDownloadable implements Runnable {
             try {
                 this.connection = (HttpURLConnection) new URL(url).openConnection();
             } catch (IOException e) {
-                App.settings.getConsole().log("Cannot Connect To URL " + url, true);
-                App.settings.getConsole().logStackTrace(e);
+                App.settings.log("Cannot Connect To URL " + url, LogMessageType.error, false);
+                App.settings.logStackTrace(e);
                 if (App.settings.disableServerGetNext()) {
                     this.url = App.settings.getFileURL(this.beforeURL);
                     getMD5FromURL(this.url);
                 } else {
-                    App.settings.getConsole().log(
-                            "Couldn't Get MD5 From " + this.url + ". Switching To Offline Mode!",
-                            true);
+                    App.settings.log("Couldn't Get MD5 From " + this.url
+                            + ". Switching To Offline Mode!", LogMessageType.error, false);
                     App.settings.setOfflineMode();
                     if (this.instanceInstaller != null) {
                         instanceInstaller.cancel(true);
@@ -141,19 +135,16 @@ public class ATLauncherDownloadable implements Runnable {
             }
             this.connection.setUseCaches(false);
             this.connection.setDefaultUseCaches(false);
-            this.connection
-                    .setRequestProperty(
-                            "User-Agent",
-                            "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+            this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
             this.connection.setConnectTimeout(5000);
             this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
             this.connection.setRequestProperty("Expires", "0");
             this.connection.setRequestProperty("Pragma", "no-cache");
             this.connection.connect();
         } catch (MalformedURLException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         String etag = this.connection.getHeaderField("ATLauncher-MD5");
         if (etag == null) {
@@ -172,25 +163,22 @@ public class ATLauncherDownloadable implements Runnable {
                 try {
                     this.connection = (HttpURLConnection) downloadURL.openConnection();
                 } catch (IOException e) {
-                    App.settings.getConsole().log("Cannot Connect To URL " + downloadURL, true);
-                    App.settings.getConsole().logStackTrace(e);
+                    App.settings.log("Cannot Connect To URL " + downloadURL, LogMessageType.error,
+                            false);
+                    App.settings.logStackTrace(e);
                     if (App.settings.disableServerGetNext()) {
                         this.url = App.settings.getFileURL(this.beforeURL);
                         downloadFile();
                     } else {
-                        App.settings.getConsole().log(
-                                "Couldn't Download File " + file.getName()
-                                        + ". Switching To Offline Mode!", true);
+                        App.settings.log("Couldn't Download File " + file.getName()
+                                + ". Switching To Offline Mode!", LogMessageType.error, false);
                         App.settings.setOfflineMode();
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);
                         }
                     }
                 }
-                this.connection
-                        .setRequestProperty(
-                                "User-Agent",
-                                "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36");
+                this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
                 this.connection.setConnectTimeout(5000);
             }
             in = this.connection.getInputStream();
@@ -204,7 +192,7 @@ public class ATLauncherDownloadable implements Runnable {
             writer.close();
             in.close();
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
     }
 

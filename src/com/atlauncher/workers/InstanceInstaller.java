@@ -412,10 +412,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireTask(App.settings.getLocalizedString("instance.downloadingresources"));
         fireSubProgressUnknown();
         ExecutorService executor = Executors.newFixedThreadPool(8);
-        ArrayList<MojangDownloadable> downloads = getNeededResources();
+        ArrayList<Downloadable> downloads = getNeededResources();
         totalResources = downloads.size();
 
-        for (MojangDownloadable download : downloads) {
+        for (Downloadable download : downloads) {
             executor.execute(download);
         }
         executor.shutdown();
@@ -447,8 +447,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
-    private ArrayList<MojangDownloadable> getNeededResources() {
-        ArrayList<MojangDownloadable> downloads = new ArrayList<MojangDownloadable>(); // All the
+    private ArrayList<Downloadable> getNeededResources() {
+        ArrayList<Downloadable> downloads = new ArrayList<Downloadable>(); // All the
                                                                                        // files
 
         // Read in the resources needed
@@ -500,7 +500,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                     filename = file.getName();
                                 }
                                 if (!Utils.getMD5(file).equalsIgnoreCase(etag))
-                                    downloads.add(new MojangDownloadable(
+                                    downloads.add(new Downloadable(
                                             "https://s3.amazonaws.com/Minecraft.Resources/" + key,
                                             file, etag, this));
                             }
@@ -638,10 +638,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                     downloadTo = new File(App.settings.getLibrariesDir(), file);
                     if (download == Download.server) {
-                        downloads.add(new MojangDownloadable(App.settings.getFileURL(url),
+                        downloads.add(new Downloadable(App.settings.getFileURL(url),
                                 downloadTo, md5, this));
                     } else {
-                        downloads.add(new MojangDownloadable(url, downloadTo, md5, this));
+                        downloads.add(new Downloadable(url, downloadTo, md5, this));
                     }
                 }
             }
@@ -746,7 +746,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         String url = "https://s3.amazonaws.com/Minecraft.Download/libraries/" + dir
                                 + "/" + filename;
                         File file = new File(App.settings.getLibrariesDir(), filename);
-                        downloads.add(new MojangDownloadable(url, file, null, this));
+                        downloads.add(new Downloadable(url, file, null, this));
                     }
                 }
 
@@ -756,13 +756,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (isServer) {
-            downloads.add(new MojangDownloadable(
+            downloads.add(new Downloadable(
                     "https://s3.amazonaws.com/Minecraft.Download/versions/" + this.minecraftVersion
                             + "/minecraft_server." + this.minecraftVersion + ".jar", new File(
                             App.settings.getJarsDir(), "minecraft_server." + this.minecraftVersion
                                     + ".jar"), null, this));
         } else {
-            downloads.add(new MojangDownloadable(
+            downloads.add(new Downloadable(
                     "https://s3.amazonaws.com/Minecraft.Download/versions/" + this.minecraftVersion
                             + "/" + this.minecraftVersion + ".jar", new File(App.settings
                             .getJarsDir(), this.minecraftVersion + ".jar"), null, this));

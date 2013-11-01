@@ -122,6 +122,7 @@ public class Settings {
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private String version = "%VERSION%"; // Version of the Launcher
+    private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     @SuppressWarnings("unused")
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     @SuppressWarnings("unused")
@@ -2272,6 +2273,10 @@ public class Settings {
 
     public String getVersion() {
         return this.version;
+    }
+
+    public String getUserAgent() {
+        return this.userAgent;
     }
 
     public String getLocalizedString(String string) {
