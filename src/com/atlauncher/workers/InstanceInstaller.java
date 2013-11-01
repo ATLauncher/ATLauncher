@@ -80,6 +80,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private int doneResources = 0; // Total number of Resources downloaded for Minecraft >=1.6
     private int totalDownloads = 0; // Total number of mods to download
     private int doneDownloads = 0; // Total number of mods downloaded
+    private int totalBytes = 0; // Total number of bytes to download
+    private int downloadedBytes = 0; // Total number of bytes downloaded
     private Instance instance = null;
     private String[] modsInstalled;
     private ArrayList<File> serverLibraries;
@@ -408,48 +410,109 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return true; // No other recommended mods found in the group
     }
 
-    private void downloadMojangStuffNew() {
+    private void downloadResources() {
         fireTask(App.settings.getLocalizedString("instance.downloadingresources"));
         fireSubProgressUnknown();
         ExecutorService executor = Executors.newFixedThreadPool(8);
-        ArrayList<Downloadable> downloads = getNeededResources();
-        totalResources = downloads.size();
-
+        ArrayList<Downloadable> downloads = getResources();
         for (Downloadable download : downloads) {
-            executor.execute(download);
+            if (download.needToDownload()) {
+                totalResources++;
+            }
+        }
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        fireTask(download.getFile().getName());
+                        download.download(false);
+                        setResourceDone();
+                    }
+                }
+            });
         }
         executor.shutdown();
         while (!executor.isTerminated()) {
         }
-        if (!isCancelled()) {
-            fireTask(App.settings.getLocalizedString("instance.organisinglibraries"));
-            fireSubProgress(0);
-            if (!isServer) {
-                String[] libraries = librariesNeeded.split(",");
-                for (String libraryFile : libraries) {
-                    Utils.copyFile(new File(App.settings.getLibrariesDir(), libraryFile),
-                            getBinDirectory());
+    }
+
+    private void downloadLibraries() {
+        fireTask(App.settings.getLocalizedString("instance.downloadinglibraries"));
+        fireSubProgressUnknown();
+        ExecutorService executor;
+        ArrayList<Downloadable> downloads = getLibraries();
+
+        // Get the filesizes for the downloads we need to do
+
+        executor = Executors.newFixedThreadPool(8);
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        totalBytes += download.getFilesize();
+                    }
                 }
-                String[] natives = nativesNeeded.split(",");
-                for (String nativeFile : natives) {
-                    Utils.unzip(new File(App.settings.getLibrariesDir(), nativeFile),
-                            getNativesDirectory());
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        // Now download the libraries
+
+        executor = Executors.newFixedThreadPool(8);
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        fireTask(download.getFile().getName());
+                        download.download(true);
+                    }
                 }
-                Utils.delete(new File(getNativesDirectory(), "META-INF"));
-            }
-            if (isServer) {
-                Utils.copyFile(new File(App.settings.getJarsDir(), "minecraft_server."
-                        + this.minecraftVersion + ".jar"), getRootDirectory());
-            } else {
-                Utils.copyFile(new File(App.settings.getJarsDir(), this.minecraftVersion + ".jar"),
-                        new File(getBinDirectory(), "minecraft.jar"), true);
-            }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
         }
     }
 
-    private ArrayList<Downloadable> getNeededResources() {
+    private void organiseLibraries() {
+        fireTask(App.settings.getLocalizedString("instance.organisinglibraries"));
+        fireSubProgress(0);
+        if (!isServer) {
+            String[] libraries = librariesNeeded.split(",");
+            for (String libraryFile : libraries) {
+                Utils.copyFile(new File(App.settings.getLibrariesDir(), libraryFile),
+                        getBinDirectory());
+            }
+            String[] natives = nativesNeeded.split(",");
+            for (String nativeFile : natives) {
+                Utils.unzip(new File(App.settings.getLibrariesDir(), nativeFile),
+                        getNativesDirectory());
+            }
+            Utils.delete(new File(getNativesDirectory(), "META-INF"));
+        }
+        if (isServer) {
+            Utils.copyFile(new File(App.settings.getJarsDir(), "minecraft_server."
+                    + this.minecraftVersion + ".jar"), getRootDirectory());
+        } else {
+            Utils.copyFile(new File(App.settings.getJarsDir(), this.minecraftVersion + ".jar"),
+                    new File(getBinDirectory(), "minecraft.jar"), true);
+        }
+    }
+
+    private ArrayList<Downloadable> getResources() {
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>(); // All the
-                                                                                       // files
+                                                                           // files
 
         // Read in the resources needed
 
@@ -499,10 +562,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                     file = new File(App.settings.getResourcesDir(), key);
                                     filename = file.getName();
                                 }
-                                if (!Utils.getMD5(file).equalsIgnoreCase(etag))
-                                    downloads.add(new Downloadable(
-                                            "https://s3.amazonaws.com/Minecraft.Resources/" + key,
-                                            file, etag, this));
+                                downloads.add(new Downloadable(
+                                        "https://s3.amazonaws.com/Minecraft.Resources/" + key,
+                                        file, etag, this));
                             }
                         }
                     }
@@ -584,8 +646,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             App.settings.getConsole().logStackTrace(e);
         }
 
-        // Now read in the library jars needed from the pack
+        return downloads;
+    }
 
+    public ArrayList<Downloadable> getLibraries() {
+        ArrayList<Downloadable> libraries = new ArrayList<Downloadable>();
+
+        // Now read in the library jars needed from the pack
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -638,10 +705,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                     downloadTo = new File(App.settings.getLibrariesDir(), file);
                     if (download == Download.server) {
-                        downloads.add(new Downloadable(App.settings.getFileURL(url),
-                                downloadTo, md5, this));
+                        libraries.add(new Downloadable(App.settings.getFileURL(url), downloadTo,
+                                md5, this));
                     } else {
-                        downloads.add(new Downloadable(url, downloadTo, md5, this));
+                        libraries.add(new Downloadable(url, downloadTo, md5, this));
                     }
                 }
             }
@@ -746,7 +813,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         String url = "https://s3.amazonaws.com/Minecraft.Download/libraries/" + dir
                                 + "/" + filename;
                         File file = new File(App.settings.getLibrariesDir(), filename);
-                        downloads.add(new Downloadable(url, file, null, this));
+                        libraries.add(new Downloadable(url, file, null, this));
                     }
                 }
 
@@ -756,18 +823,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (isServer) {
-            downloads.add(new Downloadable(
+            libraries.add(new Downloadable(
                     "https://s3.amazonaws.com/Minecraft.Download/versions/" + this.minecraftVersion
                             + "/minecraft_server." + this.minecraftVersion + ".jar", new File(
                             App.settings.getJarsDir(), "minecraft_server." + this.minecraftVersion
                                     + ".jar"), null, this));
         } else {
-            downloads.add(new Downloadable(
-                    "https://s3.amazonaws.com/Minecraft.Download/versions/" + this.minecraftVersion
-                            + "/" + this.minecraftVersion + ".jar", new File(App.settings
-                            .getJarsDir(), this.minecraftVersion + ".jar"), null, this));
+            libraries.add(new Downloadable("https://s3.amazonaws.com/Minecraft.Download/versions/"
+                    + this.minecraftVersion + "/" + this.minecraftVersion + ".jar", new File(
+                    App.settings.getJarsDir(), this.minecraftVersion + ".jar"), null, this));
         }
-        return downloads;
+        return libraries;
     }
 
     public static String getEtag(String etag) {
@@ -999,7 +1065,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             savedPortalGunSounds = true;
             Utils.copyFile(portalGunSounds, getTempDirectory());
         }
-        downloadMojangStuffNew();
+        downloadResources(); // Download Minecraft Resources
+        downloadLibraries(); // Download Libraries
+        organiseLibraries(); // Organise the libraries
         if (isServer) {
             for (File file : serverLibraries) {
                 file.mkdirs();
@@ -1104,8 +1172,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(percent);
     }
 
-    public void setDoingResources(String doing) {
-        fireTask(doing);
+    public void setResourceDone() {
         doneResources++;
         int progress = (100 * doneResources) / totalResources;
         fireSubProgress(progress);
@@ -1114,6 +1181,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public void setDownloadDone() {
         doneDownloads++;
         int progress = (100 * doneDownloads) / totalDownloads;
+        fireSubProgress(progress);
+    }
+
+    public void addDownloadedBytes(int bytes) {
+        this.downloadedBytes += bytes;
+        int progress = (100 * this.downloadedBytes) / this.totalBytes;
         fireSubProgress(progress);
     }
 

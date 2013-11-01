@@ -17,7 +17,7 @@ import com.atlauncher.App;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Utils;
 
-public class Downloadable implements Runnable {
+public class Downloadable {
 
     private String url;
     private File file;
@@ -60,6 +60,45 @@ public class Downloadable implements Runnable {
         return etag;
     }
 
+    public int getFilesize() {
+        if (needToDownload()) {
+            String size = getConnection().getHeaderField("Content-Length");
+            if (size == null) {
+                return 0;
+            } else {
+                return Integer.parseInt(size);
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    public boolean needToDownload() {
+        if (this.file.exists()) {
+            if (Utils.getMD5(this.file).equalsIgnoreCase(getMD5())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String getMD5() {
+        if (this.md5 == null) {
+            try {
+                this.md5 = getMD5FromURL();
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+                this.md5 = "-";
+                this.connection = null;
+            }
+        }
+        return this.md5;
+    }
+
+    public File getFile() {
+        return this.file;
+    }
+
     private HttpURLConnection getConnection() {
         if (this.connection == null) {
             try {
@@ -80,7 +119,7 @@ public class Downloadable implements Runnable {
         return this.connection;
     }
 
-    public void downloadFile() {
+    public void downloadFile(boolean downloadAsLibrary) {
         if (instanceInstaller.isCancelled()) {
             return;
         }
@@ -93,6 +132,9 @@ public class Downloadable implements Runnable {
             while ((bytesRead = in.read(buffer)) > 0) {
                 writer.write(buffer, 0, bytesRead);
                 buffer = new byte[1024];
+                if (this.instanceInstaller != null && downloadAsLibrary) {
+                    this.instanceInstaller.addDownloadedBytes(bytesRead);
+                }
             }
             writer.close();
             in.close();
@@ -101,26 +143,16 @@ public class Downloadable implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
+    public void download(boolean downloadAsLibrary) {
         if (instanceInstaller.isCancelled()) {
             return;
-        }
-        instanceInstaller.setDoingResources("Downloading " + file.getName());
-        if (this.md5 == null) {
-            try {
-                this.md5 = getMD5FromURL();
-            } catch (IOException e) {
-                App.settings.logStackTrace(e);
-                this.md5 = "-";
-                this.connection = null;
-            }
         }
         // Create the directory structure
         new File(file.getAbsolutePath().substring(0,
                 file.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
-        if (this.md5.equalsIgnoreCase("-")) {
-            downloadFile(); // Only download the file once since we have no MD5 to check
+        if (getMD5().equalsIgnoreCase("-")) {
+            downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to
+                                             // check
         } else {
             String fileMD5;
             if (this.file.exists()) {
@@ -128,9 +160,10 @@ public class Downloadable implements Runnable {
             } else {
                 fileMD5 = "0";
             }
-            while (!fileMD5.equalsIgnoreCase(this.md5) && attempts <= 3) {
+            while (!fileMD5.equalsIgnoreCase(getMD5()) && attempts <= 3) {
                 attempts++;
-                downloadFile(); // Keep downloading file until it matches MD5, up to 3 times
+                downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5, up
+                                                 // to 3 times
                 if (this.file.exists()) {
                     fileMD5 = Utils.getMD5(this.file);
                 } else {
