@@ -26,13 +26,14 @@ public class Downloadable {
     private String url;
     private File file;
     private String md5;
+    private int size;
     private HttpURLConnection connection;
     private InstanceInstaller instanceInstaller;
     private boolean isATLauncherDownload;
     private int attempts = 0;
 
-    public Downloadable(String url, File file, String md5, InstanceInstaller instanceInstaller,
-            boolean isATLauncherDownload) {
+    public Downloadable(String url, File file, String md5, int size,
+            InstanceInstaller instanceInstaller, boolean isATLauncherDownload) {
         if (isATLauncherDownload) {
             this.url = App.settings.getFileURL(url);
         } else {
@@ -41,12 +42,18 @@ public class Downloadable {
         this.beforeURL = url;
         this.file = file;
         this.md5 = md5;
+        this.size = size;
         this.instanceInstaller = instanceInstaller;
         this.isATLauncherDownload = isATLauncherDownload;
     }
 
-    public Downloadable(String url, boolean isATLauncherDownloadable) {
-        this(url, null, null, null, isATLauncherDownloadable);
+    public Downloadable(String url, File file, String md5, InstanceInstaller instanceInstaller,
+            boolean isATLauncherDownload) {
+        this(url, file, md5, -1, instanceInstaller, isATLauncherDownload);
+    }
+
+    public Downloadable(String url, boolean isATLauncherDownload) {
+        this(url, null, null, -1, null, isATLauncherDownload);
     }
 
     public String getMD5FromURL() throws IOException {
@@ -69,12 +76,15 @@ public class Downloadable {
     }
 
     public int getFilesize() {
-        int size = getConnection().getContentLength();
-        if (size == -1) {
-            return 0;
-        } else {
-            return size;
+        if (this.size == -1) {
+            int size = getConnection().getContentLength();
+            if (size == -1) {
+                this.size = 0;
+            } else {
+                this.size = size;
+            }
         }
+        return this.size;
     }
 
     public boolean needToDownload() {
@@ -168,11 +178,11 @@ public class Downloadable {
                 in = getConnection().getInputStream();
             }
             FileOutputStream writer = new FileOutputStream(this.file);
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[2048];
             int bytesRead = 0;
             while ((bytesRead = in.read(buffer)) > 0) {
                 writer.write(buffer, 0, bytesRead);
-                buffer = new byte[1024];
+                buffer = new byte[2048];
                 if (this.instanceInstaller != null && downloadAsLibrary && getFilesize() != 0) {
                     this.instanceInstaller.addDownloadedBytes(bytesRead);
                 }

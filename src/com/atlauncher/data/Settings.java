@@ -120,6 +120,7 @@ public class Settings {
     private Process minecraftProcess = null; // The process minecraft is running on
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
+    private String fileHashes = null; // Hashes for the files to get from the server
     private String version = "%VERSION%"; // Version of the Launcher
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     @SuppressWarnings("unused")
@@ -188,7 +189,8 @@ public class Settings {
     public void checkMojangStatus() {
         JSONParser parser = new JSONParser();
         try {
-            Object obj = parser.parse(Utils.urlToString("http://status.mojang.com/check"));
+            Downloadable download = new Downloadable("http://status.mojang.com/check", false);
+            Object obj = parser.parse(download.getContents());
             JSONArray jsonObject = (JSONArray) obj;
             Iterator<JSONObject> iterator = jsonObject.iterator();
             while (iterator.hasNext()) {
@@ -260,26 +262,29 @@ public class Settings {
         System.exit(0);
     }
 
+    private String getFileHashes() {
+        if (this.fileHashes == null) {
+            Downloadable download = new Downloadable("launcher/hashes.xml", true);
+            String hashes = download.getContents();
+            if (hashes == null) {
+                this.offlineMode = true;
+                return null;
+            } else {
+                this.fileHashes = hashes;
+            }
+        }
+        return this.fileHashes;
+    }
+
     /**
      * This checks the servers hashes.xml file and gets the files that the Launcher needs to have
      */
     private ArrayList<Downloadable> getLauncherFiles() {
-        String hashes = null;
-        while (hashes == null) {
-            hashes = Utils.urlToString(getFileURL("launcher/hashes.xml"));
-            if (hashes == null) {
-                boolean changed = disableServerGetNext(); // Disable the server and get the next one
-                if (!changed) {
-                    this.offlineMode = true;
-                    return null;
-                }
-            }
-        }
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(new StringReader(hashes)));
+            Document document = builder.parse(new InputSource(new StringReader(getFileHashes())));
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("hash");
             for (int i = 0; i < nodeList.getLength(); i++) {
@@ -362,17 +367,6 @@ public class Settings {
     public boolean hasUpdatedFiles() {
         if (isInOfflineMode()) {
             return false;
-        }
-        String hashes = null;
-        while (hashes == null) {
-            hashes = Utils.urlToString(getFileURL("launcher/hashes.xml"));
-            if (hashes == null) {
-                boolean changed = disableServerGetNext(); // Disable the server and get the next one
-                if (!changed) {
-                    this.offlineMode = true;
-                    return false;
-                }
-            }
         }
         ArrayList<Downloadable> downloads = getLauncherFiles();
         for (Downloadable download : downloads) {
@@ -1027,21 +1021,16 @@ public class Settings {
      * Loads the Testers and Allowed Players for the packs in the Launcher
      */
     private void loadUsers() {
-        String xml = null;
-        while (xml == null) {
-            xml = Utils.urlToString(getFileURL("launcher/users.xml"));
-            if (xml == null) {
-                boolean changed = disableServerGetNext(); // Disable the server and get the next one
-                if (!changed) {
-                    this.offlineMode = true;
-                    return;
-                }
-            }
+        Downloadable download = new Downloadable("launcher/users.xml", true);
+        String users = download.getContents();
+        if (users == null) {
+            this.offlineMode = true;
+            return;
         }
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(xml));
+            InputSource is = new InputSource(new StringReader(users));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("pack");
@@ -1586,18 +1575,9 @@ public class Settings {
             server.enableServer();
         }
         this.offlineMode = false;
-        String test = null;
-        while (test == null) {
-            test = Utils.urlToString(getFileURL("ping"));
-            if (test == null) {
-                boolean changed = disableServerGetNext(); // Disable the server and get the next one
-                if (!changed) {
-                    this.offlineMode = true;
-                    return;
-                }
-            }
-        }
-        if (test.equalsIgnoreCase("pong")) {
+        Downloadable download = new Downloadable("launcher/users.xml", true);
+        String test = download.getContents();
+        if (test != null && test.equalsIgnoreCase("pong")) {
             this.offlineMode = false;
             reloadPacksPanel();
             reloadInstancesPanel();

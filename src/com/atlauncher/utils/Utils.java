@@ -632,6 +632,7 @@ public class Utils {
         return key;
     }
 
+    @Deprecated
     public static String urlToString(String url) {
         if (App.settings.isInOfflineMode()) {
             return null;

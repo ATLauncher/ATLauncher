@@ -451,7 +451,7 @@ public class InstanceInstallerDialog extends JDialog {
                             if (progress > 100) {
                                 progress = 100;
                             }
-                            if (progress == 0) {
+                            if (progress < 0) {
                                 subProgressBar.setVisible(false);
                             }
                             subProgressBar.setValue(progress);

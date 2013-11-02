@@ -392,15 +392,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgressUnknown();
         ExecutorService executor = Executors.newFixedThreadPool(8);
         ArrayList<Downloadable> downloads = getResources();
-        totalDownloads = 0;
-        doneDownloads = 0;
+        totalBytes = 0;
+        downloadedBytes = 0;
 
         for (Downloadable download : downloads) {
             if (download.needToDownload()) {
-                totalDownloads++;
+                totalBytes += download.getFilesize();
             }
         }
 
+        fireSubProgress(0); // Show the subprogress bar
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
 
@@ -409,8 +410,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     if (download.needToDownload()) {
                         fireTask(App.settings.getLocalizedString("common.downloading") + " "
                                 + download.getFile().getName());
-                        download.download(false);
-                        setDownloadDone();
+                        download.download(true);
                     }
                 }
             });
@@ -418,38 +418,25 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor.shutdown();
         while (!executor.isTerminated()) {
         }
+        fireSubProgress(-1); // Hide the subprogress bar
     }
 
     private void downloadLibraries() {
         fireTask(App.settings.getLocalizedString("instance.downloadinglibraries"));
         fireSubProgressUnknown();
-        ExecutorService executor;
+        ExecutorService executor = Executors.newFixedThreadPool(8);
         ArrayList<Downloadable> downloads = getLibraries();
-        this.totalBytes = 0;
-        this.downloadedBytes = 0;
+        totalBytes = 0;
+        downloadedBytes = 0;
 
-        // Get the filesizes for the downloads we need to do
-
-        executor = Executors.newFixedThreadPool(8);
-
-        for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        totalBytes += download.getFilesize();
-                    }
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
+        for (Downloadable download : downloads) {
+            if (download.needToDownload()) {
+                totalDownloads++;
+                totalBytes += download.getFilesize();
+            }
         }
 
-        // Now download the libraries
-
-        executor = Executors.newFixedThreadPool(8);
+        fireSubProgress(0); // Show the subprogress bar
 
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
@@ -467,6 +454,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor.shutdown();
         while (!executor.isTerminated()) {
         }
+        fireSubProgress(-1); // Hide the subprogress bar
     }
 
     private void downloadMods(ArrayList<Mod> mods) {
@@ -500,6 +488,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         while (!executor.isTerminated()) {
         }
 
+        fireSubProgress(-1); // Hide the subprogress bar
+
         for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
                 fireTask(App.settings.getLocalizedString("common.downloading") + " "
@@ -511,7 +501,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void organiseLibraries() {
         fireTask(App.settings.getLocalizedString("instance.organisinglibraries"));
-        fireSubProgress(0);
+        fireSubProgressUnknown();
         if (!isServer) {
             String[] libraries = librariesNeeded.split(",");
             for (String libraryFile : libraries) {
@@ -532,6 +522,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.copyFile(new File(App.settings.getJarsDir(), this.minecraftVersion + ".jar"),
                     new File(getBinDirectory(), "minecraft.jar"), true);
         }
+        fireSubProgress(-1); // Hide the subprogress bar
     }
 
     private ArrayList<Downloadable> getResources() {
@@ -570,10 +561,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                     .getNodeValue() : "-";
                             etag = getEtag(etag);
                             marker = key;
-                            long size = Long.parseLong(element.getElementsByTagName("Size").item(0)
-                                    .getChildNodes().item(0).getNodeValue());
+                            int size = Integer.parseInt(element.getElementsByTagName("Size")
+                                    .item(0).getChildNodes().item(0).getNodeValue());
 
-                            if (size > 0L) {
+                            if (size > 0) {
                                 File file;
                                 String filename;
                                 if (key.contains("/")) {
@@ -588,7 +579,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                 }
                                 downloads.add(new Downloadable(
                                         "https://s3.amazonaws.com/Minecraft.Resources/" + key,
-                                        file, etag, this, false));
+                                        file, etag, size, this, false));
                             }
                         }
                     }
@@ -1165,10 +1156,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void fireProgress(int percent) {
+        if (percent > 100) {
+            percent = 100;
+        }
         firePropertyChange("progress", null, percent);
     }
 
     private void fireSubProgress(int percent) {
+        if (percent > 100) {
+            percent = 100;
+        }
         firePropertyChange("subprogress", null, percent);
     }
 
@@ -1185,19 +1182,34 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public void setSubPercent(int percent) {
+        if (percent > 100) {
+            percent = 100;
+        }
         fireSubProgress(percent);
     }
 
     public void setDownloadDone() {
-        doneDownloads++;
-        int progress = (100 * doneDownloads) / totalDownloads;
-        fireSubProgress(progress);
+        this.doneDownloads++;
+        float progress;
+        if (this.totalDownloads > 0) {
+            progress = ((float) this.doneDownloads / (float) this.totalDownloads) * 100;
+        } else {
+            progress = 0;
+        }
+        fireSubProgress((int) progress);
     }
 
     public void addDownloadedBytes(int bytes) {
         this.downloadedBytes += bytes;
-        int progress = (100 * this.downloadedBytes) / this.totalBytes;
-        fireSubProgress(progress);
+        float progress;
+        if (this.totalBytes > 0) {
+            progress = ((float) this.downloadedBytes / (float) this.totalBytes) * 100;
+        } else {
+            progress = 0;
+        }
+        System.out.println("Downloaded " + bytes + " bytes bringing total to "
+                + this.downloadedBytes + "/" + this.totalBytes + " which is " + progress + "%");
+        fireSubProgress((int) progress);
     }
 
 }
