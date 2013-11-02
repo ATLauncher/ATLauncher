@@ -17,6 +17,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -24,6 +25,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
+import com.atlauncher.data.LogMessageType;
+import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -101,14 +104,26 @@ public class ConsoleBottomBar extends JPanel {
         });
         uploadLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String result = Utils.uploadPaste("ATLauncher Log", App.settings.getLog());
+                final ProgressDialog dialog = new ProgressDialog(App.settings
+                        .getLocalizedString("console.uploadinglog"), 0, App.settings
+                        .getLocalizedString("console.uploadinglog"), "Aborting log upload!");
+                dialog.addThread(new Thread() {
+                    public void run() {
+                        String result = Utils.uploadPaste("ATLauncher Log", App.settings.getLog());
+                        dialog.setReturnValue(result);
+                        dialog.close();
+                    };
+                });
+                dialog.start();
+                String result = dialog.getReturnValue();
                 if (result.contains("%PASTECHECKURL%")) {
                     App.settings.log("Log uploaded and link copied to clipboard: " + result);
                     StringSelection text = new StringSelection(result);
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(text, null);
                 } else {
-                    App.settings.log("Log failed to upload: " + result);
+                    App.settings
+                            .log("Log failed to upload: " + result, LogMessageType.error, false);
                 }
             }
         });
