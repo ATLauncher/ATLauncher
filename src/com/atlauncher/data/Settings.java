@@ -170,7 +170,9 @@ public class Settings {
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
         loadServerProperty(); // Get users Server preference
-        downloadUpdatedFiles(); // Downloads updated files on the server
+        if (hasUpdatedFiles()) {
+            downloadUpdatedFiles(); // Downloads updated files on the server
+        }
         loadLanguages(); // Load the Languages available in the Launcher
         loadPacks(); // Load the Packs available in the Launcher
         loadUsers(); // Load the Testers and Allowed Players for the packs
@@ -356,7 +358,7 @@ public class Settings {
      * This checks the servers hashes.xml file and looks for new/updated files that differ from what
      * the user has
      */
-    public boolean isUpdatedFiles() {
+    public boolean hasUpdatedFiles() {
         if (isInOfflineMode()) {
             return false;
         }
@@ -371,65 +373,11 @@ public class Settings {
                 }
             }
         }
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(new StringReader(hashes)));
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("hash");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    String name = element.getAttribute("name");
-                    String type = element.getAttribute("type");
-                    String md5 = element.getAttribute("md5");
-                    File file = null;
-                    if (type.equalsIgnoreCase("Root")) {
-                        file = new File(configsDir, name);
-                    } else if (type.equalsIgnoreCase("Images")) {
-                        file = new File(imagesDir, name);
-                        name = "images/" + name;
-                    } else if (type.equalsIgnoreCase("Skins")) {
-                        file = new File(skinsDir, name);
-                        name = "skins/" + name;
-                    } else if (type.equalsIgnoreCase("Languages")) {
-                        file = new File(languagesDir, name);
-                        name = "languages/" + name;
-                    } else if (type.equalsIgnoreCase("Libraries")) {
-                        file = new File(librariesDir, name);
-                        name = "libraries/" + name;
-                    } else if (type.equalsIgnoreCase("Launcher")) {
-                        String version = element.getAttribute("version");
-                        if (!getVersion().equalsIgnoreCase(version)) {
-                            if (getVersion().equalsIgnoreCase("%VERSION%")) {
-                                continue; // Don't even think about updating my unbuilt copy
-                            } else {
-                                log("Update to Launcher found. Current version: " + this.version
-                                        + ", New version: " + version);
-                                downloadUpdate();
-                            }
-                        } else {
-                            continue;
-                        }
-                    } else {
-                        continue; // Don't know what to do with this file so ignore it
-                    }
-                    if (!file.exists()) {
-                        return true; // Something updated
-                    } else {
-                        if (!Utils.getMD5(file).equalsIgnoreCase(md5)) {
-                            return true; // Something updated
-                        }
-                    }
-                }
+        ArrayList<Downloadable> downloads = getLauncherFiles();
+        for (Downloadable download : downloads) {
+            if (download.needToDownload()) {
+                return true; // 1 file needs to be updated so there is updated files
             }
-        } catch (SAXException e) {
-            this.console.logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            this.console.logStackTrace(e);
-        } catch (IOException e) {
-            this.console.logStackTrace(e);
         }
         return false; // No updates
     }

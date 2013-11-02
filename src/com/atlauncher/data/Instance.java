@@ -499,7 +499,7 @@ public class Instance implements Serializable {
                                                         .getID() + ""),
                                                 ((end - start) / 1000) + "", (isDev ? "dev"
                                                         : getVersion()));
-                                if (App.settings.isUpdatedFiles()) {
+                                if (App.settings.hasUpdatedFiles()) {
                                     App.settings.reloadLauncherData();
                                 }
                             }
