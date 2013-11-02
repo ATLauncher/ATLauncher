@@ -65,7 +65,6 @@ import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.NewsPanel;
 import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.ATLauncherDownloadable;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user
@@ -275,7 +274,7 @@ public class Settings {
                 }
             }
         }
-        ArrayList<ATLauncherDownloadable> downloads = new ArrayList<ATLauncherDownloadable>();
+        ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -333,20 +332,25 @@ public class Settings {
                         if (!file.canWrite()) {
                             Utils.delete(file);
                         }
-                        downloads.add(new ATLauncherDownloadable("launcher/" + name, file, md5));
+                        downloads.add(new Downloadable("launcher/" + name, file, md5, null, true));
                     }
                 }
             }
         } catch (SAXException e) {
-            this.console.logStackTrace(e);
+            logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            this.console.logStackTrace(e);
+            logStackTrace(e);
         } catch (IOException e) {
-            this.console.logStackTrace(e);
+            logStackTrace(e);
         }
         ExecutorService executor = Executors.newFixedThreadPool(8);
-        for (ATLauncherDownloadable download : downloads) {
-            executor.execute(download);
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    download.download(false);
+                }
+            });
         }
         executor.shutdown();
         while (!executor.isTerminated()) {

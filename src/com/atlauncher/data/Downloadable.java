@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package com.atlauncher.workers;
+package com.atlauncher.data;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,8 +15,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 
 import com.atlauncher.App;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.InstanceInstaller;
 
 public class Downloadable {
 
@@ -139,8 +139,10 @@ public class Downloadable {
     }
 
     public void downloadFile(boolean downloadAsLibrary) {
-        if (instanceInstaller.isCancelled()) {
-            return;
+        if (instanceInstaller != null) {
+            if (instanceInstaller.isCancelled()) {
+                return;
+            }
         }
         try {
             InputStream in = null;
@@ -163,8 +165,10 @@ public class Downloadable {
     }
 
     public void download(boolean downloadAsLibrary) {
-        if (instanceInstaller.isCancelled()) {
-            return;
+        if (instanceInstaller != null) {
+            if (instanceInstaller.isCancelled()) {
+                return;
+            }
         }
         // Create the directory structure
         new File(file.getAbsolutePath().substring(0,
