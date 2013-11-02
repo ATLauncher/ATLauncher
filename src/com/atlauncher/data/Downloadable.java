@@ -66,14 +66,11 @@ public class Downloadable {
         if (needToDownload()) {
             String size = getConnection().getHeaderField("Content-Length");
             if (size == null) {
-                System.out.println(this.url + ": No Content-Length Header!");
                 return 0;
             } else {
-                System.out.println(this.url + ": Size is " + Integer.parseInt(size) + " bytes!");
                 return Integer.parseInt(size);
             }
         } else {
-            System.out.println(this.url + ": Don't Need To Download!");
             return 0;
         }
     }
@@ -138,7 +135,7 @@ public class Downloadable {
         return this.connection;
     }
 
-    public void downloadFile(boolean downloadAsLibrary) {
+    private void downloadFile(boolean downloadAsLibrary) {
         if (instanceInstaller != null) {
             if (instanceInstaller.isCancelled()) {
                 return;

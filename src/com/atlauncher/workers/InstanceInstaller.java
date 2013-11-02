@@ -44,6 +44,7 @@ import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Downloader;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
@@ -898,35 +899,32 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             inputFile.delete();
             outputTmpFile.renameTo(inputFile);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
     }
 
     public void configurePack() {
-        Boolean configsDownloaded = false; // If the configs were downloaded
-        fireTask(App.settings.getLocalizedString("instance.extractingconfigs"));
+        // Download the configs zip file
+        fireTask(App.settings.getLocalizedString("instance.downloadingconfigs"));
         File configs = new File(App.settings.getTempDir(), "Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version + "/Configs.zip";
-        String configsURL = App.settings.getFileURL(path); // The zip on the server
-        Downloader configsDownloader = new Downloader(configsURL, configs.getAbsolutePath(), this);
-        configsDownloader.run();
-        configsDownloaded = configsDownloader.downloaded();
-        while (!configsDownloaded) {
-            if (App.settings.disableServerGetNext()) {
-                configsURL = App.settings.getFileURL(path); // The zip on the server
-                configsDownloader = new Downloader(configsURL, configs.getAbsolutePath(), this);
-                configsDownloader.run();
-                configsDownloaded = configsDownloader.downloaded();
-            } else {
-                App.settings.getConsole().log(
-                        "Couldn't Download Configs For " + pack.getName()
-                                + ". Switching To Offline Mode!", true);
-                App.settings.setOfflineMode();
-                cancel(true);
-            }
+        Downloadable configsDownload = new Downloadable(path, configs, null, this, true);
+        this.totalBytes = configsDownload.getFilesize();
+        this.downloadedBytes = 0;
+        configsDownload.download(true); // Download the file
+        if (configsDownload.needToDownload()) {
+            App.settings.log("Couldn't download configs for " + this.pack.getName() + " version "
+                    + this.version + ". Aborting install!", LogMessageType.error, false);
+            cancel(true);
         }
+
+        // Extract the configs zip file
+        fireSubProgressUnknown();
+        fireTask(App.settings.getLocalizedString("instance.extractingconfigs"));
         Utils.unzip(configs, getRootDirectory());
-        configs.delete();
+        Utils.delete(configs);
+
+        // Copy over common configs if any
         if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
             Utils.copyDirectory(App.settings.getCommonConfigsDir(), getRootDirectory());
         }
