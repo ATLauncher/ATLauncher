@@ -42,7 +42,6 @@ import com.atlauncher.App;
 import com.atlauncher.data.DecompType;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.Downloader;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.MinecraftVersion;
