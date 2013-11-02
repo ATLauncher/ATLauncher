@@ -246,8 +246,10 @@ public class Account implements Serializable {
                                 "http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername
                                         + ".png").openConnection();
                         if (conn.getResponseCode() == 200) {
-                            new Downloader("http://s3.amazonaws.com/MinecraftSkins/"
-                                    + minecraftUsername + ".png", file.getAbsolutePath()).run();
+                            Downloadable skin = new Downloadable(
+                                    "http://s3.amazonaws.com/MinecraftSkins/" + minecraftUsername
+                                            + ".png", file, null, null, false);
+                            skin.download(false);
                         } else {
                             Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"),
                                     file, true);

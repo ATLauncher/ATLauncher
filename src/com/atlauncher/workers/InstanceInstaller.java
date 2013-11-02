@@ -597,7 +597,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                 } while (isTruncated);
             } catch (Exception e) {
-                App.settings.getConsole().logStackTrace(e);
+                App.settings.logStackTrace(e);
             }
         }
 
@@ -631,11 +631,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
 
         try {
@@ -666,16 +666,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
 
         return downloads;
     }
 
+    @SuppressWarnings("unchecked")
     public ArrayList<Downloadable> getLibraries() {
         ArrayList<Downloadable> libraries = new ArrayList<Downloadable>();
 
@@ -740,11 +741,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
 
         // Now read in the library jars needed from Mojang
@@ -767,7 +768,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 while (iterator.hasNext()) {
                     boolean shouldDownload = false;
                     JSONObject object = iterator.next();
-                    String libraryName = (String) object.get("name");
                     String[] parts = ((String) object.get("name")).split(":");
                     String dir = parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2];
                     String filename = null;
@@ -847,7 +847,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
 
             } catch (ParseException e) {
-                App.settings.getConsole().logStackTrace(e);
+                App.settings.logStackTrace(e);
             }
         }
 

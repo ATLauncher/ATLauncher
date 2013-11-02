@@ -174,11 +174,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return null;
     }
@@ -201,11 +201,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return 0;
     }
@@ -228,11 +228,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return 0;
     }
@@ -256,11 +256,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return null;
     }
@@ -388,11 +388,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
         return mods;
     }
@@ -447,7 +447,7 @@ public class Pack {
                         return true; // Can make a server
                     }
                 } catch (InvalidMinecraftVersion e) {
-                    App.settings.getConsole().log(e.getMessage(), true);
+                    App.settings.logStackTrace(e);
                     continue;
                 }
             }
@@ -458,7 +458,7 @@ public class Pack {
                     return true; // Can make a server
                 }
             } catch (InvalidMinecraftVersion e) {
-                App.settings.getConsole().log(e.getMessage(), true);
+                App.settings.logStackTrace(e);
                 continue;
             }
         }

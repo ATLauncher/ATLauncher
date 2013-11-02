@@ -147,7 +147,7 @@ public class LauncherConsole extends JFrame {
                 }
             }
         } catch (Exception e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
 
         UIManager.put("control", BASE_COLOR);

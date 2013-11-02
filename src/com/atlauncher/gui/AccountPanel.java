@@ -174,8 +174,6 @@ public class AccountPanel extends JPanel {
                             options[0]);
                 } else {
                     Account account;
-                    boolean loggedIn = false;
-                    String url = null;
                     String username = usernameField.getText();
                     String minecraftUsername = null;
                     String password = new String(passwordField.getPassword());
@@ -194,8 +192,8 @@ public class AccountPanel extends JPanel {
                     App.settings.log("Logging into Minecraft!");
                     final ProgressDialog dialog = new ProgressDialog(App.settings
                             .getLocalizedString("account.loggingin"), 0, App.settings
-                            .getLocalizedString("account.loggingin"),
-                            "Aborting login for " + usernameField.getText());
+                            .getLocalizedString("account.loggingin"), "Aborting login for "
+                            + usernameField.getText());
                     dialog.addThread(new Thread() {
                         public void run() {
                             try {

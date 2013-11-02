@@ -9,6 +9,7 @@ package com.atlauncher.data;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
+import java.awt.event.ComponentAdapter;
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.File;
@@ -185,7 +186,6 @@ public class Settings {
         console.setupLanguage(); // Setup language on the console
     }
 
-    @SuppressWarnings("unchecked")
     public void checkMojangStatus() {
         JSONParser parser = new JSONParser();
         try {
@@ -225,8 +225,8 @@ public class Settings {
             }
             File newFile = new File(getTempDir(), saveAs);
             log("Downloading Launcher Update");
-            new Downloader(getFileURL("ATLauncher." + toget), newFile.getAbsolutePath()).run(); // Download
-                                                                                                // it
+            Downloadable update = new Downloadable("ATLauncher." + toget, newFile, null, null, true);
+            update.download(false);
             runUpdate(path, newFile.getAbsolutePath());
         } catch (IOException e) {
             this.logStackTrace(e);
@@ -1947,6 +1947,18 @@ public class Settings {
     @Deprecated
     public LauncherConsole getConsole() {
         return this.console;
+    }
+
+    public void clearConsole() {
+        this.console.clearConsole();
+    }
+
+    public void addConsoleListener(ComponentAdapter ca) {
+        this.console.addComponentListener(ca);
+    }
+
+    public String getLog() {
+        return this.console.getLog();
     }
 
     /**

@@ -87,30 +87,28 @@ public class ConsoleBottomBar extends JPanel {
     private void setupActionListeners() {
         clear.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().clearConsole();
-                App.settings.getConsole().log("Console Cleared");
+                App.settings.clearConsole();
+                App.settings.log("Console Cleared");
             }
         });
         copyLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().log("Copied Log To Clipboard");
-                StringSelection text = new StringSelection(App.settings.getConsole().getLog());
+                App.settings.log("Copied Log To Clipboard");
+                StringSelection text = new StringSelection(App.settings.getLog());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);
             }
         });
         uploadLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String result = Utils.uploadPaste("ATLauncher Log", App.settings.getConsole()
-                        .getLog());
+                String result = Utils.uploadPaste("ATLauncher Log", App.settings.getLog());
                 if (result.contains("%PASTECHECKURL%")) {
-                    App.settings.getConsole().log(
-                            "Log uploaded and link copied to clipboard: " + result);
+                    App.settings.log("Log uploaded and link copied to clipboard: " + result);
                     StringSelection text = new StringSelection(result);
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(text, null);
                 } else {
-                    App.settings.getConsole().log("Log failed to upload: " + result);
+                    App.settings.log("Log failed to upload: " + result);
                 }
             }
         });
@@ -128,25 +126,25 @@ public class ConsoleBottomBar extends JPanel {
         });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().log("Opening Up ATLauncher Facebook Page");
+                App.settings.log("Opening Up ATLauncher Facebook Page");
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
         githubIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().log("Opening Up ATLauncher GitHub Page");
+                App.settings.log("Opening Up ATLauncher GitHub Page");
                 Utils.openBrowser("https://github.com/RyanTheAllmighty/ATLauncher");
             }
         });
         redditIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().log("Opening Up ATLauncher Reddit Page");
+                App.settings.log("Opening Up ATLauncher Reddit Page");
                 Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
             }
         });
         twitterIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().log("Opening Up ATLauncher Twitter Page");
+                App.settings.log("Opening Up ATLauncher Twitter Page");
                 Utils.openBrowser("http://www.twitter.com/ATLauncher");
             }
         });
@@ -162,7 +160,7 @@ public class ConsoleBottomBar extends JPanel {
 
         killMinecraft = new JButton("Kill Minecraft");
         killMinecraft.setVisible(false);
-        
+
         facebookIcon = new JButton(Utils.getIconImage("/resources/FacebookIcon.png"));
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());
         facebookIcon.setContentAreaFilled(false);

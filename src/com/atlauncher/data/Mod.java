@@ -248,19 +248,26 @@ public class Mod {
                 }
                 break;
             case direct:
+                Downloadable download;
                 if (serverURL == null) {
-                    new Downloader(getURL(), fileLocation.getAbsolutePath(), installer).run();
+                    download = new Downloadable(getURL(), fileLocation, this.md5, installer, false);
                 } else {
-                    new Downloader(getServerURL(), fileLocation.getAbsolutePath(), installer).run();
+                    download = new Downloadable(getServerURL(), fileLocation, this.md5, installer,
+                            false);
+                }
+                if (download.needToDownload()) {
+                    download.download(false);
                 }
                 break;
             case server:
                 if (serverURL == null) {
-                    new Downloader(App.settings.getFileURL(getURL()),
-                            fileLocation.getAbsolutePath(), installer).run();
+                    download = new Downloadable(getURL(), fileLocation, this.md5, installer, true);
                 } else {
-                    new Downloader(App.settings.getFileURL(getServerURL()),
-                            fileLocation.getAbsolutePath(), installer).run();
+                    download = new Downloadable(getServerURL(), fileLocation, this.md5, installer,
+                            true);
+                }
+                if (download.needToDownload()) {
+                    download.download(false);
                 }
                 break;
         }

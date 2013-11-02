@@ -134,7 +134,7 @@ public class InstanceInstallerDialog extends JDialog {
                 try {
                     mcVersion = App.settings.getMinecraftVersion(pack.getDevMinecraftVersion(i));
                 } catch (InvalidMinecraftVersion e1) {
-                    App.settings.getConsole().logStackTrace(e1);
+                    App.settings.logStackTrace(e1);
                     continue;
                 }
                 versions.add(new Version(true, pack.getDevVersion(i), mcVersion));
@@ -145,7 +145,7 @@ public class InstanceInstallerDialog extends JDialog {
             try {
                 mcVersion = App.settings.getMinecraftVersion(pack.getMinecraftVersion(i));
             } catch (InvalidMinecraftVersion e1) {
-                App.settings.getConsole().log(e1.getMessage(), true);
+                App.settings.logStackTrace(e1);
                 continue;
             }
             versions.add(new Version(false, pack.getVersion(i), mcVersion));
@@ -307,9 +307,9 @@ public class InstanceInstallerDialog extends JDialog {
                             try {
                                 success = get();
                             } catch (InterruptedException e) {
-                                App.settings.getConsole().logStackTrace(e);
+                                App.settings.logStackTrace(e);
                             } catch (ExecutionException e) {
-                                App.settings.getConsole().logStackTrace(e);
+                                App.settings.logStackTrace(e);
                             }
                             if (success) {
                                 type = JOptionPane.INFORMATION_MESSAGE;

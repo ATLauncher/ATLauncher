@@ -16,7 +16,7 @@ public class ModsJCheckBox extends JCheckBox {
 
     public ModsJCheckBox(Mod mod) {
         super(mod.getName());
-        if(mod.hasColour()){
+        if (mod.hasColour()) {
             setForeground(mod.getColour());
         }
         this.mod = mod;

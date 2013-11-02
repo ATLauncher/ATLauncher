@@ -42,9 +42,9 @@ public class LauncherFrame extends JFrame {
     private BottomBar bottomBar;
 
     public LauncherFrame(boolean show) {
-        App.settings.getConsole().log("Launcher opening");
-        App.settings.getConsole().log("Made By Bob*");
-        App.settings.getConsole().log("*(Not Actually)");
+        App.settings.log("Launcher opening");
+        App.settings.log("Made By Bob*");
+        App.settings.log("*(Not Actually)");
         App.settings.setParentFrame(this);
         setSize(new Dimension(925, 550));
         setTitle("ATLauncher %VERSION%");
@@ -54,17 +54,17 @@ public class LauncherFrame extends JFrame {
         setIconImage(Utils.getImage("/resources/Icon.png"));
         setLayout(LAYOUT_MANAGER);
 
-        App.settings.getConsole().log("Setting up Look & Feel");
+        App.settings.log("Setting up Look & Feel");
         setupLookAndFeel(); // Setup the look and feel for the Launcher
-        App.settings.getConsole().log("Finished Setting up Look & Feel");
+        App.settings.log("Finished Setting up Look & Feel");
 
-        App.settings.getConsole().log("Setting up Look & Feel");
+        App.settings.log("Setting up Look & Feel");
         setupBottomBar(); // Setup the Bottom Bar
-        App.settings.getConsole().log("Finished Setting up Bottom Bar");
+        App.settings.log("Finished Setting up Bottom Bar");
 
-        App.settings.getConsole().log("Setting up Tabs");
+        App.settings.log("Setting up Tabs");
         setupTabs(); // Setup the JTabbedPane
-        App.settings.getConsole().log("Finished Setting up Tabs");
+        App.settings.log("Finished Setting up Tabs");
 
         add(tabbedPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
@@ -76,14 +76,14 @@ public class LauncherFrame extends JFrame {
         });
 
         if (show) {
-            App.settings.getConsole().log("Showing Launcher");
+            App.settings.log("Showing Launcher");
             setVisible(true);
         }
 
-        App.settings.getConsole().addComponentListener(new ComponentAdapter() {
+        App.settings.addConsoleListener(new ComponentAdapter() {
             public void componentHidden(ComponentEvent e) {
-                App.settings.getConsole().log("Hiding console");
-                App.settings.getConsole().setVisible(false);
+                App.settings.log("Hiding console");
+                App.settings.setConsoleVisible(false);
                 bottomBar.hideConsole();
             }
         });
@@ -137,7 +137,7 @@ public class LauncherFrame extends JFrame {
                 }
             }
         } catch (Exception e) {
-            App.settings.getConsole().logStackTrace(e);
+            App.settings.logStackTrace(e);
         }
 
         // For some reason Mac OS makes text bigger then it should be
