@@ -910,13 +910,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         Downloadable configsDownload = new Downloadable(path, configs, null, this, true);
         this.totalBytes = configsDownload.getFilesize();
         this.downloadedBytes = 0;
-<<<<<<< HEAD
         configsDownload.download(true); // Download the file
-=======
-        do {
-            configsDownload.download(true);
-        } while (configsDownload.needToDownload());
->>>>>>> refs/remotes/origin/master
         if (configsDownload.needToDownload()) {
             App.settings.log("Couldn't download configs for " + this.pack.getName() + " version "
                     + this.version + ". Aborting install!", LogMessageType.error, false);
