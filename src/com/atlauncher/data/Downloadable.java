@@ -113,14 +113,17 @@ public class Downloadable {
                 this.connection.setRequestProperty("Expires", "0");
                 this.connection.setRequestProperty("Pragma", "no-cache");
                 this.connection.connect();
+                if (this.connection.getResponseCode() / 100 != 2) {
+                    throw new IOException(this.url + " returned response code "
+                            + this.connection.getResponseCode());
+                }
             } catch (IOException e) {
-                App.settings.log("Cannot make a connection to " + this.url, LogMessageType.error,
-                        false);
                 App.settings.logStackTrace(e);
                 if (this.isATLauncherDownload) {
                     if (App.settings.disableServerGetNext()) {
                         this.url = App.settings.getFileURL(this.beforeURL);
-                        getConnection();
+                        this.connection = null;
+                        return getConnection();
                     } else {
                         App.settings.log("Failed to download file " + this.file.getName()
                                 + " from all ATLauncher servers. Cancelling install!",

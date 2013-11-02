@@ -290,7 +290,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             .getLocalizedString("common.reinstalled")
                                             : App.settings.getLocalizedString("common.installed"))
                                     + "<br/><br/>"
-                                    + App.settings.getLocalizedString("instance.actioncancelled");
+                                    + App.settings.getLocalizedString("instance.checkerrorlogs");
                             title = pack.getName()
                                     + " "
                                     + version.getVersion()

@@ -895,7 +895,7 @@ public class Settings {
         this.server.disableServer(); // Disable the server
         for (Server server : this.servers) {
             if (!server.isDisabled()) {
-                log("Server" + this.server.getName() + " Not Available! Switching To "
+                log("Server " + this.server.getName() + " Not Available! Switching To "
                         + server.getName(), LogMessageType.warning, true);
                 this.server = server; // Setup next available server
                 return true;

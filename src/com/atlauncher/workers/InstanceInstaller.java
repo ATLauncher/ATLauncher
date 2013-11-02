@@ -43,7 +43,6 @@ import com.atlauncher.data.DecompType;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
@@ -911,11 +910,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.totalBytes = configsDownload.getFilesize();
         this.downloadedBytes = 0;
         configsDownload.download(true); // Download the file
-        if (configsDownload.needToDownload()) {
-            App.settings.log("Couldn't download configs for " + this.pack.getName() + " version "
-                    + this.version + ". Aborting install!", LogMessageType.error, false);
-            cancel(true);
-        }
 
         // Extract the configs zip file
         fireSubProgressUnknown();
