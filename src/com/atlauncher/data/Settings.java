@@ -170,7 +170,7 @@ public class Settings {
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
         loadServerProperty(); // Get users Server preference
-        checkForUpdatedFiles(); // Checks for updated files on the server
+        downloadUpdatedFiles(); // Downloads updated files on the server
         loadLanguages(); // Load the Languages available in the Launcher
         loadPacks(); // Load the Packs available in the Launcher
         loadUsers(); // Load the Testers and Allowed Players for the packs
@@ -259,10 +259,9 @@ public class Settings {
     }
 
     /**
-     * This checks the servers hashes.xml file and downloads and new/updated files that differ from
-     * what the user has
+     * This checks the servers hashes.xml file and gets the files that the Launcher needs to have
      */
-    private void checkForUpdatedFiles() {
+    private ArrayList<Downloadable> getLauncherFiles() {
         String hashes = null;
         while (hashes == null) {
             hashes = Utils.urlToString(getFileURL("launcher/hashes.xml"));
@@ -270,7 +269,7 @@ public class Settings {
                 boolean changed = disableServerGetNext(); // Disable the server and get the next one
                 if (!changed) {
                     this.offlineMode = true;
-                    return;
+                    return null;
                 }
             }
         }
@@ -319,21 +318,7 @@ public class Settings {
                     } else {
                         continue; // Don't know what to do with this file so ignore it
                     }
-                    boolean download = false; // If we have to download the file or not
-                    if (!file.exists()) {
-                        download = true; // File doesn't exist so download it
-                    } else {
-                        if (!Utils.getMD5(file).equalsIgnoreCase(md5)) {
-                            download = true; // MD5 hashes don't match so download it
-                        }
-                    }
-
-                    if (download) {
-                        if (!file.canWrite()) {
-                            Utils.delete(file);
-                        }
-                        downloads.add(new Downloadable("launcher/" + name, file, md5, null, true));
-                    }
+                    downloads.add(new Downloadable("launcher/" + name, file, md5, null, true));
                 }
             }
         } catch (SAXException e) {
@@ -343,12 +328,22 @@ public class Settings {
         } catch (IOException e) {
             logStackTrace(e);
         }
+        return downloads;
+    }
+
+    public void downloadUpdatedFiles() {
+        ArrayList<Downloadable> downloads = getLauncherFiles();
+        if (downloads == null) {
+            return;
+        }
         ExecutorService executor = Executors.newFixedThreadPool(8);
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    download.download(false);
+                    if (download.needToDownload()) {
+                        download.download(false);
+                    }
                 }
             });
         }
@@ -450,7 +445,7 @@ public class Settings {
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
         Thread updateThread = new Thread() {
             public void run() {
-                checkForUpdatedFiles(); // Download all updated files
+                downloadUpdatedFiles(); // Download updated files
                 reloadNewsPanel(); // Reload news panel
                 loadPacks(); // Load the Packs available in the Launcher
                 loadUsers(); // Load the Testers and Allowed Players for the packs

@@ -170,9 +170,12 @@ public class Downloadable {
                 return;
             }
         }
+        if (!this.file.canWrite()) {
+            Utils.delete(this.file);
+        }
         // Create the directory structure
-        new File(file.getAbsolutePath().substring(0,
-                file.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
+        new File(this.file.getAbsolutePath().substring(0,
+                this.file.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
         if (getMD5().equalsIgnoreCase("-")) {
             downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to
                                              // check
@@ -199,7 +202,8 @@ public class Downloadable {
                                 + this.url + ". Trying another server!", LogMessageType.warning,
                                 false);
                         this.url = App.settings.getFileURL(this.beforeURL);
-                        getConnection();
+                        this.connection = null;
+                        download(downloadAsLibrary); // Redownload the file
                     } else {
                         App.settings.log("Failed to download file " + this.file.getName()
                                 + " from all ATLauncher servers. Cancelling install!",
