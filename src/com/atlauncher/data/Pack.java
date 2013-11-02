@@ -147,17 +147,10 @@ public class Pack {
         if (this.xml == null || !this.xmlVersion.equalsIgnoreCase(version)
                 || (isTester() && redownload)) {
             String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.xml";
-            String versionURL = App.settings.getFileURL(path); // The XML with path on server
-            this.xml = Utils.urlToString(versionURL);
-            while (xml == null) {
-                if (App.settings.disableServerGetNext()) {
-                    versionURL = App.settings.getFileURL(path); // The XML with path on server
-                    this.xml = Utils.urlToString(versionURL); // Try again with another server
-                } else {
-                    App.settings.setOfflineMode();
-                    return null;
-                }
-            }
+            Downloadable download = new Downloadable(path, true);
+            do {
+                this.xml = download.getContents();
+            } while (xml == null);
             this.xmlVersion = version;
         }
         return this.xml;

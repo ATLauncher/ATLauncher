@@ -6,13 +6,15 @@
  */
 package com.atlauncher.data;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.zip.GZIPInputStream;
 
 import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
@@ -43,6 +45,10 @@ public class Downloadable {
         this.isATLauncherDownload = isATLauncherDownload;
     }
 
+    public Downloadable(String url, boolean isATLauncherDownloadable) {
+        this(url, null, null, null, isATLauncherDownloadable);
+    }
+
     public String getMD5FromURL() throws IOException {
         String etag = null;
         etag = getConnection().getHeaderField("ETag");
@@ -63,19 +69,18 @@ public class Downloadable {
     }
 
     public int getFilesize() {
-        if (needToDownload()) {
-            String size = getConnection().getHeaderField("Content-Length");
-            if (size == null) {
-                return 0;
-            } else {
-                return Integer.parseInt(size);
-            }
-        } else {
+        int size = getConnection().getContentLength();
+        if (size == -1) {
             return 0;
+        } else {
+            return size;
         }
     }
 
     public boolean needToDownload() {
+        if (this.file == null) {
+            return true;
+        }
         if (this.file.exists()) {
             if (Utils.getMD5(this.file).equalsIgnoreCase(getMD5())) {
                 return false;
@@ -101,6 +106,16 @@ public class Downloadable {
         return this.file;
     }
 
+    public boolean isGziped() {
+        if (getConnection().getContentEncoding() == null) {
+            return false;
+        } else if (getConnection().getContentEncoding().equalsIgnoreCase("gzip")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private HttpURLConnection getConnection() {
         if (this.connection == null) {
             try {
@@ -108,6 +123,7 @@ public class Downloadable {
                 this.connection.setUseCaches(false);
                 this.connection.setDefaultUseCaches(false);
                 this.connection.setConnectTimeout(5000);
+                this.connection.setRequestProperty("Accept-Encoding", "gzip");
                 this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
                 this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
                 this.connection.setRequestProperty("Expires", "0");
@@ -125,7 +141,7 @@ public class Downloadable {
                         this.connection = null;
                         return getConnection();
                     } else {
-                        App.settings.log("Failed to download file " + this.file.getName()
+                        App.settings.log("Failed to download " + this.beforeURL
                                 + " from all ATLauncher servers. Cancelling install!",
                                 LogMessageType.error, false);
                         if (this.instanceInstaller != null) {
@@ -146,14 +162,18 @@ public class Downloadable {
         }
         try {
             InputStream in = null;
-            in = getConnection().getInputStream();
+            if (isGziped()) {
+                in = new GZIPInputStream(getConnection().getInputStream());
+            } else {
+                in = getConnection().getInputStream();
+            }
             FileOutputStream writer = new FileOutputStream(this.file);
             byte[] buffer = new byte[1024];
             int bytesRead = 0;
             while ((bytesRead = in.read(buffer)) > 0) {
                 writer.write(buffer, 0, bytesRead);
                 buffer = new byte[1024];
-                if (this.instanceInstaller != null && downloadAsLibrary) {
+                if (this.instanceInstaller != null && downloadAsLibrary && getFilesize() != 0) {
                     this.instanceInstaller.addDownloadedBytes(bytesRead);
                 }
             }
@@ -164,7 +184,40 @@ public class Downloadable {
         }
     }
 
+    public String getContents() {
+        if (instanceInstaller != null) {
+            if (instanceInstaller.isCancelled()) {
+                return null;
+            }
+        }
+        StringBuilder response = null;
+        try {
+            InputStream in = null;
+            if (isGziped()) {
+                in = new GZIPInputStream(getConnection().getInputStream());
+            } else {
+                in = getConnection().getInputStream();
+            }
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            response = new StringBuilder();
+            String inputLine;
+
+            while ((inputLine = br.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return response.toString();
+    }
+
     public void download(boolean downloadAsLibrary) {
+        if (this.file == null) {
+            App.settings.log("Cannot download " + this.url + " to file as one wasn't specified!",
+                    LogMessageType.error, false);
+            return;
+        }
         if (instanceInstaller != null) {
             if (instanceInstaller.isCancelled()) {
                 return;

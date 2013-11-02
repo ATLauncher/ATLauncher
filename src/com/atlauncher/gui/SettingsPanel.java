@@ -28,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
-import com.atlauncher.data.ExtractTo;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 import com.atlauncher.utils.Utils;
