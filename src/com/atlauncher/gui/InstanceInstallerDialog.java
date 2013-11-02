@@ -447,15 +447,36 @@ public class InstanceInstallerDialog extends JDialog {
                             if (subProgressBar.isIndeterminate()) {
                                 subProgressBar.setIndeterminate(false);
                             }
-                            int progress = (Integer) evt.getNewValue();
+                            int progress;
+                            String paint = null;
+                            if (evt.getNewValue() instanceof Integer) {
+                                progress = (Integer) evt.getNewValue();
+                            } else {
+                                String[] parts = (String[]) evt.getNewValue();
+                                progress = Integer.parseInt(parts[0]);
+                                paint = parts[1];
+                            }
                             if (progress > 100) {
                                 progress = 100;
                             }
                             if (progress < 0) {
+                                if (subProgressBar.isStringPainted()) {
+                                    subProgressBar.setStringPainted(false);
+                                }
                                 subProgressBar.setVisible(false);
+                            } else {
+                                if (!subProgressBar.isStringPainted()) {
+                                    subProgressBar.setStringPainted(true);
+                                }
+                                if (paint != null) {
+                                    subProgressBar.setString(paint);
+                                }
                             }
                             subProgressBar.setValue(progress);
                         } else if ("subprogressint" == evt.getPropertyName()) {
+                            if (subProgressBar.isStringPainted()) {
+                                subProgressBar.setStringPainted(false);
+                            }
                             if (!subProgressBar.isVisible()) {
                                 subProgressBar.setVisible(true);
                             }

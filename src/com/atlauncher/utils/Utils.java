@@ -632,32 +632,6 @@ public class Utils {
         return key;
     }
 
-    @Deprecated
-    public static String urlToString(String url) {
-        if (App.settings.isInOfflineMode()) {
-            return null;
-        }
-        StringBuilder response = null;
-        try {
-            URL urll = new URL(url);
-            URLConnection connection = urll.openConnection();
-            connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
-            connection.setConnectTimeout(5000);
-            BufferedReader in;
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            response = new StringBuilder();
-            String inputLine;
-
-            while ((inputLine = in.readLine()) != null)
-                response.append(inputLine);
-            in.close();
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-            return null;
-        }
-        return response.toString();
-    }
-
     public static void replaceText(File originalFile, File destinationFile, String replaceThis,
             String withThis) throws IOException {
 

@@ -424,19 +424,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void downloadLibraries() {
         fireTask(App.settings.getLocalizedString("instance.downloadinglibraries"));
         fireSubProgressUnknown();
-        ExecutorService executor = Executors.newFixedThreadPool(8);
+        ExecutorService executor;
         ArrayList<Downloadable> downloads = getLibraries();
         totalBytes = 0;
         downloadedBytes = 0;
 
-        for (Downloadable download : downloads) {
-            if (download.needToDownload()) {
-                totalDownloads++;
-                totalBytes += download.getFilesize();
-            }
+        executor = Executors.newFixedThreadPool(8);
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        totalBytes += download.getFilesize();
+                    }
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
         }
 
         fireSubProgress(0); // Show the subprogress bar
+
+        executor = Executors.newFixedThreadPool(8);
 
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
@@ -740,9 +752,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             JSONParser parser = new JSONParser();
 
             try {
-                Object obj = parser.parse(Utils
-                        .urlToString("https://s3.amazonaws.com/Minecraft.Download/versions/"
-                                + this.minecraftVersion + "/" + this.minecraftVersion + ".json"));
+                Downloadable versionJson = new Downloadable(
+                        "https://s3.amazonaws.com/Minecraft.Download/versions/"
+                                + this.minecraftVersion + "/" + this.minecraftVersion + ".json",
+                        false);
+                Object obj = parser.parse(versionJson.getContents());
                 JSONObject jsonObject = (JSONObject) obj;
                 if (this.mainClass == null) {
                     this.mainClass = (String) jsonObject.get("mainClass");
@@ -1169,6 +1183,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         firePropertyChange("subprogress", null, percent);
     }
 
+    private void fireSubProgress(int percent, String paint) {
+        if (percent > 100) {
+            percent = 100;
+        }
+        String[] info = new String[2];
+        info[0] = "" + percent;
+        info[1] = paint;
+        firePropertyChange("subprogress", null, info);
+    }
+
     private void fireSubProgressUnknown() {
         firePropertyChange("subprogressint", null, null);
     }
@@ -1207,9 +1231,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else {
             progress = 0;
         }
-        System.out.println("Downloaded " + bytes + " bytes bringing total to "
-                + this.downloadedBytes + "/" + this.totalBytes + " which is " + progress + "%");
-        fireSubProgress((int) progress);
+        fireSubProgress((int) progress,
+                String.format("%.2f", ((float) this.downloadedBytes / 1024 / 1024)) + " MB / "
+                        + String.format("%.2f", ((float) this.totalBytes / 1024 / 1024)) + " MB");
     }
-
 }
