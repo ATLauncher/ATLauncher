@@ -119,7 +119,7 @@ public class NewMCLauncher {
                         .getAbsolutePath());
                 argument = argument.replace("${auth_uuid}", loginParts[2]);
                 argument = argument.replace("${auth_access_token}", loginParts[1]);
-                argument = argument.replace("${auth_session}", loginParts[1]);
+                argument = argument.replace("${auth_session}", session);
                 arguments.add(argument);
             }
         } else {
