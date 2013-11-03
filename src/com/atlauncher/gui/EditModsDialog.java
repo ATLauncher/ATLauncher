@@ -40,11 +40,11 @@ public class EditModsDialog extends JDialog {
     private JPanel bottomPanel, disabledModsPanel, enabledModsPanel;
     private JSplitPane split, labelsTop, labels, modsInPack;
     private JScrollPane scroller1, scroller2;
-    private JButton enableButton, disableButton, closeButton;
+    private JButton addButton, enableButton, disableButton, removeButton, closeButton;
     private JLabel topLabelLeft, topLabelRight;
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
-    public EditModsDialog(Instance instance) {
+    public EditModsDialog(final Instance instance) {
         super(App.settings.getParent(), App.settings.getLocalizedString("instance.editingmods",
                 instance.getName()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
@@ -116,6 +116,47 @@ public class EditModsDialog extends JDialog {
         bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
 
+        addButton = new JButton(App.settings.getLocalizedString("instance.addmod"));
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                FileChooserDialog fcd = new FileChooserDialog(App.settings
+                        .getLocalizedString("instance.addmod"), App.settings
+                        .getLocalizedString("common.mod"), App.settings
+                        .getLocalizedString("common.add"), App.settings
+                        .getLocalizedString("instance.typeofmod"), App.settings
+                        .getLocalizedString("instance.selectmodtype"), new String[] {
+                        "Mods Folder", "Jar Mod", "CoreMods Mod", "Texture Pack", "Resource Pack",
+                        "Shader Pack" }, new String[] { "jar", "zip", "litemod" });
+                if (fcd.getChosenFile() != null && fcd.getSelectorValue() != null) {
+                    String typeTemp = fcd.getSelectorValue();
+                    com.atlauncher.data.Type type = null;
+                    if (typeTemp.equalsIgnoreCase("Mods Folder")) {
+                        type = com.atlauncher.data.Type.mods;
+                    } else if (typeTemp.equalsIgnoreCase("Jar Mod")) {
+                        type = com.atlauncher.data.Type.jar;
+                    } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
+                        type = com.atlauncher.data.Type.coremods;
+                    } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
+                        type = com.atlauncher.data.Type.texturepack;
+                    } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
+                        type = com.atlauncher.data.Type.resourcepack;
+                    } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
+                        type = com.atlauncher.data.Type.shaderpack;
+                    }
+                    if (type != null) {
+                        DisableableMod mod = new DisableableMod(fcd.getChosenFile().getName(),
+                                "Custom", true, fcd.getChosenFile().getName(), type, null, null,
+                                true);
+                        Utils.copyFile(fcd.getChosenFile(), instance.getDisabledModsDirectory());
+                        instance.getInstalledMods().add(mod);
+                        disabledMods.add(new ModsJCheckBox(mod));
+                        reloadPanels();
+                    }
+                }
+            }
+        });
+        bottomPanel.add(addButton);
+
         enableButton = new JButton(App.settings.getLocalizedString("instance.enablemod"));
         enableButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -131,6 +172,14 @@ public class EditModsDialog extends JDialog {
             }
         });
         bottomPanel.add(disableButton);
+
+        removeButton = new JButton(App.settings.getLocalizedString("instance.removemod"));
+        removeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeMods();
+            }
+        });
+        bottomPanel.add(removeButton);
 
         closeButton = new JButton(App.settings.getLocalizedString("common.close"));
         closeButton.addActionListener(new ActionListener() {
@@ -181,12 +230,12 @@ public class EditModsDialog extends JDialog {
         ArrayList<ModsJCheckBox> mods = new ArrayList<ModsJCheckBox>(disabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
-                mod.getDisableableMod().enable(instance);
-                disabledMods.remove(mod);
-                enabledMods.add(mod);
+                if (mod.getDisableableMod().enable(instance)) {
+                    disabledMods.remove(mod);
+                    enabledMods.add(mod);
+                }
             }
         }
-        App.settings.saveInstances();
         reloadPanels();
     }
 
@@ -194,16 +243,35 @@ public class EditModsDialog extends JDialog {
         ArrayList<ModsJCheckBox> mods = new ArrayList<ModsJCheckBox>(enabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
-                mod.getDisableableMod().disable(instance);
-                enabledMods.remove(mod);
-                disabledMods.add(mod);
+                if (mod.getDisableableMod().disable(instance)) {
+                    enabledMods.remove(mod);
+                    disabledMods.add(mod);
+                }
             }
         }
-        App.settings.saveInstances();
+        reloadPanels();
+    }
+
+    private void removeMods() {
+        ArrayList<ModsJCheckBox> mods = new ArrayList<ModsJCheckBox>(enabledMods);
+        for (ModsJCheckBox mod : mods) {
+            if (mod.isSelected()) {
+                instance.removeInstalledMod(mod.getDisableableMod());
+                enabledMods.remove(mod);
+            }
+        }
+        mods = new ArrayList<ModsJCheckBox>(disabledMods);
+        for (ModsJCheckBox mod : mods) {
+            if (mod.isSelected()) {
+                instance.removeInstalledMod(mod.getDisableableMod());
+                disabledMods.remove(mod);
+            }
+        }
         reloadPanels();
     }
 
     private void reloadPanels() {
+        App.settings.saveInstances();
         int count = 0;
         enabledModsPanel.removeAll();
         for (int i = 0; i < enabledMods.size(); i++) {

@@ -73,18 +73,24 @@ public class DisableableMod implements Serializable {
         return this.disabled;
     }
 
-    public void enable(Instance instance) {
+    public boolean enable(Instance instance) {
         if (this.disabled) {
-            this.disabled = false;
-            Utils.moveFile(getDisabledFile(instance), getFile(instance));
+            if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
+                this.disabled = false;
+                return true;
+            }
         }
+        return false;
     }
 
-    public void disable(Instance instance) {
+    public boolean disable(Instance instance) {
         if (!this.disabled) {
-            this.disabled = true;
-            Utils.moveFile(getFile(instance), instance.getDisabledModsDirectory());
+            if (Utils.moveFile(getFile(instance), instance.getDisabledModsDirectory(), true)) {
+                this.disabled = true;
+                return true;
+            }
         }
+        return false;
     }
 
     public File getDisabledFile(Instance instance) {
@@ -107,9 +113,6 @@ public class DisableableMod implements Serializable {
                 break;
             case mods:
                 dir = instance.getModsDirectory();
-                break;
-            case plugins:
-                dir = instance.getPluginsDirectory();
                 break;
             case coremods:
                 dir = instance.getCoreModsDirectory();

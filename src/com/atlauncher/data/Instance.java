@@ -208,6 +208,15 @@ public class Instance implements Serializable {
         this.isConverted = true;
     }
 
+    public void removeInstalledMod(DisableableMod mod) {
+        if (mod.isDisabled()) {
+            Utils.delete(mod.getDisabledFile(this));
+        } else {
+            Utils.delete(mod.getFile(this));
+        }
+        this.mods.remove(mod);
+    }
+
     public String getVersion() {
         return version;
     }

@@ -367,8 +367,8 @@ public class Utils {
         return sb.toString();
     }
 
-    public static boolean moveFile(File from, File to) {
-        if (copyFile(from, to)) {
+    public static boolean moveFile(File from, File to, boolean withFilename) {
+        if (copyFile(from, to, withFilename)) {
             delete(from);
             return true;
         } else {
