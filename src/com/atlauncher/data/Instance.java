@@ -49,13 +49,14 @@ public class Instance implements Serializable {
     private boolean isPlayable;
     private boolean newLaunchMethod;
     private String[] modsInstalled;
+    private ArrayList<DisableableMod> mods;
     private ArrayList<String> ignoredUpdates;
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int memory, int permgen,
-            String[] modsInstalled, String jarOrder, String librariesNeeded, String extraArguments,
-            String minecraftArguments, String mainClass, boolean isDev, boolean isPlayable,
-            boolean newLaunchMethod) {
+            ArrayList<DisableableMod> mods, String jarOrder, String librariesNeeded,
+            String extraArguments, String minecraftArguments, String mainClass, boolean isDev,
+            boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -63,7 +64,7 @@ public class Instance implements Serializable {
         this.minecraftVersion = minecraftVersion;
         this.memory = memory;
         this.permgen = permgen;
-        this.modsInstalled = modsInstalled;
+        this.mods = mods;
         this.jarOrder = jarOrder;
         this.librariesNeeded = librariesNeeded;
         this.mainClass = mainClass;
@@ -83,11 +84,12 @@ public class Instance implements Serializable {
 
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int memory, int permgen,
-            String[] modsInstalled, String jarOrder, String librariesNeeded, String extraArguments,
-            String minecraftArguments, String mainClass, boolean isDev, boolean newLaunchMethod) {
+            ArrayList<DisableableMod> mods, String jarOrder, String librariesNeeded,
+            String extraArguments, String minecraftArguments, String mainClass, boolean isDev,
+            boolean newLaunchMethod) {
         this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen,
-                modsInstalled, jarOrder, librariesNeeded, extraArguments, minecraftArguments,
-                mainClass, isDev, true, newLaunchMethod);
+                mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments, mainClass,
+                isDev, true, newLaunchMethod);
     }
 
     public String getName() {
@@ -102,12 +104,20 @@ public class Instance implements Serializable {
         return pack;
     }
 
+    public boolean hasInstalledMods() {
+        return (this.mods == null ? false : true);
+    }
+
     public String getJarOrder() {
         return this.jarOrder;
     }
 
     public int getMemory() {
         return this.memory;
+    }
+
+    public ArrayList<DisableableMod> getInstalledMods() {
+        return this.mods;
     }
 
     public int getPermGen() {
@@ -218,12 +228,32 @@ public class Instance implements Serializable {
         return new File(getRootDirectory(), "mods");
     }
 
+    public File getPluginsDirectory() {
+        return new File(getRootDirectory(), "plugins");
+    }
+
+    public File getShaderPacksDirectory() {
+        return new File(getRootDirectory(), "shaderpacks");
+    }
+
+    public File getDisabledModsDirectory() {
+        return new File(getRootDirectory(), "disabledmods");
+    }
+
     public File getCoreModsDirectory() {
         return new File(getRootDirectory(), "coremods");
     }
 
     public File getJarModsDirectory() {
         return new File(getRootDirectory(), "jarmods");
+    }
+
+    public File getTexturePacksDirectory() {
+        return new File(getRootDirectory(), "texturepacks");
+    }
+
+    public File getResourcePacksDirectory() {
+        return new File(getRootDirectory(), "resourcepacks");
     }
 
     public File getBinDirectory() {
@@ -369,9 +399,9 @@ public class Instance implements Serializable {
     }
 
     public boolean wasModInstalled(String name) {
-        if (modsInstalled != null) {
-            for (String modName : modsInstalled) {
-                if (modName.equalsIgnoreCase(name)) {
+        if (mods != null) {
+            for (DisableableMod mod : mods) {
+                if (mod.getName().equalsIgnoreCase(name)) {
                     return true;
                 }
             }
@@ -379,8 +409,8 @@ public class Instance implements Serializable {
         return false;
     }
 
-    public void setModsInstalled(String[] modsInstalled) {
-        this.modsInstalled = modsInstalled;
+    public void setModsInstalled(ArrayList<DisableableMod> mods) {
+        this.mods = mods;
     }
 
     public boolean hasExtraArguments() {

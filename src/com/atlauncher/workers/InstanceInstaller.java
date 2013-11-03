@@ -40,6 +40,7 @@ import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
 import com.atlauncher.data.DecompType;
+import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
@@ -81,7 +82,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private int totalBytes = 0; // Total number of bytes to download
     private int downloadedBytes = 0; // Total number of bytes downloaded
     private Instance instance = null;
-    private String[] modsInstalled;
+    private ArrayList<DisableableMod> modsInstalled;
     private ArrayList<File> serverLibraries;
 
     public InstanceInstaller(String instanceName, Pack pack, String version,
@@ -109,7 +110,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.instanceName;
     }
 
-    public String[] getModsInstalled() {
+    public ArrayList<DisableableMod> getModsInstalled() {
         return this.modsInstalled;
     }
 
@@ -1047,13 +1048,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (!hasOptionalMods()) {
             selectedMods = allMods;
         }
-        if (selectedMods.size() != 0) {
-            modsInstalled = new String[selectedMods.size()];
-            for (int i = 0; i < selectedMods.size(); i++) {
-                modsInstalled[i] = selectedMods.get(i).getName();
-            }
-        } else {
-            modsInstalled = new String[0];
+        modsInstalled = new ArrayList<DisableableMod>();
+        for (Mod mod : selectedMods) {
+            modsInstalled
+                    .add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), mod.getFile(), mod
+                            .getType(), mod.getColour(), mod.getDescription(), false));
         }
         makeDirectories();
         addPercent(5);

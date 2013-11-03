@@ -367,6 +367,18 @@ public class Utils {
         return sb.toString();
     }
 
+    public static boolean moveFile(File from, File to) {
+        if (copyFile(from, to)) {
+            delete(from);
+            return true;
+        } else {
+            App.settings.log(
+                    "Couldn't move file " + from.getAbsolutePath() + " to " + to.getAbsolutePath(),
+                    LogMessageType.error, false);
+            return false;
+        }
+    }
+
     public static boolean copyFile(File from, File to) {
         return copyFile(from, to, false);
     }

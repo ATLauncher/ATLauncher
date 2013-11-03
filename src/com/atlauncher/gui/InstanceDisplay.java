@@ -54,6 +54,7 @@ public class InstanceDisplay extends CollapsiblePanel {
     private JButton update; // Update button
     private JButton backup; // Backup button
     private JButton delete; // Delete button
+    private JButton editMods; // Edit mods button
     private JButton openFolder; // Open Folder button
     private Pack pack; // The pack this instance is
 
@@ -278,6 +279,19 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
         });
 
+        // Edit Mods Button
+
+        editMods = new JButton(App.settings.getLocalizedString("common.editmods"));
+        editMods.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new EditModsDialog(instance);
+            }
+        });
+        if (!instance.hasInstalledMods()) {
+            editMods.setVisible(false);
+        }
+
         // Open Folder Button
 
         openFolder = new JButton(App.settings.getLocalizedString("common.openfolder"));
@@ -407,6 +421,7 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         instanceActionsBottom.add(backup);
         instanceActionsBottom.add(delete);
+        instanceActionsBottom.add(editMods);
         instanceActionsBottom.add(openFolder);
 
         // Add panels to other panels

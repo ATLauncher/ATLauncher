@@ -1175,6 +1175,9 @@ public class Settings {
                                     instance.convert();
                                     wasConversion = true;
                                 }
+                                if (!instance.getDisabledModsDirectory().exists()) {
+                                    instance.getDisabledModsDirectory().mkdirs();
+                                }
                                 instances.add(instance);
                                 if (isPackByName(instance.getPackName())) {
                                     instance.setRealPack(getPackByName(instance.getPackName()));
