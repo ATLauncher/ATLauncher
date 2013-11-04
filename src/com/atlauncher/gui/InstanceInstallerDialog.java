@@ -339,7 +339,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             .getVersion());
                                     instance.setModsInstalled(this.getModsInstalled());
                                     instance.setJarOrder(this.getJarOrder());
-                                    instance.setIsNewLaunchMethod(true);
+                                    instance.setIsNewLaunchMethod(!this.isLegacy());
                                     instance.setLibrariesNeeded(this.getLibrariesNeeded());
                                     instance.setMinecraftArguments(this.getMinecraftArguments());
                                     instance.setMainClass(this.getMainClass());
@@ -365,7 +365,7 @@ public class InstanceInstallerDialog extends JDialog {
                                                     this.getExtraArguments(), this
                                                             .getMinecraftArguments(), this
                                                             .getMainClass(),
-                                                    version.isDevVersion(), true)); // Add It
+                                                    version.isDevVersion(), !this.isLegacy()));
                                 }
                                 App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();

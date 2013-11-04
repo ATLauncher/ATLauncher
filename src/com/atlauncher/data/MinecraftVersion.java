@@ -11,11 +11,13 @@ public class MinecraftVersion {
     private String version;
     private String type;
     private boolean canCreateServer;
+    private boolean legacy;
 
-    public MinecraftVersion(String version, String type, boolean canCreateServer) {
+    public MinecraftVersion(String version, String type, boolean canCreateServer, boolean legacy) {
         this.version = version;
         this.type = type;
         this.canCreateServer = canCreateServer;
+        this.legacy = legacy;
     }
 
     public boolean canCreateServer() {
@@ -28,6 +30,10 @@ public class MinecraftVersion {
 
     public String getType() {
         return this.type;
+    }
+
+    public boolean isLegacy() {
+        return this.legacy;
     }
 
     public String toString() {

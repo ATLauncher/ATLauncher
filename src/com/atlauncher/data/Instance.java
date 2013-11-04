@@ -23,8 +23,8 @@ import javax.swing.JPasswordField;
 
 import com.atlauncher.App;
 import com.atlauncher.gui.ProgressDialog;
+import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
-import com.atlauncher.mclauncher.NewMCLauncher;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
@@ -506,9 +506,9 @@ public class Instance implements Serializable {
                             }
                             Process process = null;
                             if (isNewLaunchMethod()) {
-                                process = NewMCLauncher.launch(account, Instance.this, session);
-                            } else {
                                 process = MCLauncher.launch(account, Instance.this, session);
+                            } else {
+                                process = LegacyMCLauncher.launch(account, Instance.this, session);
                             }
                             App.settings.showKillMinecraft(process);
                             InputStream is = process.getInputStream();

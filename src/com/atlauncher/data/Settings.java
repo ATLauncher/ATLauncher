@@ -1086,7 +1086,8 @@ public class Settings {
                     String version = element.getAttribute("version");
                     String type = element.getAttribute("type");
                     boolean server = Boolean.parseBoolean(element.getAttribute("server"));
-                    minecraftVersions.add(new MinecraftVersion(version, type, server));
+                    boolean legacy = Boolean.parseBoolean(element.getAttribute("legacy"));
+                    minecraftVersions.add(new MinecraftVersion(version, type, server, legacy));
                 }
             }
         } catch (SAXException e) {

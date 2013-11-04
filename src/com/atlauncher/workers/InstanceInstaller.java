@@ -107,6 +107,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.isServer;
     }
 
+    public boolean isLegacy() {
+        return this.minecraftVersion.isLegacy();
+    }
+
     public String getInstanceName() {
         return this.instanceName;
     }
@@ -218,7 +222,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (jarOrder == null) {
             jarOrder = file;
         } else {
-            jarOrder = jarOrder + "," + file;
+            if (!isLegacy()) {
+                jarOrder = jarOrder + "," + file;
+            } else {
+                jarOrder = file + "," + jarOrder;
+            }
         }
     }
 
@@ -797,7 +805,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 while (iterator.hasNext()) {
                     boolean shouldDownload = false;
                     JSONObject object = iterator.next();
-                    String[] parts = ((String) object.get("name")).split(":");
+                    String name = (String) object.get("name");
+                    if (isLegacy()) {
+                        if (!name.contains("jinput") && !name.contains("lwjgl")) {
+                            continue;
+                        }
+                    }
+                    String[] parts = name.split(":");
                     String dir = parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2];
                     String filename = null;
                     if (object.containsKey("rules")) {
