@@ -35,6 +35,8 @@ public class Mod {
     private boolean server;
     private String serverURL;
     private String serverFile;
+    private Download serverDownload;
+    private String serverMD5;
     private Type serverType;
     private boolean optional;
     private boolean serverOptional;
@@ -50,9 +52,10 @@ public class Mod {
     public Mod(String name, String version, String url, String file, String website,
             String donation, Color colour, String md5, Type type, ExtractTo extractTo,
             String extractFolder, String decompFile, DecompType decompType, boolean client,
-            boolean server, String serverURL, String serverFile, Type serverType, boolean optional,
-            boolean serverOptional, Download download, boolean hidden, boolean library,
-            String group, String linked, String[] depends, boolean recommended, String description) {
+            boolean server, String serverURL, String serverFile, Download serverDownload,
+            String serverMD5, Type serverType, boolean optional, boolean serverOptional,
+            Download download, boolean hidden, boolean library, String group, String linked,
+            String[] depends, boolean recommended, String description) {
         this.name = name;
         this.version = version;
         this.url = url.replace("&amp;", "&").replace(" ", "%20");
@@ -72,6 +75,8 @@ public class Mod {
         this.serverURL = (serverURL == null) ? null : serverURL.replace("&amp;", "&").replace(" ",
                 "%20");
         this.serverFile = serverFile;
+        this.serverDownload = serverDownload;
+        this.serverMD5 = serverMD5;
         this.serverType = serverType;
         this.optional = optional;
         this.serverOptional = serverOptional;
@@ -109,12 +114,24 @@ public class Mod {
         return this.md5;
     }
 
+    public String getServerMD5() {
+        return this.serverMD5;
+    }
+
     public boolean compareMD5(String md5) {
         return this.md5.equalsIgnoreCase(md5);
     }
 
+    public boolean compareServerMD5(String md5) {
+        return this.serverMD5.equalsIgnoreCase(md5);
+    }
+
     public boolean hasMD5() {
         return !this.md5.isEmpty();
+    }
+
+    public boolean hasServerMD5() {
+        return this.serverMD5 != null;
     }
 
     public boolean isOptional() {
@@ -173,17 +190,41 @@ public class Mod {
         return (this.download == Download.server);
     }
 
+    public boolean isBrowserDownloadServer() {
+        if (this.serverDownload == null) {
+            return this.isBrowserDownload();
+        }
+        return (this.serverDownload == Download.browser);
+    }
+
+    public boolean isDirectDownloadServer() {
+        if (this.serverDownload == null) {
+            return this.isDirectDownload();
+        }
+        return (this.serverDownload == Download.direct);
+    }
+
+    public boolean isServerDownloadServer() {
+        if (this.serverDownload == null) {
+            return this.isServerDownload();
+        }
+        return (this.serverDownload == Download.server);
+    }
+
     public void download(InstanceInstaller installer) {
         download(installer, 1);
     }
 
     public void download(InstanceInstaller installer, int attempt) {
-        File fileLocation;
-        if (serverFile == null) {
-            fileLocation = new File(App.settings.getDownloadsDir(), getFile());
+        if (installer.isServer() && this.serverURL != null) {
+            downloadServer(installer, attempt);
         } else {
-            fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
+            downloadClient(installer, attempt);
         }
+    }
+
+    public void downloadClient(InstanceInstaller installer, int attempt) {
+        File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
         if (fileLocation.exists()) {
             if (hasMD5()) {
                 if (compareMD5(Utils.getMD5(fileLocation))) {
@@ -197,22 +238,12 @@ public class Mod {
         }
         switch (download) {
             case browser:
-                File downloadsFolderFile;
-                if (serverFile == null) {
-                    downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(), getFile());
-                } else {
-                    downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(),
-                            getServerFile());
-                }
+                File downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(), getFile());
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
                 }
                 while (!fileLocation.exists()) {
-                    if (serverURL == null) {
-                        Utils.openBrowser(getURL());
-                    } else {
-                        Utils.openBrowser(getServerURL());
-                    }
+                    Utils.openBrowser(getURL());
                     String[] options = new String[] { App.settings
                             .getLocalizedString("instance.ivedownloaded") };
                     int retValue = JOptionPane.showOptionDialog(
@@ -246,26 +277,17 @@ public class Mod {
                 }
                 break;
             case direct:
-                Downloadable download;
-                if (serverURL == null) {
-                    download = new Downloadable(getURL(), fileLocation, this.md5, installer, false);
-                } else {
-                    download = new Downloadable(getServerURL(), fileLocation, this.md5, installer,
-                            false);
-                }
-                if (download.needToDownload()) {
-                    download.download(false);
+                Downloadable download1 = new Downloadable(getURL(), fileLocation, this.md5,
+                        installer, false);
+                if (download1.needToDownload()) {
+                    download1.download(false);
                 }
                 break;
             case server:
-                if (serverURL == null) {
-                    download = new Downloadable(getURL(), fileLocation, this.md5, installer, true);
-                } else {
-                    download = new Downloadable(getServerURL(), fileLocation, this.md5, installer,
-                            true);
-                }
-                if (download.needToDownload()) {
-                    download.download(false);
+                Downloadable download2 = new Downloadable(getURL(), fileLocation, this.md5,
+                        installer, true);
+                if (download2.needToDownload()) {
+                    download2.download(false);
                 }
                 break;
         }
@@ -275,7 +297,92 @@ public class Mod {
             } else {
                 if (attempt < 5) {
                     Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
-                    download(installer, ++attempt); // download again
+                    downloadClient(installer, ++attempt); // download again
+                } else {
+                    App.settings.log("Cannot download " + fileLocation.getAbsolutePath()
+                            + ". Aborting install!", LogMessageType.error, false);
+                    installer.cancel(true);
+                }
+            }
+        } else {
+            return; // No MD5, but file is there, can only assume it's fine
+        }
+    }
+
+    public void downloadServer(InstanceInstaller installer, int attempt) {
+        System.out.println("Downloading " + this.serverURL + " to " + this.serverFile);
+        File fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
+        if (fileLocation.exists()) {
+            if (hasServerMD5()) {
+                if (compareServerMD5(Utils.getMD5(fileLocation))) {
+                    return; // File already exists and matches hash, don't download it
+                } else {
+                    Utils.delete(fileLocation); // File exists but is corrupt, delete it
+                }
+            } else {
+                return; // No MD5, but file is there, can only assume it's fine
+            }
+        }
+        if (isBrowserDownloadServer()) {
+            File downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(),
+                    getServerFile());
+            if (downloadsFolderFile.exists()) {
+                Utils.moveFile(downloadsFolderFile, fileLocation, true);
+            }
+            while (!fileLocation.exists()) {
+                Utils.openBrowser(getServerURL());
+                String[] options = new String[] { App.settings
+                        .getLocalizedString("instance.ivedownloaded") };
+                int retValue = JOptionPane
+                        .showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString("instance.browseropened",
+                                                (serverFile == null ? getFile() : getServerFile()))
+                                        + "<br/><br/>"
+                                        + App.settings.getLocalizedString("instance.pleasesave")
+                                        + "<br/><br/>"
+                                        + (App.settings.isUsingMacApp() ? App.settings
+                                                .getUsersDownloadsDir().getAbsolutePath()
+                                                : App.settings.getDownloadsDir().getAbsolutePath()
+                                                        + " or<br/>"
+                                                        + App.settings.getUsersDownloadsDir())
+                                        + "</center></html>",
+                                App.settings.getLocalizedString("common.downloading") + " "
+                                        + (serverFile == null ? getFile() : getServerFile()),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                                options, options[0]);
+                if (retValue == JOptionPane.CLOSED_OPTION) {
+                    installer.cancel(true);
+                    return;
+                }
+                if (!fileLocation.exists()) {
+                    // Check users downloads folder to see if it's there
+                    if (downloadsFolderFile.exists()) {
+                        Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                    }
+                }
+            }
+        } else if (isDirectDownloadServer()) {
+            Downloadable download = new Downloadable(getServerURL(), fileLocation, this.serverMD5,
+                    installer, false);
+            if (download.needToDownload()) {
+                download.download(false);
+            }
+        } else if (isServerDownloadServer()) {
+            Downloadable download = new Downloadable(getServerURL(), fileLocation, this.serverMD5,
+                    installer, true);
+            if (download.needToDownload()) {
+                download.download(false);
+            }
+        }
+        if (hasServerMD5()) {
+            if (compareServerMD5(Utils.getMD5(fileLocation))) {
+                return; // MD5 hash matches
+            } else {
+                if (attempt < 5) {
+                    Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
+                    downloadServer(installer, ++attempt); // download again
                 } else {
                     App.settings.log("Cannot download " + fileLocation.getAbsolutePath()
                             + ". Aborting install!", LogMessageType.error, false);
@@ -288,14 +395,22 @@ public class Mod {
     }
 
     public void install(InstanceInstaller installer) {
-        File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
-        switch (type) {
+        File fileLocation;
+        Type thisType;
+        if (installer.isServer() && this.serverURL != null) {
+            fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
+            thisType = this.serverType;
+        } else {
+            fileLocation = new File(App.settings.getDownloadsDir(), getFile());
+            thisType = this.type;
+        }
+        switch (thisType) {
             case jar:
             case forge:
-                if (installer.isServer() && type == Type.forge) {
+                if (installer.isServer() && thisType == Type.forge) {
                     Utils.copyFile(fileLocation, installer.getRootDirectory());
                     break;
-                } else if (installer.isServer() && type == Type.jar) {
+                } else if (installer.isServer() && thisType == Type.jar) {
                     Utils.unzip(fileLocation, installer.getTempJarDirectory());
                     break;
                 }
@@ -438,7 +553,7 @@ public class Mod {
                 break;
             default:
                 App.settings.log("No known way to install mod " + this.name + " with type "
-                        + this.type, LogMessageType.error, false);
+                        + thisType, LogMessageType.error, false);
                 break;
         }
     }

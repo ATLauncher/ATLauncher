@@ -331,11 +331,16 @@ public class Pack {
                     String serverURL = null;
                     String serverFile = null;
                     Type serverType = null;
+                    Download serverDownload = null;
+                    String serverMD5 = null;
                     if (element.getAttribute("server").equalsIgnoreCase("seperate")) {
                         server = false;
                         serverURL = element.getAttribute("serverurl");
                         serverFile = element.getAttribute("serverfile");
                         serverType = Type.valueOf(element.getAttribute("servertype").toLowerCase());
+                        serverDownload = Download.valueOf(element.getAttribute("serverdownload")
+                                .toLowerCase());
+                        serverMD5 = element.getAttribute("servermd5");
                     } else if (element.getAttribute("server").equalsIgnoreCase("no")) {
                         server = false;
                         if (isServer) {
@@ -383,8 +388,9 @@ public class Pack {
                     String description = element.getAttribute("description");
                     mods.add(new Mod(name, version, url, file, website, donation, colour, md5,
                             type, extractTo, extractFolder, decompFile, decompType, client, server,
-                            serverURL, serverFile, serverType, optional, serverOptional, download,
-                            hidden, library, group, linked, depends, recommended, description));
+                            serverURL, serverFile, serverDownload, serverMD5, serverType, optional,
+                            serverOptional, download, hidden, library, group, linked, depends,
+                            recommended, description));
                 }
             }
         } catch (SAXException e) {
