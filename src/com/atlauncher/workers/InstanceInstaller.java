@@ -559,7 +559,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     } else {
                         add = "?marker=" + marker;
                     }
-                    URL resourceUrl = new URL("https://s3.amazonaws.com/Minecraft.Resources/" + add);
+                    URL resourceUrl = new URL("http://s3.amazonaws.com/Minecraft.Resources/" + add);
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     Document doc = db.parse(resourceUrl.openStream());
@@ -595,7 +595,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                     filename = file.getName();
                                 }
                                 downloads.add(new Downloadable(
-                                        "https://s3.amazonaws.com/Minecraft.Resources/" + key,
+                                        "http://s3.amazonaws.com/Minecraft.Resources/" + key,
                                         file, etag, size, this, false));
                             }
                         }
@@ -759,7 +759,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
             try {
                 Downloadable versionJson = new Downloadable(
-                        "https://s3.amazonaws.com/Minecraft.Download/versions/"
+                        "http://s3.amazonaws.com/Minecraft.Download/versions/"
                                 + this.minecraftVersion + "/" + this.minecraftVersion + ".json",
                         false);
                 Object obj = parser.parse(versionJson.getContents());
@@ -844,7 +844,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                 this.librariesNeeded += "," + filename;
                             }
                         }
-                        String url = "https://s3.amazonaws.com/Minecraft.Download/libraries/" + dir
+                        String url = "http://s3.amazonaws.com/Minecraft.Download/libraries/" + dir
                                 + "/" + filename;
                         File file = new File(App.settings.getLibrariesDir(), filename);
                         libraries.add(new Downloadable(url, file, null, this, false));
@@ -858,12 +858,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (isServer) {
             libraries.add(new Downloadable(
-                    "https://s3.amazonaws.com/Minecraft.Download/versions/" + this.minecraftVersion
+                    "http://s3.amazonaws.com/Minecraft.Download/versions/" + this.minecraftVersion
                             + "/minecraft_server." + this.minecraftVersion + ".jar", new File(
                             App.settings.getJarsDir(), "minecraft_server." + this.minecraftVersion
                                     + ".jar"), null, this, false));
         } else {
-            libraries.add(new Downloadable("https://s3.amazonaws.com/Minecraft.Download/versions/"
+            libraries.add(new Downloadable("http://s3.amazonaws.com/Minecraft.Download/versions/"
                     + this.minecraftVersion + "/" + this.minecraftVersion + ".jar", new File(
                     App.settings.getJarsDir(), this.minecraftVersion + ".jar"), null, this, false));
         }
