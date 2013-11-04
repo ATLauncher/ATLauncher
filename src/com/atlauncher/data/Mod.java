@@ -205,8 +205,7 @@ public class Mod {
                             getServerFile());
                 }
                 if (downloadsFolderFile.exists()) {
-                    Utils.copyFile(downloadsFolderFile, fileLocation, true);
-                    Utils.delete(downloadsFolderFile);
+                    Utils.moveFile(downloadsFolderFile, fileLocation, true);
                 }
                 while (!fileLocation.exists()) {
                     if (serverURL == null) {
@@ -241,8 +240,7 @@ public class Mod {
                     if (!fileLocation.exists()) {
                         // Check users downloads folder to see if it's there
                         if (downloadsFolderFile.exists()) {
-                            Utils.copyFile(downloadsFolderFile, fileLocation, true);
-                            Utils.delete(downloadsFolderFile);
+                            Utils.moveFile(downloadsFolderFile, fileLocation, true);
                         }
                     }
                 }
