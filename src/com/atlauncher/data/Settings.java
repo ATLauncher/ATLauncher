@@ -358,13 +358,6 @@ public class Settings {
             while (!executor.isTerminated()) {
             }
         }
-        File localForgeList = new File(getConfigsDir(), "forgeList.json");
-        Downloadable remoteForgeList = new Downloadable(
-                "http://files.minecraftforge.net/minecraftforge/json", localForgeList, "-", null,
-                false);
-        if (remoteForgeList.getFilesize() != localForgeList.length()) {
-            remoteForgeList.download(false);
-        }
     }
 
     /**
@@ -380,13 +373,6 @@ public class Settings {
             if (download.needToDownload()) {
                 return true; // 1 file needs to be updated so there is updated files
             }
-        }
-        File localForgeList = new File(getConfigsDir(), "forgeList.json");
-        Downloadable remoteForgeList = new Downloadable(
-                "http://files.minecraftforge.net/minecraftforge/json", localForgeList, "-", null,
-                false);
-        if (remoteForgeList.getFilesize() != localForgeList.length()) {
-            return true;
         }
         return false; // No updates
     }

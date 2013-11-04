@@ -595,8 +595,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                     filename = file.getName();
                                 }
                                 downloads.add(new Downloadable(
-                                        "http://s3.amazonaws.com/Minecraft.Resources/" + key,
-                                        file, etag, size, this, false));
+                                        "http://s3.amazonaws.com/Minecraft.Resources/" + key, file,
+                                        etag, size, this, false));
                             }
                         }
                     }
@@ -623,6 +623,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         boolean found = false;
                         for (Mod mod : selectedMods) {
                             if (element.getAttribute("depends").equalsIgnoreCase(mod.getName())) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            break;
+                        }
+                    } else if (element.hasAttribute("dependsgroup")) {
+                        boolean found = false;
+                        for (Mod mod : selectedMods) {
+                            if (element.getAttribute("dependsgroup").equalsIgnoreCase(
+                                    mod.getGroup())) {
                                 found = true;
                                 break;
                             }
@@ -658,6 +670,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         boolean found = false;
                         for (Mod mod : selectedMods) {
                             if (element.getAttribute("depends").equalsIgnoreCase(mod.getName())) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            break;
+                        }
+                    } else if (element.hasAttribute("dependsgroup")) {
+                        boolean found = false;
+                        for (Mod mod : selectedMods) {
+                            if (element.getAttribute("dependsgroup").equalsIgnoreCase(
+                                    mod.getGroup())) {
                                 found = true;
                                 break;
                             }
