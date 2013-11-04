@@ -183,6 +183,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return new File(getRootDirectory(), "jarmods");
     }
 
+    public File getDisabledModsDirectory() {
+        return new File(getRootDirectory(), "disabledmods");
+    }
+
     public File getBinDirectory() {
         return new File(getRootDirectory(), "bin");
     }
@@ -314,16 +318,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         File[] directories;
         if (isServer) {
             directories = new File[] { getRootDirectory(), getModsDirectory(),
-                    getLibrariesDirectory() };
+                    getCoreModsDirectory(), getTempDirectory(), getLibrariesDirectory() };
         } else {
             directories = new File[] { getRootDirectory(), getModsDirectory(),
+                    getCoreModsDirectory(), getDisabledModsDirectory(), getTempDirectory(),
                     getJarModsDirectory(), getBinDirectory(), getNativesDirectory() };
         }
         for (File directory : directories) {
             directory.mkdir();
         }
-        getCoreModsDirectory().mkdir();
-        getTempDirectory().mkdir();
     }
 
     private ArrayList<Downloadable> getDownloadableMods() {
@@ -1051,9 +1054,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         modsInstalled = new ArrayList<DisableableMod>();
         for (Mod mod : selectedMods) {
-            modsInstalled
-                    .add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), mod.getFile(), mod
-                            .getType(), mod.getColour(), mod.getDescription(), false));
+            modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(),
+                    mod.getFile(), mod.getType(), mod.getColour(), mod.getDescription(), false));
         }
         makeDirectories();
         addPercent(5);

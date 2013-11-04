@@ -147,10 +147,11 @@ public class EditModsDialog extends JDialog {
                         DisableableMod mod = new DisableableMod(fcd.getChosenFile().getName(),
                                 "Custom", true, fcd.getChosenFile().getName(), type, null, null,
                                 true);
-                        Utils.copyFile(fcd.getChosenFile(), instance.getDisabledModsDirectory());
-                        instance.getInstalledMods().add(mod);
-                        disabledMods.add(new ModsJCheckBox(mod));
-                        reloadPanels();
+                        if (Utils.copyFile(fcd.getChosenFile(), instance.getDisabledModsDirectory())) {
+                            instance.getInstalledMods().add(mod);
+                            disabledMods.add(new ModsJCheckBox(mod));
+                            reloadPanels();
+                        }
                     }
                 }
             }

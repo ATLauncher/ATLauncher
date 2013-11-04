@@ -102,7 +102,8 @@ public class InstanceDisplay extends CollapsiblePanel {
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (instance.hasUpdate()
-                        && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())) {
+                        && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())
+                        && !instance.isDev()) {
                     String[] options = { App.settings.getLocalizedString("common.yes"),
                             App.settings.getLocalizedString("common.no"),
                             App.settings.getLocalizedString("instance.dontremindmeagain") };
