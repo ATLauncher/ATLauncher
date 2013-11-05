@@ -104,18 +104,7 @@ public class ConsoleBottomBar extends JPanel {
         });
         uploadLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                final ProgressDialog dialog = new ProgressDialog(App.settings
-                        .getLocalizedString("console.uploadinglog"), 0, App.settings
-                        .getLocalizedString("console.uploadinglog"), "Aborting log upload!");
-                dialog.addThread(new Thread() {
-                    public void run() {
-                        String result = Utils.uploadPaste("ATLauncher Log", App.settings.getLog());
-                        dialog.setReturnValue(result);
-                        dialog.close();
-                    };
-                });
-                dialog.start();
-                String result = dialog.getReturnValue();
+                String result = Utils.uploadLog();
                 if (result.contains("%PASTECHECKURL%")) {
                     App.settings.log("Log uploaded and link copied to clipboard: " + result);
                     StringSelection text = new StringSelection(result);

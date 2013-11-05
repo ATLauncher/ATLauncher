@@ -7,6 +7,9 @@
 package com.atlauncher.data;
 
 import java.awt.BorderLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -526,6 +529,12 @@ public class Instance implements Serializable {
                             if (App.settings.isInOfflineMode()) {
                                 App.settings.checkOnlineStatus();
                             }
+                            if (process.exitValue() != 0) {
+                                if (getRealPack().isLoggingEnabled() && App.settings.enableLogs()
+                                        && getRealPack().isCrashReportsEnabled()) {
+                                    uploadCrashLog(); // Auto upload crash log if enabled
+                                }
+                            }
                             App.settings.setMinecraftLaunched(false);
                             if (!App.settings.isInOfflineMode() && isLeaderboardsEnabled()) {
                                 App.settings
@@ -548,6 +557,20 @@ public class Instance implements Serializable {
                     }
                 };
                 launcher.start();
+            }
+        }
+    }
+
+    public void uploadCrashLog() {
+        String result = Utils.uploadLog();
+        if (!App.settings.isInOfflineMode()) {
+            if (result.contains("%PASTECHECKURL%")) {
+                App.settings.apiCall(App.settings.getAccount().getMinecraftUsername(),
+                        "reportcrash", this.realPack.getID() + "",
+                        result.replace("http://paste.atlauncher.com/view/", ""));
+                App.settings.log("Log uploaded and reported to ModPack creator: " + result);
+            } else {
+                App.settings.log("Log failed to upload: " + result, LogMessageType.error, false);
             }
         }
     }

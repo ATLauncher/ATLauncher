@@ -953,7 +953,7 @@ public class Settings {
                     boolean leaderboards = Boolean.parseBoolean(element
                             .getAttribute("leaderboards"));
                     boolean logging = Boolean.parseBoolean(element.getAttribute("logging"));
-                    boolean latestlwjgl = Boolean.parseBoolean(element.getAttribute("latestlwjgl"));
+                    boolean crashReports = Boolean.parseBoolean(element.getAttribute("crashreports"));
                     String[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
                         versions = new String[0];
@@ -990,19 +990,19 @@ public class Settings {
                     String websiteURL = element.getAttribute("websiteurl");
                     if (element.getAttribute("type").equalsIgnoreCase("private")) {
                         packs.add(new PrivatePack(id, name, createServer, leaderboards, logging,
-                                latestlwjgl, versions, noUpdateVersions, minecraftVersions,
+                                crashReports, versions, noUpdateVersions, minecraftVersions,
                                 devVersions, devMinecraftVersions, description, supportURL,
                                 websiteURL));
                     } else if (element.getAttribute("type").equalsIgnoreCase("semipublic")) {
                         if (element.hasAttribute("code")) {
                             packs.add(new SemiPublicPack(id, name, element.getAttribute("code"),
-                                    createServer, leaderboards, logging, latestlwjgl, versions,
+                                    createServer, leaderboards, logging, crashReports, versions,
                                     noUpdateVersions, minecraftVersions, devVersions,
                                     devMinecraftVersions, description, supportURL, websiteURL));
                         }
                     } else {
                         packs.add(new Pack(id, name, createServer, leaderboards, logging,
-                                latestlwjgl, versions, noUpdateVersions, minecraftVersions,
+                                crashReports, versions, noUpdateVersions, minecraftVersions,
                                 devVersions, devMinecraftVersions, description, supportURL,
                                 websiteURL));
                     }

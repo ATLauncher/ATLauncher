@@ -12,6 +12,8 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -51,6 +53,7 @@ import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
 import com.atlauncher.data.LogMessageType;
+import com.atlauncher.gui.ProgressDialog;
 
 public class Utils {
 
@@ -665,5 +668,20 @@ public class Utils {
         writer1.close();
         br.close();
         fs.close();
+    }
+
+    public static String uploadLog() {
+        final ProgressDialog dialog = new ProgressDialog(
+                App.settings.getLocalizedString("console.uploadinglog"), 0,
+                App.settings.getLocalizedString("console.uploadinglog"), "Aborting log upload!");
+        dialog.addThread(new Thread() {
+            public void run() {
+                String result = Utils.uploadPaste("ATLauncher Log", App.settings.getLog());
+                dialog.setReturnValue(result);
+                dialog.close();
+            };
+        });
+        dialog.start();
+        return dialog.getReturnValue();
     }
 }

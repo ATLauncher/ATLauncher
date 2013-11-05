@@ -13,10 +13,10 @@ public class SemiPublicPack extends Pack {
     private String code;
 
     public SemiPublicPack(int id, String name, String code, boolean createServer,
-            boolean leaderboards, boolean logging, boolean latestlwjgl, String[] versions,
+            boolean leaderboards, boolean logging, boolean crashReports, String[] versions,
             String[] noUpdateVersions, String[] minecraftVersions, String[] devVersions,
             String[] devMinecraftVersions, String description, String supportURL, String websiteURL) {
-        super(id, name, createServer, leaderboards, logging, latestlwjgl, versions,
+        super(id, name, createServer, leaderboards, logging, crashReports, versions,
                 noUpdateVersions, minecraftVersions, devVersions, devMinecraftVersions,
                 description, supportURL, websiteURL);
         this.code = code;
