@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.zip.GZIPInputStream;
 
@@ -171,14 +172,15 @@ public class Downloadable {
                 return;
             }
         }
+        InputStream in = null;
+        FileOutputStream writer = null;
         try {
-            InputStream in = null;
             if (isGziped()) {
                 in = new GZIPInputStream(getConnection().getInputStream());
             } else {
                 in = getConnection().getInputStream();
             }
-            FileOutputStream writer = new FileOutputStream(this.file);
+            writer = new FileOutputStream(this.file);
             byte[] buffer = new byte[2048];
             int bytesRead = 0;
             while ((bytesRead = in.read(buffer)) > 0) {
@@ -188,10 +190,24 @@ public class Downloadable {
                     this.instanceInstaller.addDownloadedBytes(bytesRead);
                 }
             }
-            writer.close();
-            in.close();
+        } catch (SocketException e) {
+            // Connection reset. Close connection and try again
+            App.settings.logStackTrace(e);
+            this.connection.disconnect();
+            this.connection = null;
         } catch (IOException e) {
             App.settings.logStackTrace(e);
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e1) {
+                App.settings.logStackTrace(e1);
+            }
         }
     }
 
@@ -257,6 +273,9 @@ public class Downloadable {
                 if (fileMD5.equalsIgnoreCase(getMD5())) {
                     done = true;
                     break; // MD5 matches, file is good
+                }
+                if (this.file.exists()) {
+                    Utils.delete(this.file); // Delete file since it doesn't match MD5
                 }
                 downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
             }
