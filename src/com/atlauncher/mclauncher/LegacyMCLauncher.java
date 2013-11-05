@@ -164,7 +164,20 @@ public class LegacyMCLauncher {
             File lwjglDir = binDir;
 
             System.out.println("Loading jars...");
-            String[] lwjglJars = new String[] { "lwjgl.jar", "lwjgl_util.jar", "jinput.jar" };
+            String lwjgl = "lwjgl.jar";
+            String lwjgl_util = "lwjgl_util.jar";
+            String jinput = "jinput.jar";
+            File[] files = new File(workingDirectory, "bin").listFiles();
+            for (File file : files) {
+                if (file.getName().startsWith("lwjgl-")) {
+                    lwjgl = file.getName();
+                } else if (file.getName().startsWith("lwjgl_util-")) {
+                    lwjgl_util = file.getName();
+                } else if (file.getName().startsWith("jinput-")) {
+                    jinput = file.getName();
+                }
+            }
+            String[] lwjglJars = new String[] { lwjgl, lwjgl_util, jinput };
 
             URL[] urls = new URL[4];
 
