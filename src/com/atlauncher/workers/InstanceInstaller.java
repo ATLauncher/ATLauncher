@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,12 +45,15 @@ import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Language;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Type;
 import com.atlauncher.gui.ModsChooser;
 import com.atlauncher.utils.Utils;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
@@ -340,16 +344,76 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private ArrayList<Downloadable> getDownloadableMods() {
         ArrayList<Downloadable> mods = new ArrayList<Downloadable>();
 
+        String files = "";
+
+        for (Mod mod : this.selectedMods) {
+            if (mod.isServerDownload()) {
+                files = files + mod.getURL() + "|||";
+            }
+        }
+
+        HashMap<String, Integer> fileSizes = null;
+
+        if (!files.isEmpty()) {
+            String base64Files = Base64.encode(files.getBytes());
+            fileSizes = new HashMap<String, Integer>();
+            String returnValue = null;
+            do {
+                try {
+                    returnValue = Utils.sendPostData(App.settings.getFileURL("getfilesizes.php"),
+                            base64Files, "files");
+                } catch (IOException e1) {
+                    App.settings.logStackTrace(e1);
+                }
+                if (returnValue == null) {
+                    if (!App.settings.getNextServer()) {
+                        App.settings
+                                .log("Couldn't get filesizes of files from all ATLauncher servers. Continuing regardless!",
+                                        LogMessageType.warning, false);
+                    }
+                }
+            } while (returnValue == null);
+            if (returnValue != null) {
+                try {
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    InputSource is = new InputSource(new StringReader(returnValue));
+                    Document document = builder.parse(is);
+                    document.getDocumentElement().normalize();
+                    NodeList nodeList = document.getElementsByTagName("file");
+                    for (int i = 0; i < nodeList.getLength(); i++) {
+                        Node node = nodeList.item(i);
+                        if (node.getNodeType() == Node.ELEMENT_NODE) {
+                            Element element = (Element) node;
+                            String url = element.getAttribute("url");
+                            int size = Integer.parseInt(element.getAttribute("size"));
+                            fileSizes.put(url, size);
+                        }
+                    }
+                } catch (SAXException e) {
+                    App.settings.logStackTrace(e);
+                } catch (ParserConfigurationException e) {
+                    App.settings.logStackTrace(e);
+                } catch (IOException e) {
+                    App.settings.logStackTrace(e);
+                }
+            }
+        }
+
         for (Mod mod : this.selectedMods) {
             if (mod.isServerDownload()) {
                 Downloadable downloadable;
+                int size = -1;
+                if (fileSizes.containsKey(mod.getURL())) {
+                    size = fileSizes.get(mod.getURL());
+                }
                 if (mod.hasMD5()) {
                     downloadable = new Downloadable(mod.getURL(), new File(
-                            App.settings.getDownloadsDir(), mod.getFile()), mod.getMD5(), this,
-                            true);
+                            App.settings.getDownloadsDir(), mod.getFile()), mod.getMD5(), size,
+                            this, true);
                 } else {
                     downloadable = new Downloadable(mod.getURL(), new File(
-                            App.settings.getDownloadsDir(), mod.getFile()), null, this, true);
+                            App.settings.getDownloadsDir(), mod.getFile()), null, size, this, true);
                 }
                 mods.add(downloadable);
             }
@@ -484,16 +548,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void downloadMods(ArrayList<Mod> mods) {
         fireSubProgressUnknown();
-        ExecutorService executor = Executors.newFixedThreadPool(8);
+        ExecutorService executor;
         ArrayList<Downloadable> downloads = getDownloadableMods();
-        totalDownloads = 0;
-        doneDownloads = 0;
+        totalBytes = 0;
+        downloadedBytes = 0;
 
-        for (Downloadable download : downloads) {
-            if (download.needToDownload()) {
-                totalDownloads++;
-            }
+        executor = Executors.newFixedThreadPool(8);
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        totalBytes += download.getFilesize();
+                    }
+                }
+            });
         }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        fireSubProgress(0); // Show the subprogress bar
+
+        executor = Executors.newFixedThreadPool(8);
 
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
@@ -503,8 +582,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     if (download.needToDownload()) {
                         fireTask(App.settings.getLocalizedString("common.downloading") + " "
                                 + download.getFile().getName());
-                        download.download(false);
-                        setDownloadDone();
+                        download.download(true);
                     }
                 }
             });

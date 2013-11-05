@@ -18,6 +18,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,6 +33,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -43,6 +46,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -683,5 +687,40 @@ public class Utils {
         });
         dialog.start();
         return dialog.getReturnValue();
+    }
+
+    public static String sendPostData(String urll, String text, String key) throws IOException {
+        String write = URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8");
+        StringBuilder response = null;
+        URL url = new URL(urll);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setConnectTimeout(15000);
+        connection.setReadTimeout(15000);
+        connection.setRequestMethod("POST");
+
+        connection.setRequestProperty("Content-Length", "" + write.getBytes().length);
+
+        connection.setUseCaches(false);
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+
+        DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+        writer.write(write.getBytes());
+        writer.flush();
+        writer.close();
+
+        // Read the result
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                connection.getInputStream()));
+        response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+            response.append('\r');
+        }
+        reader.close();
+        return response.toString();
     }
 }
