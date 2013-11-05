@@ -43,6 +43,7 @@ public class EditModsDialog extends JDialog {
     private JButton addButton, enableButton, disableButton, removeButton, closeButton;
     private JLabel topLabelLeft, topLabelRight;
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
+    private ArrayList<ModDescriptionJLabel> enabledModLabels, disabledModLabels;
 
     public EditModsDialog(final Instance instance) {
         super(App.settings.getParent(), App.settings.getLocalizedString("instance.editingmods",
@@ -199,28 +200,50 @@ public class EditModsDialog extends JDialog {
         ArrayList<DisableableMod> mods = instance.getInstalledMods();
         enabledMods = new ArrayList<ModsJCheckBox>();
         disabledMods = new ArrayList<ModsJCheckBox>();
-        int count = 0;
+        enabledModLabels = new ArrayList<ModDescriptionJLabel>();
+        disabledModLabels = new ArrayList<ModDescriptionJLabel>();
         int dCount = 0;
         int eCount = 0;
         for (DisableableMod mod : mods) {
             ModsJCheckBox checkBox = null;
+            ModDescriptionJLabel label = null;
             int nameSize = getFontMetrics(Utils.getFont()).stringWidth(mod.getName());
 
             checkBox = new ModsJCheckBox(mod);
             if (mod.isDisabled()) {
-                checkBox.setBounds(0, (dCount++ * 20), nameSize + 23, 20);
+                checkBox.setBounds(0, (dCount * 20), nameSize + 23, 20);
+                if (!mod.getDescription().isEmpty()) {
+                    label = new ModDescriptionJLabel(mod.getDescription());
+                    label.setBounds(nameSize + 24, (dCount * 20), 12, 20);
+                }
                 disabledMods.add(checkBox);
+                disabledModLabels.add(label);
+                dCount++;
             } else {
-                checkBox.setBounds(0, (eCount++ * 20), nameSize + 23, 20);
+                checkBox.setBounds(0, (eCount * 20), nameSize + 23, 20);
+                if (!mod.getDescription().isEmpty()) {
+                    label = new ModDescriptionJLabel(mod.getDescription());
+                    label.setBounds(nameSize + 24, (eCount * 20), 12, 20);
+                }
                 enabledMods.add(checkBox);
+                enabledModLabels.add(label);
+                eCount++;
             }
         }
         for (int i = 0; i < enabledMods.size(); i++) {
-            JCheckBox checkBox = enabledMods.get(i);
+            ModsJCheckBox checkBox = enabledMods.get(i);
+            ModDescriptionJLabel label = enabledModLabels.get(i);
+            if (!checkBox.getDisableableMod().getDescription().isEmpty()) {
+                enabledModsPanel.add(label);
+            }
             enabledModsPanel.add(checkBox);
         }
         for (int i = 0; i < disabledMods.size(); i++) {
-            JCheckBox checkBox = disabledMods.get(i);
+            ModsJCheckBox checkBox = disabledMods.get(i);
+            ModDescriptionJLabel label = disabledModLabels.get(i);
+            if (!checkBox.getDisableableMod().getDescription().isEmpty()) {
+                enabledModsPanel.add(label);
+            }
             disabledModsPanel.add(checkBox);
         }
         enabledModsPanel.setPreferredSize(new Dimension(0, enabledMods.size() * 20));
@@ -277,6 +300,12 @@ public class EditModsDialog extends JDialog {
         enabledModsPanel.removeAll();
         for (int i = 0; i < enabledMods.size(); i++) {
             ModsJCheckBox checkBox = enabledMods.get(i);
+            if (enabledModLabels.size() > i) {
+                ModDescriptionJLabel label = enabledModLabels.get(i);
+                if (!checkBox.getDisableableMod().getDescription().isEmpty()) {
+                    enabledModsPanel.add(label);
+                }
+            }
             int nameSize = getFontMetrics(Utils.getFont()).stringWidth(
                     checkBox.getDisableableMod().getName());
             checkBox.setBounds(0, (count++ * 20), nameSize + 23, 20);
@@ -285,11 +314,16 @@ public class EditModsDialog extends JDialog {
             }
             enabledModsPanel.add(checkBox);
         }
-
         count = 0;
         disabledModsPanel.removeAll();
         for (int i = 0; i < disabledMods.size(); i++) {
             ModsJCheckBox checkBox = disabledMods.get(i);
+            if (disabledModLabels.size() > i) {
+                ModDescriptionJLabel label = disabledModLabels.get(i);
+                if (!checkBox.getDisableableMod().getDescription().isEmpty()) {
+                    enabledModsPanel.add(label);
+                }
+            }
             int nameSize = getFontMetrics(Utils.getFont()).stringWidth(
                     checkBox.getDisableableMod().getName());
             checkBox.setBounds(0, (count++ * 20), nameSize + 23, 20);

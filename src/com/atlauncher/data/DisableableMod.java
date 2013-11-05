@@ -66,6 +66,9 @@ public class DisableableMod implements Serializable {
     }
 
     public String getDescription() {
+        if (this.description == null) {
+            return "";
+        }
         return this.description;
     }
 
@@ -85,7 +88,7 @@ public class DisableableMod implements Serializable {
 
     public boolean disable(Instance instance) {
         if (!this.disabled) {
-            if (Utils.moveFile(getFile(instance), instance.getDisabledModsDirectory(), true)) {
+            if (Utils.moveFile(getFile(instance), instance.getDisabledModsDirectory(), false)) {
                 this.disabled = true;
                 return true;
             }
