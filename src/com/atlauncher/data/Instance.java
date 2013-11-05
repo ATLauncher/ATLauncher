@@ -566,7 +566,7 @@ public class Instance implements Serializable {
         if (!App.settings.isInOfflineMode()) {
             if (result.contains("%PASTECHECKURL%")) {
                 App.settings.apiCall(App.settings.getAccount().getMinecraftUsername(),
-                        "reportcrash", this.realPack.getID() + "",
+                        "reportcrash", this.realPack.getID() + "", this.getVersion(),
                         result.replace("http://paste.atlauncher.com/view/", ""));
                 App.settings.log("Log uploaded and reported to ModPack creator: " + result);
             } else {
