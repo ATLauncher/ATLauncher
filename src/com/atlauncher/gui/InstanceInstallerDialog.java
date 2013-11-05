@@ -137,7 +137,7 @@ public class InstanceInstallerDialog extends JDialog {
                     App.settings.logStackTrace(e1);
                     continue;
                 }
-                if (isServer && mcVersion.canCreateServer()) {
+                if (!isServer || (isServer && mcVersion.canCreateServer())) {
                     versions.add(new Version(true, pack.getDevVersion(i), mcVersion));
                 }
             }
@@ -150,7 +150,7 @@ public class InstanceInstallerDialog extends JDialog {
                 App.settings.logStackTrace(e1);
                 continue;
             }
-            if (isServer && mcVersion.canCreateServer()) {
+            if (!isServer || (isServer && mcVersion.canCreateServer())) {
                 versions.add(new Version(false, pack.getVersion(i), mcVersion));
             }
         }
