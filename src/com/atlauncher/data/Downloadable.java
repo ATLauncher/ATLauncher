@@ -146,7 +146,7 @@ public class Downloadable {
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
                 if (this.isATLauncherDownload) {
-                    if (App.settings.disableServerGetNext()) {
+                    if (App.settings.getNextServer()) {
                         this.url = App.settings.getFileURL(this.beforeURL);
                         this.connection = null;
                         return getConnection();
@@ -260,7 +260,7 @@ public class Downloadable {
             }
             if (!done) {
                 if (this.isATLauncherDownload) {
-                    if (App.settings.disableServerGetNext()) {
+                    if (App.settings.getNextServer()) {
                         App.settings.log("Error downloading " + this.file.getName() + " from "
                                 + this.url + ". Trying another server!", LogMessageType.warning,
                                 false);

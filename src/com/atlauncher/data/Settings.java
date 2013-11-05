@@ -111,6 +111,7 @@ public class Settings {
     private LauncherConsole console = new LauncherConsole(); // Load the Launcher's Console
     private ArrayList<Language> languages = new ArrayList<Language>(); // Languages for the Launcher
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
+    private ArrayList<Server> triedServers = new ArrayList<Server>(); // Servers tried to connect to
     private InstancesPanel instancesPanel; // The instances panel
     private NewsPanel newsPanel; // The news panel
     private PacksPanel packsPanel; // The packs panel
@@ -899,6 +900,23 @@ public class Settings {
         return false;
     }
 
+    public void clearTriedServers() {
+        this.triedServers = new ArrayList<Server>(); // Clear the list
+    }
+
+    public boolean getNextServer() {
+        this.triedServers.add(this.server);
+        for (Server server : this.servers) {
+            if (!this.triedServers.contains(server)) {
+                log("Server " + this.server.getName() + " Not Available! Switching To "
+                        + server.getName(), LogMessageType.warning, true);
+                this.server = server; // Setup next available server
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Loads the languages for use in the Launcher
      */
@@ -953,7 +971,8 @@ public class Settings {
                     boolean leaderboards = Boolean.parseBoolean(element
                             .getAttribute("leaderboards"));
                     boolean logging = Boolean.parseBoolean(element.getAttribute("logging"));
-                    boolean crashReports = Boolean.parseBoolean(element.getAttribute("crashreports"));
+                    boolean crashReports = Boolean.parseBoolean(element
+                            .getAttribute("crashreports"));
                     String[] versions;
                     if (element.getAttribute("versions").isEmpty()) {
                         versions = new String[0];
