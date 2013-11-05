@@ -160,6 +160,7 @@ public class Downloadable {
                     }
                 }
             }
+            App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used
         }
         return this.connection;
     }
@@ -283,6 +284,7 @@ public class Downloadable {
                     }
                 }
             }
+            App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used
         }
     }
 }
