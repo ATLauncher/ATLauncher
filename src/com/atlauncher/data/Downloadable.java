@@ -220,6 +220,7 @@ public class Downloadable {
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
+        this.connection.disconnect();
         return response.toString();
     }
 
@@ -286,5 +287,6 @@ public class Downloadable {
             }
             App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used
         }
+        this.connection.disconnect();
     }
 }
