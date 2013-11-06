@@ -45,7 +45,6 @@ import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Mod;
@@ -1209,8 +1208,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.copyFile(portalGunSounds, getTempDirectory());
         }
         downloadResources(); // Download Minecraft Resources
+        if (isCancelled()) {
+            return false;
+        }
         downloadLibraries(); // Download Libraries
+        if (isCancelled()) {
+            return false;
+        }
         organiseLibraries(); // Organise the libraries
+        if (isCancelled()) {
+            return false;
+        }
         if (isServer) {
             for (File file : serverLibraries) {
                 file.mkdirs();
@@ -1231,10 +1239,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             addPercent(40);
             fireTask(App.settings.getLocalizedString("instance.downloadingmods"));
             downloadMods(selectedMods);
+            if (isCancelled()) {
+                return false;
+            }
             addPercent(40);
             installMods(selectedMods);
         } else {
             addPercent(80);
+        }
+        if (isCancelled()) {
+            return false;
         }
         if (isServer && hasJarMods()) {
             fireTask(App.settings.getLocalizedString("server.zippingjar"));
@@ -1258,6 +1272,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             Utils.zip(getTempResourcePackDirectory(), new File(getResourcePacksDirectory(),
                     "ResourcePack.zip"));
+        }
+        if (isCancelled()) {
+            return false;
         }
         configurePack();
         if (savedReis) {
