@@ -233,7 +233,9 @@ public class Mod {
                     Utils.delete(fileLocation); // File exists but is corrupt, delete it
                 }
             } else {
-                return; // No MD5, but file is there, can only assume it's fine
+                if (fileLocation.length() != 0) {
+                    return; // No MD5, but file is there, can only assume it's fine
+                }
             }
         }
         switch (download) {
@@ -280,7 +282,8 @@ public class Mod {
                 Downloadable download1 = new Downloadable(getURL(), fileLocation, this.md5,
                         installer, false);
                 if (download1.needToDownload()) {
-                    download1.download(false);
+                    installer.resetDownloadedBytes(download1.getFilesize());
+                    download1.download(true);
                 }
                 break;
             case server:
@@ -310,7 +313,6 @@ public class Mod {
     }
 
     public void downloadServer(InstanceInstaller installer, int attempt) {
-        System.out.println("Downloading " + this.serverURL + " to " + this.serverFile);
         File fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
         if (fileLocation.exists()) {
             if (hasServerMD5()) {
@@ -564,6 +566,61 @@ public class Mod {
 
     public String getFile() {
         return this.file;
+    }
+
+    public File getInstalledFile(InstanceInstaller installer) {
+        Type thisType;
+        String file;
+        File base = null;
+        if (installer.isServer()) {
+            file = getServerFile();
+            thisType = this.serverType;
+        } else {
+            file = getFile();
+            thisType = this.type;
+        }
+        switch (thisType) {
+            case jar:
+            case forge:
+                if (installer.isServer() && thisType == Type.forge) {
+                    base = installer.getRootDirectory();
+                    break;
+                }
+                base = installer.getJarModsDirectory();
+                break;
+            case mcpc:
+                if (installer.isServer()) {
+                    base = installer.getRootDirectory();
+                    break;
+                }
+                break;
+            case texturepack:
+                base = installer.getTexturePacksDirectory();
+                break;
+            case resourcepack:
+                base = installer.getResourcePacksDirectory();
+                break;
+            case mods:
+                base = installer.getModsDirectory();
+                break;
+            case plugins:
+                base = installer.getPluginsDirectory();
+                break;
+            case coremods:
+                base = installer.getCoreModsDirectory();
+                break;
+            case shaderpack:
+                base = installer.getShaderPacksDirectory();
+                break;
+            default:
+                App.settings.log("No known way to find installed mod " + this.name + " with type "
+                        + thisType, LogMessageType.error, false);
+                break;
+        }
+        if (base == null) {
+            return null;
+        }
+        return new File(base, file);
     }
 
     public boolean hasGroup() {

@@ -40,6 +40,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Action;
 import com.atlauncher.data.DecompType;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Download;
@@ -88,6 +89,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private Instance instance = null;
     private ArrayList<DisableableMod> modsInstalled;
     private ArrayList<File> serverLibraries;
+    private ArrayList<Action> actions;
 
     public InstanceInstaller(String instanceName, Pack pack, String version,
             MinecraftVersion minecraftVersion, boolean isReinstall, boolean isServer) {
@@ -142,6 +144,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public File getTempJarDirectory() {
         return new File(App.settings.getTempDir(), pack.getSafeName() + "_"
                 + version.replaceAll("[^A-Za-z0-9]", "") + "_JarTemp");
+    }
+
+    public File getTempActionsDirectory() {
+        return new File(App.settings.getTempDir(), pack.getSafeName() + "_"
+                + version.replaceAll("[^A-Za-z0-9]", "") + "_ActionsTemp");
     }
 
     public File getTempTexturePackDirectory() {
@@ -202,6 +209,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return new File(getBinDirectory(), "natives");
     }
 
+    public boolean hasActions() {
+        if (this.actions == null) {
+            return false;
+        }
+        return this.actions.size() != 0;
+    }
+
     public File getMinecraftJar() {
         if (isServer) {
             return new File(getRootDirectory(), "minecraft_server." + minecraftVersion + ".jar");
@@ -236,6 +250,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public boolean wasModInstalled(String mod) {
         if (isReinstall && instance != null) {
             return instance.wasModInstalled(mod);
+        }
+        return false;
+    }
+
+    public boolean isModByName(String name) {
+        for (Mod mod : allMods) {
+            if (mod.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
         }
         return false;
     }
@@ -419,6 +442,52 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         return mods;
+    }
+
+    private void loadActions() {
+        this.actions = new ArrayList<Action>();
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(pack.getXML(version, false)));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("action");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    String mod = element.getAttribute("mod");
+                    String action = element.getAttribute("action");
+                    Type type = Type.valueOf(element.getAttribute("type"));
+                    String after = element.getAttribute("after");
+                    String saveAs = element.getAttribute("saveas");
+                    Boolean client = (element.getAttribute("client").equalsIgnoreCase("yes") ? true
+                            : false);
+                    Boolean server = (element.getAttribute("server").equalsIgnoreCase("yes") ? true
+                            : false);
+                    Action thing = new Action(action, type, after, saveAs, client, server);
+                    for (String modd : mod.split(",")) {
+                        if (isModByName(modd)) {
+                            thing.addMod(getModByName(modd));
+                        }
+                    }
+                    actions.add(thing);
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+    }
+
+    private void doActions() {
+        for (Action action : this.actions) {
+            action.execute(this);
+        }
     }
 
     private boolean hasOptionalMods() {
@@ -1148,6 +1217,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     protected Boolean doInBackground() throws Exception {
         this.allMods = sortMods(this.pack.getMods(this.version, isServer));
+        loadActions(); // Load all the actions up for the pack
         this.permgen = this.pack.getPermGen(this.version);
         this.memory = this.pack.getMemory(this.version);
         if (this.minecraftVersion == null) {
@@ -1276,6 +1346,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (isCancelled()) {
             return false;
         }
+        if (hasActions()) {
+            doActions();
+        }
+        if (isCancelled()) {
+            return false;
+        }
         configurePack();
         if (savedReis) {
             Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"), reis);
@@ -1306,8 +1382,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         return true;
     }
+    
+    public void resetDownloadedBytes(int bytes) {
+        totalBytes = bytes;
+        downloadedBytes = 0;
+    }
 
-    private void fireTask(String name) {
+    public void fireTask(String name) {
         firePropertyChange("doing", null, name);
     }
 
@@ -1335,7 +1416,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         firePropertyChange("subprogress", null, info);
     }
 
-    private void fireSubProgressUnknown() {
+    public void fireSubProgressUnknown() {
         firePropertyChange("subprogressint", null, null);
     }
 
