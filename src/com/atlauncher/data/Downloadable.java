@@ -235,6 +235,7 @@ public class Downloadable {
             in.close();
         } catch (IOException e) {
             App.settings.logStackTrace(e);
+            return null;
         }
         this.connection.disconnect();
         return response.toString();

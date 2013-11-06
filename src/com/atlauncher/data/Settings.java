@@ -268,7 +268,6 @@ public class Settings {
             Downloadable download = new Downloadable("launcher/hashes.xml", true);
             String hashes = download.getContents();
             if (hashes == null) {
-                this.offlineMode = true;
                 return null;
             } else {
                 this.fileHashes = hashes;
@@ -281,11 +280,16 @@ public class Settings {
      * This checks the servers hashes.xml file and gets the files that the Launcher needs to have
      */
     private ArrayList<Downloadable> getLauncherFiles() {
+        String hashes = getFileHashes();
+        if (hashes == null) {
+            this.offlineMode = true;
+            return null;
+        }
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(new StringReader(getFileHashes())));
+            Document document = builder.parse(new InputSource(new StringReader(hashes)));
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("hash");
             for (int i = 0; i < nodeList.getLength(); i++) {
@@ -370,6 +374,10 @@ public class Settings {
             return false;
         }
         ArrayList<Downloadable> downloads = getLauncherFiles();
+        if (downloads == null) {
+            this.offlineMode = true;
+            return false;
+        }
         for (Downloadable download : downloads) {
             if (download.needToDownload()) {
                 return true; // 1 file needs to be updated so there is updated files
