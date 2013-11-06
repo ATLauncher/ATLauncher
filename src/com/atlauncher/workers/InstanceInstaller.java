@@ -580,8 +580,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 @Override
                 public void run() {
                     if (download.needToDownload()) {
-                        fireTask(App.settings.getLocalizedString("common.downloading") + " "
-                                + download.getFile().getName());
                         download.download(true);
                     }
                 }
