@@ -73,7 +73,11 @@ public class Downloadable {
             etag = etag.substring(1, etag.length() - 1);
         }
 
-        return etag;
+        if (etag.matches("[A-Za-z0-9]{32}")) {
+            return etag;
+        } else {
+            return "-";
+        }
     }
 
     public int getFilesize() {
@@ -101,7 +105,7 @@ public class Downloadable {
     }
 
     public String getMD5() {
-        if (this.md5 == null) {
+        if (this.md5 == null || this.md5.isEmpty()) {
             try {
                 this.md5 = getMD5FromURL();
             } catch (IOException e) {
