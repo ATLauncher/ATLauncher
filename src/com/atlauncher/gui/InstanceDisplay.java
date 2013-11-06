@@ -51,6 +51,7 @@ public class InstanceDisplay extends CollapsiblePanel {
     private JPanel instanceActionsBottom; // All the actions that can be performed on the instance
     private JButton play; // Play button
     private JButton reinstall; // Reinstall button
+    private JButton rename; // Rename button
     private JButton update; // Update button
     private JButton backup; // Backup button
     private JButton delete; // Delete button
@@ -162,6 +163,15 @@ public class InstanceDisplay extends CollapsiblePanel {
                 } else {
                     new InstanceInstallerDialog(instance);
                 }
+            }
+        });
+
+        // Rename Button
+
+        rename = new JButton(App.settings.getLocalizedString("instance.rename"));
+        rename.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new RenameInstanceDialog(instance);
             }
         });
 
@@ -418,6 +428,7 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         instanceActionsTop.add(play);
         instanceActionsTop.add(reinstall);
+        instanceActionsTop.add(rename);
         instanceActionsTop.add(update);
 
         instanceActionsBottom.add(backup);

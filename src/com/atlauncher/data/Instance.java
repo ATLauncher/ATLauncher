@@ -127,6 +127,13 @@ public class Instance implements Serializable {
         return this.permgen;
     }
 
+    public void rename(String newName) {
+        File oldDir = getRootDirectory();
+        this.name = newName;
+        File newDir = getRootDirectory();
+        Utils.moveDirectory(oldDir, newDir);
+    }
+
     /**
      * Gets a file safe and URL safe name which simply means replacing all non alpha numerical
      * characters with nothing

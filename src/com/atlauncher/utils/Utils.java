@@ -445,6 +445,17 @@ public class Utils {
         return true;
     }
 
+    public static boolean moveDirectory(File sourceLocation, File targetLocation) {
+        if (copyDirectory(sourceLocation, targetLocation)) {
+            delete(sourceLocation);
+            return true;
+        } else {
+            App.settings.log("Couldn't move directory " + sourceLocation.getAbsolutePath() + " to "
+                    + targetLocation.getAbsolutePath(), LogMessageType.error, false);
+            return false;
+        }
+    }
+
     public static boolean copyDirectory(File sourceLocation, File targetLocation) {
         return copyDirectory(sourceLocation, targetLocation, false);
     }
