@@ -177,7 +177,7 @@ public class Settings {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
         loadLanguages(); // Load the Languages available in the Launcher
-        loadPacks(); // Load the Packs available in the Launcher
+        loadPacks(0); // Load the Packs available in the Launcher
         loadUsers(); // Load the Testers and Allowed Players for the packs
         loadMinecraftVersions(); // Load info about the different Minecraft versions
         loadAddons(); // Load the Addons available in the Launcher
@@ -399,7 +399,7 @@ public class Settings {
             public void run() {
                 downloadUpdatedFiles(); // Download updated files
                 reloadNewsPanel(); // Reload news panel
-                loadPacks(); // Load the Packs available in the Launcher
+                loadPacks(0); // Load the Packs available in the Launcher
                 loadUsers(); // Load the Testers and Allowed Players for the packs
                 reloadPacksPanel(); // Reload packs panel
                 loadAddons(); // Load the Addons available in the Launcher
@@ -958,10 +958,11 @@ public class Settings {
     /**
      * Loads the Packs for use in the Launcher
      */
-    private void loadPacks() {
+    private void loadPacks(int tries) {
         if (this.packs.size() != 0) {
             this.packs = new ArrayList<Pack>();
         }
+        boolean errored = false;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -1036,12 +1037,25 @@ public class Settings {
                 }
             }
         } catch (SAXException e) {
+            errored = true;
             logStackTrace(e);
         } catch (ParserConfigurationException e) {
+            errored = true;
             logStackTrace(e);
         } catch (IOException e) {
+            errored = true;
             logStackTrace(e);
         }
+        if (errored && tries <= 3) {
+            forceDownloadPacksXML();
+            loadPacks(++tries);
+        }
+    }
+
+    private void forceDownloadPacksXML() {
+        Downloadable download = new Downloadable("launcher/packs.xml", new File(configsDir,
+                "packs.xml"), null, null, true);
+        download.download(false);
     }
 
     /**

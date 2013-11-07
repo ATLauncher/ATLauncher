@@ -246,6 +246,10 @@ public class Downloadable {
     }
 
     public void download(boolean downloadAsLibrary) {
+        download(downloadAsLibrary, false);
+    }
+
+    public void download(boolean downloadAsLibrary, boolean force) {
         if (this.file == null) {
             App.settings.log("Cannot download " + this.url + " to file as one wasn't specified!",
                     LogMessageType.error, false);
@@ -257,6 +261,9 @@ public class Downloadable {
             }
         }
         if (!this.file.canWrite()) {
+            Utils.delete(this.file);
+        }
+        if (this.file.exists() && this.file.isFile()) {
             Utils.delete(this.file);
         }
         // Create the directory structure
