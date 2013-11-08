@@ -53,19 +53,19 @@ public class LegacyMCLauncher {
             if (instance.hasJarMods()) {
                 ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance
                         .getJarOrder().split(",")));
-                for (String mod : jarmods) {
-                    File thisFile = new File(jarMods, mod);
-                    if (thisFile.exists()) {
-                        cpb.append(File.pathSeparator);
-                        cpb.append(thisFile);
-                    }
-                }
                 for (File file : jarMods.listFiles()) {
                     if (jarmods.contains(file.getName())) {
                         continue;
                     }
                     cpb.append(File.pathSeparator);
                     cpb.append(file);
+                }
+                for (String mod : jarmods) {
+                    File thisFile = new File(jarMods, mod);
+                    if (thisFile.exists()) {
+                        cpb.append(File.pathSeparator);
+                        cpb.append(thisFile);
+                    }
                 }
             } else {
                 for (File file : jarMods.listFiles()) {
