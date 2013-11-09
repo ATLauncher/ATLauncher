@@ -459,14 +459,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     Element element = (Element) node;
                     String mod = element.getAttribute("mod");
                     String action = element.getAttribute("action");
-                    Type type = Type.valueOf(element.getAttribute("type"));
+                    Type type = null;
+                    if (element.hasAttribute("type")) {
+                        type = Type.valueOf(element.getAttribute("type"));
+                    }
                     String after = element.getAttribute("after");
                     String saveAs = element.getAttribute("saveas");
                     Boolean client = (element.getAttribute("client").equalsIgnoreCase("yes") ? true
                             : false);
                     Boolean server = (element.getAttribute("server").equalsIgnoreCase("yes") ? true
                             : false);
-                    Action thing = new Action(action, type, after, saveAs, client, server);
+                    Action thing = null;
+                    if (element.hasAttribute("type")) {
+                        thing = new Action(action, type, after, saveAs, client, server);
+                    } else {
+                        thing = new Action(action, after, saveAs, client, server);
+                    }
                     for (String modd : mod.split(",")) {
                         if (isModByName(modd)) {
                             thing.addMod(getModByName(modd));
@@ -1382,7 +1390,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         return true;
     }
-    
+
     public void resetDownloadedBytes(int bytes) {
         totalBytes = bytes;
         downloadedBytes = 0;

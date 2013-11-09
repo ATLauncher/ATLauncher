@@ -37,6 +37,16 @@ public class Action {
         this.server = server;
     }
 
+    public Action(String action, String after, String saveAs, boolean client,
+            boolean server) {
+        this.mod = new ArrayList<Mod>();
+        this.action = action;
+        this.after = after;
+        this.saveAs = saveAs;
+        this.client = client;
+        this.server = server;
+    }
+
     public void addMod(Mod mod) {
         if (!this.mod.contains(mod)) {
             this.mod.add(mod);
@@ -73,6 +83,12 @@ public class Action {
                     default:
                         break;
                 }
+            }
+        } else if (this.action.equalsIgnoreCase("rename")) {
+            if (mod.size() == 1) {
+                File from = mod.get(0).getInstalledFile(instanceInstaller);
+                File to = new File(from.getParentFile(), saveAs);
+                Utils.moveFile(from, to, true);
             }
         }
         if (this.after.equalsIgnoreCase("delete")) {
