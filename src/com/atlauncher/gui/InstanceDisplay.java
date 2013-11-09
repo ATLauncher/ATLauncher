@@ -320,22 +320,23 @@ public class InstanceDisplay extends CollapsiblePanel {
         }
 
         // Check if pack is a private pack and if the user can play it
-
         if (pack instanceof PrivatePack && !App.settings.isInOfflineMode()
-                && !((PrivatePack) pack).isAllowedPlayer()) {
-            for (ActionListener al : play.getActionListeners()) {
-                play.removeActionListener(al);
-            }
-            play.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.notauthorizedplay"),
-                            App.settings.getLocalizedString("instance.notauthorized"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
+                && (!((PrivatePack) pack).isAllowedPlayer())) {
+            if (!(instance.isDev() && pack.isTester())) {
+                for (ActionListener al : play.getActionListeners()) {
+                    play.removeActionListener(al);
                 }
-            });
+                play.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
+                        JOptionPane.showOptionDialog(App.settings.getParent(),
+                                App.settings.getLocalizedString("instance.notauthorizedplay"),
+                                App.settings.getLocalizedString("instance.notauthorized"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
+                    }
+                });
+            }
         }
 
         // Check if instance is a dev version and if the user still has access
