@@ -670,7 +670,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
                 fireTask(App.settings.getLocalizedString("common.downloading") + " "
-                        + mod.getFile());
+                        + (mod.isFilePattern() ? mod.getName() : mod.getFile()));
                 mod.download(this);
             }
         }

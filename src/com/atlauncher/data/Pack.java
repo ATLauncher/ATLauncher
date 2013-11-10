@@ -320,6 +320,18 @@ public class Pack {
                         decompType = DecompType.valueOf(element.getAttribute("decomptype")
                                 .toLowerCase());
                     }
+                    boolean filePattern = false;
+                    if (element.getAttribute("filepattern").equalsIgnoreCase("yes")) {
+                        filePattern = true;
+                    }
+                    String filePreference = null;
+                    if (element.hasAttribute("filepreference")) {
+                        filePreference = element.getAttribute("filepreference");
+                    }
+                    String fileCheck = null;
+                    if (element.hasAttribute("filecheck")) {
+                        fileCheck = element.getAttribute("filecheck");
+                    }
                     boolean client = true;
                     if (element.getAttribute("client").equalsIgnoreCase("no")) {
                         client = false;
@@ -387,10 +399,11 @@ public class Pack {
 
                     String description = element.getAttribute("description");
                     mods.add(new Mod(name, version, url, file, website, donation, colour, md5,
-                            type, extractTo, extractFolder, decompFile, decompType, client, server,
-                            serverURL, serverFile, serverDownload, serverMD5, serverType, optional,
-                            serverOptional, download, hidden, library, group, linked, depends,
-                            recommended, description));
+                            type, extractTo, extractFolder, decompFile, decompType, filePattern,
+                            filePreference, fileCheck, client, server, serverURL, serverFile,
+                            serverDownload, serverMD5, serverType, optional, serverOptional,
+                            download, hidden, library, group, linked, depends, recommended,
+                            description));
                 }
             }
         } catch (SAXException e) {

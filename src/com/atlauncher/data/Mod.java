@@ -31,6 +31,9 @@ public class Mod {
     private String extractFolder;
     private String decompFile;
     private DecompType decompType;
+    private boolean filePattern;
+    private String filePreference;
+    private String fileCheck;
     private boolean client;
     private boolean server;
     private String serverURL;
@@ -51,11 +54,12 @@ public class Mod {
 
     public Mod(String name, String version, String url, String file, String website,
             String donation, Color colour, String md5, Type type, ExtractTo extractTo,
-            String extractFolder, String decompFile, DecompType decompType, boolean client,
-            boolean server, String serverURL, String serverFile, Download serverDownload,
-            String serverMD5, Type serverType, boolean optional, boolean serverOptional,
-            Download download, boolean hidden, boolean library, String group, String linked,
-            String[] depends, boolean recommended, String description) {
+            String extractFolder, String decompFile, DecompType decompType, boolean filePattern,
+            String filePreference, String fileCheck, boolean client, boolean server,
+            String serverURL, String serverFile, Download serverDownload, String serverMD5,
+            Type serverType, boolean optional, boolean serverOptional, Download download,
+            boolean hidden, boolean library, String group, String linked, String[] depends,
+            boolean recommended, String description) {
         this.name = name;
         this.version = version;
         this.url = url.replace("&amp;", "&").replace(" ", "%20");
@@ -70,6 +74,9 @@ public class Mod {
                 File.separator);
         this.decompFile = decompFile;
         this.decompType = decompType;
+        this.filePattern = filePattern;
+        this.filePreference = filePreference;
+        this.fileCheck = fileCheck;
         this.client = client;
         this.server = server;
         this.serverURL = (serverURL == null) ? null : serverURL.replace("&amp;", "&").replace(" ",
@@ -106,6 +113,10 @@ public class Mod {
         return this.type;
     }
 
+    public boolean isFilePattern() {
+        return this.filePattern;
+    }
+
     public DecompType getDecompType() {
         return this.decompType;
     }
@@ -136,6 +147,21 @@ public class Mod {
 
     public boolean isOptional() {
         return this.optional;
+    }
+
+    public FilenameFilter getFileNameFilter() {
+        FilenameFilter filter = new FilenameFilter() {
+
+            @Override
+            public boolean accept(File dir, String name) {
+                if (name.matches(file)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        return filter;
     }
 
     public boolean isRecommeneded() {
@@ -244,6 +270,35 @@ public class Mod {
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
                 }
+                if (fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
+                    String[] files = (App.settings.isUsingMacApp() ? App.settings
+                            .getUsersDownloadsDir() : App.settings.getDownloadsDir())
+                            .list(getFileNameFilter());
+                    if (files.length == 1) {
+                        this.file = files[0];
+                        fileLocation = new File(
+                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                        : App.settings.getDownloadsDir()), files[0]);
+                    } else if (files.length > 1) {
+                        for (int i = 0; i < files.length; i++) {
+                            if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
+                                this.file = files[i];
+                                fileLocation = new File(
+                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                                : App.settings.getDownloadsDir()), files[i]);
+                                break;
+                            }
+                            if (this.filePreference.equalsIgnoreCase("last")
+                                    && (i + 1) == files.length) {
+                                this.file = files[i];
+                                fileLocation = new File(
+                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                                : App.settings.getDownloadsDir()), files[i]);
+                                break;
+                            }
+                        }
+                    }
+                }
                 while (!fileLocation.exists()) {
                     Utils.openBrowser(getURL());
                     String[] options = new String[] { App.settings
@@ -252,28 +307,65 @@ public class Mod {
                             App.settings.getParent(),
                             "<html><center>"
                                     + App.settings.getLocalizedString("instance.browseropened",
-                                            (serverFile == null ? getFile() : getServerFile()))
+                                            (serverFile == null ? (isFilePattern() ? getName()
+                                                    : getFile()) : (isFilePattern() ? getName()
+                                                    : getServerFile())))
                                     + "<br/><br/>"
                                     + App.settings.getLocalizedString("instance.pleasesave")
                                     + "<br/><br/>"
                                     + (App.settings.isUsingMacApp() ? App.settings
                                             .getUsersDownloadsDir().getAbsolutePath()
-                                            : App.settings.getDownloadsDir().getAbsolutePath()
+                                            : (isFilePattern() ? App.settings.getDownloadsDir()
+                                                    .getAbsolutePath() : App.settings
+                                                    .getDownloadsDir().getAbsolutePath()
                                                     + " or<br/>"
-                                                    + App.settings.getUsersDownloadsDir())
+                                                    + App.settings.getUsersDownloadsDir()))
                                     + "</center></html>",
-                            App.settings.getLocalizedString("common.downloading") + " "
-                                    + (serverFile == null ? getFile() : getServerFile()),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
-                            options, options[0]);
+                            App.settings.getLocalizedString("common.downloading")
+                                    + " "
+                                    + (serverFile == null ? (isFilePattern() ? getName()
+                                            : getFile()) : (isFilePattern() ? getName()
+                                            : getServerFile())), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                     if (retValue == JOptionPane.CLOSED_OPTION) {
                         installer.cancel(true);
                         return;
                     }
-                    if (!fileLocation.exists()) {
-                        // Check users downloads folder to see if it's there
-                        if (downloadsFolderFile.exists()) {
-                            Utils.moveFile(downloadsFolderFile, fileLocation, true);
+
+                    if (isFilePattern()) {
+                        String[] files = (App.settings.isUsingMacApp() ? App.settings
+                                .getUsersDownloadsDir() : App.settings.getDownloadsDir())
+                                .list(getFileNameFilter());
+                        if (files.length == 1) {
+                            this.file = files[0];
+                            fileLocation = new File(
+                                    (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                            : App.settings.getDownloadsDir()), files[0]);
+                        } else if (files.length > 1) {
+                            for (int i = 0; i < files.length; i++) {
+                                if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
+                                    this.file = files[i];
+                                    fileLocation = new File(
+                                            (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                                    : App.settings.getDownloadsDir()), files[i]);
+                                    break;
+                                }
+                                if (this.filePreference.equalsIgnoreCase("last")
+                                        && (i + 1) == files.length) {
+                                    this.file = files[i];
+                                    fileLocation = new File(
+                                            (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                                    : App.settings.getDownloadsDir()), files[i]);
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        if (!fileLocation.exists()) {
+                            // Check users downloads folder to see if it's there
+                            if (downloadsFolderFile.exists()) {
+                                Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                            }
                         }
                     }
                 }
@@ -331,6 +423,36 @@ public class Mod {
             if (downloadsFolderFile.exists()) {
                 Utils.moveFile(downloadsFolderFile, fileLocation, true);
             }
+
+            if (fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
+                String[] files = (App.settings.isUsingMacApp() ? App.settings
+                        .getUsersDownloadsDir() : App.settings.getDownloadsDir())
+                        .list(getFileNameFilter());
+                if (files.length == 1) {
+                    this.file = files[0];
+                    fileLocation = new File(
+                            (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                    : App.settings.getDownloadsDir()), files[0]);
+                } else if (files.length > 1) {
+                    for (int i = 0; i < files.length; i++) {
+                        if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
+                            this.file = files[i];
+                            fileLocation = new File(
+                                    (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                            : App.settings.getDownloadsDir()), files[i]);
+                            break;
+                        }
+                        if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
+                            this.file = files[i];
+                            fileLocation = new File(
+                                    (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                            : App.settings.getDownloadsDir()), files[i]);
+                            break;
+                        }
+                    }
+                }
+            }
+
             while (!fileLocation.exists()) {
                 Utils.openBrowser(getServerURL());
                 String[] options = new String[] { App.settings
@@ -358,10 +480,41 @@ public class Mod {
                     installer.cancel(true);
                     return;
                 }
-                if (!fileLocation.exists()) {
-                    // Check users downloads folder to see if it's there
-                    if (downloadsFolderFile.exists()) {
-                        Utils.moveFile(downloadsFolderFile, fileLocation, true);
+
+                if (isFilePattern()) {
+                    String[] files = (App.settings.isUsingMacApp() ? App.settings
+                            .getUsersDownloadsDir() : App.settings.getDownloadsDir())
+                            .list(getFileNameFilter());
+                    if (files.length == 1) {
+                        this.file = files[0];
+                        fileLocation = new File(
+                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                        : App.settings.getDownloadsDir()), files[0]);
+                    } else if (files.length > 1) {
+                        for (int i = 0; i < files.length; i++) {
+                            if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
+                                this.file = files[i];
+                                fileLocation = new File(
+                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                                : App.settings.getDownloadsDir()), files[i]);
+                                break;
+                            }
+                            if (this.filePreference.equalsIgnoreCase("last")
+                                    && (i + 1) == files.length) {
+                                this.file = files[i];
+                                fileLocation = new File(
+                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                                : App.settings.getDownloadsDir()), files[i]);
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    if (!fileLocation.exists()) {
+                        // Check users downloads folder to see if it's there
+                        if (downloadsFolderFile.exists()) {
+                            Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                        }
                     }
                 }
             }
