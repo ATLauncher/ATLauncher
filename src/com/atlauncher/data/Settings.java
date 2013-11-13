@@ -354,6 +354,7 @@ public class Settings {
                     @Override
                     public void run() {
                         if (download.needToDownload()) {
+                            log("Downloading Launcher File " + download.getFile().getName());
                             download.download(false);
                         }
                     }
@@ -373,6 +374,7 @@ public class Settings {
         if (isInOfflineMode()) {
             return false;
         }
+        log("Checking for updated files!");
         ArrayList<Downloadable> downloads = getLauncherFiles();
         if (downloads == null) {
             this.offlineMode = true;
@@ -380,14 +382,15 @@ public class Settings {
         }
         for (Downloadable download : downloads) {
             if (download.needToDownload()) {
+                log("Updates found!");
                 return true; // 1 file needs to be updated so there is updated files
             }
         }
+        log("No updates found!");
         return false; // No updates
     }
 
     public void reloadLauncherData() {
-        log("Updating Launcher Data");
         final JDialog dialog = new JDialog(this.parent, ModalityType.APPLICATION_MODAL);
         dialog.setSize(300, 100);
         dialog.setTitle("Updating Launcher");

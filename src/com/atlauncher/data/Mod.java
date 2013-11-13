@@ -272,11 +272,12 @@ public class Mod {
         }
         switch (download) {
             case browser:
+                System.out.println("Downloading " + this.name);
                 File downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(), getFile());
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
                 }
-                if (fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
+                if (fileCheck != null && fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
                     String[] files = (App.settings.isUsingMacApp() ? App.settings
                             .getUsersDownloadsDir() : App.settings.getDownloadsDir())
                             .list(getFileNameFilter());
