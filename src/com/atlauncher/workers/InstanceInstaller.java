@@ -248,10 +248,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public boolean wasModInstalled(String mod) {
-        if (isReinstall && instance != null) {
+        if (instance != null) {
             return instance.wasModInstalled(mod);
         }
         return false;
+    }
+
+    public boolean isReinstall() {
+        return this.isReinstall;
     }
 
     public boolean isModByName(String name) {

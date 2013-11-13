@@ -369,6 +369,12 @@ public class Pack {
                     } else if (element.getAttribute("serveroptional").equalsIgnoreCase("no")) {
                         serverOptional = false;
                     }
+                    boolean selected = false;
+                    if (element.hasAttribute("selected")) {
+                        if (element.getAttribute("selected").equalsIgnoreCase("yes")) {
+                            selected = true;
+                        }
+                    }
                     Download download = Download.valueOf(element.getAttribute("download")
                             .toLowerCase());
                     boolean hidden = false;
@@ -402,8 +408,8 @@ public class Pack {
                             type, extractTo, extractFolder, decompFile, decompType, filePattern,
                             filePreference, fileCheck, client, server, serverURL, serverFile,
                             serverDownload, serverMD5, serverType, optional, serverOptional,
-                            download, hidden, library, group, linked, depends, recommended,
-                            description));
+                            selected, download, hidden, library, group, linked, depends,
+                            recommended, description));
                 }
             }
         } catch (SAXException e) {

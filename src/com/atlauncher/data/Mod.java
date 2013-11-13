@@ -43,6 +43,7 @@ public class Mod {
     private Type serverType;
     private boolean optional;
     private boolean serverOptional;
+    private boolean selected;
     private Download download;
     private boolean hidden;
     private boolean library;
@@ -57,9 +58,9 @@ public class Mod {
             String extractFolder, String decompFile, DecompType decompType, boolean filePattern,
             String filePreference, String fileCheck, boolean client, boolean server,
             String serverURL, String serverFile, Download serverDownload, String serverMD5,
-            Type serverType, boolean optional, boolean serverOptional, Download download,
-            boolean hidden, boolean library, String group, String linked, String[] depends,
-            boolean recommended, String description) {
+            Type serverType, boolean optional, boolean serverOptional, boolean selected,
+            Download download, boolean hidden, boolean library, String group, String linked,
+            String[] depends, boolean recommended, String description) {
         this.name = name;
         this.version = version;
         this.url = url.replace("&amp;", "&").replace(" ", "%20");
@@ -87,6 +88,7 @@ public class Mod {
         this.serverType = serverType;
         this.optional = optional;
         this.serverOptional = serverOptional;
+        this.selected = selected;
         this.download = download;
         this.hidden = hidden;
         this.library = library;
@@ -174,6 +176,10 @@ public class Mod {
 
     public boolean isServerOptional() {
         return this.serverOptional;
+    }
+
+    public boolean isSelected() {
+        return this.selected;
     }
 
     public boolean hasColour() {

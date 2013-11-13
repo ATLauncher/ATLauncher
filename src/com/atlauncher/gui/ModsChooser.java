@@ -245,8 +245,15 @@ public class ModsChooser extends JDialog {
                     count2++;
                 }
             }
-            if (installer.wasModInstalled(mod.getName())) {
-                if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
+            if (installer.isReinstall()) {
+                if (installer.wasModInstalled(mod.getName())) {
+                    if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
+                        checkBox.setSelected(true);
+                        checkBox.setEnabled(true);
+                    }
+                }
+            } else {
+                if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional()) && mod.isSelected()) {
                     checkBox.setSelected(true);
                     checkBox.setEnabled(true);
                 }
