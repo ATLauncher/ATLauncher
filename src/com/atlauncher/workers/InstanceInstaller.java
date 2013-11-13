@@ -355,15 +355,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         File[] directories;
         if (isServer) {
-            directories = new File[] { getRootDirectory(), getModsDirectory(),
-                    getCoreModsDirectory(), getTempDirectory(), getLibrariesDirectory() };
+            directories = new File[] { getRootDirectory(), getModsDirectory(), getTempDirectory(),
+                    getLibrariesDirectory() };
         } else {
             directories = new File[] { getRootDirectory(), getModsDirectory(),
-                    getCoreModsDirectory(), getDisabledModsDirectory(), getTempDirectory(),
-                    getJarModsDirectory(), getBinDirectory(), getNativesDirectory() };
+                    getDisabledModsDirectory(), getTempDirectory(), getJarModsDirectory(),
+                    getBinDirectory(), getNativesDirectory() };
         }
         for (File directory : directories) {
             directory.mkdir();
+        }
+        if (minecraftVersion.usesCoreMods()) {
+            getCoreModsDirectory().mkdir();
         }
     }
 

@@ -1131,7 +1131,9 @@ public class Settings {
                     String type = element.getAttribute("type");
                     boolean server = Boolean.parseBoolean(element.getAttribute("server"));
                     boolean legacy = Boolean.parseBoolean(element.getAttribute("legacy"));
-                    minecraftVersions.add(new MinecraftVersion(version, type, server, legacy));
+                    boolean coremods = Boolean.parseBoolean(element.getAttribute("coremods"));
+                    minecraftVersions.add(new MinecraftVersion(version, type, server, legacy,
+                            coremods));
                 }
             }
         } catch (SAXException e) {
