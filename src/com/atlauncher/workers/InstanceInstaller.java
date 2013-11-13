@@ -676,6 +676,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 fireTask(App.settings.getLocalizedString("common.downloading") + " "
                         + (mod.isFilePattern() ? mod.getName() : mod.getFile()));
                 mod.download(this);
+                fireSubProgress(-1); // Hide the subprogress bar
             }
         }
     }
