@@ -366,6 +366,10 @@ public class Instance implements Serializable {
         return this.extraArguments;
     }
 
+    public void setExtraArguments(String extraArguments) {
+        this.extraArguments = extraArguments;
+    }
+
     public String getMinecraftArguments() {
         return this.minecraftArguments;
     }
