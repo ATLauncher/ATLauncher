@@ -149,8 +149,11 @@ public class Downloadable {
                             + this.connection.getResponseCode());
                 }
             } catch (IOException e) {
-                if (!this.url.contains("Minecraft.Resources")
-                        && !e.getMessage().contains("503 for URL")) {
+                if (this.url.contains("Minecraft.Resources")) {
+                    if(this.instanceInstaller!=null){
+                        this.instanceInstaller.addDownloadedBytes(getFilesize());
+                    }
+                } else {
                     App.settings.logStackTrace(e);
                     if (this.isATLauncherDownload) {
                         if (App.settings.getNextServer()) {
@@ -312,10 +315,12 @@ public class Downloadable {
                         }
                     }
                 } else {
-                    App.settings.log("Error downloading " + this.file.getName() + " from "
-                            + this.url + ". Cancelling install!", LogMessageType.error, false);
-                    if (this.instanceInstaller != null) {
-                        instanceInstaller.cancel(true);
+                    if (!this.url.contains("Minecraft.Resources")) {
+                        App.settings.log("Error downloading " + this.file.getName() + " from "
+                                + this.url + ". Cancelling install!", LogMessageType.error, false);
+                        if (this.instanceInstaller != null) {
+                            instanceInstaller.cancel(true);
+                        }
                     }
                 }
             }
