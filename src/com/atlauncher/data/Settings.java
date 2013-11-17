@@ -1091,12 +1091,21 @@ public class Settings {
                         continue;
                     }
                     if (!element.getAttribute("testers").isEmpty()) {
-                        pack.addTesters(element.getAttribute("testers").split(","));
+                        if (element.getAttribute("testers").contains(",")) {
+                            pack.addTesters(element.getAttribute("testers").split(","));
+                        } else {
+                            pack.addTesters(new String[] { element.getAttribute("testers") });
+                        }
                     }
                     if (pack instanceof PrivatePack) {
                         if (!element.getAttribute("allowedplayers").isEmpty()) {
-                            ((PrivatePack) pack).addAllowedPlayers(element.getAttribute(
-                                    "allowedplayers").split(","));
+                            if (element.getAttribute("allowedplayers").contains(",")) {
+                                ((PrivatePack) pack).addAllowedPlayers(element.getAttribute(
+                                        "testers").split(","));
+                            } else {
+                                ((PrivatePack) pack).addAllowedPlayers(new String[] { element
+                                        .getAttribute("allowedplayers") });
+                            }
                         }
                     }
                 }
