@@ -50,6 +50,31 @@ Make sure to add the directory containing launch4jc to your executable path whic
 C:\Program Files (x86)\Launch4j
 ```
 
+### Pluging In Your Data
+
+To get started with the code and plug in your own data, you need to replace the following files
+
+#### /src/com/atlauncher/data/Settings.java
+%APIURL% should be replaced with a link to your server side API for processing of leaderboard times and pack installs
+
+#### /src/com/atlauncher/gui/ConsoleBottomBar.java & /src/com/atlauncher/data/Instance.java
+%PASTECHECKURL% should be replaced with a link to the url where an instance of [stikked](https://github.com/claudehohl/Stikked) is running (For instance http://www.mypaste.com) this is how the launcher knows if the paste was successful by checking the response from the API for the url of the software.
+
+#### /src/com/atlauncher/utils/Utils.java
+%PASTEAPIURL% should be replaced with a link to the create api command for the instance of [stikked](https://github.com/claudehohl/Stikked) is running (For instance http://www.mypaste.com/api/create/)
+
+#### /src/com/atlauncher/data/Settings.java
+// INSERT SERVERS HERE should be replaced with the addition of your servers to the servers ArrayList such as details below
+
+servers.add(new Server("Test", "sometest.myserver.com"));
+
+#### How to make your data
+
+To make the data the Launcher needs you will need to figure out your own server side way of doing that. You can create a system to do it automatically or you can manually do it by just popping the files on the server. The best way to get the file structure and contents is to examine the source code and the ATLauncher files it downloads.
+
+### Need Help/Have Questions?
+
+If you have questions or need any help please don't hesitate to email sourcecode@atlauncher.com
 
 ### License
 
