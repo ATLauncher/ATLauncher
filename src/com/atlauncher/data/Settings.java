@@ -680,7 +680,11 @@ public class Settings {
             } else {
                 this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty(
                         "usingcustomjavapath", "false"));
-                this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+                if (isUsingCustomJavaPath()) {
+                    this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+                } else {
+                    this.javaPath = Utils.getJavaHome();
+                }
             }
         } catch (FileNotFoundException e) {
             logStackTrace(e);
