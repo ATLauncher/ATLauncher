@@ -83,6 +83,7 @@ public class Settings {
     private int windowWidth; // Width of the Minecraft window
     private int windowHeight; // Height of the Minecraft window
     private boolean maximiseMinecraft; // If Minecraft should start maximised
+    private boolean usingCustomJavaPath; // If the user is using a custom java path
     private String javaPath; // Users path to Java
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
     private boolean sortPacksAlphabetically; // If to sort packs default alphabetically
@@ -673,7 +674,14 @@ public class Settings {
                     "true"));
             this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty(
                     "enabledebugconsole", "false"));
-            this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+            if (!properties.containsKey("usingcustomjavapath")) {
+                this.usingCustomJavaPath = false;
+                this.javaPath = Utils.getJavaHome();
+            } else {
+                this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty(
+                        "usingcustomjavapath", "false"));
+                this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+            }
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         } catch (IOException e) {
@@ -753,7 +761,14 @@ public class Settings {
                                                                     // size wider than they have
             }
 
-            this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+            this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty(
+                    "usingcustomjavapath", "false"));
+
+            if (isUsingCustomJavaPath()) {
+                this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+            } else {
+                this.javaPath = Utils.getJavaHome();
+            }
 
             this.javaParamaters = properties.getProperty("javaparameters", "");
 
@@ -807,6 +822,8 @@ public class Settings {
             properties.setProperty("permGen", this.permGen + "");
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
+            properties.setProperty("usingcustomjavapath", (this.usingCustomJavaPath) ? "true"
+                    : "false");
             properties.setProperty("javapath", this.javaPath);
             properties.setProperty("javaparameters", this.javaParamaters);
             properties
@@ -862,6 +879,8 @@ public class Settings {
             properties.setProperty("ram", this.ram + "");
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
+            properties.setProperty("usingcustomjavapath", (this.usingCustomJavaPath) ? "true"
+                    : "false");
             properties.setProperty("javapath", this.javaPath);
             properties.setProperty("javaparameters", this.javaParamaters);
             properties
@@ -2172,11 +2191,20 @@ public class Settings {
         this.windowHeight = windowHeight;
     }
 
+    public boolean isUsingCustomJavaPath() {
+        return this.usingCustomJavaPath;
+    }
+
     public String getJavaPath() {
         return this.javaPath;
     }
 
     public void setJavaPath(String javaPath) {
+        if (javaPath.equalsIgnoreCase(Utils.getJavaHome())) {
+            this.usingCustomJavaPath = false;
+        } else {
+            this.usingCustomJavaPath = true;
+        }
         this.javaPath = javaPath;
     }
 

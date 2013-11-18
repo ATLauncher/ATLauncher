@@ -72,7 +72,7 @@ public class App {
         settings.log("ATLauncher Version: " + settings.getVersion());
         settings.log("Operating System: " + System.getProperty("os.name"));
         settings.log("Java Version: " + Utils.getJavaVersion(), LogMessageType.info, false);
-        if (!Utils.getJavaHome().equalsIgnoreCase(settings.getJavaPath())) {
+        if (settings.isUsingCustomJavaPath()) {
             settings.log("Custom Java Path Set!", LogMessageType.warning, false);
         }
         settings.log("Java Path: " + settings.getJavaPath());
