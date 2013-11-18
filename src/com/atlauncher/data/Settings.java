@@ -1124,7 +1124,7 @@ public class Settings {
                         if (!element.getAttribute("allowedplayers").isEmpty()) {
                             if (element.getAttribute("allowedplayers").contains(",")) {
                                 ((PrivatePack) pack).addAllowedPlayers(element.getAttribute(
-                                        "testers").split(","));
+                                        "allowedplayers").split(","));
                             } else {
                                 ((PrivatePack) pack).addAllowedPlayers(new String[] { element
                                         .getAttribute("allowedplayers") });
