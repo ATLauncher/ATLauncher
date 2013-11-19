@@ -984,11 +984,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                     JSONObject rule = (JSONObject) rules.get("os");
                                     if (((String) rule.get("name")).equalsIgnoreCase(Utils
                                             .getOSName())) {
-                                        Pattern pattern = Pattern.compile((String) rule
-                                                .get("version"));
-                                        Matcher matcher = pattern.matcher(System
-                                                .getProperty("os.version"));
-                                        if (matcher.matches()) {
+                                        if (rule.containsKey("version")) {
+                                            Pattern pattern = Pattern.compile((String) rule
+                                                    .get("version"));
+                                            Matcher matcher = pattern.matcher(System
+                                                    .getProperty("os.version"));
+                                            if (matcher.matches()) {
+                                                shouldDownload = true;
+                                            }
+                                        } else {
                                             shouldDownload = true;
                                         }
                                     }
@@ -1000,11 +1004,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                     JSONObject rule = (JSONObject) rules.get("os");
                                     if (((String) rule.get("name")).equalsIgnoreCase(Utils
                                             .getOSName())) {
-                                        Pattern pattern = Pattern.compile((String) rule
-                                                .get("version"));
-                                        Matcher matcher = pattern.matcher(System
-                                                .getProperty("os.version"));
-                                        if (matcher.matches()) {
+                                        if (rule.containsKey("version")) {
+                                            Pattern pattern = Pattern.compile((String) rule
+                                                    .get("version"));
+                                            Matcher matcher = pattern.matcher(System
+                                                    .getProperty("os.version"));
+                                            if (matcher.matches()) {
+                                                shouldDownload = false;
+                                            }
+                                        } else {
                                             shouldDownload = false;
                                         }
                                     }
