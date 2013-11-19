@@ -727,7 +727,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     } else {
                         add = "?marker=" + marker;
                     }
-                    URL resourceUrl = new URL("http://s3.amazonaws.com/Minecraft.Resources/" + add);
+                    URL resourceUrl = new URL("http://resources.download.minecraft.net/" + add);
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     Document doc = db.parse(resourceUrl.openStream());
@@ -763,7 +763,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                     filename = file.getName();
                                 }
                                 downloads.add(new Downloadable(
-                                        "http://s3.amazonaws.com/Minecraft.Resources/" + key, file,
+                                        "http://resources.download.minecraft.net/" + key, file,
                                         etag, size, this, false));
                             }
                         }
