@@ -305,7 +305,9 @@ public class InstanceInstallerDialog extends JDialog {
                                             .getLocalizedString("common.reinstalled")
                                             : App.settings.getLocalizedString("common.installed"));
                             if (isReinstall) {
-                                App.settings.setInstanceUnplayable(instance);
+                                if (shouldCoruptInstance()) {
+                                    App.settings.setInstanceUnplayable(instance);
+                                }
                             }
                         } else {
                             try {
@@ -392,8 +394,9 @@ public class InstanceInstallerDialog extends JDialog {
                                             + " "
                                             + App.settings.getLocalizedString("common.reinstalled")
                                             + "<br/><br/>"
-                                            + App.settings
+                                            + (this.shouldCoruptInstance() ? App.settings
                                                     .getLocalizedString("instance.nolongerplayable")
+                                                    : "")
                                             + "<br/><br/>"
                                             + App.settings
                                                     .getLocalizedString("instance.checkerrorlogs")
@@ -401,7 +404,9 @@ public class InstanceInstallerDialog extends JDialog {
                                     title = pack.getName() + " " + version.getVersion() + " "
                                             + App.settings.getLocalizedString("common.not") + " "
                                             + App.settings.getLocalizedString("common.reinstalled");
-                                    App.settings.setInstanceUnplayable(instance);
+                                    if (this.shouldCoruptInstance()) {
+                                        App.settings.setInstanceUnplayable(instance);
+                                    }
                                 } else {
                                     // Install failed so delete the folder and clear Temp Dir
                                     Utils.delete(this.getRootDirectory());

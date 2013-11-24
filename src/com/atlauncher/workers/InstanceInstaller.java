@@ -64,6 +64,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private boolean isServer;
     private MinecraftVersion minecraftVersion;
     private String jarOrder;
+    private boolean instanceIsCorrupt = false; // If the instance should be set as corrupt
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
     private boolean savedZans = false; // If Zans Minimap stuff was found and saved
     private boolean savedNEICfg = false; // If NEI Config was found and saved
@@ -1190,6 +1191,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.allMods;
     }
 
+    public boolean shouldCoruptInstance() {
+        return this.instanceIsCorrupt;
+    }
+
     public MinecraftVersion getMinecraftVersion() {
         return this.minecraftVersion;
     }
@@ -1246,6 +1251,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.memory = this.pack.getMemory(this.version);
         if (this.minecraftVersion == null) {
             this.cancel(true);
+            return false;
         }
         selectedMods = new ArrayList<Mod>();
         if (allMods.size() != 0 && hasOptionalMods()) {
@@ -1253,6 +1259,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             modsChooser.setVisible(true);
             if (modsChooser.wasClosed()) {
                 this.cancel(true);
+                return false;
             }
             selectedMods = modsChooser.getSelectedMods();
         }
@@ -1264,6 +1271,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(),
                     mod.getFile(), mod.getType(), mod.getColour(), mod.getDescription(), false));
         }
+        this.instanceIsCorrupt = true; // From this point on the instance is corrupt
         makeDirectories();
         addPercent(5);
         File reis = new File(getModsDirectory(), "rei_minimap");
