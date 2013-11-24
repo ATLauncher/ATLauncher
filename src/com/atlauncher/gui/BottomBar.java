@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -24,6 +25,7 @@ import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Downloadable;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -38,6 +40,7 @@ public class BottomBar extends JPanel {
 
     private JButton toggleConsole;
     private JButton openFolder;
+    private JButton updateData;
     private JComboBox<Account> username;
     private JButton facebookIcon;
     private JButton githubIcon;
@@ -67,6 +70,8 @@ public class BottomBar extends JPanel {
         leftSide.add(toggleConsole, gbc);
         gbc.gridx++;
         leftSide.add(openFolder, gbc);
+        gbc.gridx++;
+        leftSide.add(updateData, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
@@ -109,6 +114,22 @@ public class BottomBar extends JPanel {
         openFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Utils.openExplorer(App.settings.getBaseDir());
+            }
+        });
+        updateData.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final ProgressDialog dialog = new ProgressDialog(App.settings
+                        .getLocalizedString("common.checkingforupdates"), 0, App.settings
+                        .getLocalizedString("common.checkingforupdates"), "Aborting Update Check!");
+                dialog.addThread(new Thread() {
+                    public void run() {
+                        if (App.settings.hasUpdatedFiles()) {
+                            App.settings.reloadLauncherData();
+                        }
+                        dialog.close();
+                    };
+                });
+                dialog.start();
             }
         });
         username.addItemListener(new ItemListener() {
@@ -157,6 +178,7 @@ public class BottomBar extends JPanel {
         }
 
         openFolder = new JButton(App.settings.getLocalizedString("common.openfolder"));
+        updateData = new JButton(App.settings.getLocalizedString("common.updatedata"));
 
         username = new JComboBox<Account>();
         username.setRenderer(new AccountsDropDownRenderer());

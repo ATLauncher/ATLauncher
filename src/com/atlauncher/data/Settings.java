@@ -265,6 +265,13 @@ public class Settings {
     }
 
     private String getFileHashes() {
+        return this.getFileHashes(false);
+    }
+
+    private String getFileHashes(boolean force) {
+        if (force) {
+            this.fileHashes = null;
+        }
         if (this.fileHashes == null) {
             Downloadable download = new Downloadable("launcher/hashes.xml", true);
             String hashes = download.getContents();
@@ -280,8 +287,8 @@ public class Settings {
     /**
      * This checks the servers hashes.xml file and gets the files that the Launcher needs to have
      */
-    private ArrayList<Downloadable> getLauncherFiles() {
-        String hashes = getFileHashes();
+    private ArrayList<Downloadable> getLauncherFiles(boolean force) {
+        String hashes = getFileHashes(force);
         if (hashes == null) {
             this.offlineMode = true;
             return null;
@@ -347,7 +354,7 @@ public class Settings {
     }
 
     public void downloadUpdatedFiles() {
-        ArrayList<Downloadable> downloads = getLauncherFiles();
+        ArrayList<Downloadable> downloads = getLauncherFiles(false);
         if (downloads != null) {
             ExecutorService executor = Executors.newFixedThreadPool(8);
             for (final Downloadable download : downloads) {
@@ -376,7 +383,7 @@ public class Settings {
             return false;
         }
         log("Checking for updated files!");
-        ArrayList<Downloadable> downloads = getLauncherFiles();
+        ArrayList<Downloadable> downloads = getLauncherFiles(true);
         if (downloads == null) {
             this.offlineMode = true;
             return false;
