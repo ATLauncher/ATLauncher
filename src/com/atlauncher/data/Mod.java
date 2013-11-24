@@ -178,6 +178,14 @@ public class Mod {
         return this.serverOptional;
     }
 
+    public void setSelected() {
+        this.selected = true;
+    }
+
+    public void setNotSelected() {
+        this.selected = false;
+    }
+
     public boolean isSelected() {
         return this.selected;
     }

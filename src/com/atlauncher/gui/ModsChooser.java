@@ -217,8 +217,31 @@ public class ModsChooser extends JDialog {
                             label.setBounds(nameSize + 24, (count1 * 20), 12, 20);
                         }
                     }
-                    if(linkedMod.isSelected()){
+                    if (mod.isSelected()) {
                         checkBox.setEnabled(true);
+                        checkBox.setSelected(true);
+                        if (!linkedMod.isSelected()) {
+                            boolean needToEnableChildren = false;
+                            for (ModsJCheckBox checkbox : modCheckboxes) {
+                                if (checkbox.getMod().getName().equalsIgnoreCase(mod.getLinked())) {
+                                    checkbox.setSelected(true); // Select the checkbox
+                                    needToEnableChildren = true;
+                                    break;
+                                }
+                            }
+                            if (needToEnableChildren) {
+                                for (ModsJCheckBox checkbox : modCheckboxes) {
+                                    if (checkbox.getMod().getLinked()
+                                            .equalsIgnoreCase(mod.getLinked())) {
+                                        checkbox.setEnabled(true);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        if (linkedMod.isSelected()) {
+                            checkBox.setEnabled(true);
+                        }
                     }
                 }
                 if (mod.isHidden() || mod.isLibrary()) {
@@ -256,7 +279,8 @@ public class ModsChooser extends JDialog {
                     }
                 }
             } else {
-                if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional()) && mod.isSelected()) {
+                if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())
+                        && mod.isSelected()) {
                     checkBox.setSelected(true);
                     checkBox.setEnabled(true);
                 }
