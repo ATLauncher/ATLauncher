@@ -217,6 +217,9 @@ public class ModsChooser extends JDialog {
                             label.setBounds(nameSize + 24, (count1 * 20), 12, 20);
                         }
                     }
+                    if(linkedMod.isSelected()){
+                        checkBox.setEnabled(true);
+                    }
                 }
                 if (mod.isHidden() || mod.isLibrary()) {
                     checkBox.setVisible(false);
