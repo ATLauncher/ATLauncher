@@ -732,21 +732,21 @@ public class Settings {
             }
 
             if (Utils.is64Bit()) {
-                this.ram = Integer.parseInt(properties.getProperty("ram",
-                        ((Utils.getMaximumRam() / 1000) * 512) + ""));
+                int halfRam = (Utils.getMaximumRam() / 1000) * 512;
+                int defaultRam = (halfRam >= 4096 ? 4096 : halfRam); // Default ram
+                this.ram = Integer.parseInt(properties.getProperty("ram", defaultRam + ""));
                 if (this.ram > Utils.getMaximumRam()) {
                     log("Tried to allocate " + this.ram + "MB of Ram but only "
-                            + Utils.getMaximumRam() + " is available to use!",
+                            + Utils.getMaximumRam() + "MB is available to use!",
                             LogMessageType.warning, false);
-                    this.ram = ((Utils.getMaximumRam() / 1000) * 512); // User tried to allocate
-                                                                       // too much ram, set it
-                                                                       // back to half
+                    this.ram = defaultRam; // User tried to allocate too much ram, set it back to
+                                           // half, capped at 4GB
                 }
             } else {
                 this.ram = Integer.parseInt(properties.getProperty("ram", "1024"));
                 if (this.ram > Utils.getMaximumRam()) {
                     log("Tried to allocate " + this.ram + "MB of Ram but only "
-                            + Utils.getMaximumRam() + " is available to use!",
+                            + Utils.getMaximumRam() + "MB is available to use!",
                             LogMessageType.warning, false);
                     this.ram = 1024; // User tried to allocate too much ram, set it back to 1GB
                 }
