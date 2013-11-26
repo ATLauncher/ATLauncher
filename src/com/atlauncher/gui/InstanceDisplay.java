@@ -129,20 +129,23 @@ public class InstanceDisplay extends CollapsiblePanel {
                         }
                     } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
                         if (!App.settings.isMinecraftLaunched()) {
-                            App.settings.setMinecraftLaunched(true);
-                            instance.launch();
+                            if(instance.launch()){
+                                App.settings.setMinecraftLaunched(true);
+                            }
                         }
                     } else if (ret == 2) {
                         instance.ignoreUpdate();
                         if (!App.settings.isMinecraftLaunched()) {
-                            App.settings.setMinecraftLaunched(true);
-                            instance.launch();
+                            if(instance.launch()){
+                                App.settings.setMinecraftLaunched(true);
+                            }
                         }
                     }
                 } else {
                     if (!App.settings.isMinecraftLaunched()) {
-                        App.settings.setMinecraftLaunched(true);
-                        instance.launch();
+                        if(instance.launch()){
+                            App.settings.setMinecraftLaunched(true);
+                        }
                     }
                 }
             }
