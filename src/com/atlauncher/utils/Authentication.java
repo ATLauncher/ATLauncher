@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.util.UUID;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -32,8 +33,8 @@ public class Authentication {
         StringBuilder response = null;
         URL url = new URL("https://authserver.mojang.com/authenticate");
         String request = "{\"agent\":{\"name\":\"Minecraft\",\"version\":10},\"username\":\""
-                + username + "\",\"password\":\"" + password + "\",\"clientToken\":\""
-                + UUID.randomUUID() + "\"}";
+                + JSONValue.escape(username) + "\",\"password\":\"" + JSONValue.escape(password) + "\",\"clientToken\":\""
+                + JSONValue.escape(UUID.randomUUID() + "") + "\"}";
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setConnectTimeout(15000);
