@@ -123,8 +123,12 @@ public class App {
             if (settings.isInstanceBySafeName(autoLaunch)) {
                 Instance instance = settings.getInstanceBySafeName(autoLaunch);
                 settings.log("Opening Instance " + instance.getName());
-                instance.launch();
-                open = false;
+                if (instance.launch()) {
+                    open = false;
+                } else {
+                    settings.log("Error Opening Instance  " + instance.getName(),
+                            LogMessageType.error, false);
+                }
             }
         }
 

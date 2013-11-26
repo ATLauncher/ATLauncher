@@ -450,7 +450,7 @@ public class Instance implements Serializable {
         return false;
     }
 
-    public void launch() {
+    public boolean launch() {
         final Account account = App.settings.getAccount();
         if (account == null) {
             String[] options = { App.settings.getLocalizedString("common.ok") };
@@ -460,6 +460,7 @@ public class Instance implements Serializable {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                     options[0]);
             App.settings.setMinecraftLaunched(false);
+            return false;
         } else {
             String password = account.getPassword();
             if (!account.isRemembered()) {
@@ -479,7 +480,7 @@ public class Instance implements Serializable {
                     App.settings.log("Aborting login for " + account.getMinecraftUsername(),
                             LogMessageType.error, false);
                     App.settings.setMinecraftLaunched(false);
-                    return;
+                    return false;
                 }
             }
             App.settings.log("Logging into Minecraft!");
@@ -496,6 +497,9 @@ public class Instance implements Serializable {
                 };
             });
             dialog.start();
+            if (dialog.getReturnValue() == null) {
+                return false;
+            }
             String sess = dialog.getReturnValue();
             if (!sess.substring(0, 6).equalsIgnoreCase("token:")) {
                 App.settings.log(sess, LogMessageType.error, false);
@@ -509,6 +513,7 @@ public class Instance implements Serializable {
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                         options[0]);
                 App.settings.setMinecraftLaunched(false);
+                return false;
             } else {
                 final String session = sess;
                 Thread launcher = new Thread() {
@@ -568,6 +573,7 @@ public class Instance implements Serializable {
                     }
                 };
                 launcher.start();
+                return true;
             }
         }
     }
