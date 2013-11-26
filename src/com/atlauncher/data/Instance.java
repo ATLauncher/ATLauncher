@@ -7,9 +7,6 @@
 package com.atlauncher.data;
 
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -548,7 +545,15 @@ public class Instance implements Serializable {
                             if (process.exitValue() != 0) {
                                 if (getRealPack().isLoggingEnabled() && App.settings.enableLogs()
                                         && getRealPack().isCrashReportsEnabled()) {
-                                    uploadCrashLog(); // Auto upload crash log if enabled
+                                    Thread crashThread = new Thread() {
+
+                                        @Override
+                                        public void run() {
+                                            uploadCrashLog(); // Auto upload crash log if enabled
+                                        }
+
+                                    };
+                                    crashThread.start();
                                 }
                             }
                             App.settings.setMinecraftLaunched(false);
