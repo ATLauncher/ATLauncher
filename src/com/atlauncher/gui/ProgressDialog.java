@@ -21,6 +21,7 @@ import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
 import com.atlauncher.data.LogMessageType;
+import com.atlauncher.utils.Utils;
 
 public class ProgressDialog extends JDialog {
 
@@ -38,6 +39,7 @@ public class ProgressDialog extends JDialog {
         this.max = initMax;
         this.closedLogMessage = initClosedLogMessage;
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        setIconImage(Utils.getImage("/resources/Icon.png"));
         setSize(300, 80);
         setTitle(title);
         setLocationRelativeTo(App.settings.getParent());

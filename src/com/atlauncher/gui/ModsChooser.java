@@ -44,6 +44,7 @@ public class ModsChooser extends JDialog {
                 ModalityType.APPLICATION_MODAL);
         this.installer = installerr;
         setSize(550, 450);
+        setIconImage(Utils.getImage("/resources/Icon.png"));
         setLocationRelativeTo(App.settings.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
