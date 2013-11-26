@@ -139,6 +139,7 @@ public class LegacyMCLauncher {
             arguments.add("false"); // Not Maximised
         }
 
+        App.settings.log("Launching Minecraft with the following arguments: " + arguments);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
