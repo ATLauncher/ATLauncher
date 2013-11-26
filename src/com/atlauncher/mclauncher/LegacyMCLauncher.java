@@ -10,12 +10,14 @@ import java.applet.Applet;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -25,6 +27,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import com.atlauncher.App;
+import com.atlauncher.Update;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.utils.Utils;
@@ -121,7 +124,21 @@ public class LegacyMCLauncher {
         }
 
         arguments.add("-cp");
-        arguments.add(System.getProperty("java.class.path") + cpb.toString());
+        File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
+                .getPath());
+        String pathh = null;
+        try {
+            pathh = thisFile.getCanonicalPath();
+            pathh = URLDecoder.decode(pathh, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            pathh = System.getProperty("java.class.path");
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            pathh = System.getProperty("java.class.path");
+            App.settings.logStackTrace(e);
+        }
+        System.out.println(System.getProperty("java.class.path"));
+        arguments.add(pathh + cpb.toString());
 
         arguments.add(LegacyMCLauncher.class.getCanonicalName());
 
