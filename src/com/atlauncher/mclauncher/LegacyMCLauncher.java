@@ -109,7 +109,9 @@ public class LegacyMCLauncher {
 
         if (!App.settings.getJavaParameters().isEmpty()) {
             for (String arg : App.settings.getJavaParameters().split(" ")) {
-                arguments.add(arg);
+                if (!arg.isEmpty()) {
+                    arguments.add(arg);
+                }
             }
         }
 
