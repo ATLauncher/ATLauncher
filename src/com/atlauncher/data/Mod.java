@@ -637,6 +637,12 @@ public class Mod {
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
                 break;
+            case dependancy:
+                if (!installer.getDependancyDirectory().exists()) {
+                    installer.getDependancyDirectory().mkdirs();
+                }
+                Utils.copyFile(fileLocation, installer.getDependancyDirectory());
+                break;
             case plugins:
                 Utils.copyFile(fileLocation, installer.getPluginsDirectory());
                 break;
@@ -792,9 +798,9 @@ public class Mod {
                 base = installer.getPluginsDirectory();
                 break;
             case coremods:
-                if(installer.getMinecraftVersion().usesCoreMods()){
+                if (installer.getMinecraftVersion().usesCoreMods()) {
                     base = installer.getCoreModsDirectory();
-                }else{
+                } else {
                     base = installer.getModsDirectory();
                 }
                 break;
