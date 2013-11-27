@@ -37,8 +37,7 @@ public class Action {
         this.server = server;
     }
 
-    public Action(String action, String after, String saveAs, boolean client,
-            boolean server) {
+    public Action(String action, String after, String saveAs, boolean client, boolean server) {
         this.mod = new ArrayList<Mod>();
         this.action = action;
         this.after = after;
@@ -72,8 +71,13 @@ public class Action {
                                 instanceInstaller.getModsDirectory(), saveAs));
                         break;
                     case coremods:
-                        Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(
-                                instanceInstaller.getCoreModsDirectory(), saveAs));
+                        if (instanceInstaller.getMinecraftVersion().usesCoreMods()) {
+                            Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(
+                                    instanceInstaller.getCoreModsDirectory(), saveAs));
+                        } else {
+                            Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(
+                                    instanceInstaller.getModsDirectory(), saveAs));
+                        }
                         break;
                     case jar:
                         Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(

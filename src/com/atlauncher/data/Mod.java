@@ -641,7 +641,11 @@ public class Mod {
                 Utils.copyFile(fileLocation, installer.getPluginsDirectory());
                 break;
             case coremods:
-                Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
+                if (installer.getMinecraftVersion().usesCoreMods()) {
+                    Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
+                } else {
+                    Utils.copyFile(fileLocation, installer.getModsDirectory());
+                }
                 break;
             case shaderpack:
                 if (!installer.getShaderPacksDirectory().exists()) {
@@ -656,7 +660,11 @@ public class Mod {
                         this.extractFolder);
                 switch (extractTo) {
                     case coremods:
-                        Utils.copyDirectory(folder, installer.getCoreModsDirectory());
+                        if (installer.getMinecraftVersion().usesCoreMods()) {
+                            Utils.copyDirectory(folder, installer.getCoreModsDirectory());
+                        } else {
+                            Utils.copyDirectory(folder, installer.getModsDirectory());
+                        }
                         break;
                     case mods:
                         Utils.copyDirectory(folder, installer.getModsDirectory());
@@ -679,10 +687,19 @@ public class Mod {
                     switch (decompType) {
                         case coremods:
                             if (tempFileDecomp.isFile()) {
-                                Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
+                                if (installer.getMinecraftVersion().usesCoreMods()) {
+                                    Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
+                                } else {
+                                    Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
+                                }
                             } else {
-                                Utils.copyDirectory(tempFileDecomp,
-                                        installer.getCoreModsDirectory());
+                                if (installer.getMinecraftVersion().usesCoreMods()) {
+                                    Utils.copyDirectory(tempFileDecomp,
+                                            installer.getCoreModsDirectory());
+                                } else {
+                                    Utils.copyDirectory(tempFileDecomp,
+                                            installer.getModsDirectory());
+                                }
                             }
                             break;
                         case jar:
@@ -775,7 +792,11 @@ public class Mod {
                 base = installer.getPluginsDirectory();
                 break;
             case coremods:
-                base = installer.getCoreModsDirectory();
+                if(installer.getMinecraftVersion().usesCoreMods()){
+                    base = installer.getCoreModsDirectory();
+                }else{
+                    base = installer.getModsDirectory();
+                }
                 break;
             case shaderpack:
                 base = installer.getShaderPacksDirectory();
