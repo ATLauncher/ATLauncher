@@ -1249,6 +1249,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     protected Boolean doInBackground() throws Exception {
+        if(this.isReinstall){
+            System.out.println(this.pack.getUpdateMessage(this.version));
+        }else{
+            System.out.println(this.pack.getInstallMessage(this.version));
+        }
         this.allMods = sortMods(this.pack.getMods(this.version, isServer));
         loadActions(); // Load all the actions up for the pack
         this.permgen = this.pack.getPermGen(this.version);
