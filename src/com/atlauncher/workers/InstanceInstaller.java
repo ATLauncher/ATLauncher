@@ -186,7 +186,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return new File(getRootDirectory(), "mods");
     }
 
-    public File getDependancyDirectory() {
+    public File getDependencyDirectory() {
         return new File(getModsDirectory(), this.minecraftVersion.getVersion());
     }
 

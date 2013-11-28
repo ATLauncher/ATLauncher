@@ -637,11 +637,11 @@ public class Mod {
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
                 break;
-            case dependancy:
-                if (!installer.getDependancyDirectory().exists()) {
-                    installer.getDependancyDirectory().mkdirs();
+            case dependency:
+                if (!installer.getDependencyDirectory().exists()) {
+                    installer.getDependencyDirectory().mkdirs();
                 }
-                Utils.copyFile(fileLocation, installer.getDependancyDirectory());
+                Utils.copyFile(fileLocation, installer.getDependencyDirectory());
                 break;
             case plugins:
                 Utils.copyFile(fileLocation, installer.getPluginsDirectory());
