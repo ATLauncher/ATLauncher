@@ -637,6 +637,7 @@ public class Mod {
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
                 break;
+            case depandency:
             case dependency:
                 if (!installer.getDependencyDirectory().exists()) {
                     installer.getDependencyDirectory().mkdirs();
