@@ -23,6 +23,7 @@ import java.util.jar.JarOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -1249,10 +1250,40 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     protected Boolean doInBackground() throws Exception {
-        if(this.isReinstall){
-            System.out.println(this.pack.getUpdateMessage(this.version));
-        }else{
-            System.out.println(this.pack.getInstallMessage(this.version));
+        if (this.isReinstall) {
+            if (this.pack.getUpdateMessage(this.version) != null) {
+                String[] options = { App.settings.getLocalizedString("common.ok"),
+                        App.settings.getLocalizedString("common.cancel") };
+                int ret = JOptionPane.showOptionDialog(
+                        App.settings.getParent(),
+                        "<html>" + this.pack.getUpdateMessage(this.version) + "</html>",
+                        App.settings.getLocalizedString("common.reinstalling") + " "
+                                + this.pack.getName(), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                if (ret != 0) {
+                    App.settings.log("Instance Install Cancelled After Viewing Message!",
+                            LogMessageType.error, false);
+                    cancel(true);
+                    return false;
+                }
+            }
+        } else {
+            if (this.pack.getInstallMessage(this.version) != null) {
+                String[] options = { App.settings.getLocalizedString("common.ok"),
+                        App.settings.getLocalizedString("common.cancel") };
+                int ret = JOptionPane.showOptionDialog(
+                        App.settings.getParent(),
+                        "<html>" + this.pack.getInstallMessage(this.version) + "</html>",
+                        App.settings.getLocalizedString("common.installing") + " "
+                                + this.pack.getName(), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                if (ret != 0) {
+                    App.settings.log("Instance Install Cancelled After Viewing Message!",
+                            LogMessageType.error, false);
+                    cancel(true);
+                    return false;
+                }
+            }
         }
         this.allMods = sortMods(this.pack.getMods(this.version, isServer));
         loadActions(); // Load all the actions up for the pack
