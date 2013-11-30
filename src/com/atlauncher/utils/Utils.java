@@ -509,6 +509,10 @@ public class Utils {
                 if (entry.getName().endsWith("aux.class")) {
                     entryName = "aux_class";
                 }
+                if(entry.isDirectory()){
+                    File folder = new File(out, entryName);
+                    folder.mkdirs();
+                }
                 File destinationFilePath = new File(out, entryName);
                 destinationFilePath.getParentFile().mkdirs();
                 if (!entry.isDirectory() && !entry.getName().equals(".minecraft")) {
