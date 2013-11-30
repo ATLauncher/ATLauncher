@@ -242,7 +242,7 @@ public class EditModsDialog extends JDialog {
             ModsJCheckBox checkBox = disabledMods.get(i);
             ModDescriptionJLabel label = disabledModLabels.get(i);
             if (!checkBox.getDisableableMod().getDescription().isEmpty()) {
-                enabledModsPanel.add(label);
+                disabledModsPanel.add(label);
             }
             disabledModsPanel.add(checkBox);
         }
@@ -254,10 +254,7 @@ public class EditModsDialog extends JDialog {
         ArrayList<ModsJCheckBox> mods = new ArrayList<ModsJCheckBox>(disabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
-                if (mod.getDisableableMod().enable(instance)) {
-                    disabledMods.remove(mod);
-                    enabledMods.add(mod);
-                }
+                mod.getDisableableMod().enable(instance);
             }
         }
         reloadPanels();
@@ -267,10 +264,7 @@ public class EditModsDialog extends JDialog {
         ArrayList<ModsJCheckBox> mods = new ArrayList<ModsJCheckBox>(enabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
-                if (mod.getDisableableMod().disable(instance)) {
-                    enabledMods.remove(mod);
-                    disabledMods.add(mod);
-                }
+                mod.getDisableableMod().disable(instance);
             }
         }
         reloadPanels();
@@ -296,45 +290,9 @@ public class EditModsDialog extends JDialog {
 
     private void reloadPanels() {
         App.settings.saveInstances();
-        int count = 0;
         enabledModsPanel.removeAll();
-        for (int i = 0; i < enabledMods.size(); i++) {
-            ModsJCheckBox checkBox = enabledMods.get(i);
-            if (enabledModLabels.size() > i) {
-                ModDescriptionJLabel label = enabledModLabels.get(i);
-                if (!checkBox.getDisableableMod().getDescription().isEmpty()) {
-                    enabledModsPanel.add(label);
-                }
-            }
-            int nameSize = getFontMetrics(Utils.getFont()).stringWidth(
-                    checkBox.getDisableableMod().getName());
-            checkBox.setBounds(0, (count++ * 20), nameSize + 23, 20);
-            if (checkBox.isSelected()) {
-                checkBox.setSelected(false);
-            }
-            enabledModsPanel.add(checkBox);
-        }
-        count = 0;
         disabledModsPanel.removeAll();
-        for (int i = 0; i < disabledMods.size(); i++) {
-            ModsJCheckBox checkBox = disabledMods.get(i);
-            if (disabledModLabels.size() > i) {
-                ModDescriptionJLabel label = disabledModLabels.get(i);
-                if (!checkBox.getDisableableMod().getDescription().isEmpty()) {
-                    enabledModsPanel.add(label);
-                }
-            }
-            int nameSize = getFontMetrics(Utils.getFont()).stringWidth(
-                    checkBox.getDisableableMod().getName());
-            checkBox.setBounds(0, (count++ * 20), nameSize + 23, 20);
-            if (checkBox.isSelected()) {
-                checkBox.setSelected(false);
-            }
-            disabledModsPanel.add(checkBox);
-        }
-
-        enabledModsPanel.setPreferredSize(new Dimension(0, enabledMods.size() * 20));
-        disabledModsPanel.setPreferredSize(new Dimension(0, disabledMods.size() * 20));
+        loadMods();
         enabledModsPanel.repaint();
         disabledModsPanel.repaint();
     }
