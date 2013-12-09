@@ -1056,7 +1056,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                 this.librariesNeeded += "," + filename;
                             }
                         }
-                        String url = "http://s3.amazonaws.com/Minecraft.Download/libraries/" + dir
+                        String url = "https://libraries.minecraft.net/" + dir
                                 + "/" + filename;
                         File file = new File(App.settings.getLibrariesDir(), filename);
                         libraries.add(new Downloadable(url, file, null, this, false));
