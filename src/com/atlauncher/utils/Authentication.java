@@ -21,20 +21,23 @@ import java.net.URLEncoder;
 import java.util.UUID;
 
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.atlauncher.App;
+import com.atlauncher.data.mojang.auth.AuthenticationRequest;
+import com.atlauncher.data.mojang.auth.AuthenticationResponse;
+import com.google.gson.Gson;
 
 public class Authentication {
 
-    public static String checkAccount(String username, String password) throws IOException {
+    public static AuthenticationResponse checkAccount(String username, String password)
+            throws IOException {
+        Gson gson = new Gson();
         StringBuilder response = null;
         URL url = new URL("https://authserver.mojang.com/authenticate");
-        String request = "{\"agent\":{\"name\":\"Minecraft\",\"version\":10},\"username\":\""
-                + JSONValue.escape(username) + "\",\"password\":\"" + JSONValue.escape(password) + "\",\"clientToken\":\""
-                + JSONValue.escape(UUID.randomUUID() + "") + "\"}";
+        String request = gson.toJson(new AuthenticationRequest(username, password, UUID
+                .randomUUID() + ""));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setConnectTimeout(15000);
@@ -68,7 +71,9 @@ public class Authentication {
             response.append('\r');
         }
         reader.close();
-        return response.toString();
+        AuthenticationResponse result = gson.fromJson(response.toString(),
+                AuthenticationResponse.class);
+        return result;
     }
 
     public static String checkAccountOld(String username, String password) {
@@ -94,61 +99,39 @@ public class Authentication {
         return response.toString();
     }
 
-    public static String getSessionToken(boolean isNewLoginMethod, String username, String password) {
-        String authToken = null;
-        String auth = null;
-        String authError = null;
+    public static String loginOld(String username, String password) {
         if (App.settings.isInOfflineMode()) {
+            return "token:0:0";
+        }
+        String authToken = null;
+        String auth = checkAccountOld(username, password);
+        if (auth == null) {
             authToken = "token:0:0";
-        } else if (!isNewLoginMethod) {
-            auth = checkAccountOld(username, password);
-            if (auth == null) {
-                authToken = "token:0:0";
-            } else {
-                if (auth.contains(":")) {
-                    String[] parts = auth.split(":");
-                    if (parts.length == 5) {
-                        authToken = "token:" + parts[3] + ":0";
-                    } else {
-                        authError = auth;
-                    }
-                } else {
-                    authError = auth;
-                }
-            }
         } else {
-            try {
-                auth = checkAccount(username, password);
-            } catch (IOException e) {
-                App.settings.logStackTrace(e);
-            }
-            if (auth == null) {
-                authToken = "token:0:0";
-            } else {
-                JSONParser parser = new JSONParser();
-                JSONObject object = null;
-                try {
-                    object = (JSONObject) parser.parse(auth);
-                } catch (ParseException e) {
-                    App.settings.logStackTrace(e);
-                    return "An unknown error occured!";
-                }
-                if (object.containsKey("errorMessage")) {
-                    authError = (String) object.get("errorMessage");
-                } else if (object.containsKey("accessToken")) {
-                    String accessToken = (String) object.get("accessToken");
-                    JSONObject selectedProfileObject = (JSONObject) object.get("selectedProfile");
-                    String profileID = (String) selectedProfileObject.get("id");
-                    authToken = "token:" + accessToken + ":" + profileID;
+            if (auth.contains(":")) {
+                String[] parts = auth.split(":");
+                if (parts.length == 5) {
+                    authToken = "token:" + parts[3] + ":0";
                 } else {
-                    authError = "An unknown error occured!";
+                    authToken = auth;
                 }
+            } else {
+                authToken = auth;
             }
         }
-        if (authError == null) {
-            return authToken;
-        } else {
-            return authError.replace("Invalid credentials. ", "");
+        return authToken;
+    }
+
+    public static AuthenticationResponse login(String username, String password) {
+        if (App.settings.isInOfflineMode()) {
+            return null;
         }
+        AuthenticationResponse response = null;
+        try {
+            response = checkAccount(username, password);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return response;
     }
 }

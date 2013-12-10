@@ -12,8 +12,6 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -34,7 +32,6 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -46,7 +43,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -57,6 +53,8 @@ import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
 import com.atlauncher.data.LogMessageType;
+import com.atlauncher.data.mojang.ExtractRule;
+import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.gui.ProgressDialog;
 
 public class Utils {
@@ -150,23 +148,8 @@ public class Utils {
         return font;
     }
 
-    public static enum OS {
-        windows, mac, linux
-    }
-
-    private static OS getOS() {
-        String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("win")) {
-            return OS.windows;
-        } else if (osName.contains("mac")) {
-            return OS.mac;
-        } else {
-            return OS.linux;
-        }
-    }
-
     public static String osSlash() {
-        if (getOS() == OS.windows) {
+        if (isWindows()) {
             return "\\";
         } else {
             return "/";
@@ -174,21 +157,10 @@ public class Utils {
     }
 
     public static String osDelimiter() {
-        if (getOS() == OS.windows) {
+        if (isWindows()) {
             return ";";
         } else {
             return ":";
-        }
-    }
-
-    public static String getOSName() {
-        String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("win")) {
-            return "windows";
-        } else if (osName.contains("mac")) {
-            return "osx";
-        } else {
-            return "linux";
         }
     }
 
@@ -201,20 +173,28 @@ public class Utils {
     }
 
     public static boolean isWindows() {
-        return getOS() == OS.windows;
+        return OperatingSystem.getOS() == OperatingSystem.WINDOWS;
     }
 
     public static boolean isMac() {
-        return getOS() == OS.mac;
+        return OperatingSystem.getOS() == OperatingSystem.OSX;
     }
 
     public static boolean isLinux() {
-        return getOS() == OS.linux;
+        return OperatingSystem.getOS() == OperatingSystem.LINUX;
     }
 
     public static boolean is64Bit() {
         String osType = System.getProperty("sun.arch.data.model");
         return Boolean.valueOf(osType.contains("64"));
+    }
+
+    public static String getArch() {
+        if (is64Bit()) {
+            return "64";
+        } else {
+            return "32";
+        }
     }
 
     public static String[] getMemoryOptions() {
@@ -321,6 +301,44 @@ public class Utils {
         StringBuffer sb = null;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
+            FileInputStream fis = new FileInputStream(file);
+
+            byte[] dataBytes = new byte[1024];
+
+            int nread = 0;
+            while ((nread = fis.read(dataBytes)) != -1) {
+                md.update(dataBytes, 0, nread);
+            }
+            ;
+            byte[] mdbytes = md.digest();
+
+            sb = new StringBuffer();
+            for (int i = 0; i < mdbytes.length; i++) {
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+
+            if (fis != null) {
+                fis.close();
+            }
+        } catch (NoSuchAlgorithmException e) {
+            App.settings.logStackTrace(e);
+        } catch (FileNotFoundException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return sb.toString();
+    }
+
+    public static String getSHA1(File file) {
+        if (!file.exists()) {
+            App.settings.log("Cannot get SHA-1 hash of " + file.getAbsolutePath()
+                    + " as it doesn't exist", LogMessageType.error, false);
+            return "0"; // File doesn't exists so MD5 is nothing
+        }
+        StringBuffer sb = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
             FileInputStream fis = new FileInputStream(file);
 
             byte[] dataBytes = new byte[1024];
@@ -496,6 +514,10 @@ public class Utils {
     }
 
     public static void unzip(File in, File out) {
+        unzip(in, out, null);
+    }
+
+    public static void unzip(File in, File out, ExtractRule extractRule) {
         try {
             ZipFile zipFile = null;
             if (!out.exists()) {
@@ -509,7 +531,10 @@ public class Utils {
                 if (entry.getName().endsWith("aux.class")) {
                     entryName = "aux_class";
                 }
-                if(entry.isDirectory()){
+                if (extractRule != null && extractRule.shouldExclude(entryName)) {
+                    continue;
+                }
+                if (entry.isDirectory()) {
                     File folder = new File(out, entryName);
                     folder.mkdirs();
                 }
@@ -701,7 +726,7 @@ public class Utils {
             };
         });
         dialog.start();
-        return dialog.getReturnValue();
+        return (String) dialog.getReturnValue();
     }
 
     public static String sendPostData(String urll, String text, String key) throws IOException {

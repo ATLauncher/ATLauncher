@@ -31,13 +31,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.LogMessageType;
+import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.utils.Authentication;
 
 public class AccountPanel extends JPanel {
@@ -175,7 +172,6 @@ public class AccountPanel extends JPanel {
                 } else {
                     Account account;
                     String username = usernameField.getText();
-                    String minecraftUsername = null;
                     String password = new String(passwordField.getPassword());
                     boolean remember = rememberField.isSelected();
                     if (App.settings.isAccountByName(username)
@@ -202,44 +198,18 @@ public class AccountPanel extends JPanel {
                                         new String(passwordField.getPassword())));
                             } catch (IOException e1) {
                                 App.settings.logStackTrace(e1);
-                                dialog.setReturnValue("An unknown error occured!");
                             }
                             dialog.close();
                         };
                     });
                     dialog.start();
-                    String authError = null;
-                    String auth = dialog.getReturnValue();
-                    JSONParser parser = new JSONParser();
-                    JSONObject object = null;
-                    try {
-                        object = (JSONObject) parser.parse(auth);
-                        if (object.containsKey("errorMessage")) {
-                            authError = ((String) object.get("errorMessage")).replace(
-                                    "Invalid credentials. ", "");
-                        } else if (object.containsKey("accessToken")) {
-                            JSONObject selectedProfileObject = (JSONObject) object
-                                    .get("selectedProfile");
-                            minecraftUsername = (String) selectedProfileObject.get("name");
-                        } else {
-                            authError = "An unknown error occured!";
-                        }
-                    } catch (ParseException e1) {
-                        authError = auth;
-                    }
-
-                    if (authError != null) {
-                        App.settings.log(authError, LogMessageType.error, false);
-                        String[] options = { App.settings.getLocalizedString("common.ok") };
-                        JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
-                                + App.settings.getLocalizedString("account.incorrect")
-                                + "<br/><br/>" + authError + "</center></html>",
-                                App.settings.getLocalizedString("account.notadded"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
-                    } else {
+                    AuthenticationResponse response = (AuthenticationResponse) dialog
+                            .getReturnValue();
+                    if (!response.hasError()) {
+                        AuthenticationResponse resp = (AuthenticationResponse) response;
                         if (accountsComboBox.getSelectedIndex() == 0) {
-                            account = new Account(username, password, minecraftUsername, remember);
+                            account = new Account(username, password, resp.getSelectedProfile()
+                                    .getName(), remember);
                             App.settings.getAccounts().add(account);
                             App.settings.log("Added Account " + account);
                             String[] options = { App.settings.getLocalizedString("common.yes"),
@@ -255,7 +225,7 @@ public class AccountPanel extends JPanel {
                         } else {
                             account = (Account) accountsComboBox.getSelectedItem();
                             account.setUsername(username);
-                            account.setMinecraftUsername(minecraftUsername);
+                            account.setMinecraftUsername(resp.getSelectedProfile().getName());
                             if (remember) {
                                 account.setPassword(password);
                             }
@@ -276,6 +246,15 @@ public class AccountPanel extends JPanel {
                             accountsComboBox.addItem(accountt);
                         }
                         accountsComboBox.setSelectedItem(account);
+                    } else {
+                        App.settings.log(response.getErrorMessage(), LogMessageType.error, false);
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
+                        JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
+                                + App.settings.getLocalizedString("account.incorrect")
+                                + "<br/><br/>" + response.getErrorMessage() + "</center></html>",
+                                App.settings.getLocalizedString("account.notadded"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
                     }
                 }
             }

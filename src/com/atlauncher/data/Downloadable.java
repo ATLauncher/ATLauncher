@@ -26,15 +26,16 @@ public class Downloadable {
     private String beforeURL;
     private String url;
     private File file;
-    private String md5;
+    private String hash;
     private int size;
     private HttpURLConnection connection;
     private InstanceInstaller instanceInstaller;
     private boolean isATLauncherDownload;
+    private File copyTo;
     private int attempts = 0;
 
-    public Downloadable(String url, File file, String md5, int size,
-            InstanceInstaller instanceInstaller, boolean isATLauncherDownload) {
+    public Downloadable(String url, File file, String hash, int size,
+            InstanceInstaller instanceInstaller, boolean isATLauncherDownload, File copyTo) {
         if (isATLauncherDownload) {
             this.url = App.settings.getFileURL(url);
         } else {
@@ -42,22 +43,38 @@ public class Downloadable {
         }
         this.beforeURL = url;
         this.file = file;
-        this.md5 = md5;
+        this.hash = hash;
         this.size = size;
         this.instanceInstaller = instanceInstaller;
         this.isATLauncherDownload = isATLauncherDownload;
+        this.copyTo = copyTo;
     }
 
-    public Downloadable(String url, File file, String md5, InstanceInstaller instanceInstaller,
+    public Downloadable(String url, File file, String hash, int size,
+            InstanceInstaller instanceInstaller, boolean isATLauncherDownload) {
+        this(url, file, hash, size, instanceInstaller, isATLauncherDownload, null);
+    }
+
+    public Downloadable(String url, File file, String hash, InstanceInstaller instanceInstaller,
             boolean isATLauncherDownload) {
-        this(url, file, md5, -1, instanceInstaller, isATLauncherDownload);
+        this(url, file, hash, -1, instanceInstaller, isATLauncherDownload, null);
     }
 
     public Downloadable(String url, boolean isATLauncherDownload) {
-        this(url, null, null, -1, null, isATLauncherDownload);
+        this(url, null, null, -1, null, isATLauncherDownload, null);
     }
 
-    public String getMD5FromURL() throws IOException {
+    public boolean isMD5() {
+        if (hash == null) {
+            return true;
+        }
+        if (hash.length() == 40) {
+            return false;
+        }
+        return true;
+    }
+
+    public String getHashFromURL() throws IOException {
         String etag = null;
         etag = getConnection().getHeaderField("ETag");
 
@@ -97,28 +114,38 @@ public class Downloadable {
             return true;
         }
         if (this.file.exists()) {
-            if (Utils.getMD5(this.file).equalsIgnoreCase(getMD5())) {
-                return false;
+            if (isMD5()) {
+                if (Utils.getMD5(this.file).equalsIgnoreCase(getHash())) {
+                    return false;
+                }
+            } else {
+                if (Utils.getSHA1(this.file).equalsIgnoreCase(getHash())) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
-    public String getMD5() {
-        if (this.md5 == null || this.md5.isEmpty()) {
+    public String getHash() {
+        if (this.hash == null || this.hash.isEmpty()) {
             try {
-                this.md5 = getMD5FromURL();
+                this.hash = getHashFromURL();
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
-                this.md5 = "-";
+                this.hash = "-";
                 this.connection = null;
             }
         }
-        return this.md5;
+        return this.hash;
     }
 
     public File getFile() {
         return this.file;
+    }
+
+    public File getCopyToFile() {
+        return this.copyTo;
     }
 
     public boolean isGziped() {
@@ -150,7 +177,7 @@ public class Downloadable {
                 }
             } catch (IOException e) {
                 if (this.url.contains("Minecraft.Resources")) {
-                    if(this.instanceInstaller!=null){
+                    if (this.instanceInstaller != null) {
                         this.instanceInstaller.addDownloadedBytes(getFilesize());
                     }
                 } else {
@@ -275,22 +302,26 @@ public class Downloadable {
         // Create the directory structure
         new File(this.file.getAbsolutePath().substring(0,
                 this.file.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
-        if (getMD5().equalsIgnoreCase("-")) {
+        if (getHash().equalsIgnoreCase("-")) {
             downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to
                                              // check
         } else {
-            String fileMD5;
+            String fileHash;
             boolean done = false;
             while (attempts <= 3) {
                 attempts++;
                 if (this.file.exists()) {
-                    fileMD5 = Utils.getMD5(this.file);
+                    if (isMD5()) {
+                        fileHash = Utils.getMD5(this.file);
+                    } else {
+                        fileHash = Utils.getSHA1(this.file);
+                    }
                 } else {
-                    fileMD5 = "0";
+                    fileHash = "0";
                 }
-                if (fileMD5.equalsIgnoreCase(getMD5())) {
+                if (fileHash.equalsIgnoreCase(getHash())) {
                     done = true;
-                    break; // MD5 matches, file is good
+                    break; // Hash matches, file is good
                 }
                 if (this.file.exists()) {
                     Utils.delete(this.file); // Delete file since it doesn't match MD5
@@ -322,6 +353,28 @@ public class Downloadable {
                             instanceInstaller.cancel(true);
                         }
                     }
+                }
+            } else if (this.copyTo != null) {
+                String fileHash2;
+                if (this.copyTo.exists()) {
+                    if (isMD5()) {
+                        fileHash2 = Utils.getMD5(this.file);
+                    } else {
+                        fileHash2 = Utils.getSHA1(this.file);
+                    }
+                } else {
+                    fileHash2 = "0";
+                }
+                if (!fileHash2.equalsIgnoreCase(getHash())) {
+                    if (this.copyTo.exists()) {
+                        Utils.delete(this.copyTo);
+                    }
+                    new File(this.copyTo.getAbsolutePath().substring(0,
+                            this.copyTo.getAbsolutePath().lastIndexOf(File.separatorChar)))
+                            .mkdirs();
+                    Utils.copyFile(this.file, this.copyTo, true);
+                } else {
+                    System.out.println("Not copying over " + this.copyTo.getName());
                 }
             }
             App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used

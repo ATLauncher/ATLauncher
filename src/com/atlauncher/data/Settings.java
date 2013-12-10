@@ -65,6 +65,7 @@ import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.NewsPanel;
 import com.atlauncher.gui.PacksPanel;
+import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -186,6 +187,36 @@ public class Settings {
         loadAccounts(); // Load the saved Accounts
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
+        checkResources(); // Check for new format of resources
+    }
+
+    public void checkResources() {
+        File indexesDir = new File(this.resourcesDir, "indexes");
+        if (!indexesDir.exists() || !indexesDir.isDirectory()) {
+            final ProgressDialog dialog = new ProgressDialog("Rearanging Resources Folder!", 0,
+                    "Rearanging Resources Folder!", null);
+            Thread thread = new Thread() {
+                public void run() {
+                    File indexesDir = new File(getResourcesDir(), "indexes");
+                    File objectsDir = new File(getResourcesDir(), "objects");
+                    File virtualDir = new File(getResourcesDir(), "virtual");
+                    File legacyDir = new File(virtualDir, "legacy");
+                    File tempDir = new File(getTempDir(), "assets");
+                    tempDir.mkdir();
+                    Utils.moveDirectory(getResourcesDir(), tempDir);
+                    indexesDir.mkdirs();
+                    objectsDir.mkdirs();
+                    virtualDir.mkdirs();
+                    legacyDir.mkdirs();
+                    Utils.moveDirectory(tempDir, legacyDir);
+                    Utils.delete(tempDir);
+                    dialog.close();
+                }
+            };
+            dialog.addThread(thread);
+            dialog.start();
+
+        }
     }
 
     public void checkMojangStatus() {
@@ -508,6 +539,14 @@ public class Settings {
      */
     public File getResourcesDir() {
         return this.resourcesDir;
+    }
+
+    public File getVirtualAssetsDir() {
+        return new File(this.resourcesDir, "virtual");
+    }
+
+    public File getLegacyVirtualAssetsDir() {
+        return new File(getVirtualAssetsDir(), "legacy");
     }
 
     /**

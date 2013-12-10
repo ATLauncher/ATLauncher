@@ -30,7 +30,7 @@ public class ProgressDialog extends JDialog {
     private int max; // The maximum the progress bar should get to
     private Thread thread = null; // The Thread were optionally running
     private String closedLogMessage; // The message to log to the console when dialog closed
-    private String returnValue = null; // The value returned
+    private Object returnValue = null; // The value returned
 
     public ProgressDialog(String title, int initMax, String initLabelText,
             String initClosedLogMessage) {
@@ -52,18 +52,20 @@ public class ProgressDialog extends JDialog {
         JLabel label = new JLabel(this.labelText, SwingConstants.CENTER);
         add(label, BorderLayout.CENTER);
         add(progressBar, BorderLayout.SOUTH);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                App.settings.log(closedLogMessage, LogMessageType.error, false);
-                if (thread != null) {
-                    if (thread.isAlive()) {
-                        thread.interrupt();
+        if (this.closedLogMessage != null) {
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    App.settings.log(closedLogMessage, LogMessageType.error, false);
+                    if (thread != null) {
+                        if (thread.isAlive()) {
+                            thread.interrupt();
+                        }
                     }
+                    close(); // Close the dialog
                 }
-                close(); // Close the dialog
-            }
-        });
+            });
+        }
     }
 
     public void addThread(Thread thread) {
@@ -77,11 +79,11 @@ public class ProgressDialog extends JDialog {
         setVisible(true);
     }
 
-    public void setReturnValue(String returnValue) {
+    public void setReturnValue(Object returnValue) {
         this.returnValue = returnValue;
     }
 
-    public String getReturnValue() {
+    public Object getReturnValue() {
         return this.returnValue;
     }
 

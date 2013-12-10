@@ -350,6 +350,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setMinecraftArguments(this.getMinecraftArguments());
                                     instance.setExtraArguments(this.getExtraArguments());
                                     instance.setMainClass(this.getMainClass());
+                                    instance.setAssets(this.getAssets());
                                     if (version.isDevVersion()) {
                                         instance.setDevVersion();
                                     } else {
@@ -371,7 +372,7 @@ public class InstanceInstallerDialog extends JDialog {
                                                     this.getJarOrder(), this.getLibrariesNeeded(),
                                                     this.getExtraArguments(), this
                                                             .getMinecraftArguments(), this
-                                                            .getMainClass(),
+                                                            .getMainClass(), this.getAssets(),
                                                     version.isDevVersion(), !this.isLegacy()));
                                 }
                                 App.settings.saveInstances();

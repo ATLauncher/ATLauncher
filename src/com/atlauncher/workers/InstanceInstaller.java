@@ -8,20 +8,20 @@ package com.atlauncher.workers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -29,10 +29,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -52,8 +48,19 @@ import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Type;
+import com.atlauncher.data.mojang.AssetIndex;
+import com.atlauncher.data.mojang.AssetObject;
+import com.atlauncher.data.mojang.DateTypeAdapter;
+import com.atlauncher.data.mojang.FileTypeAdapter;
+import com.atlauncher.data.mojang.Library;
+import com.atlauncher.data.mojang.MojangConstants;
+import com.atlauncher.data.mojang.Version;
 import com.atlauncher.gui.ModsChooser;
 import com.atlauncher.utils.Utils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
@@ -61,6 +68,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String instanceName;
     private Pack pack;
     private String version;
+    private Version mojangVersion;
     private boolean isReinstall;
     private boolean isServer;
     private MinecraftVersion minecraftVersion;
@@ -92,6 +100,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private ArrayList<DisableableMod> modsInstalled;
     private ArrayList<File> serverLibraries;
     private ArrayList<Action> actions;
+    private final Gson gson; // GSON Parser
 
     public InstanceInstaller(String instanceName, Pack pack, String version,
             MinecraftVersion minecraftVersion, boolean isReinstall, boolean isServer) {
@@ -104,6 +113,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (isServer) {
             serverLibraries = new ArrayList<File>();
         }
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapterFactory(new EnumTypeAdapterFactory());
+        builder.registerTypeAdapter(Date.class, new DateTypeAdapter());
+        builder.registerTypeAdapter(File.class, new FileTypeAdapter());
+        builder.setPrettyPrinting();
+        this.gson = builder.create();
     }
 
     public void setInstance(Instance instance) {
@@ -575,7 +590,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 public void run() {
                     if (download.needToDownload()) {
                         fireTask(App.settings.getLocalizedString("common.downloading") + " "
-                                + download.getFile().getName());
+                                + download.getCopyToFile().getName());
                         download.download(true);
                     }
                 }
@@ -694,17 +709,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireTask(App.settings.getLocalizedString("instance.organisinglibraries"));
         fireSubProgressUnknown();
         if (!isServer) {
-            String[] libraries = librariesNeeded.split(",");
-            for (String libraryFile : libraries) {
-                Utils.copyFile(new File(App.settings.getLibrariesDir(), libraryFile),
-                        getBinDirectory());
+            for (Library library : this.mojangVersion.getLibraries()) {
+                if (library.shouldInstall()) {
+                    if (library.shouldExtract()) {
+                        Utils.unzip(library.getFile(), getNativesDirectory(),
+                                library.getExtractRule());
+                    } else {
+                        Utils.copyFile(library.getFile(), getBinDirectory());
+                    }
+                }
             }
-            String[] natives = nativesNeeded.split(",");
-            for (String nativeFile : natives) {
-                Utils.unzip(new File(App.settings.getLibrariesDir(), nativeFile),
-                        getNativesDirectory());
-            }
-            Utils.delete(new File(getNativesDirectory(), "META-INF"));
         }
         if (isServer) {
             Utils.copyFile(new File(App.settings.getJarsDir(), "minecraft_server."
@@ -717,166 +731,50 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private ArrayList<Downloadable> getResources() {
-        ArrayList<Downloadable> downloads = new ArrayList<Downloadable>(); // All the
-                                                                           // files
-
-        // Read in the resources needed
-
-        if (!isServer) {
-            try {
-                boolean isTruncated;
-                String marker = null;
-                String add;
-                do {
-                    if (marker == null) {
-                        add = "";
-                    } else {
-                        add = "?marker=" + marker;
-                    }
-                    URL resourceUrl = new URL("http://resources.download.minecraft.net/" + add);
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder db = dbf.newDocumentBuilder();
-                    Document doc = db.parse(resourceUrl.openStream());
-                    isTruncated = Boolean.parseBoolean(doc.getElementsByTagName("IsTruncated")
-                            .item(0).getTextContent());
-                    NodeList nodeLst = doc.getElementsByTagName("Contents");
-                    for (int i = 0; i < nodeLst.getLength(); i++) {
-                        Node node = nodeLst.item(i);
-
-                        if (node.getNodeType() == 1) {
-                            Element element = (Element) node;
-                            String key = element.getElementsByTagName("Key").item(0)
-                                    .getChildNodes().item(0).getNodeValue();
-                            String etag = element.getElementsByTagName("ETag") != null ? element
-                                    .getElementsByTagName("ETag").item(0).getChildNodes().item(0)
-                                    .getNodeValue() : "-";
-                            etag = getEtag(etag);
-                            marker = key;
-                            int size = Integer.parseInt(element.getElementsByTagName("Size")
-                                    .item(0).getChildNodes().item(0).getNodeValue());
-
-                            if (size > 0) {
-                                File file;
-                                String filename;
-                                if (key.contains("/")) {
-                                    filename = key
-                                            .substring(key.lastIndexOf('/') + 1, key.length());
-                                    File directory = new File(App.settings.getResourcesDir(),
-                                            key.substring(0, key.lastIndexOf('/')));
-                                    file = new File(directory, filename);
-                                } else {
-                                    file = new File(App.settings.getResourcesDir(), key);
-                                    filename = file.getName();
-                                }
-                                downloads.add(new Downloadable(
-                                        "http://resources.download.minecraft.net/" + key, file,
-                                        etag, size, this, false));
-                            }
-                        }
-                    }
-                } while (isTruncated);
-            } catch (Exception e) {
-                App.settings.logStackTrace(e);
-            }
-        }
-
-        // Now lets see if we have custom mainclass and extraarguments
-
+        ArrayList<Downloadable> downloads = new ArrayList<Downloadable>(); // All the files
+        File objectsFolder = new File(App.settings.getResourcesDir(), "objects");
+        File indexesFolder = new File(App.settings.getResourcesDir(), "indexes");
+        File virtualFolder = new File(App.settings.getResourcesDir(), "virtual");
+        String assetVersion = this.mojangVersion.getAssets();
+        File virtualRoot = new File(virtualFolder, assetVersion);
+        File indexFile = new File(indexesFolder, assetVersion + ".json");
+        virtualRoot.mkdirs();
+        objectsFolder.mkdirs();
+        indexesFolder.mkdirs();
+        virtualFolder.mkdirs();
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(pack.getXML(version, false)));
-            Document document = builder.parse(is);
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("mainclass");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    if (element.hasAttribute("depends")) {
-                        boolean found = false;
-                        for (Mod mod : selectedMods) {
-                            if (element.getAttribute("depends").equalsIgnoreCase(mod.getName())) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            break;
-                        }
-                    } else if (element.hasAttribute("dependsgroup")) {
-                        boolean found = false;
-                        for (Mod mod : selectedMods) {
-                            if (element.getAttribute("dependsgroup").equalsIgnoreCase(
-                                    mod.getGroup())) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            break;
-                        }
-                    }
-                    NodeList nodeList1 = element.getChildNodes();
-                    this.mainClass = nodeList1.item(0).getNodeValue();
+            new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion
+                    + ".json"), indexFile, null, this, false).download(false);
+            AssetIndex index = (AssetIndex) this.gson.fromJson(new FileReader(indexFile),
+                    AssetIndex.class);
+
+            for (Map.Entry<String, AssetObject> entry : index.getObjects().entrySet()) {
+                AssetObject object = entry.getValue();
+                String filename = object.getHash().substring(0, 2) + "/" + object.getHash();
+                File file = new File(objectsFolder, filename);
+                File virtualFile = new File(virtualRoot, entry.getKey());
+                if (object.needToDownload(file)) {
+                    downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename),
+                            file, object.getHash(), (int) object.getSize(), this, false,
+                            virtualFile));
                 }
             }
-        } catch (SAXException e) {
+        } catch (JsonSyntaxException e) {
             App.settings.logStackTrace(e);
-        } catch (ParserConfigurationException e) {
+        } catch (JsonIOException e) {
             App.settings.logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
-
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(pack.getXML(version, false)));
-            Document document = builder.parse(is);
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("extraarguments");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    if (element.hasAttribute("depends")) {
-                        boolean found = false;
-                        for (Mod mod : selectedMods) {
-                            if (element.getAttribute("depends").equalsIgnoreCase(mod.getName())) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            break;
-                        }
-                    } else if (element.hasAttribute("dependsgroup")) {
-                        boolean found = false;
-                        for (Mod mod : selectedMods) {
-                            if (element.getAttribute("dependsgroup").equalsIgnoreCase(
-                                    mod.getGroup())) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            break;
-                        }
-                    }
-                    NodeList nodeList1 = element.getChildNodes();
-                    this.extraArguments = nodeList1.item(0).getNodeValue();
-                }
-            }
-        } catch (SAXException e) {
-            App.settings.logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            App.settings.logStackTrace(e);
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             App.settings.logStackTrace(e);
         }
 
         return downloads;
+    }
+
+    public Version getVersion() {
+        String url = MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.minecraftVersion + "/"
+                + this.minecraftVersion + ".json");
+        Downloadable versionJson = new Downloadable(url, false);
+        return gson.fromJson(versionJson.getContents(), Version.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -953,130 +851,27 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // Now read in the library jars needed from Mojang
         if (!isServer) {
-            JSONParser parser = new JSONParser();
-
-            try {
-                Downloadable versionJson = new Downloadable(
-                        "http://s3.amazonaws.com/Minecraft.Download/versions/"
-                                + this.minecraftVersion + "/" + this.minecraftVersion + ".json",
-                        false);
-                Object obj = parser.parse(versionJson.getContents());
-                JSONObject jsonObject = (JSONObject) obj;
-                if (this.mainClass == null) {
-                    this.mainClass = (String) jsonObject.get("mainClass");
-                }
-                this.minecraftArguments = (String) jsonObject.get("minecraftArguments");
-                JSONArray msg = (JSONArray) jsonObject.get("libraries");
-                Iterator<JSONObject> iterator = msg.iterator();
-                while (iterator.hasNext()) {
-                    boolean shouldDownload = false;
-                    JSONObject object = iterator.next();
-                    String name = (String) object.get("name");
-                    if (isLegacy()) {
-                        if (!name.contains("jinput") && !name.contains("lwjgl")) {
-                            continue;
-                        }
-                    }
-                    String[] parts = name.split(":");
-                    String dir = parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2];
-                    String filename = null;
-                    if (object.containsKey("rules")) {
-                        JSONArray ruless = (JSONArray) object.get("rules");
-                        Iterator<JSONObject> itt = ruless.iterator();
-                        while (itt.hasNext()) {
-                            JSONObject rules = itt.next();
-                            if (((String) rules.get("action")).equalsIgnoreCase("allow")) {
-                                if (rules.containsKey("os")) {
-                                    JSONObject rule = (JSONObject) rules.get("os");
-                                    if (((String) rule.get("name")).equalsIgnoreCase(Utils
-                                            .getOSName())) {
-                                        if (rule.containsKey("version")) {
-                                            Pattern pattern = Pattern.compile((String) rule
-                                                    .get("version"));
-                                            Matcher matcher = pattern.matcher(System
-                                                    .getProperty("os.version"));
-                                            if (matcher.matches()) {
-                                                shouldDownload = true;
-                                            }
-                                        } else {
-                                            shouldDownload = true;
-                                        }
-                                    }
-                                } else {
-                                    shouldDownload = true;
-                                }
-                            } else if (((String) rules.get("action")).equalsIgnoreCase("disallow")) {
-                                if (rules.containsKey("os")) {
-                                    JSONObject rule = (JSONObject) rules.get("os");
-                                    if (((String) rule.get("name")).equalsIgnoreCase(Utils
-                                            .getOSName())) {
-                                        if (rule.containsKey("version")) {
-                                            Pattern pattern = Pattern.compile((String) rule
-                                                    .get("version"));
-                                            Matcher matcher = pattern.matcher(System
-                                                    .getProperty("os.version"));
-                                            if (matcher.matches()) {
-                                                shouldDownload = false;
-                                            }
-                                        } else {
-                                            shouldDownload = false;
-                                        }
-                                    }
-                                }
-                            } else {
-                                shouldDownload = true;
-                            }
-                        }
+            for (Library library : this.mojangVersion.getLibraries()) {
+                if (library.shouldInstall()) {
+                    if (librariesNeeded == null) {
+                        this.librariesNeeded = library.getFile().getName();
                     } else {
-                        shouldDownload = true;
+                        this.librariesNeeded += "," + library.getFile().getName();
                     }
-
-                    if (shouldDownload) {
-                        if (object.containsKey("natives")) {
-                            JSONObject nativesObject = (JSONObject) object.get("natives");
-                            String nativesName;
-                            if (Utils.isWindows()) {
-                                nativesName = (String) nativesObject.get("windows");
-                            } else if (Utils.isMac()) {
-                                nativesName = (String) nativesObject.get("osx");
-                            } else {
-                                nativesName = (String) nativesObject.get("linux");
-                            }
-                            filename = parts[1] + "-" + parts[2] + "-" + nativesName + ".jar";
-                            if (nativesNeeded == null) {
-                                this.nativesNeeded = filename;
-                            } else {
-                                this.nativesNeeded += "," + filename;
-                            }
-                        } else {
-                            filename = parts[1] + "-" + parts[2] + ".jar";
-                            if (librariesNeeded == null) {
-                                this.librariesNeeded = filename;
-                            } else {
-                                this.librariesNeeded += "," + filename;
-                            }
-                        }
-                        String url = "https://libraries.minecraft.net/" + dir
-                                + "/" + filename;
-                        File file = new File(App.settings.getLibrariesDir(), filename);
-                        libraries.add(new Downloadable(url, file, null, this, false));
-                    }
+                    libraries.add(new Downloadable(library.getURL(), library.getFile(), null, this,
+                            false));
                 }
-
-            } catch (ParseException e) {
-                App.settings.logStackTrace(e);
             }
         }
 
         if (isServer) {
-            libraries.add(new Downloadable(
-                    "http://s3.amazonaws.com/Minecraft.Download/versions/" + this.minecraftVersion
-                            + "/minecraft_server." + this.minecraftVersion + ".jar", new File(
-                            App.settings.getJarsDir(), "minecraft_server." + this.minecraftVersion
-                                    + ".jar"), null, this, false));
+            libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE
+                    .getURL("versions/" + this.minecraftVersion + "/minecraft_server."
+                            + this.minecraftVersion + ".jar"), new File(App.settings.getJarsDir(),
+                    "minecraft_server." + this.minecraftVersion + ".jar"), null, this, false));
         } else {
-            libraries.add(new Downloadable("http://s3.amazonaws.com/Minecraft.Download/versions/"
-                    + this.minecraftVersion + "/" + this.minecraftVersion + ".jar", new File(
+            libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/"
+                    + this.minecraftVersion + "/" + this.minecraftVersion + ".jar"), new File(
                     App.settings.getJarsDir(), this.minecraftVersion + ".jar"), null, this, false));
         }
         return libraries;
@@ -1221,11 +1016,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public String getMinecraftArguments() {
-        return this.minecraftArguments;
+        return this.mojangVersion.getMinecraftArguments();
     }
 
     public String getMainClass() {
+        if (this.mainClass == null) {
+            return this.mojangVersion.getMainClass();
+        }
         return this.mainClass;
+    }
+
+    public String getAssets() {
+        return this.mojangVersion.getAssets();
     }
 
     public ArrayList<Mod> sortMods(ArrayList<Mod> original) {
@@ -1349,6 +1151,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             savedPortalGunSounds = true;
             Utils.copyFile(portalGunSounds, getTempDirectory());
         }
+        this.mojangVersion = getVersion();
         downloadResources(); // Download Minecraft Resources
         if (isCancelled()) {
             return false;

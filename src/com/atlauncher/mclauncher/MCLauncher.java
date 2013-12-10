@@ -10,16 +10,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.utils.Utils;
+import com.google.gson.Gson;
 
 public class MCLauncher {
 
-    public static Process launch(Account account, Instance instance, String session)
+    public static Process launch(Account account, Instance instance, AuthenticationResponse response)
             throws IOException {
         StringBuilder cpb = new StringBuilder("");
 
@@ -66,6 +69,11 @@ public class MCLauncher {
         }
         arguments.add(path);
 
+        if (Utils.isWindows()) {
+            arguments
+                    .add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
+        }
+
         arguments.add("-Xms256M");
 
         if (App.settings.getMemory() < instance.getMemory()) {
@@ -108,30 +116,34 @@ public class MCLauncher {
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
         arguments.add(instance.getMainClass());
-        String[] loginParts = session.split(":");
         if (instance.hasMinecraftArguments()) {
             String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
             for (String argument : minecraftArguments) {
-                argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
+                argument = argument.replace("${auth_player_name}", response.getSelectedProfile()
+                        .getName());
                 argument = argument.replace("${profile_name}", instance.getName());
+                argument = argument.replace("${user_properties}", new Gson().toJson((response
+                        .getUser() == null ? new HashMap() : response.getProperties())));
                 argument = argument.replace("${version_name}", instance.getMinecraftVersion());
                 argument = argument.replace("${game_directory}", instance.getRootDirectory()
                         .getAbsolutePath());
-                argument = argument.replace("${game_assets}", App.settings.getResourcesDir()
+                argument = argument.replace("${game_assets}", instance.getAssetsDir()
                         .getAbsolutePath());
-                argument = argument.replace("${auth_uuid}", loginParts[2]);
-                argument = argument.replace("${auth_access_token}", loginParts[1]);
-                argument = argument.replace("${auth_session}", session);
+                argument = argument.replace("${assets_root}", App.settings.getResourcesDir()
+                        .getAbsolutePath());
+                argument = argument.replace("${assets_index_name}", instance.getAssets());
+                argument = argument.replace("${auth_uuid}", response.getSelectedProfile().getId());
+                argument = argument.replace("${auth_access_token}", response.getAccessToken());
+                argument = argument.replace("${auth_session}", response.getSession());
                 arguments.add(argument);
             }
         } else {
-            arguments.add("--username=" + account.getMinecraftUsername());
-            arguments.add("--session=" + session);
+            arguments.add("--username=" + response.getSelectedProfile().getName());
+            arguments.add("--session=" + response.getSession());
 
             // This is for 1.7
-            String[] parts = session.split(":");
-            arguments.add("--accessToken=" + parts[1]);
-            arguments.add("--uuid=" + parts[2]);
+            arguments.add("--accessToken=" + response.getAccessToken());
+            arguments.add("--uuid=" + response.getSelectedProfile().getId());
             // End of stuff for 1.7
 
             arguments.add("--version=" + instance.getMinecraftVersion());
@@ -162,5 +174,4 @@ public class MCLauncher {
         processBuilder.redirectErrorStream(true);
         return processBuilder.start();
     }
-
 }

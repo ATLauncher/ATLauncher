@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
 import com.atlauncher.App;
+import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
@@ -43,6 +44,7 @@ public class Instance implements Serializable {
     private String extraArguments = null;
     private String minecraftArguments = null;
     private String mainClass = null;
+    private String assets = null;
     private boolean isConverted = false;
     private transient Pack realPack;
     private boolean isDev;
@@ -55,8 +57,8 @@ public class Instance implements Serializable {
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int memory, int permgen,
             ArrayList<DisableableMod> mods, String jarOrder, String librariesNeeded,
-            String extraArguments, String minecraftArguments, String mainClass, boolean isDev,
-            boolean isPlayable, boolean newLaunchMethod) {
+            String extraArguments, String minecraftArguments, String mainClass, String assets,
+            boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -68,6 +70,7 @@ public class Instance implements Serializable {
         this.jarOrder = jarOrder;
         this.librariesNeeded = librariesNeeded;
         this.mainClass = mainClass;
+        this.assets = assets;
         this.jarOrder = jarOrder;
         this.extraArguments = extraArguments;
         this.minecraftArguments = minecraftArguments;
@@ -85,11 +88,11 @@ public class Instance implements Serializable {
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int memory, int permgen,
             ArrayList<DisableableMod> mods, String jarOrder, String librariesNeeded,
-            String extraArguments, String minecraftArguments, String mainClass, boolean isDev,
-            boolean newLaunchMethod) {
+            String extraArguments, String minecraftArguments, String mainClass, String assets,
+            boolean isDev, boolean newLaunchMethod) {
         this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen,
                 mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments, mainClass,
-                isDev, true, newLaunchMethod);
+                assets, isDev, true, newLaunchMethod);
     }
 
     public String getName() {
@@ -236,6 +239,10 @@ public class Instance implements Serializable {
         return new File(App.settings.getInstancesDir(), getSafeName());
     }
 
+    public File getAssetsDir() {
+        return new File(App.settings.getVirtualAssetsDir(), getAssets());
+    }
+
     public File getSavesDirectory() {
         return new File(getRootDirectory(), "saves");
     }
@@ -379,8 +386,19 @@ public class Instance implements Serializable {
         return mainClass;
     }
 
+    public String getAssets() {
+        if (this.assets == null) {
+            return "legacy";
+        }
+        return this.assets;
+    }
+
     public void setMainClass(String mainClass) {
         this.mainClass = mainClass;
+    }
+
+    public void setAssets(String assets) {
+        this.assets = assets;
     }
 
     public boolean canPlay() {
@@ -488,8 +506,11 @@ public class Instance implements Serializable {
                             + account.getMinecraftUsername());
             dialog.addThread(new Thread() {
                 public void run() {
-                    dialog.setReturnValue(Authentication.getSessionToken(isNewLaunchMethod(),
-                            account.getUsername(), pass));
+                    if (isNewLaunchMethod()) {
+                        dialog.setReturnValue(Authentication.login(account.getUsername(), pass));
+                    } else {
+                        dialog.setReturnValue(Authentication.loginOld(account.getUsername(), pass));
+                    }
                     dialog.close();
                 };
             });
@@ -497,89 +518,97 @@ public class Instance implements Serializable {
             if (dialog.getReturnValue() == null) {
                 return false;
             }
-            String sess = dialog.getReturnValue();
-            if (!sess.substring(0, 6).equalsIgnoreCase("token:")) {
-                App.settings.log(sess, LogMessageType.error, false);
+            AuthenticationResponse sess = null;
+            if (isNewLaunchMethod()) {
+                sess = (AuthenticationResponse) dialog.getReturnValue();
+            } else {
+                String s = (String) dialog.getReturnValue();
+                if (s.contains(":")) {
+                    sess = new AuthenticationResponse(s, false);
+                } else {
+                    sess = new AuthenticationResponse(s, true);
+                }
+            }
+            if (sess.hasError()) {
+                App.settings.log(sess.getErrorMessage(), LogMessageType.error, false);
                 String[] options = { App.settings.getLocalizedString("common.ok") };
-                JOptionPane.showOptionDialog(
-                        App.settings.getParent(),
-                        "<html><center>"
-                                + App.settings.getLocalizedString("instance.errorloggingin",
-                                        "<br/><br/>" + sess) + "</center></html>",
-                        App.settings.getLocalizedString("instance.errorloggingintitle"),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                        options[0]);
+                JOptionPane
+                        .showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString(
+                                                "instance.errorloggingin",
+                                                "<br/><br/>" + sess.getErrorMessage())
+                                        + "</center></html>", App.settings
+                                        .getLocalizedString("instance.errorloggingintitle"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
                 App.settings.setMinecraftLaunched(false);
                 return false;
-            } else {
-                final String session = sess;
-                Thread launcher = new Thread() {
-                    public void run() {
-                        try {
-                            long start = System.currentTimeMillis();
-                            if (App.settings.getParent() != null) {
-                                App.settings.getParent().setVisible(false);
-                            }
-                            Process process = null;
-                            if (isNewLaunchMethod()) {
-                                process = MCLauncher.launch(account, Instance.this, session);
-                            } else {
-                                process = LegacyMCLauncher.launch(account, Instance.this, session);
-                            }
-                            App.settings.showKillMinecraft(process);
-                            InputStream is = process.getInputStream();
-                            InputStreamReader isr = new InputStreamReader(is);
-                            BufferedReader br = new BufferedReader(isr);
-                            String line;
-                            while ((line = br.readLine()) != null) {
-                                App.settings.logMinecraft(line);
-                            }
-                            App.settings.hideKillMinecraft();
-                            if (App.settings.getParent() != null) {
-                                App.settings.getParent().setVisible(true);
-                            }
-                            long end = System.currentTimeMillis();
-                            if (App.settings.isInOfflineMode()) {
-                                App.settings.checkOnlineStatus();
-                            }
-                            if (process.exitValue() != 0) {
-                                if (getRealPack().isLoggingEnabled() && App.settings.enableLogs()
-                                        && getRealPack().isCrashReportsEnabled()) {
-                                    Thread crashThread = new Thread() {
-
-                                        @Override
-                                        public void run() {
-                                            uploadCrashLog(); // Auto upload crash log if enabled
-                                        }
-
-                                    };
-                                    crashThread.start();
-                                }
-                            }
-                            App.settings.setMinecraftLaunched(false);
-                            if (!App.settings.isInOfflineMode() && isLeaderboardsEnabled()) {
-                                App.settings
-                                        .apiCall(
-                                                account.getMinecraftUsername(),
-                                                "addleaderboardtime"
-                                                        + (App.settings.enableLeaderboards() ? ""
-                                                                : "generic"),
-                                                (getRealPack() == null ? "0" : getRealPack()
-                                                        .getID() + ""),
-                                                ((end - start) / 1000) + "", (isDev ? "dev"
-                                                        : getVersion()));
-                                if (App.settings.hasUpdatedFiles()) {
-                                    App.settings.reloadLauncherData();
-                                }
-                            }
-                        } catch (IOException e1) {
-                            App.settings.logStackTrace(e1);
-                        }
-                    }
-                };
-                launcher.start();
-                return true;
             }
+            final AuthenticationResponse session = sess;
+            Thread launcher = new Thread() {
+                public void run() {
+                    try {
+                        long start = System.currentTimeMillis();
+                        if (App.settings.getParent() != null) {
+                            App.settings.getParent().setVisible(false);
+                        }
+                        Process process = null;
+                        if (isNewLaunchMethod()) {
+                            process = MCLauncher.launch(account, Instance.this, session);
+                        } else {
+                            process = LegacyMCLauncher.launch(account, Instance.this,
+                                    session.getSession());
+                        }
+                        App.settings.showKillMinecraft(process);
+                        InputStream is = process.getInputStream();
+                        InputStreamReader isr = new InputStreamReader(is);
+                        BufferedReader br = new BufferedReader(isr);
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            App.settings.logMinecraft(line);
+                        }
+                        App.settings.hideKillMinecraft();
+                        if (App.settings.getParent() != null) {
+                            App.settings.getParent().setVisible(true);
+                        }
+                        long end = System.currentTimeMillis();
+                        if (App.settings.isInOfflineMode()) {
+                            App.settings.checkOnlineStatus();
+                        }
+                        if (process.exitValue() != 0) {
+                            if (getRealPack().isLoggingEnabled() && App.settings.enableLogs()
+                                    && getRealPack().isCrashReportsEnabled()) {
+                                Thread crashThread = new Thread() {
+
+                                    @Override
+                                    public void run() {
+                                        uploadCrashLog(); // Auto upload crash log if enabled
+                                    }
+
+                                };
+                                crashThread.start();
+                            }
+                        }
+                        App.settings.setMinecraftLaunched(false);
+                        if (!App.settings.isInOfflineMode() && isLeaderboardsEnabled()) {
+                            App.settings.apiCall(account.getMinecraftUsername(),
+                                    "addleaderboardtime"
+                                            + (App.settings.enableLeaderboards() ? "" : "generic"),
+                                    (getRealPack() == null ? "0" : getRealPack().getID() + ""),
+                                    ((end - start) / 1000) + "", (isDev ? "dev" : getVersion()));
+                            if (App.settings.hasUpdatedFiles()) {
+                                App.settings.reloadLauncherData();
+                            }
+                        }
+                    } catch (IOException e1) {
+                        App.settings.logStackTrace(e1);
+                    }
+                }
+            };
+            launcher.start();
+            return true;
         }
     }
 

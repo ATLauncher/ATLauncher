@@ -91,6 +91,11 @@ public class LegacyMCLauncher {
         }
         arguments.add(path);
 
+        if (Utils.isWindows()) {
+            arguments
+                    .add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
+        }
+
         arguments.add("-Xms256M");
         if (App.settings.getMemory() < instance.getMemory()) {
             if (Utils.getMaximumRam() < instance.getMemory()) {
