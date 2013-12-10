@@ -32,10 +32,12 @@ public class Downloadable {
     private InstanceInstaller instanceInstaller;
     private boolean isATLauncherDownload;
     private File copyTo;
+    private boolean actuallyCopy;
     private int attempts = 0;
 
     public Downloadable(String url, File file, String hash, int size,
-            InstanceInstaller instanceInstaller, boolean isATLauncherDownload, File copyTo) {
+            InstanceInstaller instanceInstaller, boolean isATLauncherDownload, File copyTo,
+            boolean actuallyCopy) {
         if (isATLauncherDownload) {
             this.url = App.settings.getFileURL(url);
         } else {
@@ -48,20 +50,28 @@ public class Downloadable {
         this.instanceInstaller = instanceInstaller;
         this.isATLauncherDownload = isATLauncherDownload;
         this.copyTo = copyTo;
+        this.actuallyCopy = actuallyCopy;
     }
 
     public Downloadable(String url, File file, String hash, int size,
             InstanceInstaller instanceInstaller, boolean isATLauncherDownload) {
-        this(url, file, hash, size, instanceInstaller, isATLauncherDownload, null);
+        this(url, file, hash, size, instanceInstaller, isATLauncherDownload, null, false);
     }
 
     public Downloadable(String url, File file, String hash, InstanceInstaller instanceInstaller,
             boolean isATLauncherDownload) {
-        this(url, file, hash, -1, instanceInstaller, isATLauncherDownload, null);
+        this(url, file, hash, -1, instanceInstaller, isATLauncherDownload, null, false);
     }
 
     public Downloadable(String url, boolean isATLauncherDownload) {
-        this(url, null, null, -1, null, isATLauncherDownload, null);
+        this(url, null, null, -1, null, isATLauncherDownload, null, false);
+    }
+
+    public String getFilename() {
+        if (this.copyTo == null) {
+            return this.file.getName();
+        }
+        return this.copyTo.getName();
     }
 
     public boolean isMD5() {
@@ -373,8 +383,6 @@ public class Downloadable {
                             this.copyTo.getAbsolutePath().lastIndexOf(File.separatorChar)))
                             .mkdirs();
                     Utils.copyFile(this.file, this.copyTo, true);
-                } else {
-                    System.out.println("Not copying over " + this.copyTo.getName());
                 }
             }
             App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used

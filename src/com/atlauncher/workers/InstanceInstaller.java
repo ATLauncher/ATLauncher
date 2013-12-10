@@ -590,7 +590,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 public void run() {
                     if (download.needToDownload()) {
                         fireTask(App.settings.getLocalizedString("common.downloading") + " "
-                                + download.getCopyToFile().getName());
+                                + download.getFilename());
                         download.download(true);
                     }
                 }
@@ -638,7 +638,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 public void run() {
                     if (download.needToDownload()) {
                         fireTask(App.settings.getLocalizedString("common.downloading") + " "
-                                + download.getFile().getName());
+                                + download.getFilename());
                         download.download(true);
                     }
                 }
@@ -752,14 +752,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 AssetObject object = entry.getValue();
                 String filename = object.getHash().substring(0, 2) + "/" + object.getHash();
                 File file = new File(objectsFolder, filename);
-                File virtualFile = null;
-                if (index.isVirtual()) {
-                    new File(virtualRoot, entry.getKey());
-                }
+                File virtualFile = new File(virtualRoot, entry.getKey());
                 if (object.needToDownload(file)) {
                     downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename),
                             file, object.getHash(), (int) object.getSize(), this, false,
-                            virtualFile));
+                            virtualFile, index.isVirtual()));
                 }
             }
         } catch (JsonSyntaxException e) {
