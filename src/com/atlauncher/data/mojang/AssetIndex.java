@@ -27,6 +27,6 @@ public class AssetIndex {
     }
 
     public boolean isVirtual() {
-        return this.isVirtual();
+        return this.virtual;
     }
 }
