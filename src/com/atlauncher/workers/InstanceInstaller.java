@@ -752,7 +752,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 AssetObject object = entry.getValue();
                 String filename = object.getHash().substring(0, 2) + "/" + object.getHash();
                 File file = new File(objectsFolder, filename);
-                File virtualFile = new File(virtualRoot, entry.getKey());
+                File virtualFile = null;
+                if (index.isVirtual()) {
+                    new File(virtualRoot, entry.getKey());
+                }
                 if (object.needToDownload(file)) {
                     downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename),
                             file, object.getHash(), (int) object.getSize(), this, false,
