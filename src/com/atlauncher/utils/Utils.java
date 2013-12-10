@@ -590,6 +590,20 @@ public class Utils {
         }
     }
 
+    public static void spreadOutResourceFiles(File dir) {
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                spreadOutResourceFiles(file);
+            } else {
+                String hash = getSHA1(file);
+                File saveTo = new File(App.settings.getObjectsAssetsDir(), hash.substring(0, 2)
+                        + File.separator + hash);
+                saveTo.mkdirs();
+                copyFile(file, saveTo, true);
+            }
+        }
+    }
+
     public static void deleteContents(File file) {
         if (file.isDirectory()) {
             for (File c : file.listFiles())

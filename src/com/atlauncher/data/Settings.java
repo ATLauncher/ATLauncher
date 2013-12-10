@@ -210,6 +210,7 @@ public class Settings {
                     legacyDir.mkdirs();
                     Utils.moveDirectory(tempDir, legacyDir);
                     Utils.delete(tempDir);
+                    Utils.spreadOutResourceFiles(legacyDir);
                     dialog.close();
                 }
             };
@@ -543,6 +544,10 @@ public class Settings {
 
     public File getVirtualAssetsDir() {
         return new File(this.resourcesDir, "virtual");
+    }
+
+    public File getObjectsAssetsDir() {
+        return new File(this.resourcesDir, "objects");
     }
 
     public File getLegacyVirtualAssetsDir() {
