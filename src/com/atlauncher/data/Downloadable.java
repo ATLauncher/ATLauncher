@@ -137,6 +137,17 @@ public class Downloadable {
         return true;
     }
 
+    public void copyFile() {
+        if (this.copyTo != null && this.actuallyCopy) {
+            if (this.copyTo.exists()) {
+                Utils.delete(this.copyTo);
+            }
+            new File(this.copyTo.getAbsolutePath().substring(0,
+                    this.copyTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
+            Utils.copyFile(this.file, this.copyTo, true);
+        }
+    }
+
     public String getHash() {
         if (this.hash == null || this.hash.isEmpty()) {
             try {
@@ -364,7 +375,7 @@ public class Downloadable {
                         }
                     }
                 }
-            } else if (this.copyTo != null) {
+            } else if (this.copyTo != null && this.actuallyCopy) {
                 String fileHash2;
                 if (this.copyTo.exists()) {
                     if (isMD5()) {

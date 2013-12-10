@@ -592,6 +592,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         fireTask(App.settings.getLocalizedString("common.downloading") + " "
                                 + download.getFilename());
                         download.download(true);
+                    } else {
+                        download.copyFile();
                     }
                 }
             });
@@ -738,7 +740,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         String assetVersion = this.mojangVersion.getAssets();
         File virtualRoot = new File(virtualFolder, assetVersion);
         File indexFile = new File(indexesFolder, assetVersion + ".json");
-        virtualRoot.mkdirs();
         objectsFolder.mkdirs();
         indexesFolder.mkdirs();
         virtualFolder.mkdirs();
@@ -747,6 +748,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     + ".json"), indexFile, null, this, false).download(false);
             AssetIndex index = (AssetIndex) this.gson.fromJson(new FileReader(indexFile),
                     AssetIndex.class);
+
+            if (index.isVirtual()) {
+                virtualRoot.mkdirs();
+            }
 
             for (Map.Entry<String, AssetObject> entry : index.getObjects().entrySet()) {
                 AssetObject object = entry.getValue();
@@ -757,6 +762,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename),
                             file, object.getHash(), (int) object.getSize(), this, false,
                             virtualFile, index.isVirtual()));
+                } else {
+                    if (index.isVirtual()) {
+                        virtualFile.mkdirs();
+                        Utils.copyFile(file, virtualFile, true);
+                    }
                 }
             }
         } catch (JsonSyntaxException e) {
