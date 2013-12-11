@@ -1126,6 +1126,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     mod.getFile(), mod.getType(), mod.getColour(), mod.getDescription(), false));
         }
         this.instanceIsCorrupt = true; // From this point on the instance is corrupt
+        getTempDirectory().mkdirs(); // Make the temp directory
         File reis = new File(getModsDirectory(), "rei_minimap");
         if (reis.exists() && reis.isDirectory()) {
             if (Utils.copyDirectory(reis, getTempDirectory(), true)) {
@@ -1164,6 +1165,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         makeDirectories();
         addPercent(5);
         this.mojangVersion = getVersion();
+        this.mainClass = pack.getMainClass(this.version);
+        this.extraArguments = pack.getExtraArguments(this.version);
         downloadResources(); // Download Minecraft Resources
         if (isCancelled()) {
             return false;
