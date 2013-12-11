@@ -101,6 +101,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private ArrayList<File> serverLibraries;
     private ArrayList<Action> actions;
     private final Gson gson; // GSON Parser
+    private ArrayList<String> forgeLibraries = new ArrayList<String>();
 
     public InstanceInstaller(String instanceName, Pack pack, String version,
             MinecraftVersion minecraftVersion, boolean isReinstall, boolean isServer) {
@@ -711,6 +712,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireTask(App.settings.getLocalizedString("instance.organisinglibraries"));
         fireSubProgressUnknown();
         if (!isServer) {
+            for (String libraryFile : forgeLibraries) {
+                Utils.copyFile(new File(App.settings.getLibrariesDir(), libraryFile),
+                        getBinDirectory());
+            }
             for (Library library : this.mojangVersion.getLibraries()) {
                 if (library.shouldInstall()) {
                     if (library.shouldExtract()) {
@@ -830,6 +835,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     } else {
                         this.librariesNeeded += "," + file;
                     }
+                    forgeLibraries.add(file);
                     File downloadTo = null;
                     if (isServer) {
                         if (!element.hasAttribute("server")) {
