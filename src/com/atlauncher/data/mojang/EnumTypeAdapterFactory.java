@@ -8,7 +8,7 @@
  *
  * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
-package com.atlauncher.workers;
+package com.atlauncher.data.mojang;
 
 import java.io.IOException;
 import java.util.HashMap;
