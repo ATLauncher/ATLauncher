@@ -506,6 +506,7 @@ public class Pack {
                     } else {
                         depends = null;
                     }
+                    String filePrefix = element.getAttribute("fileprefix");
                     boolean recommended = true;
                     if (element.getAttribute("recommended").equalsIgnoreCase("no")) {
                         recommended = false;
@@ -517,7 +518,7 @@ public class Pack {
                             filePreference, fileCheck, client, server, serverURL, serverFile,
                             serverDownload, serverMD5, serverType, optional, serverOptional,
                             selected, download, hidden, library, group, linked, depends,
-                            recommended, description));
+                            filePrefix, recommended, description));
                 }
             }
         } catch (SAXException e) {

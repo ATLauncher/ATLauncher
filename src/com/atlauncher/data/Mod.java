@@ -50,6 +50,7 @@ public class Mod {
     private String group;
     private String linked;
     private String[] depends;
+    private String filePrefix;
     private boolean recommended;
     private String description;
 
@@ -60,7 +61,7 @@ public class Mod {
             String serverURL, String serverFile, Download serverDownload, String serverMD5,
             Type serverType, boolean optional, boolean serverOptional, boolean selected,
             Download download, boolean hidden, boolean library, String group, String linked,
-            String[] depends, boolean recommended, String description) {
+            String[] depends, String filePrefix, boolean recommended, String description) {
         this.name = name;
         this.version = version;
         this.url = url.replace("&amp;", "&").replace(" ", "%20");
@@ -95,6 +96,7 @@ public class Mod {
         this.group = group;
         this.linked = linked;
         this.depends = depends;
+        this.filePrefix = filePrefix;
         this.recommended = recommended;
         this.description = description;
     }
@@ -129,6 +131,10 @@ public class Mod {
 
     public String getServerMD5() {
         return this.serverMD5;
+    }
+
+    public boolean hasFilePrefix() {
+        return this.filePrefix != null;
     }
 
     public boolean compareMD5(String md5) {
@@ -757,6 +763,9 @@ public class Mod {
     }
 
     public String getFile() {
+        if (hasFilePrefix()) {
+            return this.filePrefix + this.file;
+        }
         return this.file;
     }
 
@@ -836,6 +845,9 @@ public class Mod {
     }
 
     public String getServerFile() {
+        if (hasFilePrefix()) {
+            return this.filePrefix + this.serverFile;
+        }
         return this.serverFile;
     }
 
