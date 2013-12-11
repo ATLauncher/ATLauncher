@@ -117,7 +117,7 @@ public class AccountPanel extends JPanel {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        usernameLabel = new JLabel(App.settings.getLocalizedString("account.username") + ":");
+        usernameLabel = new JLabel(App.settings.getLocalizedString("account.usernameemail") + ":");
         bottomPanel.add(usernameLabel, gbc);
 
         gbc.gridx++;
