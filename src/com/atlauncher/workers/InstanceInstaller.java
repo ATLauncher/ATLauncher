@@ -863,10 +863,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (!isServer) {
             for (Library library : this.mojangVersion.getLibraries()) {
                 if (library.shouldInstall()) {
-                    if (librariesNeeded == null) {
-                        this.librariesNeeded = library.getFile().getName();
-                    } else {
-                        this.librariesNeeded += "," + library.getFile().getName();
+                    if (!library.shouldExtract()) {
+                        if (librariesNeeded == null) {
+                            this.librariesNeeded = library.getFile().getName();
+                        } else {
+                            this.librariesNeeded += "," + library.getFile().getName();
+                        }
                     }
                     libraries.add(new Downloadable(library.getURL(), library.getFile(), null, this,
                             false));
