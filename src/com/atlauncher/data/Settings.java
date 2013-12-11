@@ -193,8 +193,9 @@ public class Settings {
     public void checkResources() {
         File indexesDir = new File(this.resourcesDir, "indexes");
         if (!indexesDir.exists() || !indexesDir.isDirectory()) {
-            final ProgressDialog dialog = new ProgressDialog("Rearanging Resources Folder!", 0,
-                    "Rearanging Resources Folder!", null);
+            final ProgressDialog dialog = new ProgressDialog(
+                    getLocalizedString("settings.rearrangingresources"), 0,
+                    getLocalizedString("settings.rearrangingresources"), null);
             Thread thread = new Thread() {
                 public void run() {
                     File indexesDir = new File(getResourcesDir(), "indexes");
