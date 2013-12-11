@@ -30,12 +30,14 @@ import com.atlauncher.App;
 import com.atlauncher.Update;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.utils.Utils;
 
 public class LegacyMCLauncher {
 
-    public static Process launch(Account account, Instance instance, String session)
+    public static Process launch(Account account, Instance instance, AuthenticationResponse sess)
             throws IOException {
+        String session = sess.getSession();
         String lwjgl = "lwjgl.jar";
         String lwjgl_util = "lwjgl_util.jar";
         String jinput = "jinput.jar";
@@ -153,7 +155,7 @@ public class LegacyMCLauncher {
         arguments.add(instance.getRootDirectory().getAbsolutePath()); // Path
         arguments.add(account.getMinecraftUsername()); // Username
         String[] loginParts = session.split(":");
-        arguments.add(loginParts[1]); // Session
+        arguments.add(sess.getAccessToken()); // Session
         arguments.add(instance.getName()); // Instance Name
         arguments.add(App.settings.getWindowWidth() + ""); // Window Width
         arguments.add(App.settings.getWindowHeight() + ""); // Window Height

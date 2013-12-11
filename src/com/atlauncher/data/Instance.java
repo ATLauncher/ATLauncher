@@ -477,75 +477,65 @@ public class Instance implements Serializable {
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
-            String password = account.getPassword();
-            if (!account.isRemembered()) {
-                JPanel panel = new JPanel();
-                panel.setLayout(new BorderLayout());
-                JLabel passwordLabel = new JLabel(App.settings.getLocalizedString(
-                        "instance.enterpassword", account.getMinecraftUsername()));
-                JPasswordField passwordField = new JPasswordField();
-                panel.add(passwordLabel, BorderLayout.NORTH);
-                panel.add(passwordField, BorderLayout.CENTER);
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
-                        App.settings.getLocalizedString("instance.enterpasswordtitle"),
-                        JOptionPane.OK_CANCEL_OPTION);
-                if (ret == JOptionPane.OK_OPTION) {
-                    password = new String(passwordField.getPassword());
-                } else {
-                    App.settings.log("Aborting login for " + account.getMinecraftUsername(),
-                            LogMessageType.error, false);
+            AuthenticationResponse sess = null;
+            if (!App.settings.isInOfflineMode()) {
+                String password = account.getPassword();
+                if (!account.isRemembered()) {
+                    JPanel panel = new JPanel();
+                    panel.setLayout(new BorderLayout());
+                    JLabel passwordLabel = new JLabel(App.settings.getLocalizedString(
+                            "instance.enterpassword", account.getMinecraftUsername()));
+                    JPasswordField passwordField = new JPasswordField();
+                    panel.add(passwordLabel, BorderLayout.NORTH);
+                    panel.add(passwordField, BorderLayout.CENTER);
+                    int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
+                            App.settings.getLocalizedString("instance.enterpasswordtitle"),
+                            JOptionPane.OK_CANCEL_OPTION);
+                    if (ret == JOptionPane.OK_OPTION) {
+                        password = new String(passwordField.getPassword());
+                    } else {
+                        App.settings.log("Aborting login for " + account.getMinecraftUsername(),
+                                LogMessageType.error, false);
+                        App.settings.setMinecraftLaunched(false);
+                        return false;
+                    }
+                }
+                App.settings.log("Logging into Minecraft!");
+                final String pass = password;
+                final ProgressDialog dialog = new ProgressDialog(
+                        App.settings.getLocalizedString("account.loggingin"), 0,
+                        App.settings.getLocalizedString("account.loggingin"), "Aborting login for "
+                                + account.getMinecraftUsername());
+                dialog.addThread(new Thread() {
+                    public void run() {
+                        dialog.setReturnValue(Authentication.login(account.getUsername(), pass));
+                        dialog.close();
+                    };
+                });
+                dialog.start();
+                if (dialog.getReturnValue() == null) {
+                    return false;
+                }
+                sess = (AuthenticationResponse) dialog.getReturnValue();
+                if (sess.hasError()) {
+                    App.settings.log(sess.getErrorMessage(), LogMessageType.error, false);
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString("instance.errorloggingin",
+                                            "<br/><br/>" + sess.getErrorMessage())
+                                    + "</center></html>", App.settings
+                                    .getLocalizedString("instance.errorloggingintitle"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
                     App.settings.setMinecraftLaunched(false);
                     return false;
                 }
-            }
-            App.settings.log("Logging into Minecraft!");
-            final String pass = password;
-            final ProgressDialog dialog = new ProgressDialog(
-                    App.settings.getLocalizedString("account.loggingin"), 0,
-                    App.settings.getLocalizedString("account.loggingin"), "Aborting login for "
-                            + account.getMinecraftUsername());
-            dialog.addThread(new Thread() {
-                public void run() {
-                    if (isNewLaunchMethod()) {
-                        dialog.setReturnValue(Authentication.login(account.getUsername(), pass));
-                    } else {
-                        dialog.setReturnValue(Authentication.loginOld(account.getUsername(), pass));
-                    }
-                    dialog.close();
-                };
-            });
-            dialog.start();
-            if (dialog.getReturnValue() == null) {
-                return false;
-            }
-            AuthenticationResponse sess = null;
-            if (isNewLaunchMethod()) {
-                sess = (AuthenticationResponse) dialog.getReturnValue();
             } else {
-                String s = (String) dialog.getReturnValue();
-                if (s.contains(":")) {
-                    sess = new AuthenticationResponse(s, false);
-                } else {
-                    sess = new AuthenticationResponse(s, true);
-                }
+                sess = new AuthenticationResponse("token:0:0", false);
             }
-            if (sess.hasError()) {
-                App.settings.log(sess.getErrorMessage(), LogMessageType.error, false);
-                String[] options = { App.settings.getLocalizedString("common.ok") };
-                JOptionPane
-                        .showOptionDialog(
-                                App.settings.getParent(),
-                                "<html><center>"
-                                        + App.settings.getLocalizedString(
-                                                "instance.errorloggingin",
-                                                "<br/><br/>" + sess.getErrorMessage())
-                                        + "</center></html>", App.settings
-                                        .getLocalizedString("instance.errorloggingintitle"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
-                App.settings.setMinecraftLaunched(false);
-                return false;
-            }
+
             final AuthenticationResponse session = sess;
             Thread launcher = new Thread() {
                 public void run() {
@@ -558,8 +548,7 @@ public class Instance implements Serializable {
                         if (isNewLaunchMethod()) {
                             process = MCLauncher.launch(account, Instance.this, session);
                         } else {
-                            process = LegacyMCLauncher.launch(account, Instance.this,
-                                    session.getSession());
+                            process = LegacyMCLauncher.launch(account, Instance.this, session);
                         }
                         App.settings.showKillMinecraft(process);
                         InputStream is = process.getInputStream();
