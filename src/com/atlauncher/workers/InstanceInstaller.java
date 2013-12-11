@@ -1126,8 +1126,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     mod.getFile(), mod.getType(), mod.getColour(), mod.getDescription(), false));
         }
         this.instanceIsCorrupt = true; // From this point on the instance is corrupt
-        makeDirectories();
-        addPercent(5);
         File reis = new File(getModsDirectory(), "rei_minimap");
         if (reis.exists() && reis.isDirectory()) {
             if (Utils.copyDirectory(reis, getTempDirectory(), true)) {
@@ -1163,6 +1161,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             savedPortalGunSounds = true;
             Utils.copyFile(portalGunSounds, getTempDirectory());
         }
+        makeDirectories();
+        addPercent(5);
         this.mojangVersion = getVersion();
         downloadResources(); // Download Minecraft Resources
         if (isCancelled()) {
