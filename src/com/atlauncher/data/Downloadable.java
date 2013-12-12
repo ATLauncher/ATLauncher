@@ -188,6 +188,7 @@ public class Downloadable {
                 this.connection.setConnectTimeout(5000);
                 this.connection.setRequestProperty("Accept-Encoding", "gzip");
                 this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+                this.connection.setRequestProperty("Auth-Key", App.settings.getAuthKey());
                 this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
                 this.connection.setRequestProperty("Expires", "0");
                 this.connection.setRequestProperty("Pragma", "no-cache");

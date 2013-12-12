@@ -23,6 +23,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -61,14 +62,17 @@ import com.atlauncher.Update;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
+import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.gui.AuthKeySetupDialog;
 import com.atlauncher.gui.BottomBar;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.NewsPanel;
 import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.ProgressDialog;
+import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -102,6 +106,7 @@ public class Settings {
     private boolean enableLogs; // If to enable logs
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
+    private String authKey; // The Auth key
 
     // Packs, Addons, Instances and Accounts
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
@@ -158,6 +163,67 @@ public class Settings {
         loadStartingProperties(); // Get users Console preference and Java Path
     }
 
+    public void checkAuthKey() {
+        boolean isValid = true;
+        if (this.authKey == null || this.authKey.isEmpty()) {
+            log("Empty Auth Key!", LogMessageType.error, false);
+            isValid = false;
+        } else {
+            try {
+                HttpURLConnection connection = (HttpURLConnection) new URL(getFileURL("ping"))
+                        .openConnection();
+                connection.setUseCaches(false);
+                connection.setDefaultUseCaches(false);
+                connection.setConnectTimeout(5000);
+                connection.setRequestProperty("Accept-Encoding", "gzip");
+                connection.setRequestProperty("User-Agent", this.userAgent);
+                connection.setRequestProperty("Auth-Key", this.authKey);
+                connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+                connection.setRequestProperty("Expires", "0");
+                connection.setRequestProperty("Pragma", "no-cache");
+                connection.connect();
+                if (connection.getResponseCode() == 403) {
+                    log("Invalid Auth Key!", LogMessageType.error, false);
+                    isValid = false;
+                }
+            } catch (IOException e) {
+                logStackTrace(e);
+            }
+        }
+        if (!isValid) {
+            if (this.account.isReal() && this.account.isRemembered()) {
+                AuthenticationResponse ar = null;
+                try {
+                    ar = Authentication.checkAccount(this.account.getUsername(),
+                            this.account.getPassword());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                if (ar != null) {
+                    if (ar.hasError()) {
+                        JOptionPane.showMessageDialog(null, ar.getErrorMessage(), "Error!",
+                                JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        String authKey = App.settings.apiCallReturn(
+                                this.account.getMinecraftUsername(), "checkauth",
+                                ar.getAccessToken());
+                        if (authKey.isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "Unable to verify your account!",
+                                    "Error!", JOptionPane.ERROR_MESSAGE);
+                            new AuthKeySetupDialog();
+                        } else {
+                            log("Auth Key Set! " + authKey);
+                            setAuthKey(authKey);
+                        }
+                    }
+                }
+            } else {
+                new AuthKeySetupDialog();
+            }
+            saveProperties();
+        }
+    }
+
     public void setupFiles() {
         if (Utils.isLinux()) {
             try {
@@ -212,6 +278,11 @@ public class Settings {
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
+        checkAuthKey(); // Check the Auth Key
+    }
+
+    public void setAuthKey(String authKey) {
+        this.authKey = authKey;
     }
 
     public void checkResources() {
@@ -716,6 +787,8 @@ public class Settings {
                     "true"));
             this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty(
                     "enabledebugconsole", "false"));
+            this.authKey = properties.getProperty("authkey", "");
+            System.out.println(this.authKey);
             if (!properties.containsKey("usingcustomjavapath")) {
                 this.usingCustomJavaPath = false;
                 this.javaPath = Utils.getJavaHome();
@@ -861,6 +934,7 @@ public class Settings {
     public void saveProperties() {
         try {
             properties.setProperty("firsttimerun", "false");
+            properties.setProperty("authkey", this.authKey);
             properties.setProperty("language", this.language.getName());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
@@ -2244,6 +2318,10 @@ public class Settings {
 
     public String getVersion() {
         return this.version;
+    }
+
+    public String getAuthKey() {
+        return this.authKey;
     }
 
     public String getUserAgent() {
