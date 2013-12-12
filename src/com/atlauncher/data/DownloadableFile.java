@@ -31,9 +31,11 @@ public class DownloadableFile {
     }
 
     public Downloadable getDownloadable() {
-        return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name,
-                new File(new File(App.settings.getConfigsDir(), this.folder), name), this.sha1,
-                this.size, null, true);
+        File file = new File(new File(App.settings.getConfigsDir(), this.folder), this.name);
+        if (this.folder.equalsIgnoreCase("Skins")) {
+            file = new File(App.settings.getSkinsDir(), this.name);
+        }
+        return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name, file,
+                this.sha1, this.size, null, true);
     }
-
 }

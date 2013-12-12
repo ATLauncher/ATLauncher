@@ -1709,6 +1709,9 @@ public class Settings {
      * Reloads the bottom bar accounts combobox
      */
     public void reloadAccounts() {
+        if (this.bottomBar == null) {
+            return; // Bottom Bar hasnt been made yet, so don't do anything
+        }
         this.bottomBar.reloadAccounts(); // Reload the Bottom Bar accounts combobox
     }
 
