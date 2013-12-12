@@ -193,9 +193,21 @@ public class AccountPanel extends JPanel {
                     dialog.addThread(new Thread() {
                         public void run() {
                             try {
-                                dialog.setReturnValue(Authentication.checkAccount(
+                                AuthenticationResponse resp = Authentication.checkAccount(
                                         usernameField.getText(),
-                                        new String(passwordField.getPassword())));
+                                        new String(passwordField.getPassword()));
+                                if (!resp.hasError()) {
+                                    String authKey = App.settings.apiCallReturn(resp
+                                            .getSelectedProfile().getName(), "checkauth", resp
+                                            .getAccessToken());
+                                    if (authKey.isEmpty()) {
+                                        resp.setErrorMessage("Auth Key Couldn't Be Set! Try Again!");
+                                    } else {
+                                        App.settings.log("Auth Key Set!");
+                                        App.settings.setAuthKey(authKey);
+                                    }
+                                }
+                                dialog.setReturnValue(resp);
                             } catch (IOException e1) {
                                 App.settings.logStackTrace(e1);
                             }
@@ -207,6 +219,7 @@ public class AccountPanel extends JPanel {
                             .getReturnValue();
                     if (!response.hasError()) {
                         AuthenticationResponse resp = (AuthenticationResponse) response;
+
                         if (accountsComboBox.getSelectedIndex() == 0) {
                             account = new Account(username, password, resp.getSelectedProfile()
                                     .getName(), remember);

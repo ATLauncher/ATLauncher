@@ -46,6 +46,11 @@ public class AuthenticationResponse {
         }
     }
 
+    public void setErrorMessage(String message) {
+        this.error = message;
+        this.errorMessage = message;
+    }
+
     public boolean hasError() {
         return this.errorMessage != null;
     }
