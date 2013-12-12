@@ -208,19 +208,17 @@ public class Settings {
                                 this.account.getMinecraftUsername(), "checkauth",
                                 ar.getAccessToken());
                         if (authKey.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, "Unable to verify your account!",
-                                    "Error!", JOptionPane.ERROR_MESSAGE);
-                            new AuthKeySetupDialog();
+                            log("Auth Key Couldn't Be Set!", LogMessageType.error, false);
                         } else {
-                            log("Auth Key Set! " + authKey);
+                            log("Auth Key Set!");
                             setAuthKey(authKey);
                         }
                     }
                 }
-            } else {
-                new AuthKeySetupDialog();
             }
             saveProperties();
+        } else {
+            log("Auth Key Valid!");
         }
     }
 
@@ -261,6 +259,11 @@ public class Settings {
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
         loadServerProperty(); // Get users Server preference
+        new Thread() {
+            public void run() {
+                checkAuthKey(); // Check the Auth Key
+            }
+        }.run();
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
@@ -278,7 +281,6 @@ public class Settings {
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
-        checkAuthKey(); // Check the Auth Key
     }
 
     public void setAuthKey(String authKey) {
@@ -788,7 +790,6 @@ public class Settings {
             this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty(
                     "enabledebugconsole", "false"));
             this.authKey = properties.getProperty("authkey", "");
-            System.out.println(this.authKey);
             if (!properties.containsKey("usingcustomjavapath")) {
                 this.usingCustomJavaPath = false;
                 this.javaPath = Utils.getJavaHome();
