@@ -17,7 +17,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -26,7 +25,6 @@ import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.data.LogMessageType;
-import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")

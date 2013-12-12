@@ -10,7 +10,6 @@
  */
 package com.atlauncher.data.mojang;
 
-import java.util.Date;
 import java.util.List;
 
 public class Version {

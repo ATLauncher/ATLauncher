@@ -1,8 +1,12 @@
 /**
  * Copyright 2013 by ATLauncher and Contributors
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * ATLauncher is licensed under CC BY-NC-ND 3.0 which allows others you to
+ * share this software with others as long as you credit us by linking to our
+ * website at http://www.atlauncher.com. You also cannot modify the application
+ * in any way or make commercial use of this software.
+ *
+ * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
 package com.atlauncher.data;
 
@@ -11,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
@@ -25,49 +30,28 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
-import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.utils.Utils;
 
 public class Pack {
 
     private int id;
+    private int position;
     private String name;
+    private PackType type;
+    private String code;
+    private List<PackVersion> versions;
+    private List<PackVersion> devVersions;
     private boolean createServer;
     private boolean leaderboards;
     private boolean logging;
     private boolean crashReports;
-    private String[] versions;
-    private String[] noUpdateVersions;
-    private String[] minecraftVersions;
-    private String[] devVersions;
-    private String[] devMinecraftVersions;
-    private String[] testers;
     private String description;
     private String supportURL;
     private String websiteURL;
-
-    private String xml; // The XML
-    private String xmlVersion; // The version the XML is for
-
-    public Pack(int id, String name, boolean createServer, boolean leaderboards, boolean logging,
-            boolean crashReports, String[] versions, String[] noUpdateVersions,
-            String[] minecraftVersions, String[] devVersions, String[] devMinecraftVersions,
-            String description, String supportURL, String websiteURL) {
-        this.id = id;
-        this.name = name;
-        this.createServer = createServer;
-        this.leaderboards = leaderboards;
-        this.logging = logging;
-        this.crashReports = crashReports;
-        this.versions = versions;
-        this.noUpdateVersions = noUpdateVersions;
-        this.minecraftVersions = minecraftVersions;
-        this.devVersions = devVersions;
-        this.devMinecraftVersions = devMinecraftVersions;
-        this.description = description;
-        this.supportURL = supportURL;
-        this.websiteURL = websiteURL;
-    }
+    private List<String> testers = new ArrayList<String>();
+    private List<String> allowedPlayers = new ArrayList<String>();
+    private String xml; // The xml for a version of the pack
+    private String xmlVersion; // The version the XML above is for
 
     public int getID() {
         return this.id;
@@ -75,14 +59,6 @@ public class Pack {
 
     public String getName() {
         return this.name;
-    }
-
-    public ImageIcon getImage() {
-        File imageFile = new File(App.settings.getImagesDir(), getSafeName().toLowerCase() + ".png");
-        if (!imageFile.exists()) {
-            imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
-        }
-        return Utils.getIconImage(imageFile);
     }
 
     /**
@@ -95,8 +71,35 @@ public class Pack {
         return this.name.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    public String[] getVersions() {
-        return this.versions;
+    public int getPosition() {
+        return this.position;
+    }
+
+    public ImageIcon getImage() {
+        File imageFile = new File(App.settings.getImagesDir(), getSafeName().toLowerCase() + ".png");
+        if (!imageFile.exists()) {
+            imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
+        }
+        return Utils.getIconImage(imageFile);
+    }
+
+    public boolean isPublic() {
+        return this.type == PackType.PUBLIC;
+    }
+
+    public boolean isSemiPublic() {
+        return this.type == PackType.SEMIPUBLIC;
+    }
+
+    public boolean isPrivate() {
+        return this.type == PackType.PRIVATE;
+    }
+
+    public String getCode() {
+        if (!isSemiPublic()) {
+            return "";
+        }
+        return this.code;
     }
 
     public String getDescription() {
@@ -111,32 +114,133 @@ public class Pack {
         return this.websiteURL;
     }
 
+    public boolean canCreateServer() {
+        return this.createServer;
+    }
+
+    public boolean crashReportsEnabled() {
+        return this.crashReports;
+    }
+
+    public boolean isLoggingEnabled() {
+        return this.logging;
+    }
+
+    public boolean isLeaderboardsEnabled() {
+        return this.leaderboards;
+    }
+
+    public void addTesters(List<String> users) {
+        this.testers.addAll(users);
+    }
+
+    public void addAllowedPlayers(List<String> users) {
+        this.allowedPlayers.addAll(users);
+    }
+
+    public List<PackVersion> getVersions() {
+        return this.versions;
+    }
+
+    public List<PackVersion> getDevVersions() {
+        return this.devVersions;
+    }
+
+    public void processVersions() {
+        for (PackVersion pv : this.versions) {
+            pv.setMinecraftVesion();
+        }
+        for (PackVersion dpv : this.devVersions) {
+            dpv.setMinecraftVesion();
+        }
+    }
+
+    public boolean isTester() {
+        Account account = App.settings.getAccount();
+        if (account == null) {
+            return false;
+        }
+        for (String tester : this.testers) {
+            if (tester.equalsIgnoreCase(account.getMinecraftUsername())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasVersions() {
+        if (this.versions.size() == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean hasDevVersions() {
+        if (this.devVersions.size() == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean canInstall() {
+        if (this.type == PackType.PRIVATE) {
+            if (isTester() || (hasVersions() && isAllowedPlayer())) {
+                return true;
+            }
+        } else if (this.type == PackType.SEMIPUBLIC) {
+            if (isTester()
+                    || (hasVersions() && App.settings.canViewSemiPublicPackByCode(this.code))) {
+                return true;
+            }
+        } else {
+            if (isTester() || hasVersions()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isAllowedPlayer() {
+        if (this.type != PackType.PRIVATE) {
+            return true;
+        }
+        Account account = App.settings.getAccount();
+        if (account == null) {
+            return false;
+        }
+        for (String player : this.allowedPlayers) {
+            if (player.equalsIgnoreCase(account.getMinecraftUsername())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public int getVersionCount() {
-        return this.versions.length;
+        return this.versions.size();
     }
 
     public int getDevVersionCount() {
-        return this.devVersions.length;
+        return this.devVersions.size();
     }
 
-    public String getVersion(int index) {
-        return this.versions[index];
+    public PackVersion getLatestVersion() {
+        if (this.versions.size() == 0) {
+            return null;
+        }
+        return this.versions.get(0);
     }
 
-    public String getDevVersion(int index) {
-        return this.devVersions[index];
-    }
-
-    public void addTesters(String[] players) {
-        this.testers = players;
-    }
-
-    public String getMinecraftVersion(int index) {
-        return this.minecraftVersions[index];
-    }
-
-    public String getDevMinecraftVersion(int index) {
-        return this.devMinecraftVersions[index];
+    public boolean isLatestVersionNoUpdate() {
+        if (this.versions.size() == 0) {
+            return false;
+        }
+        if (!getLatestVersion().canUpdate()) {
+            return true;
+        }
+        return false;
     }
 
     public String getXML(String version) {
@@ -148,39 +252,14 @@ public class Pack {
                 || (isTester() && redownload)) {
             String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.xml";
             Downloadable download = new Downloadable(path, true);
+            int tries = 1;
             do {
                 this.xml = download.getContents();
-            } while (xml == null);
+                tries++;
+            } while (xml == null && tries < 5);
             this.xmlVersion = version;
         }
         return this.xml;
-    }
-
-    public String getMinecraftVersion(String version) {
-        String xml = getXML(version, false);
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(xml));
-            Document document = builder.parse(is);
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("minecraft");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    NodeList nodeList1 = element.getChildNodes();
-                    return nodeList1.item(0).getNodeValue();
-                }
-            }
-        } catch (SAXException e) {
-            App.settings.logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            App.settings.logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
-        return null;
     }
 
     public String getInstallMessage(String version) {
@@ -531,96 +610,4 @@ public class Pack {
         return mods;
     }
 
-    public boolean hasVersions() {
-        if (this.versions.length == 0) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public boolean hasTesters() {
-        if (this.testers.length == 0) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public boolean isTester() {
-        Account account = App.settings.getAccount();
-        if (account == null) {
-            return false;
-        }
-        if (this.testers == null) {
-            return false;
-        }
-        for (String tester : testers) {
-            if (tester.equalsIgnoreCase(account.getMinecraftUsername())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean canInstall() {
-        if (hasVersions() || isTester()) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean canCreateServer() {
-        if (!this.createServer) {
-            return false;
-        }
-        if (isTester()) {
-            for (String version : devMinecraftVersions) {
-                try {
-                    if (App.settings.getMinecraftVersion(version).canCreateServer()) {
-                        return true; // Can make a server
-                    }
-                } catch (InvalidMinecraftVersion e) {
-                    App.settings.logStackTrace(e);
-                    continue;
-                }
-            }
-        }
-        for (String version : minecraftVersions) {
-            try {
-                if (App.settings.getMinecraftVersion(version).canCreateServer()) {
-                    return true; // Can make a server
-                }
-            } catch (InvalidMinecraftVersion e) {
-                App.settings.logStackTrace(e);
-                continue;
-            }
-        }
-        return false; // Cannot create a server of this pack
-    }
-
-    public boolean isLatestVersionNoUpdate() {
-        for (String version : noUpdateVersions) {
-            if (getLatestVersion().equalsIgnoreCase(version)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public String getLatestVersion() {
-        return this.versions[0];
-    }
-
-    public boolean isLeaderboardsEnabled() {
-        return this.leaderboards;
-    }
-
-    public boolean isLoggingEnabled() {
-        return this.logging;
-    }
-
-    public boolean isCrashReportsEnabled() {
-        return this.crashReports;
-    }
 }

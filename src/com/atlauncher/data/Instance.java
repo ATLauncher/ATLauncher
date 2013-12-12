@@ -418,7 +418,7 @@ public class Instance implements Serializable {
     public boolean hasUpdate() {
         if (realPack != null) {
             if (realPack.hasVersions() && !this.version.equalsIgnoreCase("Dev")) {
-                if (!realPack.getLatestVersion().equalsIgnoreCase(this.version)
+                if (!realPack.getLatestVersion().getVersion().equalsIgnoreCase(this.version)
                         && !realPack.isLatestVersionNoUpdate()) {
                     return true;
                 }
@@ -429,9 +429,7 @@ public class Instance implements Serializable {
 
     public String getLatestVersion() {
         if (realPack != null) {
-            if (realPack.hasVersions()) {
-                return realPack.getLatestVersion();
-            }
+            return realPack.getLatestVersion().getVersion();
         }
         return null;
     }
@@ -568,14 +566,12 @@ public class Instance implements Serializable {
                         }
                         if (process.exitValue() != 0) {
                             if (getRealPack().isLoggingEnabled() && App.settings.enableLogs()
-                                    && getRealPack().isCrashReportsEnabled()) {
+                                    && getRealPack().crashReportsEnabled()) {
                                 Thread crashThread = new Thread() {
-
                                     @Override
                                     public void run() {
                                         uploadCrashLog(); // Auto upload crash log if enabled
                                     }
-
                                 };
                                 crashThread.start();
                             }

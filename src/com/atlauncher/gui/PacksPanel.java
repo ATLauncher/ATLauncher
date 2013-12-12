@@ -26,7 +26,6 @@ import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.PrivatePack;
 
 public class PacksPanel extends JPanel {
 
@@ -138,8 +137,8 @@ public class PacksPanel extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for (Pack pack : (App.settings.sortPacksAlphabetically() ? App.settings.getPacksSorted()
-                : App.settings.getPacks())) {
+        for (Pack pack : (App.settings.sortPacksAlphabetically() ? App.settings
+                .getPacksSortedAlphabetically() : App.settings.getPacksSortedPositionally())) {
             if (pack.canInstall()) {
                 if (keepFilters) {
                     boolean showPack = true;
@@ -158,7 +157,7 @@ public class PacksPanel extends JPanel {
                     }
 
                     if (isPrivatePacks) {
-                        if (!(pack instanceof PrivatePack)) {
+                        if (pack.isPrivate()) {
                             showPack = false;
                         }
                     }

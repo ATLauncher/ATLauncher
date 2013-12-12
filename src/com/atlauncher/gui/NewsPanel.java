@@ -8,8 +8,6 @@ package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -18,17 +16,9 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
+import com.atlauncher.data.News;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -63,51 +53,11 @@ public class NewsPanel extends JPanel {
         add(new JScrollPane(newsArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         String news = "<html>";
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(App.settings.getConfigsDir(), "news.xml"));
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("article");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    if (i == nodeList.getLength() - 1) {
-                        news += "<p id=\"newsHeader\">"
-                                + element.getAttribute("posted")
-                                + " - <a href=\""
-                                + element.getAttribute("link")
-                                + "\">"
-                                + element.getAttribute("title")
-                                + "</a> ("
-                                + element.getAttribute("comments")
-                                + " "
-                                + (Integer.parseInt(element.getAttribute("comments")) == 1 ? "comment"
-                                        : "comments") + ")</p>" + "<p id=\"newsBody\">"
-                                + element.getTextContent() + "</p><br/>";
-                    } else {
-                        news += "<p id=\"newsHeader\">"
-                                + element.getAttribute("posted")
-                                + " - <a href=\""
-                                + element.getAttribute("link")
-                                + "\">"
-                                + element.getAttribute("title")
-                                + "</a> ("
-                                + element.getAttribute("comments")
-                                + " "
-                                + (Integer.parseInt(element.getAttribute("comments")) == 1 ? "comment"
-                                        : "comments") + ")</p>" + "<p id=\"newsBody\">"
-                                + element.getTextContent() + "</p><br/><hr/>";
-                    }
-                }
+        for (News newsItem : App.settings.getNews()) {
+            news += newsItem;
+            if (App.settings.getNews().get(App.settings.getNews().size() - 1) != newsItem) {
+                news += "<hr/>";
             }
-        } catch (SAXException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            App.settings.getConsole().logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.getConsole().logStackTrace(e);
         }
         newsArea.setText(news + "</html>");
         newsArea.setCaretPosition(0);

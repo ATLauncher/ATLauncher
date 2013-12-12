@@ -58,7 +58,7 @@ import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.gui.ProgressDialog;
 
 public class Utils {
-
+    
     public static ImageIcon getIconImage(String path) {
         URL url = System.class.getResource(path);
 

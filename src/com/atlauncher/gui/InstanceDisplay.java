@@ -30,7 +30,6 @@ import javax.swing.JTextArea;
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.PrivatePack;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -129,21 +128,21 @@ public class InstanceDisplay extends CollapsiblePanel {
                         }
                     } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
                         if (!App.settings.isMinecraftLaunched()) {
-                            if(instance.launch()){
+                            if (instance.launch()) {
                                 App.settings.setMinecraftLaunched(true);
                             }
                         }
                     } else if (ret == 2) {
                         instance.ignoreUpdate();
                         if (!App.settings.isMinecraftLaunched()) {
-                            if(instance.launch()){
+                            if (instance.launch()) {
                                 App.settings.setMinecraftLaunched(true);
                             }
                         }
                     }
                 } else {
                     if (!App.settings.isMinecraftLaunched()) {
-                        if(instance.launch()){
+                        if (instance.launch()) {
                             App.settings.setMinecraftLaunched(true);
                         }
                     }
@@ -323,8 +322,7 @@ public class InstanceDisplay extends CollapsiblePanel {
         }
 
         // Check if pack is a private pack and if the user can play it
-        if (pack instanceof PrivatePack && !App.settings.isInOfflineMode()
-                && (!((PrivatePack) pack).isAllowedPlayer())) {
+        if (pack.isPrivate() && !App.settings.isInOfflineMode() && (!pack.isAllowedPlayer())) {
             if (!(instance.isDev() && pack.isTester())) {
                 for (ActionListener al : play.getActionListeners()) {
                     play.removeActionListener(al);

@@ -21,7 +21,6 @@ import javax.swing.JTextArea;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.SemiPublicPack;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -153,11 +152,11 @@ public class PackDisplay extends CollapsiblePanel {
 
         packActionsTop.add(newInstance);
         packActionsTop.add(createServer);
-        if (pack instanceof SemiPublicPack && !pack.isTester()) {
-            removePack = new JButton("Remove Pack");
+        if (pack.isSemiPublic() && !pack.isTester()) {
+            removePack = new JButton("pack.removepack");
             removePack.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    App.settings.removePack(((SemiPublicPack) pack).getCode());
+                    App.settings.removePack(pack.getCode());
                     App.settings.reloadPacksPanel();
                 }
             });

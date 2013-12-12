@@ -6,33 +6,52 @@
  */
 package com.atlauncher.data;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+
+import com.atlauncher.App;
+import com.atlauncher.data.mojang.MojangConstants;
+import com.atlauncher.data.mojang.Version;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+
 public class MinecraftVersion {
 
     private String version;
-    private String type;
-    private boolean canCreateServer;
+    private boolean server;
     private boolean legacy;
     private boolean coremods;
+    private Version mojangVersion;
 
-    public MinecraftVersion(String version, String type, boolean canCreateServer, boolean legacy,
-            boolean coremods) {
-        this.version = version;
-        this.type = type;
-        this.canCreateServer = canCreateServer;
-        this.legacy = legacy;
-        this.coremods = coremods;
+    public void loadVersion() {
+        File versionFile = new File(App.settings.getVersionsDir(), this.version + ".json");
+        Downloadable download = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/"
+                + this.version + "/" + this.version + ".json"), versionFile, null, null, false);
+        if (!versionFile.exists()) {
+            download.download(false);
+        }
+        try {
+            mojangVersion = Settings.altGson.fromJson(new FileReader(versionFile), Version.class);
+        } catch (JsonSyntaxException e) {
+            App.settings.logStackTrace(e);
+        } catch (JsonIOException e) {
+            App.settings.logStackTrace(e);
+        } catch (FileNotFoundException e) {
+            App.settings.logStackTrace(e);
+        }
     }
 
     public boolean canCreateServer() {
-        return this.canCreateServer;
+        return this.server;
     }
 
     public String getVersion() {
         return this.version;
     }
 
-    public String getType() {
-        return this.type;
+    public Version getMojangVersion() {
+        return this.mojangVersion;
     }
 
     public boolean isLegacy() {

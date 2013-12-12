@@ -16,12 +16,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -31,6 +31,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -53,11 +54,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
 import com.atlauncher.Update;
+import com.atlauncher.data.mojang.DateTypeAdapter;
+import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
+import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.BottomBar;
@@ -67,6 +70,11 @@ import com.atlauncher.gui.NewsPanel;
 import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.utils.Utils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user
@@ -96,22 +104,25 @@ public class Settings {
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
 
     // Packs, Addons, Instances and Accounts
-    private ArrayList<Pack> packs = new ArrayList<Pack>(); // Packs in the Launcher
+    private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
+    private List<News> news; // News
+    private List<Language> languages; // Languages for the Launcher
+    private List<MinecraftVersion> minecraftVersions; // Minecraft versions
+    private List<Pack> packs; // Packs in the Launcher
     private ArrayList<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
-    private ArrayList<MinecraftVersion> minecraftVersions = new ArrayList<MinecraftVersion>(); // Minecraft
     private ArrayList<Addon> addons = new ArrayList<Addon>(); // Addons in the Launcher
     private ArrayList<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
 
     // Directories and Files for the Launcher
-    private File baseDir, backupsDir, configsDir, imagesDir, skinsDir, jarsDir, commonConfigsDir,
-            resourcesDir, librariesDir, languagesDir, downloadsDir, usersDownloadsFolder,
-            instancesDir, serversDir, tempDir, instancesDataFile, userDataFile, propertiesFile;
+    private File baseDir, backupsDir, configsDir, jsonDir, versionsDir, imagesDir, skinsDir,
+            jarsDir, commonConfigsDir, resourcesDir, librariesDir, languagesDir, downloadsDir,
+            usersDownloadsFolder, instancesDir, serversDir, tempDir, instancesDataFile,
+            userDataFile, propertiesFile;
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
     private LauncherConsole console = new LauncherConsole(); // Load the Launcher's Console
-    private ArrayList<Language> languages = new ArrayList<Language>(); // Languages for the Launcher
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private ArrayList<Server> triedServers = new ArrayList<Server>(); // Servers tried to connect to
     private InstancesPanel instancesPanel; // The instances panel
@@ -124,15 +135,22 @@ public class Settings {
     private Process minecraftProcess = null; // The process minecraft is running on
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
-    private String fileHashes = null; // Hashes for the files to get from the server
     private String version = "%VERSION%"; // Version of the Launcher
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     @SuppressWarnings("unused")
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     @SuppressWarnings("unused")
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
+    public static Gson gson = new Gson();
+    public static Gson altGson;
 
     public Settings() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapterFactory(new EnumTypeAdapterFactory());
+        builder.registerTypeAdapter(Date.class, new DateTypeAdapter());
+        builder.registerTypeAdapter(File.class, new FileTypeAdapter());
+        builder.setPrettyPrinting();
+        Settings.altGson = builder.create();
         setupFiles(); // Setup all the file and directory variables
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
@@ -156,6 +174,8 @@ public class Settings {
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
         backupsDir = new File(baseDir, "Backups");
         configsDir = new File(baseDir, "Configs");
+        jsonDir = new File(configsDir, "JSON");
+        versionsDir = new File(configsDir, "Versions");
         imagesDir = new File(configsDir, "Images");
         skinsDir = new File(imagesDir, "Skins");
         jarsDir = new File(configsDir, "Jars");
@@ -178,11 +198,15 @@ public class Settings {
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
+        if (launcherHasUpdate()) {
+            downloadUpdate(); // Update the Launcher
+        }
+        loadNews(); // Load the news
         loadLanguages(); // Load the Languages available in the Launcher
-        loadPacks(0); // Load the Packs available in the Launcher
-        loadUsers(); // Load the Testers and Allowed Players for the packs
         loadMinecraftVersions(); // Load info about the different Minecraft versions
-        loadAddons(); // Load the Addons available in the Launcher
+        loadPacks(); // Load the Packs available in the Launcher
+        loadUsers(); // Load the Testers and Allowed Players for the packs
+        // loadAddons(); // Load the Addons available in the Launcher
         loadInstances(); // Load the users installed Instances
         loadAccounts(); // Load the saved Accounts
         loadProperties(); // Load the users Properties
@@ -245,6 +269,20 @@ public class Settings {
         }
     }
 
+    public boolean launcherHasUpdate() {
+        for (DownloadableFile file : this.launcherFiles) {
+            if (file.isLauncher()) {
+                if (getVersion().contains("%VERSION%") || getVersion().contains("-dev")
+                        || file.getSHA1().equalsIgnoreCase(getVersion())) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void downloadUpdate() {
         try {
             File thisFile = new File(Update.class.getProtectionDomain().getCodeSource()
@@ -297,97 +335,34 @@ public class Settings {
         System.exit(0);
     }
 
-    private String getFileHashes() {
-        return this.getFileHashes(false);
-    }
-
-    private String getFileHashes(boolean force) {
-        if (force) {
-            this.fileHashes = null;
-        }
-        if (this.fileHashes == null) {
-            Downloadable download = new Downloadable("launcher/hashes.xml", true);
-            String hashes = download.getContents();
-            if (hashes == null) {
-                return null;
-            } else {
-                this.fileHashes = hashes;
-            }
-        }
-        return this.fileHashes;
+    private void getFileHashes() {
+        this.launcherFiles = null;
+        Downloadable download = new Downloadable("launcher/json/hashes.json", true);
+        java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {
+        }.getType();
+        this.launcherFiles = gson.fromJson(download.getContents(), type);
     }
 
     /**
      * This checks the servers hashes.xml file and gets the files that the Launcher needs to have
      */
-    private ArrayList<Downloadable> getLauncherFiles(boolean force) {
-        String hashes = getFileHashes(force);
-        if (hashes == null) {
+    private ArrayList<Downloadable> getLauncherFiles() {
+        getFileHashes();
+        if (this.launcherFiles == null) {
             this.offlineMode = true;
             return null;
         }
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(new StringReader(hashes)));
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("hash");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    String name = element.getAttribute("name");
-                    String type = element.getAttribute("type");
-                    String md5 = element.getAttribute("md5");
-                    File file = null;
-                    if (type.equalsIgnoreCase("Root")) {
-                        file = new File(configsDir, name);
-                    } else if (type.equalsIgnoreCase("Images")) {
-                        file = new File(imagesDir, name);
-                        name = "images/" + name;
-                    } else if (type.equalsIgnoreCase("Skins")) {
-                        file = new File(skinsDir, name);
-                        name = "skins/" + name;
-                    } else if (type.equalsIgnoreCase("Languages")) {
-                        file = new File(languagesDir, name);
-                        name = "languages/" + name;
-                    } else if (type.equalsIgnoreCase("Libraries")) {
-                        file = new File(librariesDir, name);
-                        name = "libraries/" + name;
-                    } else if (type.equalsIgnoreCase("Launcher")) {
-                        String version = element.getAttribute("version");
-                        if (!getVersion().equalsIgnoreCase(version)) {
-                            if (getVersion().contains("-dev")) {
-                                continue; // Don't update dev versions
-                            } else if (getVersion().equalsIgnoreCase("%VERSION%")) {
-                                continue; // Don't even think about updating my unbuilt copy
-                            } else {
-                                log("Update to Launcher found. Current version: " + this.version
-                                        + ", New version: " + version);
-                                downloadUpdate();
-                            }
-                        } else {
-                            continue;
-                        }
-                    } else {
-                        continue; // Don't know what to do with this file so ignore it
-                    }
-                    downloads.add(new Downloadable("launcher/" + name, file, md5, null, true));
-                }
+        for (DownloadableFile file : this.launcherFiles) {
+            if (!file.isLauncher()) {
+                downloads.add(file.getDownloadable());
             }
-        } catch (SAXException e) {
-            logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            logStackTrace(e);
-        } catch (IOException e) {
-            logStackTrace(e);
         }
         return downloads;
     }
 
     public void downloadUpdatedFiles() {
-        ArrayList<Downloadable> downloads = getLauncherFiles(false);
+        ArrayList<Downloadable> downloads = getLauncherFiles();
         if (downloads != null) {
             ExecutorService executor = Executors.newFixedThreadPool(8);
             for (final Downloadable download : downloads) {
@@ -416,7 +391,7 @@ public class Settings {
             return false;
         }
         log("Checking for updated files!");
-        ArrayList<Downloadable> downloads = getLauncherFiles(true);
+        ArrayList<Downloadable> downloads = getLauncherFiles();
         if (downloads == null) {
             this.offlineMode = true;
             return false;
@@ -442,8 +417,12 @@ public class Settings {
         Thread updateThread = new Thread() {
             public void run() {
                 downloadUpdatedFiles(); // Download updated files
+                if (launcherHasUpdate()) {
+                    downloadUpdate(); // Update the Launcher
+                }
+                loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
-                loadPacks(0); // Load the Packs available in the Launcher
+                loadPacks(); // Load the Packs available in the Launcher
                 loadUsers(); // Load the Testers and Allowed Players for the packs
                 reloadPacksPanel(); // Reload packs panel
                 loadAddons(); // Load the Addons available in the Launcher
@@ -496,6 +475,24 @@ public class Settings {
      */
     public File getConfigsDir() {
         return this.configsDir;
+    }
+
+    /**
+     * Returns the JSON directory
+     * 
+     * @return File object for the JSON directory
+     */
+    public File getJSONDir() {
+        return this.jsonDir;
+    }
+
+    /**
+     * Returns the Versions directory
+     * 
+     * @return File object for the Versions directory
+     */
+    public File getVersionsDir() {
+        return this.versionsDir;
     }
 
     /**
@@ -679,14 +676,7 @@ public class Settings {
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             String serv = properties.getProperty("server", "Auto");
-            if (isPackTester()) {
-                this.server = getServerByName("Master"); // If tester use Master Server
-                if (isServerByName(serv)) {
-                    this.originalServer = this.server;
-                } else {
-                    this.server = getServerByName("Auto"); // Server not found, use default of Auto
-                }
-            } else if (isServerByName(serv)) {
+            if (isServerByName(serv)) {
                 this.server = getServerByName(serv);
                 this.originalServer = this.server;
             } else {
@@ -1006,191 +996,38 @@ public class Settings {
     /**
      * Loads the languages for use in the Launcher
      */
+    private void loadNews() {
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<News>>() {
+            }.getType();
+            this.news = gson.fromJson(new FileReader(new File(getJSONDir(), "news.json")), type);
+        } catch (JsonSyntaxException e) {
+            logStackTrace(e);
+        } catch (JsonIOException e) {
+            logStackTrace(e);
+        } catch (FileNotFoundException e) {
+            logStackTrace(e);
+        }
+    }
+
+    /**
+     * Loads the languages for use in the Launcher
+     */
     private void loadLanguages() {
-        Language language;
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(configsDir, "languages.xml"));
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("language");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    String name = element.getAttribute("name");
-                    String localizedName = element.getAttribute("localizedname");
-                    language = new Language(name, localizedName);
-                    languages.add(language);
-                }
-            }
-        } catch (SAXException e) {
+            java.lang.reflect.Type type = new TypeToken<List<Language>>() {
+            }.getType();
+            this.languages = gson.fromJson(
+                    new FileReader(new File(getJSONDir(), "languages.json")), type);
+        } catch (JsonSyntaxException e) {
             logStackTrace(e);
-        } catch (ParserConfigurationException e) {
+        } catch (JsonIOException e) {
             logStackTrace(e);
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             logStackTrace(e);
         }
-    }
-
-    /**
-     * Loads the Packs for use in the Launcher
-     */
-    private void loadPacks(int tries) {
-        if (this.packs.size() != 0) {
-            this.packs = new ArrayList<Pack>();
-        }
-        boolean errored = false;
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(configsDir, "packs.xml"));
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("pack");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    int id = Integer.parseInt(element.getAttribute("id"));
-                    String name = element.getAttribute("name");
-                    boolean createServer = Boolean.parseBoolean(element
-                            .getAttribute("createserver"));
-                    boolean leaderboards = Boolean.parseBoolean(element
-                            .getAttribute("leaderboards"));
-                    boolean logging = Boolean.parseBoolean(element.getAttribute("logging"));
-                    boolean crashReports = Boolean.parseBoolean(element
-                            .getAttribute("crashreports"));
-                    String[] versions;
-                    if (element.getAttribute("versions").isEmpty()) {
-                        versions = new String[0];
-                    } else {
-                        versions = element.getAttribute("versions").split(",");
-                    }
-                    String[] noUpdateVersions;
-                    if (element.getAttribute("noupdateversions").isEmpty()) {
-                        noUpdateVersions = new String[0];
-                    } else {
-                        noUpdateVersions = element.getAttribute("noupdateversions").split(",");
-                    }
-                    String[] minecraftVersions;
-                    if (element.getAttribute("minecraftversions").isEmpty()) {
-                        minecraftVersions = new String[0];
-                    } else {
-                        minecraftVersions = element.getAttribute("minecraftversions").split(",");
-                    }
-                    String[] devVersions;
-                    if (element.getAttribute("devversions").isEmpty()) {
-                        devVersions = new String[0];
-                    } else {
-                        devVersions = element.getAttribute("devversions").split(",");
-                    }
-                    String[] devMinecraftVersions;
-                    if (element.getAttribute("devminecraftversions").isEmpty()) {
-                        devMinecraftVersions = new String[0];
-                    } else {
-                        devMinecraftVersions = element.getAttribute("devminecraftversions").split(
-                                ",");
-                    }
-                    String description = element.getAttribute("description");
-                    String supportURL = element.getAttribute("supporturl");
-                    String websiteURL = element.getAttribute("websiteurl");
-                    if (element.getAttribute("type").equalsIgnoreCase("private")) {
-                        packs.add(new PrivatePack(id, name, createServer, leaderboards, logging,
-                                crashReports, versions, noUpdateVersions, minecraftVersions,
-                                devVersions, devMinecraftVersions, description, supportURL,
-                                websiteURL));
-                    } else if (element.getAttribute("type").equalsIgnoreCase("semipublic")) {
-                        if (element.hasAttribute("code")) {
-                            packs.add(new SemiPublicPack(id, name, element.getAttribute("code"),
-                                    createServer, leaderboards, logging, crashReports, versions,
-                                    noUpdateVersions, minecraftVersions, devVersions,
-                                    devMinecraftVersions, description, supportURL, websiteURL));
-                        }
-                    } else {
-                        packs.add(new Pack(id, name, createServer, leaderboards, logging,
-                                crashReports, versions, noUpdateVersions, minecraftVersions,
-                                devVersions, devMinecraftVersions, description, supportURL,
-                                websiteURL));
-                    }
-                }
-            }
-        } catch (SAXException e) {
-            errored = true;
-            logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            errored = true;
-            logStackTrace(e);
-        } catch (IOException e) {
-            errored = true;
-            logStackTrace(e);
-        }
-        if (errored && tries <= 3) {
-            forceDownloadPacksXML();
-            loadPacks(++tries);
-        }
-    }
-
-    private void forceDownloadPacksXML() {
-        Downloadable download = new Downloadable("launcher/packs.xml", new File(configsDir,
-                "packs.xml"), null, null, true);
-        download.download(false);
-    }
-
-    /**
-     * Loads the Testers and Allowed Players for the packs in the Launcher
-     */
-    private void loadUsers() {
-        Downloadable download = new Downloadable("launcher/users.xml", true);
-        String users = download.getContents();
-        if (users == null) {
-            this.offlineMode = true;
-            return;
-        }
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(users));
-            Document document = builder.parse(is);
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("pack");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    int id = Integer.parseInt(element.getAttribute("id"));
-                    Pack pack;
-                    try {
-                        pack = getPackByID(id);
-                    } catch (InvalidPack e) {
-                        log(e.getMessage(), LogMessageType.error, false);
-                        continue;
-                    }
-                    if (!element.getAttribute("testers").isEmpty()) {
-                        if (element.getAttribute("testers").contains(",")) {
-                            pack.addTesters(element.getAttribute("testers").split(","));
-                        } else {
-                            pack.addTesters(new String[] { element.getAttribute("testers") });
-                        }
-                    }
-                    if (pack instanceof PrivatePack) {
-                        if (!element.getAttribute("allowedplayers").isEmpty()) {
-                            if (element.getAttribute("allowedplayers").contains(",")) {
-                                ((PrivatePack) pack).addAllowedPlayers(element.getAttribute(
-                                        "allowedplayers").split(","));
-                            } else {
-                                ((PrivatePack) pack).addAllowedPlayers(new String[] { element
-                                        .getAttribute("allowedplayers") });
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (SAXException e) {
-            logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            logStackTrace(e);
-        } catch (IOException e) {
-            logStackTrace(e);
+        for (Language lang : this.languages) {
+            lang.setupLanguage();
         }
     }
 
@@ -1198,34 +1035,73 @@ public class Settings {
      * Loads info about the different Minecraft versions
      */
     private void loadMinecraftVersions() {
-        if (this.minecraftVersions.size() != 0) {
-            this.minecraftVersions = new ArrayList<MinecraftVersion>();
-        }
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(configsDir, "minecraftversions.xml"));
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("minecraft");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    String version = element.getAttribute("version");
-                    String type = element.getAttribute("type");
-                    boolean server = Boolean.parseBoolean(element.getAttribute("server"));
-                    boolean legacy = Boolean.parseBoolean(element.getAttribute("legacy"));
-                    boolean coremods = Boolean.parseBoolean(element.getAttribute("coremods"));
-                    minecraftVersions.add(new MinecraftVersion(version, type, server, legacy,
-                            coremods));
+            java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
+            }.getType();
+            this.minecraftVersions = gson.fromJson(new FileReader(new File(getJSONDir(),
+                    "minecraftversions.json")), type);
+        } catch (JsonSyntaxException e) {
+            logStackTrace(e);
+        } catch (JsonIOException e) {
+            logStackTrace(e);
+        } catch (FileNotFoundException e) {
+            logStackTrace(e);
+        }
+        ExecutorService executor = Executors.newFixedThreadPool(8);
+        for (final MinecraftVersion mv : this.minecraftVersions) {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    mv.loadVersion();
                 }
-            }
-        } catch (SAXException e) {
+            });
+        }
+        executor.shutdown();
+        while (!executor.isShutdown()) {
+        }
+    }
+
+    /**
+     * Loads the Packs for use in the Launcher
+     */
+    private void loadPacks() {
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
+            }.getType();
+            this.packs = gson.fromJson(new FileReader(new File(getJSONDir(), "packs.json")), type);
+        } catch (JsonSyntaxException e) {
             logStackTrace(e);
-        } catch (ParserConfigurationException e) {
+        } catch (JsonIOException e) {
             logStackTrace(e);
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             logStackTrace(e);
+        }
+        for (Pack pack : this.packs) {
+            pack.processVersions();
+        }
+    }
+
+    /**
+     * Loads the Testers and Allowed Players for the packs in the Launcher
+     */
+    private void loadUsers() {
+        Downloadable download = new Downloadable("launcher/json/users.json", true);
+        List<PackUsers> packUsers = null;
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
+            }.getType();
+            packUsers = gson.fromJson(download.getContents(), type);
+        } catch (JsonSyntaxException e) {
+            logStackTrace(e);
+        } catch (JsonIOException e) {
+            logStackTrace(e);
+        }
+        if (packUsers == null) {
+            this.offlineMode = true;
+            return;
+        }
+        for (PackUsers pu : packUsers) {
+            pu.addUsers();
         }
     }
 
@@ -1431,7 +1307,7 @@ public class Settings {
      * 
      * @return The Packs available in the Launcher
      */
-    public ArrayList<Pack> getPacks() {
+    public List<Pack> getPacks() {
         return this.packs;
     }
 
@@ -1440,11 +1316,26 @@ public class Settings {
      * 
      * @return The Packs available in the Launcher sorted alphabetically
      */
-    public ArrayList<Pack> getPacksSorted() {
+    public ArrayList<Pack> getPacksSortedAlphabetically() {
         ArrayList<Pack> packs = new ArrayList<Pack>(this.packs);
         Collections.sort(packs, new Comparator<Pack>() {
             public int compare(Pack result1, Pack result2) {
                 return result1.getName().compareTo(result2.getName());
+            }
+        });
+        return packs;
+    }
+
+    /**
+     * Get the Packs available in the Launcher sorted positionally
+     * 
+     * @return The Packs available in the Launcher sorted by position
+     */
+    public ArrayList<Pack> getPacksSortedPositionally() {
+        ArrayList<Pack> packs = new ArrayList<Pack>(this.packs);
+        Collections.sort(packs, new Comparator<Pack>() {
+            public int compare(Pack result1, Pack result2) {
+                return result1.getPosition() - result2.getPosition();
             }
         });
         return packs;
@@ -1621,8 +1512,8 @@ public class Settings {
     public boolean semiPublicPackExistsFromCode(String packCode) {
         String packCodeMD5 = Utils.getMD5(packCode);
         for (Pack pack : this.packs) {
-            if (pack instanceof SemiPublicPack) {
-                if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(packCodeMD5)) {
+            if (pack.isSemiPublic()) {
+                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
                     return true;
                 }
             }
@@ -1633,9 +1524,8 @@ public class Settings {
     public boolean addPack(String packCode) {
         String packCodeMD5 = Utils.getMD5(packCode);
         for (Pack pack : this.packs) {
-            if (pack instanceof SemiPublicPack
-                    && !App.settings.canViewSemiPublicPackByCode(packCodeMD5)) {
-                if (((SemiPublicPack) pack).getCode().equalsIgnoreCase(packCodeMD5)) {
+            if (pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(packCodeMD5)) {
+                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
                     if (pack.isTester()) {
                         return false;
                     }
@@ -1678,11 +1568,20 @@ public class Settings {
     }
 
     /**
+     * Get the News for the Launcher
+     * 
+     * @return The News items
+     */
+    public List<News> getNews() {
+        return this.news;
+    }
+
+    /**
      * Get the Languages available in the Launcher
      * 
      * @return The Languages available in the Launcher
      */
-    public ArrayList<Language> getLanguages() {
+    public List<Language> getLanguages() {
         return this.languages;
     }
 
@@ -1857,20 +1756,6 @@ public class Settings {
     public boolean isPackByName(String name) {
         for (Pack pack : packs) {
             if (pack.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if the user is a tester of any packs
-     * 
-     * @return True if they are, false otherwise
-     */
-    public boolean isPackTester() {
-        for (Pack pack : packs) {
-            if (pack.isTester()) {
                 return true;
             }
         }

@@ -32,10 +32,9 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.Version;
-import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -56,8 +55,8 @@ public class InstanceInstallerDialog extends JDialog {
     private JLabel instanceNameLabel;
     private JTextField instanceNameField;
     private JLabel versionLabel;
-    private JComboBox<Version> versionsDropDown;
-    private ArrayList<Version> versions = new ArrayList<Version>();
+    private JComboBox<PackVersion> versionsDropDown;
+    private ArrayList<PackVersion> versions = new ArrayList<PackVersion>();
     private JLabel installForLabel;
     private JCheckBox installForMe;
 
@@ -127,45 +126,31 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        versionsDropDown = new JComboBox<Version>();
+        versionsDropDown = new JComboBox<PackVersion>();
         if (pack.isTester()) {
-            for (int i = 0; i < pack.getDevVersionCount(); i++) {
-                MinecraftVersion mcVersion;
-                try {
-                    mcVersion = App.settings.getMinecraftVersion(pack.getDevMinecraftVersion(i));
-                } catch (InvalidMinecraftVersion e1) {
-                    App.settings.logStackTrace(e1);
-                    continue;
-                }
-                if (!isServer || (isServer && mcVersion.canCreateServer())) {
-                    versions.add(new Version(true, pack.getDevVersion(i), mcVersion));
+            for (PackVersion pv : pack.getDevVersions()) {
+                if (!isServer || (isServer && pv.getMinecraftVersion().canCreateServer())) {
+                    versions.add(pv);
                 }
             }
         }
-        for (int i = 0; i < pack.getVersionCount(); i++) {
-            MinecraftVersion mcVersion;
-            try {
-                mcVersion = App.settings.getMinecraftVersion(pack.getMinecraftVersion(i));
-            } catch (InvalidMinecraftVersion e1) {
-                App.settings.logStackTrace(e1);
-                continue;
-            }
-            if (!isServer || (isServer && mcVersion.canCreateServer())) {
-                versions.add(new Version(false, pack.getVersion(i), mcVersion));
+        for (PackVersion pv : pack.getVersions()) {
+            if (!isServer || (isServer && pv.getMinecraftVersion().canCreateServer())) {
+                versions.add(pv);
             }
         }
-        for (Version version : versions) {
+        PackVersion forUpdate = null;
+        for (PackVersion version : versions) {
+            if ((!version.isDev()) && (forUpdate == null)) {
+                forUpdate = version;
+            }
             versionsDropDown.addItem(version);
         }
-        if (isUpdate) {
-            if (pack.isTester()) {
-                versionsDropDown.setSelectedIndex(1);
-            } else {
-                versionsDropDown.setSelectedIndex(0);
-            }
+        if (isUpdate && forUpdate != null) {
+            versionsDropDown.setSelectedItem(forUpdate);
         } else if (isReinstall) {
-            for (Version version : versions) {
-                if (version.getVersion().equalsIgnoreCase(instance.getVersion())) {
+            for (PackVersion version : versions) {
+                if (version.versionMatches(instance.getVersion())) {
                     versionsDropDown.setSelectedItem(version);
                 }
             }
