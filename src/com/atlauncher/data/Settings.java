@@ -167,6 +167,9 @@ public class Settings {
     }
 
     public void checkAuthKey() {
+        if (getAccounts().size() == 0) {
+            return; // No accounts added so don't check
+        }
         boolean isValid = true;
         if (this.authKey == null || this.authKey.isEmpty()) {
             log("Empty Auth Key!", LogMessageType.error, false);

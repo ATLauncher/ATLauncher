@@ -34,7 +34,6 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
-import com.atlauncher.data.Version;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -220,7 +219,7 @@ public class InstanceInstallerDialog extends JDialog {
                         return;
                     }
                 }
-                final Version version = (Version) versionsDropDown.getSelectedItem();
+                final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
                 final JDialog dialog = new JDialog(App.settings.getParent(),
                         ((isReinstall) ? App.settings.getLocalizedString("common.reinstalling")
                                 : App.settings.getLocalizedString("common.installing"))
@@ -336,7 +335,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setExtraArguments(this.getExtraArguments());
                                     instance.setMainClass(this.getMainClass());
                                     instance.setAssets(this.getAssets());
-                                    if (version.isDevVersion()) {
+                                    if (version.isDev()) {
                                         instance.setDevVersion();
                                     } else {
                                         instance.setNotDevVersion();
@@ -358,7 +357,7 @@ public class InstanceInstallerDialog extends JDialog {
                                                     this.getExtraArguments(), this
                                                             .getMinecraftArguments(), this
                                                             .getMainClass(), this.getAssets(),
-                                                    version.isDevVersion(), !this.isLegacy()));
+                                                    version.isDev(), !this.isLegacy()));
                                 }
                                 App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();
@@ -367,7 +366,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             .getMinecraftUsername(), "packinstalled"
                                             + (App.settings.enableLogs() ? "" : "generic"),
                                             pack.getID() + "", version.getVersion(), (version
-                                                    .isDevVersion() ? "dev" : version.getVersion()));
+                                                    .isDev() ? "dev" : version.getVersion()));
                                 }
                             } else {
                                 if (isReinstall) {
