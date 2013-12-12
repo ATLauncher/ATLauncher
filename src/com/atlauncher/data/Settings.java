@@ -7,6 +7,7 @@
 package com.atlauncher.data;
 
 import java.awt.Dialog.ModalityType;
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.ComponentAdapter;
@@ -43,6 +44,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -191,28 +194,62 @@ public class Settings {
             }
         }
         if (!isValid) {
-            if (this.account.isReal() && this.account.isRemembered()) {
+            if (this.account.isReal()) {
+                String password = null;
+                if (!this.account.isRemembered()) {
+                    JPanel panel = new JPanel();
+                    panel.setLayout(new BorderLayout());
+                    JLabel passwordLabel = new JLabel(App.settings.getLocalizedString(
+                            "instance.enterpassword", account.getMinecraftUsername()));
+                    JPasswordField passwordField = new JPasswordField();
+                    panel.add(passwordLabel, BorderLayout.NORTH);
+                    panel.add(passwordField, BorderLayout.CENTER);
+                    int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
+                            App.settings.getLocalizedString("instance.enterpasswordtitle"),
+                            JOptionPane.OK_CANCEL_OPTION);
+                    if (ret == JOptionPane.OK_OPTION) {
+                        password = new String(passwordField.getPassword());
+                    }
+                } else {
+                    password = this.account.getPassword();
+                }
                 AuthenticationResponse ar = null;
                 try {
-                    ar = Authentication.checkAccount(this.account.getUsername(),
-                            this.account.getPassword());
+                    ar = Authentication.checkAccount(this.account.getUsername(), password);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
                 if (ar != null) {
-                    if (ar.hasError()) {
+                    while (ar.hasError()) {
                         JOptionPane.showMessageDialog(null, ar.getErrorMessage(), "Error!",
                                 JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        String authKey = App.settings.apiCallReturn(
-                                this.account.getMinecraftUsername(), "checkauth",
-                                ar.getAccessToken());
-                        if (authKey.isEmpty()) {
-                            log("Auth Key Couldn't Be Set!", LogMessageType.error, false);
-                        } else {
-                            log("Auth Key Set!");
-                            setAuthKey(authKey);
+                        JPanel panel = new JPanel();
+                        panel.setLayout(new BorderLayout());
+                        JLabel passwordLabel = new JLabel(App.settings.getLocalizedString(
+                                "instance.enterpassword", account.getMinecraftUsername()));
+                        JPasswordField passwordField = new JPasswordField();
+                        panel.add(passwordLabel, BorderLayout.NORTH);
+                        panel.add(passwordField, BorderLayout.CENTER);
+                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
+                                App.settings.getLocalizedString("instance.enterpasswordtitle"),
+                                JOptionPane.OK_CANCEL_OPTION);
+                        if (ret == JOptionPane.OK_OPTION) {
+                            password = new String(passwordField.getPassword());
                         }
+                        try {
+                            ar = Authentication.checkAccount(this.account.getUsername(), password);
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+
+                    String authKey = App.settings.apiCallReturn(
+                            this.account.getMinecraftUsername(), "checkauth", ar.getAccessToken());
+                    if (authKey.isEmpty()) {
+                        log("Auth Key Couldn't Be Set!", LogMessageType.error, false);
+                    } else {
+                        log("Auth Key Set!");
+                        setAuthKey(authKey);
                     }
                 }
             }
@@ -259,11 +296,6 @@ public class Settings {
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
         loadServerProperty(); // Get users Server preference
-        new Thread() {
-            public void run() {
-                checkAuthKey(); // Check the Auth Key
-            }
-        }.run();
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
@@ -281,6 +313,7 @@ public class Settings {
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
+        checkAuthKey(); // Check the Auth Key
     }
 
     public void setAuthKey(String authKey) {
