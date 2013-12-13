@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -41,7 +42,7 @@ public class FileChooserDialog extends JDialog {
     private JLabel selectorLabel;
     private JComboBox<String> selector;
 
-    private File fileChosen;
+    private File[] filesChosen;
     private String[] fileOptions;
 
     private JButton bottomButton;
@@ -86,6 +87,7 @@ public class FileChooserDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser(App.settings.getBaseDir());
+                fileChooser.setMultiSelectionEnabled(true);
                 fileChooser.setFileFilter(new FileFilter() {
                     @Override
                     public String getDescription() {
@@ -107,9 +109,13 @@ public class FileChooserDialog extends JDialog {
                     }
                 });
                 fileChooser.showOpenDialog(App.settings.getParent());
-                if (fileChooser.getSelectedFile() != null) {
-                    fileChosen = fileChooser.getSelectedFile();
-                    textField.setText(fileChosen.getAbsolutePath());
+                filesChosen = fileChooser.getSelectedFiles();
+                if (filesChosen != null && filesChosen.length >= 1) {
+                    if (filesChosen.length == 1) {
+                        textField.setText(filesChosen[0].getAbsolutePath());
+                    } else {
+                        textField.setText(filesChosen.length + " Files Selected!");
+                    }
                 }
             }
         });
@@ -159,16 +165,19 @@ public class FileChooserDialog extends JDialog {
         dispose();
     }
 
-    public File getChosenFile() {
-        if (this.fileChosen == null) {
+    public ArrayList<File> getChosenFiles() {
+        ArrayList<File> files = new ArrayList<File>();
+        if (this.filesChosen == null) {
             return null;
         }
-        for (String ext : fileOptions) {
-            if (this.fileChosen.getName().endsWith(ext)) {
-                return this.fileChosen;
+        for (File file : filesChosen) {
+            for (String ext : fileOptions) {
+                if (file.getName().endsWith(ext)) {
+                    files.add(file);
+                }
             }
         }
-        return null;
+        return files;
     }
 
     public String getSelectorValue() {

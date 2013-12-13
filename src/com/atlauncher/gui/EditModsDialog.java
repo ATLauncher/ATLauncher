@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -127,31 +128,37 @@ public class EditModsDialog extends JDialog {
                         .getLocalizedString("instance.selectmodtype"), new String[] {
                         "Mods Folder", "Jar Mod", "CoreMods Mod", "Texture Pack", "Resource Pack",
                         "Shader Pack" }, new String[] { "jar", "zip", "litemod" });
-                if (fcd.getChosenFile() != null && fcd.getSelectorValue() != null) {
-                    String typeTemp = fcd.getSelectorValue();
-                    com.atlauncher.data.Type type = null;
-                    if (typeTemp.equalsIgnoreCase("Mods Folder")) {
-                        type = com.atlauncher.data.Type.mods;
-                    } else if (typeTemp.equalsIgnoreCase("Jar Mod")) {
-                        type = com.atlauncher.data.Type.jar;
-                    } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
-                        type = com.atlauncher.data.Type.coremods;
-                    } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
-                        type = com.atlauncher.data.Type.texturepack;
-                    } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
-                        type = com.atlauncher.data.Type.resourcepack;
-                    } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
-                        type = com.atlauncher.data.Type.shaderpack;
-                    }
-                    if (type != null) {
-                        DisableableMod mod = new DisableableMod(fcd.getChosenFile().getName(),
-                                "Custom", true, fcd.getChosenFile().getName(), type, null, null,
-                                true);
-                        if (Utils.copyFile(fcd.getChosenFile(), instance.getDisabledModsDirectory())) {
-                            instance.getInstalledMods().add(mod);
-                            disabledMods.add(new ModsJCheckBox(mod));
-                            reloadPanels();
+                ArrayList<File> files = fcd.getChosenFiles();
+                if (files != null && files.size() >= 1) {
+                    boolean reload = false;
+                    for (File file : files) {
+                        String typeTemp = fcd.getSelectorValue();
+                        com.atlauncher.data.Type type = null;
+                        if (typeTemp.equalsIgnoreCase("Mods Folder")) {
+                            type = com.atlauncher.data.Type.mods;
+                        } else if (typeTemp.equalsIgnoreCase("Jar Mod")) {
+                            type = com.atlauncher.data.Type.jar;
+                        } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
+                            type = com.atlauncher.data.Type.coremods;
+                        } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
+                            type = com.atlauncher.data.Type.texturepack;
+                        } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
+                            type = com.atlauncher.data.Type.resourcepack;
+                        } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
+                            type = com.atlauncher.data.Type.shaderpack;
                         }
+                        if (type != null) {
+                            DisableableMod mod = new DisableableMod(file.getName(), "Custom", true,
+                                    file.getName(), type, null, null, true);
+                            if (Utils.copyFile(file, instance.getDisabledModsDirectory())) {
+                                instance.getInstalledMods().add(mod);
+                                disabledMods.add(new ModsJCheckBox(mod));
+                                reload = true;
+                            }
+                        }
+                    }
+                    if (reload) {
+                        reloadPanels();
                     }
                 }
             }
