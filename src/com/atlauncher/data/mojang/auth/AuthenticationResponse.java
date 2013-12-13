@@ -52,6 +52,10 @@ public class AuthenticationResponse {
     }
 
     public boolean hasError() {
+        if(this.selectedProfile==null){
+            this.error = "There are no copies of Minecraft associated with this account!";
+            this.errorMessage = "There are no copies of Minecraft associated with this account!";
+        }
         return this.errorMessage != null;
     }
 
