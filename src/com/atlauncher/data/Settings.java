@@ -256,7 +256,6 @@ public class Settings {
                     }
                 }
             }
-            saveProperties();
         } else {
             log("Auth Key Valid!");
         }
@@ -327,6 +326,7 @@ public class Settings {
 
     public void setAuthKey(String authKey) {
         this.authKey = authKey;
+        saveProperties();
     }
 
     public void checkResources() {
@@ -1023,6 +1023,10 @@ public class Settings {
         } catch (IOException e) {
             logStackTrace(e);
         }
+    }
+
+    public void addAccount(Account account) {
+        this.accounts.add(account);
     }
 
     /**

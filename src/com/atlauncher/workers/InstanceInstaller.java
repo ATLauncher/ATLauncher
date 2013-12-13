@@ -943,7 +943,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         // Download the configs zip file
         fireTask(App.settings.getLocalizedString("instance.downloadingconfigs"));
         File configs = new File(App.settings.getTempDir(), "Configs.zip");
-        String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
+        String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion()
+                + "/Configs.zip";
         Downloadable configsDownload = new Downloadable(path, configs, null, this, true);
         this.totalBytes = configsDownload.getFilesize();
         this.downloadedBytes = 0;

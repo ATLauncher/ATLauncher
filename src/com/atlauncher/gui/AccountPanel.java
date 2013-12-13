@@ -223,7 +223,7 @@ public class AccountPanel extends JPanel {
                         if (accountsComboBox.getSelectedIndex() == 0) {
                             account = new Account(username, password, resp.getSelectedProfile()
                                     .getName(), remember);
-                            App.settings.getAccounts().add(account);
+                            App.settings.addAccount(account);
                             App.settings.log("Added Account " + account);
                             String[] options = { App.settings.getLocalizedString("common.yes"),
                                     App.settings.getLocalizedString("common.no") };
