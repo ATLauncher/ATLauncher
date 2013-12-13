@@ -1308,23 +1308,24 @@ public class Settings {
                     while ((obj = objIn.readObject()) != null) {
                         if (obj instanceof Instance) {
                             File dir = new File(getInstancesDir(), ((Instance) obj).getSafeName());
-                            if (dir.exists()) {
-                                Instance instance = (Instance) obj;
-                                if (!instance.hasBeenConverted()) {
-                                    log("Instance "
-                                            + instance.getName()
-                                            + " is being converted! This is normal and should only appear once!",
-                                            LogMessageType.warning, false);
-                                    instance.convert();
-                                    wasConversion = true;
-                                }
-                                if (!instance.getDisabledModsDirectory().exists()) {
-                                    instance.getDisabledModsDirectory().mkdir();
-                                }
-                                instances.add(instance);
-                                if (isPackByName(instance.getPackName())) {
-                                    instance.setRealPack(getPackByName(instance.getPackName()));
-                                }
+                            Instance instance = (Instance) obj;
+                            if (!instance.hasBeenConverted()) {
+                                log("Instance "
+                                        + instance.getName()
+                                        + " is being converted! This is normal and should only appear once!",
+                                        LogMessageType.warning, false);
+                                instance.convert();
+                                wasConversion = true;
+                            }
+                            if (!instance.getDisabledModsDirectory().exists()) {
+                                instance.getDisabledModsDirectory().mkdir();
+                            }
+                            instances.add(instance);
+                            if (isPackByName(instance.getPackName())) {
+                                instance.setRealPack(getPackByName(instance.getPackName()));
+                            }
+                            if (!dir.exists()) {
+                                instance.setUnplayable();
                             }
                         }
                     }
