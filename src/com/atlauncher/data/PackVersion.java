@@ -24,6 +24,10 @@ public class PackVersion {
     public String getVersion() {
         return this.version;
     }
+    
+    public String getSafeVersion() {
+        return this.version.replaceAll("[^A-Za-z0-9]", "");
+    }
 
     public void setMinecraftVesion() {
         try {

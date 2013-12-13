@@ -28,7 +28,7 @@ public class MinecraftVersion {
         File versionFile = new File(App.settings.getVersionsDir(), this.version + ".json");
         Downloadable download = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/"
                 + this.version + "/" + this.version + ".json"), versionFile, null, null, false);
-        if (!versionFile.exists()) {
+        if (download.needToDownload()) {
             download.download(false);
         }
         try {

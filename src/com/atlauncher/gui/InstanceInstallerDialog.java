@@ -258,8 +258,7 @@ public class InstanceInstallerDialog extends JDialog {
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller((isServer ? ""
-                        : instanceNameField.getText()), pack, version.getVersion(), version
-                        .getMinecraftVersion(), isReinstall, isServer) {
+                        : instanceNameField.getText()), pack, version, isReinstall, isServer) {
 
                     protected void done() {
                         Boolean success = false;
@@ -325,7 +324,7 @@ public class InstanceInstallerDialog extends JDialog {
                                         + App.settings.getLocalizedString("common.installed");
                                 if (isReinstall) {
                                     instance.setVersion(version.getVersion());
-                                    instance.setMinecraftVersion(this.getMinecraftVersion()
+                                    instance.setMinecraftVersion(version.getMinecraftVersion()
                                             .getVersion());
                                     instance.setModsInstalled(this.getModsInstalled());
                                     instance.setJarOrder(this.getJarOrder());
@@ -334,7 +333,8 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setMinecraftArguments(this.getMinecraftArguments());
                                     instance.setExtraArguments(this.getExtraArguments());
                                     instance.setMainClass(this.getMainClass());
-                                    instance.setAssets(this.getAssets());
+                                    instance.setAssets(version.getMinecraftVersion()
+                                            .getMojangVersion().getAssets());
                                     if (version.isDev()) {
                                         instance.setDevVersion();
                                     } else {
@@ -349,15 +349,18 @@ public class InstanceInstallerDialog extends JDialog {
                                     App.settings.getInstances().add(
                                             new Instance(instanceNameField.getText(), pack
                                                     .getName(), pack, installForMe.isSelected(),
-                                                    version.getVersion(), this
+                                                    version.getVersion(), version
                                                             .getMinecraftVersion().getVersion(),
                                                     this.getMemory(), this.getPermGen(), this
                                                             .getModsInstalled(),
                                                     this.getJarOrder(), this.getLibrariesNeeded(),
                                                     this.getExtraArguments(), this
                                                             .getMinecraftArguments(), this
-                                                            .getMainClass(), this.getAssets(),
-                                                    version.isDev(), !this.isLegacy()));
+                                                            .getMainClass(), version
+                                                            .getMinecraftVersion()
+                                                            .getMojangVersion().getAssets(),
+                                                    version.isDev(), !version.getMinecraftVersion()
+                                                            .isLegacy()));
                                 }
                                 App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();

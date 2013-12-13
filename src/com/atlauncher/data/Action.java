@@ -71,7 +71,7 @@ public class Action {
                                 instanceInstaller.getModsDirectory(), saveAs));
                         break;
                     case coremods:
-                        if (instanceInstaller.getMinecraftVersion().usesCoreMods()) {
+                        if (instanceInstaller.getVersion().getMinecraftVersion().usesCoreMods()) {
                             Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(
                                     instanceInstaller.getCoreModsDirectory(), saveAs));
                         } else {

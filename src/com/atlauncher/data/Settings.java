@@ -6,8 +6,8 @@
  */
 package com.atlauncher.data;
 
-import java.awt.Dialog.ModalityType;
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.ComponentAdapter;
@@ -68,7 +68,6 @@ import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.gui.AuthKeySetupDialog;
 import com.atlauncher.gui.BottomBar;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
@@ -167,6 +166,7 @@ public class Settings {
     }
 
     public void checkAuthKey() {
+        log("[Background] Checking Auth Key Started!");
         if (getAccounts().size() == 0) {
             return; // No accounts added so don't check
         }
@@ -260,6 +260,7 @@ public class Settings {
         } else {
             log("Auth Key Valid!");
         }
+        log("[Background] Checking Auth Key Finished!");
     }
 
     public void setupFiles() {
@@ -316,7 +317,11 @@ public class Settings {
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
-        checkAuthKey(); // Check the Auth Key
+        new Thread() {
+            public void run() {
+                checkAuthKey(); // Check the Auth Key
+            }
+        }.start();
     }
 
     public void setAuthKey(String authKey) {
@@ -1158,6 +1163,7 @@ public class Settings {
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         }
+        log("[Background] Checking Minecraft Versions Started");
         ExecutorService executor = Executors.newFixedThreadPool(8);
         for (final MinecraftVersion mv : this.minecraftVersions) {
             executor.execute(new Runnable() {
@@ -1167,6 +1173,12 @@ public class Settings {
                 }
             });
         }
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                log("[Background] Checking Minecraft Versions Complete");
+            }
+        });
         executor.shutdown();
         while (!executor.isShutdown()) {
         }

@@ -654,7 +654,7 @@ public class Mod {
                 Utils.copyFile(fileLocation, installer.getPluginsDirectory());
                 break;
             case coremods:
-                if (installer.getMinecraftVersion().usesCoreMods()) {
+                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                     Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
                 } else {
                     Utils.copyFile(fileLocation, installer.getModsDirectory());
@@ -673,7 +673,7 @@ public class Mod {
                         this.extractFolder);
                 switch (extractTo) {
                     case coremods:
-                        if (installer.getMinecraftVersion().usesCoreMods()) {
+                        if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                             Utils.copyDirectory(folder, installer.getCoreModsDirectory());
                         } else {
                             Utils.copyDirectory(folder, installer.getModsDirectory());
@@ -700,13 +700,13 @@ public class Mod {
                     switch (decompType) {
                         case coremods:
                             if (tempFileDecomp.isFile()) {
-                                if (installer.getMinecraftVersion().usesCoreMods()) {
+                                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                                     Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
                                 } else {
                                     Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
                                 }
                             } else {
-                                if (installer.getMinecraftVersion().usesCoreMods()) {
+                                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                                     Utils.copyDirectory(tempFileDecomp,
                                             installer.getCoreModsDirectory());
                                 } else {
@@ -808,7 +808,7 @@ public class Mod {
                 base = installer.getPluginsDirectory();
                 break;
             case coremods:
-                if (installer.getMinecraftVersion().usesCoreMods()) {
+                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                     base = installer.getCoreModsDirectory();
                 } else {
                     base = installer.getModsDirectory();

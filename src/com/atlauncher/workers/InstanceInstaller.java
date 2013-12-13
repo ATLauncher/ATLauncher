@@ -44,9 +44,9 @@ import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
-import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.mojang.AssetIndex;
 import com.atlauncher.data.mojang.AssetObject;
@@ -55,7 +55,6 @@ import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.data.mojang.Library;
 import com.atlauncher.data.mojang.MojangConstants;
-import com.atlauncher.data.mojang.Version;
 import com.atlauncher.gui.ModsChooser;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
@@ -68,11 +67,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private String instanceName;
     private Pack pack;
-    private String version;
-    private Version mojangVersion;
+    private PackVersion version;
     private boolean isReinstall;
     private boolean isServer;
-    private MinecraftVersion minecraftVersion;
     private String jarOrder;
     private boolean instanceIsCorrupt = false; // If the instance should be set as corrupt
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
@@ -104,12 +101,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private final Gson gson; // GSON Parser
     private ArrayList<String> forgeLibraries = new ArrayList<String>();
 
-    public InstanceInstaller(String instanceName, Pack pack, String version,
-            MinecraftVersion minecraftVersion, boolean isReinstall, boolean isServer) {
+    public InstanceInstaller(String instanceName, Pack pack, PackVersion version,
+            boolean isReinstall, boolean isServer) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
-        this.minecraftVersion = minecraftVersion;
         this.isReinstall = isReinstall;
         this.isServer = isServer;
         if (isServer) {
@@ -132,7 +128,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public boolean isLegacy() {
-        return this.minecraftVersion.isLegacy();
+        return this.version.getMinecraftVersion().isLegacy();
     }
 
     public String getInstanceName() {
@@ -150,34 +146,34 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public File getRootDirectory() {
         if (isServer) {
             return new File(App.settings.getServersDir(), pack.getSafeName() + "_"
-                    + version.replaceAll("[^A-Za-z0-9]", ""));
+                    + version.getSafeVersion());
         }
         return new File(App.settings.getInstancesDir(), getInstanceSafeName());
     }
 
     public File getTempDirectory() {
         return new File(App.settings.getTempDir(), pack.getSafeName() + "_"
-                + version.replaceAll("[^A-Za-z0-9]", ""));
+                + version.getSafeVersion());
     }
 
     public File getTempJarDirectory() {
         return new File(App.settings.getTempDir(), pack.getSafeName() + "_"
-                + version.replaceAll("[^A-Za-z0-9]", "") + "_JarTemp");
+                + version.getSafeVersion() + "_JarTemp");
     }
 
     public File getTempActionsDirectory() {
         return new File(App.settings.getTempDir(), pack.getSafeName() + "_"
-                + version.replaceAll("[^A-Za-z0-9]", "") + "_ActionsTemp");
+                + version.getSafeVersion() + "_ActionsTemp");
     }
 
     public File getTempTexturePackDirectory() {
         return new File(App.settings.getTempDir(), pack.getSafeName() + "_"
-                + version.replaceAll("[^A-Za-z0-9]", "") + "_TexturePackTemp");
+                + version.getSafeVersion() + "_TexturePackTemp");
     }
 
     public File getTempResourcePackDirectory() {
         return new File(App.settings.getTempDir(), pack.getSafeName() + "_"
-                + version.replaceAll("[^A-Za-z0-9]", "") + "_ResourcePackTemp");
+                + version.getSafeVersion() + "_ResourcePackTemp");
     }
 
     public File getLibrariesDirectory() {
@@ -205,7 +201,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public File getDependencyDirectory() {
-        return new File(getModsDirectory(), this.minecraftVersion.getVersion());
+        return new File(getModsDirectory(), this.version.getMinecraftVersion().getVersion());
     }
 
     public File getPluginsDirectory() {
@@ -239,9 +235,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.actions.size() != 0;
     }
 
+    public PackVersion getVersion() {
+        return this.getVersion();
+    }
+
     public File getMinecraftJar() {
         if (isServer) {
-            return new File(getRootDirectory(), "minecraft_server." + minecraftVersion + ".jar");
+            return new File(getRootDirectory(), "minecraft_server."
+                    + this.version.getMinecraftVersion().getVersion() + ".jar");
         }
         return new File(getBinDirectory(), "minecraft.jar");
     }
@@ -388,7 +389,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         for (File directory : directories) {
             directory.mkdir();
         }
-        if (minecraftVersion.usesCoreMods()) {
+        if (this.version.getMinecraftVersion().usesCoreMods()) {
             getCoreModsDirectory().mkdir();
         }
     }
@@ -479,7 +480,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(pack.getXML(version, false)));
+            InputSource is = new InputSource(new StringReader(pack.getXML(
+                    this.version.getVersion(), false)));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("action");
@@ -717,7 +719,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 Utils.copyFile(new File(App.settings.getLibrariesDir(), libraryFile),
                         getBinDirectory());
             }
-            for (Library library : this.mojangVersion.getLibraries()) {
+            for (Library library : this.version.getMinecraftVersion().getMojangVersion()
+                    .getLibraries()) {
                 if (library.shouldInstall()) {
                     if (library.shouldExtract()) {
                         Utils.unzip(library.getFile(), getNativesDirectory(),
@@ -730,10 +733,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         if (isServer) {
             Utils.copyFile(new File(App.settings.getJarsDir(), "minecraft_server."
-                    + this.minecraftVersion + ".jar"), getRootDirectory());
+                    + this.version.getMinecraftVersion().getVersion() + ".jar"), getRootDirectory());
         } else {
-            Utils.copyFile(new File(App.settings.getJarsDir(), this.minecraftVersion + ".jar"),
-                    new File(getBinDirectory(), "minecraft.jar"), true);
+            Utils.copyFile(new File(App.settings.getJarsDir(), this.version.getMinecraftVersion()
+                    .getVersion() + ".jar"), new File(getBinDirectory(), "minecraft.jar"), true);
         }
         fireSubProgress(-1); // Hide the subprogress bar
     }
@@ -743,7 +746,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         File objectsFolder = new File(App.settings.getResourcesDir(), "objects");
         File indexesFolder = new File(App.settings.getResourcesDir(), "indexes");
         File virtualFolder = new File(App.settings.getResourcesDir(), "virtual");
-        String assetVersion = this.mojangVersion.getAssets();
+        String assetVersion = this.version.getMinecraftVersion().getMojangVersion().getAssets();
         File virtualRoot = new File(virtualFolder, assetVersion);
         File indexFile = new File(indexesFolder, assetVersion + ".json");
         objectsFolder.mkdirs();
@@ -786,13 +789,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return downloads;
     }
 
-    public Version getVersion() {
-        String url = MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.minecraftVersion + "/"
-                + this.minecraftVersion + ".json");
-        Downloadable versionJson = new Downloadable(url, false);
-        return gson.fromJson(versionJson.getContents(), Version.class);
-    }
-
     @SuppressWarnings("unchecked")
     public ArrayList<Downloadable> getLibraries() {
         ArrayList<Downloadable> libraries = new ArrayList<Downloadable>();
@@ -801,7 +797,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(pack.getXML(version, false)));
+            InputSource is = new InputSource(new StringReader(pack.getXML(
+                    this.version.getVersion(), false)));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("library");
@@ -868,7 +865,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // Now read in the library jars needed from Mojang
         if (!isServer) {
-            for (Library library : this.mojangVersion.getLibraries()) {
+            for (Library library : this.version.getMinecraftVersion().getMojangVersion()
+                    .getLibraries()) {
                 if (library.shouldInstall()) {
                     if (!library.shouldExtract()) {
                         if (librariesNeeded == null) {
@@ -884,14 +882,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (isServer) {
-            libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE
-                    .getURL("versions/" + this.minecraftVersion + "/minecraft_server."
-                            + this.minecraftVersion + ".jar"), new File(App.settings.getJarsDir(),
-                    "minecraft_server." + this.minecraftVersion + ".jar"), null, this, false));
+            libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/"
+                    + this.version.getMinecraftVersion().getVersion() + "/minecraft_server."
+                    + this.version.getMinecraftVersion().getVersion() + ".jar"), new File(
+                    App.settings.getJarsDir(), "minecraft_server."
+                            + this.version.getMinecraftVersion().getVersion() + ".jar"), null,
+                    this, false));
         } else {
             libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/"
-                    + this.minecraftVersion + "/" + this.minecraftVersion + ".jar"), new File(
-                    App.settings.getJarsDir(), this.minecraftVersion + ".jar"), null, this, false));
+                    + this.version.getMinecraftVersion().getVersion() + "/"
+                    + this.version.getMinecraftVersion().getVersion() + ".jar"), new File(
+                    App.settings.getJarsDir(), this.version.getMinecraftVersion().getVersion()
+                            + ".jar"), null, this, false));
         }
         return libraries;
     }
@@ -974,7 +976,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else if (forge != null) {
             return forge.getFile();
         } else {
-            return "minecraft_server." + minecraftVersion + ".jar";
+            return "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar";
         }
     }
 
@@ -1014,10 +1016,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.instanceIsCorrupt;
     }
 
-    public MinecraftVersion getMinecraftVersion() {
-        return this.minecraftVersion;
-    }
-
     public int getPermGen() {
         return this.permgen;
     }
@@ -1035,18 +1033,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public String getMinecraftArguments() {
-        return this.mojangVersion.getMinecraftArguments();
+        return this.version.getMinecraftVersion().getMojangVersion().getMinecraftArguments();
     }
 
     public String getMainClass() {
         if (this.mainClass == null) {
-            return this.mojangVersion.getMainClass();
+            return this.version.getMinecraftVersion().getMojangVersion().getMainClass();
         }
         return this.mainClass;
-    }
-
-    public String getAssets() {
-        return this.mojangVersion.getAssets();
     }
 
     public ArrayList<Mod> sortMods(ArrayList<Mod> original) {
@@ -1072,12 +1066,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     protected Boolean doInBackground() throws Exception {
         if (this.isReinstall) {
-            if (this.pack.getUpdateMessage(this.version) != null) {
+            if (this.pack.getUpdateMessage(this.version.getVersion()) != null) {
                 String[] options = { App.settings.getLocalizedString("common.ok"),
                         App.settings.getLocalizedString("common.cancel") };
                 int ret = JOptionPane.showOptionDialog(
                         App.settings.getParent(),
-                        "<html>" + this.pack.getUpdateMessage(this.version) + "</html>",
+                        "<html>" + this.pack.getUpdateMessage(this.version.getVersion())
+                                + "</html>",
                         App.settings.getLocalizedString("common.reinstalling") + " "
                                 + this.pack.getName(), JOptionPane.DEFAULT_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
@@ -1089,12 +1084,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         } else {
-            if (this.pack.getInstallMessage(this.version) != null) {
+            if (this.pack.getInstallMessage(this.version.getVersion()) != null) {
                 String[] options = { App.settings.getLocalizedString("common.ok"),
                         App.settings.getLocalizedString("common.cancel") };
                 int ret = JOptionPane.showOptionDialog(
                         App.settings.getParent(),
-                        "<html>" + this.pack.getInstallMessage(this.version) + "</html>",
+                        "<html>" + this.pack.getInstallMessage(this.version.getVersion())
+                                + "</html>",
                         App.settings.getLocalizedString("common.installing") + " "
                                 + this.pack.getName(), JOptionPane.DEFAULT_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
@@ -1106,14 +1102,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         }
-        this.allMods = sortMods(this.pack.getMods(this.version, isServer));
+        this.allMods = sortMods(this.pack.getMods(this.version.getVersion(), isServer));
         loadActions(); // Load all the actions up for the pack
-        this.permgen = this.pack.getPermGen(this.version);
-        this.memory = this.pack.getMemory(this.version);
-        if (this.minecraftVersion == null) {
-            this.cancel(true);
-            return false;
-        }
+        this.permgen = this.pack.getPermGen(this.version.getVersion());
+        this.memory = this.pack.getMemory(this.version.getVersion());
         selectedMods = new ArrayList<Mod>();
         if (allMods.size() != 0 && hasOptionalMods()) {
             ModsChooser modsChooser = new ModsChooser(this);
@@ -1171,9 +1163,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         makeDirectories();
         addPercent(5);
-        this.mojangVersion = getVersion();
-        this.mainClass = pack.getMainClass(this.version);
-        this.extraArguments = pack.getExtraArguments(this.version);
+        this.mainClass = pack.getMainClass(this.version.getVersion());
+        this.extraArguments = pack.getExtraArguments(this.version.getVersion());
         downloadResources(); // Download Minecraft Resources
         if (isCancelled()) {
             return false;
