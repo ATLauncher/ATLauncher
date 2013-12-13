@@ -539,7 +539,7 @@ public class Settings {
                 loadPacks(); // Load the Packs available in the Launcher
                 loadUsers(); // Load the Testers and Allowed Players for the packs
                 reloadPacksPanel(); // Reload packs panel
-                loadAddons(); // Load the Addons available in the Launcher
+                //loadAddons(); // Load the Addons available in the Launcher
                 loadInstances(); // Load the users installed Instances
                 reloadInstancesPanel(); // Reload instances panel
                 dialog.setVisible(false); // Remove the dialog
