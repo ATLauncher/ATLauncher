@@ -567,9 +567,9 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
-                resourcesDir, librariesDir, languagesDir, downloadsDir, instancesDir, serversDir,
-                tempDir };
+        File[] files = { backupsDir, configsDir, jsonDir, commonConfigsDir, imagesDir, skinsDir,
+                jarsDir, resourcesDir, librariesDir, languagesDir, downloadsDir, instancesDir,
+                serversDir, tempDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
