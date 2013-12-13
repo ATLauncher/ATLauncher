@@ -530,16 +530,20 @@ public class Settings {
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
         Thread updateThread = new Thread() {
             public void run() {
-                downloadUpdatedFiles(); // Download updated files
+                if (hasUpdatedFiles()) {
+                    downloadUpdatedFiles(); // Downloads updated files on the server
+                }
                 if (launcherHasUpdate()) {
                     downloadUpdate(); // Update the Launcher
                 }
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
+                loadLanguages(); // Load the Languages available in the Launcher
+                loadMinecraftVersions(); // Load info about the different Minecraft versions
                 loadPacks(); // Load the Packs available in the Launcher
-                loadUsers(); // Load the Testers and Allowed Players for the packs
                 reloadPacksPanel(); // Reload packs panel
-                //loadAddons(); // Load the Addons available in the Launcher
+                loadUsers(); // Load the Testers and Allowed Players for the packs
+                // loadAddons(); // Load the Addons available in the Launcher
                 loadInstances(); // Load the users installed Instances
                 reloadInstancesPanel(); // Reload instances panel
                 dialog.setVisible(false); // Remove the dialog
