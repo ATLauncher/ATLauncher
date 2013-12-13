@@ -317,6 +317,7 @@ public class Settings {
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
+        checkForXML(); // Check for old XML files
         new Thread() {
             public void run() {
                 checkAuthKey(); // Check the Auth Key
@@ -356,6 +357,14 @@ public class Settings {
             dialog.addThread(thread);
             dialog.start();
 
+        }
+    }
+
+    public void checkForXML() {
+        for (File file : this.configsDir.listFiles()) {
+            if (file.isFile() && file.getName().endsWith(".xml")) {
+                Utils.delete(file);
+            }
         }
     }
 
