@@ -7,6 +7,7 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -24,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
@@ -84,6 +86,9 @@ public class InstanceDisplay extends CollapsiblePanel {
         instanceDescription.setLineWrap(true);
         instanceDescription.setWrapStyleWord(true);
         instanceDescription.setText(instance.getPackDescription());
+        JScrollPane instanceDescriptionScoller = new JScrollPane(instanceDescription,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        instanceDescriptionScoller.getVerticalScrollBar().setUnitIncrement(16);
 
         instanceActions = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         instanceActions.setEnabled(false);
@@ -441,9 +446,10 @@ public class InstanceDisplay extends CollapsiblePanel {
         // Add panels to other panels
 
         leftPanel.add(instanceImage, BorderLayout.CENTER);
-        rightPanel.add(instanceDescription, BorderLayout.CENTER);
+        rightPanel.add(instanceDescriptionScoller, BorderLayout.CENTER);
         rightPanel.add(instanceActions, BorderLayout.SOUTH);
 
         panel.add(splitPane, BorderLayout.CENTER);
+        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 160));
     }
 }
