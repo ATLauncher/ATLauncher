@@ -182,7 +182,7 @@ public class Settings {
                 connection.setDefaultUseCaches(false);
                 connection.setConnectTimeout(5000);
                 connection.setRequestProperty("Accept-Encoding", "gzip");
-                connection.setRequestProperty("User-Agent", this.userAgent);
+                connection.setRequestProperty("User-Agent", getUserAgent());
                 connection.setRequestProperty("Auth-Key", this.authKey);
                 connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
                 connection.setRequestProperty("Expires", "0");
@@ -2395,7 +2395,7 @@ public class Settings {
     }
 
     public String getUserAgent() {
-        return this.userAgent;
+        return this.userAgent + " ATLauncher/" + this.version;
     }
 
     public String getLocalizedString(String string) {
