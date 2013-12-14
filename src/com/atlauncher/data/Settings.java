@@ -573,6 +573,13 @@ public class Settings {
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
+            } else {
+                if (!file.isDirectory()) {
+                    if (file.delete()) {
+                        file.mkdir();
+                    }
+
+                }
             }
         }
     }
