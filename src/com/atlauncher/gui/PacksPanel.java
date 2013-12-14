@@ -157,7 +157,7 @@ public class PacksPanel extends JPanel {
                     }
 
                     if (isPrivatePacks) {
-                        if (pack.isPrivate()) {
+                        if (!pack.isPrivate()) {
                             showPack = false;
                         }
                     }
