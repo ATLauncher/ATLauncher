@@ -80,6 +80,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private boolean savedPortalGunSounds = false; // If Portal Gun Sounds was found and saved
     private boolean extractedTexturePack = false; // If there is an extracted texturepack
     private boolean extractedResourcePack = false; // If there is an extracted resourcepack
+    private String caseAllFiles = null;
     private int permgen = 0;
     private int memory = 0;
     private String librariesNeeded = null;
@@ -741,6 +742,25 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
+    private void doCaseConversions(File dir) {
+        for (File file : dir.listFiles()) {
+            if (file.isFile()
+                    && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file
+                            .getName().endsWith("litemod"))) {
+                if (this.caseAllFiles != null) {
+                    if (this.caseAllFiles.equalsIgnoreCase("upper")) {
+                        file.renameTo(new File(file.getParentFile(), file.getName()
+                                .substring(0, file.getName().lastIndexOf(".")).toUpperCase()
+                                + file.getName().substring(file.getName().lastIndexOf("."),
+                                        file.getName().length())));
+                    } else if (this.caseAllFiles.equalsIgnoreCase("lower")) {
+                        file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
+                    }
+                }
+            }
+        }
+    }
+
     private ArrayList<Downloadable> getResources() {
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>(); // All the files
         File objectsFolder = new File(App.settings.getResourcesDir(), "objects");
@@ -1017,6 +1037,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.instanceIsCorrupt;
     }
 
+    public String getCaseAllFiles() {
+        return this.caseAllFiles;
+    }
+
     public int getPermGen() {
         return this.permgen;
     }
@@ -1107,6 +1131,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         loadActions(); // Load all the actions up for the pack
         this.permgen = this.pack.getPermGen(this.version.getVersion());
         this.memory = this.pack.getMemory(this.version.getVersion());
+        this.caseAllFiles = this.pack.getCaseAllFiles(this.version.getVersion());
         selectedMods = new ArrayList<Mod>();
         if (allMods.size() != 0 && hasOptionalMods()) {
             ModsChooser modsChooser = new ModsChooser(this);
@@ -1209,6 +1234,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (isCancelled()) {
             return false;
         }
+        doCaseConversions(getModsDirectory());
         if (isServer && hasJarMods()) {
             fireTask(App.settings.getLocalizedString("server.zippingjar"));
             fireSubProgressUnknown();
