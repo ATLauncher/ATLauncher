@@ -467,10 +467,13 @@ public class Settings {
      * This checks the servers hashes.xml file and gets the files that the Launcher needs to have
      */
     private ArrayList<Downloadable> getLauncherFiles() {
-        getFileHashes();
+        getFileHashes(); // Get File Hashes
         if (this.launcherFiles == null) {
             this.offlineMode = true;
             return null;
+        }
+        if (launcherHasUpdate()) {
+            downloadUpdate(); // Update the Launcher
         }
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
         for (DownloadableFile file : this.launcherFiles) {
@@ -484,9 +487,6 @@ public class Settings {
     public void downloadUpdatedFiles() {
         ArrayList<Downloadable> downloads = getLauncherFiles();
         if (downloads != null) {
-            if (launcherHasUpdate()) {
-                downloadUpdate(); // Update the Launcher
-            }
             ExecutorService executor = Executors.newFixedThreadPool(8);
             for (final Downloadable download : downloads) {
                 executor.execute(new Runnable() {
@@ -541,9 +541,6 @@ public class Settings {
             public void run() {
                 if (hasUpdatedFiles()) {
                     downloadUpdatedFiles(); // Downloads updated files on the server
-                }
-                if (launcherHasUpdate()) {
-                    downloadUpdate(); // Update the Launcher
                 }
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
