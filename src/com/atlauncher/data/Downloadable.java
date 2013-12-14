@@ -15,6 +15,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import com.atlauncher.App;
@@ -195,7 +198,8 @@ public class Downloadable {
                 this.connection.connect();
                 if (this.connection.getResponseCode() / 100 != 2) {
                     throw new IOException(this.url + " returned response code "
-                            + this.connection.getResponseCode());
+                            + this.connection.getResponseCode() + " with message of "
+                            + this.connection.getResponseMessage());
                 }
             } catch (IOException e) {
                 if (this.url.contains("Minecraft.Resources")) {
