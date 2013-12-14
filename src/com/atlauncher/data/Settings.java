@@ -299,9 +299,6 @@ public class Settings {
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
         loadServerProperty(); // Get users Server preference
-        if (launcherHasUpdate()) {
-            downloadUpdate(); // Update the Launcher
-        }
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
@@ -487,6 +484,9 @@ public class Settings {
     public void downloadUpdatedFiles() {
         ArrayList<Downloadable> downloads = getLauncherFiles();
         if (downloads != null) {
+            if (launcherHasUpdate()) {
+                downloadUpdate(); // Update the Launcher
+            }
             ExecutorService executor = Executors.newFixedThreadPool(8);
             for (final Downloadable download : downloads) {
                 executor.execute(new Runnable() {
