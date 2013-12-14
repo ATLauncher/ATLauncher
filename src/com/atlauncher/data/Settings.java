@@ -2395,7 +2395,7 @@ public class Settings {
     }
 
     public String getUserAgent() {
-        return this.userAgent + " ATLauncher/" + this.version;
+        return this.userAgent + " ATLauncher/" + this.version.replace("%VERSION", "3.1");
     }
 
     public String getLocalizedString(String string) {
