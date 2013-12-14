@@ -188,7 +188,7 @@ public class Settings {
                 connection.setRequestProperty("Expires", "0");
                 connection.setRequestProperty("Pragma", "no-cache");
                 connection.connect();
-                if (connection.getResponseCode() == 403) {
+                if (connection.getResponseCode() == 401) {
                     log("Invalid Auth Key!", LogMessageType.error, false);
                     isValid = false;
                 }
