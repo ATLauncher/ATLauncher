@@ -299,11 +299,11 @@ public class Settings {
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
         loadServerProperty(); // Get users Server preference
-        if (hasUpdatedFiles()) {
-            downloadUpdatedFiles(); // Downloads updated files on the server
-        }
         if (launcherHasUpdate()) {
             downloadUpdate(); // Update the Launcher
+        }
+        if (hasUpdatedFiles()) {
+            downloadUpdatedFiles(); // Downloads updated files on the server
         }
         loadNews(); // Load the news
         loadLanguages(); // Load the Languages available in the Launcher
