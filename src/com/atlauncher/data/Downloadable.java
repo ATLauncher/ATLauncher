@@ -197,9 +197,11 @@ public class Downloadable {
                 this.connection.setRequestProperty("Pragma", "no-cache");
                 this.connection.connect();
                 if (this.connection.getResponseCode() / 100 != 2) {
-                    throw new IOException(this.url + " returned response code "
-                            + this.connection.getResponseCode() + " with message of "
-                            + this.connection.getResponseMessage());
+                    throw new IOException(this.url
+                            + " returned response code "
+                            + this.connection.getResponseCode()
+                            + (this.connection.getResponseMessage() != null ? " with message of "
+                                    + this.connection.getResponseMessage() : ""));
                 }
             } catch (IOException e) {
                 if (this.url.contains("Minecraft.Resources")) {
