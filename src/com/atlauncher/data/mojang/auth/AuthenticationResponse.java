@@ -54,7 +54,6 @@ public class AuthenticationResponse {
 
     public boolean hasError() {
         if (this.errorMessage == null && this.selectedProfile == null) {
-            System.out.println(Settings.gson.toJson(this));
             this.error = "There are no copies of Minecraft associated with this account!";
             this.errorMessage = "There are no copies of Minecraft associated with this account!";
         }

@@ -200,6 +200,15 @@ public class Downloadable {
                 this.connection.connect();
                 if (this.connection.getResponseCode() / 100 != 2) {
                     if (this.connection.getResponseCode() == 401 && this.isATLauncherDownload) {
+                        App.settings
+                                .log(this.url
+                                        + " returned response code "
+                                        + this.connection.getResponseCode()
+                                        + (this.connection.getResponseMessage() != null ? " with message of "
+                                                + this.connection.getResponseMessage()
+                                                : "") + " and auth key error of "
+                                        + this.connection.getHeaderField("Auth-Key-Error"),
+                                        LogMessageType.error, false);
                         if (App.settings.checkAuthKey()) {
                             this.connection = null; // Clear the connection
                             return this.getConnection(); // Try getting it again
