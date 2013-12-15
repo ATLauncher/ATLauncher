@@ -975,11 +975,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireTask(App.settings.getLocalizedString("instance.extractingconfigs"));
         Utils.unzip(configs, getRootDirectory());
         Utils.delete(configs);
-
-        // Copy over common configs if any
-        if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
-            Utils.copyDirectory(App.settings.getCommonConfigsDir(), getRootDirectory());
-        }
     }
 
     public String getServerJar() {
@@ -1273,7 +1268,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (isCancelled()) {
             return false;
         }
-        configurePack();
+        if (this.pack.hasConfigs(this.version.getVersion())) {
+            configurePack();
+        }
+        // Copy over common configs if any
+        if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
+            Utils.copyDirectory(App.settings.getCommonConfigsDir(), getRootDirectory());
+        }
         if (savedReis) {
             Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"), reis);
         }

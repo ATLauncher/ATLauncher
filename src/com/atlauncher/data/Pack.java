@@ -451,6 +451,34 @@ public class Pack {
         return null;
     }
 
+    public boolean hasConfigs(String version) {
+        String xml = getXML(version, false);
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(xml));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("noconfigs");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    NodeList nodeList1 = element.getChildNodes();
+                    System.out.println(!Boolean.parseBoolean(nodeList1.item(0).getNodeValue()));
+                    return !Boolean.parseBoolean(nodeList1.item(0).getNodeValue());
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return true;
+    }
+
     public String getColour(String version, String name) {
         String xml = getXML(version, false);
         try {
