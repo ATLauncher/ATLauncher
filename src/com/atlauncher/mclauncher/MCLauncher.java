@@ -17,6 +17,7 @@ import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
+import com.atlauncher.data.mojang.auth.UserType;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 
@@ -116,8 +117,8 @@ public class MCLauncher {
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
         arguments.add(instance.getMainClass());
-        String props = new Gson().toJson((response
-                .getUser() == null ? new HashMap() : response.getProperties()));
+        String props = new Gson().toJson((response.getUser() == null ? new HashMap() : response
+                .getProperties()));
         if (instance.hasMinecraftArguments()) {
             String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
             for (String argument : minecraftArguments) {
@@ -136,6 +137,8 @@ public class MCLauncher {
                 argument = argument.replace("${auth_uuid}", response.getSelectedProfile().getId());
                 argument = argument.replace("${auth_access_token}", response.getAccessToken());
                 argument = argument.replace("${auth_session}", response.getSession());
+                argument = argument.replace("${user_type}", (response.getSelectedProfile()
+                        .isLegacy() ? UserType.LEGACY.getName() : UserType.MOJANG.getName()));
                 arguments.add(argument);
             }
         } else {

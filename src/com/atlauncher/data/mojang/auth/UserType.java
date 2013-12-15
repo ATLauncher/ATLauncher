@@ -10,27 +10,16 @@
  */
 package com.atlauncher.data.mojang.auth;
 
-public class GameProfile {
+public enum UserType {
+    LEGACY("legacy"), MOJANG("mojang");
 
-    private final String id;
     private final String name;
-    private boolean legacy;
 
-    public GameProfile(String id, String name) {
-        this.id = id;
+    private UserType(String name) {
         this.name = name;
-    }
-
-    public String getId() {
-        return this.id;
     }
 
     public String getName() {
         return this.name;
     }
-    
-    public boolean isLegacy() {
-        return this.legacy;
-    }
-
 }
