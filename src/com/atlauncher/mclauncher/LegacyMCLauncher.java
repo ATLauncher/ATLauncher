@@ -165,7 +165,12 @@ public class LegacyMCLauncher {
             arguments.add("false"); // Not Maximised
         }
 
-        App.settings.log("Launching Minecraft with the following arguments: " + arguments);
+        String argsString = arguments.toString();
+        argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
+        argsString = argsString.replace(sess.getAccessToken(), "REDACTED");
+
+        App.settings.log("Launching Minecraft with the following arguments "
+                + "(user related stuff has been removed): " + argsString);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);

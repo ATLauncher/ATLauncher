@@ -116,14 +116,15 @@ public class MCLauncher {
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
         arguments.add(instance.getMainClass());
+        String props = new Gson().toJson((response
+                .getUser() == null ? new HashMap() : response.getProperties()));
         if (instance.hasMinecraftArguments()) {
             String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
             for (String argument : minecraftArguments) {
                 argument = argument.replace("${auth_player_name}", response.getSelectedProfile()
                         .getName());
                 argument = argument.replace("${profile_name}", instance.getName());
-                argument = argument.replace("${user_properties}", new Gson().toJson((response
-                        .getUser() == null ? new HashMap() : response.getProperties())));
+                argument = argument.replace("${user_properties}", props);
                 argument = argument.replace("${version_name}", instance.getMinecraftVersion());
                 argument = argument.replace("${game_directory}", instance.getRootDirectory()
                         .getAbsolutePath());
@@ -168,7 +169,15 @@ public class MCLauncher {
             }
         }
 
-        App.settings.log("Launching Minecraft with the following arguments: " + arguments);
+        String argsString = arguments.toString();
+        argsString = argsString.replace(response.getSelectedProfile().getName(), "REDACTED");
+        argsString = argsString.replace(response.getSelectedProfile().getId(), "REDACTED");
+        argsString = argsString.replace(response.getAccessToken(), "REDACTED");
+        argsString = argsString.replace(response.getSession(), "REDACTED");
+        argsString = argsString.replace(props, "REDACTED");
+
+        App.settings.log("Launching Minecraft with the following arguments "
+                + "(user related stuff has been removed): " + argsString);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
