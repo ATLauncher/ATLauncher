@@ -98,23 +98,6 @@ public class Authentication {
             writer.write(request.getBytes());
             writer.flush();
             writer.close();
-
-            // Read the result
-
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            } catch (IOException e) {
-                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-            }
-            response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-                response.append('\r');
-            }
-            reader.close();
-            App.settings.log(response.toString());
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
