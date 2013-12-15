@@ -328,7 +328,7 @@ public class Downloadable {
             downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to
                                              // check
         } else {
-            String fileHash;
+            String fileHash = "0";
             boolean done = false;
             while (attempts <= 3) {
                 attempts++;
@@ -354,8 +354,9 @@ public class Downloadable {
                 if (this.isATLauncherDownload) {
                     if (App.settings.getNextServer()) {
                         App.settings.log("Error downloading " + this.file.getName() + " from "
-                                + this.url + ". Trying another server!", LogMessageType.warning,
-                                false);
+                                + this.url + ". Expected hash of " + getHash() + " but got "
+                                + fileHash + " instead. Trying another server!",
+                                LogMessageType.warning, false);
                         this.url = App.settings.getFileURL(this.beforeURL);
                         this.connection = null;
                         download(downloadAsLibrary); // Redownload the file
@@ -369,7 +370,8 @@ public class Downloadable {
                     }
                 } else {
                     App.settings.log("Error downloading " + this.file.getName() + " from "
-                            + this.url + ". Cancelling install!", LogMessageType.error, false);
+                            + this.url + ". Expected hash of " + getHash() + " but got " + fileHash
+                            + " instead. Cancelling install!", LogMessageType.error, false);
                     if (this.instanceInstaller != null) {
                         instanceInstaller.cancel(true);
                     }
