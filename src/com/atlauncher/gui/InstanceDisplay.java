@@ -450,6 +450,6 @@ public class InstanceDisplay extends CollapsiblePanel {
         rightPanel.add(instanceActions, BorderLayout.SOUTH);
 
         panel.add(splitPane, BorderLayout.CENTER);
-        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 160));
+        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 180));
     }
 }
