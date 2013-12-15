@@ -22,6 +22,7 @@ public class MinecraftVersion {
     private boolean server;
     private boolean legacy;
     private boolean coremods;
+    private boolean resources;
     private Version mojangVersion;
 
     public void loadVersion() {
@@ -60,6 +61,10 @@ public class MinecraftVersion {
 
     public boolean usesCoreMods() {
         return this.coremods;
+    }
+
+    public boolean hasResources() {
+        return this.resources;
     }
 
     public String toString() {

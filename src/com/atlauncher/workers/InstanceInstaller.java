@@ -1192,9 +1192,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         addPercent(5);
         this.mainClass = pack.getMainClass(this.version.getVersion());
         this.extraArguments = pack.getExtraArguments(this.version.getVersion());
-        downloadResources(); // Download Minecraft Resources
-        if (isCancelled()) {
-            return false;
+        if (this.version.getMinecraftVersion().hasResources()) {
+            downloadResources(); // Download Minecraft Resources
+            if (isCancelled()) {
+                return false;
+            }
         }
         downloadLibraries(); // Download Libraries
         if (isCancelled()) {
