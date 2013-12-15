@@ -237,7 +237,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public PackVersion getVersion() {
-        return this.getVersion();
+        return this.version;
     }
 
     public File getMinecraftJar() {
