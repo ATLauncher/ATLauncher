@@ -28,6 +28,8 @@ public class AuthenticationResponse {
     private Map<String, Collection<String>> userProperties = new HashMap();
     private User user;
 
+    private String uuid;
+
     private String error;
     private String errorMessage;
     private String cause;
@@ -45,6 +47,14 @@ public class AuthenticationResponse {
             this.availableProfiles = new GameProfile[] { gp };
             this.userProperties = new HashMap();
         }
+    }
+
+    public String getUUID() {
+        return this.uuid;
+    }
+
+    public void setUUID(String uuid) {
+        this.uuid = uuid;
     }
 
     public void setErrorMessage(String message) {

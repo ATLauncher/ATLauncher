@@ -206,6 +206,7 @@ public class AccountPanel extends JPanel {
                                         App.settings.log("Auth Key Set!");
                                         App.settings.setAuthKey(authKey);
                                     }
+                                    Authentication.invalidateToken(resp);
                                 }
                                 dialog.setReturnValue(resp);
                             } catch (IOException e1) {

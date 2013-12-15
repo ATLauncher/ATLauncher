@@ -20,24 +20,22 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.UUID;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import com.atlauncher.App;
+import com.atlauncher.data.Settings;
 import com.atlauncher.data.mojang.auth.AuthenticationRequest;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
+import com.atlauncher.data.mojang.auth.InvalidateRequest;
 import com.google.gson.Gson;
 
 public class Authentication {
 
     public static AuthenticationResponse checkAccount(String username, String password)
             throws IOException {
+        String uuid = UUID.randomUUID() + "";
         Gson gson = new Gson();
         StringBuilder response = null;
         URL url = new URL("https://authserver.mojang.com/authenticate");
-        String request = gson.toJson(new AuthenticationRequest(username, password, UUID
-                .randomUUID() + ""));
+        String request = gson.toJson(new AuthenticationRequest(username, password, uuid));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setConnectTimeout(15000);
@@ -73,7 +71,53 @@ public class Authentication {
         reader.close();
         AuthenticationResponse result = gson.fromJson(response.toString(),
                 AuthenticationResponse.class);
+        result.setUUID(uuid);
         return result;
+    }
+
+    public static void invalidateToken(AuthenticationResponse ar) {
+        StringBuilder response;
+        try {
+            URL url = new URL("https://authserver.mojang.com/invalidate");
+            String request = Settings.gson.toJson(new InvalidateRequest(ar.getAccessToken(), ar
+                    .getUUID()));
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
+            connection.setRequestProperty("Content-Length", "" + request.getBytes().length);
+
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+            writer.write(request.getBytes());
+            writer.flush();
+            writer.close();
+
+            // Read the result
+
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            } catch (IOException e) {
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+            }
+            response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+            reader.close();
+            App.settings.log(response.toString());
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
     }
 
     public static String checkAccountOld(String username, String password) {

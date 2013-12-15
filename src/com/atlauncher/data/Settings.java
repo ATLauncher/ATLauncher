@@ -259,6 +259,7 @@ public class Settings {
                         setAuthKey(authKey);
                         return true;
                     }
+                    Authentication.invalidateToken(ar);
                 }
             }
         } else {
