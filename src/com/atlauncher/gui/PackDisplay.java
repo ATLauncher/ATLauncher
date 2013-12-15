@@ -175,6 +175,6 @@ public class PackDisplay extends CollapsiblePanel {
         rightPanel.add(packActions, BorderLayout.SOUTH);
 
         panel.add(splitPane, BorderLayout.CENTER);
-        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 160));
+        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 180));
     }
 }
