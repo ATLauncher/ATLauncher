@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.utils.Authentication;
@@ -197,9 +198,8 @@ public class AccountPanel extends JPanel {
                                         usernameField.getText(),
                                         new String(passwordField.getPassword()));
                                 if (!resp.hasError()) {
-                                    String authKey = App.settings.apiCallReturn(resp
-                                            .getSelectedProfile().getName(), "checkauth", resp
-                                            .getAccessToken());
+                                    String authKey = App.settings.getAuthKey(resp
+                                            .getSelectedProfile().getName(), resp.getAccessToken());
                                     if (authKey.isEmpty()) {
                                         resp.setErrorMessage("Auth Key Couldn't Be Set! Try Again!");
                                     } else {

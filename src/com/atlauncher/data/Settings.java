@@ -76,7 +76,6 @@ import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
@@ -251,8 +250,8 @@ public class Settings {
                         }
                     }
 
-                    String authKey = App.settings.apiCallReturn(
-                            this.account.getMinecraftUsername(), "checkauth", ar.getAccessToken());
+                    String authKey = getAuthKey(this.account.getMinecraftUsername(),
+                            ar.getAccessToken());
                     if (authKey.isEmpty()) {
                         log("Auth Key Couldn't Be Set!", LogMessageType.error, false);
                     } else {
@@ -1575,6 +1574,57 @@ public class Settings {
             saveInstances(); // Save the instancesdata file
             reloadInstancesPanel(); // Reload the instances panel
         }
+    }
+
+    public String getAuthKey(String username, String token) {
+        String response = "";
+        try {
+            String data = URLEncoder.encode("username", "UTF-8") + "="
+                    + URLEncoder.encode(username, "UTF-8");
+            data += "&" + URLEncoder.encode("token", "UTF-8") + "="
+                    + URLEncoder.encode(token, "UTF-8");
+
+            URL url = new URL(getFileURL("getauthkey.php"));
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setUseCaches(false);
+            conn.setDefaultUseCaches(false);
+            conn.setConnectTimeout(5000);
+            conn.setRequestProperty("User-Agent", getUserAgent());
+            conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+            conn.setRequestProperty("Expires", "0");
+            conn.setRequestProperty("Pragma", "no-cache");
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(data);
+            wr.flush();
+            BufferedReader rd;
+            boolean error = false;
+            try {
+                rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            } catch (IOException e) {
+                error = true;
+                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            }
+            String line;
+            while ((line = rd.readLine()) != null) {
+                if (error) {
+                    log("Error getting auth key: " + line, LogMessageType.error, false);
+                    if (getNextServer()) {
+                        return getAuthKey(username, token);
+                    }
+                } else {
+                    response += line;
+                }
+            }
+            wr.close();
+        } catch (Exception e) {
+            logStackTrace(e);
+            if (getNextServer()) {
+                return getAuthKey(username, token);
+            }
+        }
+        clearTriedServers();
+        return response;
     }
 
     public String apiCall(String username, String action, String extra1, String extra2,
