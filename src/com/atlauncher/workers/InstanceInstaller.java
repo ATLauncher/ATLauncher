@@ -1092,6 +1092,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     protected Boolean doInBackground() throws Exception {
         if (this.isReinstall) {
             if (this.pack.getUpdateMessage(this.version.getVersion()) != null) {
+                if (this.isCancelled()) {
+                    return false;
+                }
                 String[] options = { App.settings.getLocalizedString("common.ok"),
                         App.settings.getLocalizedString("common.cancel") };
                 int ret = JOptionPane.showOptionDialog(
@@ -1110,6 +1113,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         } else {
             if (this.pack.getInstallMessage(this.version.getVersion()) != null) {
+                if (this.isCancelled()) {
+                    return false;
+                }
                 String[] options = { App.settings.getLocalizedString("common.ok"),
                         App.settings.getLocalizedString("common.cancel") };
                 int ret = JOptionPane.showOptionDialog(

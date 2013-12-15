@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Settings;
 import com.atlauncher.data.mojang.Property;
 
 public class AuthenticationResponse {
@@ -52,7 +53,8 @@ public class AuthenticationResponse {
     }
 
     public boolean hasError() {
-        if(this.selectedProfile==null){
+        if (this.errorMessage == null && this.selectedProfile == null) {
+            System.out.println(Settings.gson.toJson(this));
             this.error = "There are no copies of Minecraft associated with this account!";
             this.errorMessage = "There are no copies of Minecraft associated with this account!";
         }

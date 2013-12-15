@@ -15,9 +15,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import com.atlauncher.App;
@@ -183,6 +180,11 @@ public class Downloadable {
     }
 
     private HttpURLConnection getConnection() {
+        if (this.instanceInstaller != null) {
+            if (this.instanceInstaller.isCancelled()) {
+                return null;
+            }
+        }
         if (this.connection == null) {
             try {
                 this.connection = (HttpURLConnection) new URL(this.url).openConnection();
@@ -197,6 +199,17 @@ public class Downloadable {
                 this.connection.setRequestProperty("Pragma", "no-cache");
                 this.connection.connect();
                 if (this.connection.getResponseCode() / 100 != 2) {
+                    if (this.connection.getResponseCode() == 401 && this.isATLauncherDownload) {
+                        if (App.settings.checkAuthKey()) {
+                            this.connection = null; // Clear the connection
+                            return this.getConnection(); // Try getting it again
+                        } else {
+                            if (this.instanceInstaller != null) {
+                                this.instanceInstaller.cancel(true);
+                            }
+                            return null;
+                        }
+                    }
                     throw new IOException(this.url
                             + " returned response code "
                             + this.connection.getResponseCode()

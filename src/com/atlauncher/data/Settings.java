@@ -76,6 +76,7 @@ import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
@@ -165,10 +166,10 @@ public class Settings {
         loadStartingProperties(); // Get users Console preference and Java Path
     }
 
-    public void checkAuthKey() {
+    public boolean checkAuthKey() {
         log("[Background] Checking Auth Key Started!");
         if (getAccounts().size() == 0) {
-            return; // No accounts added so don't check
+            return false; // No accounts added so don't check
         }
         boolean isValid = true;
         if (this.authKey == null || this.authKey.isEmpty()) {
@@ -212,6 +213,8 @@ public class Settings {
                             JOptionPane.OK_CANCEL_OPTION);
                     if (ret == JOptionPane.OK_OPTION) {
                         password = new String(passwordField.getPassword());
+                    } else {
+                        return false;
                     }
                 } else {
                     password = this.account.getPassword();
@@ -238,6 +241,8 @@ public class Settings {
                                 JOptionPane.OK_CANCEL_OPTION);
                         if (ret == JOptionPane.OK_OPTION) {
                             password = new String(passwordField.getPassword());
+                        } else {
+                            return false;
                         }
                         try {
                             ar = Authentication.checkAccount(this.account.getUsername(), password);
@@ -253,13 +258,16 @@ public class Settings {
                     } else {
                         log("Auth Key Set!");
                         setAuthKey(authKey);
+                        return true;
                     }
                 }
             }
         } else {
             log("Auth Key Valid!");
+            return true;
         }
         log("[Background] Checking Auth Key Finished!");
+        return false;
     }
 
     public void setupFiles() {
