@@ -807,9 +807,12 @@ public class Settings {
             this.properties.load(new FileInputStream(propertiesFile));
             String serv = properties.getProperty("server", "Auto");
             if (isServerByName(serv)) {
-                this.server = getServerByName(serv);
-                this.originalServer = this.server;
-            } else {
+                if (getServerByName(serv).isUserSelectable()) {
+                    this.server = getServerByName(serv);
+                    this.originalServer = this.server;
+                }
+            }
+            if (this.server == null) {
                 log("Server " + serv + " is invalid", LogMessageType.warning, false);
                 this.server = getServerByName("Auto"); // Server not found, use default of Auto
                 this.originalServer = this.server;

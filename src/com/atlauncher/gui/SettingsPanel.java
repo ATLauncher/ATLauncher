@@ -201,7 +201,9 @@ public class SettingsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         server = new JComboBox<Server>();
         for (Server serverr : App.settings.getServers()) {
-            server.addItem(serverr);
+            if (serverr.isUserSelectable()) {
+                server.addItem(serverr);
+            }
         }
         server.setSelectedItem(App.settings.getOriginalServer());
         topPanel.add(server, gbc);

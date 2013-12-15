@@ -6,16 +6,17 @@
  */
 package com.atlauncher.data;
 
-
 public class Server {
 
     private String name;
     private String baseURL;
+    private boolean userSelectable;
     private boolean disabled;
 
-    public Server(String name, String baseURL) {
+    public Server(String name, String baseURL, boolean userSelectable) {
         this.name = name;
         this.baseURL = baseURL;
+        this.userSelectable = userSelectable;
         this.disabled = false;
     }
 
@@ -25,6 +26,10 @@ public class Server {
 
     public void enableServer() {
         this.disabled = false;
+    }
+
+    public boolean isUserSelectable() {
+        return this.userSelectable;
     }
 
     public boolean isDisabled() {
