@@ -752,6 +752,10 @@ public class Utils {
         connection.setConnectTimeout(15000);
         connection.setReadTimeout(15000);
         connection.setRequestMethod("POST");
+        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+        connection.setRequestProperty("Expires", "0");
+        connection.setRequestProperty("Pragma", "no-cache");
 
         connection.setRequestProperty("Content-Length", "" + write.getBytes().length);
 
