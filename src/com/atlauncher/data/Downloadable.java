@@ -26,6 +26,7 @@ public class Downloadable {
     private String beforeURL;
     private String url;
     private File file;
+    private File oldFile;
     private String hash;
     private int size;
     private HttpURLConnection connection;
@@ -242,7 +243,6 @@ public class Downloadable {
                     }
                 }
             }
-            App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used
         }
         return this.connection;
     }
@@ -337,6 +337,8 @@ public class Downloadable {
                     LogMessageType.error, false);
             return;
         }
+        this.oldFile = new File(this.file.getParent(), this.file.getName() + ".bak");
+        Utils.moveFile(this.file, this.oldFile, true);
         if (instanceInstaller != null) {
             if (instanceInstaller.isCancelled()) {
                 return;
@@ -381,7 +383,11 @@ public class Downloadable {
                 }
                 downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
             }
+            if (done) {
+                Utils.delete(this.oldFile);
+            }
             if (!done) {
+                Utils.moveFile(this.oldFile, this.file, true);
                 if (this.isATLauncherDownload) {
                     if (App.settings.getNextServer()) {
                         App.settings.log("Error downloading " + this.file.getName() + " from "
