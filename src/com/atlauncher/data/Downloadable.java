@@ -327,6 +327,11 @@ public class Downloadable {
     }
 
     public void download(boolean downloadAsLibrary, boolean force) {
+        this.attempts = 0;
+        if (this.connection != null) {
+            this.connection.disconnect();
+            this.connection = null;
+        }
         if (this.file == null) {
             App.settings.log("Cannot download " + this.url + " to file as one wasn't specified!",
                     LogMessageType.error, false);
@@ -367,6 +372,10 @@ public class Downloadable {
                     done = true;
                     break; // Hash matches, file is good
                 }
+                if (this.connection != null) {
+                    this.connection.disconnect();
+                    this.connection = null;
+                }
                 if (this.file.exists()) {
                     Utils.delete(this.file); // Delete file since it doesn't match MD5
                 }
@@ -380,7 +389,6 @@ public class Downloadable {
                                 + fileHash + " instead. Trying another server!",
                                 LogMessageType.warning, false);
                         this.url = App.settings.getFileURL(this.beforeURL);
-                        this.connection = null;
                         download(downloadAsLibrary); // Redownload the file
                     } else {
                         App.settings.log("Failed to download file " + this.file.getName()
@@ -421,6 +429,9 @@ public class Downloadable {
             }
             App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used
         }
-        this.connection.disconnect();
+
+        if (this.connection != null) {
+            this.connection.disconnect();
+        }
     }
 }
