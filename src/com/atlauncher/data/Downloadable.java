@@ -337,8 +337,10 @@ public class Downloadable {
                     LogMessageType.error, false);
             return;
         }
-        this.oldFile = new File(this.file.getParent(), this.file.getName() + ".bak");
-        Utils.moveFile(this.file, this.oldFile, true);
+        if (this.file.exists()) {
+            this.oldFile = new File(this.file.getParent(), this.file.getName() + ".bak");
+            Utils.moveFile(this.file, this.oldFile, true);
+        }
         if (instanceInstaller != null) {
             if (instanceInstaller.isCancelled()) {
                 return;
@@ -384,10 +386,14 @@ public class Downloadable {
                 downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
             }
             if (done) {
-                Utils.delete(this.oldFile);
+                if (this.oldFile.exists()) {
+                    Utils.delete(this.oldFile);
+                }
             }
             if (!done) {
-                Utils.moveFile(this.oldFile, this.file, true);
+                if (this.oldFile.exists()) {
+                    Utils.moveFile(this.oldFile, this.file, true);
+                }
                 if (this.isATLauncherDownload) {
                     if (App.settings.getNextServer()) {
                         App.settings.log("Error downloading " + this.file.getName() + " from "
