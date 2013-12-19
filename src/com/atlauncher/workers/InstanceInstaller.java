@@ -56,12 +56,12 @@ import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.data.mojang.Library;
 import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.gui.ModsChooser;
+import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
@@ -409,7 +409,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         HashMap<String, Integer> fileSizes = null;
 
         if (!files.isEmpty()) {
-            String base64Files = Base64.encode(files.getBytes());
+            String base64Files = Base64.encodeBytes(files.getBytes());
             fileSizes = new HashMap<String, Integer>();
             String returnValue = null;
             do {
