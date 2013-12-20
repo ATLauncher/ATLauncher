@@ -319,38 +319,47 @@ public class Mod {
                         }
                     }
                 }
+                boolean openBrowser = true;
                 while (!fileLocation.exists()) {
-                    Utils.openBrowser(getURL());
-                    String[] options = new String[] { App.settings
-                            .getLocalizedString("instance.ivedownloaded") };
-                    int retValue = JOptionPane.showOptionDialog(
-                            App.settings.getParent(),
-                            "<html><center>"
-                                    + App.settings.getLocalizedString("instance.browseropened",
-                                            (serverFile == null ? (isFilePattern() ? getName()
-                                                    : getFile()) : (isFilePattern() ? getName()
-                                                    : getServerFile())))
-                                    + "<br/><br/>"
-                                    + App.settings.getLocalizedString("instance.pleasesave")
-                                    + "<br/><br/>"
-                                    + (App.settings.isUsingMacApp() ? App.settings
-                                            .getUsersDownloadsDir().getAbsolutePath()
-                                            : (isFilePattern() ? App.settings.getDownloadsDir()
-                                                    .getAbsolutePath() : App.settings
-                                                    .getDownloadsDir().getAbsolutePath()
-                                                    + " or<br/>"
-                                                    + App.settings.getUsersDownloadsDir()))
-                                    + "</center></html>",
-                            App.settings.getLocalizedString("common.downloading")
-                                    + " "
-                                    + (serverFile == null ? (isFilePattern() ? getName()
-                                            : getFile()) : (isFilePattern() ? getName()
-                                            : getServerFile())), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                    if (retValue == JOptionPane.CLOSED_OPTION) {
-                        installer.cancel(true);
-                        return;
-                    }
+                    int retValue = 1;
+                    do {
+                        if (retValue == 1) {
+                            Utils.openBrowser(getURL());
+                        }
+                        String[] options = new String[] {
+                                App.settings.getLocalizedString("common.openfolder"),
+                                App.settings.getLocalizedString("instance.ivedownloaded") };
+                        retValue = JOptionPane.showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString("instance.browseropened",
+                                                (serverFile == null ? (isFilePattern() ? getName()
+                                                        : getFile()) : (isFilePattern() ? getName()
+                                                        : getServerFile())))
+                                        + "<br/><br/>"
+                                        + App.settings.getLocalizedString("instance.pleasesave")
+                                        + "<br/><br/>"
+                                        + (App.settings.isUsingMacApp() ? App.settings
+                                                .getUsersDownloadsDir().getAbsolutePath()
+                                                : (isFilePattern() ? App.settings.getDownloadsDir()
+                                                        .getAbsolutePath() : App.settings
+                                                        .getDownloadsDir().getAbsolutePath()
+                                                        + " or<br/>"
+                                                        + App.settings.getUsersDownloadsDir()))
+                                        + "</center></html>",
+                                App.settings.getLocalizedString("common.downloading")
+                                        + " "
+                                        + (serverFile == null ? (isFilePattern() ? getName()
+                                                : getFile()) : (isFilePattern() ? getName()
+                                                : getServerFile())), JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                        if (retValue == JOptionPane.CLOSED_OPTION) {
+                            installer.cancel(true);
+                            return;
+                        } else if (retValue == 0) {
+                            Utils.openExplorer(App.settings.getDownloadsDir());
+                        }
+                    } while (retValue != 1);
 
                     if (isFilePattern()) {
                         String[] files = (App.settings.isUsingMacApp() ? App.settings
