@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
