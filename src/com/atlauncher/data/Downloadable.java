@@ -386,12 +386,12 @@ public class Downloadable {
                 downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
             }
             if (done) {
-                if (this.oldFile.exists()) {
+                if (this.oldFile!=null && this.oldFile.exists()) {
                     Utils.delete(this.oldFile);
                 }
             }
             if (!done) {
-                if (this.oldFile.exists()) {
+                if (this.oldFile!=null && this.oldFile.exists()) {
                     Utils.moveFile(this.oldFile, this.file, true);
                 }
                 if (this.isATLauncherDownload) {
