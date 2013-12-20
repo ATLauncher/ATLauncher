@@ -319,7 +319,6 @@ public class Mod {
                         }
                     }
                 }
-                boolean openBrowser = true;
                 while (!fileLocation.exists()) {
                     int retValue = 1;
                     do {
