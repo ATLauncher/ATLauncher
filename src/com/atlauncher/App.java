@@ -11,6 +11,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
@@ -28,6 +29,7 @@ public class App {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void main(String[] args) {
+        Locale.setDefault(Locale.ENGLISH); // Set English as the default locale
         System.setProperty("java.net.preferIPv4Stack", "true");
         String autoLaunch = null;
         if (args != null) {
