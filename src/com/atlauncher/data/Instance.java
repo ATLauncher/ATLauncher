@@ -251,6 +251,14 @@ public class Instance implements Serializable {
         return new File(getRootDirectory(), "mods");
     }
 
+    public File getIC2LibDirectory() {
+        return new File(getModsDirectory(), "ic2");
+    }
+
+    public File getDenLibDirectory() {
+        return new File(getModsDirectory(), "denlib");
+    }
+
     public File getPluginsDirectory() {
         return new File(getRootDirectory(), "plugins");
     }

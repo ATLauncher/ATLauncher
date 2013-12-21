@@ -650,6 +650,18 @@ public class Mod {
             case mods:
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
                 break;
+            case ic2lib:
+                if(!installer.getIC2LibDirectory().exists()){
+                    installer.getIC2LibDirectory().mkdir();
+                }
+                Utils.copyFile(fileLocation, installer.getIC2LibDirectory());
+                break;
+            case denlib:
+                if(!installer.getDenLibDirectory().exists()){
+                    installer.getDenLibDirectory().mkdir();
+                }
+                Utils.copyFile(fileLocation, installer.getDenLibDirectory());
+                break;
             case depandency:
             case dependency:
                 if (!installer.getDependencyDirectory().exists()) {
@@ -810,6 +822,12 @@ public class Mod {
                 break;
             case mods:
                 base = installer.getModsDirectory();
+                break;
+            case ic2lib:
+                base = installer.getIC2LibDirectory();
+                break;
+            case denlib:
+                base = installer.getDenLibDirectory();
                 break;
             case plugins:
                 base = installer.getPluginsDirectory();

@@ -196,9 +196,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public File getConfigDirectory() {
         return new File(getRootDirectory(), "config");
     }
-
+    
     public File getModsDirectory() {
         return new File(getRootDirectory(), "mods");
+    }
+    
+    public File getIC2LibDirectory() {
+        return new File(getModsDirectory(), "ic2");
+    }
+
+    public File getDenLibDirectory() {
+        return new File(getModsDirectory(), "denlib");
     }
 
     public File getDependencyDirectory() {

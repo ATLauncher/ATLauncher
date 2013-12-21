@@ -117,6 +117,12 @@ public class DisableableMod implements Serializable {
             case mods:
                 dir = instance.getModsDirectory();
                 break;
+            case ic2lib:
+                dir = instance.getIC2LibDirectory();
+                break;
+            case denlib:
+                dir = instance.getDenLibDirectory();
+                break;
             case coremods:
                 dir = instance.getCoreModsDirectory();
                 break;
