@@ -628,6 +628,7 @@ public class Pack {
                         library = true;
                     }
                     String group = element.getAttribute("group");
+                    String category = element.getAttribute("category");
                     String linked = element.getAttribute("linked");
                     String[] depends;
                     if (element.hasAttribute("depends")) {
@@ -651,7 +652,7 @@ public class Pack {
                             type, extractTo, extractFolder, decompFile, decompType, filePattern,
                             filePreference, fileCheck, client, server, serverURL, serverFile,
                             serverDownload, serverMD5, serverType, optional, serverOptional,
-                            selected, download, hidden, library, group, linked, depends,
+                            selected, download, hidden, library, group, category, linked, depends,
                             filePrefix, recommended, description));
                 }
             }

@@ -584,6 +584,105 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return true; // No other recommended mods found in the group
     }
 
+    public ArrayList<Mod> getModsInCategory(String category) {
+        ArrayList<Mod> mods = new ArrayList<Mod>();
+        for (Mod mod : allMods) {
+            if (mod.getCategory() == null) {
+                continue; // Has no category so hurry along
+            }
+            if (!mod.isOptional()) {
+                continue; // Only for Optional Mods
+            }
+            if (mod.getCategory().equalsIgnoreCase(category)) {
+                mods.add(mod);
+            }
+        }
+        return mods;
+    }
+
+    public ArrayList<String> getCategories() {
+        ArrayList<String> categories = new ArrayList<String>();
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(pack.getXML(
+                    this.version.getVersion(), false)));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("category");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    categories.add(element.getAttribute("id"));
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return categories;
+    }
+
+    public String getCategoryName(String id) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(pack.getXML(
+                    this.version.getVersion(), false)));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("category");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    if (element.getAttribute("id").equalsIgnoreCase(id)) {
+                        return element.getAttribute("name");
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return null;
+    }
+
+    public String getCategoryDescription(String id) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(pack.getXML(
+                    this.version.getVersion(), false)));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("category");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    if (element.getAttribute("id").equalsIgnoreCase(id)) {
+                        return element.getAttribute("description");
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return null;
+    }
+
     private void downloadResources() {
         fireTask(App.settings.getLocalizedString("instance.downloadingresources"));
         fireSubProgressUnknown();
@@ -1092,7 +1191,33 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
-        return mods;
+        ArrayList<Mod> modss = new ArrayList<Mod>();
+
+        for (Mod mod : mods) {
+            if (!mod.isOptional()) {
+                modss.add(mod); // Add all non optional mods
+            }
+        }
+
+        for (String category : getCategories()) {
+            for (Mod mod : mods) {
+                if (mod.isOptional()) {
+                    if (!mod.getCategory().isEmpty()) {
+                        if (mod.getCategory().equalsIgnoreCase(category)) {
+                            modss.add(mod); // Add optional mods based upon their category
+                        }
+                    }
+                }
+            }
+        }
+
+        for (Mod mod : mods) {
+            if (!modss.contains(mod)) {
+                modss.add(mod); // Add the rest
+            }
+        }
+
+        return modss;
     }
 
     protected Boolean doInBackground() throws Exception {

@@ -124,6 +124,9 @@ public class ModsChooser extends JDialog {
         selectAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
+                    if (check.isCategory()) {
+                        continue;
+                    }
                     if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod()
                             .isOptional())) {
                         if (check.getMod().isRecommeneded()) {
@@ -154,6 +157,9 @@ public class ModsChooser extends JDialog {
         clearAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
+                    if (check.isCategory()) {
+                        continue;
+                    }
                     if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod()
                             .isOptional())) {
                         check.setSelected(false);
@@ -181,10 +187,13 @@ public class ModsChooser extends JDialog {
 
         modCheckboxes = new ArrayList<ModsJCheckBox>();
         modLabels = new ArrayList<ModDescriptionJLabel>();
+        ArrayList<String> categoriesDone = new ArrayList<String>();
         int count1 = 0;
         int count2 = 0;
 
-        for (Mod mod : installer.getMods()) {
+        for (int i = 0; i < installer.getMods().size();) {
+            boolean skip = false;
+            Mod mod = installer.getMods().get(i);
             if (installer.isServer() && !mod.installOnServer()) {
                 continue;
             }
@@ -192,72 +201,90 @@ public class ModsChooser extends JDialog {
             ModDescriptionJLabel label = null;
             int nameSize = getFontMetrics(Utils.getFont()).stringWidth(mod.getName());
             if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
-                checkBox = new ModsJCheckBox(mod);
-                checkBox.setEnabled(true);
-                if (mod.getLinked().isEmpty()) {
-                    checkBox.setBounds(0, (count1 * 20), nameSize + 23, 20);
-                    if (!mod.getDescription().isEmpty()) {
-                        label = new ModDescriptionJLabel(mod.getDescription());
-                        label.setBounds(nameSize + 24, (count1 * 20), 12, 20);
-                    }
-                } else {
-                    Mod linkedMod = installer.getModByName(mod.getLinked());
-                    if (linkedMod == null) {
-                        App.settings.log("The mod " + mod.getName()
-                                + " tried to reference a linked mod " + mod.getLinked()
-                                + " which doesn't exist!", LogMessageType.error, false);
-                        installer.cancel(true);
-                        return;
-                    }
-                    if ((installer.isServer() ? linkedMod.isServerOptional() : linkedMod
-                            .isOptional())) {
+                if (!mod.getCategory().isEmpty()) {
+                    if (!categoriesDone.contains(mod.getCategory())) {
+                        skip = true;
+                        categoriesDone.add(mod.getCategory());
+                        nameSize = getFontMetrics(Utils.getFont()).stringWidth(
+                                installerr.getCategoryName(mod.getCategory()));
+                        checkBox = new ModsJCheckBox(installerr.getCategoryName(mod.getCategory()));
+                        checkBox.setBounds(0, (count1 * 20), nameSize + 23, 20);
                         checkBox.setEnabled(false);
-                        checkBox.setBounds(20, (count1 * 20), nameSize + 23, 20);
+                        label = new ModDescriptionJLabel(installerr.getCategoryDescription(mod
+                                .getCategory()));
+                        label.setBounds(nameSize + 24, (count1 * 20), 12, 20);
+                        count1++;
+                    }
+                }
+                if (!skip) {
+                    checkBox = new ModsJCheckBox(mod);
+                    checkBox.setEnabled(true);
+                    if (mod.getLinked().isEmpty()) {
+                        checkBox.setBounds((mod.hasCategory() ? 20 : 0), (count1 * 20), nameSize + 23, 20);
                         if (!mod.getDescription().isEmpty()) {
                             label = new ModDescriptionJLabel(mod.getDescription());
-                            label.setBounds(nameSize + 44, (count1 * 20), 12, 20);
+                            label.setBounds(nameSize + (mod.hasCategory() ? 44 : 24), (count1 * 20), 12, 20);
                         }
                     } else {
-                        checkBox.setBounds(0, (count1 * 20), nameSize + 23, 20);
-                        if (!mod.getDescription().isEmpty()) {
-                            label = new ModDescriptionJLabel(mod.getDescription());
-                            label.setBounds(nameSize + 24, (count1 * 20), 12, 20);
+                        Mod linkedMod = installer.getModByName(mod.getLinked());
+                        if (linkedMod == null) {
+                            App.settings.log("The mod " + mod.getName()
+                                    + " tried to reference a linked mod " + mod.getLinked()
+                                    + " which doesn't exist!", LogMessageType.error, false);
+                            installer.cancel(true);
+                            return;
                         }
-                    }
-                    if (mod.isSelected()) {
-                        checkBox.setEnabled(true);
-                        checkBox.setSelected(true);
-                        if (!linkedMod.isSelected()) {
-                            boolean needToEnableChildren = false;
-                            for (ModsJCheckBox checkbox : modCheckboxes) {
-                                if (checkbox.getMod().getName().equalsIgnoreCase(mod.getLinked())) {
-                                    checkbox.setSelected(true); // Select the checkbox
-                                    needToEnableChildren = true;
-                                    break;
-                                }
+                        if ((installer.isServer() ? linkedMod.isServerOptional() : linkedMod
+                                .isOptional())) {
+                            checkBox.setEnabled(false);
+                            checkBox.setBounds((mod.hasCategory() ? 40 : 20), (count1 * 20), nameSize + 23, 20);
+                            if (!mod.getDescription().isEmpty()) {
+                                label = new ModDescriptionJLabel(mod.getDescription());
+                                label.setBounds(nameSize + (mod.hasCategory() ? 64 : 44), (count1 * 20), 12, 20);
                             }
-                            if (needToEnableChildren) {
+                        } else {
+                            checkBox.setBounds((mod.hasCategory() ? 20 : 0), (count1 * 20), nameSize + 23, 20);
+                            if (!mod.getDescription().isEmpty()) {
+                                label = new ModDescriptionJLabel(mod.getDescription());
+                                label.setBounds(nameSize + (mod.hasCategory() ? 44 : 24), (count1 * 20), 12, 20);
+                            }
+                        }
+                        if (mod.isSelected()) {
+                            checkBox.setEnabled(true);
+                            checkBox.setSelected(true);
+                            if (!linkedMod.isSelected()) {
+                                boolean needToEnableChildren = false;
                                 for (ModsJCheckBox checkbox : modCheckboxes) {
-                                    if (checkbox.getMod().getLinked()
+                                    if (checkbox.getMod().getName()
                                             .equalsIgnoreCase(mod.getLinked())) {
-                                        checkbox.setEnabled(true);
+                                        checkbox.setSelected(true); // Select the checkbox
+                                        needToEnableChildren = true;
+                                        break;
+                                    }
+                                }
+                                if (needToEnableChildren) {
+                                    for (ModsJCheckBox checkbox : modCheckboxes) {
+                                        if (checkbox.getMod().getLinked()
+                                                .equalsIgnoreCase(mod.getLinked())) {
+                                            checkbox.setEnabled(true);
+                                        }
                                     }
                                 }
                             }
+                        } else {
+                            if (linkedMod.isSelected()) {
+                                checkBox.setEnabled(true);
+                            }
+                        }
+                    }
+                    if (mod.isHidden() || mod.isLibrary()) {
+                        checkBox.setVisible(false);
+                        if (!mod.getDescription().isEmpty()) {
+                            label.setVisible(false);
                         }
                     } else {
-                        if (linkedMod.isSelected()) {
-                            checkBox.setEnabled(true);
-                        }
+                        count1++;
                     }
-                }
-                if (mod.isHidden() || mod.isLibrary()) {
-                    checkBox.setVisible(false);
-                    if (!mod.getDescription().isEmpty()) {
-                        label.setVisible(false);
-                    }
-                } else {
-                    count1++;
                 }
             } else {
                 checkBox = new ModsJCheckBox(mod);
@@ -278,34 +305,42 @@ public class ModsChooser extends JDialog {
                     count2++;
                 }
             }
-            if (installer.isReinstall()) {
-                if (installer.wasModInstalled(mod.getName())) {
-                    if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
+            if (!checkBox.isCategory()) {
+                if (installer.isReinstall()) {
+                    if (installer.wasModInstalled(mod.getName())) {
+                        if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
+                            checkBox.setSelected(true);
+                            checkBox.setEnabled(true);
+                        }
+                    }
+                } else {
+                    if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())
+                            && mod.isSelected()) {
                         checkBox.setSelected(true);
                         checkBox.setEnabled(true);
                     }
                 }
-            } else {
-                if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())
-                        && mod.isSelected()) {
-                    checkBox.setSelected(true);
-                    checkBox.setEnabled(true);
-                }
+                checkBox.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        ModsJCheckBox a = (ModsJCheckBox) e.getSource();
+                        sortOutMods(a);
+                    }
+                });
             }
-            checkBox.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    ModsJCheckBox a = (ModsJCheckBox) e.getSource();
-                    sortOutMods(a);
-                }
-            });
             modCheckboxes.add(checkBox);
             modLabels.add(label);
+            if (!skip) {
+                i++;
+            }
         }
         for (int i = 0; i < modCheckboxes.size(); i++) {
             ModsJCheckBox checkBox = modCheckboxes.get(i);
             ModDescriptionJLabel label = modLabels.get(i);
-            if ((installer.isServer() ? checkBox.getMod().isServerOptional() : checkBox.getMod()
-                    .isOptional())) {
+            if (checkBox.isCategory()) {
+                checkBoxPanel1.add(label);
+                checkBoxPanel1.add(checkBox);
+            } else if ((installer.isServer() ? checkBox.getMod().isServerOptional() : checkBox
+                    .getMod().isOptional())) {
                 if (!checkBox.getMod().getDescription().isEmpty()) {
                     checkBoxPanel1.add(label);
                 }

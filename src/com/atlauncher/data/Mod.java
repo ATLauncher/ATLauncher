@@ -48,6 +48,7 @@ public class Mod {
     private boolean hidden;
     private boolean library;
     private String group;
+    private String category;
     private String linked;
     private String[] depends;
     private String filePrefix;
@@ -60,8 +61,9 @@ public class Mod {
             String filePreference, String fileCheck, boolean client, boolean server,
             String serverURL, String serverFile, Download serverDownload, String serverMD5,
             Type serverType, boolean optional, boolean serverOptional, boolean selected,
-            Download download, boolean hidden, boolean library, String group, String linked,
-            String[] depends, String filePrefix, boolean recommended, String description) {
+            Download download, boolean hidden, boolean library, String group, String category,
+            String linked, String[] depends, String filePrefix, boolean recommended,
+            String description) {
         this.name = name;
         this.version = version;
         this.url = url.replace("&amp;", "&").replace(" ", "%20");
@@ -94,6 +96,7 @@ public class Mod {
         this.hidden = hidden;
         this.library = library;
         this.group = group;
+        this.category = category;
         this.linked = linked;
         this.depends = depends;
         this.filePrefix = filePrefix;
@@ -651,13 +654,13 @@ public class Mod {
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
                 break;
             case ic2lib:
-                if(!installer.getIC2LibDirectory().exists()){
+                if (!installer.getIC2LibDirectory().exists()) {
                     installer.getIC2LibDirectory().mkdir();
                 }
                 Utils.copyFile(fileLocation, installer.getIC2LibDirectory());
                 break;
             case denlib:
-                if(!installer.getDenLibDirectory().exists()){
+                if (!installer.getDenLibDirectory().exists()) {
                     installer.getDenLibDirectory().mkdir();
                 }
                 Utils.copyFile(fileLocation, installer.getDenLibDirectory());
@@ -863,6 +866,14 @@ public class Mod {
 
     public String getGroup() {
         return this.group;
+    }
+
+    public String getCategory() {
+        return this.category;
+    }
+
+    public boolean hasCategory() {
+        return !this.category.isEmpty();
     }
 
     public String getServerURL() {

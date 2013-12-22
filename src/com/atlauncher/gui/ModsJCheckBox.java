@@ -14,6 +14,8 @@ import com.atlauncher.data.Mod;
 public class ModsJCheckBox extends JCheckBox {
 
     private Object mod;
+    private boolean isCategory = false;
+    private String categoryName = null;
 
     public ModsJCheckBox(Mod mod) {
         super(mod.getName());
@@ -29,6 +31,19 @@ public class ModsJCheckBox extends JCheckBox {
             setForeground(mod.getColour());
         }
         this.mod = mod;
+    }
+
+    public ModsJCheckBox(String categoryName) {
+        super(categoryName);
+        this.isCategory = true;
+    }
+
+    public boolean isCategory() {
+        return this.isCategory;
+    }
+
+    public String getCategoryName() {
+        return this.categoryName;
     }
 
     public Mod getMod() {
