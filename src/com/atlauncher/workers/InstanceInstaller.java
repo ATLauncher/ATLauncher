@@ -23,8 +23,11 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -196,11 +199,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public File getConfigDirectory() {
         return new File(getRootDirectory(), "config");
     }
-    
+
     public File getModsDirectory() {
         return new File(getRootDirectory(), "mods");
     }
-    
+
     public File getIC2LibDirectory() {
         return new File(getModsDirectory(), "ic2");
     }
@@ -1100,10 +1103,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
                 String[] options = { App.settings.getLocalizedString("common.ok"),
                         App.settings.getLocalizedString("common.cancel") };
+                JEditorPane ep = new JEditorPane("text/html", "<html>"
+                        + this.pack.getUpdateMessage(this.version.getVersion()) + "</html>");
+                ep.setEditable(false);
+                ep.addHyperlinkListener(new HyperlinkListener() {
+                    @Override
+                    public void hyperlinkUpdate(HyperlinkEvent e) {
+                        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                            Utils.openBrowser(e.getURL());
+                        }
+                    }
+                });
                 int ret = JOptionPane.showOptionDialog(
                         App.settings.getParent(),
-                        "<html>" + this.pack.getUpdateMessage(this.version.getVersion())
-                                + "</html>",
+                        ep,
                         App.settings.getLocalizedString("common.reinstalling") + " "
                                 + this.pack.getName(), JOptionPane.DEFAULT_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
@@ -1121,10 +1134,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
                 String[] options = { App.settings.getLocalizedString("common.ok"),
                         App.settings.getLocalizedString("common.cancel") };
+                JEditorPane ep = new JEditorPane("text/html", "<html>"
+                        + this.pack.getInstallMessage(this.version.getVersion()) + "</html>");
+                ep.setEditable(false);
+                ep.addHyperlinkListener(new HyperlinkListener() {
+                    @Override
+                    public void hyperlinkUpdate(HyperlinkEvent e) {
+                        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                            Utils.openBrowser(e.getURL());
+                        }
+                    }
+                });
                 int ret = JOptionPane.showOptionDialog(
                         App.settings.getParent(),
-                        "<html>" + this.pack.getInstallMessage(this.version.getVersion())
-                                + "</html>",
+                        ep,
                         App.settings.getLocalizedString("common.installing") + " "
                                 + this.pack.getName(), JOptionPane.DEFAULT_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
