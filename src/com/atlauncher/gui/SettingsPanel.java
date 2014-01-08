@@ -107,19 +107,7 @@ public class SettingsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         languageLabel = new JLabel(App.settings.getLocalizedString("settings.language") + ":");
         languageLabel.setIcon(helpIcon);
-        languageLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("settings.languagehelp"),
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		languageLabel.setToolTipText(App.settings.getLocalizedString("settings.languagehelp"));
         topPanel.add(languageLabel, gbc);
 
         gbc.gridx++;
@@ -140,23 +128,10 @@ public class SettingsPanel extends JPanel {
         forgeLoggingLevelLabel = new JLabel(
                 App.settings.getLocalizedString("settings.forgelogginglevel") + ":");
         forgeLoggingLevelLabel.setIcon(helpIcon);
-        forgeLoggingLevelLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(
-                                App.settings.getParent(),
-                                "<html><center>"
-                                        + App.settings.getLocalizedString(
-                                                "settings.forgelogginglevelhelp", "<br/><br/>")
-                                        + "</center></html>", App.settings
-                                        .getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		forgeLoggingLevelLabel.setToolTipText("<html><center>"
+				+ App.settings.getLocalizedString(
+				"settings.forgelogginglevelhelp", "<br/><br/>")
+				+ "</center></html>");
         topPanel.add(forgeLoggingLevelLabel, gbc);
 
         gbc.gridx++;
@@ -181,19 +156,7 @@ public class SettingsPanel extends JPanel {
         downloadServerLabel = new JLabel(App.settings.getLocalizedString("settings.downloadserver")
                 + ":");
         downloadServerLabel.setIcon(helpIcon);
-        downloadServerLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("settings.downloadserverhelp"),
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		downloadServerLabel.setToolTipText(App.settings.getLocalizedString("settings.downloadserverhelp"));
         topPanel.add(downloadServerLabel, gbc);
 
         gbc.gridx++;
@@ -215,30 +178,11 @@ public class SettingsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         memoryLabel = new JLabel(App.settings.getLocalizedString("settings.memory") + ":");
         memoryLabel.setIcon(helpIcon);
-        memoryLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        if (!Utils.is64Bit()) {
-                            JOptionPane.showMessageDialog(
-                                    App.settings.getParent(),
-                                    "<html><center>"
-                                            + App.settings.getLocalizedString(
-                                                    "settings.memoryhelp32bit", "<br/>")
-                                            + "</center></html>", App.settings
-                                            .getLocalizedString("settings.help"),
-                                    JOptionPane.PLAIN_MESSAGE);
-                        } else {
-                            JOptionPane.showMessageDialog(App.settings.getParent(),
-                                    App.settings.getLocalizedString("settings.memoryhelp"),
-                                    App.settings.getLocalizedString("settings.help"),
-                                    JOptionPane.PLAIN_MESSAGE);
-                        }
-                    }
-                }
-            }
-        });
+		if (Utils.is64Bit()) memoryLabel.setToolTipText(App.settings.getLocalizedString("settings.memoryhelp"));
+		else memoryLabel.setToolTipText("<html><center>"
+				+ App.settings.getLocalizedString(
+				"settings.memoryhelp32bit", "<br/>")
+				+ "</center></html>");
         topPanel.add(memoryLabel, gbc);
 
         gbc.gridx++;
@@ -259,19 +203,7 @@ public class SettingsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         permGenLabel = new JLabel(App.settings.getLocalizedString("settings.permgen") + ":");
         permGenLabel.setIcon(helpIcon);
-        permGenLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("settings.permgenhelp"),
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		permGenLabel.setToolTipText(App.settings.getLocalizedString("settings.permgenhelp"));
         topPanel.add(permGenLabel, gbc);
 
         gbc.gridx++;
@@ -289,19 +221,7 @@ public class SettingsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         windowSizeLabel = new JLabel(App.settings.getLocalizedString("settings.windowsize") + ":");
         windowSizeLabel.setIcon(helpIcon);
-        windowSizeLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && (e.getY() > 10 && e.getY() < 26)) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("settings.windowsizehelp"),
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		windowSizeLabel.setToolTipText(App.settings.getLocalizedString("settings.windowsizehelp"));
         topPanel.add(windowSizeLabel, gbc);
 
         gbc.gridx++;
@@ -356,20 +276,9 @@ public class SettingsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaPathLabel = new JLabel(App.settings.getLocalizedString("settings.javapath") + ":");
         javaPathLabel.setIcon(helpIcon);
-        javaPathLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && (e.getY() > 10 && e.getY() < 26)) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html><center>"
-                                + App.settings.getLocalizedString("settings.javapathhelp", "<br/>")
-                                + "</center></html>",
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		javaPathLabel.setToolTipText("<html><center>"
+				+ App.settings.getLocalizedString("settings.javapathhelp", "<br/>")
+				+ "</center></html>");
         topPanel.add(javaPathLabel, gbc);
 
         gbc.gridx++;
@@ -400,19 +309,7 @@ public class SettingsPanel extends JPanel {
         javaParametersLabel = new JLabel(App.settings.getLocalizedString("settings.javaparameters")
                 + ":");
         javaParametersLabel.setIcon(helpIcon);
-        javaParametersLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("settings.javaparametershelp"),
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		javaParametersLabel.setToolTipText(App.settings.getLocalizedString("settings.javaparametershelp"));
         topPanel.add(javaParametersLabel, gbc);
 
         gbc.gridx++;
@@ -431,19 +328,8 @@ public class SettingsPanel extends JPanel {
         startMinecraftMaximisedLabel = new JLabel(
                 App.settings.getLocalizedString("settings.startminecraftmaximised") + "?");
         startMinecraftMaximisedLabel.setIcon(helpIcon);
-        startMinecraftMaximisedLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(), App.settings
-                                .getLocalizedString("settings.startminecraftmaximisedhelp"),
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		startMinecraftMaximisedLabel.setToolTipText(App.settings
+				.getLocalizedString("settings.startminecraftmaximisedhelp"));
         topPanel.add(startMinecraftMaximisedLabel, gbc);
 
         gbc.gridx++;
@@ -464,19 +350,8 @@ public class SettingsPanel extends JPanel {
         sortPacksAlphabeticallyLabel = new JLabel(
                 App.settings.getLocalizedString("settings.sortpacksalphabetically") + "?");
         sortPacksAlphabeticallyLabel.setIcon(helpIcon);
-        sortPacksAlphabeticallyLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(), App.settings
-                                .getLocalizedString("settings.sortpacksalphabeticallyhelp"),
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		sortPacksAlphabeticallyLabel.setToolTipText(App.settings
+				.getLocalizedString("settings.sortpacksalphabeticallyhelp"));
         topPanel.add(sortPacksAlphabeticallyLabel, gbc);
 
         gbc.gridx++;
@@ -496,19 +371,7 @@ public class SettingsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableConsoleLabel = new JLabel(App.settings.getLocalizedString("settings.console") + "?");
         enableConsoleLabel.setIcon(helpIcon);
-        enableConsoleLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("settings.consolehelp"),
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		enableConsoleLabel.setToolTipText(App.settings.getLocalizedString("settings.consolehelp"));
         topPanel.add(enableConsoleLabel, gbc);
 
         gbc.gridx++;
@@ -529,19 +392,7 @@ public class SettingsPanel extends JPanel {
         enableDebugConsoleLabel = new JLabel(
                 App.settings.getLocalizedString("settings.debugconsole") + "?");
         enableDebugConsoleLabel.setIcon(helpIcon);
-        enableDebugConsoleLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("settings.debugconsolehelp"),
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		enableDebugConsoleLabel.setToolTipText(App.settings.getLocalizedString("settings.debugconsolehelp"));
         topPanel.add(enableDebugConsoleLabel, gbc);
 
         gbc.gridx++;
@@ -562,19 +413,7 @@ public class SettingsPanel extends JPanel {
         enableLeaderboardsLabel = new JLabel(
                 App.settings.getLocalizedString("settings.leaderboards") + "?");
         enableLeaderboardsLabel.setIcon(helpIcon);
-        enableLeaderboardsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("settings.leaderboardshelp"),
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		enableLeaderboardsLabel.setToolTipText(App.settings.getLocalizedString("settings.leaderboardshelp"));
         topPanel.add(enableLeaderboardsLabel, gbc);
 
         gbc.gridx++;
@@ -594,20 +433,9 @@ public class SettingsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableLoggingLabel = new JLabel(App.settings.getLocalizedString("settings.logging") + "?");
         enableLoggingLabel.setIcon(helpIcon);
-        enableLoggingLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    if (e.getX() < 16 && e.getY() < 16) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html><center>"
-                                + App.settings.getLocalizedString("settings.logginghelp", "<br/>")
-                                + "</center></html>",
-                                App.settings.getLocalizedString("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
-                    }
-                }
-            }
-        });
+		enableLoggingLabel.setToolTipText("<html><center>"
+				+ App.settings.getLocalizedString("settings.logginghelp", "<br/>")
+				+ "</center></html>");
         topPanel.add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
