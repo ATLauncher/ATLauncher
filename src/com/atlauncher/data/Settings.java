@@ -144,9 +144,7 @@ public class Settings {
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private String version = "%VERSION%"; // Version of the Launcher
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36";
-    @SuppressWarnings("unused")
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
-    @SuppressWarnings("unused")
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
     public static Gson gson = new Gson();
     public static Gson altGson;
@@ -396,6 +394,12 @@ public class Settings {
             this.logStackTrace(e);
         }
     }
+
+	public Status getMojangStatus() {
+		if (minecraftLoginServerUp && minecraftSessionServerUp) return Status.ONLINE;
+		else if (!minecraftLoginServerUp && !minecraftSessionServerUp) return Status.OFFLINE;
+		else return Status.PARTIAL;
+	}
 
     public boolean launcherHasUpdate() {
         for (DownloadableFile file : this.launcherFiles) {

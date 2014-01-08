@@ -87,3 +87,5 @@ You must also establish yourself as not being a part of our Launcher, and should
 ![CC SA](http://i.creativecommons.org/l/by-sa/3.0/88x31.png)
 
 This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+
+Some icons by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/). Licensed under a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).

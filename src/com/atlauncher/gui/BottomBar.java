@@ -17,13 +17,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Status;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -44,6 +42,8 @@ public class BottomBar extends JPanel {
     private JButton githubIcon;
     private JButton twitterIcon;
     private JButton redditIcon;
+
+	private JLabel statusIcon;
 
     public BottomBar() {
         setBorder(BorderFactory.createEtchedBorder());
@@ -75,6 +75,8 @@ public class BottomBar extends JPanel {
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 0, 0, 5);
         middle.add(username, gbc);
+		gbc.gridx++;
+		middle.add(statusIcon, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
@@ -211,7 +213,38 @@ public class BottomBar extends JPanel {
         twitterIcon.setBorder(BorderFactory.createEmptyBorder());
         twitterIcon.setContentAreaFilled(false);
         twitterIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+		statusIcon = new JLabel(Utils.getIconImage("/resources/StatusWhite.png"));
+		statusIcon.setBorder(BorderFactory.createEmptyBorder());
+		statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.checking"));
     }
+
+	/**
+	 * Update the status icon to show the current Minecraft server status.
+	 * @param status The status of servers
+	 */
+	public void updateStatus(Status status) {
+		switch (status) {
+			case UNKNOWN:
+				statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.checking"));
+				statusIcon.setIcon(Utils.getIconImage("/resources/StatusWhite.png"));
+				break;
+			case ONLINE:
+				statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.online"));
+				statusIcon.setIcon(Utils.getIconImage("/resources/StatusGreen.png"));
+				break;
+			case OFFLINE:
+				statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.offline"));
+				statusIcon.setIcon(Utils.getIconImage("/resources/StatusRed.png"));
+				break;
+			case PARTIAL:
+				statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.partial"));
+				statusIcon.setIcon(Utils.getIconImage("/resources/StatusYellow.png"));
+				break;
+			default:
+				break;
+		}
+	}
 
     /**
      * Changes the text on the toggleConsole button when the console is hidden

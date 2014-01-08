@@ -85,6 +85,13 @@ public class LauncherFrame extends JFrame {
                 bottomBar.hideConsole();
             }
         });
+
+		new Thread() {
+			public void run() {
+				App.settings.checkMojangStatus(); //Check Minecraft status
+				bottomBar.updateStatus(App.settings.getMojangStatus());
+			}
+		}.start();
     }
 
     /**
