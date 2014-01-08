@@ -86,12 +86,12 @@ public class LauncherFrame extends JFrame {
             }
         });
 
-		new Thread() {
-			public void run() {
-				App.settings.checkMojangStatus(); //Check Minecraft status
-				bottomBar.updateStatus(App.settings.getMojangStatus());
-			}
-		}.start();
+        new Thread() {
+            public void run() {
+                App.settings.checkMojangStatus(); //Check Minecraft status
+                bottomBar.updateStatus(App.settings.getMojangStatus());
+            }
+        }.start();
     }
 
     /**
@@ -162,9 +162,9 @@ public class LauncherFrame extends JFrame {
         UIManager
                 .put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
 
-		ToolTipManager.sharedInstance().setDismissDelay(15000);
-		ToolTipManager.sharedInstance().setInitialDelay(50);
-		UIManager.put("info", new Color(57, 64, 71)); //Sets background colour for tooltips using nimbus theme
+        ToolTipManager.sharedInstance().setDismissDelay(15000);
+        ToolTipManager.sharedInstance().setInitialDelay(50);
+        UIManager.put("info", new Color(57, 64, 71)); //Sets background colour for tooltips using nimbus theme
     }
 
 }

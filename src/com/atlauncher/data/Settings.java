@@ -395,11 +395,11 @@ public class Settings {
         }
     }
 
-	public Status getMojangStatus() {
-		if (minecraftLoginServerUp && minecraftSessionServerUp) return Status.ONLINE;
-		else if (!minecraftLoginServerUp && !minecraftSessionServerUp) return Status.OFFLINE;
-		else return Status.PARTIAL;
-	}
+    public Status getMojangStatus() {
+        if (minecraftLoginServerUp && minecraftSessionServerUp) return Status.ONLINE;
+        else if (!minecraftLoginServerUp && !minecraftSessionServerUp) return Status.OFFLINE;
+        else return Status.PARTIAL;
+    }
 
     public boolean launcherHasUpdate() {
         for (DownloadableFile file : this.launcherFiles) {
