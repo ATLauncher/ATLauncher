@@ -110,6 +110,14 @@ public class Settings {
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private String authKey; // The Auth key
 
+    //General backup settings
+    private boolean autoBackup; //Whether backups are created on instance close
+    private String lastSelectedSync; //The last service selected for syncing
+    private boolean notifyBackup; //Whether to notify the user on successful backup or restore
+
+    //Dropbox settings
+    private String dropboxFolderLocation; //Location of dropbox if defined by user
+
     // Packs, Addons, Instances and Accounts
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<News> news; // News
@@ -148,6 +156,7 @@ public class Settings {
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
     public static Gson gson = new Gson();
     public static Gson altGson;
+    private DropboxSync dropbox;
 
     public Settings() {
         GsonBuilder builder = new GsonBuilder();
@@ -325,6 +334,8 @@ public class Settings {
                 checkAuthKey(); // Check the Auth Key
             }
         }.start();
+
+        dropbox = new DropboxSync();
     }
 
     public void setAuthKey(String authKey) {
@@ -994,6 +1005,9 @@ public class Settings {
             }
 
             this.addedPacks = properties.getProperty("addedpacks", "");
+            this.autoBackup = Boolean.parseBoolean(properties.getProperty("autobackup", "false"));
+            this.notifyBackup = Boolean.parseBoolean(properties.getProperty("notifybackup", "true"));
+            this.dropboxFolderLocation = properties.getProperty("dropboxlocation", "");
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         } catch (IOException e) {
@@ -1035,6 +1049,9 @@ public class Settings {
                 properties.setProperty("lastaccount", "");
             }
             properties.setProperty("addedpacks", this.addedPacks);
+            properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
+            properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
+            properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
             this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
         } catch (FileNotFoundException e) {
             logStackTrace(e);
@@ -2430,6 +2447,43 @@ public class Settings {
 
     public void setEnableConsole(boolean enableConsole) {
         this.enableConsole = enableConsole;
+    }
+
+    public void setLastSelectedSync(String lastSelected) {
+        this.lastSelectedSync = lastSelected;
+        saveProperties();
+    }
+
+    public String getLastSelectedSync() {
+        if (this.lastSelectedSync == null) setLastSelectedSync("Dropbox");
+        return this.lastSelectedSync;
+    }
+
+    public void setNotifyBackup(boolean notify) {
+        this.notifyBackup = notify;
+        saveProperties();
+    }
+
+    public boolean getNotifyBackup() {
+        return this.notifyBackup;
+    }
+
+    public void setAutoBackup(boolean enableBackup) {
+        this.autoBackup = enableBackup;
+        saveProperties();
+    }
+
+    public String getDropboxLocation() {
+        return this.dropboxFolderLocation;
+    }
+
+    public void setDropboxLocation(String dropboxLoc) {
+        this.dropboxFolderLocation = dropboxLoc;
+        saveProperties();
+    }
+
+    public boolean getAutoBackup() {
+        return this.autoBackup;
     }
 
     public void setEnableDebugConsole(boolean enableDebugConsole) {

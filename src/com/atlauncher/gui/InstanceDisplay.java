@@ -6,33 +6,15 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.sql.Timestamp;
-import java.util.Date;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.utils.Utils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Class for displaying instances in the Instance Tab
@@ -208,77 +190,7 @@ public class InstanceDisplay extends CollapsiblePanel {
         backup = new JButton(App.settings.getLocalizedString("common.backup"));
         backup.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (instance.getSavesDirectory().exists()) {
-                    int ret = JOptionPane.showConfirmDialog(
-                            App.settings.getParent(),
-                            "<html><center>"
-                                    + App.settings.getLocalizedString("backup.sure", "<br/><br/>")
-                                    + "</center></html>",
-                            App.settings.getLocalizedString("backup.backingup", instance.getName()),
-                            JOptionPane.YES_NO_OPTION);
-                    if (ret == JOptionPane.YES_OPTION) {
-                        final JDialog dialog = new JDialog(App.settings.getParent(), App.settings
-                                .getLocalizedString("backup.backingup", instance.getName()),
-                                ModalityType.APPLICATION_MODAL);
-                        dialog.setSize(300, 100);
-                        dialog.setLocationRelativeTo(App.settings.getParent());
-                        dialog.setResizable(false);
-
-                        JPanel topPanel = new JPanel();
-                        topPanel.setLayout(new BorderLayout());
-                        JLabel doing = new JLabel(App.settings.getLocalizedString(
-                                "backup.backingup", instance.getName()));
-                        doing.setHorizontalAlignment(JLabel.CENTER);
-                        doing.setVerticalAlignment(JLabel.TOP);
-                        topPanel.add(doing);
-
-                        JPanel bottomPanel = new JPanel();
-                        bottomPanel.setLayout(new BorderLayout());
-                        JProgressBar progressBar = new JProgressBar();
-                        bottomPanel.add(progressBar, BorderLayout.NORTH);
-                        progressBar.setIndeterminate(true);
-
-                        dialog.add(topPanel, BorderLayout.CENTER);
-                        dialog.add(bottomPanel, BorderLayout.SOUTH);
-
-                        final Thread backupThread = new Thread() {
-                            public void run() {
-                                Timestamp timestamp = new Timestamp(new Date().getTime());
-                                String time = timestamp.toString().replaceAll("[^0-9]", "_");
-                                String filename = instance.getSafeName() + "-"
-                                        + time.substring(0, time.lastIndexOf("_")) + ".zip";
-                                Utils.zip(instance.getSavesDirectory(),
-                                        new File(App.settings.getBackupsDir(), filename));
-                                dialog.dispose();
-                                String[] options = { App.settings.getLocalizedString("common.ok") };
-                                JOptionPane.showOptionDialog(
-                                        App.settings.getParent(),
-                                        "<html><center>"
-                                                + App.settings.getLocalizedString(
-                                                        "backup.backupcomplete", "<br/><br/>"
-                                                                + filename) + "</center></html>",
-                                        App.settings.getLocalizedString("backup.complete"),
-                                        JOptionPane.DEFAULT_OPTION,
-                                        JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                            }
-                        };
-                        backupThread.start();
-                        dialog.addWindowListener(new WindowAdapter() {
-                            public void windowClosing(WindowEvent e) {
-                                backupThread.interrupt();
-                                dialog.dispose();
-                            }
-                        });
-                        dialog.setVisible(true);
-                    }
-                } else {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("backup.nosaves"),
-                            App.settings.getLocalizedString("backup.nosavestitle"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                }
+                new BackupDialog(instance).setVisible(true);
             }
         });
 
