@@ -6,21 +6,6 @@
  */
 package com.atlauncher.data;
 
-import java.awt.BorderLayout;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-
 import com.atlauncher.App;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.ProgressDialog;
@@ -28,6 +13,12 @@ import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Instance implements Serializable {
 
@@ -550,6 +541,18 @@ public class Instance implements Serializable {
                         if (App.settings.getParent() != null) {
                             App.settings.getParent().setVisible(false);
                         }
+                        //Create a note of worlds for auto backup
+                        HashMap<String, Long> preWorldList = new HashMap<String, Long>();
+                        if (App.settings.getAutoBackup()) {
+                            if (getSavesDirectory().exists()) {
+                                File[] files = getSavesDirectory().listFiles();
+                                if (files != null) {
+                                    for (File file:files) {
+                                        if (file.isDirectory()) preWorldList.put(file.getName(), file.lastModified());
+                                    }
+                                }
+                            }
+                        }
                         Process process = null;
                         if (isNewLaunchMethod()) {
                             process = MCLauncher.launch(account, Instance.this, session);
@@ -582,6 +585,30 @@ public class Instance implements Serializable {
                                     }
                                 };
                                 crashThread.start();
+                            }
+                        }
+                        //Begin backup
+                        else if (App.settings.getAutoBackup()) {
+                            if (getSavesDirectory().exists()) {
+                                File[] files = getSavesDirectory().listFiles();
+                                if (files != null) {
+                                    for (File file:files) {
+                                        if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
+                                            if (preWorldList.containsKey(file.getName())) {
+                                                //Only backup if file changed
+                                                if (!(preWorldList.get(file.getName()) == file.lastModified())) {
+                                                    SyncAbstract sync = SyncAbstract.syncList.get(App.settings.getLastSelectedSync());
+                                                    sync.backupWorld(file.getName() + String.valueOf(file.lastModified()), file, Instance.this);
+                                                }
+                                            }
+                                            //Or backup if a new file is found
+                                            else {
+                                                SyncAbstract sync = SyncAbstract.syncList.get(App.settings.getLastSelectedSync());
+                                                sync.backupWorld(file.getName() + String.valueOf(file.lastModified()).replace(":", ""), file, Instance.this);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                         App.settings.setMinecraftLaunched(false);
