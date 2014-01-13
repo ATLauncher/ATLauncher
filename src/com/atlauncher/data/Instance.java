@@ -17,11 +17,6 @@ import com.atlauncher.utils.Utils;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.nio.file.DirectoryIteratorException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -547,20 +542,15 @@ public class Instance implements Serializable {
                             App.settings.getParent().setVisible(false);
                         }
                         //Create a note of worlds for auto backup
-                        HashMap<String, FileTime> preWorldList = new HashMap<>();
+                        HashMap<String, Long> preWorldList = new HashMap<String, Long>();
                         if (App.settings.getAutoBackup()) {
-                            try {
-                                DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-                                    public boolean accept(Path file) throws IOException {
-                                        return (Files.isDirectory(file));
+                            if (getSavesDirectory().exists()) {
+                                File[] files = getSavesDirectory().listFiles();
+                                if (files != null) {
+                                    for (File file:files) {
+                                        if (file.isDirectory()) preWorldList.put(file.getName(), file.lastModified());
                                     }
-                                };
-                                DirectoryStream<Path> stream = Files.newDirectoryStream(getSavesDirectory().toPath(), filter);
-                                for (Path file:stream) {
-                                    preWorldList.put(file.getFileName().toString(), Files.getLastModifiedTime(file.resolve("level.dat")));
                                 }
-                            } catch (IOException | DirectoryIteratorException e) {
-                                e.printStackTrace();
                             }
                         }
                         Process process = null;
@@ -599,31 +589,26 @@ public class Instance implements Serializable {
                         }
                         //Begin backup
                         else if (App.settings.getAutoBackup()) {
-                            try {
-                                DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-                                    public boolean accept(Path file) throws IOException {
-                                        return (Files.isDirectory(file));
-                                    }
-                                };
-                                DirectoryStream<Path> stream = Files.newDirectoryStream(getSavesDirectory().toPath(), filter);
-                                for (Path file:stream) {
-                                    if (!file.getFileName().toString().equals("NEI")) {
-                                        if (preWorldList.containsKey(file.getFileName().toString())) {
-                                            //Only backup if file changed
-                                            if (!preWorldList.get(file.getFileName().toString()).equals(Files.getLastModifiedTime(file.resolve("level.dat")))) {
-                                                SyncAbstract sync = SyncAbstract.syncList.get(App.settings.getLastSelectedSync());
-                                                sync.backupWorld(file.getFileName().toString() + Files.getLastModifiedTime(file.resolve("level.dat")).toString(), file, name);
+                            if (getSavesDirectory().exists()) {
+                                File[] files = getSavesDirectory().listFiles();
+                                if (files != null) {
+                                    for (File file:files) {
+                                        if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
+                                            if (preWorldList.containsKey(file.getName())) {
+                                                //Only backup if file changed
+                                                if (!(preWorldList.get(file.getName()) == file.lastModified())) {
+                                                    SyncAbstract sync = SyncAbstract.syncList.get(App.settings.getLastSelectedSync());
+                                                    sync.backupWorld(file.getName() + String.valueOf(file.lastModified()), file, Instance.this);
+                                                }
                                             }
-                                        }
-                                        //Or backup if a new file is found
-                                        else {
-                                            SyncAbstract sync = SyncAbstract.syncList.get(App.settings.getLastSelectedSync());
-                                            sync.backupWorld(file.getFileName().toString() + Files.getLastModifiedTime(file.resolve("level.dat")).toString().replace(":", ""), file, name);
+                                            //Or backup if a new file is found
+                                            else {
+                                                SyncAbstract sync = SyncAbstract.syncList.get(App.settings.getLastSelectedSync());
+                                                sync.backupWorld(file.getName() + String.valueOf(file.lastModified()).replace(":", ""), file, Instance.this);
+                                            }
                                         }
                                     }
                                 }
-                            } catch (IOException | DirectoryIteratorException e) {
-                                App.settings.logStackTrace(e);
                             }
                         }
                         App.settings.setMinecraftLaunched(false);

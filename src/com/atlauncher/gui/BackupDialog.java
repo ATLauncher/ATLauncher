@@ -4,21 +4,17 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.SyncAbstract;
 import com.atlauncher.utils.Utils;
-import sun.tools.jar.resources.jar;
-import sun.tools.jar.resources.jar_de;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Kihira
@@ -29,8 +25,8 @@ public class BackupDialog extends JDialog implements ActionListener{
     private final JButton backupButton = new JButton(App.settings.getLocalizedString("common.backup"));
     private final JButton restoreButton = new JButton(App.settings.getLocalizedString("common.restore"));
     private final JButton deleteButton = new JButton(App.settings.getLocalizedString("common.delete"));
-    private JList<String> worldList;
-    private JList<String> backupList;
+    private JList worldList;
+    private JList backupList;
     private SyncAbstract selectedSync = SyncAbstract.syncList.get(App.settings.getLastSelectedSync());
 
     public BackupDialog(Instance inst) {
@@ -56,22 +52,19 @@ public class BackupDialog extends JDialog implements ActionListener{
             @Override
             public void stateChanged(ChangeEvent e) {
                 //Update the backup/restore lists
-                List<String> list = selectedSync.getBackupsForInstance(instance.getName());
+                List<String> list = selectedSync.getBackupsForInstance(instance);
                 if (list == null) backupList.setListData(new String[0]);
                 else backupList.setListData(list.toArray(new String[list.size()]));
-                list = new ArrayList<>();
-                try {
-                    DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-                        public boolean accept(Path file) throws IOException {
-                            return (Files.isDirectory(file));
+                list = new ArrayList<String>();
+                if (instance.getSavesDirectory().exists()) {
+                    if (instance.getSavesDirectory().exists()) {
+                        File[] files = instance.getSavesDirectory().listFiles();
+                        if (files != null) {
+                            for (File file:files) {
+                                if ((file.isDirectory()) && (!file.getName().equals("NEI"))) list.add(file.getName());
+                            }
                         }
-                    };
-                    DirectoryStream<Path> stream = Files.newDirectoryStream(instance.getSavesDirectory().toPath(), filter);
-                    for (Path file:stream) {
-                        if (!file.getFileName().toString().equals("NEI")) list.add(file.getFileName().toString());
                     }
-                } catch (IOException | DirectoryIteratorException ex) {
-                    App.settings.logStackTrace(ex);
                 }
                 if (list.size() == 0) worldList.setListData(new String[0]);
                 else worldList.setListData(list.toArray(new String[list.size()]));
@@ -82,24 +75,19 @@ public class BackupDialog extends JDialog implements ActionListener{
     }
 
     private JPanel createBackupPanel() {
-        List<String> worldData = new ArrayList<>();
+        List<String> worldData = new ArrayList<String>();
         if (instance.getSavesDirectory().exists()) {
-            try {
-                DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-                    public boolean accept(Path file) throws IOException {
-                        return (Files.isDirectory(file));
+            if (instance.getSavesDirectory().exists()) {
+                File[] files = instance.getSavesDirectory().listFiles();
+                if (files != null) {
+                    for (File file:files) {
+                        if ((file.isDirectory()) && (!file.getName().equals("NEI"))) worldData.add(file.getName());
                     }
-                };
-                DirectoryStream<Path> stream = Files.newDirectoryStream(instance.getSavesDirectory().toPath(), filter);
-                for (Path file:stream) {
-                    if (!file.getFileName().toString().equals("NEI")) worldData.add(file.getFileName().toString());
                 }
-            } catch (IOException | DirectoryIteratorException e) {
-                e.printStackTrace();
             }
         }
 
-        worldList = new JList<>(worldData.toArray(new String[worldData.size()]));
+        worldList = new JList(worldData.toArray(new String[worldData.size()]));
         worldList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         worldList.setLayoutOrientation(JList.VERTICAL_WRAP);
         worldList.setVisibleRowCount(-1);
@@ -139,16 +127,16 @@ public class BackupDialog extends JDialog implements ActionListener{
     }
 
     private JPanel createRestorePanel() {
-        JComboBox<String> syncChoice = new JComboBox<>();
+        JComboBox syncChoice = new JComboBox();
         for (Map.Entry<String, SyncAbstract> entry:SyncAbstract.syncList.entrySet()) {
             syncChoice.addItem(entry.getKey());
         }
         syncChoice.addActionListener(this);
         syncChoice.setMaximumSize(new Dimension(100, 50));
 
-        List<String> list = selectedSync.getBackupsForInstance(instance.getName());
-        if (list == null) backupList = new JList<>();
-        else backupList = new JList<>(list.toArray(new String[list.size()]));
+        List<String> list = selectedSync.getBackupsForInstance(instance);
+        if (list == null) backupList = new JList();
+        else backupList = new JList(list.toArray(new String[list.size()]));
         backupList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         backupList.setLayoutOrientation(JList.VERTICAL_WRAP);
         backupList.setVisibleRowCount(-1);
@@ -207,30 +195,30 @@ public class BackupDialog extends JDialog implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if (("Backup".equals(e.getActionCommand())) && (worldList.getSelectedValue() != null))  {
-            String worldToBackup = worldList.getSelectedValue();
+            String worldToBackup = (String) worldList.getSelectedValue();
             String backupName = JOptionPane.showInputDialog(this, App.settings.getLocalizedString("backup.message.backupname"),
                     App.settings.getLocalizedString("backup.message.backupname.title"), JOptionPane.QUESTION_MESSAGE);
             if (backupName != null) {
                 for (Map.Entry<String, SyncAbstract> entry:SyncAbstract.syncList.entrySet()) {
-                    Path worldData = instance.getSavesDirectory().toPath().resolve(worldToBackup);
-                    if (Files.exists(worldData)) entry.getValue().backupWorld(backupName, worldData, instance.getName());
+                    File worldData = new File(instance.getSavesDirectory(), worldToBackup);
+                    if (worldData.exists()) entry.getValue().backupWorld(backupName, worldData, instance);
                     else JOptionPane.showMessageDialog(this, App.settings.getLocalizedString("backup.message.backupfailed.missingdirectory"),
                             App.settings.getLocalizedString("backup.message.backupfailed.title"), JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
         else if (("Restore".equals(e.getActionCommand())) && (backupList.getSelectedValue() != null))  {
-            String backupToRestore = backupList.getSelectedValue();
+            String backupToRestore = (String) backupList.getSelectedValue();
             selectedSync.restoreBackup(backupToRestore, instance);
         }
         else if (("Delete".equals(e.getActionCommand())) && (backupList.getSelectedValue() != null))  {
-            String backupToDelete = backupList.getSelectedValue();
+            String backupToDelete = (String) backupList.getSelectedValue();
             if (JOptionPane.showOptionDialog(this, App.settings.getLocalizedString("backup.message.deleteconfirm", backupToDelete),
                     App.settings.getLocalizedString("backup.message.deleteconfirm.title"),
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
                 selectedSync.deleteBackup(backupToDelete, instance);
                 //Update the backup list
-                List<String> list = selectedSync.getBackupsForInstance(instance.getName());
+                List<String> list = selectedSync.getBackupsForInstance(instance);
                 if (list == null) backupList.setListData(new String[0]);
                 else backupList.setListData(list.toArray(new String[list.size()]));
             }
@@ -239,7 +227,7 @@ public class BackupDialog extends JDialog implements ActionListener{
             String selection = (String) ((JComboBox) e.getSource()).getSelectedItem();
             selectedSync = SyncAbstract.syncList.get(selection);
             App.settings.setLastSelectedSync(selection);
-            List<String> list = selectedSync.getBackupsForInstance(instance.getName());
+            List<String> list = selectedSync.getBackupsForInstance(instance);
             backupList.setListData(list.toArray(new String[list.size()]));
         }
     }

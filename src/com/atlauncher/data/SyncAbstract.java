@@ -2,8 +2,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.gui.CollapsiblePanel;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,7 +14,7 @@ import java.util.List;
  */
 public abstract class SyncAbstract {
 
-    public static final HashMap<String, SyncAbstract> syncList = new HashMap<>();
+    public static final HashMap<String, SyncAbstract> syncList = new HashMap<String, SyncAbstract>();
     private final String syncName;
 
     public SyncAbstract(String name) {
@@ -34,16 +33,16 @@ public abstract class SyncAbstract {
      * This is called when a world needs to be backed up.
      * @param backupName The name of the backup
      * @param worldData The folder of the world
-     * @param instanceName The name of the instance for the world
+     * @param instance The instance for the world
      */
-    public abstract void backupWorld(String backupName, Path worldData, String instanceName);
+    public abstract void backupWorld(String backupName, File worldData, Instance instance);
 
     /**
      * This should return a list of names of the backups that the current application has backed up
-     * @param instanceName Name of the instance
+     * @param instance The instance
      * @return A list of world names
      */
-    public abstract List<String> getBackupsForInstance(String instanceName);
+    public abstract List<String> getBackupsForInstance(Instance instance);
 
     /**
      * This is called when the user wants to restore a backup. It should restore the backup to the correct save location
