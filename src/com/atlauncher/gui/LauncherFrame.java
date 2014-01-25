@@ -161,7 +161,6 @@ public class LauncherFrame extends JFrame {
         UIManager.put("nimbusSelectionBackground", new Color(100, 100, 200));
         UIManager
                 .put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
-
         ToolTipManager.sharedInstance().setDismissDelay(15000);
         ToolTipManager.sharedInstance().setInitialDelay(50);
         UIManager.put("info", new Color(57, 64, 71)); //Sets background colour for tooltips using nimbus theme

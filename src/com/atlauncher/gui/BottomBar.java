@@ -7,6 +7,7 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -17,7 +18,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToolTip;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
@@ -214,31 +222,44 @@ public class BottomBar extends JPanel {
         twitterIcon.setContentAreaFilled(false);
         twitterIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        statusIcon = new JLabel(Utils.getIconImage("/resources/StatusWhite.png"));
+        statusIcon = new JLabel(Utils.getIconImage("/resources/StatusWhite.png")) {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
         statusIcon.setBorder(BorderFactory.createEmptyBorder());
         statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.checking"));
     }
 
     /**
      * Update the status icon to show the current Minecraft server status.
-     * @param status The status of servers
+     * 
+     * @param status
+     *            The status of servers
      */
     public void updateStatus(Status status) {
         switch (status) {
             case UNKNOWN:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.checking"));
+                statusIcon.setToolTipText(App.settings
+                        .getLocalizedString("status.minecraft.checking"));
                 statusIcon.setIcon(Utils.getIconImage("/resources/StatusWhite.png"));
                 break;
             case ONLINE:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.online"));
+                statusIcon.setToolTipText(App.settings
+                        .getLocalizedString("status.minecraft.online"));
                 statusIcon.setIcon(Utils.getIconImage("/resources/StatusGreen.png"));
                 break;
             case OFFLINE:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.offline"));
+                statusIcon.setToolTipText(App.settings
+                        .getLocalizedString("status.minecraft.offline"));
                 statusIcon.setIcon(Utils.getIconImage("/resources/StatusRed.png"));
                 break;
             case PARTIAL:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.partial"));
+                statusIcon.setToolTipText(App.settings
+                        .getLocalizedString("status.minecraft.partial"));
                 statusIcon.setIcon(Utils.getIconImage("/resources/StatusYellow.png"));
                 break;
             default:
