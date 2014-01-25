@@ -586,9 +586,8 @@ public class Instance implements Serializable {
                                 };
                                 crashThread.start();
                             }
-                        }
-                        //Begin backup
-                        else if (App.settings.getAutoBackup()) {
+                        } else if (App.settings.getAutoBackup()) {
+                            //Begin backup
                             if (getSavesDirectory().exists()) {
                                 File[] files = getSavesDirectory().listFiles();
                                 if (files != null) {

@@ -2507,6 +2507,9 @@ public class Settings {
     }
 
     public boolean getAutoBackup() {
+        if (!this.advancedBackup) {
+            return false;
+        }
         return this.autoBackup;
     }
 
