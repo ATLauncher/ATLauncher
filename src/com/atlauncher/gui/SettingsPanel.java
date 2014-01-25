@@ -75,6 +75,9 @@ public class SettingsPanel extends JPanel {
     private JLabel startMinecraftMaximisedLabel;
     private JCheckBox startMinecraftMaximised;
 
+    private JLabel advancedBackupLabel;
+    private JCheckBox advancedBackup;
+
     private JLabel sortPacksAlphabeticallyLabel;
     private JCheckBox sortPacksAlphabetically;
 
@@ -409,6 +412,36 @@ public class SettingsPanel extends JPanel {
         }
         topPanel.add(startMinecraftMaximised, gbc);
 
+        // Advanced Backup
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        advancedBackupLabel = new JLabel(App.settings.getLocalizedString("settings.advancedbackup")
+                + "?") {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
+        advancedBackupLabel.setIcon(helpIcon);
+        advancedBackupLabel.setToolTipText("<html><center>"
+                + App.settings.getLocalizedString("settings.advancedbackuphelp", "<br/>")
+                + "</center></html>");
+        topPanel.add(advancedBackupLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        advancedBackup = new JCheckBox();
+        if (App.settings.isAdvancedBackupsEnabled()) {
+            advancedBackup.setSelected(true);
+        }
+        topPanel.add(advancedBackup, gbc);
+
         // Sort Packs Alphabetically
 
         gbc.gridx = 0;
@@ -603,6 +636,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.setJavaPath(javaPath.getText());
                 App.settings.setJavaParameters(javaParameters.getText());
                 App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
+                App.settings.setAdvancedBackups(advancedBackup.isSelected());
                 App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
                 App.settings.setEnableConsole(enableConsole.isSelected());
                 App.settings.setEnableDebugConsole(enableDebugConsole.isSelected());

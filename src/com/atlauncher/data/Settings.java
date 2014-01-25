@@ -101,6 +101,7 @@ public class Settings {
     private boolean usingCustomJavaPath; // If the user is using a custom java path
     private String javaPath; // Users path to Java
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
+    private boolean advancedBackup; // If advanced backup is enabled
     private boolean sortPacksAlphabetically; // If to sort packs default alphabetically
     private boolean enableConsole; // If to show the console by default
     private boolean enableDebugConsole; // If to enable debugging console
@@ -110,13 +111,13 @@ public class Settings {
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private String authKey; // The Auth key
 
-    //General backup settings
-    private boolean autoBackup; //Whether backups are created on instance close
-    private String lastSelectedSync; //The last service selected for syncing
-    private boolean notifyBackup; //Whether to notify the user on successful backup or restore
+    // General backup settings
+    private boolean autoBackup; // Whether backups are created on instance close
+    private String lastSelectedSync; // The last service selected for syncing
+    private boolean notifyBackup; // Whether to notify the user on successful backup or restore
 
-    //Dropbox settings
-    private String dropboxFolderLocation; //Location of dropbox if defined by user
+    // Dropbox settings
+    private String dropboxFolderLocation; // Location of dropbox if defined by user
 
     // Packs, Addons, Instances and Accounts
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
@@ -407,9 +408,12 @@ public class Settings {
     }
 
     public Status getMojangStatus() {
-        if (minecraftLoginServerUp && minecraftSessionServerUp) return Status.ONLINE;
-        else if (!minecraftLoginServerUp && !minecraftSessionServerUp) return Status.OFFLINE;
-        else return Status.PARTIAL;
+        if (minecraftLoginServerUp && minecraftSessionServerUp)
+            return Status.ONLINE;
+        else if (!minecraftLoginServerUp && !minecraftSessionServerUp)
+            return Status.OFFLINE;
+        else
+            return Status.PARTIAL;
     }
 
     public boolean launcherHasUpdate() {
@@ -978,6 +982,9 @@ public class Settings {
             this.maximiseMinecraft = Boolean.parseBoolean(properties.getProperty(
                     "maximiseminecraft", "false"));
 
+            this.advancedBackup = Boolean.parseBoolean(properties.getProperty("advancedbackup",
+                    "false"));
+
             this.sortPacksAlphabetically = Boolean.parseBoolean(properties.getProperty(
                     "sortpacksalphabetically", "false"));
 
@@ -1006,7 +1013,8 @@ public class Settings {
 
             this.addedPacks = properties.getProperty("addedpacks", "");
             this.autoBackup = Boolean.parseBoolean(properties.getProperty("autobackup", "false"));
-            this.notifyBackup = Boolean.parseBoolean(properties.getProperty("notifybackup", "true"));
+            this.notifyBackup = Boolean
+                    .parseBoolean(properties.getProperty("notifybackup", "true"));
             this.dropboxFolderLocation = properties.getProperty("dropboxlocation", "");
         } catch (FileNotFoundException e) {
             logStackTrace(e);
@@ -1035,6 +1043,7 @@ public class Settings {
             properties.setProperty("javaparameters", this.javaParamaters);
             properties
                     .setProperty("maximiseminecraft", (this.maximiseMinecraft) ? "true" : "false");
+            properties.setProperty("advancedbackup", (this.advancedBackup) ? "true" : "false");
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
@@ -1099,6 +1108,7 @@ public class Settings {
             properties.setProperty("javaparameters", this.javaParamaters);
             properties
                     .setProperty("maximiseminecraft", (this.maximiseMinecraft) ? "true" : "false");
+            properties.setProperty("advancedbackup", (this.advancedBackup) ? "true" : "false");
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
@@ -2405,6 +2415,19 @@ public class Settings {
     }
 
     /**
+     * If the user has selected to enable advanced backups
+     * 
+     * @return true if yes, false if not
+     */
+    public boolean isAdvancedBackupsEnabled() {
+        return this.advancedBackup;
+    }
+
+    public void setAdvancedBackups(boolean advancedBackup) {
+        this.advancedBackup = advancedBackup;
+    }
+
+    /**
      * If the user has selected to display packs alphabetically or nto
      * 
      * @return true if yes, false if not
@@ -2455,7 +2478,8 @@ public class Settings {
     }
 
     public String getLastSelectedSync() {
-        if (this.lastSelectedSync == null) setLastSelectedSync("Dropbox");
+        if (this.lastSelectedSync == null)
+            setLastSelectedSync("Dropbox");
         return this.lastSelectedSync;
     }
 
