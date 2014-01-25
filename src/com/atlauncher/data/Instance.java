@@ -541,18 +541,15 @@ public class Instance implements Serializable {
                         if (App.settings.getParent() != null) {
                             App.settings.getParent().setVisible(false);
                         }
-                        // Create a note of worlds for auto backup
-                        if (App.settings.isAdvancedBackupsEnabled()) {
-                            HashMap<String, Long> preWorldList = new HashMap<String, Long>();
-                            if (App.settings.getAutoBackup()) {
-                                if (getSavesDirectory().exists()) {
-                                    File[] files = getSavesDirectory().listFiles();
-                                    if (files != null) {
-                                        for (File file : files) {
-                                            if (file.isDirectory())
-                                                preWorldList.put(file.getName(),
-                                                        file.lastModified());
-                                        }
+                        // Create a note of worlds for auto backup if enabled
+                        HashMap<String, Long> preWorldList = new HashMap<String, Long>();
+                        if (App.settings.isAdvancedBackupsEnabled() && App.settings.getAutoBackup()) {
+                            if (getSavesDirectory().exists()) {
+                                File[] files = getSavesDirectory().listFiles();
+                                if (files != null) {
+                                    for (File file : files) {
+                                        if (file.isDirectory())
+                                            preWorldList.put(file.getName(), file.lastModified());
                                     }
                                 }
                             }
