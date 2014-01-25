@@ -84,6 +84,9 @@ public class DisableableMod implements Serializable {
 
     public boolean enable(Instance instance) {
         if (this.disabled) {
+            if (!getFile(instance).getParentFile().exists()) {
+                getFile(instance).getParentFile().mkdir();
+            }
             if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
                 if (this.type == Type.jar) {
                     File inputFile = instance.getMinecraftJar();
