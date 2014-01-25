@@ -15,6 +15,7 @@ import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -576,7 +577,14 @@ public class Instance implements Serializable {
                         if (App.settings.isInOfflineMode()) {
                             App.settings.checkOnlineStatus();
                         }
-                        if (process.exitValue() != 0) {
+                        int exitValue = 0; // Assume we exited fine
+                        try {
+                            exitValue = process.exitValue(); // Try to get the real exit value
+                        } catch (IllegalThreadStateException e) {
+                            App.settings.logStackTrace(e);
+                            process.destroy(); // Kill the process
+                        }
+                        if (exitValue != 0) {
                             if (getRealPack().isLoggingEnabled() && App.settings.enableLogs()
                                     && getRealPack().crashReportsEnabled()) {
                                 Thread crashThread = new Thread() {
