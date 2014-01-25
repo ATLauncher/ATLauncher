@@ -12,7 +12,13 @@ package com.atlauncher.data;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
 
 import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
@@ -79,6 +85,41 @@ public class DisableableMod implements Serializable {
     public boolean enable(Instance instance) {
         if (this.disabled) {
             if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
+                if (this.type == Type.jar) {
+                    File inputFile = instance.getMinecraftJar();
+                    File outputTmpFile = new File(App.settings.getTempDir(), instance.getSafeName()
+                            + "-minecraft.jar");
+                    if (Utils.hasMetaInf(inputFile)) {
+                        try {
+                            JarInputStream input = new JarInputStream(
+                                    new FileInputStream(inputFile));
+                            JarOutputStream output = new JarOutputStream(new FileOutputStream(
+                                    outputTmpFile));
+                            JarEntry entry;
+
+                            while ((entry = input.getNextJarEntry()) != null) {
+                                if (entry.getName().contains("META-INF")) {
+                                    continue;
+                                }
+                                output.putNextEntry(entry);
+                                byte buffer[] = new byte[1024];
+                                int amo;
+                                while ((amo = input.read(buffer, 0, 1024)) != -1) {
+                                    output.write(buffer, 0, amo);
+                                }
+                                output.closeEntry();
+                            }
+
+                            input.close();
+                            output.close();
+
+                            inputFile.delete();
+                            outputTmpFile.renameTo(inputFile);
+                        } catch (IOException e) {
+                            App.settings.logStackTrace(e);
+                        }
+                    }
+                }
                 this.disabled = false;
                 return true;
             }

@@ -43,6 +43,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -58,7 +61,7 @@ import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.gui.ProgressDialog;
 
 public class Utils {
-    
+
     public static ImageIcon getIconImage(String path) {
         URL url = System.class.getResource(path);
 
@@ -780,5 +783,23 @@ public class Utils {
         }
         reader.close();
         return response.toString();
+    }
+
+    public static boolean hasMetaInf(File minecraftJar) {
+        try {
+            JarInputStream input = new JarInputStream(new FileInputStream(minecraftJar));
+            JarEntry entry;
+            boolean found = false;
+            while ((entry = input.getNextJarEntry()) != null) {
+                if (entry.getName().contains("META-INF")) {
+                    found = true;
+                }
+            }
+            input.close();
+            return found;
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return false;
     }
 }
