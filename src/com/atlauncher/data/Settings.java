@@ -335,7 +335,20 @@ public class Settings {
                 checkAuthKey(); // Check the Auth Key
             }
         }.start();
-
+        if (Utils.isWindows() && this.javaPath.contains("x86")) {
+            String[] options = { App.settings.getLocalizedString("common.yes"),
+                    App.settings.getLocalizedString("common.no") };
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
+                    + App.settings.getLocalizedString("settings.running32bit", "<br/><br/>")
+                    + "</center></html>",
+                    App.settings.getLocalizedString("settings.running32bittitle"),
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                    options[0]);
+            if (ret == 0) {
+                Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
+                System.exit(0);
+            }
+        }
         dropbox = new DropboxSync();
     }
 
