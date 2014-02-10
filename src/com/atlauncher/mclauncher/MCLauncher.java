@@ -93,14 +93,6 @@ public class MCLauncher {
             arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
         }
 
-        if (!App.settings.getJavaParameters().isEmpty()) {
-            for (String arg : App.settings.getJavaParameters().split(" ")) {
-                if (!arg.isEmpty()) {
-                    arguments.add(arg);
-                }
-            }
-        }
-
         arguments.add("-Dfml.ignorePatchDiscrepancies=true");
         arguments.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
 
@@ -165,19 +157,22 @@ public class MCLauncher {
             String args = instance.getExtraArguments();
             if (args.contains(" ")) {
                 for (String arg : args.split(" ")) {
-                    if (!arguments.contains(arg)) {
+                    arguments.add(arg);
+                }
+            } else {
+                arguments.add(args);
+            }
+        }
+
+        if (!App.settings.getJavaParameters().isEmpty()) {
+            for (String arg : App.settings.getJavaParameters().split(" ")) {
+                if (!arg.isEmpty()) {
+                    if (arguments.contains(arg)) {
                         App.settings.log("Duplicate argument " + arg + " found and not added!",
                                 LogMessageType.error, false);
                     } else {
                         arguments.add(arg);
                     }
-                }
-            } else {
-                if (arguments.contains(args)) {
-                    App.settings.log("Duplicate argument " + args + " found and not added!",
-                            LogMessageType.error, false);
-                } else {
-                    arguments.add(args);
                 }
             }
         }
