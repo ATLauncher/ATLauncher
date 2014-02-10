@@ -108,8 +108,7 @@ public class MCLauncher {
         if (Utils.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
             arguments.add("-Xdock:icon="
-                    + new File(App.settings.getImagesDir(), "NewMinecraftIcon.png")
-                            .getAbsolutePath());
+                    + new File(instance.getAssetsDir(), "icons/minecraft.icns").getAbsolutePath());
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
