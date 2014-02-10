@@ -397,6 +397,18 @@ public class Mod {
                             if (downloadsFolderFile.exists()) {
                                 Utils.moveFile(downloadsFolderFile, fileLocation, true);
                             }
+                            // Check to see if a browser has added a .zip to the end of the file
+                            File zipAddedFile = new File(App.settings.getDownloadsDir(), getFile()
+                                    + ".zip");
+                            if (zipAddedFile.exists()) {
+                                Utils.moveFile(zipAddedFile, fileLocation, true);
+                            } else {
+                                zipAddedFile = new File(App.settings.getUsersDownloadsDir(),
+                                        getFile() + ".zip");
+                                if (zipAddedFile.exists()) {
+                                    Utils.moveFile(zipAddedFile, fileLocation, true);
+                                }
+                            }
                         }
                     }
                 }
@@ -545,6 +557,18 @@ public class Mod {
                         // Check users downloads folder to see if it's there
                         if (downloadsFolderFile.exists()) {
                             Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                        }
+                        // Check to see if a browser has added a .zip to the end of the file
+                        File zipAddedFile = new File(App.settings.getDownloadsDir(),
+                                getServerFile() + ".zip");
+                        if (zipAddedFile.exists()) {
+                            Utils.moveFile(zipAddedFile, fileLocation, true);
+                        } else {
+                            zipAddedFile = new File(App.settings.getUsersDownloadsDir(),
+                                    getServerFile() + ".zip");
+                            if (zipAddedFile.exists()) {
+                                Utils.moveFile(zipAddedFile, fileLocation, true);
+                            }
                         }
                     }
                 }
