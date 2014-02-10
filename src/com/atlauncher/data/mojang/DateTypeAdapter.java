@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 by ATLauncher and Contributors
+ * Copyright 2013-2014 by ATLauncher and Contributors
  *
  * ATLauncher is licensed under CC BY-NC-ND 3.0 which allows others you to
  * share this software with others as long as you credit us by linking to our
