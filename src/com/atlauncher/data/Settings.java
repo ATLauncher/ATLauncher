@@ -103,6 +103,7 @@ public class Settings {
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
     private boolean advancedBackup; // If advanced backup is enabled
     private boolean sortPacksAlphabetically; // If to sort packs default alphabetically
+    private boolean keepLauncherOpen; // If we should close the Launcher after Minecraft has closed
     private boolean enableConsole; // If to show the console by default
     private boolean enableDebugConsole; // If to enable debugging console
     private boolean enableLeaderboards; // If to enable the leaderboards
@@ -1000,6 +1001,9 @@ public class Settings {
 
             this.sortPacksAlphabetically = Boolean.parseBoolean(properties.getProperty(
                     "sortpacksalphabetically", "false"));
+            
+            this.keepLauncherOpen = Boolean.parseBoolean(properties.getProperty("keeplauncheropen",
+                    "true"));
 
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
@@ -1059,6 +1063,7 @@ public class Settings {
             properties.setProperty("advancedbackup", (this.advancedBackup) ? "true" : "false");
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
+            properties.setProperty("keeplauncheropen", (this.keepLauncherOpen) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
             properties.setProperty("enabledebugconsole", (this.enableDebugConsole) ? "true"
                     : "false");
@@ -1124,6 +1129,7 @@ public class Settings {
             properties.setProperty("advancedbackup", (this.advancedBackup) ? "true" : "false");
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
+            properties.setProperty("keeplauncheropen", (this.keepLauncherOpen) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
             properties.setProperty("enabledebugconsole", (this.enableDebugConsole) ? "true"
                     : "false");
@@ -2452,7 +2458,7 @@ public class Settings {
     public void setSortPacksAlphabetically(boolean sortPacksAlphabetically) {
         this.sortPacksAlphabetically = sortPacksAlphabetically;
     }
-
+    
     /**
      * If the user has selected to show the console always or not
      * 
@@ -2460,6 +2466,15 @@ public class Settings {
      */
     public boolean enableConsole() {
         return this.enableConsole;
+    }
+
+    /**
+     * If the user has selected to keep the launcher open after Minecraft has closed
+     * 
+     * @return true if yes, false if not
+     */
+    public boolean keepLauncherOpen() {
+        return this.keepLauncherOpen;
     }
 
     /**
@@ -2480,9 +2495,13 @@ public class Settings {
     public void setConsoleVisible(boolean visible) {
         this.console.setVisible(visible);
     }
-
+    
     public void setEnableConsole(boolean enableConsole) {
         this.enableConsole = enableConsole;
+    }
+
+    public void setKeepLauncherOpen(boolean keepLauncherOpen) {
+        this.keepLauncherOpen = keepLauncherOpen;
     }
 
     public void setLastSelectedSync(String lastSelected) {

@@ -81,6 +81,9 @@ public class SettingsPanel extends JPanel {
     private JLabel sortPacksAlphabeticallyLabel;
     private JCheckBox sortPacksAlphabetically;
 
+    private JLabel keepLauncherOpenLabel;
+    private JCheckBox keepLauncherOpen;
+
     private JLabel enableConsoleLabel;
     private JCheckBox enableConsole;
 
@@ -471,6 +474,35 @@ public class SettingsPanel extends JPanel {
         }
         topPanel.add(sortPacksAlphabetically, gbc);
 
+        // Keep Launcher Open
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        keepLauncherOpenLabel = new JLabel(App.settings.getLocalizedString("settings.keeplauncheropen")
+                + "?") {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
+        keepLauncherOpenLabel.setIcon(helpIcon);
+        keepLauncherOpenLabel.setToolTipText(App.settings
+                .getLocalizedString("settings.keeplauncheropenhelp"));
+        topPanel.add(keepLauncherOpenLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        keepLauncherOpen = new JCheckBox();
+        if (App.settings.keepLauncherOpen()) {
+            keepLauncherOpen.setSelected(true);
+        }
+        topPanel.add(keepLauncherOpen, gbc);
+
         // Enable Console
 
         gbc.gridx = 0;
@@ -638,6 +670,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
                 App.settings.setAdvancedBackups(advancedBackup.isSelected());
                 App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
+                App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
                 App.settings.setEnableConsole(enableConsole.isSelected());
                 App.settings.setEnableDebugConsole(enableDebugConsole.isSelected());
                 App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());

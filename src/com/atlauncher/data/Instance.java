@@ -505,17 +505,15 @@ public class Instance implements Serializable {
             if (App.settings.getPermGen() < this.permgen) {
                 String[] options = { App.settings.getLocalizedString("common.yes"),
                         App.settings.getLocalizedString("common.no") };
-                int ret = JOptionPane
-                        .showOptionDialog(
-                                App.settings.getParent(),
-                                "<html><center>"
-                                        + App.settings.getLocalizedString(
-                                                "instance.insufficientpermgen", "<b>"
-                                                        + this.permgen + "</b> MB<br/><br/>")
-                                        + "</center></html>", App.settings
-                                        .getLocalizedString("instance.insufficientpermgentitle"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
+                int ret = JOptionPane.showOptionDialog(
+                        App.settings.getParent(),
+                        "<html><center>"
+                                + App.settings.getLocalizedString("instance.insufficientpermgen",
+                                        "<b>" + this.permgen + "</b> MB<br/><br/>")
+                                + "</center></html>", App.settings
+                                .getLocalizedString("instance.insufficientpermgentitle"),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                        options[0]);
                 if (ret != 0) {
                     App.settings
                             .log("Launching of instance cancelled due to user cancelling memory warning!",
@@ -619,7 +617,7 @@ public class Instance implements Serializable {
                             App.settings.logMinecraft(line);
                         }
                         App.settings.hideKillMinecraft();
-                        if (App.settings.getParent() != null) {
+                        if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
                             App.settings.getParent().setVisible(true);
                         }
                         long end = System.currentTimeMillis();
@@ -632,6 +630,9 @@ public class Instance implements Serializable {
                         } catch (IllegalThreadStateException e) {
                             App.settings.logStackTrace(e);
                             process.destroy(); // Kill the process
+                        }
+                        if (!App.settings.keepLauncherOpen()) {
+                            App.settings.setConsoleVisible(false); // Hide the console to pretend we've closed
                         }
                         if (exitValue != 0) {
                             if (getRealPack().isLoggingEnabled() && App.settings.enableLogs()
@@ -688,9 +689,12 @@ public class Instance implements Serializable {
                                             + (App.settings.enableLeaderboards() ? "" : "generic"),
                                     (getRealPack() == null ? "0" : getRealPack().getID() + ""),
                                     ((end - start) / 1000) + "", (isDev ? "dev" : getVersion()));
-                            if (App.settings.hasUpdatedFiles()) {
+                            if (App.settings.keepLauncherOpen() && App.settings.hasUpdatedFiles()) {
                                 App.settings.reloadLauncherData();
                             }
+                        }
+                        if (!App.settings.keepLauncherOpen()) {
+                            System.exit(1);
                         }
                     } catch (IOException e1) {
                         App.settings.logStackTrace(e1);
