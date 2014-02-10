@@ -16,6 +16,7 @@ import java.util.List;
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.data.mojang.auth.UserType;
 import com.atlauncher.utils.Utils;
@@ -164,10 +165,20 @@ public class MCLauncher {
             String args = instance.getExtraArguments();
             if (args.contains(" ")) {
                 for (String arg : args.split(" ")) {
-                    arguments.add(arg);
+                    if (!arguments.contains(arg)) {
+                        App.settings.log("Duplicate argument " + arg + " found and not added!",
+                                LogMessageType.error, false);
+                    } else {
+                        arguments.add(arg);
+                    }
                 }
             } else {
-                arguments.add(args);
+                if (arguments.contains(args)) {
+                    App.settings.log("Duplicate argument " + args + " found and not added!",
+                            LogMessageType.error, false);
+                } else {
+                    arguments.add(args);
+                }
             }
         }
 
