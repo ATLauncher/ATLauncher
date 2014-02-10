@@ -328,6 +328,8 @@ public class InstanceInstallerDialog extends JDialog {
                                             .getVersion());
                                     instance.setModsInstalled(this.getModsInstalled());
                                     instance.setJarOrder(this.getJarOrder());
+                                    instance.setMemory(this.getMemory());
+                                    instance.setPermgen(this.getPermGen());
                                     instance.setIsNewLaunchMethod(!this.isLegacy());
                                     instance.setLibrariesNeeded(this.getLibrariesNeeded());
                                     instance.setMinecraftArguments(this.getMinecraftArguments());
