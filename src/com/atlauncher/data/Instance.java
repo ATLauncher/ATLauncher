@@ -326,6 +326,14 @@ public class Instance implements Serializable {
         this.jarOrder = jarOrder;
     }
 
+    public void setMemory(int memory) {
+        this.memory = memory;
+    }
+
+    public void setPermgen(int permgen) {
+        this.permgen = permgen;
+    }
+
     public void setPlayable() {
         this.isPlayable = true;
     }
@@ -475,6 +483,47 @@ public class Instance implements Serializable {
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
+            if (App.settings.getMemory() < this.memory) {
+                String[] options = { App.settings.getLocalizedString("common.yes"),
+                        App.settings.getLocalizedString("common.no") };
+                int ret = JOptionPane.showOptionDialog(
+                        App.settings.getParent(),
+                        "<html><center>"
+                                + App.settings.getLocalizedString("instance.insufficientram", "<b>"
+                                        + this.memory + "</b> MB<br/><br/>") + "</center></html>",
+                        App.settings.getLocalizedString("instance.insufficientramtitle"),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                        options[0]);
+                if (ret != 0) {
+                    App.settings
+                            .log("Launching of instance cancelled due to user cancelling memory warning!",
+                                    LogMessageType.warning, false);
+                    App.settings.setMinecraftLaunched(false);
+                    return false;
+                }
+            }
+            if (App.settings.getPermGen() < this.permgen) {
+                String[] options = { App.settings.getLocalizedString("common.yes"),
+                        App.settings.getLocalizedString("common.no") };
+                int ret = JOptionPane
+                        .showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString(
+                                                "instance.insufficientpermgen", "<b>"
+                                                        + this.permgen + "</b> MB<br/><br/>")
+                                        + "</center></html>", App.settings
+                                        .getLocalizedString("instance.insufficientpermgentitle"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
+                if (ret != 0) {
+                    App.settings
+                            .log("Launching of instance cancelled due to user cancelling memory warning!",
+                                    LogMessageType.warning, false);
+                    App.settings.setMinecraftLaunched(false);
+                    return false;
+                }
+            }
             AuthenticationResponse sess = null;
             if (!App.settings.isInOfflineMode()) {
                 String password = account.getPassword();
