@@ -333,45 +333,46 @@ public class InstanceDisplay extends CollapsiblePanel {
             update.setVisible(false);
         }
 
-        // Check if pack is a private pack and if the user can play it
-        if (pack.isPrivate() && !App.settings.isInOfflineMode() && (!pack.isAllowedPlayer())) {
-            if (!(instance.isDev() && pack.isTester())) {
+        if (this.pack != null) {
+            // Check if pack is a private pack and if the user can play it
+            if (pack.isPrivate() && !App.settings.isInOfflineMode() && (!pack.isAllowedPlayer())) {
+                if (!(instance.isDev() && pack.isTester())) {
+                    for (ActionListener al : play.getActionListeners()) {
+                        play.removeActionListener(al);
+                    }
+                    play.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            String[] options = { App.settings.getLocalizedString("common.ok") };
+                            JOptionPane.showOptionDialog(App.settings.getParent(),
+                                    App.settings.getLocalizedString("instance.notauthorizedplay"),
+                                    App.settings.getLocalizedString("instance.notauthorized"),
+                                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                    options, options[0]);
+                        }
+                    });
+                }
+            }
+            // Check if instance is a dev version and if the user still has access
+
+            if (instance.isDev() && !App.settings.isInOfflineMode() && !pack.isTester()) {
                 for (ActionListener al : play.getActionListeners()) {
                     play.removeActionListener(al);
                 }
                 play.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         String[] options = { App.settings.getLocalizedString("common.ok") };
-                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("instance.notauthorizedplay"),
-                                App.settings.getLocalizedString("instance.notauthorized"),
+                        JOptionPane.showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString(
+                                                "instance.notauthorizedplaydev", "<br/><br/>")
+                                        + "</center></html>", App.settings
+                                        .getLocalizedString("instance.notauthorized"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
                     }
                 });
             }
-        }
-
-        // Check if instance is a dev version and if the user still has access
-
-        if (instance.isDev() && !App.settings.isInOfflineMode() && !pack.isTester()) {
-            for (ActionListener al : play.getActionListeners()) {
-                play.removeActionListener(al);
-            }
-            play.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
-                    JOptionPane.showOptionDialog(
-                            App.settings.getParent(),
-                            "<html><center>"
-                                    + App.settings.getLocalizedString(
-                                            "instance.notauthorizedplaydev", "<br/><br/>")
-                                    + "</center></html>", App.settings
-                                    .getLocalizedString("instance.notauthorized"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                }
-            });
         }
 
         // Check is instance is playable and disable buttons if not
