@@ -260,12 +260,15 @@ public class Settings {
                     }
 
                     String authKey = getAuthKey(this.account.getMinecraftUsername(),
-                            ar.getAccessToken());
+                            ar.getAccessToken(), ar.getClientToken());
                     if (authKey.isEmpty()) {
                         log("Auth Key Couldn't Be Set!", LogMessageType.error, false);
                     } else {
                         log("Auth Key Set!");
-                        setAuthKey(authKey);
+                        String[] parts = authKey.split("\\|");
+                        ar.setNewAccessToken(parts[2]);
+                        ar.setNewClientToken(parts[3]);
+                        setAuthKey(parts[0] + "|" + parts[1]);
                         return true;
                     }
                     Authentication.invalidateToken(ar);
@@ -1001,7 +1004,7 @@ public class Settings {
 
             this.sortPacksAlphabetically = Boolean.parseBoolean(properties.getProperty(
                     "sortpacksalphabetically", "false"));
-            
+
             this.keepLauncherOpen = Boolean.parseBoolean(properties.getProperty("keeplauncheropen",
                     "true"));
 
@@ -1627,15 +1630,17 @@ public class Settings {
         }
     }
 
-    public String getAuthKey(String username, String token) {
+    public String getAuthKey(String username, String accessToken, String clientToken) {
         String response = "";
         try {
             String data = URLEncoder.encode("username", "UTF-8") + "="
                     + URLEncoder.encode(username, "UTF-8");
-            data += "&" + URLEncoder.encode("token", "UTF-8") + "="
-                    + URLEncoder.encode(token, "UTF-8");
+            data += "&" + URLEncoder.encode("accessToken", "UTF-8") + "="
+                    + URLEncoder.encode(accessToken, "UTF-8");
+            data += "&" + URLEncoder.encode("clientToken", "UTF-8") + "="
+                    + URLEncoder.encode(clientToken, "UTF-8");
 
-            URL url = new URL(getFileURL("getauthkey.php"));
+            URL url = new URL(getFileURL("getauthkeynew.php"));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setUseCaches(false);
             conn.setDefaultUseCaches(false);
@@ -1661,7 +1666,7 @@ public class Settings {
                 if (error) {
                     log("Error getting auth key: " + line, LogMessageType.error, false);
                     if (getNextServer()) {
-                        return getAuthKey(username, token);
+                        return getAuthKey(username, accessToken, clientToken);
                     }
                 } else {
                     response += line;
@@ -1671,7 +1676,7 @@ public class Settings {
         } catch (Exception e) {
             logStackTrace(e);
             if (getNextServer()) {
-                return getAuthKey(username, token);
+                return getAuthKey(username, accessToken, clientToken);
             }
         }
         clearTriedServers();
@@ -2458,7 +2463,7 @@ public class Settings {
     public void setSortPacksAlphabetically(boolean sortPacksAlphabetically) {
         this.sortPacksAlphabetically = sortPacksAlphabetically;
     }
-    
+
     /**
      * If the user has selected to show the console always or not
      * 
@@ -2495,7 +2500,7 @@ public class Settings {
     public void setConsoleVisible(boolean visible) {
         this.console.setVisible(visible);
     }
-    
+
     public void setEnableConsole(boolean enableConsole) {
         this.enableConsole = enableConsole;
     }

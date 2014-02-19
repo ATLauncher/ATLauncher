@@ -80,7 +80,7 @@ public class Authentication {
         try {
             URL url = new URL("https://authserver.mojang.com/invalidate");
             String request = Settings.gson.toJson(new InvalidateRequest(ar.getAccessToken(), ar
-                    .getUUID()));
+                    .getClientToken()));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setConnectTimeout(15000);

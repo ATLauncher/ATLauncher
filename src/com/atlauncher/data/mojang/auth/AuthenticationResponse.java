@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Settings;
 import com.atlauncher.data.mojang.Property;
 
 public class AuthenticationResponse {
@@ -124,6 +123,14 @@ public class AuthenticationResponse {
             }
         }
         return this.userProperties;
+    }
+
+    public void setNewAccessToken(String newAccessToken) {
+        this.accessToken = newAccessToken;
+    }
+
+    public void setNewClientToken(String newClientToken) {
+        this.clientToken = newClientToken;
     }
 
 }
