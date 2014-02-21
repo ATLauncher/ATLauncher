@@ -129,10 +129,16 @@ public class Instance implements Serializable {
     }
 
     public boolean rename(String newName) {
+        String oldName = this.name;
         File oldDir = getRootDirectory();
         this.name = newName;
         File newDir = getRootDirectory();
-        return oldDir.renameTo(newDir);
+        if (oldDir.renameTo(newDir)) {
+            return true;
+        } else {
+            this.name = oldName;
+            return false;
+        }
     }
 
     /**
