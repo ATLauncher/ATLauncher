@@ -6,6 +6,22 @@
  */
 package com.atlauncher.data;
 
+import java.awt.BorderLayout;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+
 import com.atlauncher.App;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.ProgressDialog;
@@ -13,13 +29,6 @@ import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
-
-import javax.swing.*;
-
-import java.awt.*;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Instance implements Serializable {
 
@@ -483,7 +492,8 @@ public class Instance implements Serializable {
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
-            if (App.settings.getMemory() < this.memory) {
+            if ((App.settings.getMemory() < this.memory)
+                    && (this.memory <= Utils.getSafeMaximumRam())) {
                 String[] options = { App.settings.getLocalizedString("common.yes"),
                         App.settings.getLocalizedString("common.no") };
                 int ret = JOptionPane.showOptionDialog(
@@ -632,7 +642,8 @@ public class Instance implements Serializable {
                             process.destroy(); // Kill the process
                         }
                         if (!App.settings.keepLauncherOpen()) {
-                            App.settings.setConsoleVisible(false); // Hide the console to pretend we've closed
+                            App.settings.setConsoleVisible(false); // Hide the console to pretend
+                                                                   // we've closed
                         }
                         if (exitValue != 0) {
                             if (getRealPack().isLoggingEnabled() && App.settings.enableLogs()

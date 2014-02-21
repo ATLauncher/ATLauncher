@@ -45,7 +45,6 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -213,6 +212,11 @@ public class Utils {
         return ramOptions;
     }
 
+    /**
+     * Returns the amount of RAM in the users system
+     * 
+     * @return The amount of RAM in the system
+     */
     public static int getSystemRam() {
         long ramm = 0;
         int ram = 0;
@@ -242,6 +246,12 @@ public class Utils {
         return ram;
     }
 
+    /**
+     * Returns the maximum RAM available to Java. If on 64 Bit system then its all of the System RAM
+     * otherwise its limited to 1GB or less due to allocations of PermGen
+     * 
+     * @return The maximum RAM available to Java
+     */
     public static int getMaximumRam() {
         int maxRam = getSystemRam();
         if (!is64Bit()) {
@@ -252,6 +262,26 @@ public class Utils {
             }
         } else {
             return maxRam;
+        }
+    }
+
+    /**
+     * Returns the safe amount of maximum ram available to Java. This is set to half of the total
+     * maximum ram available to Java in order to not allocate too much and leave enough RAM for the
+     * OS and other application
+     * 
+     * @return Half the maximum RAM available to Java
+     */
+    public static int getSafeMaximumRam() {
+        int maxRam = getSystemRam();
+        if (!is64Bit()) {
+            if (maxRam < 1024) {
+                return maxRam / 2;
+            } else {
+                return 512;
+            }
+        } else {
+            return maxRam / 2;
         }
     }
 
