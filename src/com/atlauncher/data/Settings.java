@@ -1378,6 +1378,9 @@ public class Settings {
                     while ((obj = objIn.readObject()) != null) {
                         if (obj instanceof Instance) {
                             File dir = new File(getInstancesDir(), ((Instance) obj).getSafeName());
+                            if (!dir.exists()) {
+                                continue; // Skip the instance since the folder doesn't exist
+                            }
                             Instance instance = (Instance) obj;
                             if (!instance.hasBeenConverted()) {
                                 log("Instance "
@@ -1392,9 +1395,6 @@ public class Settings {
                             instances.add(instance);
                             if (isPackByName(instance.getPackName())) {
                                 instance.setRealPack(getPackByName(instance.getPackName()));
-                            }
-                            if (!dir.exists()) {
-                                instance.setUnplayable();
                             }
                         }
                     }
