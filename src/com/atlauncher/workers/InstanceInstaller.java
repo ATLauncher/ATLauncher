@@ -1304,8 +1304,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         modsInstalled = new ArrayList<DisableableMod>();
         for (Mod mod : selectedMods) {
+            String file = mod.getFile();
+            if (this.caseAllFiles != null) {
+                if (this.caseAllFiles.equalsIgnoreCase("upper")) {
+                    file = file.toUpperCase();
+                } else if (this.caseAllFiles.equalsIgnoreCase("lower")) {
+                    file = file.toLowerCase();
+                }
+            }
             modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(),
-                    mod.getFile(), mod.getType(), mod.getColour(), mod.getDescription(), false));
+                    file, mod.getType(), mod.getColour(), mod.getDescription(), false));
         }
         this.instanceIsCorrupt = true; // From this point on the instance is corrupt
         getTempDirectory().mkdirs(); // Make the temp directory
