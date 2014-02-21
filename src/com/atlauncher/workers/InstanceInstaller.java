@@ -1354,8 +1354,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         makeDirectories();
         addPercent(5);
-        this.mainClass = pack.getMainClass(this.version.getVersion());
-        this.extraArguments = pack.getExtraArguments(this.version.getVersion());
+        setMainClass();
+        setExtraArguments();
         if (this.version.getMinecraftVersion().hasResources()) {
             downloadResources(); // Download Minecraft Resources
             if (isCancelled()) {
@@ -1469,6 +1469,71 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     getServerJar());
         }
         return true;
+    }
+
+    private void setMainClass() {
+        if (this.pack.getMainClassDepends(this.version.getVersion()) != null) {
+            String depends = this.pack.getMainClassDepends(this.version.getVersion());
+            boolean found = false;
+            for (Mod mod : this.selectedMods) {
+                if (mod.getName().equals(depends)) {
+                    found = true;
+                }
+            }
+            if (found) {
+                this.mainClass = pack.getMainClass(this.version.getVersion());
+            }
+        } else if (this.pack.getMainClassDependsGroup(this.version.getVersion()) != null) {
+            String depends = this.pack.getMainClassDependsGroup(this.version.getVersion());
+            boolean found = false;
+            for (Mod mod : this.selectedMods) {
+                if (!mod.hasGroup()) {
+                    continue; // No group, continue
+                }
+                if (mod.getGroup().equals(depends)) {
+                    found = true;
+                }
+            }
+            if (found) {
+                this.mainClass = pack.getMainClass(this.version.getVersion());
+            }
+        } else {
+            this.mainClass = pack.getMainClass(this.version.getVersion());
+        }
+        if (this.mainClass == null) {
+            this.mainClass = this.version.getMinecraftVersion().getMojangVersion().getMainClass();
+        }
+    }
+
+    private void setExtraArguments() {
+        if (this.pack.getExtraArgumentsDepends(this.version.getVersion()) != null) {
+            String depends = this.pack.getExtraArgumentsDepends(this.version.getVersion());
+            boolean found = false;
+            for (Mod mod : this.selectedMods) {
+                if (mod.getName().equals(depends)) {
+                    found = true;
+                }
+            }
+            if (found) {
+                this.extraArguments = pack.getExtraArguments(this.version.getVersion());
+            }
+        } else if (this.pack.getExtraArgumentsDependsGroup(this.version.getVersion()) != null) {
+            String depends = this.pack.getExtraArgumentsDependsGroup(this.version.getVersion());
+            boolean found = false;
+            for (Mod mod : this.selectedMods) {
+                if (!mod.hasGroup()) {
+                    continue; // No group, continue
+                }
+                if (mod.getGroup().equals(depends)) {
+                    found = true;
+                }
+            }
+            if (found) {
+                this.extraArguments = pack.getExtraArguments(this.version.getVersion());
+            }
+        } else {
+            this.extraArguments = pack.getExtraArguments(this.version.getVersion());
+        }
     }
 
     public void resetDownloadedBytes(int bytes) {
