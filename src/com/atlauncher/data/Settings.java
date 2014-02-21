@@ -12,12 +12,14 @@ import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -1366,10 +1368,7 @@ public class Settings {
      * Loads the user installed Instances
      */
     private void loadInstances() {
-        if (this.instances.size() != 0) {
-            this.instances = new ArrayList<Instance>();
-        }
-        boolean wasConversion = false;
+        this.instances = new ArrayList<Instance>(); // Reset the instances list
         if (instancesDataFile.exists()) {
             try {
                 FileInputStream in = new FileInputStream(instancesDataFile);
@@ -1386,7 +1385,6 @@ public class Settings {
                                         + " is being converted! This is normal and should only appear once!",
                                         LogMessageType.warning, false);
                                 instance.convert();
-                                wasConversion = true;
                             }
                             if (!instance.getDisabledModsDirectory().exists()) {
                                 instance.getDisabledModsDirectory().mkdir();
@@ -1409,29 +1407,47 @@ public class Settings {
             } catch (Exception e) {
                 logStackTrace(e);
             }
-        }
-        if (wasConversion) {
-            saveInstances();
+            saveInstances(); // Save the instances to new json format
+            Utils.delete(instancesDataFile); // Remove old instances data file
+        } else {
+            for (String folder : this.getInstancesDir().list(Utils.getInstanceFileFilter())) {
+                File instanceDir = new File(this.getInstancesDir(), folder);
+                FileReader fileReader;
+                try {
+                    fileReader = new FileReader(new File(instanceDir, "instance.json"));
+                } catch (FileNotFoundException e) {
+                    logStackTrace(e);
+                    continue; // Instance.json not found for some reason, continue before loading
+                }
+                Instance instance = Settings.gson.fromJson(fileReader, Instance.class);
+                if (!instance.getDisabledModsDirectory().exists()) {
+                    instance.getDisabledModsDirectory().mkdir();
+                }
+                if (isPackByName(instance.getPackName())) {
+                    instance.setRealPack(getPackByName(instance.getPackName()));
+                }
+                this.instances.add(instance);
+            }
+            if (instancesDataFile.exists()) {
+                Utils.delete(instancesDataFile); // Remove old instances data file
+            }
         }
     }
 
     public void saveInstances() {
-        FileOutputStream out = null;
-        ObjectOutputStream objOut = null;
-        try {
-            out = new FileOutputStream(instancesDataFile);
-            objOut = new ObjectOutputStream(out);
-            for (Instance instance : instances) {
-                objOut.writeObject(instance);
-            }
-        } catch (IOException e) {
-            logStackTrace(e);
-        } finally {
+        for (Instance instance : this.instances) {
+            File instanceFile = new File(instance.getRootDirectory(), "instance.json");
             try {
-                objOut.close();
-                out.close();
+                if (!instanceFile.exists()) {
+                    instanceFile.createNewFile();
+                }
+
+                FileWriter fw = new FileWriter(instanceFile);
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(Settings.gson.toJson(instance));
+                bw.close();
             } catch (IOException e) {
-                logStackTrace(e);
+                App.settings.logStackTrace(e);
             }
         }
     }

@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -831,5 +832,18 @@ public class Utils {
             App.settings.logStackTrace(e);
         }
         return false;
+    }
+
+    public static FilenameFilter getInstanceFileFilter() {
+        return new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                File instanceDir = new File(dir, name);
+                if (instanceDir.isDirectory()) {
+                    return new File(instanceDir, "instance.json").exists();
+                }
+                return false;
+            }
+        };
     }
 }

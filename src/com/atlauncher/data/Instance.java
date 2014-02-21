@@ -29,6 +29,7 @@ import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
+import com.google.gson.annotations.Expose;
 
 public class Instance implements Serializable {
 
