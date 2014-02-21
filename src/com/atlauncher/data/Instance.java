@@ -132,7 +132,7 @@ public class Instance implements Serializable {
         File oldDir = getRootDirectory();
         this.name = newName;
         File newDir = getRootDirectory();
-        Utils.moveDirectory(oldDir, newDir);
+        oldDir.renameTo(newDir);
     }
 
     /**
