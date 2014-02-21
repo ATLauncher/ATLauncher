@@ -29,7 +29,6 @@ import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
-import com.google.gson.annotations.Expose;
 
 public class Instance implements Serializable {
 
@@ -129,11 +128,11 @@ public class Instance implements Serializable {
         return this.permgen;
     }
 
-    public void rename(String newName) {
+    public boolean rename(String newName) {
         File oldDir = getRootDirectory();
         this.name = newName;
         File newDir = getRootDirectory();
-        oldDir.renameTo(newDir);
+        return oldDir.renameTo(newDir);
     }
 
     /**

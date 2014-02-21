@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Utils;
 
 public class RenameInstanceDialog extends JDialog {
@@ -81,9 +82,12 @@ public class RenameInstanceDialog extends JDialog {
                                     instanceName.getText()), App.settings
                                     .getLocalizedString("common.error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    instance.rename(instanceName.getText());
-                    App.settings.saveInstances();
-                    App.settings.reloadInstancesPanel();
+                    if (instance.rename(instanceName.getText())) {
+                        App.settings.saveInstances();
+                        App.settings.reloadInstancesPanel();
+                    } else {
+                        App.settings.log("Error Renaming Instance!", LogMessageType.error, false);
+                    }
                     close();
                 }
             }
