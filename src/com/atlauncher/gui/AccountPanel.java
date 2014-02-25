@@ -190,6 +190,7 @@ public class AccountPanel extends JPanel {
                             .getLocalizedString("account.loggingin"), 0, App.settings
                             .getLocalizedString("account.loggingin"), "Aborting login for "
                             + usernameField.getText());
+                    final String username1 = username;
                     dialog.addThread(new Thread() {
                         public void run() {
                             try {
@@ -197,8 +198,8 @@ public class AccountPanel extends JPanel {
                                         usernameField.getText(),
                                         new String(passwordField.getPassword()));
                                 if (!resp.hasError()) {
-                                    String authKey = App.settings.getAuthKey(resp
-                                            .getSelectedProfile().getName(), resp.getAccessToken(),
+                                    String authKey = App.settings.getAuthKey(
+                                            resp.getName(username1), resp.getAccessToken(),
                                             resp.getClientToken());
                                     if (authKey.isEmpty()) {
                                         resp.setErrorMessage("Auth Key Couldn't Be Set! Try Again!");

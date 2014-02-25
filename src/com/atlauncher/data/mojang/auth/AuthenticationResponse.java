@@ -62,7 +62,8 @@ public class AuthenticationResponse {
     }
 
     public boolean hasError() {
-        if (this.errorMessage == null && this.selectedProfile == null) {
+        if (this.errorMessage == null && this.selectedProfile == null
+                && (this.user != null && this.user.getId() != null)) {
             this.error = "There are no copies of Minecraft associated with this account!";
             this.errorMessage = "There are no copies of Minecraft associated with this account!";
         }
@@ -131,6 +132,16 @@ public class AuthenticationResponse {
 
     public void setNewClientToken(String newClientToken) {
         this.clientToken = newClientToken;
+    }
+
+    public String getName(String username) {
+        if (this.selectedProfile != null) {
+            return this.selectedProfile.getName();
+        }
+        if (this.user != null && this.user.getId() != null) {
+            return username;
+        }
+        throw new NullPointerException("Cannot Get Username For Account!");
     }
 
 }
