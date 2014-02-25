@@ -283,6 +283,7 @@ public class LauncherConsole extends JFrame {
             type = LogMessageType.info;
         } else if (text.contains("[main/WARN]")) {
             message = text.substring(text.indexOf("[main/WARN]"));
+            type = LogMessageType.warning;
         } else {
             message = text;
             type = LogMessageType.info;
