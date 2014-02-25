@@ -257,33 +257,48 @@ public class LauncherConsole extends JFrame {
         } else if (text.contains("[Sound Library Loader/ERROR]")) {
             message = text.substring(text.indexOf("[Sound Library Loader/ERROR]"));
             type = LogMessageType.error;
+        } else if (text.contains("[Sound Library Loader/WARN]")) {
+            message = text.substring(text.indexOf("[Sound Library Loader/WARN]"));
+            type = LogMessageType.warning;
         } else if (text.contains("[Sound Library Loader/INFO]")) {
             message = text.substring(text.indexOf("[Sound Library Loader/INFO]"));
             type = LogMessageType.info;
         } else if (text.contains("[MCO Availability Checker #1/ERROR]")) {
             message = text.substring(text.indexOf("[MCO Availability Checker #1/ERROR]"));
             type = LogMessageType.error;
+        } else if (text.contains("[MCO Availability Checker #1/WARN]")) {
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/WARN]"));
+            type = LogMessageType.warning;
         } else if (text.contains("[MCO Availability Checker #1/INFO]")) {
             message = text.substring(text.indexOf("[MCO Availability Checker #1/INFO]"));
             type = LogMessageType.info;
+        } else if (text.contains("[Client thread/ERROR]")) {
+            message = text.substring(text.indexOf("[Client thread/ERROR]"));
+            type = LogMessageType.error;
+        } else if (text.contains("[Client thread/WARN]")) {
+            message = text.substring(text.indexOf("[Client thread/WARN]"));
+            type = LogMessageType.warning;
         } else if (text.contains("[Client thread/INFO]")) {
             message = text.substring(text.indexOf("[Client thread/INFO]"));
             type = LogMessageType.info;
-        } else if (text.contains("[Client thread/WARN]")) {
-            message = text.substring(text.indexOf("[Client thread/WARN]"));
+        } else if (text.contains("[Server thread/ERROR]")) {
+            message = text.substring(text.indexOf("[Server thread/ERROR]"));
+            type = LogMessageType.error;
+        } else if (text.contains("[Server thread/WARN]")) {
+            message = text.substring(text.indexOf("[Server thread/WARN]"));
             type = LogMessageType.warning;
         } else if (text.contains("[Server thread/INFO]")) {
             message = text.substring(text.indexOf("[Server thread/INFO]"));
             type = LogMessageType.info;
-        } else if (text.contains("[Server thread/WARN]")) {
-            message = text.substring(text.indexOf("[Server thread/WARN]"));
+        } else if (text.contains("[main/ERROR]")) {
+            message = text.substring(text.indexOf("[main/ERROR]"));
+            type = LogMessageType.error;
+        } else if (text.contains("[main/WARN]")) {
+            message = text.substring(text.indexOf("[main/WARN]"));
             type = LogMessageType.warning;
         } else if (text.contains("[main/INFO]")) {
             message = text.substring(text.indexOf("[main/INFO]"));
             type = LogMessageType.info;
-        } else if (text.contains("[main/WARN]")) {
-            message = text.substring(text.indexOf("[main/WARN]"));
-            type = LogMessageType.warning;
         } else {
             message = text;
             type = LogMessageType.info;
