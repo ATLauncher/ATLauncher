@@ -646,10 +646,16 @@ public class Mod {
                 Utils.copyFile(fileLocation, installer.getResourcePacksDirectory());
                 break;
             case texturepackextract:
+                if (!installer.getTexturePacksDirectory().exists()) {
+                    installer.getTexturePacksDirectory().mkdir();
+                }
                 Utils.unzip(fileLocation, installer.getTempTexturePackDirectory());
                 installer.setTexturePackExtracted();
                 break;
             case resourcepackextract:
+                if (!installer.getResourcePacksDirectory().exists()) {
+                    installer.getResourcePacksDirectory().mkdir();
+                }
                 Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
                 installer.setResourcePackExtracted();
                 break;
@@ -697,10 +703,16 @@ public class Mod {
                 Utils.copyFile(fileLocation, installer.getDependencyDirectory());
                 break;
             case plugins:
+                if (!installer.getPluginsDirectory().exists()) {
+                    installer.getPluginsDirectory().mkdir();
+                }
                 Utils.copyFile(fileLocation, installer.getPluginsDirectory());
                 break;
             case coremods:
                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                    if (!installer.getCoreModsDirectory().exists()) {
+                        installer.getCoreModsDirectory().mkdir();
+                    }
                     Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
                 } else {
                     Utils.copyFile(fileLocation, installer.getModsDirectory());
@@ -720,6 +732,9 @@ public class Mod {
                 switch (extractTo) {
                     case coremods:
                         if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                            if (!installer.getCoreModsDirectory().exists()) {
+                                installer.getCoreModsDirectory().mkdir();
+                            }
                             Utils.copyDirectory(folder, installer.getCoreModsDirectory());
                         } else {
                             Utils.copyDirectory(folder, installer.getModsDirectory());
@@ -747,12 +762,18 @@ public class Mod {
                         case coremods:
                             if (tempFileDecomp.isFile()) {
                                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                                    if (!installer.getCoreModsDirectory().exists()) {
+                                        installer.getCoreModsDirectory().mkdir();
+                                    }
                                     Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
                                 } else {
                                     Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
                                 }
                             } else {
                                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                                    if (!installer.getCoreModsDirectory().exists()) {
+                                        installer.getCoreModsDirectory().mkdir();
+                                    }
                                     Utils.copyDirectory(tempFileDecomp,
                                             installer.getCoreModsDirectory());
                                 } else {
