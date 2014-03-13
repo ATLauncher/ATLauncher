@@ -48,6 +48,10 @@ public class Server {
         return "http://" + this.baseURL + "/ping";
     }
 
+    public void setUserSelectable(boolean selectable) {
+        this.userSelectable = selectable;
+    }
+
     public String toString() {
         if (this.disabled) {
             return "(X) " + this.name;

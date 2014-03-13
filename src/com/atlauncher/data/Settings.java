@@ -336,6 +336,16 @@ public class Settings {
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
         checkForXML(); // Check for old XML files
+        for (Pack pack : this.packs) {
+            if (pack.isTester()) {
+                for (Server server : this.servers) {
+                    if (server.getName() == "Master Server") {
+                        server.setUserSelectable(true);
+                    }
+                }
+                break;
+            }
+        }
         new Thread() {
             public void run() {
                 checkAuthKey(); // Check the Auth Key
