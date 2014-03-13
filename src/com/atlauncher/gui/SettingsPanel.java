@@ -15,8 +15,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 
 import javax.swing.ImageIcon;
@@ -480,8 +478,8 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        keepLauncherOpenLabel = new JLabel(App.settings.getLocalizedString("settings.keeplauncheropen")
-                + "?") {
+        keepLauncherOpenLabel = new JLabel(
+                App.settings.getLocalizedString("settings.keeplauncheropen") + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
                 Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);

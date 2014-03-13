@@ -320,7 +320,7 @@ public class Settings {
 
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
-        loadServerProperty(); // Get users Server preference
+        loadServerProperty(false); // Get users Server preference
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
@@ -339,13 +339,15 @@ public class Settings {
         for (Pack pack : this.packs) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
-                    if (server.getName() == "Master Server") {
+                    if (server.getName() == "Master Server (Testing Only)") {
                         server.setUserSelectable(true);
+                        break;
                     }
                 }
                 break;
             }
         }
+        loadServerProperty(true); // Get users Server preference
         new Thread() {
             public void run() {
                 checkAuthKey(); // Check the Auth Key
@@ -858,12 +860,12 @@ public class Settings {
     /**
      * Load the users Server preference from file
      */
-    public void loadServerProperty() {
+    public void loadServerProperty(boolean userSelectableOnly) {
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             String serv = properties.getProperty("server", "Auto");
             if (isServerByName(serv)) {
-                if (getServerByName(serv).isUserSelectable()) {
+                if (!userSelectableOnly || (userSelectableOnly && server.isUserSelectable())) {
                     this.server = getServerByName(serv);
                     this.originalServer = this.server;
                 }
@@ -1178,7 +1180,7 @@ public class Settings {
     public boolean disableServerGetNext() {
         this.server.disableServer(); // Disable the server
         for (Server server : this.servers) {
-            if (!server.isDisabled()) {
+            if (!server.isDisabled() && server.isUserSelectable()) {
                 log("Server " + this.server.getName() + " Not Available! Switching To "
                         + server.getName(), LogMessageType.warning, true);
                 this.server = server; // Setup next available server
@@ -1195,7 +1197,8 @@ public class Settings {
     public boolean getNextServer() {
         this.triedServers.add(this.server);
         for (Server server : this.servers) {
-            if (!this.triedServers.contains(server)) {
+            if (!this.triedServers.contains(server) && !server.isDisabled()
+                    && server.isUserSelectable()) {
                 log("Server " + this.server.getName() + " Not Available! Switching To "
                         + server.getName(), LogMessageType.warning, true);
                 this.server = server; // Setup next available server
