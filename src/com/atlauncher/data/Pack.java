@@ -670,7 +670,7 @@ public class Pack {
                             extractFolder = "/";
                         }
                     } else if (type == Type.decomp) {
-                        decompFile = element.getAttribute("decompFile");
+                        decompFile = element.getAttribute("decompfile");
                         decompType = DecompType.valueOf(element.getAttribute("decomptype")
                                 .toLowerCase());
                     }
