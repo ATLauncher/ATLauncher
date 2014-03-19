@@ -6,8 +6,6 @@
  */
 package com.atlauncher;
 
-// Test
-
 import java.awt.Image;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -71,7 +69,8 @@ public class App {
             }
         }
 
-        settings = new Settings(); // Setup the Settings and wait for it to finish
+        settings = new Settings(); // Setup the Settings and wait for it to
+                                   // finish
 
         settings.log("ATLauncher Version: " + settings.getVersion());
         settings.log("Operating System: " + System.getProperty("os.name"));
