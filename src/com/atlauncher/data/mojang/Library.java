@@ -29,12 +29,13 @@ public class Library {
         if (this.rules == null) {
             return true; // No rules setup so we need it
         }
+        Action lastAction = Action.DISALLOW;
         for (Rule rule : this.rules) { // Loop through all the rules
             if (rule.ruleApplies()) { // See if this rule applies to this system
-                return (rule.getAction() == Action.ALLOW); // Check if we are allowing it
+                lastAction = rule.getAction();
             }
         }
-        return false;
+        return (lastAction == Action.ALLOW); // Check if we are allowing it
     }
 
     public boolean shouldExtract() {
