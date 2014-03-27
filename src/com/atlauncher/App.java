@@ -21,12 +21,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Locale;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many tasks at once
     // Approach with caution though
-    public static final ForkJoinPool TASKPOOL = new ForkJoinPool();
+    // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
+    public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
 
     public static Settings settings;
 
