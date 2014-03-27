@@ -68,15 +68,13 @@ public class LauncherFrame extends JFrame {
             setVisible(true);
         }
 
-        App.settings.addConsoleListener(new ComponentAdapter() {
-            public void componentHidden(ComponentEvent e) {
-                App.settings.log("Hiding console");
+        App.settings.addConsoleListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent arg0) {
                 App.settings.setConsoleVisible(false);
-                bottomBar.hideConsole();
             }
         });
 
-        App.TASKPOOL.execute(new Runnable(){
+        App.TASKPOOL.execute(new Runnable() {
             public void run() {
                 App.settings.checkMojangStatus(); // Check Minecraft status
                 bottomBar.updateStatus(App.settings.getMojangStatus());

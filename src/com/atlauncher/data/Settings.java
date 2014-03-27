@@ -11,6 +11,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.ComponentAdapter;
+import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.EOFException;
@@ -2265,8 +2266,8 @@ public class Settings {
         this.console.clearConsole();
     }
 
-    public void addConsoleListener(ComponentAdapter ca) {
-        this.console.addComponentListener(ca);
+    public void addConsoleListener(WindowAdapter wa) {
+        this.console.addWindowListener(wa);
     }
 
     public String getLog() {
@@ -2326,6 +2327,8 @@ public class Settings {
             log("Killing Minecraft", LogMessageType.error, false);
             this.minecraftProcess.destroy();
             this.minecraftProcess = null;
+        } else {
+            log("Cannot kill Minecraft as there is no instance open!", LogMessageType.error, false);
         }
     }
 
@@ -2527,6 +2530,27 @@ public class Settings {
      *            The Launcher console's visibility
      */
     public void setConsoleVisible(boolean visible) {
+        this.setConsoleVisible(visible, true);
+    }
+
+    /**
+     * Set the Launcher console's visibility
+     * 
+     * @param visible
+     *            The Launcher console's visibility
+     */
+    public void setConsoleVisible(boolean visible, boolean updateBottomBar) {
+        if (!visible) {
+            App.settings.log("Hiding console");
+            if (updateBottomBar) {
+                this.bottomBar.hideConsole();
+            }
+        } else {
+            App.settings.log("Showing console");
+            if (updateBottomBar) {
+                this.bottomBar.showConsole();
+            }
+        }
         this.console.setVisible(visible);
     }
 

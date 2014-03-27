@@ -108,15 +108,7 @@ public class BottomBar extends JPanel {
     private void setupListeners() {
         toggleConsole.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.isConsoleVisible()) {
-                    App.settings.log("Hiding console");
-                    App.settings.setConsoleVisible(false);
-                    toggleConsole.setText(App.settings.getLocalizedString("console.show"));
-                } else {
-                    App.settings.log("Showing console");
-                    App.settings.setConsoleVisible(true);
-                    toggleConsole.setText(App.settings.getLocalizedString("console.hide"));
-                }
+                App.settings.setConsoleVisible(!App.settings.isConsoleVisible());
             }
         });
         openFolder.addActionListener(new ActionListener() {
@@ -272,6 +264,13 @@ public class BottomBar extends JPanel {
      */
     public void hideConsole() {
         toggleConsole.setText(App.settings.getLocalizedString("console.show"));
+    }
+
+    /**
+     * Changes the text on the toggleConsole button when the console is shown
+     */
+    public void showConsole() {
+        toggleConsole.setText(App.settings.getLocalizedString("console.hide"));
     }
 
     public void reloadAccounts() {

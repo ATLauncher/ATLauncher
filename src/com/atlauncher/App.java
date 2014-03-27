@@ -125,7 +125,7 @@ public class App {
         }
 
         if (settings.enableConsole()) {
-            settings.setConsoleVisible(true);
+            settings.setConsoleVisible(true, false);
         }
 
         settings.log("Showing splash screen and loading everything");
@@ -194,6 +194,7 @@ public class App {
         }
     }
 
+    // TODO: Allow detection of when Minecraft is open, console is closed etc, to update the menu
     private static PopupMenu getSystemTrayMenu() {
         PopupMenu menu = new PopupMenu();
 
@@ -207,12 +208,41 @@ public class App {
                 });
             }
         });
-        menu.add(new MenuItem("Show Launcher") {
+
+        menu.add(new MenuItem("Show Console") {
             {
                 this.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        App.settings.log("To be done");
+                        if (!App.settings.isConsoleVisible()) {
+                            App.settings.setConsoleVisible(true);
+                        }
+                    }
+                });
+            }
+        });
+
+        menu.add(new MenuItem("Hide Console") {
+            {
+                this.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent event) {
+                        if (App.settings.isConsoleVisible()) {
+                            App.settings.setConsoleVisible(false);
+                        }
+                    }
+                });
+            }
+        });
+
+        menu.addSeparator(); // Add Separator
+
+        menu.add(new MenuItem("Quit") {
+            {
+                this.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent event) {
+                        System.exit(0);
                     }
                 });
             }
