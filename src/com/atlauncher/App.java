@@ -26,7 +26,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class App {
-    // Using this will help spread the workload across multiple threads allowing you to do many tasks at once
+    // Using this will help spread the workload across multiple threads allowing you to do many
+    // tasks at once
     // Approach with caution though
     // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
@@ -38,15 +39,14 @@ public class App {
     // Don't move this declaration anywheres, its important due to Java Class Loading
     private static final Color BASE_COLOR = new Color(40, 45, 50);
 
-    static
-    {
+    static {
         // Setting the UI LAF here helps with loading the UI should improve performance
-        try{
+        try {
             setLAF();
             modifyLAF();
 
             trySystemTrayIntegration();
-        } catch(Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -119,7 +119,7 @@ public class App {
                 params[0] = Image.class;
                 Method setDockIconImage = util.getMethod("setDockIconImage", params);
                 setDockIconImage.invoke(application, Utils.getImage("/resources/Icon.png"));
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
         }
@@ -157,17 +157,15 @@ public class App {
         new LauncherFrame(open); // Open the Launcher
     }
 
-    private static void setLAF()
-    throws Exception{
-        for(UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()){
-            if(info.getName().equalsIgnoreCase("nimbus")){
+    private static void setLAF() throws Exception {
+        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            if (info.getName().equalsIgnoreCase("nimbus")) {
                 UIManager.setLookAndFeel(info.getClassName());
             }
         }
     }
 
-    private static void modifyLAF()
-    throws Exception{
+    private static void modifyLAF() throws Exception {
         UIManager.put("control", BASE_COLOR);
         UIManager.put("text", Color.WHITE);
         UIManager.put("nimbusBase", Color.BLACK);
@@ -176,40 +174,49 @@ public class App {
         UIManager.put("nimbusLightBackground", BASE_COLOR);
         UIManager.put("info", BASE_COLOR);
         UIManager.put("nimbusSelectionBackground", new Color(100, 100, 200));
-        UIManager.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
+        UIManager
+                .put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
     }
 
-    private static void trySystemTrayIntegration()
-    throws Exception{
-        if(SystemTray.isSupported()){
+    private static void trySystemTrayIntegration() throws Exception {
+        if (SystemTray.isSupported()) {
             TRAY = SystemTray.getSystemTray();
 
-            TRAY.add(new TrayIcon(Utils.getImage("/resources/icon.png"), "tray_icon"){{
-                this.setPopupMenu(getSystemTrayMenu());
-                this.setToolTip("ATLauncher");
-            }});
+            Image trayIconImage = Utils.getImage("/resources/icon.png");
+            int trayIconWidth = new TrayIcon(Utils.getImage("/resources/icon.png")).getSize().width;
+            TRAY.add(new TrayIcon(trayIconImage.getScaledInstance(trayIconWidth, -1,
+                    Image.SCALE_SMOOTH), "tray_icon") {
+                {
+                    this.setPopupMenu(getSystemTrayMenu());
+                    this.setToolTip("ATLauncher");
+                }
+            });
         }
     }
 
-    private static PopupMenu getSystemTrayMenu(){
+    private static PopupMenu getSystemTrayMenu() {
         PopupMenu menu = new PopupMenu();
 
-        menu.add(new MenuItem("Kill Minecraft"){{
-            this.addActionListener(new ActionListener(){
-                @Override
-                public void actionPerformed(ActionEvent event){
-                    App.settings.killMinecraft();
-                }
-            });
-        }});
-        menu.add(new MenuItem("Show Launcher"){{
-            this.addActionListener(new ActionListener(){
-                @Override
-                public void actionPerformed(ActionEvent event){
-                    App.settings.log("To be done");
-                }
-            });
-        }});
+        menu.add(new MenuItem("Kill Minecraft") {
+            {
+                this.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent event) {
+                        App.settings.killMinecraft();
+                    }
+                });
+            }
+        });
+        menu.add(new MenuItem("Show Launcher") {
+            {
+                this.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent event) {
+                        App.settings.log("To be done");
+                    }
+                });
+            }
+        });
 
         return menu;
     }
