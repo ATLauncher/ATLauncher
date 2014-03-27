@@ -6,15 +6,6 @@
  */
 package com.atlauncher;
 
-import java.awt.Image;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.util.Locale;
-
-import javax.swing.JOptionPane;
-
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
@@ -23,9 +14,35 @@ import com.atlauncher.gui.SetupDialog;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.utils.Utils;
 
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.util.Locale;
+import java.util.concurrent.ForkJoinPool;
+
 public class App {
+    // Using this will help spread the workload across multiple threads allowing you to do many tasks at once
+    // Approach with caution though
+    public static final ForkJoinPool TASKPOOL = new ForkJoinPool();
 
     public static Settings settings;
+
+    // Don't move this declaration anywheres, its important due to Java Class Loading
+    private static final Color BASE_COLOR = new Color(40, 45, 50);
+
+    static
+    {
+        // Setting the UI LAF here helps with loading the UI should improve performance
+        try{
+            setLAF();
+            modifyLAF();
+        } catch(Exception ex){
+            throw new RuntimeException("Cannot set LAF therefor cannot load: " , ex);
+        }
+    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void main(String[] args) {
@@ -137,5 +154,27 @@ public class App {
         }
 
         new LauncherFrame(open); // Open the Launcher
+    }
+
+    private static void setLAF()
+    throws Exception{
+        for(UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()){
+            if(info.getName().equalsIgnoreCase("nimbus")){
+                UIManager.setLookAndFeel(info.getClassName());
+            }
+        }
+    }
+
+    private static void modifyLAF()
+    throws Exception{
+        UIManager.put("control", BASE_COLOR);
+        UIManager.put("text", Color.WHITE);
+        UIManager.put("nimbusBase", Color.BLACK);
+        UIManager.put("nimbusFocus", BASE_COLOR);
+        UIManager.put("nimbusBorder", BASE_COLOR);
+        UIManager.put("nimbusLightBackground", BASE_COLOR);
+        UIManager.put("info", BASE_COLOR);
+        UIManager.put("nimbusSelectionBackground", new Color(100, 100, 200));
+        UIManager.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
     }
 }

@@ -6,21 +6,15 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
+import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.Border;
-
-import com.atlauncher.App;
-import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
@@ -53,10 +47,6 @@ public class LauncherFrame extends JFrame {
         setLayout(LAYOUT_MANAGER);
 
         App.settings.log("Setting up Look & Feel");
-        setupLookAndFeel(); // Setup the look and feel for the Launcher
-        App.settings.log("Finished Setting up Look & Feel");
-
-        App.settings.log("Setting up Look & Feel");
         setupBottomBar(); // Setup the Bottom Bar
         App.settings.log("Finished Setting up Bottom Bar");
 
@@ -86,12 +76,12 @@ public class LauncherFrame extends JFrame {
             }
         });
 
-        new Thread() {
+        App.TASKPOOL.execute(new Runnable(){
             public void run() {
                 App.settings.checkMojangStatus(); // Check Minecraft status
                 bottomBar.updateStatus(App.settings.getMojangStatus());
             }
-        }.start();
+        });
     }
 
     /**
@@ -129,42 +119,4 @@ public class LauncherFrame extends JFrame {
         bottomBar = new BottomBar();
         App.settings.setBottomBar(bottomBar);
     }
-
-    /**
-     * Setup the Java Look and Feel to make things look pretty
-     */
-    private void setupLookAndFeel() {
-        try {
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            App.settings.logStackTrace(e);
-        }
-
-        // For some reason Mac OS makes text bigger then it should be
-        if (Utils.isMac()) {
-            UIManager.getLookAndFeelDefaults().put("defaultFont",
-                    new Font("SansSerif", Font.PLAIN, 11));
-        }
-
-        UIManager.put("control", BASE_COLOR);
-        UIManager.put("text", Color.WHITE);
-        UIManager.put("nimbusBase", Color.BLACK);
-        UIManager.put("nimbusFocus", BASE_COLOR);
-        UIManager.put("nimbusBorder", BASE_COLOR);
-        UIManager.put("nimbusLightBackground", BASE_COLOR);
-        UIManager.put("info", BASE_COLOR);
-        UIManager.put("nimbusSelectionBackground", new Color(100, 100, 200));
-        UIManager
-                .put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
-        ToolTipManager.sharedInstance().setDismissDelay(15000);
-        ToolTipManager.sharedInstance().setInitialDelay(50);
-        UIManager.put("info", new Color(57, 64, 71)); // Sets background colour for tooltips using
-                                                      // nimbus theme
-    }
-
 }

@@ -69,8 +69,6 @@ public class LauncherConsole extends JFrame {
         setMinimumSize(MINIMUM_SIZE);
         setLayout(LAYOUT_MANAGER);
 
-        setupLookAndFeel(); // Setup the look and feel for the Console
-
         console = new JEditorPane("text/html", "") {
             public boolean getScrollableTracksViewportWidth() {
                 return true; // Fixes issues with resizing from big to small and text not shrinking
@@ -136,27 +134,6 @@ public class LauncherConsole extends JFrame {
                 }
             }
         });
-    }
-
-    private void setupLookAndFeel() {
-        try {
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            App.settings.logStackTrace(e);
-        }
-
-        UIManager.put("control", BASE_COLOR);
-        UIManager.put("text", Color.WHITE);
-        UIManager.put("nimbusBase", Color.BLACK);
-        UIManager.put("nimbusFocus", BASE_COLOR);
-        UIManager.put("nimbusBorder", BASE_COLOR);
-        UIManager.put("nimbusLightBackground", BASE_COLOR);
-        UIManager.put("info", BASE_COLOR);
     }
 
     @Deprecated
