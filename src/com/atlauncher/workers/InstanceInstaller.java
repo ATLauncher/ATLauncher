@@ -957,6 +957,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         if (!found) {
                             continue;
                         }
+                    } else if (element.hasAttribute("dependsgroup")) {
+                        boolean found = false;
+                        for (Mod mod : selectedMods) {
+                            if (element.getAttribute("dependsgroup").equalsIgnoreCase(mod.getGroup())) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            continue;
+                        }
                     }
                     if (librariesNeeded == null) {
                         this.librariesNeeded = file;
