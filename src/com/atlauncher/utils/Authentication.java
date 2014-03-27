@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 import com.atlauncher.App;
@@ -50,7 +51,7 @@ public class Authentication {
         connection.setDoOutput(true);
 
         DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-        writer.write(request.getBytes());
+        writer.write(request.getBytes(Charset.forName("UTF-8")));
         writer.flush();
         writer.close();
 
@@ -95,7 +96,7 @@ public class Authentication {
             connection.setDoOutput(true);
 
             DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-            writer.write(request.getBytes());
+            writer.write(request.getBytes(Charset.forName("UTF-8")));
             writer.flush();
             writer.close();
         } catch (IOException e) {
