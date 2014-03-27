@@ -16,8 +16,9 @@ import com.atlauncher.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Locale;
@@ -30,6 +31,8 @@ public class App {
     // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
 
+    private static SystemTray TRAY = null;
+
     public static Settings settings;
 
     // Don't move this declaration anywheres, its important due to Java Class Loading
@@ -41,8 +44,10 @@ public class App {
         try{
             setLAF();
             modifyLAF();
+
+            trySystemTrayIntegration();
         } catch(Exception ex){
-            throw new RuntimeException("Cannot set LAF therefor cannot load: " , ex);
+            throw new RuntimeException(ex);
         }
     }
 
@@ -114,14 +119,8 @@ public class App {
                 params[0] = Image.class;
                 Method setDockIconImage = util.getMethod("setDockIconImage", params);
                 setDockIconImage.invoke(application, Utils.getImage("/resources/Icon.png"));
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Exception ex){
+                ex.printStackTrace(System.err);
             }
         }
 
@@ -178,5 +177,40 @@ public class App {
         UIManager.put("info", BASE_COLOR);
         UIManager.put("nimbusSelectionBackground", new Color(100, 100, 200));
         UIManager.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
+    }
+
+    private static void trySystemTrayIntegration()
+    throws Exception{
+        if(SystemTray.isSupported()){
+            TRAY = SystemTray.getSystemTray();
+
+            TRAY.add(new TrayIcon(Utils.getImage("/resources/icon.png"), "tray_icon"){{
+                this.setPopupMenu(getSystemTrayMenu());
+                this.setToolTip("ATLauncher");
+            }});
+        }
+    }
+
+    private static PopupMenu getSystemTrayMenu(){
+        PopupMenu menu = new PopupMenu();
+
+        menu.add(new MenuItem("Kill Minecraft"){{
+            this.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent event){
+                    App.settings.killMinecraft();
+                }
+            });
+        }});
+        menu.add(new MenuItem("Show Launcher"){{
+            this.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent event){
+                    App.settings.log("To be done");
+                }
+            });
+        }});
+
+        return menu;
     }
 }
