@@ -212,6 +212,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return new File(getModsDirectory(), "denlib");
     }
 
+    public File getFlanDirectory() {
+        return new File(getRootDirectory(), "Flan");
+    }
+
     public File getDependencyDirectory() {
         return new File(getModsDirectory(), this.version.getMinecraftVersion().getVersion());
     }
