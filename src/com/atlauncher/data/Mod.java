@@ -689,6 +689,12 @@ public class Mod {
                 }
                 Utils.copyFile(fileLocation, installer.getIC2LibDirectory());
                 break;
+            case flan:
+                if (!installer.getFlanDirectory().exists()) {
+                    installer.getFlanDirectory().mkdir();
+                }
+                Utils.copyFile(fileLocation, installer.getFlanDirectory());
+                break;
             case denlib:
                 if (!installer.getDenLibDirectory().exists()) {
                     installer.getDenLibDirectory().mkdir();
