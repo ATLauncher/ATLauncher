@@ -182,8 +182,8 @@ public class App {
         if (SystemTray.isSupported()) {
             TRAY = SystemTray.getSystemTray();
 
-            Image trayIconImage = Utils.getImage("/resources/icon.png");
-            int trayIconWidth = new TrayIcon(Utils.getImage("/resources/icon.png")).getSize().width;
+            Image trayIconImage = Utils.getImage("/resources/Icon.png");
+            int trayIconWidth = new TrayIcon(Utils.getImage("/resources/Icon.png")).getSize().width;
             TRAY.add(new TrayIcon(trayIconImage.getScaledInstance(trayIconWidth, -1,
                     Image.SCALE_SMOOTH), "tray_icon") {
                 {
