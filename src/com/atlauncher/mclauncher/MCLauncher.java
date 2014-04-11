@@ -93,6 +93,20 @@ public class MCLauncher {
             arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
         }
 
+        arguments.add("-Duser.language=en");
+        arguments.add("-Duser.country=US");
+        arguments.add("-Dfml.ignorePatchDiscrepancies=true");
+        arguments.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
+
+        arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
+
+        if (Utils.isMac()) {
+            arguments.add("-Dapple.laf.useScreenMenuBar=true");
+            arguments.add("-Xdock:icon="
+                    + new File(instance.getAssetsDir(), "icons/minecraft.icns").getAbsolutePath());
+            arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
+        }
+
         if (!App.settings.getJavaParameters().isEmpty()) {
             for (String arg : App.settings.getJavaParameters().split(" ")) {
                 if (!arg.isEmpty()) {
@@ -108,18 +122,6 @@ public class MCLauncher {
                     }
                 }
             }
-        }
-
-        arguments.add("-Dfml.ignorePatchDiscrepancies=true");
-        arguments.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
-
-        arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
-
-        if (Utils.isMac()) {
-            arguments.add("-Dapple.laf.useScreenMenuBar=true");
-            arguments.add("-Xdock:icon="
-                    + new File(instance.getAssetsDir(), "icons/minecraft.icns").getAbsolutePath());
-            arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());

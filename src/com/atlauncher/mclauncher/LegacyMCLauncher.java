@@ -30,6 +30,7 @@ import com.atlauncher.App;
 import com.atlauncher.Update;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.utils.Utils;
 
@@ -114,14 +115,8 @@ public class LegacyMCLauncher {
             arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
         }
 
-        if (!App.settings.getJavaParameters().isEmpty()) {
-            for (String arg : App.settings.getJavaParameters().split(" ")) {
-                if (!arg.isEmpty()) {
-                    arguments.add(arg);
-                }
-            }
-        }
-
+        arguments.add("-Duser.language=en");
+        arguments.add("-Duser.country=US");
         arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
 
         if (Utils.isMac()) {
@@ -130,6 +125,23 @@ public class LegacyMCLauncher {
                     + new File(App.settings.getImagesDir(), "OldMinecraftIcon.png")
                             .getAbsolutePath());
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
+        }
+
+        if (!App.settings.getJavaParameters().isEmpty()) {
+            for (String arg : App.settings.getJavaParameters().split(" ")) {
+                if (!arg.isEmpty()) {
+                    if (instance.hasExtraArguments()) {
+                        if (instance.getExtraArguments().contains(arg)) {
+                            App.settings.log("Duplicate argument " + arg + " found and not added!",
+                                    LogMessageType.error, false);
+                        } else {
+                            arguments.add(arg);
+                        }
+                    } else {
+                        arguments.add(arg);
+                    }
+                }
+            }
         }
 
         arguments.add("-cp");
