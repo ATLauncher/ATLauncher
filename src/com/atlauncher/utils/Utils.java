@@ -846,4 +846,8 @@ public class Utils {
             }
         };
     }
+
+    public static boolean isJava8() {
+        return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.8");
+    }
 }
