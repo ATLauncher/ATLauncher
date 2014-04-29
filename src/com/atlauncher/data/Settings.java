@@ -6,11 +6,9 @@
  */
 package com.atlauncher.data;
 
-import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.awt.event.ComponentAdapter;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,7 +25,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -47,8 +44,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -68,7 +63,6 @@ import com.atlauncher.Update;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
-import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.BottomBar;
@@ -77,7 +71,6 @@ import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.NewsPanel;
 import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.ProgressDialog;
-import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -113,7 +106,6 @@ public class Settings {
     private boolean enableLogs; // If to enable logs
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
-    private String authKey; // The Auth key
 
     // General backup settings
     private boolean autoBackup; // Whether backups are created on instance close
@@ -175,114 +167,6 @@ public class Settings {
         clearTempDir(); // Cleans all files in the Temp Dir
         rotateLogFiles(); // Rotates the log files
         loadStartingProperties(); // Get users Console preference and Java Path
-    }
-
-    public boolean checkAuthKey() {
-        log("[Background] Checking Auth Key Started!");
-        if (getAccounts().size() == 0) {
-            return false; // No accounts added so don't check
-        }
-        boolean isValid = true;
-        if (this.authKey == null || this.authKey.isEmpty()) {
-            log("Empty Auth Key!", LogMessageType.error, false);
-            isValid = false;
-        } else {
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(getFileURL("ping"))
-                        .openConnection();
-                connection.setUseCaches(false);
-                connection.setDefaultUseCaches(false);
-                connection.setConnectTimeout(5000);
-                connection.setRequestProperty("Accept-Encoding", "gzip");
-                connection.setRequestProperty("User-Agent", getUserAgent());
-                connection.setRequestProperty("Auth-Key", this.authKey);
-                connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
-                connection.setRequestProperty("Expires", "0");
-                connection.setRequestProperty("Pragma", "no-cache");
-                connection.connect();
-                if (connection.getResponseCode() == 401) {
-                    log("Invalid Auth Key!", LogMessageType.error, false);
-                    isValid = false;
-                }
-            } catch (IOException e) {
-                logStackTrace(e);
-            }
-        }
-        if (!isValid) {
-            if (this.account.isReal()) {
-                String password = null;
-                if (!this.account.isRemembered()) {
-                    JPanel panel = new JPanel();
-                    panel.setLayout(new BorderLayout());
-                    JLabel passwordLabel = new JLabel(App.settings.getLocalizedString(
-                            "instance.enterpassword", account.getMinecraftUsername()));
-                    JPasswordField passwordField = new JPasswordField();
-                    panel.add(passwordLabel, BorderLayout.NORTH);
-                    panel.add(passwordField, BorderLayout.CENTER);
-                    int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
-                            App.settings.getLocalizedString("instance.enterpasswordtitle"),
-                            JOptionPane.OK_CANCEL_OPTION);
-                    if (ret == JOptionPane.OK_OPTION) {
-                        password = new String(passwordField.getPassword());
-                    } else {
-                        return false;
-                    }
-                } else {
-                    password = this.account.getPassword();
-                }
-                AuthenticationResponse ar = null;
-                try {
-                    ar = Authentication.checkAccount(this.account.getUsername(), password);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                if (ar != null) {
-                    while (ar.hasError()) {
-                        JOptionPane.showMessageDialog(null, ar.getErrorMessage(), "Error!",
-                                JOptionPane.ERROR_MESSAGE);
-                        JPanel panel = new JPanel();
-                        panel.setLayout(new BorderLayout());
-                        JLabel passwordLabel = new JLabel(App.settings.getLocalizedString(
-                                "instance.enterpassword", account.getMinecraftUsername()));
-                        JPasswordField passwordField = new JPasswordField();
-                        panel.add(passwordLabel, BorderLayout.NORTH);
-                        panel.add(passwordField, BorderLayout.CENTER);
-                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
-                                App.settings.getLocalizedString("instance.enterpasswordtitle"),
-                                JOptionPane.OK_CANCEL_OPTION);
-                        if (ret == JOptionPane.OK_OPTION) {
-                            password = new String(passwordField.getPassword());
-                        } else {
-                            return false;
-                        }
-                        try {
-                            ar = Authentication.checkAccount(this.account.getUsername(), password);
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-
-                    String authKey = getAuthKey(this.account.getMinecraftUsername(),
-                            ar.getAccessToken(), ar.getClientToken());
-                    if (authKey.isEmpty()) {
-                        log("Auth Key Couldn't Be Set!", LogMessageType.error, false);
-                    } else {
-                        log("Auth Key Set!");
-                        String[] parts = authKey.split("\\|");
-                        ar.setNewAccessToken(parts[2]);
-                        ar.setNewClientToken(parts[3]);
-                        setAuthKey(parts[0] + "|" + parts[1]);
-                        return true;
-                    }
-                    Authentication.invalidateToken(ar);
-                }
-            }
-        } else {
-            log("Auth Key Valid!");
-            return true;
-        }
-        log("[Background] Checking Auth Key Finished!");
-        return false;
     }
 
     public void setupFiles() {
@@ -349,11 +233,6 @@ public class Settings {
             }
         }
         loadServerProperty(true); // Get users Server preference
-        new Thread() {
-            public void run() {
-                checkAuthKey(); // Check the Auth Key
-            }
-        }.start();
         if (Utils.isWindows() && this.javaPath.contains("x86")) {
             String[] options = { App.settings.getLocalizedString("common.yes"),
                     App.settings.getLocalizedString("common.no") };
@@ -369,11 +248,6 @@ public class Settings {
             }
         }
         dropbox = new DropboxSync();
-    }
-
-    public void setAuthKey(String authKey) {
-        this.authKey = authKey;
-        saveProperties();
     }
 
     public void checkResources() {
@@ -908,7 +782,6 @@ public class Settings {
                     "true"));
             this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty(
                     "enabledebugconsole", "false"));
-            this.authKey = properties.getProperty("authkey", "");
             if (!properties.containsKey("usingcustomjavapath")) {
                 this.usingCustomJavaPath = false;
                 this.javaPath = Utils.getJavaHome();
@@ -1064,7 +937,6 @@ public class Settings {
     public void saveProperties() {
         try {
             properties.setProperty("firsttimerun", "false");
-            properties.setProperty("authkey", this.authKey);
             properties.setProperty("language", this.language.getName());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
@@ -1658,59 +1530,6 @@ public class Settings {
             saveInstances(); // Save the instancesdata file
             reloadInstancesPanel(); // Reload the instances panel
         }
-    }
-
-    public String getAuthKey(String username, String accessToken, String clientToken) {
-        String response = "";
-        try {
-            String data = URLEncoder.encode("username", "UTF-8") + "="
-                    + URLEncoder.encode(username, "UTF-8");
-            data += "&" + URLEncoder.encode("accessToken", "UTF-8") + "="
-                    + URLEncoder.encode(accessToken, "UTF-8");
-            data += "&" + URLEncoder.encode("clientToken", "UTF-8") + "="
-                    + URLEncoder.encode(clientToken, "UTF-8");
-
-            URL url = new URL(getFileURL("getauthkeynew.php"));
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setUseCaches(false);
-            conn.setDefaultUseCaches(false);
-            conn.setConnectTimeout(5000);
-            conn.setRequestProperty("User-Agent", getUserAgent());
-            conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
-            conn.setRequestProperty("Expires", "0");
-            conn.setRequestProperty("Pragma", "no-cache");
-            conn.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(data);
-            wr.flush();
-            BufferedReader rd;
-            boolean error = false;
-            try {
-                rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            } catch (IOException e) {
-                error = true;
-                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-            }
-            String line;
-            while ((line = rd.readLine()) != null) {
-                if (error) {
-                    log("Error getting auth key: " + line, LogMessageType.error, false);
-                    if (getNextServer()) {
-                        return getAuthKey(username, accessToken, clientToken);
-                    }
-                } else {
-                    response += line;
-                }
-            }
-            wr.close();
-        } catch (Exception e) {
-            logStackTrace(e);
-            if (getNextServer()) {
-                return getAuthKey(username, accessToken, clientToken);
-            }
-        }
-        clearTriedServers();
-        return response;
     }
 
     public String apiCall(String username, String action, String extra1, String extra2,
@@ -2622,10 +2441,6 @@ public class Settings {
 
     public String getVersion() {
         return this.version;
-    }
-
-    public String getAuthKey() {
-        return this.authKey;
     }
 
     public String getUserAgent() {
