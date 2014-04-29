@@ -299,7 +299,7 @@ public class Settings {
             while (iterator.hasNext()) {
                 JSONObject object = iterator.next();
                 if (object.containsKey("login.minecraft.net")) {
-                    if (((String) object.get("login.minecraft.net")).equalsIgnoreCase("green")) {
+                    if (((String) object.get("authserver.minecraft.net")).equalsIgnoreCase("green")) {
                         minecraftLoginServerUp = true;
                     }
                 } else if (object.containsKey("session.minecraft.net")) {

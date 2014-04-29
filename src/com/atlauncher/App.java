@@ -45,7 +45,7 @@ public class App {
             setLAF();
             modifyLAF();
 
-            trySystemTrayIntegration();
+            //trySystemTrayIntegration();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
