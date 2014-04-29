@@ -197,21 +197,6 @@ public class AccountPanel extends JPanel {
                                 AuthenticationResponse resp = Authentication.checkAccount(
                                         usernameField.getText(),
                                         new String(passwordField.getPassword()));
-                                if (!resp.hasError()) {
-                                    String authKey = App.settings.getAuthKey(
-                                            resp.getName(username1), resp.getAccessToken(),
-                                            resp.getClientToken());
-                                    if (authKey.isEmpty()) {
-                                        resp.setErrorMessage("Auth Key Couldn't Be Set! Try Again!");
-                                    } else {
-                                        App.settings.log("Auth Key Set!");
-                                        String[] parts = authKey.split("\\|");
-                                        resp.setNewAccessToken(parts[2]);
-                                        resp.setNewClientToken(parts[3]);
-                                        App.settings.setAuthKey(parts[0] + "|" + parts[1]);
-                                    }
-                                    Authentication.invalidateToken(resp);
-                                }
                                 dialog.setReturnValue(resp);
                             } catch (IOException e1) {
                                 App.settings.logStackTrace(e1);

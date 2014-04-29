@@ -194,32 +194,11 @@ public class Downloadable {
                 this.connection.setConnectTimeout(5000);
                 this.connection.setRequestProperty("Accept-Encoding", "gzip");
                 this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
-                this.connection.setRequestProperty("Auth-Key", App.settings.getAuthKey());
                 this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
                 this.connection.setRequestProperty("Expires", "0");
                 this.connection.setRequestProperty("Pragma", "no-cache");
                 this.connection.connect();
                 if (this.connection.getResponseCode() / 100 != 2) {
-                    if (this.connection.getResponseCode() == 401 && this.isATLauncherDownload) {
-                        App.settings
-                                .log(this.url
-                                        + " returned response code "
-                                        + this.connection.getResponseCode()
-                                        + (this.connection.getResponseMessage() != null ? " with message of "
-                                                + this.connection.getResponseMessage()
-                                                : "") + " and auth key error of "
-                                        + this.connection.getHeaderField("Auth-Key-Error"),
-                                        LogMessageType.error, false);
-                        if (App.settings.checkAuthKey()) {
-                            this.connection = null; // Clear the connection
-                            return this.getConnection(); // Try getting it again
-                        } else {
-                            if (this.instanceInstaller != null) {
-                                this.instanceInstaller.cancel(true);
-                            }
-                            return null;
-                        }
-                    }
                     throw new IOException(this.url
                             + " returned response code "
                             + this.connection.getResponseCode()
@@ -386,12 +365,12 @@ public class Downloadable {
                 downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
             }
             if (done) {
-                if (this.oldFile!=null && this.oldFile.exists()) {
+                if (this.oldFile != null && this.oldFile.exists()) {
                     Utils.delete(this.oldFile);
                 }
             }
             if (!done) {
-                if (this.oldFile!=null && this.oldFile.exists()) {
+                if (this.oldFile != null && this.oldFile.exists()) {
                     Utils.moveFile(this.oldFile, this.file, true);
                 }
                 if (this.isATLauncherDownload) {
