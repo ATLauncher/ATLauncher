@@ -36,9 +36,9 @@ Please keep all line lengths to 100 characters and use 4 spaces rather than tab 
 
 Download and install the latest version from [Oracle's Java Downloads page](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
 
-###### Apache Ant
+###### Apache Maven
 
-Install Apache Ant via the official [Apache Ant Install Docs](http://ant.apache.org/manual/install.html).
+Install Apache Maven via the official [Apache Maven Install Docs](http://maven.apache.org/download.cgi#Installation).
 
 ###### launch4j
 
@@ -52,21 +52,32 @@ C:\Program Files (x86)\Launch4j
 
 ### Pluging In Your Data
 
-To get started with the code and plug in your own data, you need to replace the following files
+To get started with the code and plug in your own data, you need to create a src/main/java/com/atlauncher/data/Constanst.java file. Below is a starter to get you going:
 
-#### /src/com/atlauncher/data/Settings.java
-%APIURL% should be replaced with a link to your server side API for processing of leaderboard times and pack installs
+    package com.atlauncher.data;
 
-#### /src/com/atlauncher/gui/ConsoleBottomBar.java & /src/com/atlauncher/data/Instance.java
-%PASTECHECKURL% should be replaced with a link to the url where an instance of [stikked](https://github.com/claudehohl/Stikked) is running (For instance http://www.mypaste.com) this is how the launcher knows if the paste was successful by checking the response from the API for the url of the software.
+    public class Constants {
 
-#### /src/com/atlauncher/utils/Utils.java
-%PASTEAPIURL% should be replaced with a link to the create api command for the instance of [stikked](https://github.com/claudehohl/Stikked) is running (For instance http://www.mypaste.com/api/create/)
+    public static final String VERSION = "";
+    public static final String API_URL = "";
+    public static final String PASTE_CHECK_URL = "";
+    public static final String PASTE_API_URL = "";
+    public static final Server[] SERVERS = new Server[] { new Server("Test", "my.file.server.com", true) };
+    }
 
-#### /src/com/atlauncher/data/Settings.java
-// INSERT SERVERS HERE should be replaced with the addition of your servers to the servers ArrayList such as details below
+See below for exmplanations as to what each constant means.
 
-servers.add(new Server("Test", "sometest.myserver.com"));
+#### API_URL
+This is a link to your server side API for processing of leaderboard times and pack installs. This is optional and can be removed. We do not give implementation code, this is your own doing.
+
+#### PASTE_CHECK_URL
+This is a link to the url where an instance of [stikked](https://github.com/claudehohl/Stikked) is running (For instance http://www.mypaste.com) this is how the launcher knows if the paste was successful by checking the response from the API for the url of the software.
+
+#### PASTE_API_URL
+This is a link to the create api command for the instance of [stikked](https://github.com/claudehohl/Stikked) is running (For instance http://www.mypaste.com/api/create/)
+
+#### SERVERS
+This is an array of Server type elements the launcher uses as a base to download files.
 
 #### How to make your data
 
@@ -87,5 +98,3 @@ You must also establish yourself as not being a part of our Launcher, and should
 ![CC SA](http://i.creativecommons.org/l/by-sa/3.0/88x31.png)
 
 This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
-
-Some icons by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/). Licensed under a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).
