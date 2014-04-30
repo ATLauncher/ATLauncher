@@ -6,7 +6,6 @@
 !/src/
 !/macapp/
 !/.gitignore
-!/build.xml
-!/launch4j.xml
 !/LICENSE
 !/README.md
+!/pom.xml
