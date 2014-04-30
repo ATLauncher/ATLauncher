@@ -298,8 +298,8 @@ public class Settings {
             Iterator<JSONObject> iterator = jsonObject.iterator();
             while (iterator.hasNext()) {
                 JSONObject object = iterator.next();
-                if (object.containsKey("authserver.minecraft.net")) {
-                    if (((String) object.get("authserver.minecraft.net")).equalsIgnoreCase("green")) {
+                if (object.containsKey("authserver.mojang.com")) {
+                    if (((String) object.get("authserver.mojang.com")).equalsIgnoreCase("green")) {
                         minecraftLoginServerUp = true;
                     }
                 } else if (object.containsKey("session.minecraft.net")) {
