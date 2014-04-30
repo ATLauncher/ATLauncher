@@ -29,7 +29,7 @@
 		<key>MainClass</key>
 		<string>com.atlauncher.App</string>
 		<key>ClassPath</key>
-			<string>$JAVAROOT/ATLauncher.jar</string>
+		<string>$JAVAROOT/ATLauncher.jar</string>
 	</dict>
 </dict>
 </plist>

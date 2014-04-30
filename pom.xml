@@ -76,23 +76,12 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>versioned</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
                             <finalName>ATLauncher-${project.version}</finalName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>release</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>ATLauncher</finalName>
                         </configuration>
                     </execution>
                 </executions>
@@ -103,7 +92,6 @@
                 <version>1.5.2</version>
                 <executions>
                     <execution>
-                        <id>versioned</id>
                         <configuration>
                             <headerType>gui</headerType>
                             <stayAlive>false</stayAlive>
@@ -124,30 +112,41 @@
                         </goals>
                         <phase>package</phase>
                     </execution>
-                    <execution>
-                        <id>release</id>
-                        <configuration>
-                            <headerType>gui</headerType>
-                            <stayAlive>false</stayAlive>
-                            <jar>${project.build.directory}/ATLauncher-${project.version}.jar</jar>
-                            <outfile>${project.build.directory}/ATLauncher.exe</outfile>
-                            <classPath>
-                                <mainClass>${mainclass}</mainClass>
-                                <addDependencies>false</addDependencies>
-                                <preCp>anything</preCp>
-                            </classPath>
-                            <jre>
-                                <minVersion>1.6.0</minVersion>
-                            </jre>
-                            <icon>src/main/resources/assets/image/Icon.ico</icon>
-                        </configuration>
-                        <goals>
-                            <goal>launch4j</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
                 </executions>
             </plugin>
+            <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-antrun-plugin</artifactId>
+		        <version>1.7</version>
+		        <executions>
+		          <execution>
+		            <id>compile</id>
+		            <phase>package</phase>
+		            <configuration>
+		              <target>
+		               	<chmod file="${project.build.directory}/ATLauncher-${project.version}.jar" perm="ugo+rwx" />
+
+						<mkdir dir="${project.build.directory}/ATLauncher.app" />
+						<copy todir="${project.build.directory}/ATLauncher.app">
+							<fileset dir="${basedir}/macapp" includes="**" />
+						</copy>
+						<copy file="${project.build.directory}/ATLauncher-${project.version}.jar" tofile="${project.build.directory}/ATLauncher.app/Contents/Resources/Java/ATLauncher.jar" />
+						<copy file="${basedir}/src/main/resources/assets/image/Icon.icns" tofile="${project.build.directory}/ATLauncher.app/Contents/Resources/Icon.icns" />
+						<replace file="${project.build.directory}/ATLauncher.app/Contents/Info.plist" token="%VERSION%" value="${project.version}" />
+					
+						<zip destfile="${project.build.directory}/ATLauncher-${project.version}.zip">
+							<zipfileset dir="${project.build.directory}/" includes="ATLauncher.app/**" excludes="ATLauncher.app/Contents/MacOS/JavaApplicationStub" />
+							<zipfileset dir="${project.build.directory}/" includes="ATLauncher.app/Contents/MacOS/JavaApplicationStub" filemode="755" />
+						</zip>
+						<delete dir="{project.build.directory}/ATLauncher.app" />
+		              </target>
+		            </configuration>
+		            <goals>
+		              <goal>run</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+		   	</plugin>
         </plugins>
     </build>
 </project>
