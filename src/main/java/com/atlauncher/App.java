@@ -45,7 +45,7 @@ public class App {
             setLAF();
             modifyLAF();
 
-            //trySystemTrayIntegration();
+            // trySystemTrayIntegration();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -102,6 +102,16 @@ public class App {
         settings.log("Java Version: " + Utils.getJavaVersion(), LogMessageType.info, false);
         if (settings.isUsingCustomJavaPath()) {
             settings.log("Custom Java Path Set!", LogMessageType.warning, false);
+        } else {
+            if (settings.isUsingMacApp()) {
+                File oracleJava = new File(
+                        "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
+                if (oracleJava.exists() && oracleJava.canExecute()) {
+                    settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
+                    settings.log("Launcher Forced Custom Java Path Set!", LogMessageType.warning,
+                            false);
+                }
+            }
         }
         settings.log("Java Path: " + settings.getJavaPath());
         settings.log("64 Bit Java: " + Utils.is64Bit());

@@ -144,7 +144,6 @@ public class Settings {
     private BottomBar bottomBar; // The bottom bar
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private boolean offlineMode = false; // If offline mode is enabled
-    private boolean usingMacApp = false; // If the user is using the Mac App
     private Process minecraftProcess = null; // The process minecraft is running on
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
@@ -179,9 +178,6 @@ public class Settings {
             }
         } else {
             baseDir = new File(System.getProperty("user.dir"));
-        }
-        if (Utils.isMac() && new File(baseDir.getParentFile().getParentFile(), "MacOS").exists()) {
-            usingMacApp = true;
         }
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
         backupsDir = new File(baseDir, "Backups");
@@ -881,6 +877,13 @@ public class Settings {
                 this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
             } else {
                 this.javaPath = Utils.getJavaHome();
+                if (this.isUsingMacApp()) {
+                    File oracleJava = new File(
+                            "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
+                    if (oracleJava.exists() && oracleJava.canExecute()) {
+                        this.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
+                    }
+                }
             }
 
             this.javaParamaters = properties.getProperty("javaparameters", "");
@@ -1471,7 +1474,7 @@ public class Settings {
     }
 
     public boolean isUsingMacApp() {
-        return this.usingMacApp;
+        return Utils.isMac() && new File(baseDir.getParentFile().getParentFile(), "MacOS").exists();
     }
 
     public void setInstanceVisbility(Instance instance, boolean collapsed) {
@@ -2471,7 +2474,7 @@ public class Settings {
 
         List<String> arguments = new ArrayList<String>();
 
-        if (usingMacApp) {
+        if (this.isUsingMacApp()) {
             arguments.add("open");
             arguments.add("-n");
             arguments
