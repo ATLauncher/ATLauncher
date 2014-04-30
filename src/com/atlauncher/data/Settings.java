@@ -298,7 +298,7 @@ public class Settings {
             Iterator<JSONObject> iterator = jsonObject.iterator();
             while (iterator.hasNext()) {
                 JSONObject object = iterator.next();
-                if (object.containsKey("login.minecraft.net")) {
+                if (object.containsKey("authserver.minecraft.net")) {
                     if (((String) object.get("authserver.minecraft.net")).equalsIgnoreCase("green")) {
                         minecraftLoginServerUp = true;
                     }
