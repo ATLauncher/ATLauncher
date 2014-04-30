@@ -848,6 +848,10 @@ public class Utils {
     }
 
     public static boolean isJava8() {
-        return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.8");
+        if (App.settings.isUsingCustomJavaPath()) {
+            return false; // If the user is running a custom java path, always return false
+        } else {
+            return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.8");
+        }
     }
 }
