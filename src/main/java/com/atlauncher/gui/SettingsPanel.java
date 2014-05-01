@@ -15,6 +15,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 
 import javax.swing.ImageIcon;
@@ -230,6 +232,26 @@ public class SettingsPanel extends JPanel {
             memory.addItem(memoryOptions[i]);
         }
         memory.setSelectedItem(App.settings.getMemory() + " MB");
+        memory.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    int selectedRam = Integer.parseInt(((String) memory.getSelectedItem()).replace(
+                            " MB", ""));
+                    if (selectedRam > 4096) {
+                        JOptionPane.showMessageDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString(
+                                                "settings.toomuchramallocated", "<br/><br/>")
+                                        + "</center></html>", App.settings
+                                        .getLocalizedString("settings.help"),
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                }
+            }
+        });
         topPanel.add(memory, gbc);
 
         // Perm Gen Settings
