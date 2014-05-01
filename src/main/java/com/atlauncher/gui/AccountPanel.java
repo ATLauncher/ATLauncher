@@ -36,6 +36,7 @@ import com.atlauncher.data.Account;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.utils.Authentication;
+import com.atlauncher.utils.Utils;
 
 public class AccountPanel extends JPanel {
 
@@ -151,6 +152,28 @@ public class AccountPanel extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         rememberField = new JCheckBox();
         bottomPanel.add(rememberField, gbc);
+        rememberField.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (rememberField.isSelected()) {
+                    String[] options = { App.settings.getLocalizedString("common.yes"),
+                            App.settings.getLocalizedString("common.no") };
+                    int ret = JOptionPane.showOptionDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString(
+                                            "account.rememberpasswordwarning", "<br/><br/>")
+                                    + "</center></html>", App.settings
+                                    .getLocalizedString("account.securitywarningtitle"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
+                    if (ret != 0) {
+                        rememberField.setSelected(false);
+                    }
+                }
+            }
+        });
 
         gbc.gridx = 0;
         gbc.gridy++;

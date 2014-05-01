@@ -142,6 +142,7 @@ public class Settings {
     private NewsPanel newsPanel; // The news panel
     private PacksPanel packsPanel; // The packs panel
     private BottomBar bottomBar; // The bottom bar
+    private boolean hadPasswordDialog = false; // If the user has seen the password dialog
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private boolean offlineMode = false; // If offline mode is enabled
     private Process minecraftProcess = null; // The process minecraft is running on
@@ -245,6 +246,39 @@ public class Settings {
             }
         }
         dropbox = new DropboxSync();
+        if (!this.hadPasswordDialog) {
+            checkAccounts(); // Check accounts with stored passwords
+        }
+    }
+
+    public void checkAccounts() {
+        boolean matches = false;
+        if (this.accounts != null || this.accounts.size() >= 1) {
+            for (Account account : this.accounts) {
+                if (account.isRemembered()) {
+                    matches = true;
+                }
+            }
+        }
+        if (matches) {
+            String[] options = { App.settings.getLocalizedString("common.ok"),
+                    App.settings.getLocalizedString("account.removepasswords") };
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
+                    + App.settings.getLocalizedString("account.securitywarning", "<br/>")
+                    + "</center></html>",
+                    App.settings.getLocalizedString("account.securitywarningtitle"),
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                    options[0]);
+            if (ret == 1) {
+                for (Account account : this.accounts) {
+                    if (account.isRemembered()) {
+                        account.setRemember(false);
+                    }
+                }
+                this.saveAccounts();
+            }
+        }
+        this.saveProperties();
     }
 
     public void checkResources() {
@@ -806,6 +840,8 @@ public class Settings {
             this.properties.load(new FileInputStream(propertiesFile));
             this.firstTimeRun = Boolean
                     .parseBoolean(properties.getProperty("firsttimerun", "true"));
+            this.hadPasswordDialog = Boolean.parseBoolean(properties.getProperty(
+                    "hadpassworddialog", "false"));
 
             String lang = properties.getProperty("language", "English");
             if (isLanguageByName(lang)) {
@@ -941,6 +977,7 @@ public class Settings {
     public void saveProperties() {
         try {
             properties.setProperty("firsttimerun", "false");
+            properties.setProperty("hadpassworddialog", "true");
             properties.setProperty("language", this.language.getName());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
