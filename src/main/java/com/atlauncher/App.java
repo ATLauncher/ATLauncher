@@ -99,7 +99,6 @@ public class App {
         settings.log("ATLauncher Version: " + settings.getVersion());
         settings.log("Operating System: " + System.getProperty("os.name"));
         settings.log("RAM Available: " + Utils.getMaximumRam() + "MB");
-        settings.log("Java Version: " + Utils.getJavaVersion(), LogMessageType.info, false);
         if (settings.isUsingCustomJavaPath()) {
             settings.log("Custom Java Path Set!", LogMessageType.warning, false);
         } else {
@@ -113,6 +112,7 @@ public class App {
                 }
             }
         }
+        settings.log("Java Version: " + Utils.getActualJavaVersion(), LogMessageType.info, false);
         settings.log("Java Path: " + settings.getJavaPath());
         settings.log("64 Bit Java: " + Utils.is64Bit());
         settings.log("Launcher Directory: " + settings.getBaseDir());

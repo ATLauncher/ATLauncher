@@ -41,11 +41,15 @@ import java.nio.channels.FileChannel;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -848,9 +852,60 @@ public class Utils {
         };
     }
 
+    public static String getActualJavaVersion() {
+        if (App.settings.isUsingCustomJavaPath()) {
+            File folder = new File(App.settings.getJavaPath(), "bin/");
+            List<String> arguments = new ArrayList<String>();
+            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add("-version");
+            ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+            processBuilder.directory(folder);
+            processBuilder.redirectErrorStream(true);
+            String version = "Unknown";
+            try {
+                Process process = processBuilder.start();
+                InputStream is = process.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                version = br.readLine(); // Read first line
+                version = br.readLine(); // Get second line
+                
+                // Extract version information
+                Pattern p = Pattern.compile("build ([0-9.-_a-zA-Z]+)");
+                Matcher m = p.matcher(version);
+
+                if (m.find()) {
+                    version = m.group(1);
+                }
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+            }
+            return "Launcher: " + System.getProperty("java.version") + ", Minecraft: " + version;
+        }else{
+            return "Launcher: " + System.getProperty("java.version") + ", Minecraft: " + System.getProperty("java.version");
+        }
+    }
+
     public static boolean isJava8() {
         if (App.settings.isUsingCustomJavaPath()) {
-            return false; // If the user is running a custom java path, always return false
+            File folder = new File(App.settings.getJavaPath(), "bin/");
+            List<String> arguments = new ArrayList<String>();
+            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add("-version");
+            ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+            processBuilder.directory(folder);
+            processBuilder.redirectErrorStream(true);
+            try {
+                Process process = processBuilder.start();
+                InputStream is = process.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String line = br.readLine(); // Read first line only
+                return line.contains("\"1.8");
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+            }
+            return false; // Can't determine version, so fall back to not being Java 8
         } else {
             return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.8");
         }
