@@ -440,7 +440,24 @@ public class Settings {
             return null;
         }
         if (launcherHasUpdate()) {
-            downloadUpdate(); // Update the Launcher
+            if (!App.wasUpdated) {
+                downloadUpdate(); // Update the Launcher
+            } else {
+                String[] options = { "Ok" };
+                int ret = JOptionPane
+                        .showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><center>Launcher Update failed. Please click Ok to close "
+                                        + "the launcher and open up the downloads page.<br/><br/>Download "
+                                        + "the update and replace the old ATLauncher file.</center></html>",
+                                "Update Failed!",
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
+                if (ret == 0) {
+                    Utils.openBrowser("http://www.atlauncher.com/downloads/");
+                    System.exit(0);
+                }
+            }
         }
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
         for (DownloadableFile file : this.launcherFiles) {

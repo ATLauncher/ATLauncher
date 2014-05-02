@@ -40,6 +40,7 @@ public class Update {
             arguments.add(path);
             arguments.add("-jar");
             arguments.add(launcherPath);
+            arguments.add("--updated");
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder();

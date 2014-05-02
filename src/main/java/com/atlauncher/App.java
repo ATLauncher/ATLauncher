@@ -37,6 +37,8 @@ public class App {
     private static SystemTray TRAY = null;
     public static PopupMenu TRAY_MENU = new TrayMenu();
 
+    public static boolean wasUpdated = false;
+
     public static Settings settings;
 
     // Don't move this declaration anywheres, its important due to Java Class Loading
@@ -62,6 +64,8 @@ public class App {
                 String[] parts = arg.split("=");
                 if (parts[0].equalsIgnoreCase("--launch")) {
                     autoLaunch = parts[1];
+                } else if (parts[0].equalsIgnoreCase("--update")) {
+                    wasUpdated = true;
                 }
             }
         }
