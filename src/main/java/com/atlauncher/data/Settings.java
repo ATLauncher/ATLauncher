@@ -1452,6 +1452,7 @@ public class Settings {
 
     public void setMinecraftLaunched(boolean launched) {
         this.minecraftLaunched = launched;
+        ((TrayMenu) App.TRAY_MENU).setMinecraftLaunched(launched);
     }
 
     /**
