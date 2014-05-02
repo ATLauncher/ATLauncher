@@ -64,7 +64,7 @@ public class App {
                 String[] parts = arg.split("=");
                 if (parts[0].equalsIgnoreCase("--launch")) {
                     autoLaunch = parts[1];
-                } else if (parts[0].equalsIgnoreCase("--update")) {
+                } else if (parts[0].equalsIgnoreCase("--updated")) {
                     wasUpdated = true;
                 }
             }

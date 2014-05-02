@@ -439,7 +439,7 @@ public class Settings {
             this.offlineMode = true;
             return null;
         }
-        if (launcherHasUpdate()) {
+        if (!launcherHasUpdate()) {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
             } else {
