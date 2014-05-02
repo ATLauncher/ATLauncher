@@ -31,6 +31,7 @@ import javax.swing.JTextArea;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Pack;
 import com.atlauncher.utils.Utils;
 
@@ -55,6 +56,7 @@ public class InstanceDisplay extends CollapsiblePanel {
     private JButton rename; // Rename button
     private JButton update; // Update button
     private JButton backup; // Backup button
+    private JButton clone; // Clone button
     private JButton delete; // Delete button
     private JButton editMods; // Edit mods button
     private JButton openFolder; // Open Folder button
@@ -289,6 +291,47 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
         });
 
+        // Clone Button
+
+        clone = new JButton(App.settings.getLocalizedString("instance.clone"));
+        clone.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
+                        App.settings.getLocalizedString("instance.cloneenter"),
+                        App.settings.getLocalizedString("instance.clonetitle"),
+                        JOptionPane.INFORMATION_MESSAGE);
+                if (clonedName != null
+                        && clonedName.length() >= 1
+                        && App.settings.getInstanceByName(clonedName) == null
+                        && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]",
+                                "")) == null) {
+                    App.settings.cloneInstance(instance, clonedName);
+                } else if (clonedName == null || clonedName == "") {
+                    App.settings.log(
+                            "Error Occured While Cloning Instance! Dialog Closed/Cancelled!",
+                            LogMessageType.error, false);
+                    JOptionPane.showMessageDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString("instance.errorclone",
+                                            instance.getName() + "<br/><br/>") + "</center></html>",
+                            App.settings.getLocalizedString("common.error"),
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    App.settings
+                            .log("Error Occured While Cloning Instance! Instance With That Name Already Exists!",
+                                    LogMessageType.error, false);
+                    JOptionPane.showMessageDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString("instance.errorclone",
+                                            instance.getName() + "<br/><br/>") + "</center></html>",
+                            App.settings.getLocalizedString("common.error"),
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         // Delete Button
 
         delete = new JButton(App.settings.getLocalizedString("common.delete"));
@@ -404,6 +447,19 @@ public class InstanceDisplay extends CollapsiblePanel {
                             options[0]);
                 }
             });
+            for (ActionListener al : clone.getActionListeners()) {
+                clone.removeActionListener(al);
+            }
+            clone.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            App.settings.getLocalizedString("instance.corruptclone"),
+                            App.settings.getLocalizedString("instance.corrupt"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                            options[0]);
+                }
+            });
         }
 
         if (App.settings.isInOfflineMode()) {
@@ -447,6 +503,7 @@ public class InstanceDisplay extends CollapsiblePanel {
         instanceActionsTop.add(update);
 
         instanceActionsBottom.add(backup);
+        instanceActionsBottom.add(clone);
         instanceActionsBottom.add(delete);
         instanceActionsBottom.add(editMods);
         instanceActionsBottom.add(openFolder);

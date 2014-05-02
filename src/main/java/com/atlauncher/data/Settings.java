@@ -2543,4 +2543,20 @@ public class Settings {
     public boolean isLanguageLoaded() {
         return this.languageLoaded;
     }
+
+    public void cloneInstance(Instance instance, String clonedName) {
+        Instance clonedInstance = (Instance) instance.clone();
+        if (clonedInstance == null) {
+            App.settings.log(
+                    "Error Occured While Cloning Instance! Instance Object Couldn't Be Cloned!",
+                    LogMessageType.error, false);
+        } else {
+            clonedInstance.setName(clonedName);
+            clonedInstance.getRootDirectory().mkdir();
+            Utils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
+            this.instances.add(clonedInstance);
+            this.saveInstances();
+            this.reloadInstancesPanel();
+        }
+    }
 }

@@ -30,7 +30,7 @@ import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
-public class Instance implements Serializable {
+public class Instance implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1925450686877381452L;
     private String name;
@@ -98,6 +98,10 @@ public class Instance implements Serializable {
 
     public String getName() {
         return this.name;
+    }
+
+    public void setName(String newName) {
+        this.name = newName;
     }
 
     public String getSafeName() {
@@ -739,5 +743,14 @@ public class Instance implements Serializable {
             };
         };
         thread.run();
+    }
+
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            App.settings.logStackTrace(e);
+        }
+        return null;
     }
 }
