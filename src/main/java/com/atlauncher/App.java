@@ -12,9 +12,11 @@ import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SetupDialog;
 import com.atlauncher.gui.SplashScreen;
+import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +35,7 @@ public class App {
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
 
     private static SystemTray TRAY = null;
+    public static PopupMenu TRAY_MENU = new TrayMenu();
 
     public static Settings settings;
 
@@ -45,7 +48,7 @@ public class App {
             setLAF();
             modifyLAF();
 
-            // trySystemTrayIntegration();
+            trySystemTrayIntegration();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -163,7 +166,7 @@ public class App {
                 }
             }
         }
-
+        ((TrayMenu) TRAY_MENU).localize();
         new LauncherFrame(open); // Open the Launcher
     }
 
@@ -197,67 +200,11 @@ public class App {
             TRAY.add(new TrayIcon(trayIconImage.getScaledInstance(trayIconWidth, -1,
                     Image.SCALE_SMOOTH), "tray_icon") {
                 {
-                    this.setPopupMenu(getSystemTrayMenu());
+                    this.setPopupMenu(TRAY_MENU);
                     this.setToolTip("ATLauncher");
                 }
             });
         }
     }
 
-    // TODO: Allow detection of when Minecraft is open, console is closed etc, to update the menu
-    private static PopupMenu getSystemTrayMenu() {
-        PopupMenu menu = new PopupMenu();
-
-        menu.add(new MenuItem("Kill Minecraft") {
-            {
-                this.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent event) {
-                        App.settings.killMinecraft();
-                    }
-                });
-            }
-        });
-
-        menu.add(new MenuItem("Show Console") {
-            {
-                this.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent event) {
-                        if (!App.settings.isConsoleVisible()) {
-                            App.settings.setConsoleVisible(true);
-                        }
-                    }
-                });
-            }
-        });
-
-        menu.add(new MenuItem("Hide Console") {
-            {
-                this.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent event) {
-                        if (App.settings.isConsoleVisible()) {
-                            App.settings.setConsoleVisible(false);
-                        }
-                    }
-                });
-            }
-        });
-
-        menu.addSeparator(); // Add Separator
-
-        menu.add(new MenuItem("Quit") {
-            {
-                this.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent event) {
-                        System.exit(0);
-                    }
-                });
-            }
-        });
-
-        return menu;
-    }
 }

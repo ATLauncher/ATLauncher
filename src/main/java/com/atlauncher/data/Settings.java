@@ -72,6 +72,7 @@ import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.NewsPanel;
 import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.ProgressDialog;
+import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -155,6 +156,7 @@ public class Settings {
     public static Gson gson = new Gson();
     public static Gson altGson;
     private DropboxSync dropbox;
+    private boolean languageLoaded = false;
 
     public Settings() {
         GsonBuilder builder = new GsonBuilder();
@@ -209,6 +211,7 @@ public class Settings {
         }
         loadNews(); // Load the news
         loadLanguages(); // Load the Languages available in the Launcher
+        this.languageLoaded = true; // Languages are now loaded
         loadMinecraftVersions(); // Load info about the different Minecraft versions
         loadPacks(); // Load the Packs available in the Launcher
         loadUsers(); // Load the Testers and Allowed Players for the packs
@@ -2412,6 +2415,7 @@ public class Settings {
             }
         }
         this.console.setVisible(visible);
+        ((TrayMenu) App.TRAY_MENU).setConsoleVisible(visible);
     }
 
     public void setEnableConsole(boolean enableConsole) {
@@ -2537,5 +2541,9 @@ public class Settings {
             e.printStackTrace();
         }
         System.exit(0);
+    }
+
+    public boolean isLanguageLoaded() {
+        return this.languageLoaded;
     }
 }

@@ -108,7 +108,7 @@ public class LauncherConsole extends JFrame {
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent arg0) {
-                setVisible(false);
+                App.settings.setConsoleVisible(false);
             }
         });
     }
