@@ -81,6 +81,17 @@ public class RenameInstanceDialog extends JDialog {
                             App.settings.getLocalizedString("instance.alreadyinstance",
                                     instanceName.getText()), App.settings
                                     .getLocalizedString("common.error"), JOptionPane.ERROR_MESSAGE);
+                } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+                    JOptionPane.showMessageDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString("common.error")
+                                    + "<br/><br/>"
+                                    + App.settings.getLocalizedString("instance.invalidname",
+                                            instanceName.getText()) + "</center></html>",
+                            App.settings.getLocalizedString("common.error"),
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
                 } else {
                     if (instance.rename(instanceName.getText())) {
                         App.settings.saveInstances();

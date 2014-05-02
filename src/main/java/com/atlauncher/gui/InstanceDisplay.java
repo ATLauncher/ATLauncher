@@ -304,11 +304,23 @@ public class InstanceDisplay extends CollapsiblePanel {
                         && clonedName.length() >= 1
                         && App.settings.getInstanceByName(clonedName) == null
                         && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]",
-                                "")) == null) {
+                                "")) == null
+                        && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
                     App.settings.cloneInstance(instance, clonedName);
                 } else if (clonedName == null || clonedName == "") {
                     App.settings.log(
                             "Error Occured While Cloning Instance! Dialog Closed/Cancelled!",
+                            LogMessageType.error, false);
+                    JOptionPane.showMessageDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString("instance.errorclone",
+                                            instance.getName() + "<br/><br/>") + "</center></html>",
+                            App.settings.getLocalizedString("common.error"),
+                            JOptionPane.ERROR_MESSAGE);
+                } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+                    App.settings.log(
+                            "Error Occured While Cloning Instance! Invalid Name!",
                             LogMessageType.error, false);
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
