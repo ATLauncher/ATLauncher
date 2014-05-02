@@ -47,8 +47,6 @@ public class App {
         try {
             setLAF();
             modifyLAF();
-
-            trySystemTrayIntegration();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -98,6 +96,14 @@ public class App {
 
         settings = new Settings(); // Setup the Settings and wait for it to
                                    // finish
+
+        if (settings.enableTrayIcon()) {
+            try {
+                trySystemTrayIntegration(); // Try to enable the tray icon
+            } catch (Exception e) {
+                settings.logStackTrace(e);
+            }
+        }
 
         settings.log("ATLauncher Version: " + settings.getVersion());
         settings.log("Operating System: " + System.getProperty("os.name"));

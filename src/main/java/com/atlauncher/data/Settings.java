@@ -103,7 +103,7 @@ public class Settings {
     private boolean sortPacksAlphabetically; // If to sort packs default alphabetically
     private boolean keepLauncherOpen; // If we should close the Launcher after Minecraft has closed
     private boolean enableConsole; // If to show the console by default
-    private boolean enableDebugConsole; // If to enable debugging console
+    private boolean enableTrayIcon; // If to enable tray icon
     private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
     private Account account; // Account using the Launcher
@@ -814,8 +814,8 @@ public class Settings {
             this.properties.load(new FileInputStream(propertiesFile));
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
-            this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty(
-                    "enabledebugconsole", "false"));
+            this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon",
+                    "true"));
             if (!properties.containsKey("usingcustomjavapath")) {
                 this.usingCustomJavaPath = false;
                 this.javaPath = Utils.getJavaHome();
@@ -942,8 +942,8 @@ public class Settings {
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
 
-            this.enableDebugConsole = Boolean.parseBoolean(properties.getProperty(
-                    "enabledebugconsole", "false"));
+            this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon",
+                    "true"));
 
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty(
                     "enableleaderboards", "false"));
@@ -999,8 +999,7 @@ public class Settings {
                     (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("keeplauncheropen", (this.keepLauncherOpen) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
-            properties.setProperty("enabledebugconsole", (this.enableDebugConsole) ? "true"
-                    : "false");
+            properties.setProperty("enabletrayicon", (this.enableTrayIcon) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
@@ -1065,8 +1064,7 @@ public class Settings {
                     (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("keeplauncheropen", (this.keepLauncherOpen) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
-            properties.setProperty("enabledebugconsole", (this.enableDebugConsole) ? "true"
-                    : "false");
+            properties.setProperty("enableTrayIcon", (this.enableTrayIcon) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
@@ -2160,11 +2158,9 @@ public class Settings {
     public void logStackTrace(Exception exception) {
         exception.printStackTrace();
         log(exception.getMessage(), LogMessageType.error, false);
-        if (enableDebugConsole()) {
-            for (StackTraceElement element : exception.getStackTrace()) {
-                if (element.toString() != null) {
-                    log(element.toString(), LogMessageType.error, false);
-                }
+        for (StackTraceElement element : exception.getStackTrace()) {
+            if (element.toString() != null) {
+                log(element.toString(), LogMessageType.error, false);
             }
         }
     }
@@ -2378,12 +2374,12 @@ public class Settings {
     }
 
     /**
-     * If the user has selected to see debug messages in the console
+     * If the user has selected to enable the tray icon
      * 
      * @return true if yes, false if not
      */
-    public boolean enableDebugConsole() {
-        return this.enableDebugConsole;
+    public boolean enableTrayIcon() {
+        return this.enableTrayIcon;
     }
 
     /**
@@ -2464,8 +2460,8 @@ public class Settings {
         return this.autoBackup;
     }
 
-    public void setEnableDebugConsole(boolean enableDebugConsole) {
-        this.enableDebugConsole = enableDebugConsole;
+    public void setEnableTrayIcon(boolean enableTrayIcon) {
+        this.enableTrayIcon = enableTrayIcon;
     }
 
     public boolean enableLeaderboards() {

@@ -87,8 +87,8 @@ public class SettingsPanel extends JPanel {
     private JLabel enableConsoleLabel;
     private JCheckBox enableConsole;
 
-    private JLabel enableDebugConsoleLabel;
-    private JCheckBox enableDebugConsole;
+    private JLabel enableTrayIconLabel;
+    private JCheckBox enableTrayIcon;
 
     private JLabel enableLeaderboardsLabel;
     private JCheckBox enableLeaderboards;
@@ -550,14 +550,13 @@ public class SettingsPanel extends JPanel {
         }
         topPanel.add(enableConsole, gbc);
 
-        // Enable Debug Console
+        // Enable Tray Icon
 
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableDebugConsoleLabel = new JLabel(
-                App.settings.getLocalizedString("settings.debugconsole") + "?") {
+        enableTrayIconLabel = new JLabel(App.settings.getLocalizedString("settings.traymenu") + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
                 Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
@@ -565,19 +564,20 @@ public class SettingsPanel extends JPanel {
                 return tip;
             }
         };
-        enableDebugConsoleLabel.setIcon(helpIcon);
-        enableDebugConsoleLabel.setToolTipText(App.settings
-                .getLocalizedString("settings.debugconsolehelp"));
-        topPanel.add(enableDebugConsoleLabel, gbc);
+        enableTrayIconLabel.setIcon(helpIcon);
+        enableTrayIconLabel.setToolTipText("<html><center>"
+                + App.settings.getLocalizedString("settings.traymenuhelp", "<br/>")
+                + "</center></html>");
+        topPanel.add(enableTrayIconLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableDebugConsole = new JCheckBox();
-        if (App.settings.enableDebugConsole()) {
-            enableDebugConsole.setSelected(true);
+        enableTrayIcon = new JCheckBox();
+        if (App.settings.enableTrayIcon()) {
+            enableTrayIcon.setSelected(true);
         }
-        topPanel.add(enableDebugConsole, gbc);
+        topPanel.add(enableTrayIcon, gbc);
 
         // Enable Leaderboards
 
@@ -692,7 +692,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
                 App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
                 App.settings.setEnableConsole(enableConsole.isSelected());
-                App.settings.setEnableDebugConsole(enableDebugConsole.isSelected());
+                App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
                 App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
                 App.settings.setEnableLogs(enableLogs.isSelected());
                 App.settings.saveProperties();
