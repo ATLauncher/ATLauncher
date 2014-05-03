@@ -386,7 +386,7 @@ public class Utils {
             while ((nread = fis.read(dataBytes)) != -1) {
                 md.update(dataBytes, 0, nread);
             }
-            ;
+            
             byte[] mdbytes = md.digest();
 
             sb = new StringBuffer();
