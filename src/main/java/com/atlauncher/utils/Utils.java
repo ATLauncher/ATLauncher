@@ -348,7 +348,7 @@ public class Utils {
             while ((nread = fis.read(dataBytes)) != -1) {
                 md.update(dataBytes, 0, nread);
             }
-            ;
+            
             byte[] mdbytes = md.digest();
 
             sb = new StringBuffer();
@@ -776,7 +776,7 @@ public class Utils {
                 String result = Utils.uploadPaste("ATLauncher Log", App.settings.getLog());
                 dialog.setReturnValue(result);
                 dialog.close();
-            };
+            }
         });
         dialog.start();
         return (String) dialog.getReturnValue();
