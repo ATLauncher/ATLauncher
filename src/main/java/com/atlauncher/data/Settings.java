@@ -359,8 +359,7 @@ public class Settings {
     public boolean launcherHasUpdate() {
         for (DownloadableFile file : this.launcherFiles) {
             if (file.isLauncher()) {
-                if (getVersion().contains(Constants.VERSION) || getVersion().contains("-dev")
-                        || file.getSHA1().equalsIgnoreCase(getVersion())) {
+                if (getVersion().contains("-dev") || file.getSHA1().equalsIgnoreCase(getVersion())) {
                     return false;
                 } else {
                     return true;
@@ -439,7 +438,7 @@ public class Settings {
             this.offlineMode = true;
             return null;
         }
-        if (!launcherHasUpdate()) {
+        if (launcherHasUpdate()) {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
             } else {
@@ -450,9 +449,8 @@ public class Settings {
                                 "<html><center>Launcher Update failed. Please click Ok to close "
                                         + "the launcher and open up the downloads page.<br/><br/>Download "
                                         + "the update and replace the old ATLauncher file.</center></html>",
-                                "Update Failed!",
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
+                                "Update Failed!", JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret == 0) {
                     Utils.openBrowser("http://www.atlauncher.com/downloads/");
                     System.exit(0);
