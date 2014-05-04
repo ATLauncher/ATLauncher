@@ -348,7 +348,7 @@ public class Utils {
             while ((nread = fis.read(dataBytes)) != -1) {
                 md.update(dataBytes, 0, nread);
             }
-            ;
+            
             byte[] mdbytes = md.digest();
 
             sb = new StringBuffer();
@@ -386,7 +386,7 @@ public class Utils {
             while ((nread = fis.read(dataBytes)) != -1) {
                 md.update(dataBytes, 0, nread);
             }
-            ;
+            
             byte[] mdbytes = md.digest();
 
             sb = new StringBuffer();
@@ -659,8 +659,9 @@ public class Utils {
             queue.push(in);
             OutputStream stream = new FileOutputStream(out);
             Closeable res = stream;
+            ZipOutputStream zout = null;
             try {
-                ZipOutputStream zout = new ZipOutputStream(stream);
+                zout = new ZipOutputStream(stream);
                 res = zout;
                 while (!queue.isEmpty()) {
                     in = queue.pop();
@@ -682,6 +683,7 @@ public class Utils {
                 }
             } finally {
                 res.close();
+                if ( zout != null ) zout.close();
             }
         } catch (IOException e) {
             App.settings.logStackTrace(e);
@@ -772,11 +774,12 @@ public class Utils {
                 App.settings.getLocalizedString("console.uploadinglog"), 0,
                 App.settings.getLocalizedString("console.uploadinglog"), "Aborting log upload!");
         dialog.addThread(new Thread() {
+            @Override
             public void run() {
                 String result = Utils.uploadPaste("ATLauncher Log", App.settings.getLog());
                 dialog.setReturnValue(result);
                 dialog.close();
-            };
+            }
         });
         dialog.start();
         return (String) dialog.getReturnValue();
@@ -822,8 +825,9 @@ public class Utils {
     }
 
     public static boolean hasMetaInf(File minecraftJar) {
+        JarInputStream input = null;
         try {
-            JarInputStream input = new JarInputStream(new FileInputStream(minecraftJar));
+            input = new JarInputStream(new FileInputStream(minecraftJar));
             JarEntry entry;
             boolean found = false;
             while ((entry = input.getNextJarEntry()) != null) {
@@ -831,10 +835,18 @@ public class Utils {
                     found = true;
                 }
             }
-            input.close();
             return found;
         } catch (IOException e) {
             App.settings.logStackTrace(e);
+        } finally {
+            if ( input != null ) {
+                try {
+                    input.close();
+                } catch ( IOException e ) {
+                    App.settings.log("Unable to close input stream");
+                    App.settings.logStackTrace(e);
+                }
+            }
         }
         return false;
     }
@@ -862,11 +874,12 @@ public class Utils {
             processBuilder.directory(folder);
             processBuilder.redirectErrorStream(true);
             String version = "Unknown";
+            BufferedReader br = null;
             try {
                 Process process = processBuilder.start();
                 InputStream is = process.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
+                br = new BufferedReader(isr);
                 version = br.readLine(); // Read first line
                 version = br.readLine(); // Get second line
                 
@@ -879,6 +892,15 @@ public class Utils {
                 }
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
+            } finally {
+                if ( br != null ) {
+                    try {
+                        br.close();
+                    } catch ( IOException e ) {
+                        App.settings.log( "Cannot close process input stream reader" );
+                        App.settings.logStackTrace( e );
+                    }
+                }
             }
             return "Launcher: " + System.getProperty("java.version") + ", Minecraft: " + version;
         }else{
@@ -895,15 +917,25 @@ public class Utils {
             ProcessBuilder processBuilder = new ProcessBuilder(arguments);
             processBuilder.directory(folder);
             processBuilder.redirectErrorStream(true);
+            BufferedReader br = null;
             try {
                 Process process = processBuilder.start();
                 InputStream is = process.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
+                br = new BufferedReader(isr);
                 String line = br.readLine(); // Read first line only
                 return line.contains("\"1.8");
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
+            } finally {
+                if ( br != null ) {
+                    try {
+                        br.close();
+                    } catch ( IOException e ) {
+                        App.settings.log( "Cannot close input stream reader ");
+                        App.settings.logStackTrace( e );
+                    }
+                } 
             }
             return false; // Can't determine version, so fall back to not being Java 8
         } else {
