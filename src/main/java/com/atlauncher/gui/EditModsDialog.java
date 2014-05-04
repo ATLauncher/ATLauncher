@@ -19,6 +19,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -203,7 +204,7 @@ public class EditModsDialog extends JDialog {
     }
 
     private void loadMods() {
-        ArrayList<DisableableMod> mods = instance.getInstalledMods();
+        List<DisableableMod> mods = instance.getInstalledMods();
         enabledMods = new ArrayList<ModsJCheckBox>();
         disabledMods = new ArrayList<ModsJCheckBox>();
         enabledModLabels = new ArrayList<ModDescriptionJLabel>();
