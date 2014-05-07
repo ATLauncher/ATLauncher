@@ -365,7 +365,17 @@ public class InstanceDisplay extends CollapsiblePanel {
                         App.settings.getLocalizedString("instance.deleteinstance"),
                         JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
-                    App.settings.removeInstance(instance);
+                    final ProgressDialog dialog = new ProgressDialog(App.settings
+                            .getLocalizedString("instance.deletetitle"), 0, App.settings
+                            .getLocalizedString("instance.deletinginstance"), null);
+                    dialog.addThread(new Thread() {
+                        @Override
+                        public void run() {
+                            App.settings.removeInstance(instance);
+                            dialog.close();
+                        }
+                    });
+                    dialog.start();
                 }
             }
         });
