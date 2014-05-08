@@ -577,7 +577,6 @@ public class Pack {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     NodeList nodeList1 = element.getChildNodes();
-                    System.out.println(!Boolean.parseBoolean(nodeList1.item(0).getNodeValue()));
                     return !Boolean.parseBoolean(nodeList1.item(0).getNodeValue());
                 }
             }
@@ -776,6 +775,75 @@ public class Pack {
             App.settings.logStackTrace(e);
         }
         return mods;
+    }
+
+    public boolean hasDeleteArguments(boolean getFiles, String version) {
+        String xml = getXML(version, false);
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(xml));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("delete");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                NodeList nodeListInside = node.getChildNodes();
+                for (int j = 0; j < nodeListInside.getLength(); j++) {
+                    Node nodeInside = nodeListInside.item(j);
+                    if (nodeInside.getNodeType() == Node.ELEMENT_NODE) {
+                        if (nodeInside.getNodeName().equalsIgnoreCase(
+                                (getFiles ? "file" : "folder"))) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return false;
+    }
+
+    public List<File> getDeletes(boolean getFiles, String version, Instance instance) {
+        String xml = getXML(version, false);
+        List<File> files = new ArrayList<File>();
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(xml));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("delete");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                NodeList nodeListInside = node.getChildNodes();
+                for (int j = 0; j < nodeListInside.getLength(); j++) {
+                    Node nodeInside = nodeListInside.item(j);
+                    if (nodeInside.getNodeType() == Node.ELEMENT_NODE) {
+                        if (nodeInside.getNodeName().equalsIgnoreCase(
+                                (getFiles ? "file" : "folder"))) {
+                            Element element = (Element) nodeInside;
+                            if (element.getAttribute("base").equalsIgnoreCase("root")) {
+                                files.add(new File(instance.getRootDirectory(), element
+                                        .getAttribute("target").replace("%s%", File.separator)));
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return files;
     }
 
 }

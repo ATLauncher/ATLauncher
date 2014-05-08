@@ -16,6 +16,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -391,6 +392,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 Utils.delete(new File(getResourcePacksDirectory(), "ResourcePack.zip"));
             } else {
                 Utils.delete(getLibrariesDirectory()); // Only delete if it's a server
+            }
+            if (this.pack.hasDeleteArguments(true, this.version.getVersion())) {
+                List<File> fileDeletes = this.pack.getDeletes(true, this.version.getVersion(),
+                        this.instance);
+                for (File file : fileDeletes) {
+                    if (file.exists()) {
+                        Utils.delete(file);
+                    }
+                }
+            }
+            if (this.pack.hasDeleteArguments(false, this.version.getVersion())) {
+                List<File> fileDeletes = this.pack.getDeletes(false, this.version.getVersion(),
+                        this.instance);
+                for (File file : fileDeletes) {
+                    if (file.exists()) {
+                        Utils.delete(file);
+                    }
+                }
             }
         }
         File[] directories;
@@ -964,7 +983,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     } else if (element.hasAttribute("dependsgroup")) {
                         boolean found = false;
                         for (Mod mod : selectedMods) {
-                            if (element.getAttribute("dependsgroup").equalsIgnoreCase(mod.getGroup())) {
+                            if (element.getAttribute("dependsgroup").equalsIgnoreCase(
+                                    mod.getGroup())) {
                                 found = true;
                                 break;
                             }
