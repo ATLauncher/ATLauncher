@@ -828,9 +828,22 @@ public class Pack {
                         if (nodeInside.getNodeName().equalsIgnoreCase(
                                 (getFiles ? "file" : "folder"))) {
                             Element element = (Element) nodeInside;
+                            File file = new File(instance.getRootDirectory(), element.getAttribute(
+                                    "target").replace("%s%", File.separator));
                             if (element.getAttribute("base").equalsIgnoreCase("root")) {
-                                files.add(new File(instance.getRootDirectory(), element
-                                        .getAttribute("target").replace("%s%", File.separator)));
+                                if (element.getAttribute("target").startsWith("world")
+                                        || element.getAttribute("target").startsWith("DIM")
+                                        || element.getAttribute("target").startsWith("saves")
+                                        || element.getAttribute("target").startsWith(
+                                                "instance.json")) {
+                                    App.settings.log(
+                                            "Cannot delete the file/folder "
+                                                    + file.getAbsolutePath()
+                                                    + " as it's protected.", LogMessageType.error,
+                                            false);
+                                } else {
+                                    files.add(file);
+                                }
                             }
                         }
                     }
@@ -845,5 +858,4 @@ public class Pack {
         }
         return files;
     }
-
 }
