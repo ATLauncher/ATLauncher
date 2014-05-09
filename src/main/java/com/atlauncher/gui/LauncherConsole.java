@@ -33,8 +33,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
@@ -42,6 +40,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
+import com.atlauncher.data.Settings;
 import com.atlauncher.utils.Utils;
 
 public class LauncherConsole extends JFrame {
@@ -78,7 +77,7 @@ public class LauncherConsole extends JFrame {
         kit = new HTMLEditorKit();
         doc = new HTMLDocument();
         console.setEditable(false);
-        console.setSelectionColor(Color.GRAY);
+        console.setSelectionColor(Settings.selectionColour);
         console.setEditorKit(kit);
         console.setDocument(doc);
 
@@ -116,7 +115,7 @@ public class LauncherConsole extends JFrame {
     private void setupContextMenu() {
         contextMenu = new JPopupMenu();
 
-        copy = new JMenuItem("Copy Log");
+        copy = new JMenuItem("Copy");
         copy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 StringSelection text = new StringSelection(console.getSelectedText());
@@ -316,4 +315,5 @@ public class LauncherConsole extends JFrame {
     public void clearConsole() {
         console.setText(null);
     }
+
 }

@@ -6,6 +6,7 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
@@ -157,6 +158,9 @@ public class Settings {
     public static Gson altGson;
     private DropboxSync dropbox;
     private boolean languageLoaded = false;
+
+    // Constants for things
+    public static final Color selectionColour = new Color(0, 136, 204);
 
     public Settings() {
         GsonBuilder builder = new GsonBuilder();
@@ -1744,6 +1748,22 @@ public class Settings {
      */
     public List<News> getNews() {
         return this.news;
+    }
+
+    /**
+     * Get the News for the Launcher in HTML for display on the news panel.
+     * 
+     * @return The HTML for displaying on the News Panel
+     */
+    public String getNewsHTML() {
+        String news = "<html>";
+        for (News newsItem : App.settings.getNews()) {
+            news += newsItem.getHTML();
+            if (App.settings.getNews().get(App.settings.getNews().size() - 1) != newsItem) {
+                news += "<hr/>";
+            }
+        }
+        return news;
     }
 
     /**

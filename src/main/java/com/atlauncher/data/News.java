@@ -11,7 +11,7 @@
 package com.atlauncher.data;
 
 /**
- * News class contains a single news article from the ATLauncher system.
+ * News class contains a single news article.
  */
 public class News {
 
