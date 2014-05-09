@@ -23,5 +23,18 @@ public enum LogMessageType {
     public String getColourCode() {
         return this.code;
     }
+    
+    public String getType() {
+        switch(this){
+            case info:
+            default:
+                return "INFO";
+            case warning:
+                return "WARN";
+            case error:
+                return "ERROR";
+            
+        }
+    }
 
 }

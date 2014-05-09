@@ -20,13 +20,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.sql.Timestamp;
-import java.util.Date;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -41,6 +36,8 @@ import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
+import com.atlauncher.utils.HTMLifier;
+import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 
 public class LauncherConsole extends JFrame {
@@ -158,81 +155,88 @@ public class LauncherConsole extends JFrame {
     public void logMinecraft(String text) {
         String message = null; // The log message
         LogMessageType type = null; // The log message type
+
         if (text.contains("[INFO] [STDERR]")) {
-            message = text.substring(text.indexOf("[INFO] [STDERR]"));
-            App.LOGGER.warn(message);
+            message = text.substring(text.indexOf("[INFO] [STDERR]") + 15);
+            type = LogMessageType.warning;
         } else if (text.contains("[INFO]")) {
-            message = text.substring(text.indexOf("[INFO]"));
+            message = text.substring(text.indexOf("[INFO]") + 6);
             if (message.contains("CONFLICT")) {
-                App.LOGGER.error(message);
+                type = LogMessageType.error;
             } else if (message.contains("overwriting existing item")) {
-                App.LOGGER.warn(message);
+                type = LogMessageType.warning;
             } else {
-                App.LOGGER.info(message);
+                type = LogMessageType.info;
             }
         } else if (text.contains("[WARNING]")) {
-            message = text.substring(text.indexOf("[WARNING]"));
-            App.LOGGER.warn(message);
+            message = text.substring(text.indexOf("[WARNING]") + 9);
+            type = LogMessageType.warning;
         } else if (text.contains("WARNING:")) {
-            message = text.substring(text.indexOf("WARNING:"));
-            App.LOGGER.warn(message);
+            message = text.substring(text.indexOf("WARNING:") + 8);
+            type = LogMessageType.warning;
         } else if (text.contains("INFO:")) {
-            message = text.substring(text.indexOf("INFO:"));
-            App.LOGGER.info(message);
+            message = text.substring(text.indexOf("INFO:") + 5);
+            type = LogMessageType.info;
         } else if (text.contains("Exception")) {
             message = text;
-            App.LOGGER.error(message);
+            type = LogMessageType.error;
         } else if (text.contains("[SEVERE]")) {
-            message = text.substring(text.indexOf("[SEVERE]"));
-            App.LOGGER.error(message);
+            message = text.substring(text.indexOf("[SEVERE]") + 8);
+            type = LogMessageType.error;
         } else if (text.contains("[Sound Library Loader/ERROR]")) {
-            message = text.substring(text.indexOf("[Sound Library Loader/ERROR]"));
-            App.LOGGER.error(message);
+            message = text.substring(text.indexOf("[Sound Library Loader/ERROR]") + 28);
+            type = LogMessageType.error;
         } else if (text.contains("[Sound Library Loader/WARN]")) {
-            message = text.substring(text.indexOf("[Sound Library Loader/WARN]"));
-            App.LOGGER.warn(message);
+            message = text.substring(text.indexOf("[Sound Library Loader/WARN]") + 27);
+            type = LogMessageType.warning;
         } else if (text.contains("[Sound Library Loader/INFO]")) {
-            message = text.substring(text.indexOf("[Sound Library Loader/INFO]"));
-            App.LOGGER.info(message);
+            message = text.substring(text.indexOf("[Sound Library Loader/INFO]") + 27);
+            type = LogMessageType.info;
         } else if (text.contains("[MCO Availability Checker #1/ERROR]")) {
-            message = text.substring(text.indexOf("[MCO Availability Checker #1/ERROR]"));
-            App.LOGGER.error(message);
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/ERROR]") + 35);
+            type = LogMessageType.error;
         } else if (text.contains("[MCO Availability Checker #1/WARN]")) {
-            message = text.substring(text.indexOf("[MCO Availability Checker #1/WARN]"));
-            App.LOGGER.warn(message);
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/WARN]") + 34);
+            type = LogMessageType.warning;
         } else if (text.contains("[MCO Availability Checker #1/INFO]")) {
-            message = text.substring(text.indexOf("[MCO Availability Checker #1/INFO]"));
-            App.LOGGER.info(message);
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/INFO]") + 34);
+            type = LogMessageType.info;
         } else if (text.contains("[Client thread/ERROR]")) {
-            message = text.substring(text.indexOf("[Client thread/ERROR]"));
-            App.LOGGER.error(message);
+            message = text.substring(text.indexOf("[Client thread/ERROR]") + 21);
+            type = LogMessageType.error;
         } else if (text.contains("[Client thread/WARN]")) {
-            message = text.substring(text.indexOf("[Client thread/WARN]"));
-            App.LOGGER.warn(message);
+            message = text.substring(text.indexOf("[Client thread/WARN]") + 20);
+            type = LogMessageType.warning;
         } else if (text.contains("[Client thread/INFO]")) {
-            message = text.substring(text.indexOf("[Client thread/INFO]"));
-            App.LOGGER.info(message);
+            message = text.substring(text.indexOf("[Client thread/INFO]") + 20);
+            type = LogMessageType.info;
         } else if (text.contains("[Server thread/ERROR]")) {
-            message = text.substring(text.indexOf("[Server thread/ERROR]"));
-            App.LOGGER.error(message);
+            message = text.substring(text.indexOf("[Server thread/ERROR]") + 21);
+            type = LogMessageType.error;
         } else if (text.contains("[Server thread/WARN]")) {
-            message = text.substring(text.indexOf("[Server thread/WARN]"));
-            App.LOGGER.warn(message);
+            message = text.substring(text.indexOf("[Server thread/WARN]") + 20);
+            type = LogMessageType.warning;
         } else if (text.contains("[Server thread/INFO]")) {
-            message = text.substring(text.indexOf("[Server thread/INFO]"));
-            App.LOGGER.info(message);
+            message = text.substring(text.indexOf("[Server thread/INFO]") + 20);
+            type = LogMessageType.info;
         } else if (text.contains("[main/ERROR]")) {
-            message = text.substring(text.indexOf("[main/ERROR]"));
-            App.LOGGER.error(message);
+            message = text.substring(text.indexOf("[main/ERROR]") + 12);
+            type = LogMessageType.error;
         } else if (text.contains("[main/WARN]")) {
-            message = text.substring(text.indexOf("[main/WARN]"));
-            App.LOGGER.warn(message);
+            message = text.substring(text.indexOf("[main/WARN]") + 11);
+            type = LogMessageType.warning;
         } else if (text.contains("[main/INFO]")) {
-            message = text.substring(text.indexOf("[main/INFO]"));
-            App.LOGGER.info(message);
+            message = text.substring(text.indexOf("[main/INFO]") + 11);
+            type = LogMessageType.info;
         } else {
-            App.LOGGER.info(text);
+            message = text;
+            type = LogMessageType.info;
         }
+        String logMessage = String.format(
+                "%s %s<br/>",
+                HTMLifier.wrap("[" + Timestamper.now() + "] [" + type.getType() + "]").bold()
+                        .font(type.getColourCode()), message);
+        log(logMessage);
     }
 
     /**
