@@ -69,8 +69,10 @@ public class SettingsPanel extends JPanel {
     private JTextField javaPath;
     private JButton javaPathResetButton;
 
+    private JPanel javaParametersPanel;
     private JLabel javaParametersLabel;
     private JTextField javaParameters;
+    private JButton javaParametersResetButton;
 
     private JLabel startMinecraftMaximisedLabel;
     private JCheckBox startMinecraftMaximised;
@@ -383,7 +385,8 @@ public class SettingsPanel extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.gridwidth = 1;
+        gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaParametersLabel = new JLabel(App.settings.getLocalizedString("settings.javaparameters")
                 + ":") {
@@ -400,11 +403,23 @@ public class SettingsPanel extends JPanel {
         topPanel.add(javaParametersLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        javaParametersPanel = new JPanel();
+        javaParametersPanel.setLayout(new FlowLayout());
         javaParameters = new JTextField(20);
         javaParameters.setText(App.settings.getJavaParameters());
-        topPanel.add(javaParameters, gbc);
+        javaParametersResetButton = new JButton(App.settings.getLocalizedString("settings.javapathreset"));
+        javaParametersResetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                javaParameters.setText("");
+            }
+        });
+        javaParametersPanel.add(javaParameters);
+        javaParametersPanel.add(javaParametersResetButton);
+        topPanel.add(javaParametersPanel, gbc);
+        javaParametersLabel.setPreferredSize(new Dimension(javaParametersLabel.getPreferredSize().width,
+                javaParametersPanel.getPreferredSize().height));
 
         // Start Minecraft Maximised
 
