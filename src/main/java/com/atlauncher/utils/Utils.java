@@ -57,6 +57,7 @@ import java.util.zip.ZipOutputStream;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.ImageIcon;
+import javax.swing.text.html.StyleSheet;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
@@ -348,7 +349,7 @@ public class Utils {
             while ((nread = fis.read(dataBytes)) != -1) {
                 md.update(dataBytes, 0, nread);
             }
-            
+
             byte[] mdbytes = md.digest();
 
             sb = new StringBuffer();
@@ -386,7 +387,7 @@ public class Utils {
             while ((nread = fis.read(dataBytes)) != -1) {
                 md.update(dataBytes, 0, nread);
             }
-            
+
             byte[] mdbytes = md.digest();
 
             sb = new StringBuffer();
@@ -683,7 +684,8 @@ public class Utils {
                 }
             } finally {
                 res.close();
-                if ( zout != null ) zout.close();
+                if (zout != null)
+                    zout.close();
             }
         } catch (IOException e) {
             App.settings.logStackTrace(e);
@@ -839,10 +841,10 @@ public class Utils {
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         } finally {
-            if ( input != null ) {
+            if (input != null) {
                 try {
                     input.close();
-                } catch ( IOException e ) {
+                } catch (IOException e) {
                     App.settings.log("Unable to close input stream");
                     App.settings.logStackTrace(e);
                 }
@@ -882,7 +884,7 @@ public class Utils {
                 br = new BufferedReader(isr);
                 version = br.readLine(); // Read first line
                 version = br.readLine(); // Get second line
-                
+
                 // Extract version information
                 Pattern p = Pattern.compile("build ([0-9.-_a-zA-Z]+)");
                 Matcher m = p.matcher(version);
@@ -893,18 +895,19 @@ public class Utils {
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
             } finally {
-                if ( br != null ) {
+                if (br != null) {
                     try {
                         br.close();
-                    } catch ( IOException e ) {
-                        App.settings.log( "Cannot close process input stream reader" );
-                        App.settings.logStackTrace( e );
+                    } catch (IOException e) {
+                        App.settings.log("Cannot close process input stream reader");
+                        App.settings.logStackTrace(e);
                     }
                 }
             }
             return "Launcher: " + System.getProperty("java.version") + ", Minecraft: " + version;
-        }else{
-            return "Launcher: " + System.getProperty("java.version") + ", Minecraft: " + System.getProperty("java.version");
+        } else {
+            return "Launcher: " + System.getProperty("java.version") + ", Minecraft: "
+                    + System.getProperty("java.version");
         }
     }
 
@@ -928,18 +931,34 @@ public class Utils {
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
             } finally {
-                if ( br != null ) {
+                if (br != null) {
                     try {
                         br.close();
-                    } catch ( IOException e ) {
-                        App.settings.log( "Cannot close input stream reader ");
-                        App.settings.logStackTrace( e );
+                    } catch (IOException e) {
+                        App.settings.log("Cannot close input stream reader ");
+                        App.settings.logStackTrace(e);
                     }
-                } 
+                }
             }
             return false; // Can't determine version, so fall back to not being Java 8
         } else {
             return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.8");
+        }
+    }
+
+    public static StyleSheet createStyleSheet(String name) {
+        try {
+            StyleSheet sheet = new StyleSheet();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    App.class.getResourceAsStream("/assets/css/" + name + ".css")));
+            sheet.loadRules(reader, null);
+            reader.close();
+
+            return sheet;
+        } catch (Exception e) {
+            App.settings.logStackTrace(e);
+            return new StyleSheet(); // If fails just return blank StyleSheetF
         }
     }
 }

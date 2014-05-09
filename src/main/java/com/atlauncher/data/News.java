@@ -10,14 +10,35 @@
  */
 package com.atlauncher.data;
 
+/**
+ * News class contains a single news article from the ATLauncher system.
+ */
 public class News {
 
+    /**
+     * The title of this news article.
+     */
     private String title;
+
+    /**
+     * The number of comments on this news article.
+     */
     private int comments;
+
+    /**
+     * The link to this news article.
+     */
     private String link;
+
+    /**
+     * The content of this news article.
+     */
     private String content;
 
-    public String toString() {
+    /**
+     * Gets the HTML of this object.
+     */
+    public String getHTML() {
         return "<p id=\"newsHeader\">- <a href=\"" + this.link + "\">" + this.title + "</a> ("
                 + this.comments + " " + (this.comments == 1 ? "comment" : "comments") + ")</p>"
                 + "<p id=\"newsBody\">" + this.content + "</p><br/>";

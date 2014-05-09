@@ -37,10 +37,7 @@ public class NewsPanel extends JPanel {
         newsArea.setSelectionColor(Color.GRAY);
 
         HTMLEditorKit kit = new HTMLEditorKit();
-        StyleSheet styleSheet = kit.getStyleSheet();
-        styleSheet.addRule("A {color:#0088CC}");
-        styleSheet.addRule("#newsHeader {font-weight:bold;font-size:14px;color:#339933;}");
-        styleSheet.addRule("#newsBody {font-size:10px;padding-left:20px;}");
+        kit.setStyleSheet(Utils.createStyleSheet("news"));
         newsArea.setEditorKit(kit);
 
         newsArea.addHyperlinkListener(new HyperlinkListener() {
@@ -54,7 +51,7 @@ public class NewsPanel extends JPanel {
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         String news = "<html>";
         for (News newsItem : App.settings.getNews()) {
-            news += newsItem;
+            news += newsItem.getHTML();
             if (App.settings.getNews().get(App.settings.getNews().size() - 1) != newsItem) {
                 news += "<hr/>";
             }
