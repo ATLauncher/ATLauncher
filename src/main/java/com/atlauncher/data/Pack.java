@@ -835,7 +835,9 @@ public class Pack {
                                         || element.getAttribute("target").startsWith("DIM")
                                         || element.getAttribute("target").startsWith("saves")
                                         || element.getAttribute("target").startsWith(
-                                                "instance.json")) {
+                                                "instance.json")
+                                        || element.getAttribute("target").contains("./")
+                                        || element.getAttribute("target").contains(".\\")) {
                                     App.settings.log(
                                             "Cannot delete the file/folder "
                                                     + file.getAbsolutePath()
