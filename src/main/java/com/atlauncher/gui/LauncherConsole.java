@@ -136,6 +136,9 @@ public class LauncherConsole extends JFrame {
     public void log(String text) {
         synchronized (kit) {
             try {
+                if (doc.getLength() == 0) {
+                    text = text.replace("<br/>", ""); // Remove line break on first log entry
+                }
                 kit.insertHTML(doc, doc.getLength(), text, 0, 0, null);
                 console.setCaretPosition(console.getDocument().getLength());
             } catch (BadLocationException e) {

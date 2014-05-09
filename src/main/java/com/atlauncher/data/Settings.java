@@ -2127,7 +2127,6 @@ public class Settings {
      * 
      * @return The Launcher's Console instance
      */
-    @Deprecated
     public LauncherConsole getConsole() {
         return this.console;
     }
