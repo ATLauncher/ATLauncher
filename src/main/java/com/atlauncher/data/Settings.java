@@ -904,7 +904,9 @@ public class Settings {
                 }
             }
 
-            this.permGen = Integer.parseInt(properties.getProperty("permGen", "256"));
+            // Default PermGen to 256 for 64 bit systems and 64 for 32 bit systems
+            this.permGen = Integer.parseInt(properties.getProperty("permGen",
+                    (Utils.is64Bit() ? "256" : "128")));
 
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             if (this.windowWidth > Utils.getMaximumWindowWidth()) {
