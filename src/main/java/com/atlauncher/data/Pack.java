@@ -839,7 +839,8 @@ public class Pack {
                                         || element.getAttribute("target").contains("./")
                                         || element.getAttribute("target").contains(".\\")
                                         || element.getAttribute("target").contains("~/")
-                                        || element.getAttribute("target").contains("~\\")) {
+                                        || element.getAttribute("target").contains("~\\")
+                                        || !file.getCanonicalPath().contains(instance.getRootDirectory().getCanonicalPath())) {
                                     App.settings.log(
                                             "Cannot delete the file/folder "
                                                     + file.getAbsolutePath()
