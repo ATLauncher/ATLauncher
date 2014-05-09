@@ -6,6 +6,25 @@
  */
 package com.atlauncher;
 
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
@@ -14,18 +33,6 @@ import com.atlauncher.gui.SetupDialog;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.utils.Utils;
-
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -36,6 +43,7 @@ public class App {
 
     private static SystemTray TRAY = null;
     public static PopupMenu TRAY_MENU = new TrayMenu();
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public static boolean wasUpdated = false;
 

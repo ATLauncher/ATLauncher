@@ -172,7 +172,6 @@ public class Settings {
         setupFiles(); // Setup all the file and directory variables
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
-        rotateLogFiles(); // Rotates the log files
         loadStartingProperties(); // Get users Console preference and Java Path
     }
 
@@ -736,34 +735,6 @@ public class Settings {
      */
     public void clearTempDir() {
         Utils.deleteContents(getTempDir());
-    }
-
-    public void rotateLogFiles() {
-        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
-        if (logFile3.exists()) {
-            Utils.delete(logFile3);
-        }
-        if (logFile2.exists()) {
-            logFile2.renameTo(logFile3);
-        }
-        if (logFile1.exists()) {
-            logFile1.renameTo(logFile2);
-        }
-        try {
-            logFile1.createNewFile();
-        } catch (IOException e) {
-            String[] options = { "OK" };
-            JOptionPane.showOptionDialog(null,
-                    "<html><center>Cannot create the log file.<br/><br/>Make sure"
-                            + " you are running the Launcher from somewhere with<br/>write"
-                            + " permissions for your user account such as your Home/Users folder"
-                            + " or desktop.</center></html>", "Warning",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                    options[0]);
-            System.exit(0);
-        }
     }
 
     /**
@@ -2174,13 +2145,6 @@ public class Settings {
     }
 
     /**
-     * Log a non Minecraft related info message to the console
-     */
-    public void log(String message) {
-        this.console.log(message, LogMessageType.info, false);
-    }
-
-    /**
      * Log a Minecraft related message to the console
      */
     public void logMinecraft(String message) {
@@ -2195,19 +2159,41 @@ public class Settings {
      */
     public void logStackTrace(Exception exception) {
         exception.printStackTrace();
-        log(exception.getMessage(), LogMessageType.error, false);
+        App.LOGGER.error(exception.getMessage());
         for (StackTraceElement element : exception.getStackTrace()) {
             if (element.toString() != null) {
-                log(element.toString(), LogMessageType.error, false);
+                App.LOGGER.error(element.toString());
             }
         }
+    }
+
+    /**
+     * Log a non Minecraft related info message to the console
+     */
+    public void log(String message) {
+        App.LOGGER.info(message);
     }
 
     /**
      * Log something to the console
      */
     public void log(String message, LogMessageType type, boolean isMinecraft) {
-        this.console.log(message, type, isMinecraft);
+        if (isMinecraft) {
+            logMinecraft(message);
+        } else {
+            switch (type) {
+                case error:
+                    App.LOGGER.error(message);
+                    break;
+                case info:
+                default:
+                    App.LOGGER.info(message);
+                    break;
+                case warning:
+                    App.LOGGER.warn(message);
+                    break;
+            }
+        }
     }
 
     public void showKillMinecraft(Process minecraft) {

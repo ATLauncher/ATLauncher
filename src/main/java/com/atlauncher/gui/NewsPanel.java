@@ -28,7 +28,6 @@ import com.atlauncher.App;
 import com.atlauncher.data.Settings;
 import com.atlauncher.utils.Utils;
 
-// TODO: Auto-generated Javadoc
 /**
  * This class extends {@link JPanel} and provides a Panel for displaying the latest news.
  */
