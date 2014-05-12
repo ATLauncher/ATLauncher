@@ -1227,6 +1227,16 @@ public class Instance implements Cloneable {
                                     }
                                 });
                             }
+
+                            // Submit any pending crash reports from Open Eye if need to since we
+                            // exited abnormally
+                            if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
+                                App.TASKPOOL.submit(new Runnable() {
+                                    public void run() {
+                                        sendOpenEyePendingReports();
+                                    }
+                                });
+                            }
                         } else if (App.settings.isAdvancedBackupsEnabled()
                                 && App.settings.getAutoBackup()) {
                             // Begin backup
@@ -1263,15 +1273,6 @@ public class Instance implements Cloneable {
                                     }
                                 }
                             }
-                        }
-
-                        // Submit any pending crash reports from Open Eye if need to
-                        if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
-                            App.TASKPOOL.submit(new Runnable() {
-                                public void run() {
-                                    sendOpenEyePendingReports();
-                                }
-                            });
                         }
 
                         App.settings.setMinecraftLaunched(false);
