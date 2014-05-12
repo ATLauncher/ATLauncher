@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -38,6 +39,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -62,12 +64,25 @@ import javax.swing.text.html.StyleSheet;
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
+import com.atlauncher.data.Settings;
 import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.data.mojang.OperatingSystem;
+import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.ProgressDialog;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Utils.
+ */
 public class Utils {
 
+    /**
+     * Gets the icon image.
+     * 
+     * @param path
+     *            the path
+     * @return the icon image
+     */
     public static ImageIcon getIconImage(String path) {
         URL url = System.class.getResource(path);
 
@@ -81,6 +96,13 @@ public class Utils {
         return icon;
     }
 
+    /**
+     * Gets the icon image.
+     * 
+     * @param file
+     *            the file
+     * @return the icon image
+     */
     public static ImageIcon getIconImage(File file) {
         if (!file.exists()) {
             App.settings.log("Unable to load file " + file.getAbsolutePath(), LogMessageType.error,
@@ -93,6 +115,11 @@ public class Utils {
         return icon;
     }
 
+    /**
+     * Gets the font.
+     * 
+     * @return the font
+     */
     public static Font getFont() {
         if (isMac()) {
             return new Font("SansSerif", Font.PLAIN, 11);
@@ -101,6 +128,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Gets the image.
+     * 
+     * @param path
+     *            the path
+     * @return the image
+     */
     public static Image getImage(String path) {
         URL url = System.class.getResource(path);
 
@@ -114,6 +148,12 @@ public class Utils {
         return icon.getImage();
     }
 
+    /**
+     * Open explorer.
+     * 
+     * @param file
+     *            the file
+     */
     public static void openExplorer(File file) {
         if (Desktop.isDesktopSupported()) {
             try {
@@ -124,6 +164,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Open browser.
+     * 
+     * @param URL
+     *            the url
+     */
     public static void openBrowser(String URL) {
         if (Desktop.isDesktopSupported()) {
             try {
@@ -134,6 +180,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Open browser.
+     * 
+     * @param URL
+     *            the url
+     */
     public static void openBrowser(URL URL) {
         if (Desktop.isDesktopSupported()) {
             try {
@@ -144,6 +196,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Make font.
+     * 
+     * @param name
+     *            the name
+     * @return the font
+     */
     public static Font makeFont(String name) {
         Font font = null;
         try {
@@ -157,6 +216,11 @@ public class Utils {
         return font;
     }
 
+    /**
+     * Os slash.
+     * 
+     * @return the string
+     */
     public static String osSlash() {
         if (isWindows()) {
             return "\\";
@@ -165,6 +229,11 @@ public class Utils {
         }
     }
 
+    /**
+     * Os delimiter.
+     * 
+     * @return the string
+     */
     public static String osDelimiter() {
         if (isWindows()) {
             return ";";
@@ -173,31 +242,66 @@ public class Utils {
         }
     }
 
+    /**
+     * Gets the java home.
+     * 
+     * @return the java home
+     */
     public static String getJavaHome() {
         return System.getProperty("java.home");
     }
 
+    /**
+     * Gets the java version.
+     * 
+     * @return the java version
+     */
     public static String getJavaVersion() {
         return System.getProperty("java.runtime.version");
     }
 
+    /**
+     * Checks if is windows.
+     * 
+     * @return true, if is windows
+     */
     public static boolean isWindows() {
         return OperatingSystem.getOS() == OperatingSystem.WINDOWS;
     }
 
+    /**
+     * Checks if is mac.
+     * 
+     * @return true, if is mac
+     */
     public static boolean isMac() {
         return OperatingSystem.getOS() == OperatingSystem.OSX;
     }
 
+    /**
+     * Checks if is linux.
+     * 
+     * @return true, if is linux
+     */
     public static boolean isLinux() {
         return OperatingSystem.getOS() == OperatingSystem.LINUX;
     }
 
+    /**
+     * Checks if is 64 bit.
+     * 
+     * @return true, if is 64 bit
+     */
     public static boolean is64Bit() {
         String osType = System.getProperty("sun.arch.data.model");
         return Boolean.valueOf(osType.contains("64"));
     }
 
+    /**
+     * Gets the arch.
+     * 
+     * @return the arch
+     */
     public static String getArch() {
         if (is64Bit()) {
             return "64";
@@ -206,6 +310,11 @@ public class Utils {
         }
     }
 
+    /**
+     * Gets the memory options.
+     * 
+     * @return the memory options
+     */
     public static String[] getMemoryOptions() {
         int options = Utils.getMaximumRam() / 512;
         int ramLeft = 0;
@@ -220,7 +329,7 @@ public class Utils {
     }
 
     /**
-     * Returns the amount of RAM in the users system
+     * Returns the amount of RAM in the users system.
      * 
      * @return The amount of RAM in the system
      */
@@ -292,18 +401,37 @@ public class Utils {
         }
     }
 
+    /**
+     * Gets the maximum window width.
+     * 
+     * @return the maximum window width
+     */
     public static int getMaximumWindowWidth() {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dim = toolkit.getScreenSize();
         return dim.width;
     }
 
+    /**
+     * Gets the maximum window height.
+     * 
+     * @return the maximum window height
+     */
     public static int getMaximumWindowHeight() {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dim = toolkit.getScreenSize();
         return dim.height;
     }
 
+    /**
+     * Upload paste.
+     * 
+     * @param title
+     *            the title
+     * @param log
+     *            the log
+     * @return the string
+     */
     public static String uploadPaste(String title, String log) {
         String line = "";
         String result = "";
@@ -331,6 +459,13 @@ public class Utils {
         return result;
     }
 
+    /**
+     * Gets the m d5.
+     * 
+     * @param file
+     *            the file
+     * @return the m d5
+     */
     public static String getMD5(File file) {
         if (!file.exists()) {
             App.settings.log(
@@ -370,6 +505,13 @@ public class Utils {
         return sb.toString();
     }
 
+    /**
+     * Gets the SH a1.
+     * 
+     * @param file
+     *            the file
+     * @return the SH a1
+     */
     public static String getSHA1(File file) {
         if (!file.exists()) {
             App.settings.log("Cannot get SHA-1 hash of " + file.getAbsolutePath()
@@ -408,6 +550,13 @@ public class Utils {
         return sb.toString();
     }
 
+    /**
+     * Gets the m d5.
+     * 
+     * @param string
+     *            the string
+     * @return the m d5
+     */
     public static String getMD5(String string) {
         if (string == null) {
             App.settings.log("Cannot get MD5 of null", LogMessageType.error, false);
@@ -432,6 +581,17 @@ public class Utils {
         return sb.toString();
     }
 
+    /**
+     * Move file.
+     * 
+     * @param from
+     *            the from
+     * @param to
+     *            the to
+     * @param withFilename
+     *            the with filename
+     * @return true, if successful
+     */
     public static boolean moveFile(File from, File to, boolean withFilename) {
         if (copyFile(from, to, withFilename)) {
             delete(from);
@@ -444,10 +604,30 @@ public class Utils {
         }
     }
 
+    /**
+     * Copy file.
+     * 
+     * @param from
+     *            the from
+     * @param to
+     *            the to
+     * @return true, if successful
+     */
     public static boolean copyFile(File from, File to) {
         return copyFile(from, to, false);
     }
 
+    /**
+     * Copy file.
+     * 
+     * @param from
+     *            the from
+     * @param to
+     *            the to
+     * @param withFilename
+     *            the with filename
+     * @return true, if successful
+     */
     public static boolean copyFile(File from, File to, boolean withFilename) {
         if (!from.isFile()) {
             App.settings.log(
@@ -503,6 +683,15 @@ public class Utils {
         return true;
     }
 
+    /**
+     * Move directory.
+     * 
+     * @param sourceLocation
+     *            the source location
+     * @param targetLocation
+     *            the target location
+     * @return true, if successful
+     */
     public static boolean moveDirectory(File sourceLocation, File targetLocation) {
         if (copyDirectory(sourceLocation, targetLocation)) {
             delete(sourceLocation);
@@ -514,10 +703,30 @@ public class Utils {
         }
     }
 
+    /**
+     * Copy directory.
+     * 
+     * @param sourceLocation
+     *            the source location
+     * @param targetLocation
+     *            the target location
+     * @return true, if successful
+     */
     public static boolean copyDirectory(File sourceLocation, File targetLocation) {
         return copyDirectory(sourceLocation, targetLocation, false);
     }
 
+    /**
+     * Copy directory.
+     * 
+     * @param sourceLocation
+     *            the source location
+     * @param targetLocation
+     *            the target location
+     * @param copyFolder
+     *            the copy folder
+     * @return true, if successful
+     */
     public static boolean copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
         if (copyFolder) {
             targetLocation = new File(targetLocation, sourceLocation.getName());
@@ -553,10 +762,28 @@ public class Utils {
         return true;
     }
 
+    /**
+     * Unzip.
+     * 
+     * @param in
+     *            the in
+     * @param out
+     *            the out
+     */
     public static void unzip(File in, File out) {
         unzip(in, out, null);
     }
 
+    /**
+     * Unzip.
+     * 
+     * @param in
+     *            the in
+     * @param out
+     *            the out
+     * @param extractRule
+     *            the extract rule
+     */
     public static void unzip(File in, File out, ExtractRule extractRule) {
         try {
             ZipFile zipFile = null;
@@ -600,6 +827,9 @@ public class Utils {
         }
     }
 
+    /**
+     * Clean temp directory.
+     */
     public static void cleanTempDirectory() {
         File file = App.settings.getTempDir();
         String[] myFiles;
@@ -611,6 +841,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Delete.
+     * 
+     * @param file
+     *            the file
+     */
     public static void delete(File file) {
         if (file.isDirectory()) {
             for (File c : file.listFiles()) {
@@ -630,6 +866,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Spread out resource files.
+     * 
+     * @param dir
+     *            the dir
+     */
     public static void spreadOutResourceFiles(File dir) {
         for (File file : dir.listFiles()) {
             if (file.isDirectory()) {
@@ -644,6 +886,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Delete contents.
+     * 
+     * @param file
+     *            the file
+     */
     public static void deleteContents(File file) {
         if (file.isDirectory()) {
             for (File c : file.listFiles())
@@ -653,6 +901,14 @@ public class Utils {
         }
     }
 
+    /**
+     * Zip.
+     * 
+     * @param in
+     *            the in
+     * @param out
+     *            the out
+     */
     public static void zip(File in, File out) {
         try {
             URI base = in.toURI();
@@ -692,6 +948,16 @@ public class Utils {
         }
     }
 
+    /**
+     * Copy.
+     * 
+     * @param in
+     *            the in
+     * @param out
+     *            the out
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     */
     private static void copy(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         while (true) {
@@ -703,6 +969,16 @@ public class Utils {
         }
     }
 
+    /**
+     * Copy.
+     * 
+     * @param file
+     *            the file
+     * @param out
+     *            the out
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     */
     private static void copy(File file, OutputStream out) throws IOException {
         InputStream in = new FileInputStream(file);
         try {
@@ -712,6 +988,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Encrypt.
+     * 
+     * @param Data
+     *            the data
+     * @return the string
+     */
     public static String encrypt(String Data) {
         Key key;
         String encryptedValue = null;
@@ -727,6 +1010,13 @@ public class Utils {
         return encryptedValue;
     }
 
+    /**
+     * Decrypt.
+     * 
+     * @param encryptedData
+     *            the encrypted data
+     * @return the string
+     */
     public static String decrypt(String encryptedData) {
         Key key;
         String decryptedValue = null;
@@ -743,11 +1033,32 @@ public class Utils {
         return decryptedValue;
     }
 
+    /**
+     * Generate key.
+     * 
+     * @return the key
+     * @throws Exception
+     *             the exception
+     */
     private static Key generateKey() throws Exception {
         Key key = new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
         return key;
     }
 
+    /**
+     * Replace text.
+     * 
+     * @param originalFile
+     *            the original file
+     * @param destinationFile
+     *            the destination file
+     * @param replaceThis
+     *            the replace this
+     * @param withThis
+     *            the with this
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     */
     public static void replaceText(File originalFile, File destinationFile, String replaceThis,
             String withThis) throws IOException {
 
@@ -771,6 +1082,11 @@ public class Utils {
         fs.close();
     }
 
+    /**
+     * Upload log.
+     * 
+     * @return the string
+     */
     public static String uploadLog() {
         final ProgressDialog dialog = new ProgressDialog(
                 App.settings.getLocalizedString("console.uploadinglog"), 0,
@@ -787,6 +1103,19 @@ public class Utils {
         return (String) dialog.getReturnValue();
     }
 
+    /**
+     * Send post data.
+     * 
+     * @param urll
+     *            the urll
+     * @param text
+     *            the text
+     * @param key
+     *            the key
+     * @return the string
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     */
     public static String sendPostData(String urll, String text, String key) throws IOException {
         String write = URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8");
         StringBuilder response = null;
@@ -826,6 +1155,13 @@ public class Utils {
         return response.toString();
     }
 
+    /**
+     * Checks for meta inf.
+     * 
+     * @param minecraftJar
+     *            the minecraft jar
+     * @return true, if successful
+     */
     public static boolean hasMetaInf(File minecraftJar) {
         JarInputStream input = null;
         try {
@@ -853,6 +1189,11 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Gets the instance file filter.
+     * 
+     * @return the instance file filter
+     */
     public static FilenameFilter getInstanceFileFilter() {
         return new FilenameFilter() {
             @Override
@@ -866,6 +1207,11 @@ public class Utils {
         };
     }
 
+    /**
+     * Gets the actual java version.
+     * 
+     * @return the actual java version
+     */
     public static String getActualJavaVersion() {
         if (App.settings.isUsingCustomJavaPath()) {
             File folder = new File(App.settings.getJavaPath(), "bin/");
@@ -911,6 +1257,11 @@ public class Utils {
         }
     }
 
+    /**
+     * Checks if is java8.
+     * 
+     * @return true, if is java8
+     */
     public static boolean isJava8() {
         if (App.settings.isUsingCustomJavaPath()) {
             File folder = new File(App.settings.getJavaPath(), "bin/");
@@ -946,6 +1297,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Creates the style sheet.
+     * 
+     * @param name
+     *            the name
+     * @return the style sheet
+     */
     public static StyleSheet createStyleSheet(String name) {
         try {
             StyleSheet sheet = new StyleSheet();
@@ -960,5 +1318,167 @@ public class Utils {
             App.settings.logStackTrace(e);
             return new StyleSheet(); // If fails just return blank StyleSheetF
         }
+    }
+
+    /**
+     * Gets the open eye pending reports file filter.
+     * 
+     * @return the open eye pending reports file filter
+     */
+    public static FilenameFilter getOpenEyePendingReportsFileFilter() {
+        return new FilenameFilter() {
+
+            @Override
+            public boolean accept(File dir, String name) {
+                File file = new File(dir, name);
+                Pattern pattern = Pattern.compile("^pending-crash-[0-9\\-_\\.]+\\.json$");
+                if (file.isFile() && pattern.matcher(name).matches()) {
+                    return true;
+                }
+                return false;
+            }
+        };
+    }
+
+    /**
+     * Sends a pending crash report generated by OpenEye and retrieves and returns it's response to
+     * display to the user.
+     * 
+     * @param report
+     *            a {@link File} object of the pending crash report to send the contents of
+     * @return the response received from OpenEye about the crash that was sent which is of
+     *         {@link OpenEyeReportResponse} type
+     */
+    public static OpenEyeReportResponse sendOpenEyePendingReport(File report) {
+        StringBuilder response = null;
+        String request = Utils.getFileContents(report);
+        if (request == null) {
+            App.LOGGER.error("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath()
+                    + "'. Pending report sending failed!");
+            return null;
+        }
+
+        HttpURLConnection connection;
+
+        try {
+            URL url = new URL("http://openeye.openmods.info/api/v1/crash");
+            connection = (HttpURLConnection) url.openConnection();
+
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
+            connection.setRequestProperty("Content-Length", "" + request.getBytes().length);
+
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+            writer.write(request.getBytes(Charset.forName("UTF-8")));
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+            return null; // Report not sent
+        }
+
+        // Read the result
+
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+            return null; // Report sent, but no response
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+            }
+        }
+
+        // Return an OpenEyeReportResponse object from the singular array returned in JSON
+        return Settings.gson.fromJson(response.toString(), OpenEyeReportResponse[].class)[0];
+    }
+
+    /**
+     * Gets the file contents.
+     * 
+     * @param file
+     *            the file
+     * @return the file contents
+     */
+    public static String getFileContents(File file) {
+        if (!file.exists()) {
+            App.LOGGER.error("File '" + file.getAbsolutePath()
+                    + "' doesn't exist so cannot read contents of file!");
+            return null;
+        }
+        String contents = null;
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            contents = sb.toString();
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+            }
+        }
+        return contents;
+    }
+
+    /**
+     * This splits up a string into a multi lined string by adding a separator at every space after
+     * a given count.
+     * 
+     * @param string
+     *            the string to split up
+     * @param maxLineLength
+     *            the number of characters minimum to have per line
+     * @param lineSeparator
+     *            the string to place when a new line should be placed
+     * @return the new multi lined string
+     */
+    public static String splitMultilinedString(String string, int maxLineLength,
+            String lineSeparator) {
+        char[] chars = string.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        char spaceChar = " ".charAt(0);
+        int count = 0;
+        for (char character : chars) {
+            if (count >= maxLineLength && character == spaceChar) {
+                sb.append(lineSeparator);
+                count = 0;
+            } else {
+                count++;
+                sb.append(character);
+            }
+        }
+        return sb.toString();
     }
 }

@@ -24,12 +24,14 @@ import javax.swing.JPasswordField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
+import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
+// TODO: Auto-generated Javadoc
 /**
  * This class handles contains information about a single Instance in the Launcher. An Instance
  * being an installed version of a ModPack separate to others by file structure.
@@ -270,7 +272,7 @@ public class Instance implements Cloneable {
     }
 
     /**
-     * Gets this instances name
+     * Gets this instances name.
      * 
      * @return the instances name
      */
@@ -554,6 +556,16 @@ public class Instance implements Cloneable {
     }
 
     /**
+     * Gets a File object for the reports directory of this Instance where OpenEye stores it's
+     * pending crash reports.
+     * 
+     * @return File object for the reports directory of this Instance
+     */
+    public File getReportsDirectory() {
+        return new File(getRootDirectory(), "reports");
+    }
+
+    /**
      * Gets a File object for the mods directory of this Instance.
      * 
      * @return File object for the mods directory of this Instance
@@ -673,8 +685,8 @@ public class Instance implements Cloneable {
     /**
      * Checks if the pack associated with this Instance can be installed.
      * 
-     * @see com.atlauncher.data.Pack#canInstall
      * @return true if the Pack this Instance was made from can be installed
+     * @see com.atlauncher.data.Pack#canInstall
      */
     public boolean canInstall() {
         return (this.realPack == null ? false : this.realPack.canInstall());
@@ -722,8 +734,8 @@ public class Instance implements Cloneable {
     /**
      * Sets the Minecraft version of the Pack this Instance was created from.
      * 
-     * @param version
-     *            the Minecraft version of the Pack this Instance was created from
+     * @param minecraftVersion
+     *            the new minecraft version
      */
     public void setMinecraftVersion(String minecraftVersion) {
         this.minecraftVersion = minecraftVersion;
@@ -1209,13 +1221,11 @@ public class Instance implements Cloneable {
                         if (exitValue != 0) {
                             if (getRealPack().isLoggingEnabled() && App.settings.enableLogs()
                                     && getRealPack().crashReportsEnabled()) {
-                                Thread crashThread = new Thread() {
-                                    @Override
+                                App.TASKPOOL.submit(new Runnable() {
                                     public void run() {
                                         uploadCrashLog(); // Auto upload crash log if enabled
                                     }
-                                };
-                                crashThread.start();
+                                });
                             }
                         } else if (App.settings.isAdvancedBackupsEnabled()
                                 && App.settings.getAutoBackup()) {
@@ -1254,6 +1264,16 @@ public class Instance implements Cloneable {
                                 }
                             }
                         }
+
+                        // Submit any pending crash reports from Open Eye if need to
+                        if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
+                            App.TASKPOOL.submit(new Runnable() {
+                                public void run() {
+                                    sendOpenEyePendingReports();
+                                }
+                            });
+                        }
+
                         App.settings.setMinecraftLaunched(false);
                         if (!App.settings.isInOfflineMode() && isLeaderboardsEnabled()) {
                             App.settings.apiCall(account.getMinecraftUsername(),
@@ -1279,7 +1299,48 @@ public class Instance implements Cloneable {
     }
 
     /**
-     * Uploads the contents of the console to Stikked instance to report to the pack's developer
+     * Send open eye pending reports from the instance.
+     */
+    public void sendOpenEyePendingReports() {
+        File reportsDir = this.getReportsDirectory();
+        if (reportsDir.exists()) {
+            for (String filename : reportsDir.list(Utils.getOpenEyePendingReportsFileFilter())) {
+                File report = new File(reportsDir, filename);
+                App.LOGGER.info("OpenEye: Sending pending crash report located at '"
+                        + report.getAbsolutePath() + "'");
+                OpenEyeReportResponse response = Utils.sendOpenEyePendingReport(report);
+                if (response == null) {
+                    // Pending report was never sent due to an issue. Won't delete the file in case
+                    // it's
+                    // a temporary issue and can be sent again later.
+                    App.LOGGER.warn("OpenEye: Couldn't send pending crash report!");
+                } else {
+                    // OpenEye returned a response to the report, display that to user if needed.
+                    App.LOGGER
+                            .info("OpenEye: Pending crash report sent! URL: " + response.getURL());
+                    String[] options = { App.settings.getLocalizedString("common.opencrashreport"),
+                            App.settings.getLocalizedString("common.ok") };
+                    int ret = JOptionPane.showOptionDialog(
+                            App.settings.getParent(),
+                            "<html><center>"
+                                    + App.settings.getLocalizedString("instance.openeyereport1",
+                                            "<br/><br/>") + response.getNoteDisplay()
+                                    + App.settings.getLocalizedString("instance.openeyereport2")
+                                    + "</center></html>", App.settings
+                                    .getLocalizedString("instance.aboutyourcrash"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                            options, options[1]);
+                    if (ret == 0) {
+                        Utils.openBrowser(response.getURL());
+                    }
+                }
+                Utils.delete(report); // Delete the pending report since we've sent it
+            }
+        }
+    }
+
+    /**
+     * Uploads the contents of the console to Stikked instance to report to the pack's developer.
      */
     public void uploadCrashLog() {
         Thread thread = new Thread() {

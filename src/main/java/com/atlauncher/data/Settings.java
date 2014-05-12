@@ -107,6 +107,7 @@ public class Settings {
     private boolean enableTrayIcon; // If to enable tray icon
     private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
+    private boolean enableOpenEyeReporting; // If to enable OpenEye reporting
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
 
@@ -941,6 +942,8 @@ public class Settings {
                     "enableleaderboards", "false"));
 
             this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
+            
+            this.enableOpenEyeReporting = Boolean.parseBoolean(properties.getProperty("enableopeneyereporting", "true"));
 
             String lastAccountTemp = properties.getProperty("lastaccount", "");
             if (!lastAccountTemp.isEmpty()) {
@@ -995,6 +998,7 @@ public class Settings {
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
+            properties.setProperty("enableopeneyereporting", (this.enableOpenEyeReporting) ? "true" : "false");
             if (account != null) {
                 properties.setProperty("lastaccount", account.getUsername());
             } else {
@@ -1060,6 +1064,7 @@ public class Settings {
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
+            properties.setProperty("enableopeneyereporting", (this.enableOpenEyeReporting) ? "true" : "false");
             if (account == null) {
                 properties.setProperty("lastaccount", "");
             } else {
@@ -2494,13 +2499,21 @@ public class Settings {
     public void setEnableLeaderboards(boolean enableLeaderboards) {
         this.enableLeaderboards = enableLeaderboards;
     }
-
+    
     public boolean enableLogs() {
         return this.enableLogs;
     }
-
+    
     public void setEnableLogs(boolean enableLogs) {
         this.enableLogs = enableLogs;
+    }
+
+    public boolean enableOpenEyeReporting() {
+        return this.enableOpenEyeReporting;
+    }
+
+    public void setEnableOpenEyeReporting(boolean enableOpenEyeReporting) {
+        this.enableOpenEyeReporting = enableOpenEyeReporting;
     }
 
     public String getVersion() {

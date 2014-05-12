@@ -98,6 +98,9 @@ public class SettingsPanel extends JPanel {
     private JLabel enableLoggingLabel;
     private JCheckBox enableLogs;
 
+    private JLabel enableOpenEyeReportingLabel;
+    private JCheckBox enableOpenEyeReporting;
+
     private final Insets LABEL_INSETS = new Insets(3, 0, 3, 10);
     private final Insets FIELD_INSETS = new Insets(3, 0, 3, 0);
     private final Insets LABEL_INSETS_SMALL = new Insets(0, 0, 0, 10);
@@ -409,7 +412,8 @@ public class SettingsPanel extends JPanel {
         javaParametersPanel.setLayout(new FlowLayout());
         javaParameters = new JTextField(20);
         javaParameters.setText(App.settings.getJavaParameters());
-        javaParametersResetButton = new JButton(App.settings.getLocalizedString("settings.javapathreset"));
+        javaParametersResetButton = new JButton(
+                App.settings.getLocalizedString("settings.javapathreset"));
         javaParametersResetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 javaParameters.setText("");
@@ -418,8 +422,9 @@ public class SettingsPanel extends JPanel {
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(javaParametersResetButton);
         topPanel.add(javaParametersPanel, gbc);
-        javaParametersLabel.setPreferredSize(new Dimension(javaParametersLabel.getPreferredSize().width,
-                javaParametersPanel.getPreferredSize().height));
+        javaParametersLabel.setPreferredSize(new Dimension(
+                javaParametersLabel.getPreferredSize().width, javaParametersPanel
+                        .getPreferredSize().height));
 
         // Start Minecraft Maximised
 
@@ -652,6 +657,37 @@ public class SettingsPanel extends JPanel {
         }
         topPanel.add(enableLogs, gbc);
 
+        // Enable OpenEye Reporting
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        enableOpenEyeReportingLabel = new JLabel(
+                App.settings.getLocalizedString("settings.openeye") + "?") {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
+        enableOpenEyeReportingLabel.setIcon(helpIcon);
+        enableOpenEyeReportingLabel.setToolTipText("<html><center>"
+                + Utils.splitMultilinedString(
+                        App.settings.getLocalizedString("settings.openeyehelp"), 80, "<br/>")
+                + "</center></html>");
+        topPanel.add(enableOpenEyeReportingLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        enableOpenEyeReporting = new JCheckBox();
+        if (App.settings.enableOpenEyeReporting()) {
+            enableOpenEyeReporting.setSelected(true);
+        }
+        topPanel.add(enableOpenEyeReporting, gbc);
+
         // End Components
 
         bottomPanel = new JPanel();
@@ -710,6 +746,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
                 App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
                 App.settings.setEnableLogs(enableLogs.isSelected());
+                App.settings.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());
                 App.settings.saveProperties();
                 App.settings.log("Settings Saved!");
                 if (reboot) {
