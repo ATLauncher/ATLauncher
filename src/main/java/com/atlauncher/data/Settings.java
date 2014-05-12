@@ -160,9 +160,6 @@ public class Settings {
     private DropboxSync dropbox;
     private boolean languageLoaded = false;
 
-    // Constants for things
-    public static final Color selectionColour = new Color(0, 136, 204);
-
     public Settings() {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapterFactory(new EnumTypeAdapterFactory());

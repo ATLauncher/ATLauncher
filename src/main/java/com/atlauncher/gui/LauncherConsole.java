@@ -7,7 +7,6 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -35,7 +34,6 @@ import javax.swing.text.html.HTMLEditorKit;
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
-import com.atlauncher.data.Settings;
 import com.atlauncher.utils.HTMLifier;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
@@ -47,7 +45,6 @@ public class LauncherConsole extends JFrame {
     // Minimum size the window can be
     private final Dimension MINIMUM_SIZE = new Dimension(600, 400);
     private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
-    private final Color BASE_COLOR = new Color(40, 45, 50);
 
     private JScrollPane scrollPane;
     private JEditorPane console;
@@ -74,7 +71,7 @@ public class LauncherConsole extends JFrame {
         kit = new HTMLEditorKit();
         doc = new HTMLDocument();
         console.setEditable(false);
-        console.setSelectionColor(Settings.selectionColour);
+        console.setSelectionColor(App.THEME.getSelectionColour());
         console.setEditorKit(kit);
         console.setDocument(doc);
 

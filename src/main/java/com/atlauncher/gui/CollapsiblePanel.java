@@ -102,10 +102,11 @@ public class CollapsiblePanel extends JPanel {
         if (instance.isPlayable()) {
             arrow.setText(instance.getName() + " (" + instance.getPackName() + " "
                     + instance.getVersion() + ")");
+            arrow.setForeground(App.THEME.getNormalInstanceTextColour());
         } else {
             arrow.setText(instance.getName() + " (" + instance.getPackName() + " "
                     + instance.getVersion() + " - Corrupted)");
-            arrow.setForeground(Color.RED);
+            arrow.setForeground(App.THEME.getCorruptedInstanceTextColour());
         }
         titleComponent = arrow;
         collapsed = false;

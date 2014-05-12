@@ -28,9 +28,11 @@ import org.apache.logging.log4j.Logger;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
+import com.atlauncher.gui.DefaultTheme;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SetupDialog;
 import com.atlauncher.gui.SplashScreen;
+import com.atlauncher.gui.Theme;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.utils.Utils;
 
@@ -44,13 +46,11 @@ public class App {
     private static SystemTray TRAY = null;
     public static PopupMenu TRAY_MENU = new TrayMenu();
     public static final Logger LOGGER = LogManager.getLogger();
+    public static Theme THEME = new DefaultTheme();
 
     public static boolean wasUpdated = false;
 
     public static Settings settings;
-
-    // Don't move this declaration anywheres, its important due to Java Class Loading
-    private static final Color BASE_COLOR = new Color(40, 45, 50);
 
     static {
         // Setting the UI LAF here helps with loading the UI should improve performance
@@ -197,14 +197,14 @@ public class App {
     }
 
     private static void modifyLAF() throws Exception {
-        UIManager.put("control", BASE_COLOR);
-        UIManager.put("text", Color.WHITE);
-        UIManager.put("nimbusBase", Color.BLACK);
-        UIManager.put("nimbusFocus", BASE_COLOR);
-        UIManager.put("nimbusBorder", BASE_COLOR);
-        UIManager.put("nimbusLightBackground", BASE_COLOR);
-        UIManager.put("info", BASE_COLOR);
-        UIManager.put("nimbusSelectionBackground", new Color(100, 100, 200));
+        UIManager.put("control", App.THEME.getBaseColour());
+        UIManager.put("text", App.THEME.getTextColour());
+        UIManager.put("nimbusBase", App.THEME.getButtonColour());
+        UIManager.put("nimbusFocus", App.THEME.getBaseColour());
+        UIManager.put("nimbusBorder", App.THEME.getBaseColour());
+        UIManager.put("nimbusLightBackground", App.THEME.getBaseColour());
+        UIManager.put("info", App.THEME.getBaseColour());
+        UIManager.put("nimbusSelectionBackground", App.THEME.getSelectionColour());
         UIManager
                 .put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
     }

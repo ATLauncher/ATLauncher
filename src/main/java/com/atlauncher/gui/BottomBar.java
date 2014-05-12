@@ -217,7 +217,7 @@ public class BottomBar extends JPanel {
         statusIcon = new JLabel(Utils.getIconImage("/assets/image/StatusWhite.png")) {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }

@@ -11,7 +11,6 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -97,7 +96,7 @@ public class EditModsDialog extends JDialog {
 
         disabledModsPanel = new JPanel();
         disabledModsPanel.setLayout(null);
-        disabledModsPanel.setBackground(new Color(50, 55, 60));
+        disabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColour());
 
         scroller1 = new JScrollPane(disabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -107,7 +106,7 @@ public class EditModsDialog extends JDialog {
 
         enabledModsPanel = new JPanel();
         enabledModsPanel.setLayout(null);
-        enabledModsPanel.setBackground(new Color(50, 55, 60));
+        enabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColour());
 
         scroller2 = new JScrollPane(enabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

@@ -20,7 +20,7 @@ public class ModDescriptionJLabel extends JLabel {
     private String description;
 
     public ModDescriptionJLabel(String descriptionn) {
-        super("<html><center><font color=\"#2277AA\"><sup>[?]</sup></font></center></html>");
+        super("<html><center><font color=\"" + App.THEME.getModInfoQuestionMarkColourHTML() + "\"><sup>[?]</sup></font></center></html>");
         this.description = descriptionn;
         super.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent me) {

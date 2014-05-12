@@ -23,7 +23,6 @@ public class LauncherFrame extends JFrame {
 
     // Size of initial window
     private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
-    private final Color BASE_COLOR = new Color(40, 45, 50);
 
     private JTabbedPane tabbedPane;
     private NewsPanel newsPanel;
@@ -89,7 +88,7 @@ public class LauncherFrame extends JFrame {
      */
     private void setupTabs() {
         tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
-        tabbedPane.setBackground(BASE_COLOR);
+        tabbedPane.setBackground(App.THEME.getBaseColour());
 
         newsPanel = new NewsPanel();
         App.settings.setNewsPanel(newsPanel);
@@ -108,7 +107,7 @@ public class LauncherFrame extends JFrame {
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsPanel);
-        tabbedPane.setBackground(BASE_COLOR.brighter());
+        tabbedPane.setBackground(App.THEME.getBaseColour().brighter());
         tabbedPane.setOpaque(true);
     }
 

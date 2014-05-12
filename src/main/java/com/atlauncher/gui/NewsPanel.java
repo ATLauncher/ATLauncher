@@ -25,7 +25,6 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Settings;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -67,7 +66,7 @@ public class NewsPanel extends JPanel {
     private void loadContent() {
         newsArea = new JEditorPane("text/html", null);
         newsArea.setEditable(false);
-        newsArea.setSelectionColor(Settings.selectionColour);
+        newsArea.setSelectionColor(App.THEME.getSelectionColour());
         setupContextMenu(); // Setup the right click context menu
 
         HTMLEditorKit kit = new HTMLEditorKit();

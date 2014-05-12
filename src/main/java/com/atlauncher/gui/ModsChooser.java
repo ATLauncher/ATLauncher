@@ -7,7 +7,6 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -92,7 +91,7 @@ public class ModsChooser extends JDialog {
 
         JPanel checkBoxPanel1 = new JPanel();
         checkBoxPanel1.setLayout(null);
-        checkBoxPanel1.setBackground(new Color(50, 55, 60));
+        checkBoxPanel1.setBackground(App.THEME.getModSelectionBackgroundColour());
 
         JScrollPane scroller1 = new JScrollPane(checkBoxPanel1,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -102,7 +101,7 @@ public class ModsChooser extends JDialog {
 
         JPanel checkBoxPanel2 = new JPanel();
         checkBoxPanel2.setLayout(null);
-        checkBoxPanel2.setBackground(new Color(50, 55, 60));
+        checkBoxPanel2.setBackground(App.THEME.getModSelectionBackgroundColour());
 
         JScrollPane scroller2 = new JScrollPane(checkBoxPanel2,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -220,10 +219,12 @@ public class ModsChooser extends JDialog {
                     checkBox = new ModsJCheckBox(mod);
                     checkBox.setEnabled(true);
                     if (mod.getLinked().isEmpty()) {
-                        checkBox.setBounds((mod.hasCategory() ? 20 : 0), (count1 * 20), nameSize + 23, 20);
+                        checkBox.setBounds((mod.hasCategory() ? 20 : 0), (count1 * 20),
+                                nameSize + 23, 20);
                         if (!mod.getDescription().isEmpty()) {
                             label = new ModDescriptionJLabel(mod.getDescription());
-                            label.setBounds(nameSize + (mod.hasCategory() ? 44 : 24), (count1 * 20), 12, 20);
+                            label.setBounds(nameSize + (mod.hasCategory() ? 44 : 24),
+                                    (count1 * 20), 12, 20);
                         }
                     } else {
                         Mod linkedMod = installer.getModByName(mod.getLinked());
@@ -237,16 +238,20 @@ public class ModsChooser extends JDialog {
                         if ((installer.isServer() ? linkedMod.isServerOptional() : linkedMod
                                 .isOptional())) {
                             checkBox.setEnabled(false);
-                            checkBox.setBounds((mod.hasCategory() ? 40 : 20), (count1 * 20), nameSize + 23, 20);
+                            checkBox.setBounds((mod.hasCategory() ? 40 : 20), (count1 * 20),
+                                    nameSize + 23, 20);
                             if (!mod.getDescription().isEmpty()) {
                                 label = new ModDescriptionJLabel(mod.getDescription());
-                                label.setBounds(nameSize + (mod.hasCategory() ? 64 : 44), (count1 * 20), 12, 20);
+                                label.setBounds(nameSize + (mod.hasCategory() ? 64 : 44),
+                                        (count1 * 20), 12, 20);
                             }
                         } else {
-                            checkBox.setBounds((mod.hasCategory() ? 20 : 0), (count1 * 20), nameSize + 23, 20);
+                            checkBox.setBounds((mod.hasCategory() ? 20 : 0), (count1 * 20),
+                                    nameSize + 23, 20);
                             if (!mod.getDescription().isEmpty()) {
                                 label = new ModDescriptionJLabel(mod.getDescription());
-                                label.setBounds(nameSize + (mod.hasCategory() ? 44 : 24), (count1 * 20), 12, 20);
+                                label.setBounds(nameSize + (mod.hasCategory() ? 44 : 24),
+                                        (count1 * 20), 12, 20);
                             }
                         }
                         if (mod.isSelected()) {

@@ -7,7 +7,6 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -122,7 +121,7 @@ public class SettingsPanel extends JPanel {
         languageLabel = new JLabel(App.settings.getLocalizedString("settings.language") + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -150,7 +149,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.getLocalizedString("settings.forgelogginglevel") + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -184,7 +183,7 @@ public class SettingsPanel extends JPanel {
                 + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -214,7 +213,7 @@ public class SettingsPanel extends JPanel {
         memoryLabel = new JLabel(App.settings.getLocalizedString("settings.memory") + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -267,7 +266,7 @@ public class SettingsPanel extends JPanel {
         permGenLabel = new JLabel(App.settings.getLocalizedString("settings.permgen") + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -292,7 +291,7 @@ public class SettingsPanel extends JPanel {
         windowSizeLabel = new JLabel(App.settings.getLocalizedString("settings.windowsize") + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -354,7 +353,7 @@ public class SettingsPanel extends JPanel {
         javaPathLabel = new JLabel(App.settings.getLocalizedString("settings.javapath") + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -395,7 +394,7 @@ public class SettingsPanel extends JPanel {
                 + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -436,7 +435,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.getLocalizedString("settings.startminecraftmaximised") + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -465,7 +464,7 @@ public class SettingsPanel extends JPanel {
                 + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -495,7 +494,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.getLocalizedString("settings.sortpacksalphabetically") + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -524,7 +523,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.getLocalizedString("settings.keeplauncheropen") + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -552,7 +551,7 @@ public class SettingsPanel extends JPanel {
         enableConsoleLabel = new JLabel(App.settings.getLocalizedString("settings.console") + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -579,7 +578,7 @@ public class SettingsPanel extends JPanel {
         enableTrayIconLabel = new JLabel(App.settings.getLocalizedString("settings.traymenu") + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -609,7 +608,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.getLocalizedString("settings.leaderboards") + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -640,7 +639,7 @@ public class SettingsPanel extends JPanel {
         enableLoggingLabel = new JLabel(App.settings.getLocalizedString("settings.logging") + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -685,7 +684,7 @@ public class SettingsPanel extends JPanel {
                 App.settings.getLocalizedString("settings.openeye") + "?") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, new Color(80, 170, 107), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
                 tip.setBorder(border);
                 return tip;
             }
