@@ -626,6 +626,9 @@ public class SettingsPanel extends JPanel {
         if (App.settings.enableLeaderboards()) {
             enableLeaderboards.setSelected(true);
         }
+        if (!App.settings.enableLogs()) {
+            enableLeaderboards.setEnabled(false);
+        }
         topPanel.add(enableLeaderboards, gbc);
 
         // Enable Logging
@@ -652,6 +655,21 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLogs = new JCheckBox();
+        enableLogs.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (!enableLogs.isSelected()) {
+                    enableOpenEyeReporting.setSelected(false);
+                    enableOpenEyeReporting.setEnabled(false);
+                    enableLeaderboards.setSelected(false);
+                    enableLeaderboards.setEnabled(false);
+                } else {
+                    enableOpenEyeReporting.setSelected(true);
+                    enableOpenEyeReporting.setEnabled(true);
+                    enableLeaderboards.setSelected(true);
+                    enableLeaderboards.setEnabled(true);
+                }
+            }
+        });
         if (App.settings.enableLogs()) {
             enableLogs.setSelected(true);
         }
@@ -683,6 +701,9 @@ public class SettingsPanel extends JPanel {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableOpenEyeReporting = new JCheckBox();
+        if (!App.settings.enableLogs()) {
+            enableOpenEyeReporting.setEnabled(false);
+        }
         if (App.settings.enableOpenEyeReporting()) {
             enableOpenEyeReporting.setSelected(true);
         }
