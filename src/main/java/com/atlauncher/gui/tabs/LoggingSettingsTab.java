@@ -21,7 +21,7 @@ import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
-public class LoggingSettingsTab extends SettingsTab {
+public class LoggingSettingsTab extends AbstractSettingsTab {
 
     private JLabel forgeLoggingLevelLabel;
     private JComboBox<String> forgeLoggingLevel;

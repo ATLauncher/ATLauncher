@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package com.atlauncher.gui;
+package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -12,8 +12,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
@@ -25,29 +25,27 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Pack;
+import com.atlauncher.data.Instance;
+import com.atlauncher.gui.InstanceDisplay;
+import com.atlauncher.gui.NothingToDisplay;
 
-public class PacksPanel extends JPanel {
+public class InstancesTab extends JPanel {
 
     private JPanel topPanel;
-    private JButton addPackButton;
     private JButton clearButton;
     private JTextField searchBox;
     private JButton searchButton;
-    private JCheckBox privatePacks;
-    private JLabel privatePacksLabel;
-    private JCheckBox servers;
-    private JLabel serversLabel;
+    private JCheckBox hasUpdate;
+    private JLabel hasUpdateLabel;
 
     private String searchText = null;
-    private boolean isServers = false;
-    private boolean isPrivatePacks = false;
+    private boolean isUpdate = false;
 
     private JPanel panel;
     private JScrollPane scrollPane;
     private int currentPosition = 0;
 
-    public PacksPanel() {
+    public InstancesTab() {
         setLayout(new BorderLayout());
         loadContent(false);
     }
@@ -56,21 +54,11 @@ public class PacksPanel extends JPanel {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        addPackButton = new JButton(App.settings.getLocalizedString("pack.addpack"));
-        addPackButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new AddPackDialog();
-                reload();
-            }
-        });
-        topPanel.add(addPackButton);
-
         clearButton = new JButton(App.settings.getLocalizedString("common.clear"));
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchBox.setText("");
-                servers.setSelected(false);
-                privatePacks.setSelected(false);
+                hasUpdate.setSelected(false);
                 reload();
             }
         });
@@ -80,11 +68,17 @@ public class PacksPanel extends JPanel {
         if (keepFilters) {
             searchBox.setText(this.searchText);
         }
-        searchBox.addKeyListener(new KeyAdapter() {
+        searchBox.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     reload();
                 }
+            }
+
+            public void keyTyped(KeyEvent e) {
+            }
+
+            public void keyReleased(KeyEvent e) {
             }
         });
         topPanel.add(searchBox);
@@ -97,29 +91,17 @@ public class PacksPanel extends JPanel {
         });
         topPanel.add(searchButton);
 
-        servers = new JCheckBox();
-        servers.setSelected(isServers);
-        servers.addActionListener(new ActionListener() {
+        hasUpdate = new JCheckBox();
+        hasUpdate.setSelected(isUpdate);
+        hasUpdate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 reload();
             }
         });
-        topPanel.add(servers);
+        topPanel.add(hasUpdate);
 
-        serversLabel = new JLabel(App.settings.getLocalizedString("pack.cancreateserver"));
-        topPanel.add(serversLabel);
-
-        privatePacks = new JCheckBox();
-        privatePacks.setSelected(isPrivatePacks);
-        privatePacks.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                reload();
-            }
-        });
-        topPanel.add(privatePacks);
-
-        privatePacksLabel = new JLabel(App.settings.getLocalizedString("pack.privatepacksonly"));
-        topPanel.add(privatePacksLabel);
+        hasUpdateLabel = new JLabel(App.settings.getLocalizedString("instance.hasupdate"));
+        topPanel.add(hasUpdateLabel);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -127,7 +109,6 @@ public class PacksPanel extends JPanel {
         scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPane.getVerticalScrollBar().setValue(currentPosition);
         add(scrollPane, BorderLayout.CENTER);
 
         panel.setLayout(new GridBagLayout());
@@ -137,38 +118,31 @@ public class PacksPanel extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for (Pack pack : (App.settings.sortPacksAlphabetically() ? App.settings
-                .getPacksSortedAlphabetically() : App.settings.getPacksSortedPositionally())) {
-            if (pack.canInstall()) {
+        for (Instance instance : App.settings.getInstancesSorted()) {
+            if (instance.canPlay()) {
                 if (keepFilters) {
-                    boolean showPack = true;
+                    boolean showInstance = true;
 
                     if (searchText != null) {
                         if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
-                                .matcher(pack.getName()).find()) {
-                            showPack = false;
+                                .matcher(instance.getName()).find()) {
+                            showInstance = false;
                         }
                     }
 
-                    if (isServers) {
-                        if (!pack.canCreateServer()) {
-                            showPack = false;
+                    if (isUpdate) {
+                        if (!instance.hasUpdate()) {
+                            showInstance = false;
                         }
                     }
 
-                    if (isPrivatePacks) {
-                        if (!pack.isPrivate()) {
-                            showPack = false;
-                        }
-                    }
-
-                    if (showPack) {
-                        panel.add(new PackDisplay(pack), gbc);
+                    if (showInstance) {
+                        panel.add(new InstanceDisplay(instance), gbc);
                         gbc.gridy++;
                         count++;
                     }
                 } else {
-                    panel.add(new PackDisplay(pack), gbc);
+                    panel.add(new InstanceDisplay(instance), gbc);
                     gbc.gridy++;
                     count++;
                 }
@@ -176,8 +150,8 @@ public class PacksPanel extends JPanel {
         }
         if (count == 0) {
             panel.add(
-                    new NothingToDisplay(App.settings.getLocalizedString("pack.nodisplay", "\n\n")),
-                    gbc);
+                    new NothingToDisplay(App.settings.getLocalizedString("instance.nodisplay",
+                            "\n\n")), gbc);
         }
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -190,8 +164,7 @@ public class PacksPanel extends JPanel {
     public void reload() {
         this.currentPosition = scrollPane.getVerticalScrollBar().getValue();
         this.searchText = searchBox.getText();
-        this.isServers = servers.isSelected();
-        this.isPrivatePacks = privatePacks.isSelected();
+        this.isUpdate = hasUpdate.isSelected();
         if (this.searchText.isEmpty()) {
             this.searchText = null;
         }

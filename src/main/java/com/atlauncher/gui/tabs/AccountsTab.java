@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package com.atlauncher.gui;
+package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -35,10 +35,11 @@ import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
+import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
-public class AccountPanel extends JPanel {
+public class AccountsTab extends JPanel {
 
     private JLabel userSkin;
     private JPanel rightPanel;
@@ -64,7 +65,7 @@ public class AccountPanel extends JPanel {
     private final Insets LABEL_INSETS = new Insets(3, 0, 3, 10);
     private final Insets FIELD_INSETS = new Insets(3, 0, 3, 0);
 
-    public AccountPanel() {
+    public AccountsTab() {
         setLayout(new BorderLayout());
 
         rightPanel = new JPanel();

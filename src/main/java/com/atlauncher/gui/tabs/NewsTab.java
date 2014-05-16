@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package com.atlauncher.gui;
+package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
@@ -30,7 +30,7 @@ import com.atlauncher.utils.Utils;
 /**
  * This class extends {@link JPanel} and provides a Panel for displaying the latest news.
  */
-public class NewsPanel extends JPanel {
+public class NewsTab extends JPanel {
 
     /**
      * Auto generated serial.
@@ -55,7 +55,7 @@ public class NewsPanel extends JPanel {
     /**
      * Instantiates a new instance of this class which sets the layout and loads the content.
      */
-    public NewsPanel() {
+    public NewsTab() {
         setLayout(new BorderLayout());
         loadContent();
     }

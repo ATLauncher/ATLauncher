@@ -20,7 +20,7 @@ import com.atlauncher.data.Server;
 import com.atlauncher.gui.CustomLineBorder;
 
 @SuppressWarnings("serial")
-public class GeneralSettingsTab extends SettingsTab {
+public class GeneralSettingsTab extends AbstractSettingsTab {
 
     private JLabel languageLabel;
     private JComboBox<Language> language;

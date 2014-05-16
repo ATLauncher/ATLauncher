@@ -16,6 +16,11 @@ import javax.swing.JTabbedPane;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
+import com.atlauncher.gui.tabs.AccountsTab;
+import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.gui.tabs.NewsTab;
+import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -25,11 +30,11 @@ public class LauncherFrame extends JFrame {
     private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
 
     private JTabbedPane tabbedPane;
-    private NewsPanel newsPanel;
-    private PacksPanel packsPanel;
-    private InstancesPanel instancesPanel;
-    private AccountPanel accountPanel;
-    private SettingsPanel settingsPanel;
+    private NewsTab newsTab;
+    private PacksTab packsTab;
+    private InstancesTab instancesTab;
+    private AccountsTab accountsTab;
+    private SettingsTab settingsTab;
 
     private LauncherBottomBar bottomBar;
 
@@ -90,21 +95,21 @@ public class LauncherFrame extends JFrame {
                 : JTabbedPane.LEFT));
         tabbedPane.setBackground(App.THEME.getBaseColour());
 
-        newsPanel = new NewsPanel();
-        App.settings.setNewsPanel(newsPanel);
-        packsPanel = new PacksPanel();
-        App.settings.setPacksPanel(packsPanel);
-        instancesPanel = new InstancesPanel();
-        App.settings.setInstancesPanel(instancesPanel);
-        accountPanel = new AccountPanel();
-        settingsPanel = new SettingsPanel();
+        newsTab = new NewsTab();
+        App.settings.setNewsPanel(newsTab);
+        packsTab = new PacksTab();
+        App.settings.setPacksPanel(packsTab);
+        instancesTab = new InstancesTab();
+        App.settings.setInstancesPanel(instancesTab);
+        accountsTab = new AccountsTab();
+        settingsTab = new SettingsTab();
 
         tabbedPane.setFont(App.THEME.getTabsFont());
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.news"), newsPanel);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsPanel);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesPanel);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountPanel);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsPanel);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.news"), newsTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountsTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsTab);
         tabbedPane.setBackground(App.THEME.getTabBackgroundColour());
         tabbedPane.setOpaque(true);
     }

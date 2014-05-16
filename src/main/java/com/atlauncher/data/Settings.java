@@ -68,12 +68,12 @@ import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherBottomBar;
-import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.NewsPanel;
-import com.atlauncher.gui.PacksPanel;
 import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.gui.TrayMenu;
+import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.gui.tabs.NewsTab;
+import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -141,9 +141,9 @@ public class Settings {
     private LauncherConsole console = new LauncherConsole(); // Load the Launcher's Console
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private ArrayList<Server> triedServers = new ArrayList<Server>(); // Servers tried to connect to
-    private InstancesPanel instancesPanel; // The instances panel
-    private NewsPanel newsPanel; // The news panel
-    private PacksPanel packsPanel; // The packs panel
+    private InstancesTab instancesPanel; // The instances panel
+    private NewsTab newsPanel; // The news panel
+    private PacksTab packsPanel; // The packs panel
     private LauncherBottomBar bottomBar; // The bottom bar
     private boolean hadPasswordDialog = false; // If the user has seen the password dialog
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
@@ -1811,7 +1811,7 @@ public class Settings {
      * @param instancesPanel
      *            Instances Panel
      */
-    public void setInstancesPanel(InstancesPanel instancesPanel) {
+    public void setInstancesPanel(InstancesTab instancesPanel) {
         this.instancesPanel = instancesPanel;
     }
 
@@ -1830,7 +1830,7 @@ public class Settings {
      * @param packsPanel
      *            Packs Panel
      */
-    public void setPacksPanel(PacksPanel packsPanel) {
+    public void setPacksPanel(PacksTab packsPanel) {
         this.packsPanel = packsPanel;
     }
 
@@ -1840,7 +1840,7 @@ public class Settings {
      * @param newsPanel
      *            News Panel
      */
-    public void setNewsPanel(NewsPanel newsPanel) {
+    public void setNewsPanel(NewsTab newsPanel) {
         this.newsPanel = newsPanel;
     }
 

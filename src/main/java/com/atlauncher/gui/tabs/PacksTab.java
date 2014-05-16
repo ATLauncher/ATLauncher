@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package com.atlauncher.gui;
+package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -12,8 +12,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
@@ -25,25 +25,32 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.Pack;
+import com.atlauncher.gui.AddPackDialog;
+import com.atlauncher.gui.NothingToDisplay;
+import com.atlauncher.gui.PackDisplay;
 
-public class InstancesPanel extends JPanel {
+public class PacksTab extends JPanel {
 
     private JPanel topPanel;
+    private JButton addPackButton;
     private JButton clearButton;
     private JTextField searchBox;
     private JButton searchButton;
-    private JCheckBox hasUpdate;
-    private JLabel hasUpdateLabel;
+    private JCheckBox privatePacks;
+    private JLabel privatePacksLabel;
+    private JCheckBox servers;
+    private JLabel serversLabel;
 
     private String searchText = null;
-    private boolean isUpdate = false;
+    private boolean isServers = false;
+    private boolean isPrivatePacks = false;
 
     private JPanel panel;
     private JScrollPane scrollPane;
     private int currentPosition = 0;
 
-    public InstancesPanel() {
+    public PacksTab() {
         setLayout(new BorderLayout());
         loadContent(false);
     }
@@ -52,11 +59,21 @@ public class InstancesPanel extends JPanel {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
+        addPackButton = new JButton(App.settings.getLocalizedString("pack.addpack"));
+        addPackButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new AddPackDialog();
+                reload();
+            }
+        });
+        topPanel.add(addPackButton);
+
         clearButton = new JButton(App.settings.getLocalizedString("common.clear"));
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchBox.setText("");
-                hasUpdate.setSelected(false);
+                servers.setSelected(false);
+                privatePacks.setSelected(false);
                 reload();
             }
         });
@@ -66,17 +83,11 @@ public class InstancesPanel extends JPanel {
         if (keepFilters) {
             searchBox.setText(this.searchText);
         }
-        searchBox.addKeyListener(new KeyListener() {
+        searchBox.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     reload();
                 }
-            }
-
-            public void keyTyped(KeyEvent e) {
-            }
-
-            public void keyReleased(KeyEvent e) {
             }
         });
         topPanel.add(searchBox);
@@ -89,17 +100,29 @@ public class InstancesPanel extends JPanel {
         });
         topPanel.add(searchButton);
 
-        hasUpdate = new JCheckBox();
-        hasUpdate.setSelected(isUpdate);
-        hasUpdate.addActionListener(new ActionListener() {
+        servers = new JCheckBox();
+        servers.setSelected(isServers);
+        servers.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 reload();
             }
         });
-        topPanel.add(hasUpdate);
+        topPanel.add(servers);
 
-        hasUpdateLabel = new JLabel(App.settings.getLocalizedString("instance.hasupdate"));
-        topPanel.add(hasUpdateLabel);
+        serversLabel = new JLabel(App.settings.getLocalizedString("pack.cancreateserver"));
+        topPanel.add(serversLabel);
+
+        privatePacks = new JCheckBox();
+        privatePacks.setSelected(isPrivatePacks);
+        privatePacks.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reload();
+            }
+        });
+        topPanel.add(privatePacks);
+
+        privatePacksLabel = new JLabel(App.settings.getLocalizedString("pack.privatepacksonly"));
+        topPanel.add(privatePacksLabel);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -107,6 +130,7 @@ public class InstancesPanel extends JPanel {
         scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.getVerticalScrollBar().setValue(currentPosition);
         add(scrollPane, BorderLayout.CENTER);
 
         panel.setLayout(new GridBagLayout());
@@ -116,31 +140,38 @@ public class InstancesPanel extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for (Instance instance : App.settings.getInstancesSorted()) {
-            if (instance.canPlay()) {
+        for (Pack pack : (App.settings.sortPacksAlphabetically() ? App.settings
+                .getPacksSortedAlphabetically() : App.settings.getPacksSortedPositionally())) {
+            if (pack.canInstall()) {
                 if (keepFilters) {
-                    boolean showInstance = true;
+                    boolean showPack = true;
 
                     if (searchText != null) {
                         if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
-                                .matcher(instance.getName()).find()) {
-                            showInstance = false;
+                                .matcher(pack.getName()).find()) {
+                            showPack = false;
                         }
                     }
 
-                    if (isUpdate) {
-                        if (!instance.hasUpdate()) {
-                            showInstance = false;
+                    if (isServers) {
+                        if (!pack.canCreateServer()) {
+                            showPack = false;
                         }
                     }
 
-                    if (showInstance) {
-                        panel.add(new InstanceDisplay(instance), gbc);
+                    if (isPrivatePacks) {
+                        if (!pack.isPrivate()) {
+                            showPack = false;
+                        }
+                    }
+
+                    if (showPack) {
+                        panel.add(new PackDisplay(pack), gbc);
                         gbc.gridy++;
                         count++;
                     }
                 } else {
-                    panel.add(new InstanceDisplay(instance), gbc);
+                    panel.add(new PackDisplay(pack), gbc);
                     gbc.gridy++;
                     count++;
                 }
@@ -148,8 +179,8 @@ public class InstancesPanel extends JPanel {
         }
         if (count == 0) {
             panel.add(
-                    new NothingToDisplay(App.settings.getLocalizedString("instance.nodisplay",
-                            "\n\n")), gbc);
+                    new NothingToDisplay(App.settings.getLocalizedString("pack.nodisplay", "\n\n")),
+                    gbc);
         }
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -162,7 +193,8 @@ public class InstancesPanel extends JPanel {
     public void reload() {
         this.currentPosition = scrollPane.getVerticalScrollBar().getValue();
         this.searchText = searchBox.getText();
-        this.isUpdate = hasUpdate.isSelected();
+        this.isServers = servers.isSelected();
+        this.isPrivatePacks = privatePacks.isSelected();
         if (this.searchText.isEmpty()) {
             this.searchText = null;
         }

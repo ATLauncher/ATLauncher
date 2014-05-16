@@ -30,7 +30,7 @@ import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
-public class JavaSettingsTab extends SettingsTab {
+public class JavaSettingsTab extends AbstractSettingsTab {
 
     private JLabel memoryLabel;
     private JComboBox<String> memory;
