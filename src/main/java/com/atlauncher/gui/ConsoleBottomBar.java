@@ -22,6 +22,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JToolTip;
+import javax.swing.border.Border;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
@@ -164,25 +166,57 @@ public class ConsoleBottomBar extends JPanel {
         killMinecraft = new JButton("Kill Minecraft");
         killMinecraft.setVisible(false);
 
-        facebookIcon = new JButton(Utils.getIconImage("/assets/image/FacebookIcon.png"));
+        facebookIcon = new JButton(Utils.getIconImage("/assets/image/FacebookIcon.png")) {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
         facebookIcon.setBorder(BorderFactory.createEmptyBorder());
         facebookIcon.setContentAreaFilled(false);
         facebookIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        facebookIcon.setToolTipText("Facebook");
 
-        githubIcon = new JButton(Utils.getIconImage("/assets/image/GitHubIcon.png"));
+        githubIcon = new JButton(Utils.getIconImage("/assets/image/GitHubIcon.png")) {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
         githubIcon.setBorder(BorderFactory.createEmptyBorder());
         githubIcon.setContentAreaFilled(false);
         githubIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        githubIcon.setToolTipText("GitHub");
 
-        redditIcon = new JButton(Utils.getIconImage("/assets/image/RedditIcon.png"));
+        redditIcon = new JButton(Utils.getIconImage("/assets/image/RedditIcon.png")) {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
         redditIcon.setBorder(BorderFactory.createEmptyBorder());
         redditIcon.setContentAreaFilled(false);
         redditIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        redditIcon.setToolTipText("Reddit");
 
-        twitterIcon = new JButton(Utils.getIconImage("/assets/image/TwitterIcon.png"));
+        twitterIcon = new JButton(Utils.getIconImage("/assets/image/TwitterIcon.png")) {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
         twitterIcon.setBorder(BorderFactory.createEmptyBorder());
         twitterIcon.setContentAreaFilled(false);
         twitterIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        twitterIcon.setToolTipText("Twitter");
     }
 
     public void showKillMinecraft() {
