@@ -46,6 +46,11 @@ public class Theme {
      */
     private Font tabFont;
 
+    /**
+     * The font used to display the text on the tabs in the settings frame
+     */
+    private Font settingsTabFont;
+
     private Font buttonFont;
 
     /**
@@ -59,7 +64,7 @@ public class Theme {
             Color modInfoQuestionMarkColour, Color normalInstanceTextColour,
             Color corruptedInstanceTextColour, Color consoleTextColour, Color logInfoTextColour,
             Color logWarnTextColour, Color logErrorTextColour, Font defaultFont, Font consoleFont,
-            Font tabFont, Font buttonFont, boolean showTabsOnRight) {
+            Font tabFont, Font settingsTabFont, Font buttonFont, boolean showTabsOnRight) {
         this.baseColour = baseColour;
         this.tabBackgroundColour = tabBackgroundColour;
         this.selectionColour = selectionColour;
@@ -78,6 +83,7 @@ public class Theme {
         this.defaultFont = defaultFont;
         this.consoleFont = consoleFont;
         this.tabFont = tabFont;
+        this.settingsTabFont = settingsTabFont;
         this.buttonFont = buttonFont;
         this.showTabsOnRight = showTabsOnRight;
     }
@@ -89,7 +95,7 @@ public class Theme {
     public Color getTabBackgroundColour() {
         return this.tabBackgroundColour;
     }
-    
+
     public Color getSelectionColour() {
         return this.selectionColour;
     }
@@ -176,6 +182,10 @@ public class Theme {
 
     public Font getTabsFont() {
         return this.tabFont;
+    }
+
+    public Font getSettingsTabsFont() {
+        return this.settingsTabFont;
     }
 
     public Font getButtonFont() {

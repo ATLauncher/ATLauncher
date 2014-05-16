@@ -33,6 +33,8 @@ public class DefaultTheme extends Theme {
             Utils.getBaseFontSize());
     private static final Font CONSOLE_FONT = DEFAULT_FONT;
     private static final Font TAB_FONT = Utils.makeFont("Oswald-Regular").deriveFont((float) 34);
+    private static final Font SETTINGS_TAB_FONT = Utils.makeFont("Oswald-Regular").deriveFont(
+            (float) 17);
     private static final Font BUTTON_FONT = DEFAULT_FONT;
 
     private static final boolean SHOW_TABS_ON_RIGHT = true;
@@ -43,7 +45,7 @@ public class DefaultTheme extends Theme {
                 MOD_INFO_QUESTION_MARK_COLOUR, NORMAL_INSTANCE_TEXT_COLOUR,
                 CORRUPTED_INSTANCE_TEXT_COLOUR, CONSOLE_TEXT_COLOUR, LOG_INFO_COLOUR,
                 LOG_WARN_COLOUR, LOG_ERROR_COLOUR, DEFAULT_FONT, CONSOLE_FONT, TAB_FONT,
-                BUTTON_FONT, SHOW_TABS_ON_RIGHT);
+                SETTINGS_TAB_FONT, BUTTON_FONT, SHOW_TABS_ON_RIGHT);
     }
 
 }
