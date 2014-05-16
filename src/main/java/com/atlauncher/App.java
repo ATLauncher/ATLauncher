@@ -211,8 +211,8 @@ public class App {
         ToolTipManager.sharedInstance().setDismissDelay(15000);
         ToolTipManager.sharedInstance().setInitialDelay(50);
 
-        UIManager.getLookAndFeelDefaults()
-                .put("defaultFont", App.THEME.getDefaultFont());
+        UIManager.getLookAndFeelDefaults().put("defaultFont", App.THEME.getDefaultFont());
+        UIManager.getLookAndFeelDefaults().put("Button.font", App.THEME.getButtonFont());
     }
 
     private static void trySystemTrayIntegration() throws Exception {

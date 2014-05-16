@@ -12,6 +12,7 @@ import java.awt.Font;
 public class Theme {
 
     private Color baseColour;
+    private Color tabBackgroundColour;
     private Color selectionColour;
 
     /**
@@ -24,14 +25,31 @@ public class Theme {
     private Color modInfoQuestionMarkColour;
     private Color normalInstanceTextColour;
     private Color corruptedInstanceTextColour;
-    private Font defaultFont;
-    private Font tabsFont;
 
-    public Theme(Color baseColour, Color selectionColour, Color buttonColour, Color textColour,
-            Color hoverBorderColour, Color modSelectionBackgroundColour,
-            Color modInfoQuestionMarkColour, Color normalInstanceTextColour,
-            Color corruptedInstanceTextColour, Font defaultFont, Font tabsFont) {
+    /**
+     * The default font used in the Launcher pretty much everywhere
+     */
+    private Font defaultFont;
+
+    /**
+     * The font used to display the text on the tabs in the main frame (News, Packs, Instances etc)
+     */
+    private Font tabFont;
+
+    private Font buttonFont;
+
+    /**
+     * If the tabs should display in their default position of on the Right or not
+     */
+    private boolean showTabsOnRight;
+
+    public Theme(Color baseColour, Color tabBackgroundColour, Color selectionColour,
+            Color buttonColour, Color textColour, Color hoverBorderColour,
+            Color modSelectionBackgroundColour, Color modInfoQuestionMarkColour,
+            Color normalInstanceTextColour, Color corruptedInstanceTextColour, Font defaultFont,
+            Font tabFont, Font buttonFont, boolean showTabsOnRight) {
         this.baseColour = baseColour;
+        this.tabBackgroundColour = tabBackgroundColour;
         this.selectionColour = selectionColour;
         this.buttonColour = buttonColour;
         this.textColour = textColour;
@@ -41,11 +59,17 @@ public class Theme {
         this.normalInstanceTextColour = normalInstanceTextColour;
         this.corruptedInstanceTextColour = corruptedInstanceTextColour;
         this.defaultFont = defaultFont;
-        this.tabsFont = tabsFont;
+        this.tabFont = tabFont;
+        this.buttonFont = buttonFont;
+        this.showTabsOnRight = showTabsOnRight;
     }
 
     public Color getBaseColour() {
         return this.baseColour;
+    }
+
+    public Color getTabBackgroundColour() {
+        return this.tabBackgroundColour;
     }
 
     public Color getSelectionColour() {
@@ -91,7 +115,15 @@ public class Theme {
     }
 
     public Font getTabsFont() {
-        return this.tabsFont;
+        return this.tabFont;
+    }
+
+    public Font getButtonFont() {
+        return this.buttonFont;
+    }
+
+    public boolean showTabsOnRight() {
+        return this.showTabsOnRight;
     }
 
 }
