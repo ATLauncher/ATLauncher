@@ -14,6 +14,7 @@ public class Theme {
     private Color baseColour;
     private Color tabBackgroundColour;
     private Color selectionColour;
+    private Color dropDownSelectionColour;
 
     /**
      * The Colour used for buttons, checkboxes, tabs, scrollbars and closed dropdown boxes
@@ -25,11 +26,20 @@ public class Theme {
     private Color modInfoQuestionMarkColour;
     private Color normalInstanceTextColour;
     private Color corruptedInstanceTextColour;
+    private Color consoleTextColour;
+    private Color logInfoTextColour;
+    private Color logWarnTextColour;
+    private Color logErrorTextColour;
 
     /**
      * The default font used in the Launcher pretty much everywhere
      */
     private Font defaultFont;
+
+    /**
+     * The font to use in the Console frame
+     */
+    private Font consoleFont;
 
     /**
      * The font used to display the text on the tabs in the main frame (News, Packs, Instances etc)
@@ -44,13 +54,16 @@ public class Theme {
     private boolean showTabsOnRight;
 
     public Theme(Color baseColour, Color tabBackgroundColour, Color selectionColour,
-            Color buttonColour, Color textColour, Color hoverBorderColour,
-            Color modSelectionBackgroundColour, Color modInfoQuestionMarkColour,
-            Color normalInstanceTextColour, Color corruptedInstanceTextColour, Font defaultFont,
+            Color dropDownSelectionColour, Color buttonColour, Color textColour,
+            Color hoverBorderColour, Color modSelectionBackgroundColour,
+            Color modInfoQuestionMarkColour, Color normalInstanceTextColour,
+            Color corruptedInstanceTextColour, Color consoleTextColour, Color logInfoTextColour,
+            Color logWarnTextColour, Color logErrorTextColour, Font defaultFont, Font consoleFont,
             Font tabFont, Font buttonFont, boolean showTabsOnRight) {
         this.baseColour = baseColour;
         this.tabBackgroundColour = tabBackgroundColour;
         this.selectionColour = selectionColour;
+        this.dropDownSelectionColour = dropDownSelectionColour;
         this.buttonColour = buttonColour;
         this.textColour = textColour;
         this.hoverBorderColour = hoverBorderColour;
@@ -58,7 +71,12 @@ public class Theme {
         this.modInfoQuestionMarkColour = modInfoQuestionMarkColour;
         this.normalInstanceTextColour = normalInstanceTextColour;
         this.corruptedInstanceTextColour = corruptedInstanceTextColour;
+        this.consoleTextColour = consoleTextColour;
+        this.logInfoTextColour = logInfoTextColour;
+        this.logWarnTextColour = logWarnTextColour;
+        this.logErrorTextColour = logErrorTextColour;
         this.defaultFont = defaultFont;
+        this.consoleFont = consoleFont;
         this.tabFont = tabFont;
         this.buttonFont = buttonFont;
         this.showTabsOnRight = showTabsOnRight;
@@ -71,9 +89,13 @@ public class Theme {
     public Color getTabBackgroundColour() {
         return this.tabBackgroundColour;
     }
-
+    
     public Color getSelectionColour() {
         return this.selectionColour;
+    }
+
+    public Color getDropDownSelectionColour() {
+        return this.dropDownSelectionColour;
     }
 
     public Color getButtonColour() {
@@ -110,8 +132,46 @@ public class Theme {
         return this.corruptedInstanceTextColour;
     }
 
+    public Color getConsoleTextColour() {
+        return this.consoleTextColour;
+    }
+
+    public Color getLogInfoTextColour() {
+        return this.logInfoTextColour;
+    }
+
+    public String getLogInfoTextColourHTML() {
+        return "#" + Integer.toHexString(this.logInfoTextColour.getRed()) + ""
+                + Integer.toHexString(this.logInfoTextColour.getGreen()) + ""
+                + Integer.toHexString(this.logInfoTextColour.getBlue());
+    }
+
+    public Color getLogWarnTextColour() {
+        return this.logWarnTextColour;
+    }
+
+    public String getLogWarnTextColourHTML() {
+        return "#" + Integer.toHexString(this.logWarnTextColour.getRed()) + ""
+                + Integer.toHexString(this.logWarnTextColour.getGreen()) + ""
+                + Integer.toHexString(this.logWarnTextColour.getBlue());
+    }
+
+    public Color getLogErrorTextColour() {
+        return this.logErrorTextColour;
+    }
+
+    public String getLogErrorTextColourHTML() {
+        return "#" + Integer.toHexString(this.logErrorTextColour.getRed()) + ""
+                + Integer.toHexString(this.logErrorTextColour.getGreen()) + ""
+                + Integer.toHexString(this.logErrorTextColour.getBlue());
+    }
+
     public Font getDefaultFont() {
         return this.defaultFont;
+    }
+
+    public Font getConsoleFont() {
+        return this.consoleFont;
     }
 
     public Font getTabsFont() {

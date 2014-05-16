@@ -29,9 +29,9 @@ public final class ConsoleAppender extends AbstractOutputStreamAppender {
 
     private final Map<Level, String> LEVEL_COLOURS = new HashMap<Level, String>() {
         {
-            this.put(Level.INFO, "#89C236");
-            this.put(Level.WARN, "#FFFF4C");
-            this.put(Level.ERROR, "#EE2222");
+            this.put(Level.INFO, App.THEME.getLogInfoTextColourHTML());
+            this.put(Level.WARN, App.THEME.getLogWarnTextColourHTML());
+            this.put(Level.ERROR, App.THEME.getLogErrorTextColourHTML());
         }
     };
 

@@ -43,10 +43,10 @@ public class App {
     // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
 
+    public static Theme THEME = new DefaultTheme();
     private static SystemTray TRAY = null;
     public static PopupMenu TRAY_MENU = new TrayMenu();
     public static final Logger LOGGER = LogManager.getLogger();
-    public static Theme THEME = new DefaultTheme();
 
     public static boolean wasUpdated = false;
 
@@ -204,7 +204,7 @@ public class App {
         UIManager.put("nimbusBorder", App.THEME.getBaseColour());
         UIManager.put("nimbusLightBackground", App.THEME.getBaseColour());
         UIManager.put("info", App.THEME.getBaseColour());
-        UIManager.put("nimbusSelectionBackground", App.THEME.getSelectionColour());
+        UIManager.put("nimbusSelectionBackground", App.THEME.getDropDownSelectionColour());
         UIManager
                 .put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
 

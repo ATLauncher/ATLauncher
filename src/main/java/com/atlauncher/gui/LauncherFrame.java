@@ -6,17 +6,17 @@
  */
 package com.atlauncher.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.utils.Utils;
-
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
@@ -27,7 +27,6 @@ public class LauncherFrame extends JFrame {
     private JTabbedPane tabbedPane;
     private NewsPanel newsPanel;
     private PacksPanel packsPanel;
-    private AddonsPanel addonsPanel;
     private InstancesPanel instancesPanel;
     private AccountPanel accountPanel;
     private SettingsPanel settingsPanel;
@@ -95,7 +94,6 @@ public class LauncherFrame extends JFrame {
         App.settings.setNewsPanel(newsPanel);
         packsPanel = new PacksPanel();
         App.settings.setPacksPanel(packsPanel);
-        addonsPanel = new AddonsPanel();
         instancesPanel = new InstancesPanel();
         App.settings.setInstancesPanel(instancesPanel);
         accountPanel = new AccountPanel();
@@ -104,7 +102,6 @@ public class LauncherFrame extends JFrame {
         tabbedPane.setFont(App.THEME.getTabsFont());
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.news"), newsPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsPanel);
-        // tabbedPane.addTab(App.settings.getLocalizedString("tabs.addons"), addonsPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsPanel);

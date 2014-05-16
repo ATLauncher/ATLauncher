@@ -96,7 +96,7 @@ public final class TrayMenu extends PopupMenu {
     }
 
     public void setMinecraftLaunched(boolean launched) {
-        this.KILLMC_BUTTON.setEnabled(launched); // TODO: Fix this not redisabling/enabling the item
+        this.KILLMC_BUTTON.setEnabled(launched);
     }
 
     public TrayMenu() {

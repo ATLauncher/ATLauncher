@@ -7,6 +7,7 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -68,6 +69,8 @@ public class LauncherConsole extends JFrame {
                 return true; // Fixes issues with resizing from big to small and text not shrinking
             }
         };
+        console.setFont(App.THEME.getConsoleFont());
+        console.setForeground(App.THEME.getConsoleTextColour());
         kit = new HTMLEditorKit();
         doc = new HTMLDocument();
         console.setEditable(false);
