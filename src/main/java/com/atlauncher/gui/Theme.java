@@ -7,6 +7,7 @@
 package com.atlauncher.gui;
 
 import java.awt.Color;
+import java.awt.Font;
 
 public class Theme {
 
@@ -23,11 +24,13 @@ public class Theme {
     private Color modInfoQuestionMarkColour;
     private Color normalInstanceTextColour;
     private Color corruptedInstanceTextColour;
+    private Font defaultFont;
+    private Font tabsFont;
 
     public Theme(Color baseColour, Color selectionColour, Color buttonColour, Color textColour,
             Color hoverBorderColour, Color modSelectionBackgroundColour,
             Color modInfoQuestionMarkColour, Color normalInstanceTextColour,
-            Color corruptedInstanceTextColour) {
+            Color corruptedInstanceTextColour, Font defaultFont, Font tabsFont) {
         this.baseColour = baseColour;
         this.selectionColour = selectionColour;
         this.buttonColour = buttonColour;
@@ -37,6 +40,8 @@ public class Theme {
         this.modInfoQuestionMarkColour = modInfoQuestionMarkColour;
         this.normalInstanceTextColour = normalInstanceTextColour;
         this.corruptedInstanceTextColour = corruptedInstanceTextColour;
+        this.defaultFont = defaultFont;
+        this.tabsFont = tabsFont;
     }
 
     public Color getBaseColour() {
@@ -79,6 +84,14 @@ public class Theme {
 
     public Color getCorruptedInstanceTextColour() {
         return this.corruptedInstanceTextColour;
+    }
+
+    public Font getDefaultFont() {
+        return this.defaultFont;
+    }
+
+    public Font getTabsFont() {
+        return this.tabsFont;
     }
 
 }

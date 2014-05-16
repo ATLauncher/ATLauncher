@@ -100,7 +100,7 @@ public class LauncherFrame extends JFrame {
         accountPanel = new AccountPanel();
         settingsPanel = new SettingsPanel();
 
-        tabbedPane.setFont(Utils.makeFont("Oswald-Regular").deriveFont((float) 34));
+        tabbedPane.setFont(App.THEME.getTabsFont());
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.news"), newsPanel);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsPanel);
         // tabbedPane.addTab(App.settings.getLocalizedString("tabs.addons"), addonsPanel);

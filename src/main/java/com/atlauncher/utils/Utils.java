@@ -10,6 +10,7 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.BufferedInputStream;
@@ -205,6 +206,18 @@ public class Utils {
      */
     public static Font makeFont(String name) {
         Font font = null;
+        boolean found = false; // If the user has the font
+        GraphicsEnvironment g = null;
+        g = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        String[] fonts = g.getAvailableFontFamilyNames();
+        for (int i = 0; i < fonts.length; i++) {
+            if (fonts[i].equals(name)) {
+                found = true;
+            }
+        }
+        if (found) {
+            return new Font(name, Font.PLAIN, 0);
+        }
         try {
             font = Font.createFont(Font.TRUETYPE_FONT,
                     System.class.getResource("/assets/font/" + name + ".ttf").openStream());
@@ -1480,5 +1493,13 @@ public class Utils {
             }
         }
         return sb.toString();
+    }
+
+    public static Float getBaseFontSize() {
+        if (isMac()) {
+            return (float) 11;
+        } else {
+            return (float) 12;
+        }
     }
 }

@@ -6,7 +6,6 @@
  */
 package com.atlauncher;
 
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
@@ -20,6 +19,7 @@ import java.util.concurrent.Executors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
 import org.apache.logging.log4j.LogManager;
@@ -207,6 +207,12 @@ public class App {
         UIManager.put("nimbusSelectionBackground", App.THEME.getSelectionColour());
         UIManager
                 .put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
+
+        ToolTipManager.sharedInstance().setDismissDelay(15000);
+        ToolTipManager.sharedInstance().setInitialDelay(50);
+
+        UIManager.getLookAndFeelDefaults()
+                .put("defaultFont", App.THEME.getDefaultFont());
     }
 
     private static void trySystemTrayIntegration() throws Exception {
