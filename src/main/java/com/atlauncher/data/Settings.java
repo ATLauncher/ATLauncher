@@ -67,7 +67,7 @@ import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.gui.BottomBar;
+import com.atlauncher.gui.LauncherBottomBar;
 import com.atlauncher.gui.InstancesPanel;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.NewsPanel;
@@ -144,7 +144,7 @@ public class Settings {
     private InstancesPanel instancesPanel; // The instances panel
     private NewsPanel newsPanel; // The news panel
     private PacksPanel packsPanel; // The packs panel
-    private BottomBar bottomBar; // The bottom bar
+    private LauncherBottomBar bottomBar; // The bottom bar
     private boolean hadPasswordDialog = false; // If the user has seen the password dialog
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private boolean offlineMode = false; // If offline mode is enabled
@@ -1864,7 +1864,7 @@ public class Settings {
      * @param bottomBar
      *            The Bottom Bar
      */
-    public void setBottomBar(BottomBar bottomBar) {
+    public void setBottomBar(LauncherBottomBar bottomBar) {
         this.bottomBar = bottomBar;
     }
 

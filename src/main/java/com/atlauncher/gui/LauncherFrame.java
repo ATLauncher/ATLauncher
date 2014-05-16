@@ -31,7 +31,7 @@ public class LauncherFrame extends JFrame {
     private AccountPanel accountPanel;
     private SettingsPanel settingsPanel;
 
-    private BottomBar bottomBar;
+    private LauncherBottomBar bottomBar;
 
     public LauncherFrame(boolean show) {
         App.settings.log("Launcher opening");
@@ -113,7 +113,7 @@ public class LauncherFrame extends JFrame {
      * Setup the bottom bar of the Launcher
      */
     private void setupBottomBar() {
-        bottomBar = new BottomBar();
+        bottomBar = new LauncherBottomBar();
         App.settings.setBottomBar(bottomBar);
     }
 }
