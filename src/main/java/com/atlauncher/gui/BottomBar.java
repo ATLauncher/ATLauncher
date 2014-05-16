@@ -7,7 +7,6 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -25,7 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolTip;
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
@@ -150,7 +148,7 @@ public class BottomBar extends JPanel {
         githubIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 App.settings.log("Opening Up ATLauncher GitHub Page");
-                Utils.openBrowser("https://github.com/RyanTheAllmighty/ATLauncher");
+                Utils.openBrowser("https://github.com/ATLauncher/ATLauncher");
             }
         });
         redditIcon.addActionListener(new ActionListener() {

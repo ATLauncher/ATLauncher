@@ -138,7 +138,7 @@ public class ConsoleBottomBar extends JPanel {
         githubIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 App.settings.log("Opening Up ATLauncher GitHub Page");
-                Utils.openBrowser("https://github.com/RyanTheAllmighty/ATLauncher");
+                Utils.openBrowser("https://github.com/ATLauncher/ATLauncher");
             }
         });
         redditIcon.addActionListener(new ActionListener() {

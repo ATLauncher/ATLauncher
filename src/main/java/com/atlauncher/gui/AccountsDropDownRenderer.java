@@ -16,7 +16,8 @@ import javax.swing.ListCellRenderer;
 
 import com.atlauncher.data.Account;
 
-public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer {
+@SuppressWarnings("serial")
+public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<Account> {
 
     public AccountsDropDownRenderer() {
         setOpaque(true);
@@ -30,11 +31,10 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
      * This method finds the image and text corresponding to the selected value and returns the
      * label, set up to display the text and image.
      */
-    public Component getListCellRendererComponent(JList list, Object value, int index,
+    @SuppressWarnings("rawtypes")
+    public Component getListCellRendererComponent(JList list, Account account, int index,
             boolean isSelected, boolean cellHasFocus) {
-        Account account = (Account) value;
-
-        if (value == null) {
+        if (account == null) {
             return this;
         }
 
