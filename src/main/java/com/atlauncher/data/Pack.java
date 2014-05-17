@@ -44,7 +44,6 @@ public class Pack {
     private boolean createServer;
     private boolean leaderboards;
     private boolean logging;
-    private boolean crashReports;
     private String description;
     private String supportURL;
     private String websiteURL;
@@ -116,10 +115,6 @@ public class Pack {
 
     public boolean canCreateServer() {
         return this.createServer;
-    }
-
-    public boolean crashReportsEnabled() {
-        return this.crashReports;
     }
 
     public boolean isLoggingEnabled() {
@@ -840,7 +835,8 @@ public class Pack {
                                         || element.getAttribute("target").contains(".\\")
                                         || element.getAttribute("target").contains("~/")
                                         || element.getAttribute("target").contains("~\\")
-                                        || !file.getCanonicalPath().contains(instance.getRootDirectory().getCanonicalPath())) {
+                                        || !file.getCanonicalPath().contains(
+                                                instance.getRootDirectory().getCanonicalPath())) {
                                     App.settings.log(
                                             "Cannot delete the file/folder "
                                                     + file.getAbsolutePath()
