@@ -830,7 +830,7 @@ public class Settings {
             if (this.enableProxy) {
                 this.proxyHost = properties.getProperty("proxyhost", null);
 
-                this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", ""));
+                this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", "0"));
                 if (this.proxyPort <= 0 || this.proxyPort > 65535) {
                     this.enableProxy = false;
                 }
@@ -840,6 +840,10 @@ public class Settings {
                         && this.proxyType != "DIRECT") {
                     this.enableProxy = false;
                 }
+            } else {
+                this.proxyHost = "";
+                this.proxyPort = 0;
+                this.proxyType = "";
             }
 
             this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
@@ -979,7 +983,7 @@ public class Settings {
             if (this.enableProxy) {
                 this.proxyHost = properties.getProperty("proxyhost", null);
 
-                this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", ""));
+                this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", "0"));
                 if (this.proxyPort <= 0 || this.proxyPort > 65535) {
                     // Proxy port is invalid so disable proxy
                     log("Tried to set proxy port to " + this.proxyPort
@@ -997,7 +1001,7 @@ public class Settings {
                             LogMessageType.warning, false);
                     this.enableProxy = false;
                 }
-            }else{
+            } else {
                 this.proxyHost = "";
                 this.proxyPort = 0;
                 this.proxyType = "";

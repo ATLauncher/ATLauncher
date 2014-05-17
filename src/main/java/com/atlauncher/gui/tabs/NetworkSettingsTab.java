@@ -193,7 +193,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyPort = new JTextField(4);
-        proxyPort.setText(App.settings.getProxyPort() + "");
+        proxyPort.setText((App.settings.getProxyPort() == 0 ? "" : App.settings.getProxyPort())
+                + "");
         if (!enableProxy.isSelected()) {
             proxyPort.setEnabled(false);
         }
@@ -248,7 +249,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         if (!enableProxy.isSelected()) {
             return true;
         }
-        if (Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) < 1
+        if (proxyPort.getText().isEmpty()
+                || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) < 1
                 || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) > 65535) {
             JOptionPane.showMessageDialog(App.settings.getParent(),
                     App.settings.getLocalizedString("settings.proxyportinvalid"),
