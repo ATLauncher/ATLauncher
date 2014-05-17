@@ -24,6 +24,7 @@ public class SettingsTab extends JPanel {
 
     private GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
     private JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
+    private NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
     private LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
 
     private JPanel bottomPanel;
@@ -39,6 +40,8 @@ public class SettingsTab extends JPanel {
         tabbedPane.addTab(App.settings.getLocalizedString("settings.generaltab"),
                 generalSettingsTab);
         tabbedPane.addTab(App.settings.getLocalizedString("settings.javatab"), javaSettingsTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("settings.networktab"),
+                networkSettingsTab);
         tabbedPane.addTab(App.settings.getLocalizedString("settings.loggingtab"),
                 loggingSettingsTab);
         tabbedPane.setBackground(App.THEME.getTabBackgroundColour());
@@ -57,6 +60,7 @@ public class SettingsTab extends JPanel {
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                     generalSettingsTab.save();
                     javaSettingsTab.save();
+                    networkSettingsTab.save();
                     loggingSettingsTab.save();
                     App.settings.saveProperties();
                     App.settings.log("Settings Saved!");

@@ -6,7 +6,6 @@
  */
 package com.atlauncher.data;
 
-import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
@@ -26,6 +25,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -108,8 +110,14 @@ public class Settings {
     private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
     private boolean enableOpenEyeReporting; // If to enable OpenEye reporting
+    private boolean enableProxy = false; // If proxy is in use
+    private String proxyHost; // The proxies host
+    private int proxyPort; // The proxies port
+    private String proxyType; // The type of proxy (socks, http)
+    private int connectionTimeout; // Timeout in seconds when connecting to things
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
+    private Proxy proxy = null; // The proxy object if any
 
     // General backup settings
     private boolean autoBackup; // Whether backups are created on instance close
@@ -816,6 +824,29 @@ public class Settings {
                     this.javaPath = Utils.getJavaHome();
                 }
             }
+
+            this.enableProxy = Boolean.parseBoolean(properties.getProperty("enableproxy", "false"));
+
+            if (this.enableProxy) {
+                this.proxyHost = properties.getProperty("proxyhost", null);
+
+                this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", ""));
+                if (this.proxyPort <= 0 || this.proxyPort > 65535) {
+                    this.enableProxy = false;
+                }
+
+                this.proxyType = properties.getProperty("proxytype", "");
+                if (this.proxyType != "SOCKS" && this.proxyType != "HTTP"
+                        && this.proxyType != "DIRECT") {
+                    this.enableProxy = false;
+                }
+            }
+
+            this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
+                    "2"));
+            if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
+                this.connectionTimeout = 2;
+            }
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         } catch (IOException e) {
@@ -939,8 +970,45 @@ public class Settings {
                     "enableleaderboards", "false"));
 
             this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
-            
-            this.enableOpenEyeReporting = Boolean.parseBoolean(properties.getProperty("enableopeneyereporting", "true"));
+
+            this.enableOpenEyeReporting = Boolean.parseBoolean(properties.getProperty(
+                    "enableopeneyereporting", "true"));
+
+            this.enableProxy = Boolean.parseBoolean(properties.getProperty("enableproxy", "false"));
+
+            if (this.enableProxy) {
+                this.proxyHost = properties.getProperty("proxyhost", null);
+
+                this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", ""));
+                if (this.proxyPort <= 0 || this.proxyPort > 65535) {
+                    // Proxy port is invalid so disable proxy
+                    log("Tried to set proxy port to " + this.proxyPort
+                            + " which is not a valid port! Proxy support disabled!",
+                            LogMessageType.warning, false);
+                    this.enableProxy = false;
+                }
+
+                this.proxyType = properties.getProperty("proxytype", "");
+                if (this.proxyType != "SOCKS" && this.proxyType != "HTTP"
+                        && this.proxyType != "DIRECT") {
+                    // Proxy type is invalid so disable proxy
+                    log("Tried to set proxy type to " + this.proxyType
+                            + " which is not valid! Proxy support disabled!",
+                            LogMessageType.warning, false);
+                    this.enableProxy = false;
+                }
+            }
+
+            this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
+                    "2"));
+            if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
+                // Connection timeout should be between 1 and 30
+                log("Tried to set connection timeout to "
+                        + this.connectionTimeout
+                        + " which is not valid! Must be between 1 and 30. Setting back to default of 2!",
+                        LogMessageType.warning, false);
+                this.connectionTimeout = 2;
+            }
 
             String lastAccountTemp = properties.getProperty("lastaccount", "");
             if (!lastAccountTemp.isEmpty()) {
@@ -995,7 +1063,13 @@ public class Settings {
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
-            properties.setProperty("enableopeneyereporting", (this.enableOpenEyeReporting) ? "true" : "false");
+            properties.setProperty("enableopeneyereporting", (this.enableOpenEyeReporting) ? "true"
+                    : "false");
+            properties.setProperty("enableproxy", (this.enableProxy) ? "true" : "false");
+            properties.setProperty("proxyhost", this.proxyHost);
+            properties.setProperty("proxyport", this.proxyPort + "");
+            properties.setProperty("proxytype", this.proxyType);
+            properties.setProperty("connectiontimeout", this.connectionTimeout + "");
             if (account != null) {
                 properties.setProperty("lastaccount", account.getUsername());
             } else {
@@ -1039,41 +1113,7 @@ public class Settings {
         reloadPacksPanel();
         reloadInstancesPanel();
         reloadAccounts();
-        try {
-            properties.setProperty("firsttimerun", "false");
-            properties.setProperty("language", this.language.getName());
-            properties.setProperty("server", this.server.getName());
-            properties.setProperty("ram", this.ram + "");
-            properties.setProperty("windowwidth", this.windowWidth + "");
-            properties.setProperty("windowheight", this.windowHeight + "");
-            properties.setProperty("usingcustomjavapath", (this.usingCustomJavaPath) ? "true"
-                    : "false");
-            properties.setProperty("javapath", this.javaPath);
-            properties.setProperty("javaparameters", this.javaParamaters);
-            properties
-                    .setProperty("maximiseminecraft", (this.maximiseMinecraft) ? "true" : "false");
-            properties.setProperty("advancedbackup", (this.advancedBackup) ? "true" : "false");
-            properties.setProperty("sortpacksalphabetically",
-                    (this.sortPacksAlphabetically) ? "true" : "false");
-            properties.setProperty("keeplauncheropen", (this.keepLauncherOpen) ? "true" : "false");
-            properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
-            properties.setProperty("enableTrayIcon", (this.enableTrayIcon) ? "true" : "false");
-            properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
-                    : "false");
-            properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
-            properties.setProperty("enableopeneyereporting", (this.enableOpenEyeReporting) ? "true" : "false");
-            if (account == null) {
-                properties.setProperty("lastaccount", "");
-            } else {
-                properties.setProperty("lastaccount", account.getUsername());
-            }
-            properties.setProperty("addedpacks", this.addedPacks);
-            this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
-        } catch (FileNotFoundException e) {
-            logStackTrace(e);
-        } catch (IOException e) {
-            logStackTrace(e);
-        }
+        saveProperties();
     }
 
     /**
@@ -2496,11 +2536,11 @@ public class Settings {
     public void setEnableLeaderboards(boolean enableLeaderboards) {
         this.enableLeaderboards = enableLeaderboards;
     }
-    
+
     public boolean enableLogs() {
         return this.enableLogs;
     }
-    
+
     public void setEnableLogs(boolean enableLogs) {
         this.enableLogs = enableLogs;
     }
@@ -2511,6 +2551,71 @@ public class Settings {
 
     public void setEnableOpenEyeReporting(boolean enableOpenEyeReporting) {
         this.enableOpenEyeReporting = enableOpenEyeReporting;
+    }
+
+    public boolean getEnableProxy() {
+        return this.enableProxy;
+    }
+
+    public void setEnableProxy(boolean enableProxy) {
+        this.enableProxy = enableProxy;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public String getProxyHost() {
+        return this.proxyHost;
+    }
+
+    public int getProxyPort() {
+        return this.proxyPort;
+    }
+
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public void setProxyType(String proxyType) {
+        this.proxyType = proxyType;
+    }
+
+    public String getProxyType() {
+        return this.proxyType;
+    }
+
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public int getConnectionTimeout() {
+        return this.connectionTimeout * 1000;
+    }
+
+    public Proxy getProxy() {
+        if (!this.enableProxy) {
+            return null;
+        }
+        if (this.proxy == null) {
+            Type type;
+            if (this.proxyType == "HTTP") {
+                type = Proxy.Type.HTTP;
+            } else if (this.proxyType == "SOCKS") {
+                type = Proxy.Type.SOCKS;
+            } else if (this.proxyType == "DIRECT") {
+                type = Proxy.Type.DIRECT;
+            } else {
+                // Oh noes, problem!
+                log("Tried to set proxy type to " + this.proxyType
+                        + " which is not valid! Proxy support disabled!", LogMessageType.warning,
+                        false);
+                this.enableProxy = false;
+                return null;
+            }
+            this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
+        }
+        return this.proxy;
     }
 
     public String getVersion() {

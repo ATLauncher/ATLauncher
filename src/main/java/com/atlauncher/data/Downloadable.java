@@ -188,10 +188,16 @@ public class Downloadable {
         }
         if (this.connection == null) {
             try {
-                this.connection = (HttpURLConnection) new URL(this.url).openConnection();
+                if (App.settings.getEnableProxy()) {
+                    this.connection = (HttpURLConnection) new URL(this.url)
+                            .openConnection(App.settings.getProxy());
+                } else {
+                    this.connection = (HttpURLConnection) new URL(this.url).openConnection();
+                }
                 this.connection.setUseCaches(false);
                 this.connection.setDefaultUseCaches(false);
-                this.connection.setConnectTimeout(5000);
+                this.connection.setConnectTimeout(App.settings.getConnectionTimeout());
+                this.connection.setReadTimeout(App.settings.getConnectionTimeout());
                 this.connection.setRequestProperty("Accept-Encoding", "gzip");
                 this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
                 this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");

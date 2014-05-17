@@ -25,9 +25,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabel languageLabel;
     private JComboBox<Language> language;
 
-    private JLabel downloadServerLabel;
-    private JComboBox<Server> server;
-
     private JLabel advancedBackupLabel;
     private JCheckBox advancedBackup;
 
@@ -70,37 +67,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         }
         language.setSelectedItem(App.settings.getLanguage());
         add(language, gbc);
-
-        // Download Server
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        downloadServerLabel = new JLabel(App.settings.getLocalizedString("settings.downloadserver")
-                + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        downloadServerLabel.setIcon(helpIcon);
-        downloadServerLabel.setToolTipText(App.settings
-                .getLocalizedString("settings.downloadserverhelp"));
-        add(downloadServerLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        server = new JComboBox<Server>();
-        for (Server serverr : App.settings.getServers()) {
-            if (serverr.isUserSelectable()) {
-                server.addItem(serverr);
-            }
-        }
-        server.setSelectedItem(App.settings.getOriginalServer());
-        add(server, gbc);
 
         // Advanced Backup
 
@@ -257,7 +223,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
     public void save() {
         App.settings.setLanguage((Language) language.getSelectedItem());
-        App.settings.setServer((Server) server.getSelectedItem());
         App.settings.setAdvancedBackups(advancedBackup.isSelected());
         App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
         App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
