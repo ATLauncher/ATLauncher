@@ -1219,15 +1219,6 @@ public class Instance implements Cloneable {
                                                                    // we've closed
                         }
                         if (exitValue != 0) {
-                            if (getRealPack().isLoggingEnabled() && App.settings.enableLogs()
-                                    && getRealPack().crashReportsEnabled()) {
-                                App.TASKPOOL.submit(new Runnable() {
-                                    public void run() {
-                                        uploadCrashLog(); // Auto upload crash log if enabled
-                                    }
-                                });
-                            }
-
                             // Submit any pending crash reports from Open Eye if need to since we
                             // exited abnormally
                             if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
