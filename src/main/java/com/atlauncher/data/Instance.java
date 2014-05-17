@@ -1310,20 +1310,25 @@ public class Instance implements Cloneable {
                     // OpenEye returned a response to the report, display that to user if needed.
                     App.LOGGER
                             .info("OpenEye: Pending crash report sent! URL: " + response.getURL());
-                    String[] options = { App.settings.getLocalizedString("common.opencrashreport"),
-                            App.settings.getLocalizedString("common.ok") };
-                    int ret = JOptionPane.showOptionDialog(
-                            App.settings.getParent(),
-                            "<html><center>"
-                                    + App.settings.getLocalizedString("instance.openeyereport1",
-                                            "<br/><br/>") + response.getNoteDisplay()
-                                    + App.settings.getLocalizedString("instance.openeyereport2")
-                                    + "</center></html>", App.settings
-                                    .getLocalizedString("instance.aboutyourcrash"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
-                            options, options[1]);
-                    if (ret == 0) {
-                        Utils.openBrowser(response.getURL());
+                    if (response.hasNote()) {
+                        String[] options = {
+                                App.settings.getLocalizedString("common.opencrashreport"),
+                                App.settings.getLocalizedString("common.ok") };
+                        int ret = JOptionPane.showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString(
+                                                "instance.openeyereport1", "<br/><br/>")
+                                        + response.getNoteDisplay()
+                                        + App.settings
+                                                .getLocalizedString("instance.openeyereport2")
+                                        + "</center></html>", App.settings
+                                        .getLocalizedString("instance.aboutyourcrash"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                                options, options[1]);
+                        if (ret == 0) {
+                            Utils.openBrowser(response.getURL());
+                        }
                     }
                 }
                 Utils.delete(report); // Delete the pending report since we've sent it
