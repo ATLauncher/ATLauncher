@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JToolTip;
 import javax.swing.border.Border;
@@ -227,6 +228,34 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
             proxyType.setEnabled(false);
         }
         add(proxyType, gbc);
+    }
+
+    public boolean isValidConnectionTimeout() {
+        if (!enableProxy.isSelected()) {
+            return true;
+        }
+        if (Integer.parseInt(connectionTimeout.getText().replaceAll("[^0-9]", "")) < 1
+                || Integer.parseInt(connectionTimeout.getText().replaceAll("[^0-9]", "")) > 30) {
+            JOptionPane.showMessageDialog(App.settings.getParent(),
+                    App.settings.getLocalizedString("settings.connectiontimeoutinvalid"),
+                    App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isValidProxyPort() {
+        if (!enableProxy.isSelected()) {
+            return true;
+        }
+        if (Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) < 1
+                || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) > 65535) {
+            JOptionPane.showMessageDialog(App.settings.getParent(),
+                    App.settings.getLocalizedString("settings.proxyportinvalid"),
+                    App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
     public void save() {

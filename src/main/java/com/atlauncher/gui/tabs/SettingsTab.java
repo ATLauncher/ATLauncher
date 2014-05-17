@@ -55,7 +55,9 @@ public class SettingsTab extends JPanel {
         add(bottomPanel, BorderLayout.SOUTH);
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()) {
+                if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
+                        && networkSettingsTab.isValidConnectionTimeout()
+                        && networkSettingsTab.isValidProxyPort()) {
                     boolean restartLauncher = generalSettingsTab.needToRestartLauncher();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                     generalSettingsTab.save();

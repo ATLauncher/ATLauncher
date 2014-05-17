@@ -997,6 +997,10 @@ public class Settings {
                             LogMessageType.warning, false);
                     this.enableProxy = false;
                 }
+            }else{
+                this.proxyHost = "";
+                this.proxyPort = 0;
+                this.proxyType = "";
             }
 
             this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
