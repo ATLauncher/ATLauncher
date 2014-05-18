@@ -118,6 +118,7 @@ public class Settings {
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private Proxy proxy = null; // The proxy object if any
+    private String theme; // The theme to use
 
     // General backup settings
     private boolean autoBackup; // Whether backups are created on instance close
@@ -138,15 +139,15 @@ public class Settings {
     private ArrayList<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
 
     // Directories and Files for the Launcher
-    private File baseDir, backupsDir, configsDir, jsonDir, versionsDir, imagesDir, skinsDir,
-            jarsDir, commonConfigsDir, resourcesDir, librariesDir, languagesDir, downloadsDir,
-            usersDownloadsFolder, instancesDir, serversDir, tempDir, instancesDataFile,
-            userDataFile, propertiesFile;
+    private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir,
+            skinsDir, jarsDir, commonConfigsDir, resourcesDir, librariesDir, languagesDir,
+            downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir,
+            instancesDataFile, userDataFile, propertiesFile;
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
-    private LauncherConsole console = new LauncherConsole(); // Load the Launcher's Console
+    private LauncherConsole console; // The Launcher's Console
     private ArrayList<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private ArrayList<Server> triedServers = new ArrayList<Server>(); // Servers tried to connect to
     private InstancesTab instancesPanel; // The instances panel
@@ -181,6 +182,10 @@ public class Settings {
         loadStartingProperties(); // Get users Console preference and Java Path
     }
 
+    public void loadConsole() {
+        console = new LauncherConsole();
+    }
+
     public void setupFiles() {
         if (Utils.isLinux()) {
             try {
@@ -194,6 +199,7 @@ public class Settings {
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
         backupsDir = new File(baseDir, "Backups");
         configsDir = new File(baseDir, "Configs");
+        themesDir = new File(configsDir, "Themes");
         jsonDir = new File(configsDir, "JSON");
         versionsDir = new File(configsDir, "Versions");
         imagesDir = new File(configsDir, "Images");
@@ -555,9 +561,9 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, jsonDir, commonConfigsDir, imagesDir, skinsDir,
-                jarsDir, resourcesDir, librariesDir, languagesDir, downloadsDir, instancesDir,
-                serversDir, tempDir };
+        File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir,
+                skinsDir, jarsDir, resourcesDir, librariesDir, languagesDir, downloadsDir,
+                instancesDir, serversDir, tempDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -596,6 +602,15 @@ public class Settings {
      */
     public File getConfigsDir() {
         return this.configsDir;
+    }
+
+    /**
+     * Returns the themes directory
+     * 
+     * @return File object for the themes directory
+     */
+    public File getThemesDir() {
+        return this.themesDir;
     }
 
     /**
@@ -808,6 +823,7 @@ public class Settings {
         }
         try {
             this.properties.load(new FileInputStream(propertiesFile));
+            this.theme = properties.getProperty("theme", "ATLauncher");
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon",
@@ -1018,6 +1034,8 @@ public class Settings {
                 this.connectionTimeout = 2;
             }
 
+            this.theme = properties.getProperty("theme", "ATLauncher");
+
             String lastAccountTemp = properties.getProperty("lastaccount", "");
             if (!lastAccountTemp.isEmpty()) {
                 if (isAccountByName(lastAccountTemp)) {
@@ -1078,6 +1096,7 @@ public class Settings {
             properties.setProperty("proxyport", this.proxyPort + "");
             properties.setProperty("proxytype", this.proxyType);
             properties.setProperty("connectiontimeout", this.connectionTimeout + "");
+            properties.setProperty("theme", this.theme);
             if (account != null) {
                 properties.setProperty("lastaccount", account.getUsername());
             } else {
@@ -2599,6 +2618,23 @@ public class Settings {
 
     public int getConnectionTimeout() {
         return this.connectionTimeout * 1000;
+    }
+
+    public String getTheme() {
+        return this.theme;
+    }
+
+    public File getThemeFile() {
+        File theme = new File(this.themesDir, this.theme + ".json");
+        if (theme.exists()) {
+            return theme;
+        } else {
+            return null;
+        }
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     public Proxy getProxy() {

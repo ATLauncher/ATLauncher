@@ -6,6 +6,7 @@
  */
 package com.atlauncher.utils;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -1501,5 +1502,18 @@ public class Utils {
         } else {
             return (float) 12;
         }
+    }
+
+    public static Color getColourFromTheme(int[] colour) {
+        if (colour[0] < 0 || colour[0] > 255) {
+            colour[0] = 0; // Invalid colour
+        }
+        if (colour[1] < 0 || colour[1] > 255) {
+            colour[1] = 0; // Invalid colour
+        }
+        if (colour[2] < 0 || colour[2] > 255) {
+            colour[2] = 0; // Invalid colour
+        }
+        return new Color(colour[0], colour[1], colour[2]);
     }
 }

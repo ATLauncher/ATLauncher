@@ -4,12 +4,17 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package com.atlauncher.gui;
+package com.atlauncher.gui.theme;
 
 import java.awt.Color;
 import java.awt.Font;
 
+import com.atlauncher.utils.Utils;
+
 public class Theme {
+
+    private String themeName;
+    private String authorsName;
 
     private Color baseColour;
     private Color tabBackgroundColour;
@@ -58,34 +63,45 @@ public class Theme {
      */
     private boolean showTabsOnRight;
 
-    public Theme(Color baseColour, Color tabBackgroundColour, Color selectionColour,
-            Color dropDownSelectionColour, Color buttonColour, Color textColour,
-            Color hoverBorderColour, Color modSelectionBackgroundColour,
-            Color modInfoQuestionMarkColour, Color normalInstanceTextColour,
-            Color corruptedInstanceTextColour, Color consoleTextColour, Color logInfoTextColour,
-            Color logWarnTextColour, Color logErrorTextColour, Font defaultFont, Font consoleFont,
-            Font tabFont, Font settingsTabFont, Font buttonFont, boolean showTabsOnRight) {
-        this.baseColour = baseColour;
-        this.tabBackgroundColour = tabBackgroundColour;
-        this.selectionColour = selectionColour;
-        this.dropDownSelectionColour = dropDownSelectionColour;
-        this.buttonColour = buttonColour;
-        this.textColour = textColour;
-        this.hoverBorderColour = hoverBorderColour;
-        this.modSelectionBackgroundColour = modSelectionBackgroundColour;
-        this.modInfoQuestionMarkColour = modInfoQuestionMarkColour;
-        this.normalInstanceTextColour = normalInstanceTextColour;
-        this.corruptedInstanceTextColour = corruptedInstanceTextColour;
-        this.consoleTextColour = consoleTextColour;
-        this.logInfoTextColour = logInfoTextColour;
-        this.logWarnTextColour = logWarnTextColour;
-        this.logErrorTextColour = logErrorTextColour;
-        this.defaultFont = defaultFont;
-        this.consoleFont = consoleFont;
-        this.tabFont = tabFont;
-        this.settingsTabFont = settingsTabFont;
-        this.buttonFont = buttonFont;
+    public Theme(String themeName, String authorsName, int[] baseColour, int[] tabBackgroundColour,
+            int[] selectionColour, int[] dropDownSelectionColour, int[] buttonColour,
+            int[] textColour, int[] hoverBorderColour, int[] modSelectionBackgroundColour,
+            int[] modInfoQuestionMarkColour, int[] normalInstanceTextColour,
+            int[] corruptedInstanceTextColour, int[] consoleTextColour, int[] logInfoTextColour,
+            int[] logWarnTextColour, int[] logErrorTextColour, String defaultFont,
+            String consoleFont, String tabFont, String settingsTabFont, String buttonFont,
+            boolean showTabsOnRight) {
+        this.themeName = themeName;
+        this.authorsName = authorsName;
+        this.baseColour = Utils.getColourFromTheme(baseColour);
+        this.tabBackgroundColour = Utils.getColourFromTheme(tabBackgroundColour);
+        this.selectionColour = Utils.getColourFromTheme(selectionColour);
+        this.dropDownSelectionColour = Utils.getColourFromTheme(dropDownSelectionColour);
+        this.buttonColour = Utils.getColourFromTheme(buttonColour);
+        this.textColour = Utils.getColourFromTheme(textColour);
+        this.hoverBorderColour = Utils.getColourFromTheme(hoverBorderColour);
+        this.modSelectionBackgroundColour = Utils.getColourFromTheme(modSelectionBackgroundColour);
+        this.modInfoQuestionMarkColour = Utils.getColourFromTheme(modInfoQuestionMarkColour);
+        this.normalInstanceTextColour = Utils.getColourFromTheme(normalInstanceTextColour);
+        this.corruptedInstanceTextColour = Utils.getColourFromTheme(corruptedInstanceTextColour);
+        this.consoleTextColour = Utils.getColourFromTheme(consoleTextColour);
+        this.logInfoTextColour = Utils.getColourFromTheme(logInfoTextColour);
+        this.logWarnTextColour = Utils.getColourFromTheme(logWarnTextColour);
+        this.logErrorTextColour = Utils.getColourFromTheme(logErrorTextColour);
+        this.defaultFont = Utils.makeFont(defaultFont).deriveFont(Utils.getBaseFontSize());
+        this.consoleFont = Utils.makeFont(consoleFont).deriveFont(Utils.getBaseFontSize());
+        this.tabFont = Utils.makeFont(tabFont).deriveFont((float) 34);
+        this.settingsTabFont = Utils.makeFont(settingsTabFont).deriveFont((float) 17);
+        this.buttonFont = Utils.makeFont(consoleFont).deriveFont(Utils.getBaseFontSize());
         this.showTabsOnRight = showTabsOnRight;
+    }
+
+    public String getThemeName() {
+        return this.themeName;
+    }
+
+    public String getAuthorsName() {
+        return this.authorsName;
     }
 
     public Color getBaseColour() {

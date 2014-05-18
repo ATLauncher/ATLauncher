@@ -12,6 +12,8 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Locale;
@@ -32,13 +34,16 @@ import org.apache.logging.log4j.Logger;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
-import com.atlauncher.gui.DefaultTheme;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SetupDialog;
 import com.atlauncher.gui.SplashScreen;
-import com.atlauncher.gui.Theme;
 import com.atlauncher.gui.TrayMenu;
+import com.atlauncher.gui.theme.DefaultTheme;
+import com.atlauncher.gui.theme.LoadableTheme;
+import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -47,7 +52,7 @@ public class App {
     // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
 
-    public static Theme THEME = new DefaultTheme();
+    public static Theme THEME = new DefaultTheme().createTheme();
     private static SystemTray TRAY = null;
     public static PopupMenu TRAY_MENU = new TrayMenu();
     public static final Logger LOGGER = LogManager.getLogger();
@@ -55,16 +60,6 @@ public class App {
     public static boolean wasUpdated = false;
 
     public static Settings settings;
-
-    static {
-        // Setting the UI LAF here helps with loading the UI should improve performance
-        try {
-            setLAF();
-            modifyLAF();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void main(String[] args) {
@@ -110,8 +105,33 @@ public class App {
             }
         }
 
-        settings = new Settings(); // Setup the Settings and wait for it to
-                                   // finish
+        settings = new Settings(); // Setup the Settings and wait for it to finish
+
+        File themeFile = settings.getThemeFile();
+        if (themeFile != null) {
+            try {
+                THEME = Settings.gson.fromJson(new FileReader(themeFile), LoadableTheme.class)
+                        .createTheme();
+            } catch (JsonSyntaxException e) {
+                e.printStackTrace();
+                THEME = new DefaultTheme().createTheme();
+            } catch (JsonIOException e) {
+                e.printStackTrace();
+                THEME = new DefaultTheme().createTheme();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                THEME = new DefaultTheme().createTheme();
+            }
+        }
+
+        try {
+            setLAF();
+            modifyLAF();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
+        settings.loadConsole(); // Load console AFTER L&F
 
         if (settings.enableTrayIcon()) {
             try {
@@ -141,6 +161,7 @@ public class App {
         settings.log("Java Path: " + settings.getJavaPath());
         settings.log("64 Bit Java: " + Utils.is64Bit());
         settings.log("Launcher Directory: " + settings.getBaseDir());
+        settings.log("Using Theme: " + THEME.getThemeName() + " by " + THEME.getAuthorsName());
 
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
