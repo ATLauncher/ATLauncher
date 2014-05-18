@@ -6,62 +6,6 @@
  */
 package com.atlauncher.data;
 
-import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.Proxy.Type;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import com.atlauncher.App;
 import com.atlauncher.Update;
 import com.atlauncher.data.mojang.DateTypeAdapter;
@@ -82,6 +26,30 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.Dialog.ModalityType;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.io.*;
+import java.net.*;
+import java.net.Proxy.Type;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user
@@ -187,15 +155,7 @@ public class Settings {
     }
 
     public void setupFiles() {
-        if (Utils.isLinux()) {
-            try {
-                baseDir = new File(getClass().getClassLoader().getResource("").toURI());
-            } catch (URISyntaxException e) {
-                baseDir = new File(System.getProperty("user.dir"), "ATLauncher");
-            }
-        } else {
-            baseDir = new File(System.getProperty("user.dir"));
-        }
+        baseDir = Utils.getCoreGracefully();
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
         backupsDir = new File(baseDir, "Backups");
         configsDir = new File(baseDir, "Configs");
@@ -236,7 +196,6 @@ public class Settings {
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
-        checkForXML(); // Check for old XML files
         for (Pack pack : this.packs) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
@@ -327,14 +286,6 @@ public class Settings {
             dialog.addThread(thread);
             dialog.start();
 
-        }
-    }
-
-    public void checkForXML() {
-        for (File file : this.configsDir.listFiles()) {
-            if (file.isFile() && file.getName().endsWith(".xml")) {
-                Utils.delete(file);
-            }
         }
     }
 

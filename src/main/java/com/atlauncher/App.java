@@ -6,31 +6,6 @@
  */
 package com.atlauncher;
 
-import java.awt.Image;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.swing.BorderFactory;
-import javax.swing.InputMap;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.text.DefaultEditorKit;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
@@ -45,6 +20,20 @@ import com.atlauncher.log4j2.ConsoleAppender;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -62,7 +51,6 @@ public class App {
 
     public static Settings settings;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH); // Set English as the default locale
         System.setProperty("java.net.preferIPv4Stack", "true");
@@ -78,20 +66,10 @@ public class App {
             }
         }
 
-        File config;
-        if (Utils.isLinux()) {
-            try {
-                config = new File(App.class.getClassLoader().getResource("").toURI());
-            } catch (URISyntaxException e) {
-                config = new File(System.getProperty("user.dir"), "ATLauncher");
-            }
-        } else {
-            config = new File(System.getProperty("user.dir"));
-        }
-        config = new File(config, "Configs");
+        File config = new File(Utils.getCoreGracefully(), "Configs");
         if (!config.exists()) {
             int files = config.getParentFile().list().length;
-            if (files != 1) {
+            if (files > 2) {
                 String[] options = { "Yes It's Fine", "Whoops. I'll Change That Now" };
                 int ret = JOptionPane.showOptionDialog(null,
                         "<html><center>I've detected that you may not have installed this "

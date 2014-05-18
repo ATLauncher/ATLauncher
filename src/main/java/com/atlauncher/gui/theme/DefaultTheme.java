@@ -44,5 +44,4 @@ public class DefaultTheme {
                 LOG_WARN_COLOUR, LOG_ERROR_COLOUR, DEFAULT_FONT, CONSOLE_FONT, TAB_FONT,
                 SETTINGS_TAB_FONT, BUTTON_FONT, SHOW_TABS_ON_RIGHT);
     }
-
 }

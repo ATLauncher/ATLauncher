@@ -6,27 +6,23 @@
  */
 package com.atlauncher.log4j2;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.atlauncher.App;
+import com.atlauncher.utils.HTMLifier;
+import com.atlauncher.utils.Timestamper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.appender.AbstractOutputStreamAppender;
-import org.apache.logging.log4j.core.appender.OutputStreamManager;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 
-import com.atlauncher.App;
-import com.atlauncher.utils.HTMLifier;
-import com.atlauncher.utils.Timestamper;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-@Plugin(name = "ATLauncher-Console", category = "Core", elementType = "appender",
-        printObject = true)
-public final class ConsoleAppender extends AbstractOutputStreamAppender {
-
+@Plugin(name = "ATLauncher-Console", category = "Core", elementType = "appender", printObject = true)
+public final class ConsoleAppender extends AbstractAppender{
     private final Map<Level, String> LEVEL_COLOURS = new HashMap<Level, String>() {
         {
             this.put(Level.INFO, App.THEME.getLogInfoTextColourHTML());
@@ -35,9 +31,8 @@ public final class ConsoleAppender extends AbstractOutputStreamAppender {
         }
     };
 
-    protected ConsoleAppender(String name, Layout<? extends Serializable> layout, Filter filter,
-            boolean ignoreExceptions, boolean immediateFlush, OutputStreamManager manager) {
-        super(name, layout, filter, ignoreExceptions, immediateFlush, manager);
+    protected ConsoleAppender(String name, Layout<? extends Serializable> layout, Filter filter) {
+        super(name, filter, layout);
     }
 
     @Override
@@ -54,6 +49,6 @@ public final class ConsoleAppender extends AbstractOutputStreamAppender {
 
     @PluginFactory()
     public static ConsoleAppender createAppender() {
-        return new ConsoleAppender("ATLauncher-Console", null, null, false, false, null);
+        return new ConsoleAppender("ATLauncher-Console", null, null);
     }
 }
