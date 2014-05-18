@@ -76,7 +76,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        themeLabel = new JLabel(App.settings.getLocalizedString("settings.language") + ":") {
+        themeLabel = new JLabel(App.settings.getLocalizedString("settings.theme") + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
                 Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
@@ -85,7 +85,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             }
         };
         themeLabel.setIcon(helpIcon);
-        themeLabel.setToolTipText(App.settings.getLocalizedString("settings.languagehelp"));
+        themeLabel.setToolTipText(App.settings.getLocalizedString("settings.themehelp"));
         add(themeLabel, gbc);
 
         gbc.gridx++;
