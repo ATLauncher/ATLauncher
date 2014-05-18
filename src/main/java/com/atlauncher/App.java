@@ -41,6 +41,7 @@ import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.theme.DefaultTheme;
 import com.atlauncher.gui.theme.LoadableTheme;
 import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.log4j2.ConsoleAppender;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -55,7 +56,7 @@ public class App {
     public static Theme THEME = new DefaultTheme().createTheme();
     private static SystemTray TRAY = null;
     public static PopupMenu TRAY_MENU = new TrayMenu();
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger(ConsoleAppender.class);
 
     public static boolean wasUpdated = false;
 
