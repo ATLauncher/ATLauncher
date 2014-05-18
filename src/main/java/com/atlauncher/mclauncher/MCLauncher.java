@@ -76,6 +76,7 @@ public class MCLauncher {
                     .add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
         }
 
+        arguments.add("-XX:-OmitStackTraceInFastThrow");
         arguments.add("-Xms256M");
 
         if (App.settings.getMemory() < instance.getMemory()) {

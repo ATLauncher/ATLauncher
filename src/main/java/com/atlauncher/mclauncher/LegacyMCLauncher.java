@@ -99,6 +99,7 @@ public class LegacyMCLauncher {
                     .add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
         }
 
+        arguments.add("-XX:-OmitStackTraceInFastThrow");
         arguments.add("-Xms256M");
         if (App.settings.getMemory() < instance.getMemory()) {
             if (Utils.getMaximumRam() < instance.getMemory()) {
@@ -111,15 +112,15 @@ public class LegacyMCLauncher {
         }
 
         if (App.settings.getPermGen() < instance.getPermGen()) {
-            if(Utils.isJava8()) {
+            if (Utils.isJava8()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
-            }else{
+            } else {
                 arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
             }
         } else {
-            if(Utils.isJava8()) {
+            if (Utils.isJava8()) {
                 arguments.add("-XX:MetaspaceSize=" + App.settings.getPermGen() + "M");
-            }else{
+            } else {
                 arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
             }
         }
