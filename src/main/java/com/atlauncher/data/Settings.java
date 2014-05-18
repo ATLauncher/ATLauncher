@@ -814,9 +814,9 @@ public class Settings {
             }
 
             this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
-                    "2"));
+                    "3"));
             if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
-                this.connectionTimeout = 2;
+                this.connectionTimeout = 3;
             }
         } catch (FileNotFoundException e) {
             logStackTrace(e);
@@ -975,14 +975,14 @@ public class Settings {
             }
 
             this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
-                    "2"));
+                    "3"));
             if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
                 // Connection timeout should be between 1 and 30
                 log("Tried to set connection timeout to "
                         + this.connectionTimeout
-                        + " which is not valid! Must be between 1 and 30. Setting back to default of 2!",
+                        + " which is not valid! Must be between 1 and 30. Setting back to default of 3!",
                         LogMessageType.warning, false);
-                this.connectionTimeout = 2;
+                this.connectionTimeout = 3;
             }
 
             this.theme = properties.getProperty("theme", "ATLauncher");
