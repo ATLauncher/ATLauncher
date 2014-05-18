@@ -107,29 +107,7 @@ public class App {
 
         settings = new Settings(); // Setup the Settings and wait for it to finish
 
-        File themeFile = settings.getThemeFile();
-        if (themeFile != null) {
-            try {
-                THEME = Settings.gson.fromJson(new FileReader(themeFile), LoadableTheme.class)
-                        .createTheme();
-            } catch (JsonSyntaxException e) {
-                e.printStackTrace();
-                THEME = new DefaultTheme().createTheme();
-            } catch (JsonIOException e) {
-                e.printStackTrace();
-                THEME = new DefaultTheme().createTheme();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                THEME = new DefaultTheme().createTheme();
-            }
-        }
-
-        try {
-            setLAF();
-            modifyLAF();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        loadTheme();
 
         settings.loadConsole(); // Load console AFTER L&F
 
@@ -211,6 +189,32 @@ public class App {
         }
         ((TrayMenu) TRAY_MENU).localize();
         new LauncherFrame(open); // Open the Launcher
+    }
+
+    public static void loadTheme() {
+        File themeFile = settings.getThemeFile();
+        if (themeFile != null) {
+            try {
+                THEME = Settings.gson.fromJson(new FileReader(themeFile), LoadableTheme.class)
+                        .createTheme();
+            } catch (JsonSyntaxException e) {
+                e.printStackTrace();
+                THEME = new DefaultTheme().createTheme();
+            } catch (JsonIOException e) {
+                e.printStackTrace();
+                THEME = new DefaultTheme().createTheme();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                THEME = new DefaultTheme().createTheme();
+            }
+        }
+
+        try {
+            setLAF();
+            modifyLAF();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private static void setLAF() throws Exception {
