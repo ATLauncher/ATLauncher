@@ -6,32 +6,49 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.LogMessageType;
-import com.atlauncher.data.Settings;
-import com.atlauncher.data.mojang.ExtractRule;
-import com.atlauncher.data.mojang.OperatingSystem;
-import com.atlauncher.data.openmods.OpenEyeReportResponse;
-import com.atlauncher.gui.ProgressDialog;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import javax.swing.*;
-import javax.swing.text.html.StyleSheet;
-import java.awt.*;
-import java.io.*;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -40,6 +57,20 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import javax.swing.ImageIcon;
+import javax.swing.text.html.StyleSheet;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.LogMessageType;
+import com.atlauncher.data.Settings;
+import com.atlauncher.data.mojang.ExtractRule;
+import com.atlauncher.data.mojang.OperatingSystem;
+import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.gui.ProgressDialog;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -67,10 +98,11 @@ public class Utils {
         return icon;
     }
 
-    public static File getCoreGracefully(){
-        if(Utils.isLinux()){
-            return new File(App.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParentFile();
-        } else{
+    public static File getCoreGracefully() {
+        if (Utils.isLinux()) {
+            return new File(App.class.getProtectionDomain().getCodeSource().getLocation().getFile())
+                    .getParentFile();
+        } else {
             return new File(System.getProperty("user.dir"));
         }
     }
@@ -846,14 +878,8 @@ public class Utils {
         }
         boolean deleted = file.delete();
         if (!deleted) {
-            if (file.isFile()) {
-                App.settings.log("File " + file.getAbsolutePath() + " couldn't be deleted",
-                        LogMessageType.error, false);
-            }
-            if (file.isDirectory()) {
-                App.settings.log("Folder " + file.getAbsolutePath() + " couldn't be deleted",
-                        LogMessageType.error, false);
-            }
+            App.settings.log((file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath()
+                    + " couldn't be deleted", LogMessageType.error, false);
         }
     }
 
