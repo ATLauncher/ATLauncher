@@ -871,6 +871,9 @@ public class Utils {
      *            the file
      */
     public static void delete(File file) {
+        if (!file.exists()) {
+            return;
+        }
         if (file.isDirectory()) {
             for (File c : file.listFiles()) {
                 delete(c);
