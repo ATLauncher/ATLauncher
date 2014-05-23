@@ -32,7 +32,6 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.utils.Utils;
@@ -219,7 +218,8 @@ public class InstanceInstallerDialog extends JDialog {
                                 JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                } else if (instanceNameField.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+                } else if (!isReinstall && !isServer
+                        && instanceNameField.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><center>"

@@ -876,8 +876,7 @@ public class Utils {
                 delete(c);
             }
         }
-        boolean deleted = file.delete();
-        if (!deleted) {
+        if (!file.delete()) {
             App.settings.log((file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath()
                     + " couldn't be deleted", LogMessageType.error, false);
         }
