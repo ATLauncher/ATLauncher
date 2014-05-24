@@ -1276,7 +1276,7 @@ public class Instance implements Cloneable {
                                 App.settings
                                         .apiCall((username == null ? "NULL" : username),
                                                 "addleaderboardtime"
-                                                        + (username == null ? "" : "generic"),
+                                                        + (username == null ? "generic" : ""),
                                                 (getRealPack() == null ? "0" : getRealPack()
                                                         .getID() + ""),
                                                 ((end - start) / 1000) + "", (isDev ? "dev"
