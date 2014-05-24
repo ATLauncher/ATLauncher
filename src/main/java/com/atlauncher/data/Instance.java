@@ -1267,10 +1267,14 @@ public class Instance implements Cloneable {
                         }
 
                         App.settings.setMinecraftLaunched(false);
-                        if (!App.settings.isInOfflineMode() && isLeaderboardsEnabled()) {
-                            App.settings.apiCall(account.getMinecraftUsername(),
-                                    "addleaderboardtime"
-                                            + (App.settings.enableLeaderboards() ? "" : "generic"),
+                        if (!App.settings.isInOfflineMode()) {
+                            String username = null;
+                            if (isLeaderboardsEnabled() && App.settings.enableLeaderboards()
+                                    && App.settings.enableLogs()) {
+                                username = account.getMinecraftUsername();
+                            }
+                            App.settings.apiCall((username == null ? "NULL" : username),
+                                    "addleaderboardtime" + (username == null ? "" : "generic"),
                                     (getRealPack() == null ? "0" : getRealPack().getID() + ""),
                                     ((end - start) / 1000) + "", (isDev ? "dev" : getVersion()));
                             if (App.settings.keepLauncherOpen() && App.settings.hasUpdatedFiles()) {
