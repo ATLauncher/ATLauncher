@@ -1301,18 +1301,19 @@ public class Instance implements Cloneable {
         if (reportsDir.exists()) {
             for (String filename : reportsDir.list(Utils.getOpenEyePendingReportsFileFilter())) {
                 File report = new File(reportsDir, filename);
-                App.LOGGER.info("OpenEye: Sending pending crash report located at '"
+                App.settings.log("OpenEye: Sending pending crash report located at '"
                         + report.getAbsolutePath() + "'");
                 OpenEyeReportResponse response = Utils.sendOpenEyePendingReport(report);
                 if (response == null) {
                     // Pending report was never sent due to an issue. Won't delete the file in case
                     // it's
                     // a temporary issue and can be sent again later.
-                    App.LOGGER.warn("OpenEye: Couldn't send pending crash report!");
+                    App.settings.log("OpenEye: Couldn't send pending crash report!",
+                            LogMessageType.warning, false);
                 } else {
                     // OpenEye returned a response to the report, display that to user if needed.
-                    App.LOGGER
-                            .info("OpenEye: Pending crash report sent! URL: " + response.getURL());
+                    App.settings.log("OpenEye: Pending crash report sent! URL: "
+                            + response.getURL());
                     if (response.hasNote()) {
                         String[] options = {
                                 App.settings.getLocalizedString("common.opencrashreport"),

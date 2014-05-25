@@ -6,6 +6,27 @@
  */
 package com.atlauncher;
 
+import java.awt.Image;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.swing.BorderFactory;
+import javax.swing.InputMap;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.text.DefaultEditorKit;
+
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
@@ -16,24 +37,9 @@ import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.theme.DefaultTheme;
 import com.atlauncher.gui.theme.LoadableTheme;
 import com.atlauncher.gui.theme.Theme;
-import com.atlauncher.log4j2.ConsoleAppender;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.swing.*;
-import javax.swing.text.DefaultEditorKit;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.lang.reflect.Method;
-import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -45,7 +51,6 @@ public class App {
     public static Theme THEME = new DefaultTheme().createTheme();
     private static SystemTray TRAY = null;
     public static PopupMenu TRAY_MENU = new TrayMenu();
-    public static final Logger LOGGER = LogManager.getLogger(ConsoleAppender.class);
 
     public static boolean wasUpdated = false;
 

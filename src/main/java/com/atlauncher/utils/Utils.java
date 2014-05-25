@@ -1372,8 +1372,8 @@ public class Utils {
         StringBuilder response = null;
         String request = Utils.getFileContents(report);
         if (request == null) {
-            App.LOGGER.error("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath()
-                    + "'. Pending report sending failed!");
+            App.settings.log("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath()
+                    + "'. Pending report sending failed!", LogMessageType.error, false);
             return null;
         }
 
@@ -1440,8 +1440,9 @@ public class Utils {
      */
     public static String getFileContents(File file) {
         if (!file.exists()) {
-            App.LOGGER.error("File '" + file.getAbsolutePath()
-                    + "' doesn't exist so cannot read contents of file!");
+            App.settings.log("File '" + file.getAbsolutePath()
+                    + "' doesn't exist so cannot read contents of file!", LogMessageType.error,
+                    false);
             return null;
         }
         String contents = null;

@@ -6,6 +6,61 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
+import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import com.atlauncher.App;
 import com.atlauncher.Update;
 import com.atlauncher.data.mojang.DateTypeAdapter;
@@ -26,30 +81,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.awt.Dialog.ModalityType;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.io.*;
-import java.net.*;
-import java.net.Proxy.Type;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user
@@ -147,6 +178,7 @@ public class Settings {
         setupFiles(); // Setup all the file and directory variables
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
+        rotateLogFiles(); // Rotates the log files
         loadStartingProperties(); // Get users Console preference and Java Path
     }
 
@@ -707,6 +739,34 @@ public class Settings {
      */
     public void clearTempDir() {
         Utils.deleteContents(getTempDir());
+    }
+
+    public void rotateLogFiles() {
+        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
+        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
+        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
+        if (logFile3.exists()) {
+            Utils.delete(logFile3);
+        }
+        if (logFile2.exists()) {
+            logFile2.renameTo(logFile3);
+        }
+        if (logFile1.exists()) {
+            logFile1.renameTo(logFile2);
+        }
+        try {
+            logFile1.createNewFile();
+        } catch (IOException e) {
+            String[] options = { "OK" };
+            JOptionPane.showOptionDialog(null,
+                    "<html><center>Cannot create the log file.<br/><br/>Make sure"
+                            + " you are running the Launcher from somewhere with<br/>write"
+                            + " permissions for your user account such as your Home/Users folder"
+                            + " or desktop.</center></html>", "Warning",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                    options[0]);
+            System.exit(0);
+        }
     }
 
     /**
@@ -2164,6 +2224,13 @@ public class Settings {
     }
 
     /**
+     * Log a non Minecraft related info message to the console
+     */
+    public void log(String message) {
+        this.console.log(message, LogMessageType.info, false);
+    }
+
+    /**
      * Log a Minecraft related message to the console
      */
     public void logMinecraft(String message) {
@@ -2178,41 +2245,19 @@ public class Settings {
      */
     public void logStackTrace(Exception exception) {
         exception.printStackTrace();
-        App.LOGGER.error(exception.getMessage());
+        log(exception.getMessage(), LogMessageType.error, false);
         for (StackTraceElement element : exception.getStackTrace()) {
             if (element.toString() != null) {
-                App.LOGGER.error(element.toString());
+                log(element.toString(), LogMessageType.error, false);
             }
         }
-    }
-
-    /**
-     * Log a non Minecraft related info message to the console
-     */
-    public void log(String message) {
-        App.LOGGER.info(message);
     }
 
     /**
      * Log something to the console
      */
     public void log(String message, LogMessageType type, boolean isMinecraft) {
-        if (isMinecraft) {
-            logMinecraft(message);
-        } else {
-            switch (type) {
-                case error:
-                    App.LOGGER.error(message);
-                    break;
-                case info:
-                default:
-                    App.LOGGER.info(message);
-                    break;
-                case warning:
-                    App.LOGGER.warn(message);
-                    break;
-            }
-        }
+        this.console.log(message, type, isMinecraft);
     }
 
     public void showKillMinecraft(Process minecraft) {
