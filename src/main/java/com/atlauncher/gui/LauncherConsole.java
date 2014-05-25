@@ -24,8 +24,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
-import java.sql.Timestamp;
-import java.util.Date;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -39,6 +37,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
+import com.atlauncher.utils.HTMLifier;
+import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 
 public class LauncherConsole extends JFrame {
@@ -57,6 +57,8 @@ public class LauncherConsole extends JFrame {
     private JPopupMenu contextMenu; // Right click menu
 
     private JMenuItem copy;
+
+    private static File LOG_FILE = new File(App.settings.getBaseDir(), "ATLauncher-Log-1.txt");
 
     public LauncherConsole() {
         setSize(WINDOW_SIZE);
@@ -147,21 +149,32 @@ public class LauncherConsole extends JFrame {
 
     public void log(String text, LogMessageType type, boolean isMinecraft) {
         synchronized (kit) {
-            Timestamp timestamp = new Timestamp(new Date().getTime());
-            String time = timestamp.toString().substring(0, timestamp.toString().lastIndexOf("."));
             try {
-                if (doc.getLength() == 0) {
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"" + type.getColourCode()
-                            + "\">[" + time + "]</font></b> " + text, 0, 0, null);
-                } else {
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"" + type.getColourCode()
-                            + "\">[" + time + "]</font></b> " + text + "<br/>", 0, 0, null);
-                }
+                kit.insertHTML(doc, doc.getLength(), HTMLifier.wrap("[" + Timestamper.now() + "] ")
+                        .bold().font(type.getColourCode())
+                        + text + (doc.getLength() == 0 ? "" : "<br/>"), 0, 0, null);
                 if (!isMinecraft) {
-                    PrintWriter out = new PrintWriter(new FileWriter(new File(
-                            App.settings.getBaseDir(), "ATLauncher-Log-1.txt"), true));
-                    out.println("[" + time + "] " + text);
-                    out.close();
+                    FileWriter fw = null;
+                    PrintWriter pw = null;
+                    try {
+                        fw = new FileWriter(LOG_FILE, true);
+                        pw = new PrintWriter(fw);
+                        pw.println("[" + Timestamper.now() + "] " + text);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            if (fw != null) {
+                                fw.close();
+                            }
+                            if (pw != null) {
+                                pw.close();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
