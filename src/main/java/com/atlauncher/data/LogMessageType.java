@@ -10,22 +10,26 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.App;
+
 public enum LogMessageType {
 
-    error("EE2222"), warning("FFFF4C"), info("89c236");
-
-    private final String code;
-
-    LogMessageType(String code) {
-        this.code = code;
-    }
+    error, warning, info;
 
     public String getColourCode() {
-        return this.code;
+        switch (this) {
+            case info:
+            default:
+                return App.THEME.getLogInfoTextColourHTML();
+            case warning:
+                return App.THEME.getLogWarnTextColourHTML();
+            case error:
+                return App.THEME.getLogErrorTextColourHTML();
+        }
     }
-    
+
     public String getType() {
-        switch(this){
+        switch (this) {
             case info:
             default:
                 return "INFO";
@@ -33,7 +37,7 @@ public enum LogMessageType {
                 return "WARN";
             case error:
                 return "ERROR";
-            
+
         }
     }
 

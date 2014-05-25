@@ -151,13 +151,11 @@ public class LauncherConsole extends JFrame {
             String time = timestamp.toString().substring(0, timestamp.toString().lastIndexOf("."));
             try {
                 if (doc.getLength() == 0) {
-                    kit.insertHTML(doc, doc.getLength(),
-                            "<b><font color=\"#" + type.getColourCode() + "\">[" + time
-                                    + "]</font></b> " + text, 0, 0, null);
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"" + type.getColourCode()
+                            + "\">[" + time + "]</font></b> " + text, 0, 0, null);
                 } else {
-                    kit.insertHTML(doc, doc.getLength(),
-                            "<b><font color=\"#" + type.getColourCode() + "\">[" + time
-                                    + "]</font></b> " + text + "<br/>", 0, 0, null);
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"" + type.getColourCode()
+                            + "\">[" + time + "]</font></b> " + text + "<br/>", 0, 0, null);
                 }
                 if (!isMinecraft) {
                     PrintWriter out = new PrintWriter(new FileWriter(new File(
