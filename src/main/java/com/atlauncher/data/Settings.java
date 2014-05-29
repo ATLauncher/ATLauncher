@@ -863,8 +863,8 @@ public class Settings {
                 }
 
                 this.proxyType = properties.getProperty("proxytype", "");
-                if (this.proxyType != "SOCKS" && this.proxyType != "HTTP"
-                        && this.proxyType != "DIRECT") {
+                if (!this.proxyType.equals("SOCKS") && !this.proxyType.equals("HTTP")
+                        && !this.proxyType.equals("DIRECT")) {
                     this.enableProxy = false;
                 }
             } else {
@@ -1020,8 +1020,8 @@ public class Settings {
                 }
 
                 this.proxyType = properties.getProperty("proxytype", "");
-                if (this.proxyType != "SOCKS" && this.proxyType != "HTTP"
-                        && this.proxyType != "DIRECT") {
+                if (!this.proxyType.equals("SOCKS") && !this.proxyType.equals("HTTP")
+                        && !this.proxyType.equals("DIRECT")) {
                     // Proxy type is invalid so disable proxy
                     log("Tried to set proxy type to " + this.proxyType
                             + " which is not valid! Proxy support disabled!",
@@ -2639,11 +2639,11 @@ public class Settings {
         }
         if (this.proxy == null) {
             Type type;
-            if (this.proxyType == "HTTP") {
+            if (this.proxyType.equals("HTTP")) {
                 type = Proxy.Type.HTTP;
-            } else if (this.proxyType == "SOCKS") {
+            } else if (this.proxyType.equals("SOCKS")) {
                 type = Proxy.Type.SOCKS;
-            } else if (this.proxyType == "DIRECT") {
+            } else if (this.proxyType.equals("DIRECT")) {
                 type = Proxy.Type.DIRECT;
             } else {
                 // Oh noes, problem!
