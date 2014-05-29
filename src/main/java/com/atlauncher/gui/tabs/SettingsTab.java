@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import com.atlauncher.App;
 
@@ -59,7 +58,8 @@ public class SettingsTab extends JPanel {
             public void actionPerformed(ActionEvent arg0) {
                 if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
                         && networkSettingsTab.isValidConnectionTimeout()
-                        && networkSettingsTab.isValidProxyPort()) {
+                        && networkSettingsTab.isValidProxyPort()
+                        && networkSettingsTab.canConnectWithProxy()) {
                     boolean reloadTheme = generalSettingsTab.needToReloadTheme();
                     boolean restartLauncher = generalSettingsTab.needToRestartLauncher();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();

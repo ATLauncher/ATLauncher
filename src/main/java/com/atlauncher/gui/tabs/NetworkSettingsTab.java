@@ -9,6 +9,9 @@ package com.atlauncher.gui.tabs;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -21,6 +24,8 @@ import javax.swing.border.Border;
 import com.atlauncher.App;
 import com.atlauncher.data.Server;
 import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.ProgressDialog;
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab {
@@ -257,6 +262,55 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
                     App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
+        return true;
+    }
+
+    public boolean canConnectWithProxy() {
+        if (!enableProxy.isSelected()) {
+            return true;
+        }
+
+        Type type = null;
+
+        if (proxyType.getSelectedItem().equals("HTTP")) {
+            type = Proxy.Type.HTTP;
+        } else if (proxyType.getSelectedItem().equals("SOCKS")) {
+            type = Proxy.Type.SOCKS;
+        } else if (proxyType.getSelectedItem().equals("DIRECT")) {
+            type = Proxy.Type.DIRECT;
+        }
+
+        if (type == null) {
+            return false;
+        }
+
+        final Type theType = type;
+        final ProgressDialog dialog = new ProgressDialog(
+                App.settings.getLocalizedString("settings.checkingproxytitle"), 0,
+                App.settings.getLocalizedString("settings.checkingproxy"), "Cancelled Proxy Test!");
+        dialog.addThread(new Thread() {
+            @Override
+            public void run() {
+                dialog.setReturnValue(Utils.testProxy(
+                        new Proxy(theType, new InetSocketAddress(proxyHost.getText(), Integer
+                                .parseInt(proxyPort.getText().replaceAll("[^0-9]", "")))), Integer
+                                .parseInt(connectionTimeout.getText().replaceAll("[^0-9]", ""))));
+                dialog.close();
+            }
+        });
+        dialog.start();
+
+        if (dialog.getReturnValue() == null) {
+            return false;
+        }
+
+        if (!(Boolean) dialog.getReturnValue()) {
+            JOptionPane.showMessageDialog(App.settings.getParent(),
+                    App.settings.getLocalizedString("settings.proxycannotconnect"),
+                    App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
+            return false;
+        }
+
         return true;
     }
 

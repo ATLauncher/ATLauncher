@@ -36,6 +36,7 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -1521,5 +1522,31 @@ public class Utils {
             colour[2] = 0; // Invalid colour
         }
         return new Color(colour[0], colour[1], colour[2]);
+    }
+
+    public static boolean testProxy(Proxy proxy, int timeout) {
+        try {
+            HttpURLConnection connection;
+            URL url = new URL(App.settings.getFileURL("ping"));
+            connection = (HttpURLConnection) url.openConnection(proxy);
+            connection.setUseCaches(false);
+            connection.setDefaultUseCaches(false);
+            connection.setConnectTimeout(timeout * 1000);
+            connection.setReadTimeout(timeout * 1000);
+            connection.setRequestProperty("Accept-Encoding", "gzip");
+            connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+            connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+            connection.setRequestProperty("Expires", "0");
+            connection.setRequestProperty("Pragma", "no-cache");
+            connection.connect();
+            App.settings.log("Proxy returned code " + connection.getResponseCode()
+                    + " when testing!", (connection.getResponseCode() == 200 ? LogMessageType.info
+                    : LogMessageType.error), false);
+            return connection.getResponseCode() == 200;
+        } catch (IOException e) {
+            App.settings.log("Proxy couldn't establish a connection when testing!",
+                    LogMessageType.error, false);
+            return false;
+        }
     }
 }

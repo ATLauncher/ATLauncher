@@ -16,7 +16,6 @@ import javax.swing.border.Border;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
-import com.atlauncher.data.Server;
 import com.atlauncher.gui.CustomLineBorder;
 
 @SuppressWarnings("serial")
