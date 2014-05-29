@@ -36,6 +36,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
     private JLabel connectionTimeoutLabel;
     private JTextField connectionTimeout;
 
+    private JLabel concurrentConnectionsLabel;
+    private JTextField concurrentConnections;
+
     private JLabel enableProxyLabel;
     private JCheckBox enableProxy;
 
@@ -106,6 +109,33 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         connectionTimeout = new JTextField(4);
         connectionTimeout.setText(App.settings.getConnectionTimeout() / 1000 + "");
         add(connectionTimeout, gbc);
+
+        // Concurrent Connection Settings
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        concurrentConnectionsLabel = new JLabel(
+                App.settings.getLocalizedString("settings.concurrentconnections") + ":") {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
+        concurrentConnectionsLabel.setIcon(helpIcon);
+        concurrentConnectionsLabel.setToolTipText("<html><center>"
+                + App.settings.getLocalizedString("settings.concurrentconnectionshelp",
+                        "<br/><br/>") + "</center></html>");
+        add(concurrentConnectionsLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        concurrentConnections = new JTextField(4);
+        concurrentConnections.setText(App.settings.getConcurrentConnections() + "");
+        add(concurrentConnections, gbc);
 
         // Enable Proxy
 
@@ -237,13 +267,20 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
     }
 
     public boolean isValidConnectionTimeout() {
-        if (!enableProxy.isSelected()) {
-            return true;
-        }
         if (Integer.parseInt(connectionTimeout.getText().replaceAll("[^0-9]", "")) < 1
                 || Integer.parseInt(connectionTimeout.getText().replaceAll("[^0-9]", "")) > 30) {
             JOptionPane.showMessageDialog(App.settings.getParent(),
                     App.settings.getLocalizedString("settings.connectiontimeoutinvalid"),
+                    App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isValidConcurrentConnections() {
+        if (Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")) < 1) {
+            JOptionPane.showMessageDialog(App.settings.getParent(),
+                    App.settings.getLocalizedString("settings.concurrentconnectionsinvalid"),
                     App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
@@ -318,6 +355,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         App.settings.setServer((Server) server.getSelectedItem());
         App.settings.setConnectionTimeout(Integer.parseInt(connectionTimeout.getText().replaceAll(
                 "[^0-9]", "")));
+        App.settings.setConcurrentConnections(Integer.parseInt(concurrentConnections.getText()
+                .replaceAll("[^0-9]", "")));
         App.settings.setEnableProxy(enableProxy.isSelected());
         if (enableProxy.isSelected()) {
             App.settings.setProxyHost(proxyHost.getText());

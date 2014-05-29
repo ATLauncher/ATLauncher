@@ -58,6 +58,7 @@ public class SettingsTab extends JPanel {
             public void actionPerformed(ActionEvent arg0) {
                 if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
                         && networkSettingsTab.isValidConnectionTimeout()
+                        && networkSettingsTab.isValidConcurrentConnections()
                         && networkSettingsTab.isValidProxyPort()
                         && networkSettingsTab.canConnectWithProxy()) {
                     boolean reloadTheme = generalSettingsTab.needToReloadTheme();

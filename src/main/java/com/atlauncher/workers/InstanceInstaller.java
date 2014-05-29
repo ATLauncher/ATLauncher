@@ -709,7 +709,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void downloadResources() {
         fireTask(App.settings.getLocalizedString("instance.downloadingresources"));
         fireSubProgressUnknown();
-        ExecutorService executor = Executors.newFixedThreadPool(8);
+        ExecutorService executor = Executors.newFixedThreadPool(App.settings
+                .getConcurrentConnections());
         ArrayList<Downloadable> downloads = getResources();
         totalBytes = 0;
         downloadedBytes = 0;
@@ -750,7 +751,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         totalBytes = 0;
         downloadedBytes = 0;
 
-        executor = Executors.newFixedThreadPool(8);
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
@@ -769,7 +770,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         fireSubProgress(0); // Show the subprogress bar
 
-        executor = Executors.newFixedThreadPool(8);
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
@@ -797,7 +798,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         totalBytes = 0;
         downloadedBytes = 0;
 
-        executor = Executors.newFixedThreadPool(8);
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
@@ -816,7 +817,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         fireSubProgress(0); // Show the subprogress bar
 
-        executor = Executors.newFixedThreadPool(8);
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {

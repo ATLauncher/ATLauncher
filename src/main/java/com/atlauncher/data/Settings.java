@@ -114,6 +114,7 @@ public class Settings {
     private int proxyPort; // The proxies port
     private String proxyType; // The type of proxy (socks, http)
     private int connectionTimeout; // Timeout in seconds when connecting to things
+    private int concurrentConnections; // Number of concurrent connections to open when downloading
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private Proxy proxy = null; // The proxy object if any
@@ -467,7 +468,7 @@ public class Settings {
     public void downloadUpdatedFiles() {
         ArrayList<Downloadable> downloads = getLauncherFiles();
         if (downloads != null) {
-            ExecutorService executor = Executors.newFixedThreadPool(8);
+            ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
             for (final Downloadable download : downloads) {
                 executor.execute(new Runnable() {
                     @Override
@@ -878,6 +879,12 @@ public class Settings {
             if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
                 this.connectionTimeout = 3;
             }
+
+            this.concurrentConnections = Integer.parseInt(properties.getProperty(
+                    "concurrentconnections", "8"));
+            if (this.concurrentConnections < 1) {
+                this.concurrentConnections = 8;
+            }
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         } catch (IOException e) {
@@ -1045,6 +1052,17 @@ public class Settings {
                 this.connectionTimeout = 3;
             }
 
+            this.concurrentConnections = Integer.parseInt(properties.getProperty(
+                    "concurrentconnections", "8"));
+            if (this.concurrentConnections < 1) {
+                // Concurrent connections should be more than or equal to 1
+                log("Tried to set the number of concurrent connections to "
+                        + this.concurrentConnections
+                        + " which is not valid! Must be 1 or more. Setting back to default of 8!",
+                        LogMessageType.warning, false);
+                this.concurrentConnections = 8;
+            }
+
             this.theme = properties.getProperty("theme", "ATLauncher");
 
             String lastAccountTemp = properties.getProperty("lastaccount", "");
@@ -1107,6 +1125,7 @@ public class Settings {
             properties.setProperty("proxyport", this.proxyPort + "");
             properties.setProperty("proxytype", this.proxyType);
             properties.setProperty("connectiontimeout", this.connectionTimeout + "");
+            properties.setProperty("concurrentconnections", this.concurrentConnections + "");
             properties.setProperty("theme", this.theme);
             if (account != null) {
                 properties.setProperty("lastaccount", account.getUsername());
@@ -1250,7 +1269,7 @@ public class Settings {
             logStackTrace(e);
         }
         log("[Background] Checking Minecraft Versions Started");
-        ExecutorService executor = Executors.newFixedThreadPool(8);
+        ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
         for (final MinecraftVersion mv : this.minecraftVersions) {
             executor.execute(new Runnable() {
                 @Override
@@ -2614,6 +2633,14 @@ public class Settings {
 
     public int getConnectionTimeout() {
         return this.connectionTimeout * 1000;
+    }
+
+    public void setConcurrentConnections(int concurrentConnections) {
+        this.concurrentConnections = concurrentConnections;
+    }
+
+    public int getConcurrentConnections() {
+        return this.concurrentConnections;
     }
 
     public String getTheme() {
