@@ -17,6 +17,7 @@ import javax.swing.border.Border;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab {
@@ -91,7 +92,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<String>();
-        for (String themee : App.settings.getThemesDir().list()) {
+        for (String themee : App.settings.getThemesDir().list(Utils.getThemesFileFilter())) {
             theme.addItem(themee.replace(".json", ""));
         }
         theme.setSelectedItem(App.settings.getTheme());

@@ -1549,4 +1549,17 @@ public class Utils {
             return false;
         }
     }
+
+    public static FilenameFilter getThemesFileFilter() {
+        return new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                File file = new File(dir, name);
+                if (file.exists() && file.isFile() && name.endsWith(".json")) {
+                    return true;
+                }
+                return false;
+            }
+        };
+    }
 }
