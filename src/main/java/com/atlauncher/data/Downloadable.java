@@ -376,11 +376,6 @@ public class Downloadable {
                 }
                 downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
             }
-            if (done) {
-                if (this.oldFile != null && this.oldFile.exists()) {
-                    Utils.delete(this.oldFile);
-                }
-            }
             if (!done) {
                 if (this.isATLauncherDownload) {
                     if (App.settings.getNextServer()) {
@@ -428,6 +423,10 @@ public class Downloadable {
                 }
             }
             App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used
+        }
+
+        if (this.oldFile != null && this.oldFile.exists()) {
+            Utils.delete(this.oldFile);
         }
 
         if (this.connection != null) {
