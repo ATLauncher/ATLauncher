@@ -47,19 +47,11 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
 import com.atlauncher.Update;
@@ -128,14 +120,13 @@ public class Settings {
     // Dropbox settings
     private String dropboxFolderLocation; // Location of dropbox if defined by user
 
-    // Packs, Addons, Instances and Accounts
+    // Packs, Instances and Accounts
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<News> news; // News
     private List<Language> languages; // Languages for the Launcher
     private List<MinecraftVersion> minecraftVersions; // Minecraft versions
     private List<Pack> packs; // Packs in the Launcher
     private ArrayList<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
-    private ArrayList<Addon> addons = new ArrayList<Addon>(); // Addons in the Launcher
     private ArrayList<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
 
     // Directories and Files for the Launcher
@@ -223,7 +214,6 @@ public class Settings {
         loadMinecraftVersions(); // Load info about the different Minecraft versions
         loadPacks(); // Load the Packs available in the Launcher
         loadUsers(); // Load the Testers and Allowed Players for the packs
-        // loadAddons(); // Load the Addons available in the Launcher
         loadInstances(); // Load the users installed Instances
         loadAccounts(); // Load the saved Accounts
         loadProperties(); // Load the users Properties
@@ -528,7 +518,6 @@ public class Settings {
                 loadPacks(); // Load the Packs available in the Launcher
                 reloadPacksPanel(); // Reload packs panel
                 loadUsers(); // Load the Testers and Allowed Players for the packs
-                // loadAddons(); // Load the Addons available in the Launcher
                 loadInstances(); // Load the users installed Instances
                 reloadInstancesPanel(); // Reload instances panel
                 dialog.setVisible(false); // Remove the dialog
@@ -1332,56 +1321,6 @@ public class Settings {
     }
 
     /**
-     * Loads the Addons for use in the Launcher
-     */
-    private void loadAddons() {
-        if (this.addons.size() != 0) {
-            this.addons = new ArrayList<Addon>();
-        }
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(configsDir, "addons.xml"));
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("addon");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    int id = Integer.parseInt(element.getAttribute("id"));
-                    String name = element.getAttribute("name");
-                    String[] versions;
-                    if (element.getAttribute("versions").isEmpty()) {
-                        versions = new String[0];
-                    } else {
-                        versions = element.getAttribute("versions").split(",");
-                    }
-                    String description = element.getAttribute("description");
-                    Pack forPack;
-                    Pack pack = getPackByID(id);
-                    if (pack != null) {
-                        forPack = pack;
-                    } else {
-                        log("Addon " + name + " is not available for any packs!",
-                                LogMessageType.warning, false);
-                        continue;
-                    }
-                    Addon addon = new Addon(id, name, versions, description, forPack);
-                    addons.add(addon);
-                }
-            }
-        } catch (SAXException e) {
-            logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            logStackTrace(e);
-        } catch (IOException e) {
-            logStackTrace(e);
-        } catch (InvalidPack e) {
-            log(e.getMessage(), LogMessageType.error, false);
-        }
-    }
-
-    /**
      * Loads the user installed Instances
      */
     private void loadInstances() {
@@ -1789,15 +1728,6 @@ public class Settings {
                 this.reloadInstancesPanel();
             }
         }
-    }
-
-    /**
-     * Get the Addons available in the Launcher
-     * 
-     * @return The Addons available in the Launcher
-     */
-    public ArrayList<Addon> getAddons() {
-        return this.addons;
     }
 
     /**
