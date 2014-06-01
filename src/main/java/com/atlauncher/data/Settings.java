@@ -229,15 +229,14 @@ public class Settings {
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
-        for (Pack pack : this.packs) {
+        OUTER: for (Pack pack : this.packs) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
                     if (server.getName() == "Master Server (Testing Only)") {
                         server.setUserSelectable(true);
-                        break;
+                        break OUTER; // Don't need to check anymore so break the outer loop
                     }
                 }
-                break;
             }
         }
         loadServerProperty(true); // Get users Server preference
@@ -526,7 +525,6 @@ public class Settings {
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
                 loadLanguages(); // Load the Languages available in the Launcher
-                loadMinecraftVersions(); // Load info about the different Minecraft versions
                 loadPacks(); // Load the Packs available in the Launcher
                 reloadPacksPanel(); // Reload packs panel
                 loadUsers(); // Load the Testers and Allowed Players for the packs
