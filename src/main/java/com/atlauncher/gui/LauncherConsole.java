@@ -149,17 +149,21 @@ public class LauncherConsole extends JFrame {
 
     public void log(String text, LogMessageType type, boolean isMinecraft) {
         synchronized (kit) {
+            text = text.replace(App.settings.getBaseDir().getAbsolutePath(), "**USERSDIR**");
             try {
-                kit.insertHTML(doc, doc.getLength(), HTMLifier.wrap("[" + Timestamper.now() + "] ")
-                        .bold().font(type.getColourCode())
-                        + text + (doc.getLength() == 0 ? "" : "<br/>"), 0, 0, null);
+                kit.insertHTML(
+                        doc,
+                        doc.getLength(),
+                        HTMLifier.wrap(String.format("[%s] ", Timestamper.now())).bold()
+                                .font(type.getColourCode())
+                                + text + (doc.getLength() == 0 ? "" : "<br/>"), 0, 0, null);
                 if (!isMinecraft) {
                     FileWriter fw = null;
                     PrintWriter pw = null;
                     try {
                         fw = new FileWriter(LOG_FILE, true);
                         pw = new PrintWriter(fw);
-                        pw.println("[" + Timestamper.now() + "] " + text);
+                        pw.println(String.format("[%s] %s", Timestamper.now(), text));
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
