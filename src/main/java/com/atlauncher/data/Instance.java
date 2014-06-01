@@ -1198,6 +1198,15 @@ public class Instance implements Cloneable {
                         BufferedReader br = new BufferedReader(isr);
                         String line;
                         while ((line = br.readLine()) != null) {
+                            line = line.replace(App.settings.getAccount().getMinecraftUsername(),
+                                    "**MINECRAFTUSERNAME**");
+                            line = line.replace(App.settings.getAccount().getUsername(),
+                                    "**MINECRAFTUSERNAME**");
+                            line = line.replace(session.getAccessToken(), "**ACCESSTOKEN**");
+                            line = line.replace(session.getClientToken(), "**CLIENTTOKEN**");
+                            line = line.replace(session.getUUID(), "**UUID**");
+                            line = line.replace(session.getSelectedProfile().getId(),
+                                    "**PROFILEID**");
                             App.settings.logMinecraft(line);
                         }
                         App.settings.hideKillMinecraft();
@@ -1274,8 +1283,7 @@ public class Instance implements Cloneable {
                                 final int timePlayed = (int) (end - start) / 1000;
                                 App.TASKPOOL.submit(new Runnable() {
                                     public void run() {
-                                        App.settings.log(addTimePlayed(timePlayed, (isDev ? "dev"
-                                                : getVersion())));
+                                        addTimePlayed(timePlayed, (isDev ? "dev" : getVersion()));
                                     };
                                 });
                             }
