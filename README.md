@@ -59,7 +59,7 @@ To get started with the code and plug in your own data, you need to create a src
     public class Constants {
 
     public static final String VERSION = "";
-    public static final String API_URL = "";
+    public static final String API_BASE_URL = "";
     public static final String PASTE_CHECK_URL = "";
     public static final String PASTE_API_URL = "";
     public static final Server[] SERVERS = new Server[] { new Server("Test", "my.file.server.com", true) };
@@ -68,7 +68,7 @@ To get started with the code and plug in your own data, you need to create a src
 
 See below for exmplanations as to what each constant means.
 
-#### API_URL
+#### API_BASE_URL
 This is a link to your server side API for processing of leaderboard times and pack installs. This is optional and can be removed. We do not give implementation code, this is your own doing.
 
 #### PASTE_CHECK_URL

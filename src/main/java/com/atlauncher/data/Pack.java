@@ -15,7 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
@@ -858,5 +860,23 @@ public class Pack {
             App.settings.logStackTrace(e);
         }
         return files;
+    }
+
+    public String addInstall(String version) {
+        Map<String, Object> request = new HashMap<String, Object>();
+
+        if (App.settings.enableLeaderboards()) {
+            request.put("username", App.settings.getAccount().getMinecraftUsername());
+        } else {
+            request.put("username", null);
+        }
+        request.put("version", version);
+
+        try {
+            return Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return "Install Not Added!";
     }
 }

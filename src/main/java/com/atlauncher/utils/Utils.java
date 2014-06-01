@@ -1142,8 +1142,8 @@ public class Utils {
         URL url = new URL(urll);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        connection.setConnectTimeout(15000);
-        connection.setReadTimeout(15000);
+        connection.setConnectTimeout(App.settings.getConnectionTimeout());
+        connection.setReadTimeout(App.settings.getConnectionTimeout());
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
@@ -1158,6 +1158,48 @@ public class Utils {
 
         DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
         writer.write(write.getBytes());
+        writer.flush();
+        writer.close();
+
+        // Read the result
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                connection.getInputStream()));
+        response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+            response.append('\r');
+        }
+        reader.close();
+        return response.toString();
+    }
+
+    public static String sendAPICall(String path, Object data) throws IOException {
+        StringBuilder response = null;
+
+        byte[] contents = Settings.gson.toJson(data).getBytes();
+
+        URL url = new URL(Constants.API_BASE_URL + path);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setConnectTimeout(App.settings.getConnectionTimeout());
+        connection.setReadTimeout(App.settings.getConnectionTimeout());
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+        connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+        connection.setRequestProperty("Expires", "0");
+        connection.setRequestProperty("Pragma", "no-cache");
+
+        connection.setRequestProperty("Content-Length", "" + contents.length);
+
+        connection.setUseCaches(false);
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+
+        DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+        writer.write(contents);
         writer.flush();
         writer.close();
 

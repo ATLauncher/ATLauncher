@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -1268,14 +1269,16 @@ public class Instance implements Cloneable {
 
                         App.settings.setMinecraftLaunched(false);
                         if (!App.settings.isInOfflineMode()) {
-                            String username = null;
-                            if (App.settings.enableLeaderboards() && App.settings.enableLogs()) {
-                                username = account.getMinecraftUsername();
+                            if (isLeaderboardsEnabled() && isLoggingEnabled()
+                                    && App.settings.enableLogs()) {
+                                final int timePlayed = (int) (end - start) / 1000;
+                                App.TASKPOOL.submit(new Runnable() {
+                                    public void run() {
+                                        App.settings.log(addTimePlayed(timePlayed, (isDev ? "dev"
+                                                : getVersion())));
+                                    };
+                                });
                             }
-                            App.settings.apiCall((username == null ? "NULL" : username),
-                                    "addleaderboardtime" + (username == null ? "generic" : ""),
-                                    (getRealPack() == null ? "0" : getRealPack().getID() + ""),
-                                    ((end - start) / 1000) + "", (isDev ? "dev" : getVersion()));
                             if (App.settings.keepLauncherOpen() && App.settings.hasUpdatedFiles()) {
                                 App.settings.reloadLauncherData();
                             }
@@ -1359,6 +1362,26 @@ public class Instance implements Cloneable {
             };
         };
         thread.run();
+    }
+
+    public String addTimePlayed(int time, String version) {
+        Map<String, Object> request = new HashMap<String, Object>();
+
+        if (App.settings.enableLeaderboards()) {
+            request.put("username", App.settings.getAccount().getMinecraftUsername());
+        } else {
+            request.put("username", null);
+        }
+        request.put("version", version);
+        request.put("time", time);
+
+        try {
+            return Utils.sendAPICall("pack/" + getRealPack().getSafeName() + "/timeplayed/",
+                    request);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return "Leaderboard Time Not Added!";
     }
 
     /**

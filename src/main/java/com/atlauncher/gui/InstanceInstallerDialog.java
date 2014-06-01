@@ -378,15 +378,8 @@ public class InstanceInstallerDialog extends JDialog {
                                 }
                                 App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();
-                                if (pack.isLoggingEnabled()) {
-                                    String username = null;
-                                    if (App.settings.enableLogs()) {
-                                        username = App.settings.getAccount().getMinecraftUsername();
-                                    }
-                                    App.settings.apiCall((username == null ? "NULL" : username),
-                                            "packinstalled" + (username == null ? "generic" : ""),
-                                            pack.getID() + "", version.getVersion(),
-                                            (version.isDev() ? "dev" : version.getVersion()));
+                                if (pack.isLoggingEnabled() && App.settings.enableLogs()) {
+                                    pack.addInstall(version.getVersion());
                                 }
                             } else {
                                 if (isReinstall) {

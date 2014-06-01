@@ -1681,7 +1681,7 @@ public class Settings {
             data += "&" + URLEncoder.encode("extra3", "UTF-8") + "="
                     + URLEncoder.encode(extra3, "UTF-8");
 
-            URL url = new URL(Constants.API_URL);
+            URL url = new URL(Constants.API_BASE_URL);
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
