@@ -507,7 +507,9 @@ public class Settings {
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
-        Thread updateThread = new Thread() {
+        App.TASKPOOL.execute(new Runnable() {
+
+            @Override
             public void run() {
                 if (hasUpdatedFiles()) {
                     downloadUpdatedFiles(); // Downloads updated files on the server
@@ -522,9 +524,8 @@ public class Settings {
                 reloadInstancesPanel(); // Reload instances panel
                 dialog.setVisible(false); // Remove the dialog
                 dialog.dispose(); // Dispose the dialog
-            };
-        };
-        updateThread.start();
+            }
+        });
         dialog.setVisible(true);
     }
 
