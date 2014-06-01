@@ -865,11 +865,7 @@ public class Pack {
     public String addInstall(String version) {
         Map<String, Object> request = new HashMap<String, Object>();
 
-        if (App.settings.enableLeaderboards()) {
-            request.put("username", App.settings.getAccount().getMinecraftUsername());
-        } else {
-            request.put("username", null);
-        }
+        request.put("username", App.settings.getAccount().getMinecraftUsername());
         request.put("version", version);
 
         try {
