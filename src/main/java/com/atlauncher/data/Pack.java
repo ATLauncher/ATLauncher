@@ -237,6 +237,9 @@ public class Pack {
         if (!getLatestVersion().canUpdate()) {
             return true;
         }
+        if (!getLatestVersion().isRecommended()) {
+            return true;
+        }
         return false;
     }
 

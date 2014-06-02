@@ -19,12 +19,13 @@ public class PackVersion {
     private String minecraft;
     private MinecraftVersion minecraftVersion;
     private boolean canUpdate = true;
+    private boolean isRecommended = true;
     private boolean isDev;
 
     public String getVersion() {
         return this.version;
     }
-    
+
     public String getSafeVersion() {
         return this.version.replaceAll("[^A-Za-z0-9]", "");
     }
@@ -44,6 +45,10 @@ public class PackVersion {
 
     public boolean canUpdate() {
         return this.canUpdate;
+    }
+
+    public boolean isRecommended() {
+        return this.isRecommended;
     }
 
     public boolean isDev() {

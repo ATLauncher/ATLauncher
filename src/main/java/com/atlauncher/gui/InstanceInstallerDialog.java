@@ -39,6 +39,7 @@ import com.atlauncher.workers.InstanceInstaller;
 
 public class InstanceInstallerDialog extends JDialog {
 
+    private static final long serialVersionUID = -6984886874482721558L;
     private boolean isReinstall = false;
     private boolean isServer = false;
     private Pack pack = null;
@@ -152,6 +153,13 @@ public class InstanceInstallerDialog extends JDialog {
                 if (version.versionMatches(instance.getVersion())) {
                     versionsDropDown.setSelectedItem(version);
                 }
+            }
+        } else {
+            for (PackVersion version : versions) {
+                if (!version.isRecommended() || version.isDev()) {
+                    continue;
+                }
+                versionsDropDown.setSelectedItem(version);
             }
         }
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
