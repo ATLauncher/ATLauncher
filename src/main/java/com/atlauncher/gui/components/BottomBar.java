@@ -24,6 +24,7 @@ import com.atlauncher.utils.Utils;
 @SuppressWarnings("serial")
 public abstract class BottomBar extends JPanel {
 
+    protected JButton creeperHostIcon;
     protected JButton facebookIcon;
     protected JButton githubIcon;
     protected JButton twitterIcon;
@@ -38,6 +39,7 @@ public abstract class BottomBar extends JPanel {
         rightSide = new JPanel();
         rightSide.setLayout(new FlowLayout());
 
+        rightSide.add(creeperHostIcon);
         rightSide.add(facebookIcon);
         rightSide.add(githubIcon);
         rightSide.add(redditIcon);
@@ -45,6 +47,20 @@ public abstract class BottomBar extends JPanel {
     }
 
     private void setupSocialButtons() {
+        creeperHostIcon = new JButton(Utils.getIconImage("/assets/image/CreeperHostIcon.png")) {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
+        creeperHostIcon.setBorder(BorderFactory.createEmptyBorder());
+        creeperHostIcon.setContentAreaFilled(false);
+        creeperHostIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        creeperHostIcon
+                .setToolTipText("CreeperHost - Minecraft servers for ATLauncher packs and more");
+
         facebookIcon = new JButton(Utils.getIconImage("/assets/image/FacebookIcon.png")) {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
