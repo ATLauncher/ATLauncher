@@ -472,7 +472,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 progress = Integer.parseInt(parts[0]);
                                 paint = parts[1];
                             }
-                            if (progress > 100) {
+                            if (progress >= 100) {
                                 progress = 100;
                             }
                             if (progress < 0) {

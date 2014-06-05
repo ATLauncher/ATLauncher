@@ -1640,8 +1640,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else {
             progress = 0;
         }
-        fireSubProgress((int) progress,
-                String.format("%.2f", ((float) this.downloadedBytes / 1024 / 1024)) + " MB / "
-                        + String.format("%.2f", ((float) this.totalBytes / 1024 / 1024)) + " MB");
+        float done = (float) this.downloadedBytes / 1024 / 1024;
+        float toDo = (float) this.totalBytes / 1024 / 1024;
+        if (done > toDo) {
+            fireSubProgress(100, String.format("%.2f MB", done));
+        } else {
+            fireSubProgress((int) progress, String.format("%.2f MB / %.2f MB", done, toDo));
+        }
     }
 }
