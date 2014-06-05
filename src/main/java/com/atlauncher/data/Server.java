@@ -12,12 +12,18 @@ public class Server {
     private String baseURL;
     private boolean userSelectable;
     private boolean disabled;
+    private boolean isMaster;
 
-    public Server(String name, String baseURL, boolean userSelectable) {
+    public Server(String name, String baseURL, boolean userSelectable, boolean isMaster) {
         this.name = name;
         this.baseURL = baseURL;
         this.userSelectable = userSelectable;
         this.disabled = false;
+        this.isMaster = isMaster;
+    }
+
+    public boolean isMaster() {
+        return this.isMaster;
     }
 
     public void disableServer() {

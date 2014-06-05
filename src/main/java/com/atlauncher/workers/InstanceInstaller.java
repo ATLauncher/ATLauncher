@@ -444,23 +444,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (!files.isEmpty()) {
             String base64Files = Base64.encodeBytes(files.getBytes());
+
             fileSizes = new HashMap<String, Integer>();
             String returnValue = null;
-            do {
-                try {
-                    returnValue = Utils.sendPostData(App.settings.getFileURL("getfilesizes.php"),
-                            base64Files, "files");
-                } catch (IOException e1) {
-                    App.settings.logStackTrace(e1);
-                }
-                if (returnValue == null) {
-                    if (!App.settings.getNextServer()) {
-                        App.settings
-                                .log("Couldn't get filesizes of files from all ATLauncher servers. Continuing regardless!",
-                                        LogMessageType.warning, false);
-                    }
-                }
-            } while (returnValue == null);
+            try {
+                returnValue = Utils.sendPostData(App.settings.getMasterFileURL("getfilesizes.php"),
+                        base64Files, "files");
+            } catch (IOException e1) {
+                App.settings.logStackTrace(e1);
+            }
+            if (returnValue == null) {
+                App.settings.log("Couldn't get filesizes of files. Continuing regardless!",
+                        LogMessageType.warning, false);
+            }
+
             if (returnValue != null) {
                 try {
                     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

@@ -2142,6 +2142,22 @@ public class Settings {
     }
 
     /**
+     * Gets the URL for a file on the master server
+     * 
+     * @param filename
+     *            Filename including directories on the server
+     * @return URL of the file or null if no master server defined
+     */
+    public String getMasterFileURL(String filename) {
+        for (Server server : this.servers) {
+            if (server.isMaster()) {
+                return server.getFileURL(filename);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Finds out if the Launcher Console is visible or not
      * 
      * @return true if the console is visible, false if it's been hidden
