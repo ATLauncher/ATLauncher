@@ -160,6 +160,7 @@ public class InstanceInstallerDialog extends JDialog {
                     continue;
                 }
                 versionsDropDown.setSelectedItem(version);
+                break;
             }
         }
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
