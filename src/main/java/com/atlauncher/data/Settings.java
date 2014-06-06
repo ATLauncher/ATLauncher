@@ -315,7 +315,13 @@ public class Settings {
         JSONParser parser = new JSONParser();
         try {
             Downloadable download = new Downloadable("http://status.mojang.com/check", false);
-            Object obj = parser.parse(download.getContents());
+            String response = download.getContents();
+            if (response == null) {
+                minecraftSessionServerUp = false;
+                minecraftLoginServerUp = false;
+                return;
+            }
+            Object obj = parser.parse(response);
             JSONArray jsonObject = (JSONArray) obj;
             Iterator<JSONObject> iterator = jsonObject.iterator();
             while (iterator.hasNext()) {
@@ -332,6 +338,8 @@ public class Settings {
             }
         } catch (ParseException e) {
             this.logStackTrace(e);
+            minecraftSessionServerUp = false;
+            minecraftLoginServerUp = false;
         }
     }
 
