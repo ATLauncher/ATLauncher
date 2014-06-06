@@ -14,7 +14,6 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 
@@ -61,8 +60,8 @@ public class SettingsTab extends JPanel {
                         && networkSettingsTab.isValidConcurrentConnections()
                         && networkSettingsTab.isValidProxyPort()
                         && networkSettingsTab.canConnectWithProxy()) {
-                    boolean reloadTheme = generalSettingsTab.needToReloadTheme();
-                    boolean restartLauncher = generalSettingsTab.needToRestartLauncher();
+                    boolean restartLauncher = generalSettingsTab.needToRestartLauncher()
+                            || generalSettingsTab.needToReloadTheme();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                     generalSettingsTab.save();
                     javaSettingsTab.save();
@@ -72,11 +71,6 @@ public class SettingsTab extends JPanel {
                     App.settings.log("Settings Saved!");
                     if (restartLauncher) {
                         App.settings.restartLauncher();
-                    }
-                    if (reloadTheme) {
-                        App.loadTheme();
-                        SwingUtilities.updateComponentTreeUI(App.settings.getParent());
-                        SwingUtilities.updateComponentTreeUI(App.settings.getConsole());
                     }
                     if (reloadPacksPanel) {
                         App.settings.reloadPacksPanel();
