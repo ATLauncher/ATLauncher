@@ -157,7 +157,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         windowSizePanel = new JPanel();
-        windowSizePanel.setLayout(new FlowLayout());
+        windowSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         widthField = new JTextField(4);
         widthField.setText(App.settings.getWindowWidth() + "");
         heightField = new JTextField(4);
@@ -193,8 +193,6 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         windowSizePanel.add(heightField);
         windowSizePanel.add(commonScreenSizes);
         add(windowSizePanel, gbc);
-        windowSizeLabel.setPreferredSize(new Dimension(windowSizeLabel.getPreferredSize().width,
-                windowSizePanel.getPreferredSize().height));
 
         // Java Path
 
@@ -221,7 +219,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaPathPanel = new JPanel();
-        javaPathPanel.setLayout(new FlowLayout());
+        javaPathPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         javaPath = new JTextField(20);
         javaPath.setText(App.settings.getJavaPath());
         javaPathResetButton = new JButton(App.settings.getLocalizedString("settings.javapathreset"));
@@ -233,8 +231,6 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaPathPanel.add(javaPath);
         javaPathPanel.add(javaPathResetButton);
         add(javaPathPanel, gbc);
-        javaPathLabel.setPreferredSize(new Dimension(javaPathLabel.getPreferredSize().width,
-                javaPathPanel.getPreferredSize().height));
 
         // Java Paramaters
 
@@ -261,7 +257,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaParametersPanel = new JPanel();
-        javaParametersPanel.setLayout(new FlowLayout());
+        javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         javaParameters = new JTextField(20);
         javaParameters.setText(App.settings.getJavaParameters());
         javaParametersResetButton = new JButton(
@@ -274,9 +270,6 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(javaParametersResetButton);
         add(javaParametersPanel, gbc);
-        javaParametersLabel.setPreferredSize(new Dimension(
-                javaParametersLabel.getPreferredSize().width, javaParametersPanel
-                        .getPreferredSize().height));
 
         // Start Minecraft Maximised
 
