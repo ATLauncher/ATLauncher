@@ -7,6 +7,7 @@
 package com.atlauncher.utils;
 
 public final class HTMLifier {
+
     private String text;
 
     private HTMLifier(String text) {
@@ -15,6 +16,16 @@ public final class HTMLifier {
 
     public static HTMLifier wrap(String text) {
         return new HTMLifier(text);
+    }
+
+    public HTMLifier center() {
+        this.text = "<center>" + this.text + "</center>";
+        return this;
+    }
+
+    public HTMLifier addHTMLTags() {
+        this.text = "<html>" + this.text + "</html>";
+        return this;
     }
 
     public HTMLifier font(String color) {
@@ -31,4 +42,5 @@ public final class HTMLifier {
     public String toString() {
         return this.text;
     }
+
 }
