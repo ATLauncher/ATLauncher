@@ -24,6 +24,7 @@ public abstract class AbstractSettingsTab extends JPanel {
     final Insets FIELD_INSETS_SMALL = new Insets(0, 0, 0, 0);
 
     final ImageIcon helpIcon = Utils.getIconImage("/assets/image/Help.png");
+    final ImageIcon restartIcon = Utils.getIconImage("/assets/image/Exclamation.png");
 
     final GridBagConstraints gbc;
 

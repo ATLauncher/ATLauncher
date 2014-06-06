@@ -6,11 +6,13 @@
  */
 package com.atlauncher.gui.tabs;
 
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JToolTip;
 import javax.swing.border.Border;
 
@@ -24,9 +26,13 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
     private JLabel languageLabel;
     private JComboBox<Language> language;
+    private JLabel languageLabelRestart;
+    private JPanel languageLabelPanel;
 
     private JLabel themeLabel;
     private JComboBox<String> theme;
+    private JLabel themeLabelRestart;
+    private JPanel themeLabelPanel;
 
     private JLabel advancedBackupLabel;
     private JCheckBox advancedBackup;
@@ -49,6 +55,19 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy = 0;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        languageLabelRestart = new JLabel() {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
+        languageLabelRestart.setIcon(restartIcon);
+        languageLabelRestart.setToolTipText(App.settings
+                .getLocalizedString("settings.requiresrestart"));
+
         languageLabel = new JLabel(App.settings.getLocalizedString("settings.language") + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
@@ -59,7 +78,13 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         };
         languageLabel.setIcon(helpIcon);
         languageLabel.setToolTipText(App.settings.getLocalizedString("settings.languagehelp"));
-        add(languageLabel, gbc);
+
+        languageLabelPanel = new JPanel();
+        languageLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        languageLabelPanel.add(languageLabelRestart);
+        languageLabelPanel.add(languageLabel);
+
+        add(languageLabelPanel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
@@ -76,6 +101,19 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        themeLabelRestart = new JLabel() {
+            public JToolTip createToolTip() {
+                JToolTip tip = super.createToolTip();
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                tip.setBorder(border);
+                return tip;
+            }
+        };
+        themeLabelRestart.setIcon(restartIcon);
+        themeLabelRestart.setToolTipText(App.settings
+                .getLocalizedString("settings.requiresrestart"));
+
         themeLabel = new JLabel(App.settings.getLocalizedString("settings.theme") + ":") {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
@@ -86,7 +124,13 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         };
         themeLabel.setIcon(helpIcon);
         themeLabel.setToolTipText(App.settings.getLocalizedString("settings.themehelp"));
-        add(themeLabel, gbc);
+
+        themeLabelPanel = new JPanel();
+        themeLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        themeLabelPanel.add(themeLabelRestart);
+        themeLabelPanel.add(themeLabel);
+
+        add(themeLabelPanel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
@@ -96,6 +140,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             theme.addItem(themee.replace(".json", ""));
         }
         theme.setSelectedItem(App.settings.getTheme());
+
         add(theme, gbc);
 
         // Advanced Backup
