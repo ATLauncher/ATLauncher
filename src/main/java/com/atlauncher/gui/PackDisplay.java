@@ -23,6 +23,8 @@ import javax.swing.JTextArea;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Pack;
+import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.utils.Utils;
 
 /**

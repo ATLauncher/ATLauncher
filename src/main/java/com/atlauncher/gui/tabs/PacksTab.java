@@ -26,9 +26,9 @@ import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Pack;
-import com.atlauncher.gui.AddPackDialog;
 import com.atlauncher.gui.NothingToDisplay;
 import com.atlauncher.gui.PackDisplay;
+import com.atlauncher.gui.dialogs.AddPackDialog;
 
 public class PacksTab extends JPanel {
 

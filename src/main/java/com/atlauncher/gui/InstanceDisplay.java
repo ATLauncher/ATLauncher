@@ -33,6 +33,11 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Pack;
+import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.gui.dialogs.BackupDialog;
+import com.atlauncher.gui.dialogs.EditModsDialog;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.utils.Utils;
 
 /**

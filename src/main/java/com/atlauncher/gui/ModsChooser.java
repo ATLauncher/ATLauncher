@@ -25,6 +25,8 @@ import javax.swing.SwingConstants;
 import com.atlauncher.App;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Mod;
+import com.atlauncher.gui.components.ModDescriptionJLabel;
+import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 

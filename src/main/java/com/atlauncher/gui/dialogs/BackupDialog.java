@@ -1,8 +1,10 @@
-package com.atlauncher.gui;
+package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.SyncAbstract;
+import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.*;

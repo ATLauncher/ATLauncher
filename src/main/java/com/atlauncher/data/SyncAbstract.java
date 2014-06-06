@@ -1,6 +1,6 @@
 package com.atlauncher.data;
 
-import com.atlauncher.gui.CollapsiblePanel;
+import com.atlauncher.gui.components.CollapsiblePanel;
 
 import java.io.File;
 import java.util.HashMap;
@@ -55,7 +55,7 @@ public abstract class SyncAbstract {
     public abstract void deleteBackup(String backupName, Instance instance);
 
     /**
-     * If the sync addon has settings then you should return an instance of {@link com.atlauncher.gui.CollapsiblePanel CollapsiblePanel}.
+     * If the sync addon has settings then you should return an instance of {@link com.atlauncher.gui.components.CollapsiblePanel CollapsiblePanel}.
      * It is recommended you extend that class. Look at {@link com.atlauncher.data.DropboxSync DropboxSync} for example.
      * @return The settings panel
      */
