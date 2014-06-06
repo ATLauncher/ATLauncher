@@ -15,40 +15,37 @@ import java.net.Proxy.Type;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.JToolTip;
-import javax.swing.border.Border;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Server;
-import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.ProgressDialog;
+import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab {
 
-    private JLabel downloadServerLabel;
+    private JLabelWithHover downloadServerLabel;
     private JComboBox<Server> server;
 
-    private JLabel connectionTimeoutLabel;
+    private JLabelWithHover connectionTimeoutLabel;
     private JTextField connectionTimeout;
 
-    private JLabel concurrentConnectionsLabel;
+    private JLabelWithHover concurrentConnectionsLabel;
     private JTextField concurrentConnections;
 
-    private JLabel enableProxyLabel;
+    private JLabelWithHover enableProxyLabel;
     private JCheckBox enableProxy;
 
-    private JLabel proxyHostLabel;
+    private JLabelWithHover proxyHostLabel;
     private JTextField proxyHost;
 
-    private JLabel proxyPortLabel;
+    private JLabelWithHover proxyPortLabel;
     private JTextField proxyPort;
 
-    private JLabel proxyTypeLabel;
+    private JLabelWithHover proxyTypeLabel;
     private JComboBox<String> proxyType;
 
     public NetworkSettingsTab() {
@@ -57,18 +54,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        downloadServerLabel = new JLabel(App.settings.getLocalizedString("settings.downloadserver")
-                + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        downloadServerLabel.setIcon(helpIcon);
-        downloadServerLabel.setToolTipText(App.settings
-                .getLocalizedString("settings.downloadserverhelp"));
+        downloadServerLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.downloadserver") + ":", HELP_ICON,
+                App.settings.getLocalizedString("settings.downloadserverhelp"));
         add(downloadServerLabel, gbc);
 
         gbc.gridx++;
@@ -88,19 +76,11 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        connectionTimeoutLabel = new JLabel(
-                App.settings.getLocalizedString("settings.connectiontimeout") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        connectionTimeoutLabel.setIcon(helpIcon);
-        connectionTimeoutLabel.setToolTipText("<html><center>"
-                + App.settings.getLocalizedString("settings.connectiontimeouthelp", "<br/><br/>")
-                + "</center></html>");
+        connectionTimeoutLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.connectiontimeout") + ":", HELP_ICON,
+                "<html><center>"
+                        + App.settings.getLocalizedString("settings.connectiontimeouthelp",
+                                "<br/><br/>" + "</center></html>"));
         add(connectionTimeoutLabel, gbc);
 
         gbc.gridx++;
@@ -115,19 +95,11 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        concurrentConnectionsLabel = new JLabel(
-                App.settings.getLocalizedString("settings.concurrentconnections") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        concurrentConnectionsLabel.setIcon(helpIcon);
-        concurrentConnectionsLabel.setToolTipText("<html><center>"
-                + App.settings.getLocalizedString("settings.concurrentconnectionshelp",
-                        "<br/><br/>") + "</center></html>");
+        concurrentConnectionsLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.concurrentconnections") + ":", HELP_ICON,
+                "<html><center>"
+                        + App.settings.getLocalizedString("settings.concurrentconnectionshelp",
+                                "<br/><br/>") + "</center></html>");
         add(concurrentConnectionsLabel, gbc);
 
         gbc.gridx++;
@@ -143,17 +115,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableProxyLabel = new JLabel(App.settings.getLocalizedString("settings.enableproxy") + "?") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        enableProxyLabel.setIcon(helpIcon);
-        enableProxyLabel
-                .setToolTipText(App.settings.getLocalizedString("settings.enableproxyhelp"));
+        enableProxyLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.enableproxy") + "?", HELP_ICON,
+                App.settings.getLocalizedString("settings.enableproxyhelp"));
         add(enableProxyLabel, gbc);
 
         gbc.gridx++;
@@ -185,16 +149,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        proxyHostLabel = new JLabel(App.settings.getLocalizedString("settings.proxyhost") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        proxyHostLabel.setIcon(helpIcon);
-        proxyHostLabel.setToolTipText(App.settings.getLocalizedString("settings.proxyhosthelp"));
+        proxyHostLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.proxyhost")
+                + ":", HELP_ICON, App.settings.getLocalizedString("settings.proxyhosthelp"));
         add(proxyHostLabel, gbc);
 
         gbc.gridx++;
@@ -212,16 +168,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        proxyPortLabel = new JLabel(App.settings.getLocalizedString("settings.proxyport") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        proxyPortLabel.setIcon(helpIcon);
-        proxyPortLabel.setToolTipText(App.settings.getLocalizedString("settings.proxyporthelp"));
+        proxyPortLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.proxyport")
+                + ":", HELP_ICON, App.settings.getLocalizedString("settings.proxyporthelp"));
         add(proxyPortLabel, gbc);
 
         gbc.gridx++;
@@ -240,16 +188,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        proxyTypeLabel = new JLabel(App.settings.getLocalizedString("settings.proxytype") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        proxyTypeLabel.setIcon(helpIcon);
-        proxyTypeLabel.setToolTipText(App.settings.getLocalizedString("settings.proxytypehelp"));
+        proxyTypeLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.proxytype")
+                + ":", HELP_ICON, App.settings.getLocalizedString("settings.proxytypehelp"));
         add(proxyTypeLabel, gbc);
 
         gbc.gridx++;

@@ -22,39 +22,37 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToolTip;
-import javax.swing.border.Border;
 
 import com.atlauncher.App;
-import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class JavaSettingsTab extends AbstractSettingsTab {
 
-    private JLabel memoryLabel;
+    private JLabelWithHover memoryLabel;
     private JComboBox<String> memory;
 
-    private JLabel permGenLabel;
+    private JLabelWithHover permGenLabel;
     private JTextField permGen;
 
     private JPanel windowSizePanel;
-    private JLabel windowSizeLabel;
+    private JLabelWithHover windowSizeLabel;
     private JTextField widthField;
     private JTextField heightField;
     private JComboBox<String> commonScreenSizes;
 
     private JPanel javaPathPanel;
-    private JLabel javaPathLabel;
+    private JLabelWithHover javaPathLabel;
     private JTextField javaPath;
     private JButton javaPathResetButton;
 
     private JPanel javaParametersPanel;
-    private JLabel javaParametersLabel;
+    private JLabelWithHover javaParametersLabel;
     private JTextField javaParameters;
     private JButton javaParametersResetButton;
 
-    private JLabel startMinecraftMaximisedLabel;
+    private JLabelWithHover startMinecraftMaximisedLabel;
     private JCheckBox startMinecraftMaximised;
 
     public JavaSettingsTab() {
@@ -63,21 +61,12 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        memoryLabel = new JLabel(App.settings.getLocalizedString("settings.memory") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        memoryLabel.setIcon(helpIcon);
-        if (Utils.is64Bit())
-            memoryLabel.setToolTipText(App.settings.getLocalizedString("settings.memoryhelp"));
-        else
-            memoryLabel.setToolTipText("<html><center>"
-                    + App.settings.getLocalizedString("settings.memoryhelp32bit", "<br/>")
-                    + "</center></html>");
+        memoryLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.memory") + ":",
+                HELP_ICON,
+                (Utils.is64Bit() ? App.settings.getLocalizedString("settings.memoryhelp")
+                        : "<html><center>"
+                                + App.settings.getLocalizedString("settings.memoryhelp32bit",
+                                        "<br/>") + "</center></html>"));
         add(memoryLabel, gbc);
 
         gbc.gridx++;
@@ -116,16 +105,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        permGenLabel = new JLabel(App.settings.getLocalizedString("settings.permgen") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        permGenLabel.setIcon(helpIcon);
-        permGenLabel.setToolTipText(App.settings.getLocalizedString("settings.permgenhelp"));
+        permGenLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.permgen")
+                + ":", HELP_ICON, App.settings.getLocalizedString("settings.permgenhelp"));
         add(permGenLabel, gbc);
 
         gbc.gridx++;
@@ -141,16 +122,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        windowSizeLabel = new JLabel(App.settings.getLocalizedString("settings.windowsize") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        windowSizeLabel.setIcon(helpIcon);
-        windowSizeLabel.setToolTipText(App.settings.getLocalizedString("settings.windowsizehelp"));
+        windowSizeLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.windowsize") + ":", HELP_ICON,
+                App.settings.getLocalizedString("settings.windowsizehelp"));
         add(windowSizeLabel, gbc);
 
         gbc.gridx++;
@@ -201,16 +175,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        javaPathLabel = new JLabel(App.settings.getLocalizedString("settings.javapath") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        javaPathLabel.setIcon(helpIcon);
-        javaPathLabel.setToolTipText("<html><center>"
+        javaPathLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.javapath")
+                + ":", HELP_ICON, "<html><center>"
                 + App.settings.getLocalizedString("settings.javapathhelp", "<br/>")
                 + "</center></html>");
         add(javaPathLabel, gbc);
@@ -239,18 +205,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        javaParametersLabel = new JLabel(App.settings.getLocalizedString("settings.javaparameters")
-                + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        javaParametersLabel.setIcon(helpIcon);
-        javaParametersLabel.setToolTipText(App.settings
-                .getLocalizedString("settings.javaparametershelp"));
+        javaParametersLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.javaparameters") + ":", HELP_ICON,
+                App.settings.getLocalizedString("settings.javaparametershelp"));
         add(javaParametersLabel, gbc);
 
         gbc.gridx++;
@@ -277,18 +234,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        startMinecraftMaximisedLabel = new JLabel(
-                App.settings.getLocalizedString("settings.startminecraftmaximised") + "?") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        startMinecraftMaximisedLabel.setIcon(helpIcon);
-        startMinecraftMaximisedLabel.setToolTipText(App.settings
-                .getLocalizedString("settings.startminecraftmaximisedhelp"));
+        startMinecraftMaximisedLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.startminecraftmaximised") + "?",
+                HELP_ICON, App.settings.getLocalizedString("settings.startminecraftmaximisedhelp"));
         add(startMinecraftMaximisedLabel, gbc);
 
         gbc.gridx++;

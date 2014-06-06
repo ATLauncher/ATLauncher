@@ -11,42 +11,39 @@ import java.awt.GridBagConstraints;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolTip;
-import javax.swing.border.Border;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
-import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab {
 
-    private JLabel languageLabel;
+    private JLabelWithHover languageLabel;
     private JComboBox<Language> language;
-    private JLabel languageLabelRestart;
+    private JLabelWithHover languageLabelRestart;
     private JPanel languageLabelPanel;
 
-    private JLabel themeLabel;
+    private JLabelWithHover themeLabel;
     private JComboBox<String> theme;
-    private JLabel themeLabelRestart;
+    private JLabelWithHover themeLabelRestart;
     private JPanel themeLabelPanel;
 
-    private JLabel advancedBackupLabel;
+    private JLabelWithHover advancedBackupLabel;
     private JCheckBox advancedBackup;
 
-    private JLabel sortPacksAlphabeticallyLabel;
+    private JLabelWithHover sortPacksAlphabeticallyLabel;
     private JCheckBox sortPacksAlphabetically;
 
-    private JLabel keepLauncherOpenLabel;
+    private JLabelWithHover keepLauncherOpenLabel;
     private JCheckBox keepLauncherOpen;
 
-    private JLabel enableConsoleLabel;
+    private JLabelWithHover enableConsoleLabel;
     private JCheckBox enableConsole;
 
-    private JLabel enableTrayIconLabel;
+    private JLabelWithHover enableTrayIconLabel;
     private JCheckBox enableTrayIcon;
 
     public GeneralSettingsTab() {
@@ -56,28 +53,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        languageLabelRestart = new JLabel() {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        languageLabelRestart.setIcon(restartIcon);
-        languageLabelRestart.setToolTipText(App.settings
-                .getLocalizedString("settings.requiresrestart"));
+        languageLabelRestart = new JLabelWithHover(RESTART_ICON,
+                App.settings.getLocalizedString("settings.requiresrestart"), RESTART_BORDER);
 
-        languageLabel = new JLabel(App.settings.getLocalizedString("settings.language") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        languageLabel.setIcon(helpIcon);
-        languageLabel.setToolTipText(App.settings.getLocalizedString("settings.languagehelp"));
+        languageLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.language")
+                + ":", HELP_ICON, App.settings.getLocalizedString("settings.languagehelp"));
 
         languageLabelPanel = new JPanel();
         languageLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -102,28 +82,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        themeLabelRestart = new JLabel() {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        themeLabelRestart.setIcon(restartIcon);
-        themeLabelRestart.setToolTipText(App.settings
-                .getLocalizedString("settings.requiresrestart"));
+        themeLabelRestart = new JLabelWithHover(RESTART_ICON,
+                App.settings.getLocalizedString("settings.requiresrestart"), RESTART_BORDER);
 
-        themeLabel = new JLabel(App.settings.getLocalizedString("settings.theme") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        themeLabel.setIcon(helpIcon);
-        themeLabel.setToolTipText(App.settings.getLocalizedString("settings.themehelp"));
+        themeLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.theme") + ":",
+                HELP_ICON, App.settings.getLocalizedString("settings.themehelp"));
 
         themeLabelPanel = new JPanel();
         themeLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -149,19 +112,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        advancedBackupLabel = new JLabel(App.settings.getLocalizedString("settings.advancedbackup")
-                + "?") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        advancedBackupLabel.setIcon(helpIcon);
-        advancedBackupLabel.setToolTipText("<html><center>"
-                + App.settings.getLocalizedString("settings.advancedbackuphelp", "<br/>")
-                + "</center></html>");
+        advancedBackupLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.advancedbackup") + "?", HELP_ICON,
+                "<html><center>"
+                        + App.settings.getLocalizedString("settings.advancedbackuphelp", "<br/>")
+                        + "</center></html>");
         add(advancedBackupLabel, gbc);
 
         gbc.gridx++;
@@ -179,18 +134,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        sortPacksAlphabeticallyLabel = new JLabel(
-                App.settings.getLocalizedString("settings.sortpacksalphabetically") + "?") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        sortPacksAlphabeticallyLabel.setIcon(helpIcon);
-        sortPacksAlphabeticallyLabel.setToolTipText(App.settings
-                .getLocalizedString("settings.sortpacksalphabeticallyhelp"));
+        sortPacksAlphabeticallyLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.sortpacksalphabetically") + "?",
+                HELP_ICON, App.settings.getLocalizedString("settings.sortpacksalphabeticallyhelp"));
         add(sortPacksAlphabeticallyLabel, gbc);
 
         gbc.gridx++;
@@ -208,18 +154,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        keepLauncherOpenLabel = new JLabel(
-                App.settings.getLocalizedString("settings.keeplauncheropen") + "?") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        keepLauncherOpenLabel.setIcon(helpIcon);
-        keepLauncherOpenLabel.setToolTipText(App.settings
-                .getLocalizedString("settings.keeplauncheropenhelp"));
+        keepLauncherOpenLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.keeplauncheropen") + "?", HELP_ICON,
+                App.settings.getLocalizedString("settings.keeplauncheropenhelp"));
         add(keepLauncherOpenLabel, gbc);
 
         gbc.gridx++;
@@ -237,16 +174,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableConsoleLabel = new JLabel(App.settings.getLocalizedString("settings.console") + "?") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        enableConsoleLabel.setIcon(helpIcon);
-        enableConsoleLabel.setToolTipText(App.settings.getLocalizedString("settings.consolehelp"));
+        enableConsoleLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.console") + "?", HELP_ICON,
+                App.settings.getLocalizedString("settings.consolehelp"));
         add(enableConsoleLabel, gbc);
 
         gbc.gridx++;
@@ -264,18 +194,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableTrayIconLabel = new JLabel(App.settings.getLocalizedString("settings.traymenu") + "?") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        enableTrayIconLabel.setIcon(helpIcon);
-        enableTrayIconLabel.setToolTipText("<html><center>"
-                + App.settings.getLocalizedString("settings.traymenuhelp", "<br/>")
-                + "</center></html>");
+        enableTrayIconLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.traymenu") + "?", HELP_ICON,
+                "<html><center>"
+                        + App.settings.getLocalizedString("settings.traymenuhelp", "<br/>")
+                        + "</center></html>");
         add(enableTrayIconLabel, gbc);
 
         gbc.gridx++;

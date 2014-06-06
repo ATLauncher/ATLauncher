@@ -12,27 +12,24 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JToolTip;
-import javax.swing.border.Border;
 
 import com.atlauncher.App;
-import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class LoggingSettingsTab extends AbstractSettingsTab {
 
-    private JLabel forgeLoggingLevelLabel;
+    private JLabelWithHover forgeLoggingLevelLabel;
     private JComboBox<String> forgeLoggingLevel;
 
-    private JLabel enableLeaderboardsLabel;
+    private JLabelWithHover enableLeaderboardsLabel;
     private JCheckBox enableLeaderboards;
 
-    private JLabel enableLoggingLabel;
+    private JLabelWithHover enableLoggingLabel;
     private JCheckBox enableLogs;
 
-    private JLabel enableOpenEyeReportingLabel;
+    private JLabelWithHover enableOpenEyeReportingLabel;
     private JCheckBox enableOpenEyeReporting;
 
     public LoggingSettingsTab() {
@@ -41,19 +38,11 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        forgeLoggingLevelLabel = new JLabel(
-                App.settings.getLocalizedString("settings.forgelogginglevel") + ":") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        forgeLoggingLevelLabel.setIcon(helpIcon);
-        forgeLoggingLevelLabel.setToolTipText("<html><center>"
-                + App.settings.getLocalizedString("settings.forgelogginglevelhelp", "<br/><br/>")
-                + "</center></html>");
+        forgeLoggingLevelLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.forgelogginglevel") + ":", HELP_ICON,
+                "<html><center>"
+                        + App.settings.getLocalizedString("settings.forgelogginglevelhelp",
+                                "<br/><br/>") + "</center></html>");
         add(forgeLoggingLevelLabel, gbc);
 
         gbc.gridx++;
@@ -76,18 +65,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLeaderboardsLabel = new JLabel(
-                App.settings.getLocalizedString("settings.leaderboards") + "?") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        enableLeaderboardsLabel.setIcon(helpIcon);
-        enableLeaderboardsLabel.setToolTipText(App.settings
-                .getLocalizedString("settings.leaderboardshelp"));
+        enableLeaderboardsLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.leaderboards") + "?", HELP_ICON,
+                App.settings.getLocalizedString("settings.leaderboardshelp"));
         add(enableLeaderboardsLabel, gbc);
 
         gbc.gridx++;
@@ -108,18 +88,11 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLoggingLabel = new JLabel(App.settings.getLocalizedString("settings.logging") + "?") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        enableLoggingLabel.setIcon(helpIcon);
-        enableLoggingLabel.setToolTipText("<html><center>"
-                + App.settings.getLocalizedString("settings.logginghelp", "<br/>")
-                + "</center></html>");
+        enableLoggingLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.logging") + "?", HELP_ICON,
+                "<html><center>"
+                        + App.settings.getLocalizedString("settings.logginghelp", "<br/>"
+                                + "</center></html>"));
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
@@ -152,20 +125,12 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableOpenEyeReportingLabel = new JLabel(
-                App.settings.getLocalizedString("settings.openeye") + "?") {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        enableOpenEyeReportingLabel.setIcon(helpIcon);
-        enableOpenEyeReportingLabel.setToolTipText("<html><center>"
-                + Utils.splitMultilinedString(
-                        App.settings.getLocalizedString("settings.openeyehelp"), 80, "<br/>")
-                + "</center></html>");
+        enableOpenEyeReportingLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.openeye") + "?", HELP_ICON,
+                "<html><center>"
+                        + Utils.splitMultilinedString(
+                                App.settings.getLocalizedString("settings.openeyehelp"), 80,
+                                "<br/>") + "</center></html>");
         add(enableOpenEyeReportingLabel, gbc);
 
         gbc.gridx++;

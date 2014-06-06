@@ -10,9 +10,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
+import com.atlauncher.App;
+import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -23,8 +27,11 @@ public abstract class AbstractSettingsTab extends JPanel {
     final Insets LABEL_INSETS_SMALL = new Insets(0, 0, 0, 10);
     final Insets FIELD_INSETS_SMALL = new Insets(0, 0, 0, 0);
 
-    final ImageIcon helpIcon = Utils.getIconImage("/assets/image/Help.png");
-    final ImageIcon restartIcon = Utils.getIconImage("/assets/image/Exclamation.png");
+    final ImageIcon HELP_ICON = Utils.getIconImage("/assets/image/Help.png");
+    final ImageIcon RESTART_ICON = Utils.getIconImage("/assets/image/Exclamation.png");
+
+    final Border RESTART_BORDER = BorderFactory.createEmptyBorder(0, 0, 0, 5);
+    final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
 
     final GridBagConstraints gbc;
 
