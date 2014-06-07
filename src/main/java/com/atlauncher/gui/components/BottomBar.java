@@ -115,6 +115,12 @@ public abstract class BottomBar extends JPanel {
     }
 
     private void setupSocialButtonListeners() {
+        creeperHostIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                App.settings.log("Opening Up CreeperHost");
+                Utils.openBrowser("http://www.creeperhost.net");
+            }
+        });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 App.settings.log("Opening Up ATLauncher Facebook Page");
