@@ -1406,4 +1406,33 @@ public class Instance implements Cloneable {
         }
         return null;
     }
+
+    public boolean hasCustomMods() {
+        for (DisableableMod mod : this.mods) {
+            if (mod.isUserAdded()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<String> getCustomMods(Type type) {
+        List<String> customMods = new ArrayList<String>();
+        for (DisableableMod mod : this.mods) {
+            if (mod.isUserAdded() && mod.getType() == type) {
+                customMods.add(mod.getFilename());
+            }
+        }
+        return customMods;
+    }
+
+    public List<DisableableMod> getCustomDisableableMods() {
+        List<DisableableMod> customMods = new ArrayList<DisableableMod>();
+        for (DisableableMod mod : this.mods) {
+            if (mod.isUserAdded()) {
+                customMods.add(mod);
+            }
+        }
+        return customMods;
+    }
 }

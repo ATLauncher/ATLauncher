@@ -896,6 +896,25 @@ public class Utils {
     }
 
     /**
+     * Delete.
+     * 
+     * @param file
+     *            the file
+     */
+    public static void deleteWithFilter(File file, final List<String> filesToIgnore) {
+        FilenameFilter ffFilter = new FilenameFilter() {
+
+            @Override
+            public boolean accept(File dir, String name) {
+                return !filesToIgnore.contains(name);
+            }
+        };
+        for (File aFile : file.listFiles(ffFilter)) {
+            Utils.delete(aFile);
+        }
+    }
+
+    /**
      * Spread out resource files.
      * 
      * @param dir

@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -384,10 +385,25 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             // We're reinstalling or installing a server so delete these folders
             Utils.delete(getBinDirectory());
             Utils.delete(getConfigDirectory());
-            Utils.delete(getModsDirectory());
-            Utils.delete(getCoreModsDirectory());
+            if (instance.hasCustomMods()) {
+                Utils.deleteWithFilter(getModsDirectory(), instance.getCustomMods(Type.mods));
+                if (this.version.getMinecraftVersion().usesCoreMods()) {
+                    Utils.deleteWithFilter(getCoreModsDirectory(),
+                            instance.getCustomMods(Type.coremods));
+                }
+                if (isReinstall) {
+                    Utils.deleteWithFilter(getJarModsDirectory(), instance.getCustomMods(Type.jar));
+                }
+            } else {
+                Utils.delete(getModsDirectory());
+                if (this.version.getMinecraftVersion().usesCoreMods()) {
+                    Utils.delete(getCoreModsDirectory());
+                }
+                if (isReinstall) {
+                    Utils.delete(getJarModsDirectory()); // Only delete if it's not a server
+                }
+            }
             if (isReinstall) {
-                Utils.delete(getJarModsDirectory()); // Only delete if it's not a server
                 Utils.delete(new File(getTexturePacksDirectory(), "TexturePack.zip"));
                 Utils.delete(new File(getResourcePacksDirectory(), "ResourcePack.zip"));
             } else {
@@ -874,7 +890,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void doCaseConversions(File dir) {
-        for (File file : dir.listFiles()) {
+        File[] files;
+        if (isReinstall) {
+            final List<String> customMods = instance.getCustomMods(Type.mods);
+            FilenameFilter ffFilter = new FilenameFilter() {
+
+                @Override
+                public boolean accept(File dir, String name) {
+                    return !customMods.contains(name);
+                }
+            };
+            files = dir.listFiles(ffFilter);
+        } else {
+            files = dir.listFiles();
+        }
+        for (File file : files) {
             if (file.isFile()
                     && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file
                             .getName().endsWith("litemod"))) {
@@ -1348,7 +1378,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
             modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(),
-                    file, mod.getType(), mod.getColour(), mod.getDescription(), false));
+                    file, mod.getType(), mod.getColour(), mod.getDescription(), false, false));
+        }
+        if (isReinstall && instance.hasCustomMods()) {
+            for (DisableableMod mod : instance.getCustomDisableableMods()) {
+                modsInstalled.add(mod);
+            }
         }
         this.instanceIsCorrupt = true; // From this point on the instance is corrupt
         getTempDirectory().mkdirs(); // Make the temp directory

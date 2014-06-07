@@ -34,9 +34,10 @@ public class DisableableMod implements Serializable {
     private Color colour;
     private String description;
     private boolean disabled;
+    private boolean userAdded = false; // Default to not being user added
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type,
-            Color colour, String description, boolean disabled) {
+            Color colour, String description, boolean disabled, boolean userAdded) {
         this.name = name;
         this.version = version;
         this.optional = optional;
@@ -45,6 +46,7 @@ public class DisableableMod implements Serializable {
         this.colour = colour;
         this.description = description;
         this.disabled = disabled;
+        this.userAdded = userAdded;
     }
 
     public String getName() {
@@ -80,6 +82,14 @@ public class DisableableMod implements Serializable {
 
     public boolean isDisabled() {
         return this.disabled;
+    }
+
+    public boolean isUserAdded() {
+        return this.userAdded;
+    }
+
+    public String getFilename() {
+        return this.file;
     }
 
     public boolean enable(Instance instance) {
@@ -182,6 +192,10 @@ public class DisableableMod implements Serializable {
             return null;
         }
         return new File(dir, file);
+    }
+
+    public Type getType() {
+        return this.type;
     }
 
 }

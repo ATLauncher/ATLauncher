@@ -151,7 +151,7 @@ public class EditModsDialog extends JDialog {
                         }
                         if (type != null) {
                             DisableableMod mod = new DisableableMod(file.getName(), "Custom", true,
-                                    file.getName(), type, null, null, true);
+                                    file.getName(), type, null, null, true, true);
                             if (Utils.copyFile(file, instance.getDisabledModsDirectory())) {
                                 instance.getInstalledMods().add(mod);
                                 disabledMods.add(new ModsJCheckBox(mod));
