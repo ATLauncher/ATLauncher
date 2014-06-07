@@ -385,7 +385,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             // We're reinstalling or installing a server so delete these folders
             Utils.delete(getBinDirectory());
             Utils.delete(getConfigDirectory());
-            if (instance.hasCustomMods()) {
+            if (instance.getMinecraftVersion().equalsIgnoreCase(
+                    version.getMinecraftVersion().getVersion())
+                    && instance.hasCustomMods()) {
                 Utils.deleteWithFilter(getModsDirectory(), instance.getCustomMods(Type.mods));
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
                     Utils.deleteWithFilter(getCoreModsDirectory(),
@@ -891,7 +893,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void doCaseConversions(File dir) {
         File[] files;
-        if (isReinstall) {
+        if (isReinstall
+                && instance.getMinecraftVersion().equalsIgnoreCase(
+                        version.getMinecraftVersion().getVersion())) {
             final List<String> customMods = instance.getCustomMods(Type.mods);
             FilenameFilter ffFilter = new FilenameFilter() {
 
@@ -1380,7 +1384,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(),
                     file, mod.getType(), mod.getColour(), mod.getDescription(), false, false));
         }
-        if (isReinstall && instance.hasCustomMods()) {
+        if (isReinstall
+                && instance.getMinecraftVersion().equalsIgnoreCase(
+                        version.getMinecraftVersion().getVersion()) && instance.hasCustomMods()) {
             for (DisableableMod mod : instance.getCustomDisableableMods()) {
                 modsInstalled.add(mod);
             }
