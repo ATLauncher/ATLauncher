@@ -187,6 +187,8 @@ public class Utils {
             try {
                 Desktop.getDesktop().browse(new URI(URL));
             } catch (Exception e) {
+                App.settings.log("Failed to open link " + URL + " in browser!",
+                        LogMessageType.error, false);
                 App.settings.logStackTrace(e);
             }
         }
