@@ -230,12 +230,17 @@ public class Utils {
             return new Font(name, Font.PLAIN, 0);
         }
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT,
-                    System.class.getResource("/assets/font/" + name + ".ttf").openStream());
+            URL url = System.class.getResource("/assets/font/" + name + ".ttf");
+            if (url == null) {
+                return new Font(Font.SANS_SERIF, Font.PLAIN, 0);
+            }
+            font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
         } catch (FontFormatException e) {
             App.settings.logStackTrace(e);
+            return new Font(Font.SANS_SERIF, Font.PLAIN, 0);
         } catch (IOException e) {
             App.settings.logStackTrace(e);
+            return new Font(Font.SANS_SERIF, Font.PLAIN, 0);
         }
         return font;
     }
