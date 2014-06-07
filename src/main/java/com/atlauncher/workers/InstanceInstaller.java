@@ -1340,9 +1340,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             String file = mod.getFile();
             if (this.caseAllFiles != null) {
                 if (this.caseAllFiles.equalsIgnoreCase("upper")) {
-                    file = file.toUpperCase();
+                    file = file.substring(0, file.lastIndexOf(".")).toUpperCase()
+                            + file.substring(file.lastIndexOf("."));
                 } else if (this.caseAllFiles.equalsIgnoreCase("lower")) {
-                    file = file.toLowerCase();
+                    file = file.substring(0, file.lastIndexOf(".")).toLowerCase()
+                            + file.substring(file.lastIndexOf("."));
                 }
             }
             modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(),
