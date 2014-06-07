@@ -55,6 +55,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover startMinecraftMaximisedLabel;
     private JCheckBox startMinecraftMaximised;
 
+    private JLabelWithHover saveCustomModsLabel;
+    private JCheckBox saveCustomMods;
+
     public JavaSettingsTab() {
         // Memory Settings
         gbc.gridx = 0;
@@ -247,6 +250,26 @@ public class JavaSettingsTab extends AbstractSettingsTab {
             startMinecraftMaximised.setSelected(true);
         }
         add(startMinecraftMaximised, gbc);
+
+        // Save Custom Mods
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        saveCustomModsLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.savecustommods") + "?", HELP_ICON,
+                App.settings.getLocalizedString("settings.savecustommodshelp"));
+        add(saveCustomModsLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        saveCustomMods = new JCheckBox();
+        if (App.settings.saveCustomMods()) {
+            saveCustomMods.setSelected(true);
+        }
+        add(saveCustomMods, gbc);
     }
 
     public boolean isValidJavaPath() {
@@ -289,5 +312,6 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         App.settings.setJavaPath(javaPath.getText());
         App.settings.setJavaParameters(javaParameters.getText());
         App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
+        App.settings.setSaveCustomMods(saveCustomMods.isSelected());
     }
 }

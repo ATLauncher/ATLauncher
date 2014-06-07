@@ -90,6 +90,7 @@ public class Settings {
     private int windowWidth; // Width of the Minecraft window
     private int windowHeight; // Height of the Minecraft window
     private boolean maximiseMinecraft; // If Minecraft should start maximised
+    private boolean saveCustomMods; // If custom mods should be saved between updates/reinstalls
     private boolean usingCustomJavaPath; // If the user is using a custom java path
     private String javaPath; // Users path to Java
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
@@ -985,6 +986,9 @@ public class Settings {
             this.maximiseMinecraft = Boolean.parseBoolean(properties.getProperty(
                     "maximiseminecraft", "false"));
 
+            this.saveCustomMods = Boolean.parseBoolean(properties.getProperty("savecustommods",
+                    "true"));
+
             this.advancedBackup = Boolean.parseBoolean(properties.getProperty("advancedbackup",
                     "false"));
 
@@ -1105,6 +1109,7 @@ public class Settings {
             properties.setProperty("javaparameters", this.javaParamaters);
             properties
                     .setProperty("maximiseminecraft", (this.maximiseMinecraft) ? "true" : "false");
+            properties.setProperty("savecustommods", (this.saveCustomMods) ? "true" : "false");
             properties.setProperty("advancedbackup", (this.advancedBackup) ? "true" : "false");
             properties.setProperty("sortpacksalphabetically",
                     (this.sortPacksAlphabetically) ? "true" : "false");
@@ -2387,6 +2392,14 @@ public class Settings {
 
     public void setStartMinecraftMaximised(boolean maximiseMinecraft) {
         this.maximiseMinecraft = maximiseMinecraft;
+    }
+
+    public boolean saveCustomMods() {
+        return this.saveCustomMods;
+    }
+
+    public void setSaveCustomMods(boolean saveCustomMods) {
+        this.saveCustomMods = saveCustomMods;
     }
 
     /**
