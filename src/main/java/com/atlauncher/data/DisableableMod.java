@@ -37,7 +37,7 @@ public class DisableableMod implements Serializable {
     private boolean userAdded = false; // Default to not being user added
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type,
-            Color colour, String description, boolean disabled, boolean userAdded) {
+                          Color colour, String description, boolean disabled, boolean userAdded) {
         this.name = name;
         this.version = version;
         this.optional = optional;

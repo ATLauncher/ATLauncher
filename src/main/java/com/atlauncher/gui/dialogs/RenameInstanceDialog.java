@@ -88,7 +88,7 @@ public class RenameInstanceDialog extends JDialog {
                                     + App.settings.getLocalizedString("common.error")
                                     + "<br/><br/>"
                                     + App.settings.getLocalizedString("instance.invalidname",
-                                            instanceName.getText()) + "</center></html>",
+                                    instanceName.getText()) + "</center></html>",
                             App.settings.getLocalizedString("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                     return;
@@ -103,7 +103,7 @@ public class RenameInstanceDialog extends JDialog {
                                 RenameInstanceDialog.this,
                                 "<html><center>"
                                         + App.settings.getLocalizedString("instance.errorrenaming",
-                                                instance.getName() + "<br/><br/>")
+                                        instance.getName() + "<br/><br/>")
                                         + "</center></html>", App.settings
                                         .getLocalizedString("common.error"),
                                 JOptionPane.ERROR_MESSAGE);

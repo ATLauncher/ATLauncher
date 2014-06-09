@@ -91,9 +91,9 @@ public class LauncherFrame extends JFrame {
      * Setup the individual tabs used in the Launcher sidebar
      */
     private void setupTabs() {
-        tabbedPane = new JTabbedPane((App.THEME.showTabsOnRight() ? JTabbedPane.RIGHT
+        tabbedPane = new JTabbedPane((App.THEME.tabsOnRight() ? JTabbedPane.RIGHT
                 : JTabbedPane.LEFT));
-        tabbedPane.setBackground(App.THEME.getBaseColour());
+        tabbedPane.setBackground(App.THEME.getBaseColor());
 
         newsTab = new NewsTab();
         App.settings.setNewsPanel(newsTab);
@@ -104,13 +104,13 @@ public class LauncherFrame extends JFrame {
         accountsTab = new AccountsTab();
         settingsTab = new SettingsTab();
 
-        tabbedPane.setFont(App.THEME.getTabsFont());
+        tabbedPane.setFont(App.THEME.getTabFont().deriveFont(34.0F));
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.news"), newsTab);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsTab);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesTab);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountsTab);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsTab);
-        tabbedPane.setBackground(App.THEME.getTabBackgroundColour());
+        tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
     }
 

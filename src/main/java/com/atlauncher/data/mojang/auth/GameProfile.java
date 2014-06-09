@@ -28,7 +28,7 @@ public class GameProfile {
     public String getName() {
         return this.name;
     }
-    
+
     public boolean isLegacy() {
         return this.legacy;
     }

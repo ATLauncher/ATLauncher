@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
 
 public class ModDescriptionJLabel extends JLabel {
 
@@ -20,13 +21,13 @@ public class ModDescriptionJLabel extends JLabel {
     private String description;
 
     public ModDescriptionJLabel(String descriptionn) {
-        super("<html><center><font color=\"" + App.THEME.getModInfoQuestionMarkColourHTML() + "\"><sup>[?]</sup></font></center></html>");
+        super("<html><center><font color=\"" + Utils.colorHex(App.THEME.getModInfoColor()) + "\"><sup>[?]</sup></font></center></html>");
         this.description = descriptionn;
         super.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent me) {
-                Object[] options = { App.settings.getLocalizedString("common.ok") };
+                Object[] options = {App.settings.getLocalizedString("common.ok")};
                 JOptionPane.showOptionDialog(null, "<html><center>" + description
-                        + "</center></html>",
+                                + "</center></html>",
                         App.settings.getLocalizedString("instance.moddescription"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
                         options[0]);

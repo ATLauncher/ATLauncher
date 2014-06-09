@@ -35,7 +35,7 @@ public final class TrayMenu extends PopupMenu {
                                         App.settings.getParent(),
                                         "<html><center>"
                                                 + App.settings.getLocalizedString(
-                                                        "console.killsure", "<br/><br/>")
+                                                "console.killsure", "<br/><br/>")
                                                 + "</center></html>", App.settings
                                                 .getLocalizedString("console.kill"),
                                         JOptionPane.YES_OPTION);

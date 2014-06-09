@@ -68,8 +68,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 HELP_ICON,
                 (Utils.is64Bit() ? App.settings.getLocalizedString("settings.memoryhelp")
                         : "<html><center>"
-                                + App.settings.getLocalizedString("settings.memoryhelp32bit",
-                                        "<br/>") + "</center></html>"));
+                        + App.settings.getLocalizedString("settings.memoryhelp32bit",
+                        "<br/>") + "</center></html>"));
         add(memoryLabel, gbc);
 
         gbc.gridx++;
@@ -93,7 +93,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                                 App.settings.getParent(),
                                 "<html><center>"
                                         + App.settings.getLocalizedString(
-                                                "settings.toomuchramallocated", "<br/><br/>")
+                                        "settings.toomuchramallocated", "<br/><br/>")
                                         + "</center></html>", App.settings
                                         .getLocalizedString("settings.help"),
                                 JOptionPane.PLAIN_MESSAGE);
@@ -164,7 +164,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         });
         commonScreenSizes.setPreferredSize(new Dimension(
                 commonScreenSizes.getPreferredSize().width + 10, commonScreenSizes
-                        .getPreferredSize().height));
+                .getPreferredSize().height));
         windowSizePanel.add(widthField);
         windowSizePanel.add(new JLabel("x"));
         windowSizePanel.add(heightField);
@@ -279,7 +279,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                     App.settings.getParent(),
                     "<html><center>"
                             + App.settings.getLocalizedString("settings.javapathincorrect",
-                                    "<br/><br/>") + "</center></html>",
+                            "<br/><br/>") + "</center></html>",
                     App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
@@ -294,7 +294,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                     App.settings.getParent(),
                     "<html><center>"
                             + App.settings.getLocalizedString("settings.javaparametersincorrect",
-                                    "<br/><br/>") + "</center></html>",
+                            "<br/><br/>") + "</center></html>",
                     App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }

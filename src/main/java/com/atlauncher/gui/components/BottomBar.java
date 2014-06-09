@@ -50,7 +50,7 @@ public abstract class BottomBar extends JPanel {
         creeperHostIcon = new JButton(Utils.getIconImage("/assets/image/CreeperHostIcon.png")) {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -64,7 +64,7 @@ public abstract class BottomBar extends JPanel {
         facebookIcon = new JButton(Utils.getIconImage("/assets/image/FacebookIcon.png")) {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -77,7 +77,7 @@ public abstract class BottomBar extends JPanel {
         githubIcon = new JButton(Utils.getIconImage("/assets/image/GitHubIcon.png")) {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -90,7 +90,7 @@ public abstract class BottomBar extends JPanel {
         redditIcon = new JButton(Utils.getIconImage("/assets/image/RedditIcon.png")) {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -103,7 +103,7 @@ public abstract class BottomBar extends JPanel {
         twitterIcon = new JButton(Utils.getIconImage("/assets/image/TwitterIcon.png")) {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
                 return tip;
             }

@@ -93,7 +93,7 @@ public class ModsChooser extends JDialog {
 
         JPanel checkBoxPanel1 = new JPanel();
         checkBoxPanel1.setLayout(null);
-        checkBoxPanel1.setBackground(App.THEME.getModSelectionBackgroundColour());
+        checkBoxPanel1.setBackground(App.THEME.getModSelectionBackgroundColor());
 
         JScrollPane scroller1 = new JScrollPane(checkBoxPanel1,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -103,7 +103,7 @@ public class ModsChooser extends JDialog {
 
         JPanel checkBoxPanel2 = new JPanel();
         checkBoxPanel2.setLayout(null);
-        checkBoxPanel2.setBackground(App.THEME.getModSelectionBackgroundColour());
+        checkBoxPanel2.setBackground(App.THEME.getModSelectionBackgroundColor());
 
         JScrollPane scroller2 = new JScrollPane(checkBoxPanel2,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -192,7 +192,7 @@ public class ModsChooser extends JDialog {
         int count1 = 0;
         int count2 = 0;
 
-        for (int i = 0; i < installer.getMods().size();) {
+        for (int i = 0; i < installer.getMods().size(); ) {
             boolean skip = false;
             Mod mod = installer.getMods().get(i);
             if (installer.isServer() && !mod.installOnServer()) {

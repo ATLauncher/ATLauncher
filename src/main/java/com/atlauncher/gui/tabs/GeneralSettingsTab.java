@@ -76,7 +76,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         language.setSelectedItem(App.settings.getLanguage());
         add(language, gbc);
 
-        // Theme
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;

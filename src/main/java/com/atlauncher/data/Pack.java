@@ -65,7 +65,7 @@ public class Pack {
     /**
      * Gets a file safe and URL safe name which simply means replacing all non alpha numerical
      * characters with nothing
-     * 
+     *
      * @return File safe and URL safe name of the pack
      */
     public String getSafeName() {
@@ -747,7 +747,7 @@ public class Pack {
                         if (dependTemp.contains(",")) {
                             depends = dependTemp.split(",");
                         } else {
-                            depends = new String[] { dependTemp };
+                            depends = new String[]{dependTemp};
                         }
                     } else {
                         depends = null;
@@ -835,13 +835,13 @@ public class Pack {
                                         || element.getAttribute("target").startsWith("DIM")
                                         || element.getAttribute("target").startsWith("saves")
                                         || element.getAttribute("target").startsWith(
-                                                "instance.json")
+                                        "instance.adapter")
                                         || element.getAttribute("target").contains("./")
                                         || element.getAttribute("target").contains(".\\")
                                         || element.getAttribute("target").contains("~/")
                                         || element.getAttribute("target").contains("~\\")
                                         || !file.getCanonicalPath().contains(
-                                                instance.getRootDirectory().getCanonicalPath())) {
+                                        instance.getRootDirectory().getCanonicalPath())) {
                                     App.settings.log(
                                             "Cannot delete the file/folder "
                                                     + file.getAbsolutePath()

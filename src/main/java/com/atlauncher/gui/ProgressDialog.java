@@ -33,7 +33,7 @@ public class ProgressDialog extends JDialog {
     private Object returnValue = null; // The value returned
 
     public ProgressDialog(String title, int initMax, String initLabelText,
-            String initClosedLogMessage) {
+                          String initClosedLogMessage) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
         this.labelText = initLabelText;
         this.max = initMax;

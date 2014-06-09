@@ -27,7 +27,7 @@ public class Action {
     private boolean server;
 
     public Action(String action, Type type, String after, String saveAs, boolean client,
-            boolean server) {
+                  boolean server) {
         this.mod = new ArrayList<Mod>();
         this.action = action;
         this.type = type;

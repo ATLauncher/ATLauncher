@@ -11,20 +11,20 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
 
 public enum LogMessageType {
-
     error, warning, info;
 
     public String getColourCode() {
         switch (this) {
             case info:
             default:
-                return App.THEME.getLogInfoTextColourHTML();
+                return Utils.colorHex(App.THEME.getLogInfoColor());
             case warning:
-                return App.THEME.getLogWarnTextColourHTML();
+                return Utils.colorHex(App.THEME.getLogWarnColor());
             case error:
-                return App.THEME.getLogErrorTextColourHTML();
+                return Utils.colorHex(App.THEME.getLogErrorColor());
         }
     }
 
@@ -37,8 +37,6 @@ public enum LogMessageType {
                 return "WARN";
             case error:
                 return "ERROR";
-
         }
     }
-
 }

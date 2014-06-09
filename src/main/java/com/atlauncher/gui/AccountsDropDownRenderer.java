@@ -33,7 +33,7 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
      */
     @SuppressWarnings("rawtypes")
     public Component getListCellRendererComponent(JList list, Account account, int index,
-            boolean isSelected, boolean cellHasFocus) {
+                                                  boolean isSelected, boolean cellHasFocus) {
         if (account == null) {
             return this;
         }

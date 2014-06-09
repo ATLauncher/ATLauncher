@@ -1,215 +1,174 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
- *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
- */
 package com.atlauncher.gui.theme;
-
-import java.awt.Color;
-import java.awt.Font;
 
 import com.atlauncher.utils.Utils;
 
-public class Theme {
+import javax.swing.*;
+import java.awt.*;
 
-    private String themeName;
-    private String authorsName;
+public final class Theme {
+    public static final Theme DEFAULT_THEME =
+            new Theme(
+                    "ATLauncher",
+                    "RyanTheAllmighty",
+                    true,
+                    new Color(40, 45, 50),
+                    new Color(255, 255, 255),
+                    new Color(0, 0, 0),
+                    new Color(0, 136, 204),
+                    new Color(100, 100, 200),
+                    new Color(80, 170, 107),
+                    new Color(50, 55, 60),
+                    new Color(50, 55, 60),
+                    new Color(30, 35, 40),
+                    new Color(255, 255, 255),
+                    new Color(255, 0, 0),
+                    new Color(255, 255, 255),
+                    new Color(137, 194, 54),
+                    new Color(255, 255, 76),
+                    new Color(238, 34, 34),
+                    "SansSerif",
+                    "SansSerif",
+                    "Oswald-Regular",
+                    "SansSerif"
+            );
 
-    private Color baseColour;
-    private Color tabBackgroundColour;
-    private Color selectionColour;
-    private Color dropDownSelectionColour;
 
-    /**
-     * The Colour used for buttons, checkboxes, tabs, scrollbars and closed dropdown boxes
-     */
-    private Color buttonColour;
-    private Color textColour;
-    private Color hoverBorderColour;
-    private Color modSelectionBackgroundColour;
-    private Color modInfoQuestionMarkColour;
-    private Color normalInstanceTextColour;
-    private Color corruptedInstanceTextColour;
-    private Color consoleTextColour;
-    private Color logInfoTextColour;
-    private Color logWarnTextColour;
-    private Color logErrorTextColour;
+    // Meta
+    private final String name;
+    private final String author;
 
-    /**
-     * The default font used in the Launcher pretty much everywhere
-     */
-    private Font defaultFont;
+    // Flags
+    private final boolean tabsOnRight;
 
-    /**
-     * The font to use in the Console frame
-     */
-    private Font consoleFont;
+    // Colors
+    private final Color baseColor;
+    private final Color textColor;
+    private final Color buttonColor;
+    private final Color selectionColor;
+    private final Color dropdownSelectionColor;
+    private final Color hoverBorderColor;
+    private final Color modSelectionBGColor;
+    private final Color modInfoColor;
+    private final Color tabBackgroundColor;
+    private final Color normalInstanceColor;
+    private final Color corruptedInstanceColor;
+    private final Color consoleTextColor;
+    private final Color logInfoColor;
+    private final Color logWarnColor;
+    private final Color logErrorColor;
 
-    /**
-     * The font used to display the text on the tabs in the main frame (News, Packs, Instances etc)
-     */
-    private Font tabFont;
+    // Fonts
+    private final String defaultFont, consoleFont, tabFont, buttonFont;
 
-    /**
-     * The font used to display the text on the tabs in the settings frame
-     */
-    private Font settingsTabFont;
-
-    private Font buttonFont;
-
-    /**
-     * If the tabs should display in their default position of on the Right or not
-     */
-    private boolean showTabsOnRight;
-
-    public Theme(String themeName, String authorsName, int[] baseColour, int[] tabBackgroundColour,
-            int[] selectionColour, int[] dropDownSelectionColour, int[] buttonColour,
-            int[] textColour, int[] hoverBorderColour, int[] modSelectionBackgroundColour,
-            int[] modInfoQuestionMarkColour, int[] normalInstanceTextColour,
-            int[] corruptedInstanceTextColour, int[] consoleTextColour, int[] logInfoTextColour,
-            int[] logWarnTextColour, int[] logErrorTextColour, String defaultFont,
-            String consoleFont, String tabFont, String settingsTabFont, String buttonFont,
-            boolean showTabsOnRight) {
-        this.themeName = themeName;
-        this.authorsName = authorsName;
-        this.baseColour = Utils.getColourFromTheme(baseColour);
-        this.tabBackgroundColour = Utils.getColourFromTheme(tabBackgroundColour);
-        this.selectionColour = Utils.getColourFromTheme(selectionColour);
-        this.dropDownSelectionColour = Utils.getColourFromTheme(dropDownSelectionColour);
-        this.buttonColour = Utils.getColourFromTheme(buttonColour);
-        this.textColour = Utils.getColourFromTheme(textColour);
-        this.hoverBorderColour = Utils.getColourFromTheme(hoverBorderColour);
-        this.modSelectionBackgroundColour = Utils.getColourFromTheme(modSelectionBackgroundColour);
-        this.modInfoQuestionMarkColour = Utils.getColourFromTheme(modInfoQuestionMarkColour);
-        this.normalInstanceTextColour = Utils.getColourFromTheme(normalInstanceTextColour);
-        this.corruptedInstanceTextColour = Utils.getColourFromTheme(corruptedInstanceTextColour);
-        this.consoleTextColour = Utils.getColourFromTheme(consoleTextColour);
-        this.logInfoTextColour = Utils.getColourFromTheme(logInfoTextColour);
-        this.logWarnTextColour = Utils.getColourFromTheme(logWarnTextColour);
-        this.logErrorTextColour = Utils.getColourFromTheme(logErrorTextColour);
-        this.defaultFont = Utils.makeFont(defaultFont).deriveFont(Utils.getBaseFontSize());
-        this.consoleFont = Utils.makeFont(consoleFont).deriveFont(Utils.getBaseFontSize());
-        this.tabFont = Utils.makeFont(tabFont).deriveFont((float) 34);
-        this.settingsTabFont = Utils.makeFont(settingsTabFont).deriveFont((float) 17);
-        this.buttonFont = Utils.makeFont(consoleFont).deriveFont(Utils.getBaseFontSize());
-        this.showTabsOnRight = showTabsOnRight;
+    private Theme(String name, String author, boolean tabsOnRight, Color baseColor, Color textColor, Color buttonColor, Color selectionColor, Color dropdownSelectionColor, Color hoverBorderColor, Color modSelectionBGColor, Color modInfoColor, Color tabBackgroundColor, Color normalInstanceColor, Color corruptedInstanceColor, Color consoleTextColor, Color logInfoTextColor, Color logWarnColor, Color logErrorColor, String defaultFont, String consoleFont, String tabFont, String buttonFont) {
+        this.name = name;
+        this.author = author;
+        this.tabsOnRight = tabsOnRight;
+        this.baseColor = baseColor;
+        this.textColor = textColor;
+        this.buttonColor = buttonColor;
+        this.selectionColor = selectionColor;
+        this.dropdownSelectionColor = dropdownSelectionColor;
+        this.hoverBorderColor = hoverBorderColor;
+        this.modSelectionBGColor = modSelectionBGColor;
+        this.modInfoColor = modInfoColor;
+        this.tabBackgroundColor = tabBackgroundColor;
+        this.normalInstanceColor = normalInstanceColor;
+        this.corruptedInstanceColor = corruptedInstanceColor;
+        this.consoleTextColor = consoleTextColor;
+        this.logInfoColor = logInfoTextColor;
+        this.logWarnColor = logWarnColor;
+        this.logErrorColor = logErrorColor;
+        this.defaultFont = defaultFont;
+        this.consoleFont = consoleFont;
+        this.tabFont = tabFont;
+        this.buttonFont = buttonFont;
     }
 
-    public String getThemeName() {
-        return this.themeName;
+    public void apply() {
+        try {
+            UIManager.put("control", this.baseColor);
+            UIManager.put("text", this.textColor);
+            UIManager.put("nimbusBase", this.buttonColor);
+            UIManager.put("nimbusFocus", this.baseColor);
+            UIManager.put("nimbusBorder", this.baseColor);
+            UIManager.put("nimbusLightBackground", this.baseColor);
+            UIManager.put("info", this.baseColor);
+            UIManager.put("nimbusSelectionBackground", this.dropdownSelectionColor);
+            UIManager.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
+            UIManager.put("defaultFont", Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
+            UIManager.put("Button.font", Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
-    public String getAuthorsName() {
-        return this.authorsName;
+    public Font getDefaultFont(){
+        return Utils.makeFont(this.defaultFont);
     }
 
-    public Color getBaseColour() {
-        return this.baseColour;
+    public Font getConsoleFont(){
+        return Utils.makeFont(this.consoleFont);
     }
 
-    public Color getTabBackgroundColour() {
-        return this.tabBackgroundColour;
+    public Font getTabFont(){
+        return Utils.makeFont(this.tabFont);
     }
 
-    public Color getSelectionColour() {
-        return this.selectionColour;
+    public boolean tabsOnRight(){
+        return this.tabsOnRight;
     }
 
-    public Color getDropDownSelectionColour() {
-        return this.dropDownSelectionColour;
+    public Color getConsoleTextColor(){
+        return this.consoleTextColor;
     }
 
-    public Color getButtonColour() {
-        return this.buttonColour;
+    public Color getSelectionColor(){
+        return this.selectionColor;
     }
 
-    public Color getTextColour() {
-        return this.textColour;
+    public Color getHoverBorderColor(){
+        return this.hoverBorderColor;
     }
 
-    public Color getHoverBorderColour() {
-        return this.hoverBorderColour;
+    public Color getModInfoColor(){
+        return this.modInfoColor;
     }
 
-    public Color getModSelectionBackgroundColour() {
-        return this.modSelectionBackgroundColour;
+    public Color getBaseColor(){
+        return this.baseColor;
     }
 
-    public Color getModInfoQuestionMarkColour() {
-        return this.modInfoQuestionMarkColour;
+    public Color getCorruptedInstanceColor(){
+        return this.corruptedInstanceColor;
     }
 
-    public String getModInfoQuestionMarkColourHTML() {
-        return "#" + Integer.toHexString(this.modInfoQuestionMarkColour.getRed()) + ""
-                + Integer.toHexString(this.modInfoQuestionMarkColour.getGreen()) + ""
-                + Integer.toHexString(this.modInfoQuestionMarkColour.getBlue());
+    public Color getNormalInstanceColor(){
+        return this.normalInstanceColor;
     }
 
-    public Color getNormalInstanceTextColour() {
-        return this.normalInstanceTextColour;
+    public Color getModSelectionBackgroundColor(){
+        return this.modSelectionBGColor;
     }
 
-    public Color getCorruptedInstanceTextColour() {
-        return this.corruptedInstanceTextColour;
+    public Color getTabBackgroundColor(){
+        return this.tabBackgroundColor;
     }
 
-    public Color getConsoleTextColour() {
-        return this.consoleTextColour;
+    public Color getLogInfoColor(){
+        return this.logInfoColor;
     }
 
-    public Color getLogInfoTextColour() {
-        return this.logInfoTextColour;
+    public Color getLogErrorColor(){
+        return this.logErrorColor;
     }
 
-    public String getLogInfoTextColourHTML() {
-        return "#" + Integer.toHexString(this.logInfoTextColour.getRed()) + ""
-                + Integer.toHexString(this.logInfoTextColour.getGreen()) + ""
-                + Integer.toHexString(this.logInfoTextColour.getBlue());
+    public Color getLogWarnColor(){
+        return this.logWarnColor;
     }
 
-    public Color getLogWarnTextColour() {
-        return this.logWarnTextColour;
+    @Override
+    public String toString(){
+        return this.author + "-" + this.name;
     }
-
-    public String getLogWarnTextColourHTML() {
-        return "#" + Integer.toHexString(this.logWarnTextColour.getRed()) + ""
-                + Integer.toHexString(this.logWarnTextColour.getGreen()) + ""
-                + Integer.toHexString(this.logWarnTextColour.getBlue());
-    }
-
-    public Color getLogErrorTextColour() {
-        return this.logErrorTextColour;
-    }
-
-    public String getLogErrorTextColourHTML() {
-        return "#" + Integer.toHexString(this.logErrorTextColour.getRed()) + ""
-                + Integer.toHexString(this.logErrorTextColour.getGreen()) + ""
-                + Integer.toHexString(this.logErrorTextColour.getBlue());
-    }
-
-    public Font getDefaultFont() {
-        return this.defaultFont;
-    }
-
-    public Font getConsoleFont() {
-        return this.consoleFont;
-    }
-
-    public Font getTabsFont() {
-        return this.tabFont;
-    }
-
-    public Font getSettingsTabsFont() {
-        return this.settingsTabFont;
-    }
-
-    public Font getButtonFont() {
-        return this.buttonFont;
-    }
-
-    public boolean showTabsOnRight() {
-        return this.showTabsOnRight;
-    }
-
 }

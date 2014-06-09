@@ -50,7 +50,7 @@ public class LauncherBottomBar extends BottomBar {
         setBorder(BorderFactory.createEtchedBorder());
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(0, 50)); // Make the bottom bar at least
-                                                // 50 pixels high
+        // 50 pixels high
 
         leftSide = new JPanel();
         leftSide.setLayout(new GridBagLayout());
@@ -107,7 +107,9 @@ public class LauncherBottomBar extends BottomBar {
                             App.settings.reloadLauncherData();
                         }
                         dialog.close();
-                    };
+                    }
+
+                    ;
                 });
                 dialog.start();
             }
@@ -153,7 +155,7 @@ public class LauncherBottomBar extends BottomBar {
         statusIcon = new JLabel(Utils.getIconImage("/assets/image/StatusWhite.png")) {
             public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
                 return tip;
             }
@@ -164,9 +166,8 @@ public class LauncherBottomBar extends BottomBar {
 
     /**
      * Update the status icon to show the current Minecraft server status.
-     * 
-     * @param status
-     *            The status of servers
+     *
+     * @param status The status of servers
      */
     public void updateStatus(Status status) {
         switch (status) {

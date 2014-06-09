@@ -18,7 +18,8 @@ public abstract class SyncAbstract {
     private final String syncName;
 
     public SyncAbstract(String name) {
-        if (syncList.containsKey(name)) throw new IllegalArgumentException("A sync handler with the name " + name + " has already been created!");
+        if (syncList.containsKey(name))
+            throw new IllegalArgumentException("A sync handler with the name " + name + " has already been created!");
         else {
             syncList.put(name, this);
             syncName = name;
@@ -31,14 +32,16 @@ public abstract class SyncAbstract {
 
     /**
      * This is called when a world needs to be backed up.
+     *
      * @param backupName The name of the backup
-     * @param worldData The folder of the world
-     * @param instance The instance for the world
+     * @param worldData  The folder of the world
+     * @param instance   The instance for the world
      */
     public abstract void backupWorld(String backupName, File worldData, Instance instance);
 
     /**
      * This should return a list of names of the backups that the current application has backed up
+     *
      * @param instance The instance
      * @return A list of world names
      */
@@ -47,8 +50,9 @@ public abstract class SyncAbstract {
     /**
      * This is called when the user wants to restore a backup. It should restore the backup to the correct save location
      * This method is called from a new thread
+     *
      * @param backupName The name of the backup to restore
-     * @param instance The instance that the save should be restored to
+     * @param instance   The instance that the save should be restored to
      */
     public abstract void restoreBackup(String backupName, Instance instance);
 
@@ -57,6 +61,7 @@ public abstract class SyncAbstract {
     /**
      * If the sync addon has settings then you should return an instance of {@link com.atlauncher.gui.components.CollapsiblePanel CollapsiblePanel}.
      * It is recommended you extend that class. Look at {@link com.atlauncher.data.DropboxSync DropboxSync} for example.
+     *
      * @return The settings panel
      */
     public abstract CollapsiblePanel getSettingsPanel();

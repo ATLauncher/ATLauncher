@@ -98,7 +98,7 @@ public class EditModsDialog extends JDialog {
 
         disabledModsPanel = new JPanel();
         disabledModsPanel.setLayout(null);
-        disabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColour());
+        disabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColor());
 
         scroller1 = new JScrollPane(disabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -108,7 +108,7 @@ public class EditModsDialog extends JDialog {
 
         enabledModsPanel = new JPanel();
         enabledModsPanel.setLayout(null);
-        enabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColour());
+        enabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColor());
 
         scroller2 = new JScrollPane(enabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -127,9 +127,9 @@ public class EditModsDialog extends JDialog {
                         .getLocalizedString("common.mod"), App.settings
                         .getLocalizedString("common.add"), App.settings
                         .getLocalizedString("instance.typeofmod"), App.settings
-                        .getLocalizedString("instance.selectmodtype"), new String[] {
+                        .getLocalizedString("instance.selectmodtype"), new String[]{
                         "Mods Folder", "Jar Mod", "CoreMods Mod", "Texture Pack", "Resource Pack",
-                        "Shader Pack" }, new String[] { "jar", "zip", "litemod" });
+                        "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
                 ArrayList<File> files = fcd.getChosenFiles();
                 if (files != null && files.size() >= 1) {
                     boolean reload = false;

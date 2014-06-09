@@ -80,7 +80,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
                 App.settings.getLocalizedString("settings.connectiontimeout") + ":", HELP_ICON,
                 "<html><center>"
                         + App.settings.getLocalizedString("settings.connectiontimeouthelp",
-                                "<br/><br/>" + "</center></html>"));
+                        "<br/><br/>" + "</center></html>"));
         add(connectionTimeoutLabel, gbc);
 
         gbc.gridx++;
@@ -99,7 +99,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
                 App.settings.getLocalizedString("settings.concurrentconnections") + ":", HELP_ICON,
                 "<html><center>"
                         + App.settings.getLocalizedString("settings.concurrentconnectionshelp",
-                                "<br/><br/>") + "</center></html>");
+                        "<br/><br/>") + "</center></html>");
         add(concurrentConnectionsLabel, gbc);
 
         gbc.gridx++;

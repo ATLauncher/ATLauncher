@@ -42,7 +42,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
                 App.settings.getLocalizedString("settings.forgelogginglevel") + ":", HELP_ICON,
                 "<html><center>"
                         + App.settings.getLocalizedString("settings.forgelogginglevelhelp",
-                                "<br/><br/>") + "</center></html>");
+                        "<br/><br/>") + "</center></html>");
         add(forgeLoggingLevelLabel, gbc);
 
         gbc.gridx++;
@@ -92,7 +92,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
                 App.settings.getLocalizedString("settings.logging") + "?", HELP_ICON,
                 "<html><center>"
                         + App.settings.getLocalizedString("settings.logginghelp", "<br/>"
-                                + "</center></html>"));
+                        + "</center></html>"));
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
@@ -129,8 +129,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
                 App.settings.getLocalizedString("settings.openeye") + "?", HELP_ICON,
                 "<html><center>"
                         + Utils.splitMultilinedString(
-                                App.settings.getLocalizedString("settings.openeyehelp"), 80,
-                                "<br/>") + "</center></html>");
+                        App.settings.getLocalizedString("settings.openeyehelp"), 80,
+                        "<br/>") + "</center></html>");
         add(enableOpenEyeReportingLabel, gbc);
 
         gbc.gridx++;

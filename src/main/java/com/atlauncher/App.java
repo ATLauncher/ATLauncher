@@ -34,8 +34,6 @@ import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SetupDialog;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
-import com.atlauncher.gui.theme.DefaultTheme;
-import com.atlauncher.gui.theme.LoadableTheme;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -48,13 +46,14 @@ public class App {
     // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
 
-    public static Theme THEME = new DefaultTheme().createTheme();
     private static SystemTray TRAY = null;
     public static PopupMenu TRAY_MENU = new TrayMenu();
 
     public static boolean wasUpdated = false;
 
     public static Settings settings;
+
+    public static Theme THEME = Theme.DEFAULT_THEME;
 
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH); // Set English as the default locale
@@ -75,7 +74,7 @@ public class App {
         if (!config.exists()) {
             int files = config.getParentFile().list().length;
             if (files > 2) {
-                String[] options = { "Yes It's Fine", "Whoops. I'll Change That Now" };
+                String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null,
                         "<html><center>I've detected that you may not have installed this "
                                 + "in the right location.<br/><br/>The exe or jar file"
@@ -111,9 +110,9 @@ public class App {
         } else {
             if (settings.isUsingMacApp()) {
                 File oracleJava = new File(
-                        "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
+                        "/Library/Internet Plug-Ins/JavaAppletPlugin.adapter/Contents/Home/bin/java");
                 if (oracleJava.exists() && oracleJava.canExecute()) {
-                    settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
+                    settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.adapter/Contents/Home");
                     settings.log("Launcher Forced Custom Java Path Set!", LogMessageType.warning,
                             false);
                 }
@@ -123,7 +122,6 @@ public class App {
         settings.log("Java Path: " + settings.getJavaPath());
         settings.log("64 Bit Java: " + Utils.is64Bit());
         settings.log("Launcher Directory: " + settings.getBaseDir());
-        settings.log("Using Theme: " + THEME.getThemeName() + " by " + THEME.getAuthorsName());
 
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -179,17 +177,10 @@ public class App {
         File themeFile = settings.getThemeFile();
         if (themeFile != null) {
             try {
-                THEME = Settings.gson.fromJson(new FileReader(themeFile), LoadableTheme.class)
-                        .createTheme();
-            } catch (JsonSyntaxException e) {
-                e.printStackTrace();
-                THEME = new DefaultTheme().createTheme();
-            } catch (JsonIOException e) {
-                e.printStackTrace();
-                THEME = new DefaultTheme().createTheme();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                THEME = new DefaultTheme().createTheme();
+                THEME = Settings.gson.fromJson(new FileReader(themeFile), Theme.class);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                THEME = Theme.DEFAULT_THEME;
             }
         }
 
@@ -210,22 +201,10 @@ public class App {
     }
 
     private static void modifyLAF() throws Exception {
-        UIManager.put("control", App.THEME.getBaseColour());
-        UIManager.put("text", App.THEME.getTextColour());
-        UIManager.put("nimbusBase", App.THEME.getButtonColour());
-        UIManager.put("nimbusFocus", App.THEME.getBaseColour());
-        UIManager.put("nimbusBorder", App.THEME.getBaseColour());
-        UIManager.put("nimbusLightBackground", App.THEME.getBaseColour());
-        UIManager.put("info", App.THEME.getBaseColour());
-        UIManager.put("nimbusSelectionBackground", App.THEME.getDropDownSelectionColour());
-        UIManager
-                .put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
-
+        THEME.apply();
         ToolTipManager.sharedInstance().setDismissDelay(15000);
         ToolTipManager.sharedInstance().setInitialDelay(50);
 
-        UIManager.getLookAndFeelDefaults().put("defaultFont", App.THEME.getDefaultFont());
-        UIManager.getLookAndFeelDefaults().put("Button.font", App.THEME.getButtonFont());
         if (Utils.isMac()) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
             im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK),

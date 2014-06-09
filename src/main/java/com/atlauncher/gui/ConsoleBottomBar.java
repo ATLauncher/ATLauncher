@@ -100,8 +100,8 @@ public class ConsoleBottomBar extends BottomBar {
         killMinecraft.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><center>"
-                        + App.settings.getLocalizedString("console.killsure", "<br/><br/>")
-                        + "</center>" + "</html>", App.settings.getLocalizedString("console.kill"),
+                                + App.settings.getLocalizedString("console.killsure", "<br/><br/>")
+                                + "</center>" + "</html>", App.settings.getLocalizedString("console.kill"),
                         JOptionPane.YES_NO_OPTION);
                 if (ret == JOptionPane.YES_OPTION) {
                     App.settings.killMinecraft();

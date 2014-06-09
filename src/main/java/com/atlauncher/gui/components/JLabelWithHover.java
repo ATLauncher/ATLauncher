@@ -18,7 +18,7 @@ public class JLabelWithHover extends JLabel {
 
     private static final long serialVersionUID = -4371080285355832166L;
     private static final Border HOVER_BORDER = new CustomLineBorder(5,
-            App.THEME.getHoverBorderColour(), 2);
+            App.THEME.getHoverBorderColor(), 2);
 
     public JLabelWithHover(Icon icon, String tooltipText, Border border) {
         super();

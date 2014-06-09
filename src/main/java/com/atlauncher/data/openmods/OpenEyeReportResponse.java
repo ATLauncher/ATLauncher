@@ -10,6 +10,7 @@ import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
 // TODO: Auto-generated Javadoc
+
 /**
  * The Class OpenEyeReportResponse contains information returned from OpenMods OpenEye system when a
  * pending crash report is reported through their API.
@@ -34,7 +35,7 @@ public class OpenEyeReportResponse {
 
     /**
      * Gets the type of the crash that was reported.
-     * 
+     *
      * @return the type
      */
     public String getType() {
@@ -43,7 +44,7 @@ public class OpenEyeReportResponse {
 
     /**
      * Gets the url to the OpenEye website with the details of this crash.
-     * 
+     *
      * @return the url to the OpenEye website
      */
     public String getURL() {
@@ -52,7 +53,7 @@ public class OpenEyeReportResponse {
 
     /**
      * Gets the note associated with this reported crash, if any.
-     * 
+     *
      * @return the note or null if none
      */
     public String getNote() {
@@ -61,7 +62,7 @@ public class OpenEyeReportResponse {
 
     /**
      * Checks if there is any note added for this response.
-     * 
+     *
      * @return true, if there is an attached note
      */
     public boolean hasNote() {
@@ -70,7 +71,7 @@ public class OpenEyeReportResponse {
 
     /**
      * Gets the display of the note for showing to the user.
-     * 
+     *
      * @return the string to add to the dialog box for the note
      */
     public String getNoteDisplay() {

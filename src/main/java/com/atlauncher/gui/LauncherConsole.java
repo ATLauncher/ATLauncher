@@ -73,12 +73,12 @@ public class LauncherConsole extends JFrame {
                 return true; // Fixes issues with resizing from big to small and text not shrinking
             }
         };
-        console.setFont(App.THEME.getConsoleFont());
-        console.setForeground(App.THEME.getConsoleTextColour());
+        console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
+        console.setForeground(App.THEME.getConsoleTextColor());
         kit = new HTMLEditorKit();
         doc = new HTMLDocument();
         console.setEditable(false);
-        console.setSelectionColor(App.THEME.getSelectionColour());
+        console.setSelectionColor(App.THEME.getSelectionColor());
         console.setEditorKit(kit);
         console.setDocument(doc);
 
@@ -191,9 +191,8 @@ public class LauncherConsole extends JFrame {
 
     /**
      * Logs a stack trace to the console window
-     * 
-     * @param text
-     *            The text to show in the console
+     *
+     * @param text The text to show in the console
      */
     @Deprecated
     public void logStackTrace(Exception e) {
@@ -209,9 +208,8 @@ public class LauncherConsole extends JFrame {
 
     /**
      * Logs text to the console window from Minecraft
-     * 
-     * @param text
-     *            The text to show in the console
+     *
+     * @param text The text to show in the console
      */
     public void logMinecraft(String text) {
         String message = null; // The log message
@@ -297,7 +295,7 @@ public class LauncherConsole extends JFrame {
 
     /**
      * Returns a string with the text currently in the console
-     * 
+     *
      * @return String Console Text
      */
     public String getLog() {

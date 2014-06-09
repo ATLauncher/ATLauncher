@@ -108,7 +108,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private ArrayList<String> forgeLibraries = new ArrayList<String>();
 
     public InstanceInstaller(String instanceName, Pack pack, PackVersion version,
-            boolean isReinstall, boolean isServer) {
+                             boolean isReinstall, boolean isServer) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
@@ -343,7 +343,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public ArrayList<Mod> getModsDependancies(Mod mod) {
         ArrayList<Mod> dependsMods = new ArrayList<Mod>();
         for (String name : mod.getDependancies()) {
-            inner: {
+            inner:
+            {
                 for (Mod modd : allMods) {
                     if (modd.getName().equalsIgnoreCase(name)) {
                         dependsMods.add(modd);
@@ -432,12 +433,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         File[] directories;
         if (isServer) {
-            directories = new File[] { getRootDirectory(), getModsDirectory(), getTempDirectory(),
-                    getLibrariesDirectory() };
+            directories = new File[]{getRootDirectory(), getModsDirectory(), getTempDirectory(),
+                    getLibrariesDirectory()};
         } else {
-            directories = new File[] { getRootDirectory(), getModsDirectory(),
+            directories = new File[]{getRootDirectory(), getModsDirectory(),
                     getDisabledModsDirectory(), getTempDirectory(), getJarModsDirectory(),
-                    getBinDirectory(), getNativesDirectory() };
+                    getBinDirectory(), getNativesDirectory()};
         }
         for (File directory : directories) {
             directory.mkdir();
@@ -895,7 +896,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         File[] files;
         if (isReinstall
                 && instance.getMinecraftVersion().equalsIgnoreCase(
-                        version.getMinecraftVersion().getVersion())) {
+                version.getMinecraftVersion().getVersion())) {
             final List<String> customMods = instance.getCustomMods(Type.mods);
             FilenameFilter ffFilter = new FilenameFilter() {
 
@@ -911,13 +912,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         for (File file : files) {
             if (file.isFile()
                     && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file
-                            .getName().endsWith("litemod"))) {
+                    .getName().endsWith("litemod"))) {
                 if (this.caseAllFiles != null) {
                     if (this.caseAllFiles.equalsIgnoreCase("upper")) {
                         file.renameTo(new File(file.getParentFile(), file.getName()
                                 .substring(0, file.getName().lastIndexOf(".")).toUpperCase()
                                 + file.getName().substring(file.getName().lastIndexOf("."),
-                                        file.getName().length())));
+                                file.getName().length())));
                     } else if (this.caseAllFiles.equalsIgnoreCase("lower")) {
                         file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
                     }
@@ -933,13 +934,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         File virtualFolder = new File(App.settings.getResourcesDir(), "virtual");
         String assetVersion = this.version.getMinecraftVersion().getMojangVersion().getAssets();
         File virtualRoot = new File(virtualFolder, assetVersion);
-        File indexFile = new File(indexesFolder, assetVersion + ".json");
+        File indexFile = new File(indexesFolder, assetVersion + ".adapter");
         objectsFolder.mkdirs();
         indexesFolder.mkdirs();
         virtualFolder.mkdirs();
         try {
             new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion
-                    + ".json"), indexFile, null, this, false).download(false);
+                    + ".adapter"), indexFile, null, this, false).download(false);
             AssetIndex index = (AssetIndex) this.gson.fromJson(new FileReader(indexFile),
                     AssetIndex.class);
 
@@ -1083,14 +1084,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     + this.version.getMinecraftVersion().getVersion() + "/minecraft_server."
                     + this.version.getMinecraftVersion().getVersion() + ".jar"), new File(
                     App.settings.getJarsDir(), "minecraft_server."
-                            + this.version.getMinecraftVersion().getVersion() + ".jar"), null,
+                    + this.version.getMinecraftVersion().getVersion() + ".jar"), null,
                     this, false));
         } else {
             libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/"
                     + this.version.getMinecraftVersion().getVersion() + "/"
                     + this.version.getMinecraftVersion().getVersion() + ".jar"), new File(
                     App.settings.getJarsDir(), this.version.getMinecraftVersion().getVersion()
-                            + ".jar"), null, this, false));
+                    + ".jar"), null, this, false));
         }
         return libraries;
     }
@@ -1293,8 +1294,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = { App.settings.getLocalizedString("common.ok"),
-                        App.settings.getLocalizedString("common.cancel") };
+                String[] options = {App.settings.getLocalizedString("common.ok"),
+                        App.settings.getLocalizedString("common.cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>"
                         + this.pack.getUpdateMessage(this.version.getVersion()) + "</html>");
                 ep.setEditable(false);
@@ -1324,8 +1325,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = { App.settings.getLocalizedString("common.ok"),
-                        App.settings.getLocalizedString("common.cancel") };
+                String[] options = {App.settings.getLocalizedString("common.ok"),
+                        App.settings.getLocalizedString("common.cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>"
                         + this.pack.getInstallMessage(this.version.getVersion()) + "</html>");
                 ep.setEditable(false);
@@ -1386,7 +1387,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         if (isReinstall
                 && instance.getMinecraftVersion().equalsIgnoreCase(
-                        version.getMinecraftVersion().getVersion()) && instance.hasCustomMods()) {
+                version.getMinecraftVersion().getVersion()) && instance.hasCustomMods()) {
             for (DisableableMod mod : instance.getCustomDisableableMods()) {
                 modsInstalled.add(mod);
             }

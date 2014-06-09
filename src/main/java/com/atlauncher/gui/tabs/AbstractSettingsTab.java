@@ -31,7 +31,7 @@ public abstract class AbstractSettingsTab extends JPanel {
     final ImageIcon RESTART_ICON = Utils.getIconImage("/assets/image/Exclamation.png");
 
     final Border RESTART_BORDER = BorderFactory.createEmptyBorder(0, 0, 0, 5);
-    final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+    final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
 
     final GridBagConstraints gbc;
 

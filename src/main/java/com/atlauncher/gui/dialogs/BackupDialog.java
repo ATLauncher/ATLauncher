@@ -255,8 +255,8 @@ public class BackupDialog extends JDialog implements ActionListener {
             String backupToDelete = (String) backupList.getSelectedValue();
             if (JOptionPane
                     .showOptionDialog(this, App.settings.getLocalizedString(
-                            "backup.message.deleteconfirm", backupToDelete), App.settings
-                            .getLocalizedString("backup.message.deleteconfirm.title"),
+                                    "backup.message.deleteconfirm", backupToDelete), App.settings
+                                    .getLocalizedString("backup.message.deleteconfirm.title"),
                             JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, null,
                             null) == JOptionPane.OK_OPTION) {
                 selectedSync.deleteBackup(backupToDelete, instance);
@@ -298,7 +298,7 @@ public class BackupDialog extends JDialog implements ActionListener {
                     App.settings.getLocalizedString("backup.label.autobackup") + ":") {
                 public JToolTip createToolTip() {
                     JToolTip tip = super.createToolTip();
-                    Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                    Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                     tip.setBorder(border);
                     return tip;
                 }
@@ -311,7 +311,7 @@ public class BackupDialog extends JDialog implements ActionListener {
             JCheckBox autoBackup = new JCheckBox() {
                 public JToolTip createToolTip() {
                     JToolTip tip = super.createToolTip();
-                    Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                    Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                     tip.setBorder(border);
                     return tip;
                 }
@@ -331,7 +331,7 @@ public class BackupDialog extends JDialog implements ActionListener {
                     + ":") {
                 public JToolTip createToolTip() {
                     JToolTip tip = super.createToolTip();
-                    Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                    Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                     tip.setBorder(border);
                     return tip;
                 }
@@ -344,7 +344,7 @@ public class BackupDialog extends JDialog implements ActionListener {
             JCheckBox notify = new JCheckBox() {
                 public JToolTip createToolTip() {
                     JToolTip tip = super.createToolTip();
-                    Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColour(), 2);
+                    Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                     tip.setBorder(border);
                     return tip;
                 }

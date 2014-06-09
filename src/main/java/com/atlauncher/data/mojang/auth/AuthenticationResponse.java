@@ -43,7 +43,7 @@ public class AuthenticationResponse {
             this.clientToken = parts[1];
             GameProfile gp = new GameProfile("0", App.settings.getAccount().getMinecraftUsername());
             this.selectedProfile = gp;
-            this.availableProfiles = new GameProfile[] { gp };
+            this.availableProfiles = new GameProfile[]{gp};
             this.userProperties = new HashMap();
         }
     }

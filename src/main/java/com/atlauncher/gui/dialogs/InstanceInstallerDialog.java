@@ -201,8 +201,8 @@ public class InstanceInstallerDialog extends JDialog {
                                         + App.settings.getLocalizedString("common.error")
                                         + "<br/><br/>"
                                         + App.settings.getLocalizedString(
-                                                "instance.alreadyinstance1",
-                                                instanceNameField.getText() + "<br/><br/>")
+                                        "instance.alreadyinstance1",
+                                        instanceNameField.getText() + "<br/><br/>")
                                         + "</center></html>", App.settings
                                         .getLocalizedString("common.error"),
                                 JOptionPane.ERROR_MESSAGE);
@@ -220,8 +220,8 @@ public class InstanceInstallerDialog extends JDialog {
                                         + App.settings.getLocalizedString("common.error")
                                         + "<br/><br/>"
                                         + App.settings.getLocalizedString(
-                                                "instance.alreadyinstance",
-                                                instanceNameField.getText() + "<br/><br/>")
+                                        "instance.alreadyinstance",
+                                        instanceNameField.getText() + "<br/><br/>")
                                         + "</center></html>", App.settings
                                         .getLocalizedString("common.error"),
                                 JOptionPane.ERROR_MESSAGE);
@@ -235,7 +235,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     + App.settings.getLocalizedString("common.error")
                                     + "<br/><br/>"
                                     + App.settings.getLocalizedString("instance.invalidname",
-                                            instanceNameField.getText()) + "</center></html>",
+                                    instanceNameField.getText()) + "</center></html>",
                             App.settings.getLocalizedString("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                     return;
@@ -249,7 +249,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 + " "
                                 + version.getVersion()
                                 + ((isServer) ? " "
-                                        + App.settings.getLocalizedString("common.server") : ""),
+                                + App.settings.getLocalizedString("common.server") : ""),
                         ModalityType.DOCUMENT_MODAL);
                 dialog.setLocationRelativeTo(App.settings.getParent());
                 dialog.setSize(300, 100);
@@ -295,8 +295,8 @@ public class InstanceInstallerDialog extends JDialog {
                                     + App.settings.getLocalizedString("common.wasnt")
                                     + " "
                                     + ((isReinstall) ? App.settings
-                                            .getLocalizedString("common.reinstalled")
-                                            : App.settings.getLocalizedString("common.installed"))
+                                    .getLocalizedString("common.reinstalled")
+                                    : App.settings.getLocalizedString("common.installed"))
                                     + "<br/><br/>"
                                     + App.settings.getLocalizedString("instance.checkerrorlogs");
                             title = pack.getName()
@@ -306,8 +306,8 @@ public class InstanceInstallerDialog extends JDialog {
                                     + App.settings.getLocalizedString("common.not")
                                     + " "
                                     + ((isReinstall) ? App.settings
-                                            .getLocalizedString("common.reinstalled")
-                                            : App.settings.getLocalizedString("common.installed"));
+                                    .getLocalizedString("common.reinstalled")
+                                    : App.settings.getLocalizedString("common.installed"));
                             if (isReinstall) {
                                 if (shouldCoruptInstance()) {
                                     App.settings.setInstanceUnplayable(instance);
@@ -330,17 +330,17 @@ public class InstanceInstallerDialog extends JDialog {
                                         + App.settings.getLocalizedString("common.hasbeen")
                                         + " "
                                         + ((isReinstall) ? App.settings
-                                                .getLocalizedString("common.reinstalled")
-                                                : App.settings
-                                                        .getLocalizedString("common.installed"))
+                                        .getLocalizedString("common.reinstalled")
+                                        : App.settings
+                                        .getLocalizedString("common.installed"))
                                         + "<br/><br/>"
                                         + ((isServer) ? App.settings
-                                                .getLocalizedString("instance.finditserver",
-                                                        "<br/><br/>"
-                                                                + this.getRootDirectory()
-                                                                        .getAbsolutePath())
-                                                : App.settings
-                                                        .getLocalizedString("instance.findit"));
+                                        .getLocalizedString("instance.finditserver",
+                                                "<br/><br/>"
+                                                        + this.getRootDirectory()
+                                                        .getAbsolutePath())
+                                        : App.settings
+                                        .getLocalizedString("instance.findit"));
                                 title = pack.getName() + " " + version.getVersion() + " "
                                         + App.settings.getLocalizedString("common.installed");
                                 if (isReinstall) {
@@ -373,17 +373,17 @@ public class InstanceInstallerDialog extends JDialog {
                                             new Instance(instanceNameField.getText(), pack
                                                     .getName(), pack, installForMe.isSelected(),
                                                     version.getVersion(), version
-                                                            .getMinecraftVersion().getVersion(),
+                                                    .getMinecraftVersion().getVersion(),
                                                     this.getMemory(), this.getPermGen(), this
-                                                            .getModsInstalled(),
+                                                    .getModsInstalled(),
                                                     this.getJarOrder(), this.getLibrariesNeeded(),
                                                     this.getExtraArguments(), this
-                                                            .getMinecraftArguments(), this
-                                                            .getMainClass(), version
-                                                            .getMinecraftVersion()
-                                                            .getMojangVersion().getAssets(),
+                                                    .getMinecraftArguments(), this
+                                                    .getMainClass(), version
+                                                    .getMinecraftVersion()
+                                                    .getMojangVersion().getAssets(),
                                                     version.isDev(), !version.getMinecraftVersion()
-                                                            .isLegacy()));
+                                                    .isLegacy()));
                                 }
                                 App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();
@@ -402,11 +402,11 @@ public class InstanceInstallerDialog extends JDialog {
                                             + App.settings.getLocalizedString("common.reinstalled")
                                             + "<br/><br/>"
                                             + (this.shouldCoruptInstance() ? App.settings
-                                                    .getLocalizedString("instance.nolongerplayable")
-                                                    : "")
+                                            .getLocalizedString("instance.nolongerplayable")
+                                            : "")
                                             + "<br/><br/>"
                                             + App.settings
-                                                    .getLocalizedString("instance.checkerrorlogs")
+                                            .getLocalizedString("instance.checkerrorlogs")
                                             + "!";
                                     title = pack.getName() + " " + version.getVersion() + " "
                                             + App.settings.getLocalizedString("common.not") + " "
@@ -427,7 +427,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             + App.settings.getLocalizedString("common.installed")
                                             + "<br/><br/>"
                                             + App.settings
-                                                    .getLocalizedString("instance.checkerrorlogs")
+                                            .getLocalizedString("instance.checkerrorlogs")
                                             + "!";
                                     title = pack.getName() + " " + version.getVersion() + " "
                                             + App.settings.getLocalizedString("common.not") + " "

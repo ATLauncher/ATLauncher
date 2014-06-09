@@ -36,7 +36,7 @@ public class Account implements Serializable {
     private transient boolean isReal; // If this is a real user
     private ArrayList<String> collapsedPacks; // Array of packs collapsed in the Packs Tab
     private ArrayList<String> collapsedInstances; // Array of instances collapsed in the Instances
-                                                  // Tab
+    // Tab
     private boolean skinUpdating = false; // If the skin is being updated
 
     public Account(String username, String password, String minecraftUsername, boolean remember) {
@@ -238,7 +238,7 @@ public class Account implements Serializable {
                     App.settings.getLocalizedString("account.downloadingskin"), 0,
                     App.settings.getLocalizedString("account.downloadingminecraftskin",
                             getMinecraftUsername()), "Aborting downloading Minecraft skin for "
-                            + getMinecraftUsername());
+                    + getMinecraftUsername());
             dialog.addThread(new Thread() {
                 public void run() {
                     try {
@@ -261,7 +261,9 @@ public class Account implements Serializable {
                     }
                     App.settings.reloadAccounts();
                     dialog.close();
-                };
+                }
+
+                ;
             });
             dialog.start();
             skinUpdating = false;

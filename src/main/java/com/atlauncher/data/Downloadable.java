@@ -37,8 +37,8 @@ public class Downloadable {
     private int attempts = 0;
 
     public Downloadable(String url, File file, String hash, int size,
-            InstanceInstaller instanceInstaller, boolean isATLauncherDownload, File copyTo,
-            boolean actuallyCopy) {
+                        InstanceInstaller instanceInstaller, boolean isATLauncherDownload, File copyTo,
+                        boolean actuallyCopy) {
         if (isATLauncherDownload) {
             this.url = App.settings.getFileURL(url);
         } else {
@@ -55,12 +55,12 @@ public class Downloadable {
     }
 
     public Downloadable(String url, File file, String hash, int size,
-            InstanceInstaller instanceInstaller, boolean isATLauncherDownload) {
+                        InstanceInstaller instanceInstaller, boolean isATLauncherDownload) {
         this(url, file, hash, size, instanceInstaller, isATLauncherDownload, null, false);
     }
 
     public Downloadable(String url, File file, String hash, InstanceInstaller instanceInstaller,
-            boolean isATLauncherDownload) {
+                        boolean isATLauncherDownload) {
         this(url, file, hash, -1, instanceInstaller, isATLauncherDownload, null, false);
     }
 
@@ -209,7 +209,7 @@ public class Downloadable {
                             + " returned response code "
                             + this.connection.getResponseCode()
                             + (this.connection.getResponseMessage() != null ? " with message of "
-                                    + this.connection.getResponseMessage() : ""));
+                            + this.connection.getResponseMessage() : ""));
                 }
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
@@ -220,7 +220,7 @@ public class Downloadable {
                         return getConnection();
                     } else {
                         App.settings.log("Failed to download " + this.beforeURL
-                                + " from all ATLauncher servers. Cancelling install!",
+                                        + " from all ATLauncher servers. Cancelling install!",
                                 LogMessageType.error, false);
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);
@@ -348,7 +348,7 @@ public class Downloadable {
                 this.file.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
         if (getHash().equalsIgnoreCase("-")) {
             downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to
-                                             // check
+            // check
         } else {
             String fileHash = "0";
             boolean done = false;
@@ -380,14 +380,14 @@ public class Downloadable {
                 if (this.isATLauncherDownload) {
                     if (App.settings.getNextServer()) {
                         App.settings.log("Error downloading " + this.file.getName() + " from "
-                                + this.url + ". Expected hash of " + getHash() + " but got "
-                                + fileHash + " instead. Trying another server!",
+                                        + this.url + ". Expected hash of " + getHash() + " but got "
+                                        + fileHash + " instead. Trying another server!",
                                 LogMessageType.warning, false);
                         this.url = App.settings.getFileURL(this.beforeURL);
                         download(downloadAsLibrary); // Redownload the file
                     } else {
                         App.settings.log("Failed to download file " + this.file.getName()
-                                + " from all ATLauncher servers. Cancelling install!",
+                                        + " from all ATLauncher servers. Cancelling install!",
                                 LogMessageType.error, false);
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);

@@ -6,9 +6,8 @@
  */
 package com.atlauncher.data;
 
+import java.awt.*;
 import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -48,6 +47,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+import com.atlauncher.adapter.ColorTypeAdapter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -76,7 +76,7 @@ import com.google.gson.reflect.TypeToken;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user
- * 
+ *
  * @author Ryan
  */
 public class Settings {
@@ -156,13 +156,17 @@ public class Settings {
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
-    public static Gson gson = new Gson();
+    public static Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(Color.class, new ColorTypeAdapter())
+            .create();
     public static Gson altGson;
     private DropboxSync dropbox;
     private boolean languageLoaded = false;
 
     public Settings() {
-        GsonBuilder builder = new GsonBuilder();
+        GsonBuilder builder = new GsonBuilder()
+                .registerTypeAdapter(Color.class, new ColorTypeAdapter());
         builder.registerTypeAdapterFactory(new EnumTypeAdapterFactory());
         builder.registerTypeAdapter(Date.class, new DateTypeAdapter());
         builder.registerTypeAdapter(File.class, new FileTypeAdapter());
@@ -220,7 +224,8 @@ public class Settings {
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
-        OUTER: for (Pack pack : this.packs) {
+        OUTER:
+        for (Pack pack : this.packs) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
                     if (server.getName() == "Master Server (Testing Only)") {
@@ -232,11 +237,11 @@ public class Settings {
         }
         loadServerProperty(true); // Get users Server preference
         if (Utils.isWindows() && this.javaPath.contains("x86")) {
-            String[] options = { App.settings.getLocalizedString("common.yes"),
-                    App.settings.getLocalizedString("common.no") };
+            String[] options = {App.settings.getLocalizedString("common.yes"),
+                    App.settings.getLocalizedString("common.no")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
-                    + App.settings.getLocalizedString("settings.running32bit", "<br/><br/>")
-                    + "</center></html>",
+                            + App.settings.getLocalizedString("settings.running32bit", "<br/><br/>")
+                            + "</center></html>",
                     App.settings.getLocalizedString("settings.running32bittitle"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                     options[0]);
@@ -261,11 +266,11 @@ public class Settings {
             }
         }
         if (matches) {
-            String[] options = { App.settings.getLocalizedString("common.ok"),
-                    App.settings.getLocalizedString("account.removepasswords") };
+            String[] options = {App.settings.getLocalizedString("common.ok"),
+                    App.settings.getLocalizedString("account.removepasswords")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
-                    + App.settings.getLocalizedString("account.securitywarning", "<br/>")
-                    + "</center></html>",
+                            + App.settings.getLocalizedString("account.securitywarning", "<br/>")
+                            + "</center></html>",
                     App.settings.getLocalizedString("account.securitywarningtitle"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                     options[0]);
@@ -439,7 +444,7 @@ public class Settings {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
             } else {
-                String[] options = { "Ok" };
+                String[] options = {"Ok"};
                 int ret = JOptionPane
                         .showOptionDialog(
                                 App.settings.getParent(),
@@ -542,9 +547,9 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir,
+        File[] files = {backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir,
                 skinsDir, jarsDir, resourcesDir, librariesDir, languagesDir, downloadsDir,
-                instancesDir, serversDir, tempDir };
+                instancesDir, serversDir, tempDir};
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -560,7 +565,7 @@ public class Settings {
 
     /**
      * Returns the base directory
-     * 
+     *
      * @return File object for the base directory
      */
     public File getBaseDir() {
@@ -569,7 +574,7 @@ public class Settings {
 
     /**
      * Returns the backups directory
-     * 
+     *
      * @return File object for the backups directory
      */
     public File getBackupsDir() {
@@ -578,7 +583,7 @@ public class Settings {
 
     /**
      * Returns the configs directory
-     * 
+     *
      * @return File object for the configs directory
      */
     public File getConfigsDir() {
@@ -587,7 +592,7 @@ public class Settings {
 
     /**
      * Returns the themes directory
-     * 
+     *
      * @return File object for the themes directory
      */
     public File getThemesDir() {
@@ -596,7 +601,7 @@ public class Settings {
 
     /**
      * Returns the JSON directory
-     * 
+     *
      * @return File object for the JSON directory
      */
     public File getJSONDir() {
@@ -605,7 +610,7 @@ public class Settings {
 
     /**
      * Returns the Versions directory
-     * 
+     *
      * @return File object for the Versions directory
      */
     public File getVersionsDir() {
@@ -614,7 +619,7 @@ public class Settings {
 
     /**
      * Returns the common configs directory
-     * 
+     *
      * @return File object for the common configs directory
      */
     public File getCommonConfigsDir() {
@@ -623,7 +628,7 @@ public class Settings {
 
     /**
      * Returns the images directory
-     * 
+     *
      * @return File object for the images directory
      */
     public File getImagesDir() {
@@ -632,7 +637,7 @@ public class Settings {
 
     /**
      * Returns the skins directory
-     * 
+     *
      * @return File object for the skins directory
      */
     public File getSkinsDir() {
@@ -641,7 +646,7 @@ public class Settings {
 
     /**
      * Returns the jars directory
-     * 
+     *
      * @return File object for the jars directory
      */
     public File getJarsDir() {
@@ -650,7 +655,7 @@ public class Settings {
 
     /**
      * Returns the resources directory
-     * 
+     *
      * @return File object for the resources directory
      */
     public File getResourcesDir() {
@@ -671,7 +676,7 @@ public class Settings {
 
     /**
      * Returns the libraries directory
-     * 
+     *
      * @return File object for the libraries directory
      */
     public File getLibrariesDir() {
@@ -680,7 +685,7 @@ public class Settings {
 
     /**
      * Returns the languages directory
-     * 
+     *
      * @return File object for the languages directory
      */
     public File getLanguagesDir() {
@@ -689,7 +694,7 @@ public class Settings {
 
     /**
      * Returns the downloads directory
-     * 
+     *
      * @return File object for the downloads directory
      */
     public File getDownloadsDir() {
@@ -698,7 +703,7 @@ public class Settings {
 
     /**
      * Returns the downloads directory for the user
-     * 
+     *
      * @return File object for the downloads directory for the users account
      */
     public File getUsersDownloadsDir() {
@@ -707,7 +712,7 @@ public class Settings {
 
     /**
      * Returns the instances directory
-     * 
+     *
      * @return File object for the instances directory
      */
     public File getInstancesDir() {
@@ -716,7 +721,7 @@ public class Settings {
 
     /**
      * Returns the servers directory
-     * 
+     *
      * @return File object for the servers directory
      */
     public File getServersDir() {
@@ -725,7 +730,7 @@ public class Settings {
 
     /**
      * Returns the temp directory
-     * 
+     *
      * @return File object for the temp directory
      */
     public File getTempDir() {
@@ -755,7 +760,7 @@ public class Settings {
         try {
             logFile1.createNewFile();
         } catch (IOException e) {
-            String[] options = { "OK" };
+            String[] options = {"OK"};
             JOptionPane.showOptionDialog(null,
                     "<html><center>Cannot create the log file.<br/><br/>Make sure"
                             + " you are running the Launcher from somewhere with<br/>write"
@@ -769,7 +774,7 @@ public class Settings {
 
     /**
      * Returns the instancesdata file
-     * 
+     *
      * @return File object for the instancesdata file
      */
     public File getInstancesDataFile() {
@@ -778,9 +783,8 @@ public class Settings {
 
     /**
      * Sets the main parent JFrame reference for the Launcher
-     * 
-     * @param parent
-     *            The Launcher main JFrame
+     *
+     * @param parent The Launcher main JFrame
      */
     public void setParentFrame(JFrame parent) {
         this.parent = parent;
@@ -820,7 +824,7 @@ public class Settings {
                 propertiesFile.createNewFile();
             }
         } catch (IOException e) {
-            String[] options = { "OK" };
+            String[] options = {"OK"};
             JOptionPane.showOptionDialog(null,
                     "<html><center>Cannot create the config file.<br/><br/>Make sure"
                             + " you are running the Launcher from somewhere with<br/>write"
@@ -928,16 +932,16 @@ public class Settings {
                 this.ram = Integer.parseInt(properties.getProperty("ram", defaultRam + ""));
                 if (this.ram > Utils.getMaximumRam()) {
                     log("Tried to allocate " + this.ram + "MB of Ram but only "
-                            + Utils.getMaximumRam() + "MB is available to use!",
+                                    + Utils.getMaximumRam() + "MB is available to use!",
                             LogMessageType.warning, false);
                     this.ram = defaultRam; // User tried to allocate too much ram, set it back to
-                                           // half, capped at 4GB
+                    // half, capped at 4GB
                 }
             } else {
                 this.ram = Integer.parseInt(properties.getProperty("ram", "1024"));
                 if (this.ram > Utils.getMaximumRam()) {
                     log("Tried to allocate " + this.ram + "MB of Ram but only "
-                            + Utils.getMaximumRam() + "MB is available to use!",
+                                    + Utils.getMaximumRam() + "MB is available to use!",
                             LogMessageType.warning, false);
                     this.ram = 1024; // User tried to allocate too much ram, set it back to 1GB
                 }
@@ -953,7 +957,7 @@ public class Settings {
                         + " pixels but the maximum is " + Utils.getMaximumWindowWidth()
                         + " pixels!", LogMessageType.warning, false);
                 this.windowWidth = Utils.getMaximumWindowWidth(); // User tried to make screen size
-                                                                  // wider than they have
+                // wider than they have
             }
 
             this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
@@ -962,7 +966,7 @@ public class Settings {
                         + " pixels but the maximum is " + Utils.getMaximumWindowHeight()
                         + " pixels!", LogMessageType.warning, false);
                 this.windowHeight = Utils.getMaximumWindowHeight(); // User tried to make screen
-                                                                    // size wider than they have
+                // size wider than they have
             }
 
             this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty(
@@ -974,9 +978,9 @@ public class Settings {
                 this.javaPath = Utils.getJavaHome();
                 if (this.isUsingMacApp()) {
                     File oracleJava = new File(
-                            "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
+                            "/Library/Internet Plug-Ins/JavaAppletPlugin.adapter/Contents/Home/bin/java");
                     if (oracleJava.exists() && oracleJava.canExecute()) {
-                        this.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
+                        this.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.adapter/Contents/Home");
                     }
                 }
             }
@@ -1021,7 +1025,7 @@ public class Settings {
                 if (this.proxyPort <= 0 || this.proxyPort > 65535) {
                     // Proxy port is invalid so disable proxy
                     log("Tried to set proxy port to " + this.proxyPort
-                            + " which is not a valid port! Proxy support disabled!",
+                                    + " which is not a valid port! Proxy support disabled!",
                             LogMessageType.warning, false);
                     this.enableProxy = false;
                 }
@@ -1031,7 +1035,7 @@ public class Settings {
                         && !this.proxyType.equals("DIRECT")) {
                     // Proxy type is invalid so disable proxy
                     log("Tried to set proxy type to " + this.proxyType
-                            + " which is not valid! Proxy support disabled!",
+                                    + " which is not valid! Proxy support disabled!",
                             LogMessageType.warning, false);
                     this.enableProxy = false;
                 }
@@ -1046,8 +1050,8 @@ public class Settings {
             if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
                 // Connection timeout should be between 1 and 30
                 log("Tried to set connection timeout to "
-                        + this.connectionTimeout
-                        + " which is not valid! Must be between 1 and 30. Setting back to default of 3!",
+                                + this.connectionTimeout
+                                + " which is not valid! Must be between 1 and 30. Setting back to default of 3!",
                         LogMessageType.warning, false);
                 this.connectionTimeout = 3;
             }
@@ -1057,8 +1061,8 @@ public class Settings {
             if (this.concurrentConnections < 1) {
                 // Concurrent connections should be more than or equal to 1
                 log("Tried to set the number of concurrent connections to "
-                        + this.concurrentConnections
-                        + " which is not valid! Must be 1 or more. Setting back to default of 8!",
+                                + this.concurrentConnections
+                                + " which is not valid! Must be 1 or more. Setting back to default of 8!",
                         LogMessageType.warning, false);
                 this.concurrentConnections = 8;
             }
@@ -1071,7 +1075,7 @@ public class Settings {
                     this.account = getAccountByName(lastAccountTemp);
                 } else {
                     log("The Account " + lastAccountTemp
-                            + " is no longer available. Logging out of Account!",
+                                    + " is no longer available. Logging out of Account!",
                             LogMessageType.warning, false);
                     this.account = null; // Account not found
                 }
@@ -1151,9 +1155,8 @@ public class Settings {
 
     /**
      * Switch account currently used and save it
-     * 
-     * @param account
-     *            Account to switch to
+     *
+     * @param account Account to switch to
      */
     public void switchAccount(Account account) {
         if (account == null) {
@@ -1176,7 +1179,7 @@ public class Settings {
 
     /**
      * The servers available to use in the Launcher
-     * 
+     * <p/>
      * These MUST be hardcoded in order for the Launcher to make the initial connections to download
      * files
      */
@@ -1354,8 +1357,8 @@ public class Settings {
                             Instance instance = (Instance) obj;
                             if (!instance.hasBeenConverted()) {
                                 log("Instance "
-                                        + instance.getName()
-                                        + " is being converted! This is normal and should only appear once!",
+                                                + instance.getName()
+                                                + " is being converted! This is normal and should only appear once!",
                                         LogMessageType.warning, false);
                                 instance.convert();
                             }
@@ -1481,7 +1484,7 @@ public class Settings {
 
     /**
      * Finds out if this is the first time the Launcher has been run
-     * 
+     *
      * @return true if the Launcher hasn't been run and setup yet, false for otherwise
      */
     public boolean isFirstTimeRun() {
@@ -1499,7 +1502,7 @@ public class Settings {
 
     /**
      * Get the Packs available in the Launcher
-     * 
+     *
      * @return The Packs available in the Launcher
      */
     public List<Pack> getPacks() {
@@ -1508,7 +1511,7 @@ public class Settings {
 
     /**
      * Get the Packs available in the Launcher sorted alphabetically
-     * 
+     *
      * @return The Packs available in the Launcher sorted alphabetically
      */
     public ArrayList<Pack> getPacksSortedAlphabetically() {
@@ -1523,7 +1526,7 @@ public class Settings {
 
     /**
      * Get the Packs available in the Launcher sorted positionally
-     * 
+     *
      * @return The Packs available in the Launcher sorted by position
      */
     public ArrayList<Pack> getPacksSortedPositionally() {
@@ -1578,7 +1581,7 @@ public class Settings {
 
     /**
      * Get the Instances available in the Launcher
-     * 
+     *
      * @return The Instances available in the Launcher
      */
     public ArrayList<Instance> getInstances() {
@@ -1587,7 +1590,7 @@ public class Settings {
 
     /**
      * Get the Instances available in the Launcher sorted alphabetically
-     * 
+     *
      * @return The Instances available in the Launcher sorted alphabetically
      */
     public ArrayList<Instance> getInstancesSorted() {
@@ -1618,7 +1621,7 @@ public class Settings {
     }
 
     public String apiCall(String username, String action, String extra1, String extra2,
-            String extra3, boolean debug) {
+                          String extra3, boolean debug) {
         String response = "";
         try {
             String data = URLEncoder.encode("username", "UTF-8") + "="
@@ -1670,7 +1673,7 @@ public class Settings {
     }
 
     public String apiCallReturn(String username, String action, String extra1, String extra2,
-            String extra3) {
+                                String extra3) {
         return apiCall(username, action, extra1, extra2, extra3, false);
     }
 
@@ -1746,7 +1749,7 @@ public class Settings {
 
     /**
      * Get the Accounts added to the Launcher
-     * 
+     *
      * @return The Accounts added to the Launcher
      */
     public ArrayList<Account> getAccounts() {
@@ -1755,7 +1758,7 @@ public class Settings {
 
     /**
      * Get the News for the Launcher
-     * 
+     *
      * @return The News items
      */
     public List<News> getNews() {
@@ -1764,7 +1767,7 @@ public class Settings {
 
     /**
      * Get the News for the Launcher in HTML for display on the news panel.
-     * 
+     *
      * @return The HTML for displaying on the News Panel
      */
     public String getNewsHTML() {
@@ -1780,7 +1783,7 @@ public class Settings {
 
     /**
      * Get the Languages available in the Launcher
-     * 
+     *
      * @return The Languages available in the Launcher
      */
     public List<Language> getLanguages() {
@@ -1789,7 +1792,7 @@ public class Settings {
 
     /**
      * Get the Servers available in the Launcher
-     * 
+     *
      * @return The Servers available in the Launcher
      */
     public ArrayList<Server> getServers() {
@@ -1798,7 +1801,7 @@ public class Settings {
 
     /**
      * Determines if offline mode is enabled or not
-     * 
+     *
      * @return true if offline mode is enabled, false otherwise
      */
     public boolean isInOfflineMode() {
@@ -1837,7 +1840,7 @@ public class Settings {
 
     /**
      * Returns the JFrame reference of the main Launcher
-     * 
+     *
      * @return Main JFrame of the Launcher
      */
     public Window getParent() {
@@ -1846,9 +1849,8 @@ public class Settings {
 
     /**
      * Sets the panel used for Instances
-     * 
-     * @param instancesPanel
-     *            Instances Panel
+     *
+     * @param instancesPanel Instances Panel
      */
     public void setInstancesPanel(InstancesTab instancesPanel) {
         this.instancesPanel = instancesPanel;
@@ -1865,9 +1867,8 @@ public class Settings {
 
     /**
      * Sets the panel used for Packs
-     * 
-     * @param packsPanel
-     *            Packs Panel
+     *
+     * @param packsPanel Packs Panel
      */
     public void setPacksPanel(PacksTab packsPanel) {
         this.packsPanel = packsPanel;
@@ -1875,9 +1876,8 @@ public class Settings {
 
     /**
      * Sets the panel used for News
-     * 
-     * @param newsPanel
-     *            News Panel
+     *
+     * @param newsPanel News Panel
      */
     public void setNewsPanel(NewsTab newsPanel) {
         this.newsPanel = newsPanel;
@@ -1899,9 +1899,8 @@ public class Settings {
 
     /**
      * Sets the bottom bar
-     * 
-     * @param bottomBar
-     *            The Bottom Bar
+     *
+     * @param bottomBar The Bottom Bar
      */
     public void setBottomBar(LauncherBottomBar bottomBar) {
         this.bottomBar = bottomBar;
@@ -1919,9 +1918,8 @@ public class Settings {
 
     /**
      * Checks to see if there is already an instance with the name provided or not
-     * 
-     * @param name
-     *            The name of the instance to check for
+     *
+     * @param name The name of the instance to check for
      * @return True if there is an instance with the same name already
      */
     public boolean isInstance(String name) {
@@ -1935,12 +1933,10 @@ public class Settings {
 
     /**
      * Finds a Pack from the given ID number
-     * 
-     * @param id
-     *            ID of the Pack to find
+     *
+     * @param id ID of the Pack to find
      * @return Pack if the pack is found from the ID
-     * @throws InvalidPack
-     *             If ID is not found
+     * @throws InvalidPack If ID is not found
      */
     public Pack getPackByID(int id) throws InvalidPack {
         for (Pack pack : packs) {
@@ -1953,9 +1949,8 @@ public class Settings {
 
     /**
      * Checks if there is a pack by the given name
-     * 
-     * @param name
-     *            name of the Pack to find
+     *
+     * @param name name of the Pack to find
      * @return True if the pack is found from the name
      */
     public boolean isPackByName(String name) {
@@ -1969,9 +1964,8 @@ public class Settings {
 
     /**
      * Finds a Pack from the given name
-     * 
-     * @param name
-     *            name of the Pack to find
+     *
+     * @param name name of the Pack to find
      * @return Pack if the pack is found from the name
      */
     public Pack getPackByName(String name) {
@@ -1985,9 +1979,8 @@ public class Settings {
 
     /**
      * Checks if there is an instance by the given name
-     * 
-     * @param name
-     *            name of the Instance to find
+     *
+     * @param name name of the Instance to find
      * @return True if the instance is found from the name
      */
     public boolean isInstanceByName(String name) {
@@ -2001,9 +1994,8 @@ public class Settings {
 
     /**
      * Checks if there is an instance by the given name
-     * 
-     * @param name
-     *            name of the Instance to find
+     *
+     * @param name name of the Instance to find
      * @return True if the instance is found from the name
      */
     public boolean isInstanceBySafeName(String name) {
@@ -2017,9 +2009,8 @@ public class Settings {
 
     /**
      * Finds a Instance from the given name
-     * 
-     * @param name
-     *            name of the Instance to find
+     *
+     * @param name name of the Instance to find
      * @return Instance if the instance is found from the name
      */
     public Instance getInstanceByName(String name) {
@@ -2033,9 +2024,8 @@ public class Settings {
 
     /**
      * Finds a Instance from the given name
-     * 
-     * @param name
-     *            name of the Instance to find
+     *
+     * @param name name of the Instance to find
      * @return Instance if the instance is found from the name
      */
     public Instance getInstanceBySafeName(String name) {
@@ -2049,9 +2039,8 @@ public class Settings {
 
     /**
      * Finds a Language from the given name
-     * 
-     * @param name
-     *            Name of the Language to find
+     *
+     * @param name Name of the Language to find
      * @return Language if the language is found from the name
      */
     private Language getLanguageByName(String name) {
@@ -2065,9 +2054,8 @@ public class Settings {
 
     /**
      * Finds a Server from the given name
-     * 
-     * @param name
-     *            Name of the Server to find
+     *
+     * @param name Name of the Server to find
      * @return Server if the server is found from the name
      */
     private Server getServerByName(String name) {
@@ -2081,9 +2069,8 @@ public class Settings {
 
     /**
      * Finds an Account from the given username
-     * 
-     * @param username
-     *            Username of the Account to find
+     *
+     * @param username Username of the Account to find
      * @return Account if the Account is found from the username
      */
     private Account getAccountByName(String username) {
@@ -2097,9 +2084,8 @@ public class Settings {
 
     /**
      * Finds if a language is available
-     * 
-     * @param name
-     *            The name of the Language
+     *
+     * @param name The name of the Language
      * @return true if found, false if not
      */
     public boolean isLanguageByName(String name) {
@@ -2113,9 +2099,8 @@ public class Settings {
 
     /**
      * Finds if a server is available
-     * 
-     * @param name
-     *            The name of the Server
+     *
+     * @param name The name of the Server
      * @return true if found, false if not
      */
     public boolean isServerByName(String name) {
@@ -2129,9 +2114,8 @@ public class Settings {
 
     /**
      * Finds if an Account is available
-     * 
-     * @param username
-     *            The username of the Account
+     *
+     * @param username The username of the Account
      * @return true if found, false if not
      */
     public boolean isAccountByName(String username) {
@@ -2145,9 +2129,8 @@ public class Settings {
 
     /**
      * Gets the URL for a file on the user selected server
-     * 
-     * @param filename
-     *            Filename including directories on the server
+     *
+     * @param filename Filename including directories on the server
      * @return URL of the file
      */
     public String getFileURL(String filename) {
@@ -2156,9 +2139,8 @@ public class Settings {
 
     /**
      * Gets the URL for a file on the master server
-     * 
-     * @param filename
-     *            Filename including directories on the server
+     *
+     * @param filename Filename including directories on the server
      * @return URL of the file or null if no master server defined
      */
     public String getMasterFileURL(String filename) {
@@ -2172,7 +2154,7 @@ public class Settings {
 
     /**
      * Finds out if the Launcher Console is visible or not
-     * 
+     *
      * @return true if the console is visible, false if it's been hidden
      */
     public boolean isConsoleVisible() {
@@ -2181,7 +2163,7 @@ public class Settings {
 
     /**
      * Gets the Launcher's current Console instance
-     * 
+     *
      * @return The Launcher's Console instance
      */
     public LauncherConsole getConsole() {
@@ -2216,9 +2198,8 @@ public class Settings {
 
     /**
      * Logs a stack trace to the console window
-     * 
-     * @param exception
-     *            The exception to show in the console
+     *
+     * @param exception The exception to show in the console
      */
     public void logStackTrace(Exception exception) {
         exception.printStackTrace();
@@ -2258,7 +2239,7 @@ public class Settings {
 
     /**
      * Gets the users current active Language
-     * 
+     *
      * @return The users set language
      */
     public Language getLanguage() {
@@ -2267,9 +2248,8 @@ public class Settings {
 
     /**
      * Sets the users current active Language
-     * 
-     * @param language
-     *            The language to set to
+     *
+     * @param language The language to set to
      */
     public void setLanguage(Language language) {
         this.language = language;
@@ -2277,7 +2257,7 @@ public class Settings {
 
     /**
      * Gets the users current active Server
-     * 
+     *
      * @return The users set server
      */
     public Server getServer() {
@@ -2286,7 +2266,7 @@ public class Settings {
 
     /**
      * Gets the users saved Server
-     * 
+     *
      * @return The users saved server
      */
     public Server getOriginalServer() {
@@ -2295,7 +2275,7 @@ public class Settings {
 
     /**
      * Gets the users setting for Forge Logging Level
-     * 
+     *
      * @return The users setting for Forge Logging Level
      */
     public String getForgeLoggingLevel() {
@@ -2311,9 +2291,8 @@ public class Settings {
 
     /**
      * Sets the users current active Server
-     * 
-     * @param server
-     *            The server to set to
+     *
+     * @param server The server to set to
      */
     public void setServer(Server server) {
         this.server = server;
@@ -2383,7 +2362,7 @@ public class Settings {
 
     /**
      * If the user has selected to start Minecraft maximised
-     * 
+     *
      * @return true if yes, false if not
      */
     public boolean startMinecraftMaximised() {
@@ -2404,7 +2383,7 @@ public class Settings {
 
     /**
      * If the user has selected to enable advanced backups
-     * 
+     *
      * @return true if yes, false if not
      */
     public boolean isAdvancedBackupsEnabled() {
@@ -2417,7 +2396,7 @@ public class Settings {
 
     /**
      * If the user has selected to display packs alphabetically or nto
-     * 
+     *
      * @return true if yes, false if not
      */
     public boolean sortPacksAlphabetically() {
@@ -2430,7 +2409,7 @@ public class Settings {
 
     /**
      * If the user has selected to show the console always or not
-     * 
+     *
      * @return true if yes, false if not
      */
     public boolean enableConsole() {
@@ -2439,7 +2418,7 @@ public class Settings {
 
     /**
      * If the user has selected to keep the launcher open after Minecraft has closed
-     * 
+     *
      * @return true if yes, false if not
      */
     public boolean keepLauncherOpen() {
@@ -2448,7 +2427,7 @@ public class Settings {
 
     /**
      * If the user has selected to enable the tray icon
-     * 
+     *
      * @return true if yes, false if not
      */
     public boolean enableTrayIcon() {
@@ -2457,9 +2436,8 @@ public class Settings {
 
     /**
      * Set the Launcher console's visibility
-     * 
-     * @param visible
-     *            The Launcher console's visibility
+     *
+     * @param visible The Launcher console's visibility
      */
     public void setConsoleVisible(boolean visible) {
         this.setConsoleVisible(visible, true);
@@ -2467,9 +2445,8 @@ public class Settings {
 
     /**
      * Set the Launcher console's visibility
-     * 
-     * @param visible
-     *            The Launcher console's visibility
+     *
+     * @param visible The Launcher console's visibility
      */
     public void setConsoleVisible(boolean visible, boolean updateBottomBar) {
         if (!visible) {
@@ -2641,7 +2618,7 @@ public class Settings {
             } else {
                 // Oh noes, problem!
                 log("Tried to set proxy type to " + this.proxyType
-                        + " which is not valid! Proxy support disabled!", LogMessageType.warning,
+                                + " which is not valid! Proxy support disabled!", LogMessageType.warning,
                         false);
                 this.enableProxy = false;
                 return null;

@@ -52,7 +52,7 @@ public class LegacyMCLauncher {
                 jinput = file.getName();
             }
         }
-        String[] jarFiles = new String[] { "minecraft.jar", lwjgl, lwjgl_util, jinput };
+        String[] jarFiles = new String[]{"minecraft.jar", lwjgl, lwjgl_util, jinput};
         StringBuilder cpb = new StringBuilder("");
         File jarMods = instance.getJarModsDirectory();
         if (jarMods.exists() && (instance.hasJarMods() || jarMods.listFiles().length != 0)) {
@@ -133,7 +133,7 @@ public class LegacyMCLauncher {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
             arguments.add("-Xdock:icon="
                     + new File(App.settings.getImagesDir(), "OldMinecraftIcon.png")
-                            .getAbsolutePath());
+                    .getAbsolutePath());
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
@@ -231,7 +231,7 @@ public class LegacyMCLauncher {
                     jinput = file.getName();
                 }
             }
-            String[] lwjglJars = new String[] { lwjgl, lwjgl_util, jinput };
+            String[] lwjglJars = new String[]{lwjgl, lwjgl_util, jinput};
 
             URL[] urls = new URL[4];
 

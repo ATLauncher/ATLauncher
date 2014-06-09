@@ -26,7 +26,7 @@ public class Update {
 
         if (Utils.isMac()
                 && new File(new File(System.getProperty("user.dir")).getParentFile()
-                        .getParentFile(), "MacOS").exists()) {
+                .getParentFile(), "MacOS").exists()) {
             arguments.add("open");
             arguments.add(new File(System.getProperty("user.dir")).getParentFile().getParentFile()
                     .getParentFile().getAbsolutePath());

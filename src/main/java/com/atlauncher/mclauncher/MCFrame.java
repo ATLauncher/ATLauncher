@@ -28,7 +28,7 @@ public class MCFrame extends Frame implements WindowListener {
     }
 
     public void start(Applet mcApplet, String user, String session, Dimension winSize,
-            boolean maximize) {
+                      boolean maximize) {
         try {
             appletWrap = new Launcher(mcApplet, new URL("http://www.minecraft.net/game"));
         } catch (MalformedURLException ignored) {

@@ -66,7 +66,7 @@ public class NewsTab extends JPanel {
     private void loadContent() {
         newsArea = new JEditorPane("text/html", null);
         newsArea.setEditable(false);
-        newsArea.setSelectionColor(App.THEME.getSelectionColour());
+        newsArea.setSelectionColor(App.THEME.getSelectionColor());
         setupContextMenu(); // Setup the right click context menu
 
         HTMLEditorKit kit = new HTMLEditorKit();

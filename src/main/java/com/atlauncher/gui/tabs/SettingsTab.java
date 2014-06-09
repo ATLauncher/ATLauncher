@@ -34,9 +34,9 @@ public class SettingsTab extends JPanel {
         setLayout(new BorderLayout());
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.setBackground(App.THEME.getBaseColour());
+        tabbedPane.setBackground(App.THEME.getBaseColor());
 
-        tabbedPane.setFont(App.THEME.getSettingsTabsFont());
+        tabbedPane.setFont(App.THEME.getDefaultFont().deriveFont(17.0F));
         tabbedPane.addTab(App.settings.getLocalizedString("settings.generaltab"),
                 generalSettingsTab);
         tabbedPane.addTab(App.settings.getLocalizedString("settings.javatab"), javaSettingsTab);
@@ -44,7 +44,7 @@ public class SettingsTab extends JPanel {
                 networkSettingsTab);
         tabbedPane.addTab(App.settings.getLocalizedString("settings.loggingtab"),
                 loggingSettingsTab);
-        tabbedPane.setBackground(App.THEME.getTabBackgroundColour());
+        tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
 
         add(tabbedPane, BorderLayout.CENTER);
@@ -75,7 +75,7 @@ public class SettingsTab extends JPanel {
                     if (reloadPacksPanel) {
                         App.settings.reloadPacksPanel();
                     }
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    String[] options = {App.settings.getLocalizedString("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(),
                             App.settings.getLocalizedString("settings.saved"),
                             App.settings.getLocalizedString("settings.saved"),

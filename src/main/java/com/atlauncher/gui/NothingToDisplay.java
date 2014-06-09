@@ -22,9 +22,8 @@ import com.atlauncher.utils.Utils;
 
 /**
  * Class for displaying packs in the Pack Tab
- * 
+ *
  * @author Ryan
- * 
  */
 public class NothingToDisplay extends JPanel {
 
@@ -42,12 +41,12 @@ public class NothingToDisplay extends JPanel {
             setBorder(new TitledBorder(null,
                     App.settings.getLocalizedString("common.nothingtoshow"),
                     TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(
-                            "SansSerif", Font.BOLD, 14)));
+                    "SansSerif", Font.BOLD, 14)));
         } else {
             setBorder(new TitledBorder(null,
                     App.settings.getLocalizedString("common.nothingtoshow"),
                     TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(
-                            "SansSerif", Font.BOLD, 15)));
+                    "SansSerif", Font.BOLD, 15)));
         }
 
         leftPanel = new JPanel();

@@ -74,16 +74,23 @@ import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.ProgressDialog;
 
 // TODO: Auto-generated Javadoc
+
 /**
  * The Class Utils.
  */
 public class Utils {
+    public static String colorHex(Color c){
+        if(c == null){
+            throw new NullPointerException("Color == null");
+        }
+
+        return "#" + Integer.toHexString(c.getRGB() & 0xFFFFFF);
+    }
 
     /**
      * Gets the icon image.
-     * 
-     * @param path
-     *            the path
+     *
+     * @param path the path
      * @return the icon image
      */
     public static ImageIcon getIconImage(String path) {
@@ -110,9 +117,8 @@ public class Utils {
 
     /**
      * Gets the icon image.
-     * 
-     * @param file
-     *            the file
+     *
+     * @param file the file
      * @return the icon image
      */
     public static ImageIcon getIconImage(File file) {
@@ -129,7 +135,7 @@ public class Utils {
 
     /**
      * Gets the font.
-     * 
+     *
      * @return the font
      */
     public static Font getFont() {
@@ -142,9 +148,8 @@ public class Utils {
 
     /**
      * Gets the image.
-     * 
-     * @param path
-     *            the path
+     *
+     * @param path the path
      * @return the image
      */
     public static Image getImage(String path) {
@@ -162,9 +167,8 @@ public class Utils {
 
     /**
      * Open explorer.
-     * 
-     * @param file
-     *            the file
+     *
+     * @param file the file
      */
     public static void openExplorer(File file) {
         if (Desktop.isDesktopSupported()) {
@@ -178,9 +182,8 @@ public class Utils {
 
     /**
      * Open browser.
-     * 
-     * @param URL
-     *            the url
+     *
+     * @param URL the url
      */
     public static void openBrowser(String URL) {
         if (Desktop.isDesktopSupported()) {
@@ -196,9 +199,8 @@ public class Utils {
 
     /**
      * Open browser.
-     * 
-     * @param URL
-     *            the url
+     *
+     * @param URL the url
      */
     public static void openBrowser(URL URL) {
         if (Desktop.isDesktopSupported()) {
@@ -214,9 +216,8 @@ public class Utils {
 
     /**
      * Make font.
-     * 
-     * @param name
-     *            the name
+     *
+     * @param name the name
      * @return the font
      */
     public static Font makeFont(String name) {
@@ -251,7 +252,7 @@ public class Utils {
 
     /**
      * Os slash.
-     * 
+     *
      * @return the string
      */
     public static String osSlash() {
@@ -264,7 +265,7 @@ public class Utils {
 
     /**
      * Os delimiter.
-     * 
+     *
      * @return the string
      */
     public static String osDelimiter() {
@@ -277,7 +278,7 @@ public class Utils {
 
     /**
      * Gets the java home.
-     * 
+     *
      * @return the java home
      */
     public static String getJavaHome() {
@@ -286,7 +287,7 @@ public class Utils {
 
     /**
      * Gets the java version.
-     * 
+     *
      * @return the java version
      */
     public static String getJavaVersion() {
@@ -295,7 +296,7 @@ public class Utils {
 
     /**
      * Checks if is windows.
-     * 
+     *
      * @return true, if is windows
      */
     public static boolean isWindows() {
@@ -304,7 +305,7 @@ public class Utils {
 
     /**
      * Checks if is mac.
-     * 
+     *
      * @return true, if is mac
      */
     public static boolean isMac() {
@@ -313,7 +314,7 @@ public class Utils {
 
     /**
      * Checks if is linux.
-     * 
+     *
      * @return true, if is linux
      */
     public static boolean isLinux() {
@@ -322,7 +323,7 @@ public class Utils {
 
     /**
      * Checks if is 64 bit.
-     * 
+     *
      * @return true, if is 64 bit
      */
     public static boolean is64Bit() {
@@ -332,7 +333,7 @@ public class Utils {
 
     /**
      * Gets the arch.
-     * 
+     *
      * @return the arch
      */
     public static String getArch() {
@@ -345,7 +346,7 @@ public class Utils {
 
     /**
      * Gets the memory options.
-     * 
+     *
      * @return the memory options
      */
     public static String[] getMemoryOptions() {
@@ -363,7 +364,7 @@ public class Utils {
 
     /**
      * Returns the amount of RAM in the users system.
-     * 
+     *
      * @return The amount of RAM in the system
      */
     public static int getSystemRam() {
@@ -398,7 +399,7 @@ public class Utils {
     /**
      * Returns the maximum RAM available to Java. If on 64 Bit system then its all of the System RAM
      * otherwise its limited to 1GB or less due to allocations of PermGen
-     * 
+     *
      * @return The maximum RAM available to Java
      */
     public static int getMaximumRam() {
@@ -418,7 +419,7 @@ public class Utils {
      * Returns the safe amount of maximum ram available to Java. This is set to half of the total
      * maximum ram available to Java in order to not allocate too much and leave enough RAM for the
      * OS and other application
-     * 
+     *
      * @return Half the maximum RAM available to Java
      */
     public static int getSafeMaximumRam() {
@@ -436,7 +437,7 @@ public class Utils {
 
     /**
      * Gets the maximum window width.
-     * 
+     *
      * @return the maximum window width
      */
     public static int getMaximumWindowWidth() {
@@ -447,7 +448,7 @@ public class Utils {
 
     /**
      * Gets the maximum window height.
-     * 
+     *
      * @return the maximum window height
      */
     public static int getMaximumWindowHeight() {
@@ -458,11 +459,9 @@ public class Utils {
 
     /**
      * Upload paste.
-     * 
-     * @param title
-     *            the title
-     * @param log
-     *            the log
+     *
+     * @param title the title
+     * @param log   the log
      * @return the string
      */
     public static String uploadPaste(String title, String log) {
@@ -494,9 +493,8 @@ public class Utils {
 
     /**
      * Gets the m d5.
-     * 
-     * @param file
-     *            the file
+     *
+     * @param file the file
      * @return the m d5
      */
     public static String getMD5(File file) {
@@ -540,9 +538,8 @@ public class Utils {
 
     /**
      * Gets the SH a1.
-     * 
-     * @param file
-     *            the file
+     *
+     * @param file the file
      * @return the SH a1
      */
     public static String getSHA1(File file) {
@@ -585,9 +582,8 @@ public class Utils {
 
     /**
      * Gets the m d5.
-     * 
-     * @param string
-     *            the string
+     *
+     * @param string the string
      * @return the m d5
      */
     public static String getMD5(String string) {
@@ -616,13 +612,10 @@ public class Utils {
 
     /**
      * Move file.
-     * 
-     * @param from
-     *            the from
-     * @param to
-     *            the to
-     * @param withFilename
-     *            the with filename
+     *
+     * @param from         the from
+     * @param to           the to
+     * @param withFilename the with filename
      * @return true, if successful
      */
     public static boolean moveFile(File from, File to, boolean withFilename) {
@@ -639,11 +632,9 @@ public class Utils {
 
     /**
      * Copy file.
-     * 
-     * @param from
-     *            the from
-     * @param to
-     *            the to
+     *
+     * @param from the from
+     * @param to   the to
      * @return true, if successful
      */
     public static boolean copyFile(File from, File to) {
@@ -652,13 +643,10 @@ public class Utils {
 
     /**
      * Copy file.
-     * 
-     * @param from
-     *            the from
-     * @param to
-     *            the to
-     * @param withFilename
-     *            the with filename
+     *
+     * @param from         the from
+     * @param to           the to
+     * @param withFilename the with filename
      * @return true, if successful
      */
     public static boolean copyFile(File from, File to, boolean withFilename) {
@@ -718,11 +706,9 @@ public class Utils {
 
     /**
      * Move directory.
-     * 
-     * @param sourceLocation
-     *            the source location
-     * @param targetLocation
-     *            the target location
+     *
+     * @param sourceLocation the source location
+     * @param targetLocation the target location
      * @return true, if successful
      */
     public static boolean moveDirectory(File sourceLocation, File targetLocation) {
@@ -738,11 +724,9 @@ public class Utils {
 
     /**
      * Copy directory.
-     * 
-     * @param sourceLocation
-     *            the source location
-     * @param targetLocation
-     *            the target location
+     *
+     * @param sourceLocation the source location
+     * @param targetLocation the target location
      * @return true, if successful
      */
     public static boolean copyDirectory(File sourceLocation, File targetLocation) {
@@ -751,13 +735,10 @@ public class Utils {
 
     /**
      * Copy directory.
-     * 
-     * @param sourceLocation
-     *            the source location
-     * @param targetLocation
-     *            the target location
-     * @param copyFolder
-     *            the copy folder
+     *
+     * @param sourceLocation the source location
+     * @param targetLocation the target location
+     * @param copyFolder     the copy folder
      * @return true, if successful
      */
     public static boolean copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
@@ -797,11 +778,9 @@ public class Utils {
 
     /**
      * Unzip.
-     * 
-     * @param in
-     *            the in
-     * @param out
-     *            the out
+     *
+     * @param in  the in
+     * @param out the out
      */
     public static void unzip(File in, File out) {
         unzip(in, out, null);
@@ -809,13 +788,10 @@ public class Utils {
 
     /**
      * Unzip.
-     * 
-     * @param in
-     *            the in
-     * @param out
-     *            the out
-     * @param extractRule
-     *            the extract rule
+     *
+     * @param in          the in
+     * @param out         the out
+     * @param extractRule the extract rule
      */
     public static void unzip(File in, File out, ExtractRule extractRule) {
         try {
@@ -876,9 +852,8 @@ public class Utils {
 
     /**
      * Delete.
-     * 
-     * @param file
-     *            the file
+     *
+     * @param file the file
      */
     public static void delete(File file) {
         if (!file.exists()) {
@@ -897,9 +872,8 @@ public class Utils {
 
     /**
      * Delete.
-     * 
-     * @param file
-     *            the file
+     *
+     * @param file the file
      */
     public static void deleteWithFilter(File file, final List<String> filesToIgnore) {
         FilenameFilter ffFilter = new FilenameFilter() {
@@ -916,9 +890,8 @@ public class Utils {
 
     /**
      * Spread out resource files.
-     * 
-     * @param dir
-     *            the dir
+     *
+     * @param dir the dir
      */
     public static void spreadOutResourceFiles(File dir) {
         for (File file : dir.listFiles()) {
@@ -936,9 +909,8 @@ public class Utils {
 
     /**
      * Delete contents.
-     * 
-     * @param file
-     *            the file
+     *
+     * @param file the file
      */
     public static void deleteContents(File file) {
         if (file.isDirectory()) {
@@ -951,11 +923,9 @@ public class Utils {
 
     /**
      * Zip.
-     * 
-     * @param in
-     *            the in
-     * @param out
-     *            the out
+     *
+     * @param in  the in
+     * @param out the out
      */
     public static void zip(File in, File out) {
         try {
@@ -998,13 +968,10 @@ public class Utils {
 
     /**
      * Copy.
-     * 
-     * @param in
-     *            the in
-     * @param out
-     *            the out
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     *
+     * @param in  the in
+     * @param out the out
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private static void copy(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
@@ -1019,13 +986,10 @@ public class Utils {
 
     /**
      * Copy.
-     * 
-     * @param file
-     *            the file
-     * @param out
-     *            the out
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     *
+     * @param file the file
+     * @param out  the out
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private static void copy(File file, OutputStream out) throws IOException {
         InputStream in = new FileInputStream(file);
@@ -1038,9 +1002,8 @@ public class Utils {
 
     /**
      * Encrypt.
-     * 
-     * @param Data
-     *            the data
+     *
+     * @param Data the data
      * @return the string
      */
     public static String encrypt(String Data) {
@@ -1060,9 +1023,8 @@ public class Utils {
 
     /**
      * Decrypt.
-     * 
-     * @param encryptedData
-     *            the encrypted data
+     *
+     * @param encryptedData the encrypted data
      * @return the string
      */
     public static String decrypt(String encryptedData) {
@@ -1083,10 +1045,9 @@ public class Utils {
 
     /**
      * Generate key.
-     * 
+     *
      * @return the key
-     * @throws Exception
-     *             the exception
+     * @throws Exception the exception
      */
     private static Key generateKey() throws Exception {
         Key key = new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
@@ -1095,20 +1056,15 @@ public class Utils {
 
     /**
      * Replace text.
-     * 
-     * @param originalFile
-     *            the original file
-     * @param destinationFile
-     *            the destination file
-     * @param replaceThis
-     *            the replace this
-     * @param withThis
-     *            the with this
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     *
+     * @param originalFile    the original file
+     * @param destinationFile the destination file
+     * @param replaceThis     the replace this
+     * @param withThis        the with this
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public static void replaceText(File originalFile, File destinationFile, String replaceThis,
-            String withThis) throws IOException {
+                                   String withThis) throws IOException {
 
         FileInputStream fs = new FileInputStream(originalFile);
         BufferedReader br = new BufferedReader(new InputStreamReader(fs));
@@ -1132,7 +1088,7 @@ public class Utils {
 
     /**
      * Upload log.
-     * 
+     *
      * @return the string
      */
     public static String uploadLog() {
@@ -1153,16 +1109,12 @@ public class Utils {
 
     /**
      * Send post data.
-     * 
-     * @param urll
-     *            the urll
-     * @param text
-     *            the text
-     * @param key
-     *            the key
+     *
+     * @param urll the urll
+     * @param text the text
+     * @param key  the key
      * @return the string
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public static String sendPostData(String urll, String text, String key) throws IOException {
         String write = URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8");
@@ -1215,7 +1167,7 @@ public class Utils {
         connection.setReadTimeout(App.settings.getConnectionTimeout());
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
-        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+        connection.setRequestProperty("Content-Type", "application/adapter; charset=utf-8");
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
         connection.setRequestProperty("Pragma", "no-cache");
@@ -1247,9 +1199,8 @@ public class Utils {
 
     /**
      * Checks for meta inf.
-     * 
-     * @param minecraftJar
-     *            the minecraft jar
+     *
+     * @param minecraftJar the minecraft jar
      * @return true, if successful
      */
     public static boolean hasMetaInf(File minecraftJar) {
@@ -1281,7 +1232,7 @@ public class Utils {
 
     /**
      * Gets the instance file filter.
-     * 
+     *
      * @return the instance file filter
      */
     public static FilenameFilter getInstanceFileFilter() {
@@ -1299,7 +1250,7 @@ public class Utils {
 
     /**
      * Gets the actual java version.
-     * 
+     *
      * @return the actual java version
      */
     public static String getActualJavaVersion() {
@@ -1349,7 +1300,7 @@ public class Utils {
 
     /**
      * Checks if is java8.
-     * 
+     *
      * @return true, if is java8
      */
     public static boolean isJava8() {
@@ -1389,9 +1340,8 @@ public class Utils {
 
     /**
      * Creates the style sheet.
-     * 
-     * @param name
-     *            the name
+     *
+     * @param name the name
      * @return the style sheet
      */
     public static StyleSheet createStyleSheet(String name) {
@@ -1412,7 +1362,7 @@ public class Utils {
 
     /**
      * Gets the open eye pending reports file filter.
-     * 
+     *
      * @return the open eye pending reports file filter
      */
     public static FilenameFilter getOpenEyePendingReportsFileFilter() {
@@ -1433,11 +1383,10 @@ public class Utils {
     /**
      * Sends a pending crash report generated by OpenEye and retrieves and returns it's response to
      * display to the user.
-     * 
-     * @param report
-     *            a {@link File} object of the pending crash report to send the contents of
+     *
+     * @param report a {@link File} object of the pending crash report to send the contents of
      * @return the response received from OpenEye about the crash that was sent which is of
-     *         {@link OpenEyeReportResponse} type
+     * {@link OpenEyeReportResponse} type
      */
     public static OpenEyeReportResponse sendOpenEyePendingReport(File report) {
         StringBuilder response = null;
@@ -1457,7 +1406,7 @@ public class Utils {
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            connection.setRequestProperty("Content-Type", "application/adapter; charset=utf-8");
 
             connection.setRequestProperty("Content-Length", "" + request.getBytes().length);
 
@@ -1504,15 +1453,14 @@ public class Utils {
 
     /**
      * Gets the file contents.
-     * 
-     * @param file
-     *            the file
+     *
+     * @param file the file
      * @return the file contents
      */
     public static String getFileContents(File file) {
         if (!file.exists()) {
             App.settings.log("File '" + file.getAbsolutePath()
-                    + "' doesn't exist so cannot read contents of file!", LogMessageType.error,
+                            + "' doesn't exist so cannot read contents of file!", LogMessageType.error,
                     false);
             return null;
         }
@@ -1546,17 +1494,14 @@ public class Utils {
     /**
      * This splits up a string into a multi lined string by adding a separator at every space after
      * a given count.
-     * 
-     * @param string
-     *            the string to split up
-     * @param maxLineLength
-     *            the number of characters minimum to have per line
-     * @param lineSeparator
-     *            the string to place when a new line should be placed
+     *
+     * @param string        the string to split up
+     * @param maxLineLength the number of characters minimum to have per line
+     * @param lineSeparator the string to place when a new line should be placed
      * @return the new multi lined string
      */
     public static String splitMultilinedString(String string, int maxLineLength,
-            String lineSeparator) {
+                                               String lineSeparator) {
         char[] chars = string.toCharArray();
         StringBuilder sb = new StringBuilder();
         char spaceChar = " ".charAt(0);
