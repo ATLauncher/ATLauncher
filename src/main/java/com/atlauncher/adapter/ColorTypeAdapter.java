@@ -36,7 +36,7 @@ public final class ColorTypeAdapter extends TypeAdapter<Color> {
     }
 
     private String clamp(String hex){
-        while(hex.length() > "000000".length()){
+        while(hex.length() < "000000".length()){
             hex += '0';
         }
         return hex;

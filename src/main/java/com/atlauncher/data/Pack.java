@@ -835,7 +835,7 @@ public class Pack {
                                         || element.getAttribute("target").startsWith("DIM")
                                         || element.getAttribute("target").startsWith("saves")
                                         || element.getAttribute("target").startsWith(
-                                        "instance.adapter")
+                                        "instance.json")
                                         || element.getAttribute("target").contains("./")
                                         || element.getAttribute("target").contains(".\\")
                                         || element.getAttribute("target").contains("~/")

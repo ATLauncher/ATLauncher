@@ -11,8 +11,7 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
@@ -46,7 +45,7 @@ public class LauncherFrame extends JFrame {
         setSize(new Dimension(1000, 575));
         setTitle("ATLauncher " + Constants.VERSION);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setLayout(LAYOUT_MANAGER);

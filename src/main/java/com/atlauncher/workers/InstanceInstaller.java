@@ -934,13 +934,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         File virtualFolder = new File(App.settings.getResourcesDir(), "virtual");
         String assetVersion = this.version.getMinecraftVersion().getMojangVersion().getAssets();
         File virtualRoot = new File(virtualFolder, assetVersion);
-        File indexFile = new File(indexesFolder, assetVersion + ".adapter");
+        File indexFile = new File(indexesFolder, assetVersion + ".json");
         objectsFolder.mkdirs();
         indexesFolder.mkdirs();
         virtualFolder.mkdirs();
         try {
             new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion
-                    + ".adapter"), indexFile, null, this, false).download(false);
+                    + ".json"), indexFile, null, this, false).download(false);
             AssetIndex index = (AssetIndex) this.gson.fromJson(new FileReader(indexFile),
                     AssetIndex.class);
 

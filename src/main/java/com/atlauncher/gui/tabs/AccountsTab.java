@@ -214,7 +214,6 @@ public class AccountsTab extends JPanel {
                             .getLocalizedString("account.loggingin"), 0, App.settings
                             .getLocalizedString("account.loggingin"), "Aborting login for "
                             + usernameField.getText());
-                    final String username1 = username;
                     dialog.addThread(new Thread() {
                         public void run() {
                             try {
@@ -234,7 +233,7 @@ public class AccountsTab extends JPanel {
                     AuthenticationResponse response = (AuthenticationResponse) dialog
                             .getReturnValue();
                     if (!response.hasError()) {
-                        AuthenticationResponse resp = (AuthenticationResponse) response;
+                        AuthenticationResponse resp = response;
 
                         if (accountsComboBox.getSelectedIndex() == 0) {
                             account = new Account(username, password, resp.getSelectedProfile()

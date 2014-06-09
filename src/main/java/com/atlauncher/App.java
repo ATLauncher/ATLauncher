@@ -12,14 +12,12 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
@@ -36,8 +34,6 @@ import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -46,7 +42,6 @@ public class App {
     // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
 
-    private static SystemTray TRAY = null;
     public static PopupMenu TRAY_MENU = new TrayMenu();
 
     public static boolean wasUpdated = false;
@@ -122,6 +117,7 @@ public class App {
         settings.log("Java Path: " + settings.getJavaPath());
         settings.log("64 Bit Java: " + Utils.is64Bit());
         settings.log("Launcher Directory: " + settings.getBaseDir());
+        settings.log("Using Theme: " + THEME);
 
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -204,6 +200,7 @@ public class App {
         THEME.apply();
         ToolTipManager.sharedInstance().setDismissDelay(15000);
         ToolTipManager.sharedInstance().setInitialDelay(50);
+        UIManager.put("FileChooser.readOnly", Boolean.TRUE);
 
         if (Utils.isMac()) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
@@ -218,7 +215,7 @@ public class App {
 
     private static void trySystemTrayIntegration() throws Exception {
         if (SystemTray.isSupported()) {
-            TRAY = SystemTray.getSystemTray();
+            SystemTray TRAY = SystemTray.getSystemTray();
 
             Image trayIconImage = Utils.getImage("/assets/image/Icon.png");
             int trayIconWidth = new TrayIcon(Utils.getImage("/assets/image/Icon.png")).getSize().width;

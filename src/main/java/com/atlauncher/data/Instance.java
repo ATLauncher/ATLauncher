@@ -364,9 +364,12 @@ public class Instance implements Cloneable {
     public ImageIcon getImage() {
         File imageFile = new File(App.settings.getImagesDir(), getSafePackName().toLowerCase()
                 + ".png");
+
         if (!imageFile.exists()) {
             imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
         }
+
+        System.out.println(imageFile);
         return Utils.getIconImage(imageFile);
     }
 

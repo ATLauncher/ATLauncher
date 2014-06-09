@@ -42,7 +42,7 @@ public class Authentication {
         connection.setConnectTimeout(15000);
         connection.setReadTimeout(15000);
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/adapter; charset=utf-8");
+        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
         connection.setRequestProperty("Content-Length", "" + request.getBytes().length);
 

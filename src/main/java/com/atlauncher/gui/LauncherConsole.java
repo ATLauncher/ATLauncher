@@ -192,7 +192,7 @@ public class LauncherConsole extends JFrame {
     /**
      * Logs a stack trace to the console window
      *
-     * @param text The text to show in the console
+     * @param e The text to show in the console
      */
     @Deprecated
     public void logStackTrace(Exception e) {

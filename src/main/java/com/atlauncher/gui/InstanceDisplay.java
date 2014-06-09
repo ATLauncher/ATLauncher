@@ -10,24 +10,14 @@ import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
@@ -46,7 +36,6 @@ import com.atlauncher.utils.Utils;
  * @author Ryan
  */
 public class InstanceDisplay extends CollapsiblePanel {
-
     private JPanel leftPanel; // Left panel with image
     private JPanel rightPanel; // Right panel with description and actions
     private JSplitPane splitPane; // The split pane
@@ -84,6 +73,59 @@ public class InstanceDisplay extends CollapsiblePanel {
         splitPane.setEnabled(false);
 
         instanceImage = new JLabel(instance.getImage());
+        instanceImage.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2){
+                    if (instance.hasUpdate()
+                            && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())
+                            && !instance.isDev()) {
+                        String[] options = {App.settings.getLocalizedString("common.yes"),
+                                App.settings.getLocalizedString("common.no"),
+                                App.settings.getLocalizedString("instance.dontremindmeagain")};
+                        int ret = JOptionPane.showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
+                                        + App.settings.getLocalizedString("instance.updatenow",
+                                        "<br/><br/>") + "</center></html>",
+                                App.settings.getLocalizedString("instance.updateavailable"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                                options[0]);
+                        if (ret == 0) {
+                            if (App.settings.getAccount() == null) {
+                                String[] optionss = {App.settings.getLocalizedString("common.ok")};
+                                JOptionPane.showOptionDialog(App.settings.getParent(),
+                                        App.settings.getLocalizedString("instance.cantupdate"),
+                                        App.settings.getLocalizedString("instance.noaccountselected"),
+                                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                        optionss, optionss[0]);
+                            } else {
+                                new InstanceInstallerDialog(instance, true, false);
+                            }
+                        } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
+                            if (!App.settings.isMinecraftLaunched()) {
+                                if (instance.launch()) {
+                                    App.settings.setMinecraftLaunched(true);
+                                }
+                            }
+                        } else if (ret == 2) {
+                            instance.ignoreUpdate();
+                            if (!App.settings.isMinecraftLaunched()) {
+                                if (instance.launch()) {
+                                    App.settings.setMinecraftLaunched(true);
+                                }
+                            }
+                        }
+                    } else {
+                        if (!App.settings.isMinecraftLaunched()) {
+                            if (instance.launch()) {
+                                App.settings.setMinecraftLaunched(true);
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         instanceDescription = new JTextArea();
         instanceDescription.setBorder(BorderFactory.createEmptyBorder());
