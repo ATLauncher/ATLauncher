@@ -73,12 +73,8 @@ import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.ProgressDialog;
 
-// TODO: Auto-generated Javadoc
-
-/**
- * The Class Utils.
- */
 public class Utils {
+
     public static String colorHex(Color c) {
         if (c == null) {
             throw new NullPointerException("Color == null");
@@ -1382,6 +1378,48 @@ public class Utils {
         } else {
             return "Launcher: " + System.getProperty("java.version") + ", Minecraft: "
                     + System.getProperty("java.version");
+        }
+    }
+
+    /**
+     * Checks if the user is using Java 7 or above
+     * 
+     * @return true if the user is using Java 7 or above else false
+     */
+    public static boolean isJava7OrAbove() {
+        if (App.settings.isUsingCustomJavaPath()) {
+            File folder = new File(App.settings.getJavaPath(), "bin/");
+            List<String> arguments = new ArrayList<String>();
+            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add("-version");
+            ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+            processBuilder.directory(folder);
+            processBuilder.redirectErrorStream(true);
+            BufferedReader br = null;
+            try {
+                Process process = processBuilder.start();
+                InputStream is = process.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                br = new BufferedReader(isr);
+                String line = br.readLine(); // Read first line
+                line = br.readLine(); // Get the second line
+                int buildIndex = line.indexOf("build 1.") + 8;
+                return Integer.parseInt(line.substring(buildIndex, buildIndex + 1)) >= 7;
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        App.settings.log("Cannot close input stream reader ");
+                        App.settings.logStackTrace(e);
+                    }
+                }
+            }
+            return true; // Can't determine version, so assume true.
+        } else {
+            return Integer.parseInt(System.getProperty("java.version").substring(2, 3)) >= 7;
         }
     }
 

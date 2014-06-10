@@ -118,7 +118,7 @@ public class App {
         settings.log("64 Bit Java: " + Utils.is64Bit());
         settings.log("Launcher Directory: " + settings.getBaseDir());
         settings.log("Using Theme: " + THEME);
-
+        System.out.println(Utils.isJava7OrAbove());
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "ATLauncher "
