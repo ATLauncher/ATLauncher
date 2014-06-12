@@ -69,7 +69,7 @@ public class App {
         if (!config.exists()) {
             int files = config.getParentFile().list().length;
             if (files > 2) {
-                String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
+                String[] options = { "Yes It's Fine", "Whoops. I'll Change That Now" };
                 int ret = JOptionPane.showOptionDialog(null,
                         "<html><center>I've detected that you may not have installed this "
                                 + "in the right location.<br/><br/>The exe or jar file"
@@ -105,9 +105,9 @@ public class App {
         } else {
             if (settings.isUsingMacApp()) {
                 File oracleJava = new File(
-                        "/Library/Internet Plug-Ins/JavaAppletPlugin.adapter/Contents/Home/bin/java");
+                        "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
                 if (oracleJava.exists() && oracleJava.canExecute()) {
-                    settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.adapter/Contents/Home");
+                    settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
                     settings.log("Launcher Forced Custom Java Path Set!", LogMessageType.warning,
                             false);
                 }
