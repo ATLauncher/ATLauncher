@@ -8,6 +8,8 @@ package com.atlauncher.data;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -146,9 +148,17 @@ public class Account implements Serializable {
             g.drawImage(helmet, 4, 0, null);
         }
         g.drawImage(arm, 0, 8, null);
+        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+        tx.translate(-arm.getWidth(null), 0);
+        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        arm = op.filter(arm, null);
         g.drawImage(arm, 12, 8, null);
         g.drawImage(body, 4, 8, null);
         g.drawImage(leg, 4, 20, null);
+        tx = AffineTransform.getScaleInstance(-1, 1);
+        tx.translate(-leg.getWidth(null), 0);
+        op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        leg = op.filter(leg, null);
         g.drawImage(leg, 8, 20, null);
 
         ImageIcon icon = new ImageIcon(skin.getScaledInstance(128, 256, Image.SCALE_SMOOTH));
@@ -238,7 +248,7 @@ public class Account implements Serializable {
                     App.settings.getLocalizedString("account.downloadingskin"), 0,
                     App.settings.getLocalizedString("account.downloadingminecraftskin",
                             getMinecraftUsername()), "Aborting downloading Minecraft skin for "
-                    + getMinecraftUsername());
+                            + getMinecraftUsername());
             dialog.addThread(new Thread() {
                 public void run() {
                     try {
