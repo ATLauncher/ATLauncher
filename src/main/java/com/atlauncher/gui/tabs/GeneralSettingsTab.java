@@ -8,10 +8,10 @@ package com.atlauncher.gui.tabs;
 
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
@@ -20,7 +20,6 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab {
-
     private JLabelWithHover languageLabel;
     private JComboBox<Language> language;
     private JLabelWithHover languageLabelRestart;
@@ -45,6 +44,15 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
     private JLabelWithHover enableTrayIconLabel;
     private JCheckBox enableTrayIcon;
+
+    private final JButton TCDL_BUTTON = new JButton("Get the creator!"){{
+        this.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+    }};
 
     public GeneralSettingsTab() {
         // Language
@@ -104,6 +112,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         theme.setSelectedItem(App.settings.getTheme());
 
         add(theme, gbc);
+
+        gbc.gridx++;
 
         // Advanced Backup
 
