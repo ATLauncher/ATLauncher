@@ -11,10 +11,10 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -166,6 +166,7 @@ public class App {
             }
         }
         ((TrayMenu) TRAY_MENU).localize();
+        integrate();
         new LauncherFrame(open); // Open the Launcher
     }
 
@@ -229,4 +230,19 @@ public class App {
         }
     }
 
+    public static void integrate(){
+        try {
+            File f = new File(new File(System.getProperty("user.home")), ".atl.properties");
+            if(!f.exists()){
+                f.createNewFile();
+            }
+            Properties props = new Properties();
+            props.load(new FileInputStream(f));
+            props.setProperty("atl_loc", App.settings.getBaseDir().toString());
+            System.err.println(props.getProperty("atl_loc"));
+            props.store(new FileOutputStream(f), "");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

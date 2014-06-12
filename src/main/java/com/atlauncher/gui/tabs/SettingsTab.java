@@ -10,10 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 
 import com.atlauncher.App;
 
@@ -60,8 +57,8 @@ public class SettingsTab extends JPanel {
                         && networkSettingsTab.isValidConcurrentConnections()
                         && networkSettingsTab.isValidProxyPort()
                         && networkSettingsTab.canConnectWithProxy()) {
-                    boolean restartLauncher = generalSettingsTab.needToRestartLauncher()
-                            || generalSettingsTab.needToReloadTheme();
+                    boolean restartLauncher = generalSettingsTab.needToRestartLauncher() ||
+                            generalSettingsTab.needToReloadTheme();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                     generalSettingsTab.save();
                     javaSettingsTab.save();
