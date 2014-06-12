@@ -1111,7 +1111,7 @@ public class Instance implements Cloneable {
                 }
             }
             AuthenticationResponse sess = null;
-            if (!App.settings.isInOfflineMode()) {
+            if (!App.settings.isMojangOffline()) {
                 String password = account.getPassword();
                 if (!account.isRemembered()) {
                     JPanel panel = new JPanel();

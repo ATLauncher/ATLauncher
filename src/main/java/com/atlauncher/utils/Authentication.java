@@ -128,7 +128,7 @@ public class Authentication {
     }
 
     public static String loginOld(String username, String password) {
-        if (App.settings.isInOfflineMode()) {
+        if (App.settings.isMojangOffline()) {
             return "token:0:0";
         }
         String authToken = null;
@@ -151,7 +151,7 @@ public class Authentication {
     }
 
     public static AuthenticationResponse login(String username, String password) {
-        if (App.settings.isInOfflineMode()) {
+        if (App.settings.isMojangOffline()) {
             return null;
         }
         AuthenticationResponse response = null;
