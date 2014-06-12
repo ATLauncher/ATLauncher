@@ -7,15 +7,22 @@
 package com.atlauncher.gui.components;
 
 import javax.swing.JCheckBox;
+import javax.swing.JToolTip;
+import javax.swing.border.Border;
 
+import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Mod;
+import com.atlauncher.gui.CustomLineBorder;
 
 public class ModsJCheckBox extends JCheckBox {
 
+    private static final long serialVersionUID = -4560260483416099547L;
     private Object mod;
     private boolean isCategory = false;
     private String categoryName = null;
+    private static final Border HOVER_BORDER = new CustomLineBorder(5,
+            App.THEME.getHoverBorderColor(), 2);
 
     public ModsJCheckBox(Mod mod) {
         super(mod.getName());
@@ -23,6 +30,9 @@ public class ModsJCheckBox extends JCheckBox {
             setForeground(mod.getColour());
         }
         this.mod = mod;
+        if (mod.getDescription() != null && !mod.getDescription().isEmpty()) {
+            this.setToolTipText(mod.getDescription());
+        }
     }
 
     public ModsJCheckBox(DisableableMod mod) {
@@ -31,6 +41,9 @@ public class ModsJCheckBox extends JCheckBox {
             setForeground(mod.getColour());
         }
         this.mod = mod;
+        if (mod.getDescription() != null && !mod.getDescription().isEmpty()) {
+            this.setToolTipText(mod.getDescription());
+        }
     }
 
     public ModsJCheckBox(String categoryName) {
@@ -52,6 +65,13 @@ public class ModsJCheckBox extends JCheckBox {
 
     public DisableableMod getDisableableMod() {
         return (DisableableMod) this.mod;
+    }
+
+    @Override
+    public JToolTip createToolTip() {
+        JToolTip tip = super.createToolTip();
+        tip.setBorder(HOVER_BORDER);
+        return tip;
     }
 
 }
