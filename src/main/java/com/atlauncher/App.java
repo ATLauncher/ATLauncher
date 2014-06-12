@@ -11,7 +11,11 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.KeyEvent;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Properties;
@@ -230,10 +234,10 @@ public class App {
         }
     }
 
-    public static void integrate(){
+    public static void integrate() {
         try {
             File f = new File(new File(System.getProperty("user.home")), ".atl.properties");
-            if(!f.exists()){
+            if (!f.exists()) {
                 f.createNewFile();
             }
             Properties props = new Properties();
