@@ -178,7 +178,7 @@ public class App {
         File themeFile = settings.getThemeFile();
         if (themeFile != null) {
             try {
-                THEME = Settings.gson.fromJson(new FileReader(themeFile), Theme.class);
+                THEME = Settings.themeGson.fromJson(new FileReader(themeFile), Theme.class);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 THEME = Theme.DEFAULT_THEME;

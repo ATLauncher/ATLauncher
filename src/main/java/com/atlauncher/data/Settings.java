@@ -158,21 +158,18 @@ public class Settings {
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
-    public static Gson gson = new GsonBuilder().setPrettyPrinting()
+    public static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    public static Gson altGson = new GsonBuilder().setPrettyPrinting()
+            .registerTypeAdapterFactory(new EnumTypeAdapterFactory())
+            .registerTypeAdapter(Date.class, new DateTypeAdapter())
+            .registerTypeAdapter(File.class, new FileTypeAdapter()).create();
+    public static Gson themeGson = new GsonBuilder().setPrettyPrinting()
             .registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
-    public static Gson altGson;
     @SuppressWarnings("unused")
     private DropboxSync dropbox;
     private boolean languageLoaded = false;
 
     public Settings() {
-        GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Color.class,
-                new ColorTypeAdapter());
-        builder.registerTypeAdapterFactory(new EnumTypeAdapterFactory());
-        builder.registerTypeAdapter(Date.class, new DateTypeAdapter());
-        builder.registerTypeAdapter(File.class, new FileTypeAdapter());
-        builder.setPrettyPrinting();
-        Settings.altGson = builder.create();
         setupFiles(); // Setup all the file and directory variables
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
