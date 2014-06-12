@@ -114,6 +114,7 @@ public class Settings {
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private Proxy proxy = null; // The proxy object if any
     private String theme; // The theme to use
+    private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
 
     // General backup settings
     private boolean autoBackup; // Whether backups are created on instance close
@@ -245,6 +246,24 @@ public class Settings {
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
                 System.exit(0);
+            }
+        }
+        if (!Utils.isJava7OrAbove() && !this.hideOldJavaWarning) {
+            String[] options = { App.settings.getLocalizedString("common.download"),
+                    App.settings.getLocalizedString("common.ok"),
+                    App.settings.getLocalizedString("instance.dontremindmeagain") };
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
+                    + App.settings.getLocalizedString("settings.unsupportedjava", "<br/><br/>")
+                    + "</center></html>",
+                    App.settings.getLocalizedString("settings.unsupportedjavatitle"),
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                    options[0]);
+            if (ret == 0) {
+                Utils.openBrowser("http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261.html");
+                System.exit(0);
+            } else if (ret == 2) {
+                this.hideOldJavaWarning = true;
+                this.saveProperties();
             }
         }
         if (this.advancedBackup) {
@@ -901,8 +920,12 @@ public class Settings {
             this.properties.load(new FileInputStream(propertiesFile));
             this.firstTimeRun = Boolean
                     .parseBoolean(properties.getProperty("firsttimerun", "true"));
+
             this.hadPasswordDialog = Boolean.parseBoolean(properties.getProperty(
                     "hadpassworddialog", "false"));
+
+            this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty(
+                    "hideoldjavawarning", "false"));
 
             String lang = properties.getProperty("language", "English");
             if (isLanguageByName(lang)) {
@@ -1100,6 +1123,7 @@ public class Settings {
         try {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("hadpassworddialog", "true");
+            properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
             properties.setProperty("language", this.language.getName());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
