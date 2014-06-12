@@ -39,6 +39,7 @@ import com.atlauncher.utils.Authentication;
 
 public class AccountsTab extends JPanel {
 
+    private static final long serialVersionUID = 2493791137600123223L;
     private JLabel userSkin;
     private JPanel rightPanel;
     private JPanel topPanel;

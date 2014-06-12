@@ -161,6 +161,7 @@ public class Settings {
     public static Gson gson = new GsonBuilder().setPrettyPrinting()
             .registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
     public static Gson altGson;
+    @SuppressWarnings("unused")
     private DropboxSync dropbox;
     private boolean languageLoaded = false;
 
@@ -249,7 +250,9 @@ public class Settings {
                 System.exit(0);
             }
         }
-        dropbox = new DropboxSync();
+        if (this.advancedBackup) {
+            dropbox = new DropboxSync();
+        }
         if (!this.hadPasswordDialog) {
             checkAccounts(); // Check accounts with stored passwords
         }

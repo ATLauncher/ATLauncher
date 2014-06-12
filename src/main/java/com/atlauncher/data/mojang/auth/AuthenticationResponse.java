@@ -24,7 +24,7 @@ public class AuthenticationResponse {
     private String clientToken;
     private GameProfile selectedProfile;
     private GameProfile[] availableProfiles;
-    private Map<String, Collection<String>> userProperties = new HashMap();
+    private Map<String, Collection<String>> userProperties = new HashMap<String, Collection<String>>();
     private User user;
 
     private String uuid;
@@ -46,7 +46,7 @@ public class AuthenticationResponse {
             GameProfile gp = new GameProfile("0", App.settings.getAccount().getMinecraftUsername());
             this.selectedProfile = gp;
             this.availableProfiles = new GameProfile[] { gp };
-            this.userProperties = new HashMap();
+            this.userProperties = new HashMap<String, Collection<String>>();
         }
         this.isReal = false;
     }
@@ -117,13 +117,14 @@ public class AuthenticationResponse {
     }
 
     public Map<String, Collection<String>> getProperties() {
-        this.userProperties = new HashMap();
+        this.userProperties = new HashMap<String, Collection<String>>();
         if ((this.user != null) && (this.user.getProperties() != null)) {
             for (Property property : this.user.getProperties()) {
-                Collection values = (Collection) this.userProperties.get(property.getKey());
+                Collection<String> values = (Collection<String>) this.userProperties.get(property
+                        .getKey());
 
                 if (values == null) {
-                    values = new ArrayList();
+                    values = new ArrayList<String>();
                     this.userProperties.put(property.getKey(), values);
                 }
 

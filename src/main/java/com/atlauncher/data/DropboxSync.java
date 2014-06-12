@@ -1,13 +1,6 @@
 package com.atlauncher.data;
 
-import com.atlauncher.App;
-import com.atlauncher.gui.components.CollapsiblePanel;
-import com.atlauncher.utils.Base64;
-import com.atlauncher.utils.Utils;
-
-import javax.swing.*;
-
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -16,6 +9,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+
+import com.atlauncher.App;
+import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.utils.Base64;
+import com.atlauncher.utils.Utils;
 
 /**
  * @author Kihira
@@ -33,9 +39,10 @@ public class DropboxSync extends SyncAbstract {
 
     public void findDropboxLocation() {
         File dropboxData = null;
-        //host.db sometimes disappears for some reason
+        // host.db sometimes disappears for some reason
         if (Utils.isWindows())
-            dropboxData = new File(System.getProperty("user.home"), "/AppData/Roaming/Dropbox/host.db");
+            dropboxData = new File(System.getProperty("user.home"),
+                    "/AppData/Roaming/Dropbox/host.db");
         else if (Utils.isMac() || Utils.isLinux())
             dropboxData = new File(System.getProperty("user.home"), "/.dropbox/host.db");
 
@@ -48,7 +55,8 @@ public class DropboxSync extends SyncAbstract {
                 File dropboxLoc = null;
                 while ((line = bufferedReader.readLine()) != null) {
                     dropboxLoc = new File(new String(Base64.decode(line)));
-                    if (dropboxLoc.exists()) break;
+                    if (dropboxLoc.exists())
+                        break;
                 }
                 dropboxLocation = dropboxLoc;
             } catch (IOException e) {
@@ -65,31 +73,41 @@ public class DropboxSync extends SyncAbstract {
 
     @Override
     public void backupWorld(String backupName, File worldData, Instance instance) {
-        if (dropboxLocation == null) findDropboxLocation();
-        File backupDir = new File(dropboxLocation, backupFolder + File.separator + instance.getName());
+        if (dropboxLocation == null)
+            findDropboxLocation();
+        File backupDir = new File(dropboxLocation, backupFolder + File.separator
+                + instance.getName());
         File backup = new File(backupDir, backupName + ".zip");
-        if (!backupDir.exists()) backupDir.mkdirs();
+        if (!backupDir.exists())
+            backupDir.mkdirs();
         if (backup.exists()) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("backup.message.backupexists", backupName),
-                    App.settings.getLocalizedString("backup.message.backupexists.title"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(App.settings.getParent(),
+                    App.settings.getLocalizedString("backup.message.backupexists", backupName),
+                    App.settings.getLocalizedString("backup.message.backupexists.title"),
+                    JOptionPane.ERROR_MESSAGE);
         } else {
             Utils.zip(worldData, backup);
             if (App.settings.getNotifyBackup())
-                JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("backup.complete"),
-                        App.settings.getLocalizedString("backup.complete"), JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(App.settings.getParent(),
+                        App.settings.getLocalizedString("backup.complete"),
+                        App.settings.getLocalizedString("backup.complete"),
+                        JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
     @Override
     public List<String> getBackupsForInstance(Instance instance) {
-        if (dropboxLocation == null) findDropboxLocation();
-        File backupDir = new File(dropboxLocation, backupFolder + File.separator + instance.getName());
+        if (dropboxLocation == null)
+            findDropboxLocation();
+        File backupDir = new File(dropboxLocation, backupFolder + File.separator
+                + instance.getName());
         if (backupDir.exists()) {
             File[] files = backupDir.listFiles();
             if (files != null) {
                 List<String> backupList = new ArrayList<String>();
                 for (File file : files) {
-                    if (file.getName().matches(".*\\.zip")) backupList.add(file.getName());
+                    if (file.getName().matches(".*\\.zip"))
+                        backupList.add(file.getName());
                 }
                 return backupList;
             }
@@ -102,23 +120,34 @@ public class DropboxSync extends SyncAbstract {
         File target = new File(instance.getSavesDirectory(), backupName.replace(".zip", ""));
 
         if (target.exists()) {
-            if (JOptionPane.showConfirmDialog(App.settings.getParent(), App.settings.getLocalizedString("backup.message.backupoverwrite", backupName.replace(".zip", "")),
+            if (JOptionPane.showConfirmDialog(
+                    App.settings.getParent(),
+                    App.settings.getLocalizedString("backup.message.backupoverwrite",
+                            backupName.replace(".zip", "")),
                     App.settings.getLocalizedString("backup.message.backupoverwrite.title"),
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) Utils.unzip(
-                    new File(dropboxLocation, backupFolder + File.separator + instance.getName() + File.separator + backupName), target);
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION)
+                Utils.unzip(
+                        new File(dropboxLocation, backupFolder + File.separator
+                                + instance.getName() + File.separator + backupName), target);
         } else
-            Utils.unzip(new File(dropboxLocation, backupFolder + File.separator + instance.getName() + File.separator + backupName), target);
+            Utils.unzip(
+                    new File(dropboxLocation, backupFolder + File.separator + instance.getName()
+                            + File.separator + backupName), target);
 
         if (App.settings.getNotifyBackup())
-            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("backup.message.restoresuccess"),
-                    App.settings.getLocalizedString("backup.message.restoresuccess.title"), JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(App.settings.getParent(),
+                    App.settings.getLocalizedString("backup.message.restoresuccess"),
+                    App.settings.getLocalizedString("backup.message.restoresuccess.title"),
+                    JOptionPane.INFORMATION_MESSAGE);
         App.settings.clearTempDir();
     }
 
     @Override
     public void deleteBackup(String backupName, Instance instance) {
-        File backupData = new File(dropboxLocation, backupFolder + File.separator + instance.getName() + File.separator + backupName);
-        if (backupData.exists()) backupData.delete();
+        File backupData = new File(dropboxLocation, backupFolder + File.separator
+                + instance.getName() + File.separator + backupName);
+        if (backupData.exists())
+            backupData.delete();
     }
 
     @Override
@@ -132,14 +161,16 @@ public class DropboxSync extends SyncAbstract {
         private final JFileChooser fileChooser = new JFileChooser();
 
         public FileChooseDialog() {
-            super(App.settings.getParent(), App.settings.getLocalizedString("dropbox.notfound.title"));
+            super(App.settings.getParent(), App.settings
+                    .getLocalizedString("dropbox.notfound.title"));
 
             setResizable(false);
             setSize(230, 90);
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             setLocationRelativeTo(App.settings.getParent());
 
-            folderChooseButton = new JButton(App.settings.getLocalizedString("dropbox.label.location"));
+            folderChooseButton = new JButton(
+                    App.settings.getLocalizedString("dropbox.label.location"));
             folderChooseButton.addActionListener(this);
             folderChooseButton.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -163,7 +194,8 @@ public class DropboxSync extends SyncAbstract {
                     dropboxLocation = selectedFolder;
                     App.settings.setDropboxLocation(dropboxLocation.toString());
                     dispose();
-                } else dropboxLocation = null;
+                } else
+                    dropboxLocation = null;
             }
         }
     }

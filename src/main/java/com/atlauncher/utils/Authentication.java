@@ -90,7 +90,6 @@ public class Authentication {
     }
 
     public static void invalidateToken(AuthenticationResponse ar) {
-        StringBuilder response;
         try {
             URL url = new URL("https://authserver.mojang.com/invalidate");
             String request = Settings.gson.toJson(new InvalidateRequest(ar.getAccessToken(), ar
