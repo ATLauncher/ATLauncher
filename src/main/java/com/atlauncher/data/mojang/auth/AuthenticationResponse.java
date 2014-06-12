@@ -29,6 +29,8 @@ public class AuthenticationResponse {
 
     private String uuid;
 
+    private boolean isReal = true;
+
     private String error;
     private String errorMessage;
     private String cause;
@@ -43,9 +45,14 @@ public class AuthenticationResponse {
             this.clientToken = parts[1];
             GameProfile gp = new GameProfile("0", App.settings.getAccount().getMinecraftUsername());
             this.selectedProfile = gp;
-            this.availableProfiles = new GameProfile[]{gp};
+            this.availableProfiles = new GameProfile[] { gp };
             this.userProperties = new HashMap();
         }
+        this.isReal = false;
+    }
+
+    public boolean isReal() {
+        return this.isReal;
     }
 
     public String getUUID() {

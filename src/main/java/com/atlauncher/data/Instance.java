@@ -1208,11 +1208,13 @@ public class Instance implements Cloneable {
                                     "**MINECRAFTUSERNAME**");
                             line = line.replace(App.settings.getAccount().getUsername(),
                                     "**MINECRAFTUSERNAME**");
-                            line = line.replace(session.getAccessToken(), "**ACCESSTOKEN**");
-                            line = line.replace(session.getClientToken(), "**CLIENTTOKEN**");
-                            line = line.replace(session.getUUID(), "**UUID**");
-                            line = line.replace(session.getSelectedProfile().getId(),
-                                    "**PROFILEID**");
+                            if (session.isReal()) {
+                                line = line.replace(session.getAccessToken(), "**ACCESSTOKEN**");
+                                line = line.replace(session.getClientToken(), "**CLIENTTOKEN**");
+                                line = line.replace(session.getUUID(), "**UUID**");
+                                line = line.replace(session.getSelectedProfile().getId(),
+                                        "**PROFILEID**");
+                            }
                             App.settings.logMinecraft(line);
                         }
                         App.settings.hideKillMinecraft();
