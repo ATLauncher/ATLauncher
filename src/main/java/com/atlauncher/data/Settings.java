@@ -151,7 +151,6 @@ public class Settings {
     private boolean hadPasswordDialog = false; // If the user has seen the password dialog
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private boolean offlineMode = false; // If offline mode is enabled
-    private boolean offlineModeMojang = false; // If offline mode is because of failed MC login
     private Process minecraftProcess = null; // The process minecraft is running on
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
@@ -1808,10 +1807,6 @@ public class Settings {
      */
     public boolean isInOfflineMode() {
         return this.offlineMode;
-    }
-
-    public boolean isMojangOffline() {
-        return this.offlineModeMojang;
     }
 
     public void checkOnlineStatus() {

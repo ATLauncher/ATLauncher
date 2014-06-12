@@ -27,52 +27,65 @@ import com.atlauncher.data.mojang.auth.AuthenticationRequest;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.data.mojang.auth.InvalidateRequest;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 public class Authentication {
 
-    public static AuthenticationResponse checkAccount(String username, String password)
-            throws IOException {
+    public static AuthenticationResponse checkAccount(String username, String password) {
         String uuid = UUID.randomUUID() + "";
         Gson gson = new Gson();
         StringBuilder response = null;
-        URL url = new URL("https://authserver.mojang.com/authenticate");
-        String request = gson.toJson(new AuthenticationRequest(username, password, uuid));
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setConnectTimeout(15000);
-        connection.setReadTimeout(15000);
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-
-        connection.setRequestProperty("Content-Length", "" + request.getBytes().length);
-
-        connection.setUseCaches(false);
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
-
-        DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-        writer.write(request.getBytes(Charset.forName("UTF-8")));
-        writer.flush();
-        writer.close();
-
-        // Read the result
-
-        BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            URL url = new URL("https://authserver.mojang.com/authenticate");
+            String request = gson.toJson(new AuthenticationRequest(username, password, uuid));
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setConnectTimeout(App.settings.getConnectionTimeout());
+            connection.setReadTimeout(App.settings.getConnectionTimeout());
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
+            connection.setRequestProperty("Content-Length", "" + request.getBytes().length);
+
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+            writer.write(request.getBytes(Charset.forName("UTF-8")));
+            writer.flush();
+            writer.close();
+
+            // Read the result
+
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            } catch (IOException e) {
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+            }
+            response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+            reader.close();
         } catch (IOException e) {
-            reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+            App.settings.logStackTrace(e);
+            return null;
         }
-        response = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            response.append(line);
-            response.append('\r');
+        AuthenticationResponse result = null;
+        if (response != null) {
+            try {
+                result = gson.fromJson(response.toString(), AuthenticationResponse.class);
+            } catch (JsonSyntaxException e) {
+                App.settings.logStackTrace(e);
+            }
+            if (result != null) {
+                result.setUUID(uuid);
+            }
         }
-        reader.close();
-        AuthenticationResponse result = gson.fromJson(response.toString(),
-                AuthenticationResponse.class);
-        result.setUUID(uuid);
         return result;
     }
 
@@ -84,8 +97,8 @@ public class Authentication {
                     .getClientToken()));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(15000);
+            connection.setConnectTimeout(App.settings.getConnectionTimeout());
+            connection.setReadTimeout(App.settings.getConnectionTimeout());
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
@@ -111,7 +124,8 @@ public class Authentication {
                     + URLEncoder.encode(username, "UTF-8") + "&password="
                     + URLEncoder.encode(password, "UTF-8") + "&version=999");
             URLConnection connection = urll.openConnection();
-            connection.setConnectTimeout(5000);
+            connection.setConnectTimeout(App.settings.getConnectionTimeout());
+            connection.setReadTimeout(App.settings.getConnectionTimeout());
             BufferedReader in;
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             response = new StringBuilder();
@@ -128,9 +142,6 @@ public class Authentication {
     }
 
     public static String loginOld(String username, String password) {
-        if (App.settings.isMojangOffline()) {
-            return "token:0:0";
-        }
         String authToken = null;
         String auth = checkAccountOld(username, password);
         if (auth == null) {
@@ -151,15 +162,8 @@ public class Authentication {
     }
 
     public static AuthenticationResponse login(String username, String password) {
-        if (App.settings.isMojangOffline()) {
-            return null;
-        }
         AuthenticationResponse response = null;
-        try {
-            response = checkAccount(username, password);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
+        response = checkAccount(username, password);
         return response;
     }
 }
