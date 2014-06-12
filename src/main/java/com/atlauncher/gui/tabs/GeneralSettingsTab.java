@@ -11,7 +11,10 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
@@ -45,14 +48,16 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover enableTrayIconLabel;
     private JCheckBox enableTrayIcon;
 
-    private final JButton TCDL_BUTTON = new JButton("Get the creator!"){{
-        this.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+    private final JButton TCDL_BUTTON = new JButton("Get the creator!") {
+        {
+            this.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
 
-            }
-        });
-    }};
+                }
+            });
+        }
+    };
 
     public GeneralSettingsTab() {
         // Language

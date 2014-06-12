@@ -31,6 +31,7 @@ import com.atlauncher.gui.NothingToDisplay;
 
 public class InstancesTab extends JPanel {
 
+    private static final long serialVersionUID = -969812552965390610L;
     private JPanel topPanel;
     private JButton clearButton;
     private JTextField searchBox;

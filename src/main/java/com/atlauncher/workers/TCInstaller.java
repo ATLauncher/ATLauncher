@@ -1,6 +1,6 @@
 package com.atlauncher.workers;
 
-import javax.swing.*;
+import javax.swing.SwingWorker;
 
 public final class TCInstaller extends SwingWorker<Void, Void> {
     @Override

@@ -56,14 +56,14 @@ public class Mod {
     private String description;
 
     public Mod(String name, String version, String url, String file, String website,
-               String donation, Color colour, String md5, Type type, ExtractTo extractTo,
-               String extractFolder, String decompFile, DecompType decompType, boolean filePattern,
-               String filePreference, String fileCheck, boolean client, boolean server,
-               String serverURL, String serverFile, Download serverDownload, String serverMD5,
-               Type serverType, boolean optional, boolean serverOptional, boolean selected,
-               Download download, boolean hidden, boolean library, String group, String category,
-               String linked, String[] depends, String filePrefix, boolean recommended,
-               String description) {
+            String donation, Color colour, String md5, Type type, ExtractTo extractTo,
+            String extractFolder, String decompFile, DecompType decompType, boolean filePattern,
+            String filePreference, String fileCheck, boolean client, boolean server,
+            String serverURL, String serverFile, Download serverDownload, String serverMD5,
+            Type serverType, boolean optional, boolean serverOptional, boolean selected,
+            Download download, boolean hidden, boolean library, String group, String category,
+            String linked, String[] depends, String filePrefix, boolean recommended,
+            String description) {
         this.name = name;
         this.version = version;
         this.url = url.replace("&amp;", "&").replace(" ", "%20");
@@ -328,32 +328,32 @@ public class Mod {
                         if (retValue == 1) {
                             Utils.openBrowser(getURL());
                         }
-                        String[] options = new String[]{
+                        String[] options = new String[] {
                                 App.settings.getLocalizedString("common.openfolder"),
-                                App.settings.getLocalizedString("instance.ivedownloaded")};
+                                App.settings.getLocalizedString("instance.ivedownloaded") };
                         retValue = JOptionPane.showOptionDialog(
                                 App.settings.getParent(),
                                 "<html><center>"
                                         + App.settings.getLocalizedString("instance.browseropened",
-                                        (serverFile == null ? (isFilePattern() ? getName()
-                                                : getFile()) : (isFilePattern() ? getName()
-                                                : getServerFile())))
+                                                (serverFile == null ? (isFilePattern() ? getName()
+                                                        : getFile()) : (isFilePattern() ? getName()
+                                                        : getServerFile())))
                                         + "<br/><br/>"
                                         + App.settings.getLocalizedString("instance.pleasesave")
                                         + "<br/><br/>"
                                         + (App.settings.isUsingMacApp() ? App.settings
-                                        .getUsersDownloadsDir().getAbsolutePath()
-                                        : (isFilePattern() ? App.settings.getDownloadsDir()
-                                        .getAbsolutePath() : App.settings
-                                        .getDownloadsDir().getAbsolutePath()
-                                        + " or<br/>"
-                                        + App.settings.getUsersDownloadsDir()))
+                                                .getUsersDownloadsDir().getAbsolutePath()
+                                                : (isFilePattern() ? App.settings.getDownloadsDir()
+                                                        .getAbsolutePath() : App.settings
+                                                        .getDownloadsDir().getAbsolutePath()
+                                                        + " or<br/>"
+                                                        + App.settings.getUsersDownloadsDir()))
                                         + "</center></html>",
                                 App.settings.getLocalizedString("common.downloading")
                                         + " "
                                         + (serverFile == null ? (isFilePattern() ? getName()
-                                        : getFile()) : (isFilePattern() ? getName()
-                                        : getServerFile())), JOptionPane.DEFAULT_OPTION,
+                                                : getFile()) : (isFilePattern() ? getName()
+                                                : getServerFile())), JOptionPane.DEFAULT_OPTION,
                                 JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                         if (retValue == JOptionPane.CLOSED_OPTION) {
                             installer.cancel(true);
@@ -498,22 +498,22 @@ public class Mod {
 
             while (!fileLocation.exists()) {
                 Utils.openBrowser(getServerURL());
-                String[] options = new String[]{App.settings
-                        .getLocalizedString("instance.ivedownloaded")};
+                String[] options = new String[] { App.settings
+                        .getLocalizedString("instance.ivedownloaded") };
                 int retValue = JOptionPane
                         .showOptionDialog(
                                 App.settings.getParent(),
                                 "<html><center>"
                                         + App.settings.getLocalizedString("instance.browseropened",
-                                        (serverFile == null ? getFile() : getServerFile()))
+                                                (serverFile == null ? getFile() : getServerFile()))
                                         + "<br/><br/>"
                                         + App.settings.getLocalizedString("instance.pleasesave")
                                         + "<br/><br/>"
                                         + (App.settings.isUsingMacApp() ? App.settings
-                                        .getUsersDownloadsDir().getAbsolutePath()
-                                        : App.settings.getDownloadsDir().getAbsolutePath()
-                                        + " or<br/>"
-                                        + App.settings.getUsersDownloadsDir())
+                                                .getUsersDownloadsDir().getAbsolutePath()
+                                                : App.settings.getDownloadsDir().getAbsolutePath()
+                                                        + " or<br/>"
+                                                        + App.settings.getUsersDownloadsDir())
                                         + "</center></html>",
                                 App.settings.getLocalizedString("common.downloading") + " "
                                         + (serverFile == null ? getFile() : getServerFile()),
@@ -936,6 +936,14 @@ public class Mod {
             return this.filePrefix + this.serverFile;
         }
         return this.serverFile;
+    }
+
+    public String getWebsite() {
+        return this.website;
+    }
+
+    public String getDonation() {
+        return this.donation;
     }
 
     public boolean isHidden() {

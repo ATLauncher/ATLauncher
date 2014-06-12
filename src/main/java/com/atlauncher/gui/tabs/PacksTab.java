@@ -32,6 +32,7 @@ import com.atlauncher.gui.dialogs.AddPackDialog;
 
 public class PacksTab extends JPanel {
 
+    private static final long serialVersionUID = -3550919682971699108L;
     private JPanel topPanel;
     private JButton addPackButton;
     private JButton clearButton;

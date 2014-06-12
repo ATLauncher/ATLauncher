@@ -23,7 +23,7 @@ public class AssetIndex {
     }
 
     public HashSet<AssetObject> getUniqueObjects() {
-        return new HashSet(this.objects.values());
+        return new HashSet<AssetObject>(this.objects.values());
     }
 
     public boolean isVirtual() {

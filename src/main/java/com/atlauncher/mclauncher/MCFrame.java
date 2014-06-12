@@ -19,6 +19,8 @@ import net.minecraft.Launcher;
 import com.atlauncher.utils.Utils;
 
 public class MCFrame extends Frame implements WindowListener {
+
+    private static final long serialVersionUID = -2036853903287698498L;
     private Launcher appletWrap = null;
 
     public MCFrame(String title) {
@@ -28,7 +30,7 @@ public class MCFrame extends Frame implements WindowListener {
     }
 
     public void start(Applet mcApplet, String user, String session, Dimension winSize,
-                      boolean maximize) {
+            boolean maximize) {
         try {
             appletWrap = new Launcher(mcApplet, new URL("http://www.minecraft.net/game"));
         } catch (MalformedURLException ignored) {

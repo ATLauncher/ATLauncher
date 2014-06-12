@@ -38,7 +38,6 @@ public class LegacyMCLauncher {
 
     public static Process launch(Account account, Instance instance, AuthenticationResponse sess)
             throws IOException {
-        String session = sess.getSession();
         String lwjgl = "lwjgl.jar";
         String lwjgl_util = "lwjgl_util.jar";
         String jinput = "jinput.jar";
@@ -52,7 +51,7 @@ public class LegacyMCLauncher {
                 jinput = file.getName();
             }
         }
-        String[] jarFiles = new String[]{"minecraft.jar", lwjgl, lwjgl_util, jinput};
+        String[] jarFiles = new String[] { "minecraft.jar", lwjgl, lwjgl_util, jinput };
         StringBuilder cpb = new StringBuilder("");
         File jarMods = instance.getJarModsDirectory();
         if (jarMods.exists() && (instance.hasJarMods() || jarMods.listFiles().length != 0)) {
@@ -133,7 +132,7 @@ public class LegacyMCLauncher {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
             arguments.add("-Xdock:icon="
                     + new File(App.settings.getImagesDir(), "OldMinecraftIcon.png")
-                    .getAbsolutePath());
+                            .getAbsolutePath());
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
@@ -176,7 +175,6 @@ public class LegacyMCLauncher {
         // Start or passed in arguments
         arguments.add(instance.getRootDirectory().getAbsolutePath()); // Path
         arguments.add(account.getMinecraftUsername()); // Username
-        String[] loginParts = session.split(":");
         arguments.add(sess.getAccessToken()); // Session
         arguments.add(instance.getName()); // Instance Name
         arguments.add(App.settings.getWindowWidth() + ""); // Window Width
@@ -231,7 +229,7 @@ public class LegacyMCLauncher {
                     jinput = file.getName();
                 }
             }
-            String[] lwjglJars = new String[]{lwjgl, lwjgl_util, jinput};
+            String[] lwjglJars = new String[] { lwjgl, lwjgl_util, jinput };
 
             URL[] urls = new URL[4];
 
@@ -361,6 +359,12 @@ public class LegacyMCLauncher {
                     System.out.println("Applet wrapper failed! Falling back "
                             + "to compatibility mode.");
                     mc.getMethod("main", String[].class).invoke(null, (Object) mcArgs);
+                } finally {
+                    try {
+                        cl.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         } catch (ClassNotFoundException e) {

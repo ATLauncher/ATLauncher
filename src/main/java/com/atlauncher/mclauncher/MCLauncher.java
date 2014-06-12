@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -137,8 +138,9 @@ public class MCLauncher {
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
         arguments.add(instance.getMainClass());
-        String props = new Gson().toJson((response.getUser() == null ? new HashMap() : response
-                .getProperties()));
+        String props = new Gson()
+                .toJson((response.getUser() == null ? new HashMap<String, Collection<String>>()
+                        : response.getProperties()));
         if (instance.hasMinecraftArguments()) {
             String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
             for (String argument : minecraftArguments) {

@@ -10,7 +10,6 @@
  */
 package com.atlauncher.data.mojang.auth;
 
-
 public class AuthenticationRequest {
 
     private Agent agent;
@@ -24,6 +23,26 @@ public class AuthenticationRequest {
         this.username = username;
         this.password = password;
         this.clientToken = clientToken;
+    }
+
+    public Agent getAgent() {
+        return agent;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getClientToken() {
+        return clientToken;
+    }
+
+    public boolean isRequestUser() {
+        return requestUser;
     }
 
 }

@@ -49,8 +49,9 @@ public class DropboxSync extends SyncAbstract {
         if (dropboxData == null) {
             promptUserDropboxLocation();
         } else {
+            BufferedReader bufferedReader = null;
             try {
-                BufferedReader bufferedReader = new BufferedReader(new FileReader(dropboxData));
+                bufferedReader = new BufferedReader(new FileReader(dropboxData));
                 String line;
                 File dropboxLoc = null;
                 while ((line = bufferedReader.readLine()) != null) {
@@ -62,6 +63,14 @@ public class DropboxSync extends SyncAbstract {
             } catch (IOException e) {
                 App.settings.log("Couldn't auto find the dropbox settings location!");
                 promptUserDropboxLocation();
+            } finally {
+                if (bufferedReader != null) {
+                    try {
+                        bufferedReader.close();
+                    } catch (IOException e) {
+                        App.settings.logStackTrace(e);
+                    }
+                }
             }
         }
     }
@@ -157,6 +166,7 @@ public class DropboxSync extends SyncAbstract {
 
     private class FileChooseDialog extends JDialog implements ActionListener {
 
+        private static final long serialVersionUID = 1417439005699532910L;
         private final JButton folderChooseButton;
         private final JFileChooser fileChooser = new JFileChooser();
 

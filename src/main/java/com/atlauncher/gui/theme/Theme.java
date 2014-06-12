@@ -1,37 +1,21 @@
 package com.atlauncher.gui.theme;
 
+import java.awt.Color;
+import java.awt.Font;
+
+import javax.swing.BorderFactory;
+import javax.swing.UIManager;
+
 import com.atlauncher.utils.Utils;
 
-import javax.swing.*;
-import java.awt.*;
-
 public final class Theme {
-    public static final Theme DEFAULT_THEME =
-            new Theme(
-                    "ATLauncher",
-                    "RyanTheAllmighty",
-                    true,
-                    new Color(40, 45, 50),
-                    new Color(255, 255, 255),
-                    new Color(0, 0, 0),
-                    new Color(0, 136, 204),
-                    new Color(100, 100, 200),
-                    new Color(80, 170, 107),
-                    new Color(50, 55, 60),
-                    new Color(50, 55, 60),
-                    new Color(30, 35, 40),
-                    new Color(255, 255, 255),
-                    new Color(255, 0, 0),
-                    new Color(255, 255, 255),
-                    new Color(137, 194, 54),
-                    new Color(255, 255, 76),
-                    new Color(238, 34, 34),
-                    "SansSerif",
-                    "SansSerif",
-                    "Oswald-Regular",
-                    "SansSerif"
-            );
-
+    public static final Theme DEFAULT_THEME = new Theme("ATLauncher", "RyanTheAllmighty", true,
+            new Color(40, 45, 50), new Color(255, 255, 255), new Color(0, 0, 0), new Color(0, 136,
+                    204), new Color(100, 100, 200), new Color(80, 170, 107), new Color(50, 55, 60),
+            new Color(50, 55, 60), new Color(30, 35, 40), new Color(255, 255, 255), new Color(255,
+                    0, 0), new Color(255, 255, 255), new Color(137, 194, 54), new Color(255, 255,
+                    76), new Color(238, 34, 34), "SansSerif", "SansSerif", "Oswald-Regular",
+            "SansSerif");
 
     // Meta
     private final String name;
@@ -60,7 +44,13 @@ public final class Theme {
     // Fonts
     private final String defaultFont, consoleFont, tabFont, buttonFont;
 
-    private Theme(String name, String author, boolean tabsOnRight, Color baseColor, Color textColor, Color buttonColor, Color selectionColor, Color dropdownSelectionColor, Color hoverBorderColor, Color modSelectionBGColor, Color modInfoColor, Color tabBackgroundColor, Color normalInstanceColor, Color corruptedInstanceColor, Color consoleTextColor, Color logInfoTextColor, Color logWarnColor, Color logErrorColor, String defaultFont, String consoleFont, String tabFont, String buttonFont) {
+    private Theme(String name, String author, boolean tabsOnRight, Color baseColor,
+            Color textColor, Color buttonColor, Color selectionColor, Color dropdownSelectionColor,
+            Color hoverBorderColor, Color modSelectionBGColor, Color modInfoColor,
+            Color tabBackgroundColor, Color normalInstanceColor, Color corruptedInstanceColor,
+            Color consoleTextColor, Color logInfoTextColor, Color logWarnColor,
+            Color logErrorColor, String defaultFont, String consoleFont, String tabFont,
+            String buttonFont) {
         this.name = name;
         this.author = author;
         this.tabsOnRight = tabsOnRight;
@@ -95,80 +85,87 @@ public final class Theme {
             UIManager.put("nimbusLightBackground", this.baseColor);
             UIManager.put("info", this.baseColor);
             UIManager.put("nimbusSelectionBackground", this.dropdownSelectionColor);
-            UIManager.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
-            UIManager.put("defaultFont", Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
-            UIManager.put("Button.font", Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
+            UIManager.put("Table.focusCellHighlightBorder",
+                    BorderFactory.createEmptyBorder(2, 5, 2, 5));
+            UIManager.put("defaultFont",
+                    Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
+            UIManager.put("Button.font",
+                    Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public Font getDefaultFont(){
+    public Font getDefaultFont() {
         return Utils.makeFont(this.defaultFont);
     }
 
-    public Font getConsoleFont(){
+    public Font getConsoleFont() {
         return Utils.makeFont(this.consoleFont);
     }
 
-    public Font getTabFont(){
+    public Font getTabFont() {
         return Utils.makeFont(this.tabFont);
     }
 
-    public boolean tabsOnRight(){
+    public Font getButtonFont() {
+        return Utils.makeFont(this.buttonFont);
+    }
+
+    public boolean tabsOnRight() {
         return this.tabsOnRight;
     }
 
-    public Color getConsoleTextColor(){
+    public Color getConsoleTextColor() {
         return this.consoleTextColor;
     }
 
-    public Color getSelectionColor(){
+    public Color getSelectionColor() {
         return this.selectionColor;
     }
 
-    public Color getHoverBorderColor(){
+    public Color getHoverBorderColor() {
         return this.hoverBorderColor;
     }
 
-    public Color getModInfoColor(){
+    public Color getModInfoColor() {
         return this.modInfoColor;
     }
 
-    public Color getBaseColor(){
+    public Color getBaseColor() {
         return this.baseColor;
     }
 
-    public Color getCorruptedInstanceColor(){
+    public Color getCorruptedInstanceColor() {
         return this.corruptedInstanceColor;
     }
 
-    public Color getNormalInstanceColor(){
+    public Color getNormalInstanceColor() {
         return this.normalInstanceColor;
     }
 
-    public Color getModSelectionBackgroundColor(){
+    public Color getModSelectionBackgroundColor() {
         return this.modSelectionBGColor;
     }
 
-    public Color getTabBackgroundColor(){
+    public Color getTabBackgroundColor() {
         return this.tabBackgroundColor;
     }
 
-    public Color getLogInfoColor(){
+    public Color getLogInfoColor() {
         return this.logInfoColor;
     }
 
-    public Color getLogErrorColor(){
+    public Color getLogErrorColor() {
         return this.logErrorColor;
     }
 
-    public Color getLogWarnColor(){
+    public Color getLogWarnColor() {
         return this.logWarnColor;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.author + "-" + this.name;
     }
 }
