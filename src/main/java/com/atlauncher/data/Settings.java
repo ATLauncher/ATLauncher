@@ -1397,6 +1397,9 @@ public class Settings {
                     continue; // Instance.json not found for some reason, continue before loading
                 }
                 Instance instance = Settings.gson.fromJson(fileReader, Instance.class);
+                if (instance == null) {
+                    continue;
+                }
                 if (!instance.getDisabledModsDirectory().exists()) {
                     instance.getDisabledModsDirectory().mkdir();
                 }
