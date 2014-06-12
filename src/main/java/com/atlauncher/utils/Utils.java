@@ -14,6 +14,7 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -61,6 +62,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.text.html.StyleSheet;
 
@@ -144,24 +146,30 @@ public class Utils {
         }
     }
 
-    /**
-     * Gets the image.
-     * 
-     * @param path
-     *            the path
-     * @return the image
-     */
-    public static Image getImage(String path) {
-        URL url = System.class.getResource(path);
+    public static BufferedImage getImage(String img){
+        try{
+            String name;
+            if(!img.startsWith("/assets/image/")){
+                name = "/assets/image/" + img;
+            } else{
+                name = img;
+            }
 
-        if (url == null) {
-            App.settings.log("Unable to load resource " + path, LogMessageType.error, false);
+            if(!name.endsWith(".png")){
+                name = name + ".png";
+            }
+
+            InputStream stream = App.class.getResourceAsStream(name);
+
+            if(stream == null){
+                throw new NullPointerException("Stream == null");
+            }
+
+            return ImageIO.read(stream);
+        } catch(Exception ex){
+            ex.printStackTrace(System.err);
             return null;
         }
-
-        ImageIcon icon = new ImageIcon(url);
-
-        return icon.getImage();
     }
 
     /**

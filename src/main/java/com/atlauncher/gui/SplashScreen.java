@@ -6,53 +6,40 @@
  */
 package com.atlauncher.gui;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JWindow;
+import javax.swing.*;
 
 import com.atlauncher.utils.Utils;
 
 public class SplashScreen extends JWindow {
+    private final BufferedImage img = Utils.getImage("SplashScreen");
+    private final ContextMenu CONTEXT_MENU = new ContextMenu();
 
-    private ImageIcon icon = Utils.getIconImage("/assets/image/SplashScreen.png");
-
-    public SplashScreen() {
-        setLayout(null);
-        final JButton background = new JButton(icon);
-        background.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
-        background.setFocusable(false);
-        background.setContentAreaFilled(false);
-        background.setBorderPainted(false);
-        background.setOpaque(false);
-        add(background);
-        setSize(icon.getIconWidth(), icon.getIconHeight());
-        setVisible(true);
-        setLocationRelativeTo(null);
-
-        final JPopupMenu contextMenu = new JPopupMenu();
-
-        JMenuItem forceQuit = new JMenuItem("Force Quit");
-        forceQuit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-        contextMenu.add(forceQuit);
-
-        background.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    contextMenu.show(background, e.getX(), e.getY());
+    public SplashScreen(){
+        this.setLayout(null);
+        this.setSize(this.img.getWidth(), this.img.getHeight());
+        this.setVisible(true);
+        this.setLocationRelativeTo(null);
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if(e.getButton() == MouseEvent.BUTTON3){
+                    CONTEXT_MENU.show(SplashScreen.this, e.getX(), e.getY());
                 }
             }
         });
+    }
+
+    @Override
+    public void paint(Graphics g){
+        super.paint(g);
+        g.drawImage(this.img, 0, 0, this.getWidth(), this.getHeight(), null);
     }
 
     /**
@@ -61,5 +48,21 @@ public class SplashScreen extends JWindow {
     public void close() {
         this.setVisible(false);
         this.dispose();
+    }
+
+    private final class ContextMenu extends JPopupMenu{
+        private final JMenuItem FORCE_QUIT = new JMenuItem("Force Quit");
+
+        public ContextMenu(){
+            super();
+
+            this.FORCE_QUIT.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);
+                }
+            });
+            this.add(this.FORCE_QUIT);
+        }
     }
 }
