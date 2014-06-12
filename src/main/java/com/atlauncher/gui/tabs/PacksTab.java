@@ -30,6 +30,9 @@ import com.atlauncher.gui.NothingToDisplay;
 import com.atlauncher.gui.PackDisplay;
 import com.atlauncher.gui.dialogs.AddPackDialog;
 
+/**
+ * TODO: Rewrite this for better loading
+ */
 public class PacksTab extends JPanel {
 
     private static final long serialVersionUID = -3550919682971699108L;

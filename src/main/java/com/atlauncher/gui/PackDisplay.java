@@ -28,6 +28,8 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.utils.Utils;
 
 /**
+ * TODO: Rewrite along with CollapsiblePanel
+ *
  * Class for displaying packs in the Pack Tab
  *
  * @author Ryan

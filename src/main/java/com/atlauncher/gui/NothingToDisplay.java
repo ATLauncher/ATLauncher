@@ -21,6 +21,8 @@ import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
 /**
+ * TODO: Rewrite along with CollapsiblePanel
+ *
  * Class for displaying packs in the Pack Tab
  *
  * @author Ryan

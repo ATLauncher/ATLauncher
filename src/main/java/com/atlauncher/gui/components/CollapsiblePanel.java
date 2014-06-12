@@ -38,6 +38,8 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.utils.Utils;
 
 /**
+ * TODO: Rewrite this for easier OOP
+ *
  * The user-triggered collapsible panel containing the component (trigger) in the titled border
  */
 public class CollapsiblePanel extends JPanel {

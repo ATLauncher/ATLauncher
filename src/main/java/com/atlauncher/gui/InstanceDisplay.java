@@ -31,6 +31,8 @@ import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.utils.Utils;
 
 /**
+ * TODO: Rewrite along with CollapsiblePanel
+ *
  * Class for displaying instances in the Instance Tab
  *
  * @author Ryan
