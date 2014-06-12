@@ -17,7 +17,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -37,7 +36,6 @@ import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.utils.Authentication;
-import com.atlauncher.utils.Utils;
 
 public class AccountsTab extends JPanel {
 
@@ -158,13 +156,13 @@ public class AccountsTab extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (rememberField.isSelected()) {
-                    String[] options = {App.settings.getLocalizedString("common.yes"),
-                            App.settings.getLocalizedString("common.no")};
+                    String[] options = { App.settings.getLocalizedString("common.yes"),
+                            App.settings.getLocalizedString("common.no") };
                     int ret = JOptionPane.showOptionDialog(
                             App.settings.getParent(),
                             "<html><center>"
                                     + App.settings.getLocalizedString(
-                                    "account.rememberpasswordwarning", "<br/><br/>")
+                                            "account.rememberpasswordwarning", "<br/><br/>")
                                     + "</center></html>", App.settings
                                     .getLocalizedString("account.securitywarningtitle"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
@@ -187,7 +185,7 @@ public class AccountsTab extends JPanel {
         leftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
-                    String[] options = {App.settings.getLocalizedString("common.ok")};
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
                             App.settings.getLocalizedString("account.offlinemode"),
                             App.settings.getLocalizedString("common.offline"),
@@ -200,7 +198,7 @@ public class AccountsTab extends JPanel {
                     boolean remember = rememberField.isSelected();
                     if (App.settings.isAccountByName(username)
                             && accountsComboBox.getSelectedIndex() == 0) {
-                        String[] options = {App.settings.getLocalizedString("common.ok")};
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
                         JOptionPane.showOptionDialog(App.settings.getParent(),
                                 App.settings.getLocalizedString("account.exists"),
                                 App.settings.getLocalizedString("account.notadded"),
@@ -216,14 +214,10 @@ public class AccountsTab extends JPanel {
                             + usernameField.getText());
                     dialog.addThread(new Thread() {
                         public void run() {
-                            try {
-                                AuthenticationResponse resp = Authentication.checkAccount(
-                                        usernameField.getText(),
-                                        new String(passwordField.getPassword()));
-                                dialog.setReturnValue(resp);
-                            } catch (IOException e1) {
-                                App.settings.logStackTrace(e1);
-                            }
+                            AuthenticationResponse resp = Authentication.checkAccount(
+                                    usernameField.getText(),
+                                    new String(passwordField.getPassword()));
+                            dialog.setReturnValue(resp);
                             dialog.close();
                         }
 
@@ -232,7 +226,7 @@ public class AccountsTab extends JPanel {
                     dialog.start();
                     AuthenticationResponse response = (AuthenticationResponse) dialog
                             .getReturnValue();
-                    if (!response.hasError()) {
+                    if (response != null && !response.hasError()) {
                         AuthenticationResponse resp = response;
 
                         if (accountsComboBox.getSelectedIndex() == 0) {
@@ -240,8 +234,8 @@ public class AccountsTab extends JPanel {
                                     .getName(), remember);
                             App.settings.addAccount(account);
                             App.settings.log("Added Account " + account);
-                            String[] options = {App.settings.getLocalizedString("common.yes"),
-                                    App.settings.getLocalizedString("common.no")};
+                            String[] options = { App.settings.getLocalizedString("common.yes"),
+                                    App.settings.getLocalizedString("common.no") };
                             int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
                                     App.settings.getLocalizedString("account.addedswitch"),
                                     App.settings.getLocalizedString("account.added"),
@@ -259,7 +253,7 @@ public class AccountsTab extends JPanel {
                             }
                             account.setRemember(remember);
                             App.settings.log("Edited Account " + account);
-                            String[] options = {App.settings.getLocalizedString("common.ok")};
+                            String[] options = { App.settings.getLocalizedString("common.ok") };
                             JOptionPane.showOptionDialog(App.settings.getParent(),
                                     App.settings.getLocalizedString("account.editeddone"),
                                     App.settings.getLocalizedString("account.edited"),
@@ -275,11 +269,17 @@ public class AccountsTab extends JPanel {
                         }
                         accountsComboBox.setSelectedItem(account);
                     } else {
-                        App.settings.log(response.getErrorMessage(), LogMessageType.error, false);
-                        String[] options = {App.settings.getLocalizedString("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
+                        App.settings.log(
+                                (response == null ? "Unknown Error Logging In" : response
+                                        .getErrorMessage()), LogMessageType.error, false);
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
+                        JOptionPane.showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><center>"
                                         + App.settings.getLocalizedString("account.incorrect")
-                                        + "<br/><br/>" + response.getErrorMessage() + "</center></html>",
+                                        + "<br/><br/>"
+                                        + (response == null ? "Unknown Error" : response
+                                                .getErrorMessage()) + "</center></html>",
                                 App.settings.getLocalizedString("account.notadded"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
