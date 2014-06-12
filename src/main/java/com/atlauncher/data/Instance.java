@@ -1166,6 +1166,20 @@ public class Instance implements Cloneable {
                 return false;
             }
 
+            if (!App.settings.isInOfflineMode() && isLoggingEnabled()) {
+                App.TASKPOOL.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Utils.sendGetAPICall("pack/" + getRealPack().getSafeName()
+                                    + "/playing/");
+                        } catch (IOException e) {
+                            App.settings.logStackTrace(e);
+                        }
+                    }
+                });
+            }
+
             final AuthenticationResponse session = sess;
             Thread launcher = new Thread() {
                 public void run() {

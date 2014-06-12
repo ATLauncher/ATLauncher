@@ -1279,6 +1279,38 @@ public class Utils {
         return response.toString();
     }
 
+    public static String sendGetAPICall(String path) throws IOException {
+        StringBuilder response = null;
+
+        URL url = new URL(Constants.API_BASE_URL + path);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setConnectTimeout(App.settings.getConnectionTimeout());
+        connection.setReadTimeout(App.settings.getConnectionTimeout());
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+        connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+        connection.setRequestProperty("Expires", "0");
+        connection.setRequestProperty("Pragma", "no-cache");
+
+        connection.setUseCaches(false);
+        connection.setDoOutput(true);
+
+        // Read the result
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                connection.getInputStream()));
+        response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+            response.append('\r');
+        }
+        reader.close();
+        return response.toString();
+    }
+
     /**
      * Checks for meta inf.
      * 
