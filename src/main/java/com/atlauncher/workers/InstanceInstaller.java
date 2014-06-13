@@ -866,27 +866,54 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgressUnknown();
         if (!isServer) {
             for (String libraryFile : forgeLibraries) {
-                Utils.copyFile(new File(App.settings.getLibrariesDir(), libraryFile),
-                        getBinDirectory());
+                File library = new File(App.settings.getLibrariesDir(), libraryFile);
+                if (library.exists()) {
+                    Utils.copyFile(library, getBinDirectory());
+                } else {
+                    App.settings.log("Cannot install instance because the library file "
+                            + library.getAbsolutePath() + " wasn't found!");
+                    this.cancel(true);
+                    return;
+                }
             }
             for (Library library : this.version.getMinecraftVersion().getMojangVersion()
                     .getLibraries()) {
                 if (library.shouldInstall()) {
-                    if (library.shouldExtract()) {
-                        Utils.unzip(library.getFile(), getNativesDirectory(),
-                                library.getExtractRule());
+                    if (library.getFile().exists()) {
+                        if (library.shouldExtract()) {
+                            Utils.unzip(library.getFile(), getNativesDirectory(),
+                                    library.getExtractRule());
+                        } else {
+                            Utils.copyFile(library.getFile(), getBinDirectory());
+                        }
                     } else {
-                        Utils.copyFile(library.getFile(), getBinDirectory());
+                        App.settings.log("Cannot install instance because the library file "
+                                + library.getFile().getAbsolutePath() + " wasn't found!");
+                        this.cancel(true);
+                        return;
                     }
                 }
             }
         }
+        File toCopy, copyTo;
+        boolean withFilename = false;
         if (isServer) {
-            Utils.copyFile(new File(App.settings.getJarsDir(), "minecraft_server."
-                    + this.version.getMinecraftVersion().getVersion() + ".jar"), getRootDirectory());
+            toCopy = new File(App.settings.getJarsDir(), "minecraft_server."
+                    + this.version.getMinecraftVersion().getVersion() + ".jar");
+            copyTo = getRootDirectory();
         } else {
-            Utils.copyFile(new File(App.settings.getJarsDir(), this.version.getMinecraftVersion()
-                    .getVersion() + ".jar"), new File(getBinDirectory(), "minecraft.jar"), true);
+            toCopy = new File(App.settings.getJarsDir(), this.version.getMinecraftVersion()
+                    .getVersion() + ".jar");
+            copyTo = new File(getBinDirectory(), "minecraft.jar");
+            withFilename = true;
+        }
+        if (toCopy.exists()) {
+            Utils.copyFile(toCopy, copyTo, withFilename);
+        } else {
+            App.settings.log("Cannot install instance because the library file "
+                    + toCopy.getAbsolutePath() + " wasn't found!");
+            this.cancel(true);
+            return;
         }
         fireSubProgress(-1); // Hide the subprogress bar
     }
