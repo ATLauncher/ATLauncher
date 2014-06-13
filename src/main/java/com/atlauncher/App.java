@@ -72,7 +72,7 @@ public class App {
         File config = new File(Utils.getCoreGracefully(), "Configs");
         if (!config.exists()) {
             int files = config.getParentFile().list().length;
-            if (files > 2) {
+            if (files > 1) {
                 String[] options = { "Yes It's Fine", "Whoops. I'll Change That Now" };
                 int ret = JOptionPane.showOptionDialog(null,
                         "<html><center>I've detected that you may not have installed this "

@@ -41,6 +41,7 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -81,6 +82,7 @@ public class Utils {
 
     public static String colorHex(Color c) {
         if (c == null) {
+            System.out.println("Colour given to Utils.colorhex was null");
             return "#000000";
         }
 
@@ -109,8 +111,13 @@ public class Utils {
 
     public static File getCoreGracefully() {
         if (Utils.isLinux()) {
-            return new File(App.class.getProtectionDomain().getCodeSource().getLocation().getFile())
-                    .getParentFile();
+            try {
+                return new File(App.class.getProtectionDomain().getCodeSource().getLocation()
+                        .toURI().getSchemeSpecificPart()).getParentFile();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+                return new File(System.getProperty("user.dir"), "ATLauncher");
+            }
         } else {
             return new File(System.getProperty("user.dir"));
         }
