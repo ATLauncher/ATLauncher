@@ -81,7 +81,7 @@ public class Utils {
 
     public static String colorHex(Color c) {
         if (c == null) {
-            throw new NullPointerException("Color == null");
+            return "#000000";
         }
 
         return "#" + Integer.toHexString(c.getRGB() & 0xFFFFFF);
