@@ -268,8 +268,8 @@ public class Settings {
             }
         }
         if (!this.hadConnectionTimeoutCheck) {
-            if (this.connectionTimeout <= 3) {
-                this.connectionTimeout = 5;
+            if (this.connectionTimeout < 10) {
+                this.connectionTimeout = 10;
                 this.hadConnectionTimeoutCheck = true;
                 this.saveProperties();
             }
@@ -903,9 +903,9 @@ public class Settings {
             }
 
             this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
-                    "5"));
+                    "10"));
             if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
-                this.connectionTimeout = 5;
+                this.connectionTimeout = 10;
             }
 
             this.concurrentConnections = Integer.parseInt(properties.getProperty(
@@ -1080,7 +1080,7 @@ public class Settings {
             }
 
             this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
-                    "5"));
+                    "10"));
             if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
                 // Connection timeout should be between 1 and 30
                 log("Tried to set connection timeout to "
