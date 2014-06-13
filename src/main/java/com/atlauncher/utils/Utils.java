@@ -14,11 +14,8 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
-<<<<<<< HEAD
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
-=======
->>>>>>> branch 'master' of https://github.com/ATLauncher/ATLauncher.git
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -151,27 +148,27 @@ public class Utils {
         }
     }
 
-    public static BufferedImage getImage(String img){
-        try{
+    public static BufferedImage getImage(String img) {
+        try {
             String name;
-            if(!img.startsWith("/assets/image/")){
+            if (!img.startsWith("/assets/image/")) {
                 name = "/assets/image/" + img;
-            } else{
+            } else {
                 name = img;
             }
 
-            if(!name.endsWith(".png")){
+            if (!name.endsWith(".png")) {
                 name = name + ".png";
             }
 
             InputStream stream = App.class.getResourceAsStream(name);
 
-            if(stream == null){
+            if (stream == null) {
                 throw new NullPointerException("Stream == null");
             }
 
             return ImageIO.read(stream);
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
             return null;
         }
