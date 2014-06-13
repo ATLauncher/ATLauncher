@@ -115,6 +115,7 @@ public class Settings {
     private Proxy proxy = null; // The proxy object if any
     private String theme; // The theme to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
+    private boolean hadConnectionTimeoutCheck; // If the user has had the connection timeout check
 
     // General backup settings
     private boolean autoBackup; // Whether backups are created on instance close
@@ -263,6 +264,13 @@ public class Settings {
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideOldJavaWarning = true;
+                this.saveProperties();
+            }
+        }
+        if (!this.hadConnectionTimeoutCheck) {
+            if (this.connectionTimeout <= 3) {
+                this.connectionTimeout = 5;
+                this.hadConnectionTimeoutCheck = true;
                 this.saveProperties();
             }
         }
@@ -895,9 +903,9 @@ public class Settings {
             }
 
             this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
-                    "3"));
+                    "5"));
             if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
-                this.connectionTimeout = 3;
+                this.connectionTimeout = 5;
             }
 
             this.concurrentConnections = Integer.parseInt(properties.getProperty(
@@ -926,6 +934,9 @@ public class Settings {
 
             this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty(
                     "hideoldjavawarning", "false"));
+
+            this.hadConnectionTimeoutCheck = Boolean.parseBoolean(properties.getProperty(
+                    "hadconnectiontimeoutcheck", "false"));
 
             String lang = properties.getProperty("language", "English");
             if (isLanguageByName(lang)) {
@@ -1069,14 +1080,14 @@ public class Settings {
             }
 
             this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
-                    "3"));
+                    "5"));
             if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
                 // Connection timeout should be between 1 and 30
                 log("Tried to set connection timeout to "
                         + this.connectionTimeout
-                        + " which is not valid! Must be between 1 and 30. Setting back to default of 3!",
+                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
                         LogMessageType.warning, false);
-                this.connectionTimeout = 3;
+                this.connectionTimeout = 5;
             }
 
             this.concurrentConnections = Integer.parseInt(properties.getProperty(
@@ -1124,6 +1135,8 @@ public class Settings {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("hadpassworddialog", "true");
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
+            properties
+                    .setProperty("hadconnectiontimeoutcheck", this.hadConnectionTimeoutCheck + "");
             properties.setProperty("language", this.language.getName());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
