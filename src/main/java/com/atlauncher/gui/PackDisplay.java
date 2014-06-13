@@ -31,11 +31,12 @@ import com.atlauncher.utils.Utils;
  * TODO: Rewrite along with CollapsiblePanel
  *
  * Class for displaying packs in the Pack Tab
- *
+ * 
  * @author Ryan
  */
 public class PackDisplay extends CollapsiblePanel {
 
+    private static final long serialVersionUID = -2617283435728223314L;
     private JPanel leftPanel; // Left panel with image
     private JPanel rightPanel; // Right panel with description and actions
     private JSplitPane splitPane; // The split pane
@@ -94,7 +95,7 @@ public class PackDisplay extends CollapsiblePanel {
         newInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
-                    String[] options = {App.settings.getLocalizedString("common.ok")};
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
                             App.settings.getLocalizedString("pack.offlinenewinstance"),
                             App.settings.getLocalizedString("common.offline"),
@@ -102,7 +103,7 @@ public class PackDisplay extends CollapsiblePanel {
                             options[0]);
                 } else {
                     if (App.settings.getAccount() == null) {
-                        String[] options = {App.settings.getLocalizedString("common.ok")};
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
                         JOptionPane.showOptionDialog(App.settings.getParent(),
                                 App.settings.getLocalizedString("instance.cannotcreate"),
                                 App.settings.getLocalizedString("instance.noaccountselected"),
@@ -119,7 +120,7 @@ public class PackDisplay extends CollapsiblePanel {
         createServer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
-                    String[] options = {App.settings.getLocalizedString("common.ok")};
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
                             App.settings.getLocalizedString("pack.offlinecreateserver"),
                             App.settings.getLocalizedString("common.offline"),
@@ -127,7 +128,7 @@ public class PackDisplay extends CollapsiblePanel {
                             options[0]);
                 } else {
                     if (App.settings.getAccount() == null) {
-                        String[] options = {App.settings.getLocalizedString("common.ok")};
+                        String[] options = { App.settings.getLocalizedString("common.ok") };
                         JOptionPane.showOptionDialog(App.settings.getParent(),
                                 App.settings.getLocalizedString("instance.cannotcreate"),
                                 App.settings.getLocalizedString("instance.noaccountselected"),

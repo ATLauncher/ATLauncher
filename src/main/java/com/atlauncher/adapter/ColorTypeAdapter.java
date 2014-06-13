@@ -1,29 +1,25 @@
 package com.atlauncher.adapter;
 
+import java.awt.Color;
+import java.io.IOException;
+
 import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import java.awt.*;
-import java.io.IOException;
-
 /**
- * This class will ensure that colors are serialized to a hex value for easy editing
+ * This class will ensure that colors are serialised to a hex value for easy editing
  */
 public final class ColorTypeAdapter extends TypeAdapter<Color> {
+
     @Override
-    public void write(JsonWriter writer, Color c)
-            throws IOException {
-        writer.beginObject()
-                .name("value")
-                .value("#" + toHex(c))
-                .endObject();
+    public void write(JsonWriter writer, Color c) throws IOException {
+        writer.beginObject().name("value").value("#" + toHex(c)).endObject();
     }
 
     @Override
-    public Color read(JsonReader reader)
-            throws IOException {
+    public Color read(JsonReader reader) throws IOException {
         reader.beginObject();
         String next = reader.nextName();
         if (!next.equalsIgnoreCase("value")) {
@@ -35,13 +31,31 @@ public final class ColorTypeAdapter extends TypeAdapter<Color> {
         return new Color(rgb[0], rgb[1], rgb[2]);
     }
 
-    private String clamp(String hex){
-        while(hex.length() < "000000".length()){
+    /**
+     * Adds 0's to the end of a given hex code until it's length is 6 for use as a HTML colour code.
+     * 
+     * @param hex
+     *            The hex code to clamp to a length of 6 characters
+     * @return The hex after claming to 6 characters length
+     */
+    private String clamp(String hex) {
+        while (hex.length() < 6) {
             hex += '0';
         }
         return hex;
     }
 
+    /**
+     * Turns a hex colour code into a int array of length 3 with each element being the Red, Green
+     * and Blue individual hex codes.
+     * 
+     * <p>
+     * For example an input of "227744" returns {22, 77, 44}
+     * 
+     * @param hex
+     *            The hex code to convert to RGB format
+     * @return The int array containing the RGB individual hex codes
+     */
     private int[] toRGB(String hex) {
         int[] ret = new int[3];
 
@@ -52,6 +66,13 @@ public final class ColorTypeAdapter extends TypeAdapter<Color> {
         return ret;
     }
 
+    /**
+     * Converts a {@link Color} object into a hex code.
+     * 
+     * @param c
+     *            The {@link Color} object to convert to hex
+     * @return The hex string representing the given Color
+     */
     private String toHex(Color c) {
         return Integer.toHexString(c.getRGB() & 0xFFFFFF);
     }

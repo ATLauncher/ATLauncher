@@ -14,6 +14,11 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
+<<<<<<< HEAD
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+=======
+>>>>>>> branch 'master' of https://github.com/ATLauncher/ATLauncher.git
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -1747,5 +1752,39 @@ public class Utils {
                 return false;
             }
         };
+    }
+
+    /**
+     * Flips a given {@link BufferedImage}
+     * 
+     * @param image
+     *            The image to flip
+     * @return The flipped image
+     */
+    public static Image flipImage(BufferedImage image) {
+        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+        tx.translate(-image.getWidth(null), 0);
+        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        image = op.filter(image, null);
+        return image;
+    }
+
+    /**
+     * Counts the numbers of non transparent pixels in a given {@link BufferedImage}.
+     * 
+     * @param image
+     *            The image to count the number of non transparent pixels in
+     * @return The number of non transparent pixels
+     */
+    public static int nonTransparentPixels(BufferedImage image) {
+        int count = 0;
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                if (image.getRGB(x, y) == -1) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }

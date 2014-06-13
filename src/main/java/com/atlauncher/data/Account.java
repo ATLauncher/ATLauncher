@@ -8,8 +8,6 @@ package com.atlauncher.data;
 
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,28 +17,84 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
 import com.atlauncher.gui.ProgressDialog;
+import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.utils.Utils;
 
+/**
+ * This class deals with the Accounts in the launcher.
+ */
 public class Account implements Serializable {
 
+    /**
+     * Auto generated serial.
+     */
     private static final long serialVersionUID = 525763616120118176L;
-    private String username; // Username/Email used to login to minecraft
-    private transient String password; // Users password to login to minecraft
-    private String encryptedPassword; // users encrypted password
-    private String minecraftUsername; // Users Minecraft Username
-    private boolean remember; // Remember the users password or not
-    private transient boolean isReal; // If this is a real user
-    private ArrayList<String> collapsedPacks; // Array of packs collapsed in the Packs Tab
-    private ArrayList<String> collapsedInstances; // Array of instances collapsed in the Instances
-    // Tab
-    private boolean skinUpdating = false; // If the skin is being updated
 
+    /**
+     * The username/email used to login to Mojang servers.
+     */
+    private String username;
+
+    /**
+     * The account's password to login to Mojang servers.
+     */
+    private transient String password;
+
+    /**
+     * The encrypted password.
+     */
+    private String encryptedPassword;
+
+    /**
+     * The account's Minecraft username.
+     */
+    private String minecraftUsername;
+
+    /**
+     * If this account should remember the password or not.
+     */
+    private boolean remember;
+
+    /**
+     * If this account is a real user or not.
+     */
+    private transient boolean isReal;
+
+    /**
+     * The pack names this account has collapsed in the {@link PacksTab}, if any.
+     */
+    private List<String> collapsedPacks;
+
+    /**
+     * The instance names this account has collapsed in the {@link InstancesTab}, if any.
+     */
+    private List<String> collapsedInstances;
+
+    /**
+     * If the skin is currently being updated.
+     */
+    private boolean skinUpdating = false;
+
+    /**
+     * Constructor for a real user Account.
+     * 
+     * @param username
+     *            The name of the Account
+     * @param password
+     *            The password of the Account
+     * @param minecraftUsername
+     *            The Minecraft username of the Account
+     * @param remember
+     *            If this Account's password should be remembered or not
+     */
     public Account(String username, String password, String minecraftUsername, boolean remember) {
         this.username = username;
         if (remember) {
@@ -54,6 +108,12 @@ public class Account implements Serializable {
         this.collapsedInstances = new ArrayList<String>();
     }
 
+    /**
+     * Constructor for a fake user account, used for displaying non selectable accounts.
+     * 
+     * @param name
+     *            The name of the Account
+     */
     public Account(String name) {
         this.username = "";
         this.minecraftUsername = name;
@@ -63,15 +123,21 @@ public class Account implements Serializable {
         this.collapsedInstances = new ArrayList<String>();
     }
 
+    /**
+     * Creates an {@link ImageIcon} of the Account's Minecraft skin, getting just the head of it.
+     * 
+     * @return The Account's Minecraft usernames head
+     */
     public ImageIcon getMinecraftHead() {
         File file = null;
-        if (isReal()) {
-            file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
+        if (this.isReal()) {
+            file = new File(App.settings.getSkinsDir(), this.minecraftUsername + ".png");
             if (!file.exists()) {
-                updateSkin();
+                this.updateSkin(); // Download/update the users skin
             }
         }
 
+        // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
             file = new File(App.settings.getSkinsDir(), "default.png");
         }
@@ -82,39 +148,35 @@ public class Account implements Serializable {
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
+
         BufferedImage main = image.getSubimage(8, 8, 8, 8);
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
         BufferedImage head = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
 
-        int count = 0;
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                if (helmet.getRGB(x, y) == -1) {
-                    count++;
-                }
-            }
-        }
-
         Graphics g = head.getGraphics();
         g.drawImage(main, 0, 0, null);
-        if (count <= 32) {
+        if (Utils.nonTransparentPixels(helmet) <= 32) {
             g.drawImage(helmet, 0, 0, null);
         }
 
-        ImageIcon icon = new ImageIcon(head.getScaledInstance(32, 32, Image.SCALE_SMOOTH));
-
-        return icon;
+        return new ImageIcon(head.getScaledInstance(32, 32, Image.SCALE_SMOOTH));
     }
 
+    /**
+     * Creates an {@link ImageIcon} of the Account's Minecraft skin.
+     * 
+     * @return The Account's Minecraft usernames skin
+     */
     public ImageIcon getMinecraftSkin() {
         File file = null;
-        if (isReal()) {
-            file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
+        if (this.isReal()) {
+            file = new File(App.settings.getSkinsDir(), this.minecraftUsername + ".png");
             if (!file.exists()) {
-                updateSkin();
+                this.updateSkin(); // Download/update the users skin
             }
         }
 
+        // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
             file = new File(App.settings.getSkinsDir(), "default.png");
         }
@@ -133,122 +195,173 @@ public class Account implements Serializable {
         BufferedImage leg = image.getSubimage(4, 20, 4, 12);
         BufferedImage skin = new BufferedImage(16, 32, BufferedImage.TYPE_INT_ARGB);
 
-        int count = 0;
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                if (helmet.getRGB(x, y) == -1) {
-                    count++;
-                }
-            }
-        }
-
         Graphics g = skin.getGraphics();
         g.drawImage(head, 4, 0, null);
-        if (count <= 32) {
+
+        // Draw the helmet on the skin if more than half of the pixels are not transparent.
+        if (Utils.nonTransparentPixels(helmet) <= 32) {
             g.drawImage(helmet, 4, 0, null);
         }
+
         g.drawImage(arm, 0, 8, null);
-        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
-        tx.translate(-arm.getWidth(null), 0);
-        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-        arm = op.filter(arm, null);
-        g.drawImage(arm, 12, 8, null);
+        g.drawImage(Utils.flipImage(arm), 12, 8, null);
         g.drawImage(body, 4, 8, null);
         g.drawImage(leg, 4, 20, null);
-        tx = AffineTransform.getScaleInstance(-1, 1);
-        tx.translate(-leg.getWidth(null), 0);
-        op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-        leg = op.filter(leg, null);
-        g.drawImage(leg, 8, 20, null);
+        g.drawImage(Utils.flipImage(leg), 8, 20, null);
 
-        ImageIcon icon = new ImageIcon(skin.getScaledInstance(128, 256, Image.SCALE_SMOOTH));
-
-        return icon;
+        return new ImageIcon(skin.getScaledInstance(128, 256, Image.SCALE_SMOOTH));
     }
 
+    /**
+     * If this Account is real or not.
+     * 
+     * @return true if the Account is real and was added by the user, false otherwise
+     */
     public boolean isReal() {
         return this.isReal;
     }
 
+    /**
+     * Gets the username used for logging into Mojang servers. Can be an email address or a username
+     * if the user has not migrated their Minecraft account to a Mojang account.
+     * 
+     * @return The username used for logging into Mojang servers
+     */
     public String getUsername() {
         return this.username;
     }
 
+    /**
+     * Sets the username used for this Account to login to Mojang servers.
+     * 
+     * @param username
+     *            The new username for this Account
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Gets the Minecraft username used for this Account.
+     * 
+     * @return The Minecraft username for this Account
+     */
+    public String getMinecraftUsername() {
+        return this.minecraftUsername;
+    }
+
+    /**
+     * Sets the Minecraft username used for this Account.
+     * 
+     * @param username
+     *            The new Minecraft username for this Account
+     */
     public void setMinecraftUsername(String username) {
         this.minecraftUsername = username;
     }
 
+    /**
+     * Gets the password for logging into Mojang servers for this Account.
+     * 
+     * @return The password for logging into Mojang servers
+     */
     public String getPassword() {
         return this.password;
     }
 
+    /**
+     * Sets the password for this Account.
+     * 
+     * @param password
+     *            The password for the Account
+     */
     public void setPassword(String password) {
         this.password = password;
-        this.encryptedPassword = Utils.encrypt(password);
+        this.encryptedPassword = Utils.encrypt(this.password);
     }
 
+    /**
+     * If this account should save the password or not for convenience.
+     * 
+     * @return True if the Account has been set to remember, false otherwise
+     */
     public boolean isRemembered() {
         return this.remember;
     }
 
+    /**
+     * Sets this Account to remember or not remember the password.
+     * 
+     * @param remember
+     *            True if the password should be remembered, False if it shouldn't be remembered
+     */
     public void setRemember(boolean remember) {
         this.remember = remember;
-        if (!remember) {
+        if (!this.remember) {
             this.password = "";
             this.encryptedPassword = "";
         }
     }
 
-    public String getMinecraftUsername() {
-        return this.minecraftUsername;
-    }
-
-    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
-        s.defaultReadObject(); // Read the object in
-        if (encryptedPassword == null) {
-            password = ""; // No password saved so don't set it
-            remember = false; // And make sure remember is set to false
+    /**
+     * Reads in the object from file into an Object.
+     * 
+     * @param ois
+     *            The InputStream for the object
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject(); // Read the object in
+        if (this.encryptedPassword == null) {
+            this.password = "";
+            this.remember = false;
         } else {
-            password = Utils.decrypt(encryptedPassword); // Encrypted password found so decrypt it
+            this.password = Utils.decrypt(this.encryptedPassword);
         }
-        isReal = true;
+        this.isReal = true;
     }
 
-    public ArrayList<String> getCollapsedPacks() {
+    /**
+     * Gets a List of packs this Account has collapsed in the {@link PacksTab}.
+     * 
+     * @return List of collapsed packs
+     */
+    public List<String> getCollapsedPacks() {
         if (this.collapsedPacks == null) {
             this.collapsedPacks = new ArrayList<String>();
         }
         return this.collapsedPacks;
     }
 
-    public ArrayList<String> getCollapsedInstances() {
+    /**
+     * Gets a List of instances this Account has collapsed in the {@link InstancesTab}.
+     * 
+     * @return List of collapsed instances
+     */
+    public List<String> getCollapsedInstances() {
         if (this.collapsedInstances == null) {
             this.collapsedInstances = new ArrayList<String>();
         }
         return this.collapsedInstances;
     }
 
-    public String toString() {
-        return this.minecraftUsername;
-    }
-
+    /**
+     * Updates this Account's skin by redownloading the Minecraft skin from Mojang's skin server.
+     */
     public void updateSkin() {
-        if (!skinUpdating) {
-            skinUpdating = true;
-            final File file = new File(App.settings.getSkinsDir(), minecraftUsername + ".png");
+        if (!this.skinUpdating) {
+            this.skinUpdating = true;
+            final File file = new File(App.settings.getSkinsDir(), this.minecraftUsername + ".png");
             if (file.exists()) {
                 Utils.delete(file);
             }
-            App.settings.log("Downloading skin for " + getMinecraftUsername());
+            App.settings.log("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog dialog = new ProgressDialog(
                     App.settings.getLocalizedString("account.downloadingskin"), 0,
                     App.settings.getLocalizedString("account.downloadingminecraftskin",
-                            getMinecraftUsername()), "Aborting downloading Minecraft skin for "
-                            + getMinecraftUsername());
+                            this.minecraftUsername), "Aborting downloading Minecraft skin for "
+                            + this.minecraftUsername);
             dialog.addThread(new Thread() {
                 public void run() {
                     try {
@@ -276,8 +389,13 @@ public class Account implements Serializable {
                 ;
             });
             dialog.start();
-            skinUpdating = false;
+            this.skinUpdating = false;
         }
+    }
+
+    @Override
+    public String toString() {
+        return this.minecraftUsername;
     }
 
 }
