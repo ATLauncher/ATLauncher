@@ -383,9 +383,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             // We're reinstalling or installing a server so delete these folders
             Utils.delete(getBinDirectory());
             Utils.delete(getConfigDirectory());
-            if (instance.getMinecraftVersion().equalsIgnoreCase(
-                    version.getMinecraftVersion().getVersion())
-                    && instance.hasCustomMods()) {
+            if (instance != null
+                    && instance.getMinecraftVersion().equalsIgnoreCase(
+                            version.getMinecraftVersion().getVersion()) && instance.hasCustomMods()) {
                 Utils.deleteWithFilter(getModsDirectory(), instance.getCustomMods(Type.mods));
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
                     Utils.deleteWithFilter(getCoreModsDirectory(),
