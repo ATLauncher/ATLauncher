@@ -41,7 +41,6 @@ public class Authentication {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setConnectTimeout(App.settings.getConnectionTimeout());
-            connection.setReadTimeout(App.settings.getConnectionTimeout());
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
@@ -97,7 +96,6 @@ public class Authentication {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setConnectTimeout(App.settings.getConnectionTimeout());
-            connection.setReadTimeout(App.settings.getConnectionTimeout());
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
@@ -124,7 +122,6 @@ public class Authentication {
                     + URLEncoder.encode(password, "UTF-8") + "&version=999");
             URLConnection connection = urll.openConnection();
             connection.setConnectTimeout(App.settings.getConnectionTimeout());
-            connection.setReadTimeout(App.settings.getConnectionTimeout());
             BufferedReader in;
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             response = new StringBuilder();

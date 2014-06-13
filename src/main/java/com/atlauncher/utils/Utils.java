@@ -1222,7 +1222,6 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setConnectTimeout(App.settings.getConnectionTimeout());
-        connection.setReadTimeout(App.settings.getConnectionTimeout());
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
@@ -1263,7 +1262,6 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setConnectTimeout(App.settings.getConnectionTimeout());
-        connection.setReadTimeout(App.settings.getConnectionTimeout());
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
@@ -1303,7 +1301,6 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setConnectTimeout(App.settings.getConnectionTimeout());
-        connection.setReadTimeout(App.settings.getConnectionTimeout());
         connection.setRequestMethod("GET");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
@@ -1579,8 +1576,7 @@ public class Utils {
             URL url = new URL("http://openeye.openmods.info/api/v1/crash");
             connection = (HttpURLConnection) url.openConnection();
 
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(App.settings.getConnectionTimeout());
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
