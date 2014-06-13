@@ -39,12 +39,14 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.security.Key;
@@ -1786,5 +1788,54 @@ public class Utils {
             }
         }
         return count;
+    }
+
+    public static int pingAddress(String host) {
+        try {
+            long timeStarted = System.currentTimeMillis();
+            boolean status = InetAddress.getByName(host).isReachable(
+                    App.settings.getConnectionTimeout());
+            if (status) {
+                return (int) (System.currentTimeMillis() - timeStarted);
+            }
+        } catch (UnknownHostException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return 0;
+    }
+
+    public static String traceRoute(String host) {
+        String route = "";
+        StringBuilder response = new StringBuilder();
+        try {
+            InetAddress address = InetAddress.getByName(host);
+            Process traceRoute;
+            if (Utils.isWindows()) {
+                traceRoute = Runtime.getRuntime().exec("tracert " + address.getHostAddress());
+            } else {
+                traceRoute = Runtime.getRuntime().exec("traceroute " + address.getHostAddress());
+            }
+
+            BufferedReader reader = null;
+            reader = new BufferedReader(new InputStreamReader(traceRoute.getInputStream()));
+
+            response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+                response.append(line);
+                response.append('\r');
+            }
+            reader.close();
+
+            route = response.toString();
+
+        } catch (IOException e) {
+            App.settings.logStackTrace("IOException while running traceRoute on host " + host, e);
+        }
+
+        return route;
     }
 }

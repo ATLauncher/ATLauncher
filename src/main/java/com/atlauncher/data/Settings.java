@@ -2275,6 +2275,25 @@ public class Settings {
     }
 
     /**
+     * Logs a stack trace to the console window with a custom message before it
+     * 
+     * @param message
+     *            A message regarding the stack trace to show before it providing more insight
+     * @param exception
+     *            The exception to show in the console
+     */
+    public void logStackTrace(String message, Exception exception) {
+        exception.printStackTrace();
+        log(message, LogMessageType.error, false);
+        log(exception.getMessage(), LogMessageType.error, false);
+        for (StackTraceElement element : exception.getStackTrace()) {
+            if (element.toString() != null) {
+                log(element.toString(), LogMessageType.error, false);
+            }
+        }
+    }
+
+    /**
      * Log something to the console
      */
     public void log(String message, LogMessageType type, boolean isMinecraft) {
@@ -2771,6 +2790,24 @@ public class Settings {
             this.instances.add(clonedInstance);
             this.saveInstances();
             this.reloadInstancesPanel();
+        }
+    }
+
+    public void pingServers() {
+        for (final Server server : servers) {
+            App.TASKPOOL.execute(new Runnable() {
+                @Override
+                public void run() {
+                    int time = Utils.pingAddress(server.getHost());
+                    if (time != 0) {
+                        log("Connection to " + server.getHost() + " took " + time + "ms!");
+                    } else {
+                        log("Connection to " + server.getHost()
+                                + " couldn't be established during ping test!",
+                                LogMessageType.error, false);
+                    }
+                }
+            });
         }
     }
 }

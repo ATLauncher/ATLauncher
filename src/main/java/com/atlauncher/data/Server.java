@@ -42,6 +42,10 @@ public class Server {
         return this.disabled;
     }
 
+    public String getHost() {
+        return (this.baseURL.contains("/ATL") ? this.baseURL.replace("/ATL", "") : this.baseURL);
+    }
+
     public String getName() {
         return this.name;
     }
