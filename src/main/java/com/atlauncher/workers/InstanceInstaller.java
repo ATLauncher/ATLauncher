@@ -409,21 +409,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else {
                 Utils.delete(getLibrariesDirectory()); // Only delete if it's a server
             }
-            if (this.pack.hasDeleteArguments(true, this.version.getVersion())) {
-                List<File> fileDeletes = this.pack.getDeletes(true, this.version.getVersion(),
-                        this.instance);
-                for (File file : fileDeletes) {
-                    if (file.exists()) {
-                        Utils.delete(file);
+            if (this.instance != null) {
+                if (this.pack.hasDeleteArguments(true, this.version.getVersion())) {
+                    List<File> fileDeletes = this.pack.getDeletes(true, this.version.getVersion(),
+                            this.instance);
+                    for (File file : fileDeletes) {
+                        if (file.exists()) {
+                            Utils.delete(file);
+                        }
                     }
                 }
-            }
-            if (this.pack.hasDeleteArguments(false, this.version.getVersion())) {
-                List<File> fileDeletes = this.pack.getDeletes(false, this.version.getVersion(),
-                        this.instance);
-                for (File file : fileDeletes) {
-                    if (file.exists()) {
-                        Utils.delete(file);
+                if (this.pack.hasDeleteArguments(false, this.version.getVersion())) {
+                    List<File> fileDeletes = this.pack.getDeletes(false, this.version.getVersion(),
+                            this.instance);
+                    for (File file : fileDeletes) {
+                        if (file.exists()) {
+                            Utils.delete(file);
+                        }
                     }
                 }
             }
