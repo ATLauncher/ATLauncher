@@ -39,6 +39,7 @@ import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
+import io.github.asyncronous.toast.ToasterConstants;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -208,6 +209,10 @@ public class App {
         ToolTipManager.sharedInstance().setDismissDelay(15000);
         ToolTipManager.sharedInstance().setInitialDelay(50);
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
+
+        UIManager.put(ToasterConstants.BG_COLOR, THEME.getTabBackgroundColor());
+        UIManager.put(ToasterConstants.BORDER_COLOR, THEME.getHoverBorderColor());
+        UIManager.put(ToasterConstants.MSG_COLOR, THEME.getConsoleTextColor());
 
         if (Utils.isMac()) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
