@@ -10,7 +10,10 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import com.atlauncher.App;
 
@@ -23,6 +26,7 @@ public class SettingsTab extends JPanel {
     private JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
     private NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
     private LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
+    private ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
 
     private JPanel bottomPanel;
     private JButton saveButton = new JButton(App.settings.getLocalizedString("common.save"));
@@ -41,6 +45,7 @@ public class SettingsTab extends JPanel {
                 networkSettingsTab);
         tabbedPane.addTab(App.settings.getLocalizedString("settings.loggingtab"),
                 loggingSettingsTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.tools"), toolsSettingsTab);
         tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
 
@@ -57,13 +62,14 @@ public class SettingsTab extends JPanel {
                         && networkSettingsTab.isValidConcurrentConnections()
                         && networkSettingsTab.isValidProxyPort()
                         && networkSettingsTab.canConnectWithProxy()) {
-                    boolean restartLauncher = generalSettingsTab.needToRestartLauncher() ||
-                            generalSettingsTab.needToReloadTheme();
+                    boolean restartLauncher = generalSettingsTab.needToRestartLauncher()
+                            || generalSettingsTab.needToReloadTheme();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                     generalSettingsTab.save();
                     javaSettingsTab.save();
                     networkSettingsTab.save();
                     loggingSettingsTab.save();
+                    toolsSettingsTab.save();
                     App.settings.saveProperties();
                     App.settings.log("Settings Saved!");
                     if (restartLauncher) {
@@ -72,7 +78,7 @@ public class SettingsTab extends JPanel {
                     if (reloadPacksPanel) {
                         App.settings.reloadPacksPanel();
                     }
-                    String[] options = {App.settings.getLocalizedString("common.ok")};
+                    String[] options = { App.settings.getLocalizedString("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
                             App.settings.getLocalizedString("settings.saved"),
                             App.settings.getLocalizedString("settings.saved"),

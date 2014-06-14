@@ -11,7 +11,9 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
@@ -20,6 +22,7 @@ import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.SettingsTab;
+import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -29,6 +32,7 @@ public class LauncherFrame extends JFrame {
     private PacksTab packsTab;
     private InstancesTab instancesTab;
     private AccountsTab accountsTab;
+    private ToolsTab toolsTab;
     private SettingsTab settingsTab;
 
     private LauncherBottomBar bottomBar;
@@ -97,6 +101,7 @@ public class LauncherFrame extends JFrame {
         instancesTab = new InstancesTab();
         App.settings.setInstancesPanel(instancesTab);
         accountsTab = new AccountsTab();
+        toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
 
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(34.0F));
@@ -104,6 +109,7 @@ public class LauncherFrame extends JFrame {
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsTab);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesTab);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountsTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.tools"), toolsTab);
         tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsTab);
         tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
