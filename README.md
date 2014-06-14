@@ -52,7 +52,7 @@ C:\Program Files (x86)\Launch4j
 
 ### Pluging In Your Data
 
-To get started with the code and plug in your own data, you need to create a src/main/java/com/atlauncher/data/Constansts.java file. Below is a starter to get you going:
+To get started with the code and plug in your own data, you need to create a src/main/java/com/atlauncher/data/Constants.java file. Below is a starter to get you going:
 
     package com.atlauncher.data;
 
