@@ -90,12 +90,14 @@ public class ConsoleBottomBar extends BottomBar {
                     String result = App.TASKPOOL.submit(new PasteUpload()).get();
                     if (result.contains(Constants.PASTE_CHECK_URL)) {
                         App.settings.log("Log uploaded and link copied to clipboard: " + result);
+                        App.TOASTER.pop("Log uploaded and link copied to clipboard: " + result);
                         StringSelection text = new StringSelection(result);
                         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                         clipboard.setContents(text, null);
                     } else {
                         App.settings
                                 .log("Log failed to upload: " + result, LogMessageType.error, false);
+                        App.TOASTER.popError("Log failed to upload");
                     }
                 } catch(Exception ex){
                     ex.printStackTrace(System.err);
