@@ -2793,21 +2793,4 @@ public class Settings {
         }
     }
 
-    public void pingServers() {
-        for (final Server server : servers) {
-            App.TASKPOOL.execute(new Runnable() {
-                @Override
-                public void run() {
-                    int time = Utils.pingAddress(server.getHost());
-                    if (time != 0) {
-                        log("Connection to " + server.getHost() + " took " + time + "ms!");
-                    } else {
-                        log("Connection to " + server.getHost()
-                                + " couldn't be established during ping test!",
-                                LogMessageType.error, false);
-                    }
-                }
-            });
-        }
-    }
 }

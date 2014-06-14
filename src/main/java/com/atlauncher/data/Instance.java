@@ -1370,29 +1370,6 @@ public class Instance implements Cloneable {
         }
     }
 
-    /**
-     * Uploads the contents of the console to Stikked instance to report to the pack's developer.
-     */
-    public void uploadCrashLog() {
-        Thread thread = new Thread() {
-            public void run() {
-                String result = Utils.uploadPaste("ATLauncher Log", App.settings.getLog());
-                if (result.contains(Constants.PASTE_CHECK_URL)) {
-                    App.settings.apiCall(App.settings.getAccount().getMinecraftUsername(),
-                            "reportcrash", realPack.getID() + "", getVersion(),
-                            result.replace("http://paste.atlauncher.com/view/", ""));
-                    App.settings.log("Log uploaded and reported to ModPack creator: " + result);
-                } else {
-                    App.settings
-                            .log("Log failed to upload: " + result, LogMessageType.error, false);
-                }
-            }
-
-            ;
-        };
-        thread.run();
-    }
-
     public String addTimePlayed(int time, String version) {
         Map<String, Object> request = new HashMap<String, Object>();
 

@@ -8,6 +8,9 @@ package com.atlauncher.gui.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -15,6 +18,8 @@ import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Server;
 import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.utils.Utils;
@@ -45,18 +50,15 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println("Launched NetworkCheckerTool");
         String[] options = { App.settings.getLocalizedString("common.yes"),
                 App.settings.getLocalizedString("common.no") };
         int ret = JOptionPane.showOptionDialog(
                 App.settings.getParent(),
                 "<html><p align=\"center\">"
                         + Utils.splitMultilinedString(App.settings.getLocalizedString(
-                                "tools.networkcheckerpopup",
-                                (App.settings.getServers().size() * 20) + "MB.<br/><br/>"), 75,
-                                "<br>") + "</p></html>", App.settings
-                        .getLocalizedString("tools.networkchecker"), JOptionPane.DEFAULT_OPTION,
-                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                "tools.networkcheckerpopup", "1 MB.<br/><br/>"), 75, "<br>")
+                        + "</p></html>", App.settings.getLocalizedString("tools.networkchecker"),
+                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
         if (ret == 0) {
             final ProgressDialog dialog = new ProgressDialog(
                     App.settings.getLocalizedString("tools.networkchecker"), App.settings
@@ -70,19 +72,50 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                     StringBuilder results = new StringBuilder();
                     for (Server server : App.settings.getServers()) {
                         results.append("Ping results to " + server.getHost() + " was "
-                                + Utils.pingAddress(server.getHost()) + "\n");
+                                + Utils.pingAddress(server.getHost()) + "\n\n----------------\n\n");
                         dialog.doneTask();
                     }
                     results.append("Tracert to www.creeperrepo.net was "
                             + Utils.traceRoute("www.creeperrepo.net"));
+
+                    String result = Utils.uploadPaste("ATLauncher Network Test Log",
+                            results.toString());
+                    if (result.contains(Constants.PASTE_CHECK_URL)) {
+                        try {
+                            Map<String, String> data = new HashMap<String, String>();
+                            data.put("log", result);
+                            Utils.sendAPICall("networktest/", data);
+                        } catch (IOException e1) {
+                            App.settings.logStackTrace(
+                                    "Network Test failed to submit to ATLauncher!", e1);
+                            dialog.setReturnValue(false);
+                        }
+                    } else {
+                        App.settings.log("Network Test failed to submit to ATLauncher!",
+                                LogMessageType.error, false);
+                        dialog.setReturnValue(false);
+                    }
+
                     dialog.doneTask();
-                    dialog.setReturnValue(results.toString());
+                    dialog.setReturnValue(true);
                     dialog.close();
                 }
             });
             dialog.start();
-            System.out.println("Done");
-            System.out.println(dialog.getReturnValue());
+            if (dialog.getReturnValue() == null || !(Boolean) dialog.getReturnValue()) {
+                App.settings.log("Network Test failed to run!", LogMessageType.error, false);
+            } else {
+                App.settings.log("Network Test ran and submitted to ATLauncher!");
+                String[] options2 = { App.settings.getLocalizedString("common.ok") };
+                JOptionPane.showOptionDialog(
+                        App.settings.getParent(),
+                        "<html><p align=\"center\">"
+                                + App.settings.getLocalizedString("tools.networkheckercomplete",
+                                        "<br/><br/>") + "</p></html>",
+                        App.settings.getLocalizedString("tools.networkchecker"),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                        options2, options2[0]);
+            }
         }
     }
 }
