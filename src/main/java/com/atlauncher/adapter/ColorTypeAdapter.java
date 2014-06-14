@@ -9,7 +9,9 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 /**
- * This class will ensure that colors are serialised to a hex value for easy editing
+ * This class will ensure that colors are serialized to a hex value for easy editing
+ * 
+ * TO @link RyanTheAllmighty - http://en.wikipedia.org/wiki/Serialization
  */
 public final class ColorTypeAdapter extends TypeAdapter<Color> {
 
