@@ -25,15 +25,18 @@ import com.atlauncher.utils.Utils;
 
 public class ProgressDialog extends JDialog {
 
+    private static final long serialVersionUID = -4665490255300884927L;
     private String labelText; // The text to add to the JLabel
     private JProgressBar progressBar; // The Progress Bar
     private int max; // The maximum the progress bar should get to
     private Thread thread = null; // The Thread were optionally running
     private String closedLogMessage; // The message to log to the console when dialog closed
     private Object returnValue = null; // The value returned
+    private int tasksToDo;
+    private int tasksDone;
 
     public ProgressDialog(String title, int initMax, String initLabelText,
-                          String initClosedLogMessage) {
+            String initClosedLogMessage) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
         this.labelText = initLabelText;
         this.max = initMax;
@@ -77,6 +80,21 @@ public class ProgressDialog extends JDialog {
             thread.start();
         }
         setVisible(true);
+    }
+
+    public void setTotalTasksToDo(int tasksToDo) {
+        this.tasksToDo = tasksToDo;
+        this.tasksDone = 0;
+        this.progressBar.setString("0/" + this.tasksToDo + " "
+                + App.settings.getLocalizedString("common.tasksdone"));
+        this.progressBar.setStringPainted(true);
+        this.progressBar.setMaximum(this.tasksToDo);
+    }
+
+    public void doneTask() {
+        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " "
+                + App.settings.getLocalizedString("common.tasksdone"));
+        this.progressBar.setValue(this.tasksDone);
     }
 
     public void setReturnValue(Object returnValue) {
