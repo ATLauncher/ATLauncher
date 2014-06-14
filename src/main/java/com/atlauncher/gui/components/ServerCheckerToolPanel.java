@@ -6,6 +6,9 @@
  */
 package com.atlauncher.gui.components;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
@@ -13,7 +16,7 @@ import javax.swing.border.BevelBorder;
 import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
-public class ServerCheckerToolPanel extends AbstractToolPanel {
+public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener {
 
     /**
      * Auto generated serial.
@@ -33,7 +36,13 @@ public class ServerCheckerToolPanel extends AbstractToolPanel {
         TOP_PANEL.add(TITLE_LABEL);
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
+        LAUNCH_BUTTON.addActionListener(this);
         setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("Launched ServerCheckerTool");
     }
 
 }
