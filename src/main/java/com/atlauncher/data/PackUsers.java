@@ -16,7 +16,6 @@ import com.atlauncher.App;
 import com.atlauncher.exceptions.InvalidPack;
 
 public class PackUsers {
-
     private int pack;
     private List<String> testers;
     private List<String> allowedPlayers;

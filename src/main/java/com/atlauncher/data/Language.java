@@ -15,7 +15,6 @@ import java.util.Properties;
 import com.atlauncher.App;
 
 public class Language {
-
     private String name;
     private String localizedName;
     private File file;

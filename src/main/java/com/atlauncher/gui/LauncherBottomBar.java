@@ -16,18 +16,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JToolTip;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Status;
 import com.atlauncher.gui.components.BottomBar;
+import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -42,6 +38,7 @@ public class LauncherBottomBar extends BottomBar {
     private JButton toggleConsole;
     private JButton openFolder;
     private JButton updateData;
+    private final JButton submitError = new JButton("Submit Bug");
     private JComboBox<Account> username;
 
     private JLabel statusIcon;
@@ -51,6 +48,18 @@ public class LauncherBottomBar extends BottomBar {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(0, 50)); // Make the bottom bar at least
         // 50 pixels high
+
+        submitError.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        new GithubIssueReporterDialog(null).setVisible(true);
+                    }
+                });
+            }
+        });
 
         leftSide = new JPanel();
         leftSide.setLayout(new GridBagLayout());
@@ -69,6 +78,8 @@ public class LauncherBottomBar extends BottomBar {
         leftSide.add(openFolder, gbc);
         gbc.gridx++;
         leftSide.add(updateData, gbc);
+        gbc.gridx++;
+        leftSide.add(submitError, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;

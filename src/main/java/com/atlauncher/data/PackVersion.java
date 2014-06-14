@@ -14,7 +14,6 @@ import com.atlauncher.App;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 
 public class PackVersion {
-
     private String version;
     private String minecraft;
     private MinecraftVersion minecraftVersion;

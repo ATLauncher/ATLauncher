@@ -24,10 +24,6 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class LauncherFrame extends JFrame {
-
-    // Size of initial window
-    private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
-
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;
@@ -48,7 +44,7 @@ public class LauncherFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setLayout(LAYOUT_MANAGER);
+        setLayout(new BorderLayout());
 
         App.settings.log("Setting up Look & Feel");
         setupBottomBar(); // Setup the Bottom Bar
