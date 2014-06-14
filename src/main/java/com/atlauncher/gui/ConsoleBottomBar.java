@@ -26,6 +26,7 @@ import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.gui.components.BottomBar;
+import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -85,15 +86,19 @@ public class ConsoleBottomBar extends BottomBar {
         });
         uploadLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String result = Utils.uploadLog();
-                if (result.contains(Constants.PASTE_CHECK_URL)) {
-                    App.settings.log("Log uploaded and link copied to clipboard: " + result);
-                    StringSelection text = new StringSelection(result);
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(text, null);
-                } else {
-                    App.settings
-                            .log("Log failed to upload: " + result, LogMessageType.error, false);
+                try{
+                    String result = App.TASKPOOL.submit(new PasteUpload()).get();
+                    if (result.contains(Constants.PASTE_CHECK_URL)) {
+                        App.settings.log("Log uploaded and link copied to clipboard: " + result);
+                        StringSelection text = new StringSelection(result);
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(text, null);
+                    } else {
+                        App.settings
+                                .log("Log failed to upload: " + result, LogMessageType.error, false);
+                    }
+                } catch(Exception ex){
+                    ex.printStackTrace(System.err);
                 }
             }
         });

@@ -35,7 +35,7 @@ public final class GithubIssueReporterDialog extends JDialog {
                     public void run() {
                         try {
                             GithubIssueReporter.submit(TITLE_FIELD.getText() + " - " + Constants.VERSION, INFO_AREA.getText());
-                        } catch (IOException e1) {
+                        } catch (Exception e1) {
                             e1.printStackTrace(System.err);
                         }
                         dispose();

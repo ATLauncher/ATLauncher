@@ -2,11 +2,11 @@ package com.atlauncher.reporter;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
+import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.Utils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -18,8 +18,8 @@ public final class GithubIssueReporter{
     private GithubIssueReporter(){}
 
     public static void submit(String title, String body)
-    throws IOException {
-        String log = Utils.uploadLog();
+    throws Exception {
+        String log = App.TASKPOOL.submit(new PasteUpload()).get();
         body = body + "\n\n" + times('-', 50) + "\n" + "Here is my log: " + log;
         HttpsURLConnection conn = (HttpsURLConnection) new URL(GITHUB_API + "/repos/ATLauncher/ATLauncher/issues").openConnection();
         conn.setRequestProperty("Authorization", "token " + Constants.GIT_REPORTER_AUTH);
@@ -44,6 +44,8 @@ public final class GithubIssueReporter{
         while((line = reader.readLine()) != null){
             builder.append(line);
         }
+
+        reader.close();
     }
 
     private static String times(char c, int times){
