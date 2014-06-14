@@ -1400,15 +1400,16 @@ public class Utils {
                 InputStream is = process.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
                 br = new BufferedReader(isr);
-                version = br.readLine(); // Read first line
-                version = br.readLine(); // Get second line
-
-                // Extract version information
+                String line = null;
                 Pattern p = Pattern.compile("build ([0-9.-_a-zA-Z]+)");
-                Matcher m = p.matcher(version);
+                while ((line = br.readLine()) != null) {
+                    // Extract version information
+                    Matcher m = p.matcher(line);
 
-                if (m.find()) {
-                    version = m.group(1);
+                    if (m.find()) {
+                        version = m.group(1);
+                        break;
+                    }
                 }
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
@@ -1444,15 +1445,29 @@ public class Utils {
             processBuilder.directory(folder);
             processBuilder.redirectErrorStream(true);
             BufferedReader br = null;
+            int version = -1;
             try {
                 Process process = processBuilder.start();
                 InputStream is = process.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
                 br = new BufferedReader(isr);
-                String line = br.readLine(); // Read first line
-                line = br.readLine(); // Get the second line
-                int buildIndex = line.indexOf("build 1.") + 8;
-                return Integer.parseInt(line.substring(buildIndex, buildIndex + 1)) >= 7;
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    if (line.contains("build 1.")) {
+                        int buildIndex = line.indexOf("build 1.") + 8;
+                        version = Integer.parseInt(line.substring(buildIndex, buildIndex + 1));
+                        break;
+                    }
+                }
+                if (version == -1) {
+                    App.settings.log(
+                            "Cannot get java version number from the ouput of java -version",
+                            LogMessageType.warning, false);
+                } else {
+                    return version >= 7;
+                }
+            } catch (NumberFormatException e) {
+                App.settings.logStackTrace("Cannot get number from the ouput of java -version", e);
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
             } finally {
@@ -1824,7 +1839,6 @@ public class Utils {
             response = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
                 response.append(line);
                 response.append('\r');
             }
