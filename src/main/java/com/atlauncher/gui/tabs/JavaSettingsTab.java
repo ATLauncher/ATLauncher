@@ -67,9 +67,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         memoryLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.memory") + ":",
                 HELP_ICON,
                 (Utils.is64Bit() ? App.settings.getLocalizedString("settings.memoryhelp")
-                        : "<html><center>"
-                        + App.settings.getLocalizedString("settings.memoryhelp32bit",
-                        "<br/>") + "</center></html>"));
+                        : "<html>"
+                                + App.settings.getLocalizedString("settings.memoryhelp32bit",
+                                        "<br/>") + "</html>"));
         add(memoryLabel, gbc);
 
         gbc.gridx++;
@@ -91,10 +91,10 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                     if (selectedRam > 4096) {
                         JOptionPane.showMessageDialog(
                                 App.settings.getParent(),
-                                "<html><center>"
+                                "<html>"
                                         + App.settings.getLocalizedString(
-                                        "settings.toomuchramallocated", "<br/><br/>")
-                                        + "</center></html>", App.settings
+                                                "settings.toomuchramallocated", "<br/><br/>")
+                                        + "</html>", App.settings
                                         .getLocalizedString("settings.help"),
                                 JOptionPane.PLAIN_MESSAGE);
                     }
@@ -164,7 +164,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         });
         commonScreenSizes.setPreferredSize(new Dimension(
                 commonScreenSizes.getPreferredSize().width + 10, commonScreenSizes
-                .getPreferredSize().height));
+                        .getPreferredSize().height));
         windowSizePanel.add(widthField);
         windowSizePanel.add(new JLabel("x"));
         windowSizePanel.add(heightField);
@@ -179,9 +179,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaPathLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.javapath")
-                + ":", HELP_ICON, "<html><center>"
-                + App.settings.getLocalizedString("settings.javapathhelp", "<br/>")
-                + "</center></html>");
+                + ":", HELP_ICON, "<html>"
+                + App.settings.getLocalizedString("settings.javapathhelp", "<br/>") + "</html>");
         add(javaPathLabel, gbc);
 
         gbc.gridx++;
@@ -277,9 +276,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         if (!jPath.exists()) {
             JOptionPane.showMessageDialog(
                     App.settings.getParent(),
-                    "<html><center>"
+                    "<html>"
                             + App.settings.getLocalizedString("settings.javapathincorrect",
-                            "<br/><br/>") + "</center></html>",
+                                    "<br/><br/>") + "</html>",
                     App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
@@ -292,9 +291,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 || javaParameters.getText().contains("-XX:MetaspaceSize")) {
             JOptionPane.showMessageDialog(
                     App.settings.getParent(),
-                    "<html><center>"
+                    "<html>"
                             + App.settings.getLocalizedString("settings.javaparametersincorrect",
-                            "<br/><br/>") + "</center></html>",
+                                    "<br/><br/>") + "</html>",
                     App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }

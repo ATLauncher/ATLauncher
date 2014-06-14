@@ -84,11 +84,11 @@ public class RenameInstanceDialog extends JDialog {
                 } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
-                            "<html><center>"
+                            "<html><p align=\"center\">"
                                     + App.settings.getLocalizedString("common.error")
                                     + "<br/><br/>"
                                     + App.settings.getLocalizedString("instance.invalidname",
-                                    instanceName.getText()) + "</center></html>",
+                                            instanceName.getText()) + "</p></html>",
                             App.settings.getLocalizedString("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                     return;
@@ -101,11 +101,10 @@ public class RenameInstanceDialog extends JDialog {
                                 LogMessageType.error, false);
                         JOptionPane.showMessageDialog(
                                 RenameInstanceDialog.this,
-                                "<html><center>"
+                                "<html><p align=\"center\">"
                                         + App.settings.getLocalizedString("instance.errorrenaming",
-                                        instance.getName() + "<br/><br/>")
-                                        + "</center></html>", App.settings
-                                        .getLocalizedString("common.error"),
+                                                instance.getName() + "<br/><br/>") + "</p></html>",
+                                App.settings.getLocalizedString("common.error"),
                                 JOptionPane.ERROR_MESSAGE);
                     }
                     close();

@@ -35,9 +35,9 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableServerCheckerLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.serverchecker") + "?", HELP_ICON,
-                "<html><center>"
+                "<html>"
                         + App.settings.getLocalizedString("settings.servercheckerhelp", "<br/>"
-                                + "</center></html>"));
+                                + "</html>"));
         add(enableServerCheckerLabel, gbc);
 
         gbc.gridx++;

@@ -333,7 +333,7 @@ public class Mod {
                                 App.settings.getLocalizedString("instance.ivedownloaded") };
                         retValue = JOptionPane.showOptionDialog(
                                 App.settings.getParent(),
-                                "<html><center>"
+                                "<html><p align=\"center\">"
                                         + App.settings.getLocalizedString("instance.browseropened",
                                                 (serverFile == null ? (isFilePattern() ? getName()
                                                         : getFile()) : (isFilePattern() ? getName()
@@ -348,7 +348,7 @@ public class Mod {
                                                         .getDownloadsDir().getAbsolutePath()
                                                         + " or<br/>"
                                                         + App.settings.getUsersDownloadsDir()))
-                                        + "</center></html>",
+                                        + "</p></html>",
                                 App.settings.getLocalizedString("common.downloading")
                                         + " "
                                         + (serverFile == null ? (isFilePattern() ? getName()
@@ -500,25 +500,23 @@ public class Mod {
                 Utils.openBrowser(getServerURL());
                 String[] options = new String[] { App.settings
                         .getLocalizedString("instance.ivedownloaded") };
-                int retValue = JOptionPane
-                        .showOptionDialog(
-                                App.settings.getParent(),
-                                "<html><center>"
-                                        + App.settings.getLocalizedString("instance.browseropened",
-                                                (serverFile == null ? getFile() : getServerFile()))
-                                        + "<br/><br/>"
-                                        + App.settings.getLocalizedString("instance.pleasesave")
-                                        + "<br/><br/>"
-                                        + (App.settings.isUsingMacApp() ? App.settings
-                                                .getUsersDownloadsDir().getAbsolutePath()
-                                                : App.settings.getDownloadsDir().getAbsolutePath()
-                                                        + " or<br/>"
-                                                        + App.settings.getUsersDownloadsDir())
-                                        + "</center></html>",
-                                App.settings.getLocalizedString("common.downloading") + " "
-                                        + (serverFile == null ? getFile() : getServerFile()),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
-                                options, options[0]);
+                int retValue = JOptionPane.showOptionDialog(
+                        App.settings.getParent(),
+                        "<html><p align=\"center\">"
+                                + App.settings.getLocalizedString("instance.browseropened",
+                                        (serverFile == null ? getFile() : getServerFile()))
+                                + "<br/><br/>"
+                                + App.settings.getLocalizedString("instance.pleasesave")
+                                + "<br/><br/>"
+                                + (App.settings.isUsingMacApp() ? App.settings
+                                        .getUsersDownloadsDir().getAbsolutePath() : App.settings
+                                        .getDownloadsDir().getAbsolutePath()
+                                        + " or<br/>"
+                                        + App.settings.getUsersDownloadsDir()) + "</p></html>",
+                        App.settings.getLocalizedString("common.downloading") + " "
+                                + (serverFile == null ? getFile() : getServerFile()),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
+                        options[0]);
                 if (retValue == JOptionPane.CLOSED_OPTION) {
                     installer.cancel(true);
                     return;

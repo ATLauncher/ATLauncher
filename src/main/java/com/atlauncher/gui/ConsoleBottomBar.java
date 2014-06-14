@@ -27,7 +27,6 @@ import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.gui.components.BottomBar;
 import com.atlauncher.thread.PasteUpload;
-import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class ConsoleBottomBar extends BottomBar {
@@ -86,7 +85,7 @@ public class ConsoleBottomBar extends BottomBar {
         });
         uploadLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                try{
+                try {
                     String result = App.TASKPOOL.submit(new PasteUpload()).get();
                     if (result.contains(Constants.PASTE_CHECK_URL)) {
                         App.settings.log("Log uploaded and link copied to clipboard: " + result);
@@ -95,20 +94,22 @@ public class ConsoleBottomBar extends BottomBar {
                         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                         clipboard.setContents(text, null);
                     } else {
-                        App.settings
-                                .log("Log failed to upload: " + result, LogMessageType.error, false);
+                        App.settings.log("Log failed to upload: " + result, LogMessageType.error,
+                                false);
                         App.TOASTER.popError("Log failed to upload");
                     }
-                } catch(Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace(System.err);
                 }
             }
         });
         killMinecraft.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><center>"
+                int ret = JOptionPane.showConfirmDialog(
+                        App.settings.getParent(),
+                        "<html><p align=\"center\">"
                                 + App.settings.getLocalizedString("console.killsure", "<br/><br/>")
-                                + "</center>" + "</html>", App.settings.getLocalizedString("console.kill"),
+                                + "</p></html>", App.settings.getLocalizedString("console.kill"),
                         JOptionPane.YES_NO_OPTION);
                 if (ret == JOptionPane.YES_OPTION) {
                     App.settings.killMinecraft();

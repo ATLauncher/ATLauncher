@@ -161,10 +161,10 @@ public class AccountsTab extends JPanel {
                             App.settings.getLocalizedString("common.no") };
                     int ret = JOptionPane.showOptionDialog(
                             App.settings.getParent(),
-                            "<html><center>"
+                            "<html><p align=\"center\">"
                                     + App.settings.getLocalizedString(
                                             "account.rememberpasswordwarning", "<br/><br/>")
-                                    + "</center></html>", App.settings
+                                    + "</p></html>", App.settings
                                     .getLocalizedString("account.securitywarningtitle"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
@@ -276,11 +276,11 @@ public class AccountsTab extends JPanel {
                         String[] options = { App.settings.getLocalizedString("common.ok") };
                         JOptionPane.showOptionDialog(
                                 App.settings.getParent(),
-                                "<html><center>"
+                                "<html><p align=\"center\">"
                                         + App.settings.getLocalizedString("account.incorrect")
                                         + "<br/><br/>"
                                         + (response == null ? "Unknown Error" : response
-                                                .getErrorMessage()) + "</center></html>",
+                                                .getErrorMessage()) + "</p></html>",
                                 App.settings.getLocalizedString("account.notadded"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);

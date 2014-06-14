@@ -40,9 +40,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         forgeLoggingLevelLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.forgelogginglevel") + ":", HELP_ICON,
-                "<html><center>"
+                "<html>"
                         + App.settings.getLocalizedString("settings.forgelogginglevelhelp",
-                        "<br/><br/>") + "</center></html>");
+                                "<br/><br/>") + "</html>");
         add(forgeLoggingLevelLabel, gbc);
 
         gbc.gridx++;
@@ -89,10 +89,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableLoggingLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.logging") + "?", HELP_ICON,
-                "<html><center>"
+                App.settings.getLocalizedString("settings.logging") + "?", HELP_ICON, "<html>"
                         + App.settings.getLocalizedString("settings.logginghelp", "<br/>"
-                        + "</center></html>"));
+                                + "</html>"));
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
@@ -126,11 +125,10 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableOpenEyeReportingLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.openeye") + "?", HELP_ICON,
-                "<html><center>"
+                App.settings.getLocalizedString("settings.openeye") + "?", HELP_ICON, "<html>"
                         + Utils.splitMultilinedString(
-                        App.settings.getLocalizedString("settings.openeyehelp"), 80,
-                        "<br/>") + "</center></html>");
+                                App.settings.getLocalizedString("settings.openeyehelp"), 80,
+                                "<br/>") + "</html>");
         add(enableOpenEyeReportingLabel, gbc);
 
         gbc.gridx++;

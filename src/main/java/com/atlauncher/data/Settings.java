@@ -240,10 +240,13 @@ public class Settings {
         if (Utils.isWindows() && this.javaPath.contains("x86")) {
             String[] options = { App.settings.getLocalizedString("common.yes"),
                     App.settings.getLocalizedString("common.no") };
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
-                    + App.settings.getLocalizedString("settings.running32bit", "<br/><br/>")
-                    + "</center></html>",
-                    App.settings.getLocalizedString("settings.running32bittitle"),
+            int ret = JOptionPane.showOptionDialog(
+                    App.settings.getParent(),
+                    "<html><p align=\"center\">"
+                            + App.settings
+                                    .getLocalizedString("settings.running32bit", "<br/><br/>")
+                            + "</p></html>", App.settings
+                            .getLocalizedString("settings.running32bittitle"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                     options[0]);
             if (ret == 0) {
@@ -255,9 +258,11 @@ public class Settings {
             String[] options = { App.settings.getLocalizedString("common.download"),
                     App.settings.getLocalizedString("common.ok"),
                     App.settings.getLocalizedString("instance.dontremindmeagain") };
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
-                    + App.settings.getLocalizedString("settings.unsupportedjava", "<br/><br/>")
-                    + "</center></html>",
+            int ret = JOptionPane.showOptionDialog(
+                    App.settings.getParent(),
+                    "<html><p align=\"center\">"
+                            + App.settings.getLocalizedString("settings.unsupportedjava",
+                                    "<br/><br/>") + "</p></html>",
                     App.settings.getLocalizedString("settings.unsupportedjavatitle"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                     options[0]);
@@ -296,9 +301,11 @@ public class Settings {
         if (matches) {
             String[] options = { App.settings.getLocalizedString("common.ok"),
                     App.settings.getLocalizedString("account.removepasswords") };
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><center>"
-                    + App.settings.getLocalizedString("account.securitywarning", "<br/>")
-                    + "</center></html>",
+            int ret = JOptionPane.showOptionDialog(
+                    App.settings.getParent(),
+                    "<html><p align=\"center\">"
+                            + App.settings.getLocalizedString("account.securitywarning", "<br/>")
+                            + "</p></html>",
                     App.settings.getLocalizedString("account.securitywarningtitle"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                     options[0]);
@@ -473,14 +480,12 @@ public class Settings {
                 downloadUpdate(); // Update the Launcher
             } else {
                 String[] options = { "Ok" };
-                int ret = JOptionPane
-                        .showOptionDialog(
-                                App.settings.getParent(),
-                                "<html><center>Launcher Update failed. Please click Ok to close "
-                                        + "the launcher and open up the downloads page.<br/><br/>Download "
-                                        + "the update and replace the old ATLauncher file.</center></html>",
-                                "Update Failed!", JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                        "<html><p align=\"center\">Launcher Update failed. Please click Ok to close "
+                                + "the launcher and open up the downloads page.<br/><br/>Download "
+                                + "the update and replace the old ATLauncher file.</p></html>",
+                        "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                        null, options, options[0]);
                 if (ret == 0) {
                     Utils.openBrowser("http://www.atlauncher.com/downloads/");
                     System.exit(0);
@@ -790,12 +795,11 @@ public class Settings {
         } catch (IOException e) {
             String[] options = { "OK" };
             JOptionPane.showOptionDialog(null,
-                    "<html><center>Cannot create the log file.<br/><br/>Make sure"
+                    "<html><p align=\"center\">Cannot create the log file.<br/><br/>Make sure"
                             + " you are running the Launcher from somewhere with<br/>write"
                             + " permissions for your user account such as your Home/Users folder"
-                            + " or desktop.</center></html>", "Warning",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                    options[0]);
+                            + " or desktop.</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             System.exit(0);
         }
     }
@@ -855,12 +859,11 @@ public class Settings {
         } catch (IOException e) {
             String[] options = { "OK" };
             JOptionPane.showOptionDialog(null,
-                    "<html><center>Cannot create the config file.<br/><br/>Make sure"
+                    "<html><p align=\"center\">Cannot create the config file.<br/><br/>Make sure"
                             + " you are running the Launcher from somewhere with<br/>write"
                             + " permissions for your user account such as your Home/Users folder"
-                            + " or desktop.</center></html>", "Warning",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                    options[0]);
+                            + " or desktop.</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             System.exit(0);
         }
         try {

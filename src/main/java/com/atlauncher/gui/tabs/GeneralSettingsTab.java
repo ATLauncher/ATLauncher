@@ -128,9 +128,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         advancedBackupLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.advancedbackup") + "?", HELP_ICON,
-                "<html><center>"
-                        + App.settings.getLocalizedString("settings.advancedbackuphelp", "<br/>")
-                        + "</center></html>");
+                "<html>" + App.settings.getLocalizedString("settings.advancedbackuphelp", "<br/>")
+                        + "</html>");
         add(advancedBackupLabel, gbc);
 
         gbc.gridx++;
@@ -209,10 +208,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableTrayIconLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.traymenu") + "?", HELP_ICON,
-                "<html><center>"
+                App.settings.getLocalizedString("settings.traymenu") + "?", HELP_ICON, "<html>"
                         + App.settings.getLocalizedString("settings.traymenuhelp", "<br/>")
-                        + "</center></html>");
+                        + "</html>");
         add(enableTrayIconLabel, gbc);
 
         gbc.gridx++;

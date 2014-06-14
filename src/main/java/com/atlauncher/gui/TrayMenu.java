@@ -33,10 +33,10 @@ public final class TrayMenu extends PopupMenu {
                             if (App.settings.isMinecraftLaunched()) {
                                 int ret = JOptionPane.showConfirmDialog(
                                         App.settings.getParent(),
-                                        "<html><center>"
+                                        "<html><p align=\"center\">"
                                                 + App.settings.getLocalizedString(
-                                                "console.killsure", "<br/><br/>")
-                                                + "</center></html>", App.settings
+                                                        "console.killsure", "<br/><br/>")
+                                                + "</p></html>", App.settings
                                                 .getLocalizedString("console.kill"),
                                         JOptionPane.YES_OPTION);
 

@@ -19,7 +19,7 @@ public final class HTMLifier {
     }
 
     public HTMLifier center() {
-        this.text = "<center>" + this.text + "</center>";
+        this.text = "<p align=\"center\">" + this.text + "</p>";
         return this;
     }
 

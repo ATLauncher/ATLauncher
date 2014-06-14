@@ -1076,9 +1076,9 @@ public class Instance implements Cloneable {
                         App.settings.getLocalizedString("common.no") };
                 int ret = JOptionPane.showOptionDialog(
                         App.settings.getParent(),
-                        "<html><center>"
+                        "<html><p align=\"center\">"
                                 + App.settings.getLocalizedString("instance.insufficientram", "<b>"
-                                        + this.memory + "</b> MB<br/><br/>") + "</center></html>",
+                                        + this.memory + "</b> MB<br/><br/>") + "</p></html>",
                         App.settings.getLocalizedString("instance.insufficientramtitle"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                         options[0]);
@@ -1093,15 +1093,17 @@ public class Instance implements Cloneable {
             if (App.settings.getPermGen() < this.permgen) {
                 String[] options = { App.settings.getLocalizedString("common.yes"),
                         App.settings.getLocalizedString("common.no") };
-                int ret = JOptionPane.showOptionDialog(
-                        App.settings.getParent(),
-                        "<html><center>"
-                                + App.settings.getLocalizedString("instance.insufficientpermgen",
-                                        "<b>" + this.permgen + "</b> MB<br/><br/>")
-                                + "</center></html>", App.settings
-                                .getLocalizedString("instance.insufficientpermgentitle"),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                        options[0]);
+                int ret = JOptionPane
+                        .showOptionDialog(
+                                App.settings.getParent(),
+                                "<html><p align=\"center\">"
+                                        + App.settings.getLocalizedString(
+                                                "instance.insufficientpermgen", "<b>"
+                                                        + this.permgen + "</b> MB<br/><br/>")
+                                        + "</p></html>", App.settings
+                                        .getLocalizedString("instance.insufficientpermgentitle"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
                 if (ret != 0) {
                     App.settings
                             .log("Launching of instance cancelled due to user cancelling memory warning!",
@@ -1151,17 +1153,14 @@ public class Instance implements Cloneable {
             } else if (sess.hasError()) {
                 App.settings.log(sess.getErrorMessage(), LogMessageType.error, false);
                 String[] options = { App.settings.getLocalizedString("common.ok") };
-                JOptionPane
-                        .showOptionDialog(
-                                App.settings.getParent(),
-                                "<html><center>"
-                                        + App.settings.getLocalizedString(
-                                                "instance.errorloggingin",
-                                                "<br/><br/>" + sess.getErrorMessage())
-                                        + "</center></html>", App.settings
-                                        .getLocalizedString("instance.errorloggingintitle"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
+                JOptionPane.showOptionDialog(
+                        App.settings.getParent(),
+                        "<html><p align=\"center\">"
+                                + App.settings.getLocalizedString("instance.errorloggingin",
+                                        "<br/><br/>" + sess.getErrorMessage()) + "</p></html>",
+                        App.settings.getLocalizedString("instance.errorloggingintitle"),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                        options[0]);
                 App.settings.setMinecraftLaunched(false);
                 return false;
             }
@@ -1350,13 +1349,13 @@ public class Instance implements Cloneable {
                                 App.settings.getLocalizedString("common.ok") };
                         int ret = JOptionPane.showOptionDialog(
                                 App.settings.getParent(),
-                                "<html><center>"
+                                "<html><p align=\"center\">"
                                         + App.settings.getLocalizedString(
                                                 "instance.openeyereport1", "<br/><br/>")
                                         + response.getNoteDisplay()
                                         + App.settings
                                                 .getLocalizedString("instance.openeyereport2")
-                                        + "</center></html>", App.settings
+                                        + "</p></html>", App.settings
                                         .getLocalizedString("instance.aboutyourcrash"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
                                 options, options[1]);

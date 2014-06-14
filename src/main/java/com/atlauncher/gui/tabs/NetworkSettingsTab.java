@@ -78,9 +78,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         connectionTimeoutLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.connectiontimeout") + ":", HELP_ICON,
-                "<html><center>"
+                "<html>"
                         + App.settings.getLocalizedString("settings.connectiontimeouthelp",
-                        "<br/><br/>" + "</center></html>"));
+                                "<br/><br/>" + "</html>"));
         add(connectionTimeoutLabel, gbc);
 
         gbc.gridx++;
@@ -97,9 +97,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         concurrentConnectionsLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.concurrentconnections") + ":", HELP_ICON,
-                "<html><center>"
+                "<html>"
                         + App.settings.getLocalizedString("settings.concurrentconnectionshelp",
-                        "<br/><br/>") + "</center></html>");
+                                "<br/><br/>") + "</html>");
         add(concurrentConnectionsLabel, gbc);
 
         gbc.gridx++;
