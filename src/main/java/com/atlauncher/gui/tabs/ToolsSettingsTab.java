@@ -11,7 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -20,136 +21,83 @@ import com.atlauncher.utils.Utils;
 @SuppressWarnings("serial")
 public class ToolsSettingsTab extends AbstractSettingsTab {
 
-    private JLabelWithHover forgeLoggingLevelLabel;
-    private JComboBox<String> forgeLoggingLevel;
+    private JLabelWithHover enableServerCheckerLabel;
+    private JCheckBox enableServerChecker;
 
-    private JLabelWithHover enableLeaderboardsLabel;
-    private JCheckBox enableLeaderboards;
-
-    private JLabelWithHover enableLoggingLabel;
-    private JCheckBox enableLogs;
-
-    private JLabelWithHover enableOpenEyeReportingLabel;
-    private JCheckBox enableOpenEyeReporting;
+    private JLabelWithHover serverCheckerWaitLabel;
+    private JTextField serverCheckerWait;
 
     public ToolsSettingsTab() {
-        // Forge Logging Level
+        // Enable Server Checker
         gbc.gridx = 0;
-        gbc.gridy++;
+        gbc.gridy = 0;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        forgeLoggingLevelLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.forgelogginglevel") + ":", HELP_ICON,
+        enableServerCheckerLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.serverchecker") + "?", HELP_ICON,
                 "<html><center>"
-                        + App.settings.getLocalizedString("settings.forgelogginglevelhelp",
-                        "<br/><br/>") + "</center></html>");
-        add(forgeLoggingLevelLabel, gbc);
+                        + App.settings.getLocalizedString("settings.servercheckerhelp", "<br/>"
+                                + "</center></html>"));
+        add(enableServerCheckerLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        forgeLoggingLevel = new JComboBox<String>();
-        forgeLoggingLevel.addItem("SEVERE");
-        forgeLoggingLevel.addItem("WARNING");
-        forgeLoggingLevel.addItem("INFO");
-        forgeLoggingLevel.addItem("CONFIG");
-        forgeLoggingLevel.addItem("FINE");
-        forgeLoggingLevel.addItem("FINER");
-        forgeLoggingLevel.addItem("FINEST");
-        forgeLoggingLevel.setSelectedItem(App.settings.getForgeLoggingLevel());
-        add(forgeLoggingLevel, gbc);
-
-        // Enable Leaderboards
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLeaderboardsLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.leaderboards") + "?", HELP_ICON,
-                App.settings.getLocalizedString("settings.leaderboardshelp"));
-        add(enableLeaderboardsLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableLeaderboards = new JCheckBox();
-        if (App.settings.enableLeaderboards()) {
-            enableLeaderboards.setSelected(true);
+        enableServerChecker = new JCheckBox();
+        if (App.settings.enableServerChecker()) {
+            enableServerChecker.setSelected(true);
         }
-        if (!App.settings.enableLogs()) {
-            enableLeaderboards.setEnabled(false);
-        }
-        add(enableLeaderboards, gbc);
+        enableServerChecker.addActionListener(new ActionListener() {
 
-        // Enable Logging
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLoggingLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.logging") + "?", HELP_ICON,
-                "<html><center>"
-                        + App.settings.getLocalizedString("settings.logginghelp", "<br/>"
-                        + "</center></html>"));
-        add(enableLoggingLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableLogs = new JCheckBox();
-        enableLogs.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                if (!enableLogs.isSelected()) {
-                    enableOpenEyeReporting.setSelected(false);
-                    enableOpenEyeReporting.setEnabled(false);
-                    enableLeaderboards.setSelected(false);
-                    enableLeaderboards.setEnabled(false);
+                if (!enableServerChecker.isSelected()) {
+                    serverCheckerWait.setEnabled(false);
                 } else {
-                    enableOpenEyeReporting.setSelected(true);
-                    enableOpenEyeReporting.setEnabled(true);
-                    enableLeaderboards.setSelected(true);
-                    enableLeaderboards.setEnabled(true);
+                    serverCheckerWait.setEnabled(true);
                 }
             }
         });
-        if (App.settings.enableLogs()) {
-            enableLogs.setSelected(true);
-        }
-        add(enableLogs, gbc);
+        add(enableServerChecker, gbc);
 
-        // Enable OpenEye Reporting
-
+        // Server Checker Wait Settings
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableOpenEyeReportingLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.openeye") + "?", HELP_ICON,
-                "<html><center>"
+        serverCheckerWaitLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.servercheckerwait") + ":", HELP_ICON,
+                "<html>"
                         + Utils.splitMultilinedString(
-                        App.settings.getLocalizedString("settings.openeyehelp"), 80,
-                        "<br/>") + "</center></html>");
-        add(enableOpenEyeReportingLabel, gbc);
+                                App.settings.getLocalizedString("settings.servercheckerwaithelp"),
+                                75, "<br/>") + "</html>");
+        add(serverCheckerWaitLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableOpenEyeReporting = new JCheckBox();
-        if (!App.settings.enableLogs()) {
-            enableOpenEyeReporting.setEnabled(false);
+        serverCheckerWait = new JTextField(4);
+        serverCheckerWait.setText(App.settings.getServerCheckerWait() + "");
+        if (!App.settings.enableServerChecker()) {
+            serverCheckerWait.setEnabled(false);
         }
-        if (App.settings.enableOpenEyeReporting()) {
-            enableOpenEyeReporting.setSelected(true);
+        add(serverCheckerWait, gbc);
+    }
+
+    public boolean isValidServerCheckerWait() {
+        if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1
+                || Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
+            JOptionPane.showMessageDialog(App.settings.getParent(),
+                    App.settings.getLocalizedString("settings.servercheckerwaitinvalid"),
+                    App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
+            return false;
         }
-        add(enableOpenEyeReporting, gbc);
+        return true;
     }
 
     public void save() {
-        App.settings.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
-        App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
-        App.settings.setEnableLogs(enableLogs.isSelected());
-        App.settings.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());
+        App.settings.setEnableServerChecker(enableServerChecker.isSelected());
+        App.settings.setServerCheckerWait(Integer.parseInt(serverCheckerWait.getText().replaceAll(
+                "[^0-9]", "")));
     }
 }

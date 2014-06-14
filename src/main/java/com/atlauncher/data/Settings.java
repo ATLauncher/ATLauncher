@@ -116,6 +116,8 @@ public class Settings {
     private String theme; // The theme to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
     private boolean hadConnectionTimeoutCheck; // If the user has had the connection timeout check
+    private boolean enableServerChecker; // If to enable server checker
+    private int serverCheckerWait; // Time to wait in minutes between checking server status
 
     // General backup settings
     private boolean autoBackup; // Whether backups are created on instance close
@@ -1047,6 +1049,9 @@ public class Settings {
 
             this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
 
+            this.enableServerChecker = Boolean.parseBoolean(properties.getProperty(
+                    "enableserverchecker", "false"));
+
             this.enableOpenEyeReporting = Boolean.parseBoolean(properties.getProperty(
                     "enableopeneyereporting", "true"));
 
@@ -1077,6 +1082,17 @@ public class Settings {
                 this.proxyHost = "";
                 this.proxyPort = 0;
                 this.proxyType = "";
+            }
+
+            this.serverCheckerWait = Integer.parseInt(properties.getProperty("servercheckerwait",
+                    "5"));
+            if (this.serverCheckerWait < 1 || this.serverCheckerWait > 30) {
+                // Server checker wait should be between 1 and 30
+                log("Tried to set server connection wait to "
+                        + this.serverCheckerWait
+                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
+                        LogMessageType.warning, false);
+                this.connectionTimeout = 5;
             }
 
             this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
@@ -1160,12 +1176,15 @@ public class Settings {
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true"
                     : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
+            properties.setProperty("enableserverchecker", (this.enableServerChecker) ? "true"
+                    : "false");
             properties.setProperty("enableopeneyereporting", (this.enableOpenEyeReporting) ? "true"
                     : "false");
             properties.setProperty("enableproxy", (this.enableProxy) ? "true" : "false");
             properties.setProperty("proxyhost", this.proxyHost);
             properties.setProperty("proxyport", this.proxyPort + "");
             properties.setProperty("proxytype", this.proxyType);
+            properties.setProperty("servercheckerwait", this.serverCheckerWait + "");
             properties.setProperty("connectiontimeout", this.connectionTimeout + "");
             properties.setProperty("concurrentconnections", this.concurrentConnections + "");
             properties.setProperty("theme", this.theme);
@@ -2616,6 +2635,14 @@ public class Settings {
         this.enableLogs = enableLogs;
     }
 
+    public boolean enableServerChecker() {
+        return this.enableServerChecker;
+    }
+
+    public void setEnableServerChecker(boolean enableServerChecker) {
+        this.enableServerChecker = enableServerChecker;
+    }
+
     public boolean enableOpenEyeReporting() {
         return this.enableOpenEyeReporting;
     }
@@ -2654,6 +2681,18 @@ public class Settings {
 
     public String getProxyType() {
         return this.proxyType;
+    }
+
+    public void setServerCheckerWait(int serverCheckerWait) {
+        this.serverCheckerWait = serverCheckerWait;
+    }
+
+    public int getServerCheckerWait() {
+        return this.serverCheckerWait;
+    }
+
+    public int getServerCheckerWaitInMilliseconds() {
+        return this.serverCheckerWait * 60 * 1000;
     }
 
     public void setConnectionTimeout(int connectionTimeout) {

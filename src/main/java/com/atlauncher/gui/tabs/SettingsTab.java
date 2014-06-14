@@ -61,7 +61,8 @@ public class SettingsTab extends JPanel {
                         && networkSettingsTab.isValidConnectionTimeout()
                         && networkSettingsTab.isValidConcurrentConnections()
                         && networkSettingsTab.isValidProxyPort()
-                        && networkSettingsTab.canConnectWithProxy()) {
+                        && networkSettingsTab.canConnectWithProxy()
+                        && toolsSettingsTab.isValidServerCheckerWait()) {
                     boolean restartLauncher = generalSettingsTab.needToRestartLauncher()
                             || generalSettingsTab.needToReloadTheme();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
