@@ -19,7 +19,6 @@ import com.atlauncher.gui.dialogs.AddServerForCheckerDialog;
 import com.atlauncher.utils.Utils;
 
 public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener {
-
     /**
      * Auto generated serial.
      */

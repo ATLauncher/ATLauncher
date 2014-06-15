@@ -7,7 +7,6 @@
 package com.atlauncher.data;
 
 public class Version {
-
     private boolean isDev;
     private String version;
     private MinecraftVersion minecraftVersion;

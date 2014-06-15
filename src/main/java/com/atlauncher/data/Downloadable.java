@@ -23,7 +23,6 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class Downloadable {
-
     private String beforeURL;
     private String url;
     private File file;

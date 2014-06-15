@@ -17,7 +17,6 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class Action {
-
     private ArrayList<Mod> mod;
     private String action;
     private Type type;

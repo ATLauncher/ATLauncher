@@ -13,20 +13,14 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.*;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
@@ -34,14 +28,17 @@ import com.atlauncher.data.LogMessageType;
 import com.atlauncher.evnt.ConsoleCloseEvent;
 import com.atlauncher.evnt.ConsoleOpenEvent;
 import com.atlauncher.evnt.RelocalizationEvent;
+import com.atlauncher.evnt.ReskinEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.listener.ReskinListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.ReskinManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Utils;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener{
+public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener{
     private JScrollPane scrollPane;
     public Console console;
     private ConsoleBottomBar bottomBar;
@@ -70,6 +67,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener{
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
         RelocalizationManager.addListener(this);
+        ReskinManager.addListener(this);
     }
 
     @Override
@@ -302,5 +300,15 @@ public class LauncherConsole extends JFrame implements RelocalizationListener{
     public void onRelocalization(RelocalizationEvent event) {
         copy.setText(App.settings.getLocalizedString("common.copy"));
         bottomBar.setupLanguage();
+    }
+
+    @Override
+    public void onReskin(ReskinEvent event) {
+        console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
+        console.setForeground(App.THEME.getConsoleTextColor());
+        console.setSelectionColor(App.THEME.getSelectionColor());
+        console.setBackground(App.THEME.getBaseColor());
+        console.revalidate();
+        console.repaint();
     }
 }

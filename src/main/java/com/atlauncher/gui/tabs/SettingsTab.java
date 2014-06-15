@@ -9,20 +9,23 @@ package com.atlauncher.gui.tabs;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileReader;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.data.Settings;
 import com.atlauncher.evnt.RelocalizationEvent;
+import com.atlauncher.evnt.ReskinEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.ReskinManager;
 import com.atlauncher.gui.tabs.settings.*;
+import com.atlauncher.gui.theme.Theme;
 
 @SuppressWarnings("serial")
 public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
@@ -71,8 +74,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                         && networkSettingsTab.isValidProxyPort()
                         && networkSettingsTab.canConnectWithProxy()
                         && toolsSettingsTab.isValidServerCheckerWait()) {
-                    boolean reloadLocalizationTable = generalSettingsTab.reloadLocalizationTable()
-                            || generalSettingsTab.needToReloadTheme();
+                    boolean reloadLocalizationTable = generalSettingsTab.reloadLocalizationTable();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                     boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
                     generalSettingsTab.save();
@@ -81,7 +83,6 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     loggingSettingsTab.save();
                     toolsSettingsTab.save();
                     App.settings.saveProperties();
-                    App.settings.log("Settings Saved!");
                     if (reloadLocalizationTable) {
                         RelocalizationManager.post(new RelocalizationEvent());
                     }

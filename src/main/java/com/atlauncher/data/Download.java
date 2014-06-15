@@ -7,7 +7,5 @@
 package com.atlauncher.data;
 
 public enum Download {
-
     browser, direct, server
-
 }

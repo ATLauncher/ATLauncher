@@ -24,7 +24,6 @@ import com.atlauncher.gui.dialogs.EditModsDialog;
  * developers a way to colour mod's names. Alternatively can be used to display categories.
  */
 public class ModsJCheckBox extends JCheckBox {
-
     /**
      * Auto generated serial.
      */

@@ -27,7 +27,6 @@ import com.atlauncher.utils.Utils;
  * @author Kihira
  */
 public class DropboxSync extends SyncAbstract {
-
     private File dropboxLocation = null;
     private String backupFolder = "ATLauncherBackup";
 

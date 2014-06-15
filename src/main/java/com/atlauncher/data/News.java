@@ -14,7 +14,6 @@ package com.atlauncher.data;
  * News class contains a single news article.
  */
 public class News {
-
     /**
      * The title of this news article.
      */

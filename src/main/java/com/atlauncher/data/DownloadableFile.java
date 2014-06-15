@@ -15,7 +15,6 @@ import java.io.File;
 import com.atlauncher.App;
 
 public class DownloadableFile {
-
     private String name;
     private String folder;
     private int size;

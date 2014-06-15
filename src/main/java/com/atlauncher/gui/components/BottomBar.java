@@ -23,7 +23,6 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public abstract class BottomBar extends JPanel {
-
     protected JButton creeperHostIcon;
     protected JButton facebookIcon;
     protected JButton githubIcon;

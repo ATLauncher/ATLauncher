@@ -88,7 +88,6 @@ import com.google.gson.reflect.TypeToken;
  * @author Ryan
  */
 public class Settings {
-
     // Users Settings
     private Server server; // Server to use for the Launcher
     private String forgeLoggingLevel; // Logging level to use when running Minecraft with Forge

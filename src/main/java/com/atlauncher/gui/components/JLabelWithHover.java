@@ -15,7 +15,6 @@ import com.atlauncher.App;
 import com.atlauncher.gui.CustomLineBorder;
 
 public class JLabelWithHover extends JLabel {
-
     private static final long serialVersionUID = -4371080285355832166L;
     private static final Border HOVER_BORDER = new CustomLineBorder(5,
             App.THEME.getHoverBorderColor(), 2);
@@ -39,5 +38,4 @@ public class JLabelWithHover extends JLabel {
         tip.setBorder(HOVER_BORDER);
         return tip;
     }
-
 }

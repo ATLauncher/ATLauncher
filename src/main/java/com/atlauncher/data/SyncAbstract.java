@@ -13,7 +13,6 @@ import java.util.List;
  * @author Kihira
  */
 public abstract class SyncAbstract {
-
     public static final HashMap<String, SyncAbstract> syncList = new HashMap<String, SyncAbstract>();
     private final String syncName;
 

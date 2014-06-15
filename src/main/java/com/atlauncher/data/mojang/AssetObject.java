@@ -15,7 +15,6 @@ import java.io.File;
 import com.atlauncher.utils.Utils;
 
 public class AssetObject {
-
     private String hash;
     private long size;
 

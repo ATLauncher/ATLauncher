@@ -25,7 +25,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 
 public class DisableableMod implements Serializable {
-
     private static final long serialVersionUID = 8429405767313518704L;
     private String name;
     private String version;

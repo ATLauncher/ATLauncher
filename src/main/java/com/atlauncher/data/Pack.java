@@ -36,7 +36,6 @@ import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
 public class Pack {
-
     private int id;
     private int position;
     private String name;
