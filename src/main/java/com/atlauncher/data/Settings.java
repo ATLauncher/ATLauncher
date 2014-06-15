@@ -2565,38 +2565,6 @@ public class Settings {
         return this.enableTrayIcon;
     }
 
-    /**
-     * Set the Launcher console's visibility
-     * 
-     * @param visible
-     *            The Launcher console's visibility
-     */
-    public void setConsoleVisible(boolean visible) {
-        this.setConsoleVisible(visible, true);
-    }
-
-    /**
-     * Set the Launcher console's visibility
-     * 
-     * @param visible
-     *            The Launcher console's visibility
-     */
-    public void setConsoleVisible(boolean visible, boolean updateBottomBar) {
-        if (!visible) {
-            App.settings.log("Hiding console");
-            if (updateBottomBar) {
-                this.bottomBar.hideConsole();
-            }
-        } else {
-            App.settings.log("Showing console");
-            if (updateBottomBar) {
-                this.bottomBar.showConsole();
-            }
-        }
-        this.console.setVisible(visible);
-        ((TrayMenu) App.TRAY_MENU).setConsoleVisible(visible);
-    }
-
     public void setEnableConsole(boolean enableConsole) {
         this.enableConsole = enableConsole;
     }

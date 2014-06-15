@@ -18,7 +18,6 @@ import com.atlauncher.data.Account;
 
 @SuppressWarnings("serial")
 public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<Account> {
-
     public AccountsDropDownRenderer() {
         setOpaque(true);
         setHorizontalAlignment(CENTER);

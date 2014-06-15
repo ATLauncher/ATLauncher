@@ -135,7 +135,7 @@ public class App {
         }
 
         if (settings.enableConsole()) {
-            settings.setConsoleVisible(true, false);
+            settings.getConsole().setVisible(true);
         }
 
         LogManager.info("Showing splash screen and loading everything");

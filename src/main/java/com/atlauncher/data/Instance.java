@@ -1237,7 +1237,7 @@ public class Instance implements Cloneable {
                             process.destroy(); // Kill the process
                         }
                         if (!App.settings.keepLauncherOpen()) {
-                            App.settings.setConsoleVisible(false); // Hide the console to pretend
+                            App.settings.getConsole().setVisible(false); // Hide the console to pretend
                             // we've closed
                         }
                         if (exitValue != 0) {

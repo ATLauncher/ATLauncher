@@ -14,7 +14,6 @@ import java.util.List;
 import com.atlauncher.utils.Utils;
 
 public class Update {
-
     public static void main(String[] args) {
         String launcherPath = args[0];
         String temporaryUpdatePath = args[1];

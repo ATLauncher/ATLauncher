@@ -7,10 +7,8 @@
 package com.atlauncher.gui.components;
 
 public class BlankToolPanel extends AbstractToolPanel {
-
     /**
      * Auto generated serial.
      */
     private static final long serialVersionUID = -5618131685589325394L;
-
 }

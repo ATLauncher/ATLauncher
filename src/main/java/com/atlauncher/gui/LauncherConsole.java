@@ -29,19 +29,17 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
+import com.atlauncher.evnt.ConsoleCloseEvent;
+import com.atlauncher.evnt.ConsoleOpenEvent;
+import com.atlauncher.evnt.manager.ConsoleCloseManager;
+import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Utils;
 
 public class LauncherConsole extends JFrame {
-
-    // Size of initial window
-    private final Dimension WINDOW_SIZE = new Dimension(600, 400);
-    // Minimum size the window can be
-    private final Dimension MINIMUM_SIZE = new Dimension(600, 400);
-    private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
-
     private JScrollPane scrollPane;
     public Console console;
     private HTMLEditorKit kit;
@@ -51,15 +49,12 @@ public class LauncherConsole extends JFrame {
 
     private JMenuItem copy;
 
-    private static File LOG_FILE = new File(App.settings.getBaseDir(), "ATLauncher-Log-1.txt");
-
     public LauncherConsole() {
-        setSize(WINDOW_SIZE);
         setTitle("ATLauncher Console " + Constants.VERSION);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setMinimumSize(MINIMUM_SIZE);
-        setLayout(LAYOUT_MANAGER);
+        setMinimumSize(new Dimension(600, 400));
+        this.setLayout(new BorderLayout());
 
         console = new Console();
         console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
@@ -74,27 +69,16 @@ public class LauncherConsole extends JFrame {
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
+    }
 
-        // Make sure the size doesn't go below the minimum size
-        addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-                Dimension d = LauncherConsole.this.getSize();
-                Dimension minD = LauncherConsole.this.getMinimumSize();
-                if (d.width < minD.width) {
-                    d.width = minD.width;
-                }
-                if (d.height < minD.height) {
-                    d.height = minD.height;
-                }
-                LauncherConsole.this.setSize(d);
-            }
-        });
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
-                App.settings.setConsoleVisible(false);
-            }
-        });
+    @Override
+    public void setVisible(boolean flag){
+        super.setVisible(flag);
+        if(flag){
+            ConsoleOpenManager.post(new ConsoleOpenEvent());
+        } else{
+            ConsoleCloseManager.post(new ConsoleCloseEvent());
+        }
     }
 
     private void setupContextMenu() {

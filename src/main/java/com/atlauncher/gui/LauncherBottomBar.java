@@ -27,7 +27,14 @@ import javax.swing.border.Border;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
+import com.atlauncher.evnt.ConsoleCloseEvent;
+import com.atlauncher.evnt.ConsoleOpenEvent;
+import com.atlauncher.evnt.listener.ConsoleCloseListener;
+import com.atlauncher.evnt.listener.ConsoleOpenListener;
+import com.atlauncher.evnt.manager.ConsoleCloseManager;
+import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.gui.components.BottomBar;
 import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -35,7 +42,6 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar {
-
     private JPanel leftSide;
     private JPanel middle;
 
@@ -106,7 +112,7 @@ public class LauncherBottomBar extends BottomBar {
     private void setupListeners() {
         toggleConsole.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.setConsoleVisible(!App.settings.isConsoleVisible());
+                App.settings.getConsole().setVisible(!App.settings.isConsoleVisible());
             }
         });
         openFolder.addActionListener(new ActionListener() {
@@ -139,6 +145,18 @@ public class LauncherBottomBar extends BottomBar {
                         App.settings.switchAccount((Account) username.getSelectedItem());
                     }
                 }
+            }
+        });
+        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
+            @Override
+            public void onConsoleClose(ConsoleCloseEvent event) {
+                toggleConsole.setText(Language.INSTANCE.localize("console.show"));
+            }
+        });
+        ConsoleOpenManager.addListener(new ConsoleOpenListener(){
+            @Override
+            public void onConsoleOpen(ConsoleOpenEvent event) {
+                toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
             }
         });
     }

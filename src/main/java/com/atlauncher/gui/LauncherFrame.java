@@ -61,22 +61,10 @@ public class LauncherFrame extends JFrame {
         add(tabbedPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
-                dispose();
-            }
-        });
-
         if (show) {
             App.settings.log("Showing Launcher");
             setVisible(true);
         }
-
-        App.settings.addConsoleListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
-                App.settings.setConsoleVisible(false);
-            }
-        });
 
         App.TASKPOOL.execute(new Runnable() {
             public void run() {

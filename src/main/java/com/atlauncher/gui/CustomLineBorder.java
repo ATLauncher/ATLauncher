@@ -19,7 +19,6 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 public class CustomLineBorder extends LineBorder {
-
     private int insets = 0;
 
     public CustomLineBorder(int insets, Color color) {
@@ -41,5 +40,4 @@ public class CustomLineBorder extends LineBorder {
     public Insets getBorderInsets(Component c, Insets insets) {
         return new Insets(this.insets, this.insets, this.insets, this.insets);
     }
-
 }

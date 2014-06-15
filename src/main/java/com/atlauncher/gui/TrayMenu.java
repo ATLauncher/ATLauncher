@@ -19,6 +19,13 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.evnt.ConsoleCloseEvent;
+import com.atlauncher.evnt.ConsoleOpenEvent;
+import com.atlauncher.evnt.listener.ConsoleCloseListener;
+import com.atlauncher.evnt.listener.ConsoleOpenListener;
+import com.atlauncher.evnt.manager.ConsoleCloseManager;
+import com.atlauncher.evnt.manager.ConsoleOpenManager;
 
 /**
  * TODO: Rewrite
@@ -50,6 +57,19 @@ public final class TrayMenu extends PopupMenu {
         } else {
             this.TC_BUTTON.setLabel(App.settings.getLocalizedString("console.show"));
         }
+
+        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
+            @Override
+            public void onConsoleClose(ConsoleCloseEvent event) {
+                TC_BUTTON.setLabel(Language.INSTANCE.localize("console.show"));
+            }
+        });
+        ConsoleOpenManager.addListener(new ConsoleOpenListener() {
+            @Override
+            public void onConsoleOpen(ConsoleOpenEvent event) {
+                TC_BUTTON.setLabel(Language.INSTANCE.localize("console.hide"));
+            }
+        });
 
         // Do localization
         this.KILLMC_BUTTON.setLabel(App.settings.getLocalizedString("console.kill"));
@@ -90,13 +110,7 @@ public final class TrayMenu extends PopupMenu {
             this.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
-                    if (App.settings.isConsoleVisible()) {
-                        App.settings.setConsoleVisible(false);
-                        setLabel(App.settings.getLocalizedString("console.show"));
-                    } else {
-                        App.settings.setConsoleVisible(true);
-                        setLabel(App.settings.getLocalizedString("console.hide"));
-                    }
+                    App.settings.getConsole().setVisible(!App.settings.getConsole().isVisible());
                 }
             });
         }

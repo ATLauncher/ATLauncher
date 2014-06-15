@@ -32,7 +32,6 @@ import com.atlauncher.utils.Utils;
  * This class deals with the Accounts in the launcher.
  */
 public class Account implements Serializable {
-
     /**
      * Auto generated serial.
      */
