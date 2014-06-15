@@ -1114,23 +1114,9 @@ public class Settings {
                     "5"));
             if (this.serverCheckerWait < 1 || this.serverCheckerWait > 30) {
                 // Server checker wait should be between 1 and 30
-                LogManager.warn("Tried to set server connection wait to "
-                        + this.serverCheckerWait
-                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!");
-                this.connectionTimeout = 5;
-            }
-
-            this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
-                    "10"));
-            if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
-                // Connection timeout should be between 1 and 30
-                LogManager.warn("Tried to set connection timeout to "
-                        + this.connectionTimeout
-                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!");
-                this.connectionTimeout = 5;
                 log("Tried to set server checker wait to "
-                        + this.serverCheckerWait
-                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
+                                + this.serverCheckerWait
+                                + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
                         LogMessageType.warning, false);
                 this.serverCheckerWait = 5;
             }

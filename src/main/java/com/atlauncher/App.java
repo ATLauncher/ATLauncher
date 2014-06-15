@@ -33,6 +33,7 @@ import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
+import io.github.asyncronous.toast.Toaster;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -40,6 +41,7 @@ public class App {
     // Approach with caution though
     // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
+    public static final Toaster TOASTER = Toaster.instance();
 
     public static TrayMenu TRAY_MENU = new TrayMenu();
 
