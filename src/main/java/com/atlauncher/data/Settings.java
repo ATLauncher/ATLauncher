@@ -296,16 +296,17 @@ public class Settings {
             this.checkingServersTimer.purge(); // not sure if needed or not
         }
 
-        this.checkingServersTimer = new Timer();
-        this.checkingServersTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                for (MinecraftServer server : checkingServers) {
-                    System.out.println("Checking status of " + server.getName());
-                    server.checkServer();
+        if (this.enableServerChecker) {
+            this.checkingServersTimer = new Timer();
+            this.checkingServersTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    for (MinecraftServer server : checkingServers) {
+                        server.checkServer();
+                    }
                 }
-            }
-        }, 0, this.getServerCheckerWaitInMilliseconds());
+            }, 0, this.getServerCheckerWaitInMilliseconds());
+        }
     }
 
     public void checkAccounts() {

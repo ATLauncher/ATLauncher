@@ -65,6 +65,7 @@ public class SettingsTab extends JPanel {
                     boolean restartLauncher = generalSettingsTab.needToRestartLauncher()
                             || generalSettingsTab.needToReloadTheme();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
+                    boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
                     generalSettingsTab.save();
                     javaSettingsTab.save();
                     networkSettingsTab.save();
@@ -77,6 +78,9 @@ public class SettingsTab extends JPanel {
                     }
                     if (reloadPacksPanel) {
                         App.settings.reloadPacksPanel();
+                    }
+                    if (restartServerChecker) {
+                        App.settings.startCheckingServers();
                     }
                     String[] options = { App.settings.getLocalizedString("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),

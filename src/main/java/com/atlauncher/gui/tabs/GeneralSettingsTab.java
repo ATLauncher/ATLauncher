@@ -229,7 +229,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     }
 
     public boolean needToRestartLauncher() {
-        return language.getSelectedItem() != Language.current();
+        return !((String) language.getSelectedItem()).equalsIgnoreCase(Language.current());
     }
 
     public void save() {

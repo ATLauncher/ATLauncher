@@ -79,8 +79,6 @@ public class MinecraftServer {
     public void checkServer() {
         int playersOnline = MCQuery.getNumberOfPlayers(this.host, this.port, this.queryVersion);
 
-        System.out.println(playersOnline);
-
         if (!this.hasRun) {
             System.out.println("Server Checking Started");
             App.TOASTER.pop(String.format("Server Checking on %s has started!", this.name));
