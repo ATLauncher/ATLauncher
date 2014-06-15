@@ -900,6 +900,11 @@ public class Settings {
             this.properties.load(new FileInputStream(propertiesFile));
             this.theme = properties.getProperty("theme", "ATLauncher");
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
+            if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy")
+                    && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
+                    && !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
+                this.dateFormat = "dd/M/yyy";
+            }
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon",
@@ -1133,6 +1138,14 @@ public class Settings {
             this.theme = properties.getProperty("theme", "ATLauncher");
 
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
+            if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy")
+                    && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
+                    && !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
+                log("Tried to set the date format to " + this.dateFormat
+                        + " which is not valid! Setting back to default of dd/M/yyy!",
+                        LogMessageType.warning, false);
+                this.dateFormat = "dd/M/yyy";
+            }
 
             String lastAccountTemp = properties.getProperty("lastaccount", "");
             if (!lastAccountTemp.isEmpty()) {
