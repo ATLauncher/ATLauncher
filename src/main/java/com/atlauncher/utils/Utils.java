@@ -77,7 +77,7 @@ import com.atlauncher.data.Settings;
 import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
-import com.atlauncher.gui.ProgressDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 
 public class Utils {
 

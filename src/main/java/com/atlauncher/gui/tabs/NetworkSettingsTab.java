@@ -20,8 +20,8 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Server;
-import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")

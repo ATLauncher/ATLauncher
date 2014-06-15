@@ -26,7 +26,7 @@ import javax.swing.JPasswordField;
 import com.atlauncher.App;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
-import com.atlauncher.gui.ProgressDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.Authentication;

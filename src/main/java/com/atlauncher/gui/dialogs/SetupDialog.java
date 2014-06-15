@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package com.atlauncher.gui;
+package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -29,6 +29,10 @@ import com.atlauncher.utils.Utils;
 
 public class SetupDialog extends JDialog {
 
+    /**
+     * Auto generated serial.
+     */
+    private static final long serialVersionUID = -2931970914611329658L;
     private JPanel top;
     private JPanel middle;
     private JPanel bottom;
@@ -83,6 +87,7 @@ public class SetupDialog extends JDialog {
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLeaderboards = new JCheckBox();
+        enableLeaderboards.setSelected(true);
         middle.add(enableLeaderboards, gbc);
 
         // Bottom Panel Stuff

@@ -24,6 +24,7 @@ import com.atlauncher.data.Account;
 import com.atlauncher.data.Status;
 import com.atlauncher.gui.components.BottomBar;
 import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")

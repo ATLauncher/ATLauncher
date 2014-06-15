@@ -11,7 +11,22 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
@@ -19,7 +34,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,7 +50,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -44,8 +66,8 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherBottomBar;
 import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.gui.TrayMenu;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
@@ -1805,12 +1827,12 @@ public class Settings {
      */
     public List<String> getLanguages() {
         List<String> langs = new LinkedList<String>();
-        for(File file : this.getLanguagesDir().listFiles(new FilenameFilter() {
+        for (File file : this.getLanguagesDir().listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".lang");
             }
-        })){
+        })) {
             langs.add(file.getName().substring(0, file.getName().lastIndexOf(".")));
         }
         return langs;
@@ -2116,7 +2138,7 @@ public class Settings {
      * @return true if found, false if not
      */
     public boolean isLanguageByName(String name) {
-        return this.getLanguages().contains(name);
+        return this.getLanguages().contains(name.toLowerCase());
     }
 
     /**
@@ -2289,10 +2311,10 @@ public class Settings {
      * @param language
      *            The language to set to
      */
-    public void setLanguage(String language){
-        try{
+    public void setLanguage(String language) {
+        try {
             Language.INSTANCE.load(language);
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
     }
