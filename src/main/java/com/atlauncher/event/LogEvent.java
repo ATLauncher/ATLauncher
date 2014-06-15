@@ -1,4 +1,4 @@
-package com.atlauncher.evnt;
+package com.atlauncher.event;
 
 import com.atlauncher.App;
 import com.atlauncher.gui.components.Console;

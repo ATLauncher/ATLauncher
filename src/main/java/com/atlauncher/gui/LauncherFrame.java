@@ -50,7 +50,7 @@ public class LauncherFrame extends JFrame {
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setLayout(new BorderLayout());
 
-        App.settings.log("Setting up Look & Feel");
+        App.settings.log("Setting up Bottom Bar");
         setupBottomBar(); // Setup the Bottom Bar
         App.settings.log("Finished Setting up Bottom Bar");
 
