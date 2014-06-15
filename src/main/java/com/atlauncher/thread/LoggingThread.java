@@ -1,6 +1,6 @@
 package com.atlauncher.thread;
 
-import com.atlauncher.event.LogEvent;
+import com.atlauncher.evnt.LogEvent;
 
 import java.util.concurrent.BlockingQueue;
 
