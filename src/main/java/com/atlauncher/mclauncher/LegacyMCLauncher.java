@@ -31,7 +31,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.utils.Utils;
 
