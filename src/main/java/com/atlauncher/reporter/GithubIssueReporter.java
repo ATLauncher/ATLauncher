@@ -21,7 +21,7 @@ public final class GithubIssueReporter{
     throws Exception {
         String log = App.TASKPOOL.submit(new PasteUpload()).get();
         body = body + "\n\n" + times('-', 50) + "\n" + "Here is my log: " + log;
-        HttpsURLConnection conn = (HttpsURLConnection) new URL(GITHUB_API + "/repos/ATLauncher/ATLauncher/issues").openConnection();
+        HttpsURLConnection conn = (HttpsURLConnection) new URL(GITHUB_API + "/repos/ATLauncher/ATLauncher-Test-Repo/issues").openConnection();
         conn.setRequestProperty("Authorization", "token " + Constants.GIT_REPORTER_AUTH);
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);

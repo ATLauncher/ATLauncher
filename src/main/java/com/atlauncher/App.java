@@ -25,8 +25,8 @@ import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
+import com.atlauncher.exceptions.ChunkyException;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
@@ -50,6 +50,11 @@ public class App {
     public static Settings settings;
 
     public static Theme THEME = Theme.DEFAULT_THEME;
+
+    static
+    {
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
+    }
 
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH); // Set English as the default locale
@@ -165,6 +170,7 @@ public class App {
         TRAY_MENU.localize();
         integrate();
         new LauncherFrame(open); // Open the Launcher
+        throw new ChunkyException("Hello World");
     }
 
     public static void loadTheme() {

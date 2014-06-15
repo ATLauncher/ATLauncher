@@ -81,7 +81,6 @@ import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 
 public class Utils {
-
     public static String colorHex(Color c) {
         if (c == null) {
             System.out.println("Colour given to Utils.colorhex was null");
@@ -89,6 +88,23 @@ public class Utils {
         }
 
         return "#" + Integer.toHexString(c.getRGB() & 0xFFFFFF);
+    }
+
+    public static String error(Throwable t){
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(t.toString())
+                .append("\n");
+        StackTraceElement[] elements = t.getStackTrace();
+        for(int i = 0; i < elements.length; i++){
+            builder.append("\t")
+                    .append(elements[i].toString());
+            if(i < (elements.length - 1)){
+                builder.append("\n");
+            }
+        }
+
+        return builder.toString();
     }
 
     /**
