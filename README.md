@@ -68,7 +68,7 @@ To get started with the code and plug in your own data, you need to create a src
     
     }
 
-See below for exmplanations as to what each constant means.
+See below for explanations as to what each constant means.
 
 #### API_BASE_URL
 This is a link to your server side API for processing of leaderboard times and pack installs. This is optional and can be removed. We do not give implementation code, this is your own doing.
