@@ -23,10 +23,9 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab {
+
     private JLabelWithHover languageLabel;
     private JComboBox<String> language;
-    private JLabelWithHover languageLabelRestart;
-    private JPanel languageLabelPanel;
 
     private JLabelWithHover themeLabel;
     private JComboBox<String> theme;
@@ -69,18 +68,10 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        languageLabelRestart = new JLabelWithHover(RESTART_ICON,
-                App.settings.getLocalizedString("settings.requiresrestart"), RESTART_BORDER);
-
         languageLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.language")
                 + ":", HELP_ICON, App.settings.getLocalizedString("settings.languagehelp"));
 
-        languageLabelPanel = new JPanel();
-        languageLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        languageLabelPanel.add(languageLabelRestart);
-        languageLabelPanel.add(languageLabel);
-
-        add(languageLabelPanel, gbc);
+        add(languageLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
@@ -271,7 +262,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     }
 
     @Override
-    public String getTitle(){
+    public String getTitle() {
         return Language.INSTANCE.localize("settings.generaltab");
     }
 }
