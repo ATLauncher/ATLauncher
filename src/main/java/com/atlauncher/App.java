@@ -6,11 +6,17 @@
  */
 package com.atlauncher;
 
+import io.github.asyncronous.toast.Toaster;
+
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.KeyEvent;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Properties;
@@ -26,14 +32,12 @@ import javax.swing.text.DefaultEditorKit;
 
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Settings;
-import com.atlauncher.exceptions.ChunkyException;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
-import io.github.asyncronous.toast.Toaster;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -51,8 +55,7 @@ public class App {
 
     public static Theme THEME = Theme.DEFAULT_THEME;
 
-    static
-    {
+    static {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
     }
 
@@ -220,12 +223,12 @@ public class App {
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
             TrayIcon trayIcon = new TrayIcon(Utils.getImage("/assets/image/Icon.png"));
-            
+
             trayIcon.setPopupMenu(TRAY_MENU);
             trayIcon.setToolTip("ATLauncher");
-        	trayIcon.setImageAutoSize(true);
-        	
-    		tray.add(trayIcon);
+            trayIcon.setImageAutoSize(true);
+
+            tray.add(trayIcon);
         }
     }
 

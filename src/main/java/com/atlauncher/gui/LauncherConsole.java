@@ -15,7 +15,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+<<<<<<< HEAD
 import java.io.*;
+=======
+import java.io.IOException;
+import java.io.StringReader;
+>>>>>>> f73c0d19e59ebc92de4e6ccec8e270e163d1c73a
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -38,7 +43,11 @@ import com.atlauncher.evnt.manager.ReskinManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Utils;
 
+<<<<<<< HEAD
 public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener{
+=======
+public class LauncherConsole extends JFrame implements RelocalizationListener {
+>>>>>>> f73c0d19e59ebc92de4e6ccec8e270e163d1c73a
     private JScrollPane scrollPane;
     public Console console;
     private ConsoleBottomBar bottomBar;
@@ -71,11 +80,11 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
     }
 
     @Override
-    public void setVisible(boolean flag){
+    public void setVisible(boolean flag) {
         super.setVisible(flag);
-        if(flag){
+        if (flag) {
             ConsoleOpenManager.post(new ConsoleOpenEvent());
-        } else{
+        } else {
             ConsoleCloseManager.post(new ConsoleCloseEvent());
         }
     }
@@ -116,51 +125,26 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
 
     public void log(String text, LogMessageType type, boolean isMinecraft) {
         /*
-        synchronized (kit) {
-            text = text.replace(App.settings.getBaseDir().getAbsolutePath(), "**USERSDIR**");
-            try {
-                kit.insertHTML(
-                        doc,
-                        doc.getLength(),
-                        HTMLifier.wrap(String.format("[%s] ", Timestamper.now())).bold()
-                                .font(type.getColourCode())
-                                + text + (doc.getLength() == 0 ? "" : "<br/>"), 0, 0, null);
-                if (!isMinecraft) {
-                    FileWriter fw = null;
-                    PrintWriter pw = null;
-                    try {
-                        fw = new FileWriter(LOG_FILE, true);
-                        pw = new PrintWriter(fw);
-                        pw.println(String.format("[%s] %s", Timestamper.now(), text));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        try {
-                            if (fw != null) {
-                                fw.close();
-                            }
-                            if (pw != null) {
-                                pw.close();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (BadLocationException e) {
-                e.printStackTrace();
-            }
-            console.setCaretPosition(console.getDocument().getLength());
-        } */
+         * synchronized (kit) { text = text.replace(App.settings.getBaseDir().getAbsolutePath(),
+         * "**USERSDIR**"); try { kit.insertHTML( doc, doc.getLength(),
+         * HTMLifier.wrap(String.format("[%s] ", Timestamper.now())).bold()
+         * .font(type.getColourCode()) + text + (doc.getLength() == 0 ? "" : "<br/>"), 0, 0, null);
+         * if (!isMinecraft) { FileWriter fw = null; PrintWriter pw = null; try { fw = new
+         * FileWriter(LOG_FILE, true); pw = new PrintWriter(fw); pw.println(String.format("[%s] %s",
+         * Timestamper.now(), text)); } catch (IOException e) { e.printStackTrace(); } finally { try
+         * { if (fw != null) { fw.close(); } if (pw != null) { pw.close(); } } catch (IOException e)
+         * { e.printStackTrace(); } }
+         * 
+         * } } catch (IOException e) { e.printStackTrace(); } catch (BadLocationException e) {
+         * e.printStackTrace(); } console.setCaretPosition(console.getDocument().getLength()); }
+         */
     }
 
     /**
      * Logs a stack trace to the console window
-     *
-     * @param e The text to show in the console
+     * 
+     * @param e
+     *            The text to show in the console
      */
     @Deprecated
     public void logStackTrace(Exception e) {
@@ -176,8 +160,9 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
 
     /**
      * Logs text to the console window from Minecraft
-     *
-     * @param text The text to show in the console
+     * 
+     * @param text
+     *            The text to show in the console
      */
     public void logMinecraft(String text) {
         String message = null; // The log message
@@ -263,7 +248,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
 
     /**
      * Returns a string with the text currently in the console
-     *
+     * 
      * @return String Console Text
      */
     public String getLog() {

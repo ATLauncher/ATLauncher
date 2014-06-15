@@ -53,13 +53,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import com.atlauncher.LogManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.mojang.DateTypeAdapter;
@@ -1114,8 +1114,8 @@ public class Settings {
             if (this.serverCheckerWait < 1 || this.serverCheckerWait > 30) {
                 // Server checker wait should be between 1 and 30
                 log("Tried to set server checker wait to "
-                                + this.serverCheckerWait
-                                + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
+                        + this.serverCheckerWait
+                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
                         LogMessageType.warning, false);
                 this.serverCheckerWait = 5;
             }
@@ -1232,6 +1232,12 @@ public class Settings {
     public void addCheckingServer(MinecraftServer server) {
         this.checkingServers.add(server);
         this.saveCheckingServers();
+    }
+
+    public void removeCheckingServer(MinecraftServer server) {
+        this.checkingServers.remove(server);
+        this.saveCheckingServers();
+        this.startCheckingServers();
     }
 
     /**
@@ -1417,9 +1423,10 @@ public class Settings {
                             }
                             Instance instance = (Instance) obj;
                             if (!instance.hasBeenConverted()) {
-                                LogManager.warn("Instance "
-                                        + instance.getName()
-                                        + " is being converted! This is normal and should only appear once!");
+                                LogManager
+                                        .warn("Instance "
+                                                + instance.getName()
+                                                + " is being converted! This is normal and should only appear once!");
                                 instance.convert();
                             }
                             if (!instance.getDisabledModsDirectory().exists()) {
@@ -1584,6 +1591,10 @@ public class Settings {
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
+    }
+
+    public List<MinecraftServer> getCheckingServers() {
+        return this.checkingServers;
     }
 
     /**
@@ -2814,8 +2825,8 @@ public class Settings {
     public void cloneInstance(Instance instance, String clonedName) {
         Instance clonedInstance = (Instance) instance.clone();
         if (clonedInstance == null) {
-            LogManager.error(
-                    "Error Occured While Cloning Instance! Instance Object Couldn't Be Cloned!");
+            LogManager
+                    .error("Error Occured While Cloning Instance! Instance Object Couldn't Be Cloned!");
         } else {
             clonedInstance.setName(clonedName);
             clonedInstance.getRootDirectory().mkdir();
