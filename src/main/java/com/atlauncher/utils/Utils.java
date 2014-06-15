@@ -1222,7 +1222,6 @@ public class Utils {
         URL url = new URL(urll);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        connection.setConnectTimeout(App.settings.getConnectionTimeout());
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
@@ -1262,7 +1261,6 @@ public class Utils {
         URL url = new URL(Constants.API_BASE_URL + path);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        connection.setConnectTimeout(App.settings.getConnectionTimeout());
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
@@ -1301,7 +1299,6 @@ public class Utils {
         URL url = new URL(Constants.API_BASE_URL + path);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        connection.setConnectTimeout(App.settings.getConnectionTimeout());
         connection.setRequestMethod("GET");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
@@ -1592,7 +1589,6 @@ public class Utils {
             URL url = new URL("http://openeye.openmods.info/api/v1/crash");
             connection = (HttpURLConnection) url.openConnection();
 
-            connection.setConnectTimeout(App.settings.getConnectionTimeout());
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
@@ -1731,15 +1727,13 @@ public class Utils {
         return new Color(colour[0], colour[1], colour[2]);
     }
 
-    public static boolean testProxy(Proxy proxy, int timeout) {
+    public static boolean testProxy(Proxy proxy) {
         try {
             HttpURLConnection connection;
             URL url = new URL(App.settings.getFileURL("ping"));
             connection = (HttpURLConnection) url.openConnection(proxy);
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);
-            connection.setConnectTimeout(timeout * 1000);
-            connection.setReadTimeout(timeout * 1000);
             connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
             connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");

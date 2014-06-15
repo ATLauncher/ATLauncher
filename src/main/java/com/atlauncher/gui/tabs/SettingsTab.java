@@ -58,7 +58,6 @@ public class SettingsTab extends JPanel {
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
-                        && networkSettingsTab.isValidConnectionTimeout()
                         && networkSettingsTab.isValidConcurrentConnections()
                         && networkSettingsTab.isValidProxyPort()
                         && networkSettingsTab.canConnectWithProxy()

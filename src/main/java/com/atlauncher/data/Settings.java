@@ -111,14 +111,12 @@ public class Settings {
     private String proxyHost; // The proxies host
     private int proxyPort; // The proxies port
     private String proxyType; // The type of proxy (socks, http)
-    private int connectionTimeout; // Timeout in seconds when connecting to things
     private int concurrentConnections; // Number of concurrent connections to open when downloading
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private Proxy proxy = null; // The proxy object if any
     private String theme; // The theme to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
-    private boolean hadConnectionTimeoutCheck; // If the user has had the connection timeout check
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
 
@@ -276,13 +274,6 @@ public class Settings {
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideOldJavaWarning = true;
-                this.saveProperties();
-            }
-        }
-        if (!this.hadConnectionTimeoutCheck) {
-            if (this.connectionTimeout < 10) {
-                this.connectionTimeout = 10;
-                this.hadConnectionTimeoutCheck = true;
                 this.saveProperties();
             }
         }
@@ -943,12 +934,6 @@ public class Settings {
                 this.proxyType = "";
             }
 
-            this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
-                    "10"));
-            if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
-                this.connectionTimeout = 10;
-            }
-
             this.concurrentConnections = Integer.parseInt(properties.getProperty(
                     "concurrentconnections", "8"));
             if (this.concurrentConnections < 1) {
@@ -975,9 +960,6 @@ public class Settings {
 
             this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty(
                     "hideoldjavawarning", "false"));
-
-            this.hadConnectionTimeoutCheck = Boolean.parseBoolean(properties.getProperty(
-                    "hadconnectiontimeoutcheck", "false"));
 
             String lang = properties.getProperty("language", "English");
             if (isLanguageByName(lang)) {
@@ -1126,22 +1108,11 @@ public class Settings {
                     "5"));
             if (this.serverCheckerWait < 1 || this.serverCheckerWait > 30) {
                 // Server checker wait should be between 1 and 30
-                log("Tried to set server connection wait to "
+                log("Tried to set server checker wait to "
                         + this.serverCheckerWait
                         + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
                         LogMessageType.warning, false);
-                this.connectionTimeout = 5;
-            }
-
-            this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
-                    "10"));
-            if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
-                // Connection timeout should be between 1 and 30
-                log("Tried to set connection timeout to "
-                        + this.connectionTimeout
-                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
-                        LogMessageType.warning, false);
-                this.connectionTimeout = 5;
+                this.serverCheckerWait = 5;
             }
 
             this.concurrentConnections = Integer.parseInt(properties.getProperty(
@@ -1189,8 +1160,6 @@ public class Settings {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("hadpassworddialog", "true");
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
-            properties
-                    .setProperty("hadconnectiontimeoutcheck", this.hadConnectionTimeoutCheck + "");
             properties.setProperty("language", Language.INSTANCE.getCurrent());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
@@ -1223,7 +1192,6 @@ public class Settings {
             properties.setProperty("proxyport", this.proxyPort + "");
             properties.setProperty("proxytype", this.proxyType);
             properties.setProperty("servercheckerwait", this.serverCheckerWait + "");
-            properties.setProperty("connectiontimeout", this.connectionTimeout + "");
             properties.setProperty("concurrentconnections", this.concurrentConnections + "");
             properties.setProperty("theme", this.theme);
             if (account != null) {
@@ -2739,14 +2707,6 @@ public class Settings {
 
     public int getServerCheckerWaitInMilliseconds() {
         return this.serverCheckerWait * 60 * 1000;
-    }
-
-    public void setConnectionTimeout(int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    public int getConnectionTimeout() {
-        return this.connectionTimeout * 1000;
     }
 
     public void setConcurrentConnections(int concurrentConnections) {
