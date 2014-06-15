@@ -170,6 +170,6 @@ public final class Theme {
 
     @Override
     public String toString() {
-        return this.name + " by" + this.author;
+        return this.name + " by " + this.author;
     }
 }

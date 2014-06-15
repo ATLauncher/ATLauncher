@@ -10,7 +10,6 @@ import java.io.InputStream;
 /**
  * Static class to allow easier use of toaster notifications
  */
-@SuppressWarnings("unused")
 public final class Toaster{
     private static Toaster instance;
 
