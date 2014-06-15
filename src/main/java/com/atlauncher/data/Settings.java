@@ -2608,7 +2608,6 @@ public class Settings {
             }
         }
         this.console.setVisible(visible);
-        ((TrayMenu) App.TRAY_MENU).setConsoleVisible(visible);
     }
 
     public void setEnableConsole(boolean enableConsole) {
