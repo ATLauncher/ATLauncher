@@ -16,7 +16,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToolTip;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
@@ -79,8 +85,8 @@ public class LauncherBottomBar extends BottomBar {
         leftSide.add(openFolder, gbc);
         gbc.gridx++;
         leftSide.add(updateData, gbc);
-        gbc.gridx++;
-        leftSide.add(submitError, gbc);
+        // gbc.gridx++;
+        // leftSide.add(submitError, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
@@ -178,8 +184,9 @@ public class LauncherBottomBar extends BottomBar {
 
     /**
      * Update the status icon to show the current Minecraft server status.
-     *
-     * @param status The status of servers
+     * 
+     * @param status
+     *            The status of servers
      */
     public void updateStatus(Status status) {
         switch (status) {
