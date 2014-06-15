@@ -27,6 +27,7 @@ Other than that, I am releasing this as an Open Source project in hopes that oth
 + Please keep all line lengths to 100 characters and use 4 spaces rather than tab characters
 + Please keep all variables at the top of the class
 + Please keep all inner classes at the bottom
++ Please don't use star imports
 
 ### Building
 
@@ -85,6 +86,20 @@ This is an array of Server type elements the launcher uses as a base to download
 #### How to make your data
 
 To make the data the Launcher needs you will need to figure out your own server side way of doing that. You can create a system to do it automatically or you can manually do it by just popping the files on the server. The best way to get the file structure and contents is to examine the source code and the ATLauncher files it downloads.
+
+### Versioning System
+
+Starting with version 3.2.1.0 a new versioning system was put into place. It works off the following:
+
+Reserved.Major.Minor.Revision
+
+So for 3.2.1.0 the major number is 2 and minor number is 1 and revision number is 0. Reserved is used as a base, only incremented on complete rewrites.
+
+Major should be incremented when large changes/features are made.
+
+Minor should be incremented when small changes/features are made.
+
+Revision should be incremented when there are no new features and only contains bug fixes for the previous minor.
 
 ### Need Help/Have Questions?
 
