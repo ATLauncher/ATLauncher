@@ -91,6 +91,8 @@ public final class Theme {
                     Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
             UIManager.put("Button.font",
                     Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
+            UIManager.put("Toaster.font",
+                    Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

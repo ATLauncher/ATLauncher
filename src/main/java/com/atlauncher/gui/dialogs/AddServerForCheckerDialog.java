@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.utils.MCQuery;
 import com.atlauncher.utils.Utils;
 
@@ -197,8 +198,7 @@ public class AddServerForCheckerDialog extends JDialog implements ActionListener
                             App.settings.getLocalizedString("tools.serverchecker.serveradded"),
                             App.settings.getLocalizedString("tools.serverchecker.serveradded"),
                             JOptionPane.INFORMATION_MESSAGE);
-                    System.out.println("Added server " + host + " on port " + port + " with name "
-                            + name + " using query version " + qv);
+                    App.settings.addCheckingServer(new MinecraftServer(name, host, port, qv));
                     close();
                 }
             }

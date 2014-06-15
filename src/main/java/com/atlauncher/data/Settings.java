@@ -43,6 +43,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -133,14 +135,15 @@ public class Settings {
     private List<News> news; // News
     private List<MinecraftVersion> minecraftVersions; // Minecraft versions
     private List<Pack> packs; // Packs in the Launcher
-    private ArrayList<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
-    private ArrayList<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
+    private List<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
+    private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
+    private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
 
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir,
             skinsDir, jarsDir, commonConfigsDir, resourcesDir, librariesDir, languagesDir,
             downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir,
-            instancesDataFile, userDataFile, propertiesFile;
+            instancesDataFile, checkingServersFile, userDataFile, propertiesFile;
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -172,6 +175,7 @@ public class Settings {
     @SuppressWarnings("unused")
     private DropboxSync dropbox;
     private boolean languageLoaded = false;
+    private Timer checkingServersTimer = null; // Timer used for checking servers
 
     public Settings() {
         setupFiles(); // Setup all the file and directory variables
@@ -205,6 +209,7 @@ public class Settings {
         serversDir = new File(baseDir, "Servers");
         tempDir = new File(baseDir, "Temp");
         instancesDataFile = new File(configsDir, "instancesdata");
+        checkingServersFile = new File(configsDir, "checkingservers.json");
         userDataFile = new File(configsDir, "userdata");
         propertiesFile = new File(configsDir, "ATLauncher.conf");
     }
@@ -222,6 +227,7 @@ public class Settings {
         loadUsers(); // Load the Testers and Allowed Players for the packs
         loadInstances(); // Load the users installed Instances
         loadAccounts(); // Load the saved Accounts
+        loadCheckingServers(); // Load the saved servers we're checking with the tool
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
@@ -286,6 +292,29 @@ public class Settings {
         if (!this.hadPasswordDialog) {
             checkAccounts(); // Check accounts with stored passwords
         }
+
+        if (this.enableServerChecker) {
+            this.startCheckingServers();
+        }
+    }
+
+    public void startCheckingServers() {
+        if (this.checkingServersTimer != null) {
+            // If it's not null, cancel and purge tasks left
+            this.checkingServersTimer.cancel();
+            this.checkingServersTimer.purge(); // not sure if needed or not
+        }
+
+        this.checkingServersTimer = new Timer();
+        this.checkingServersTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                for (MinecraftServer server : checkingServers) {
+                    System.out.println("Checking status of " + server.getName());
+                    server.checkServer();
+                }
+            }
+        }, 0, this.getServerCheckerWaitInMilliseconds());
     }
 
     public void checkAccounts() {
@@ -812,6 +841,15 @@ public class Settings {
     }
 
     /**
+     * Returns the checkingservers file
+     * 
+     * @return File object for the checkingservers file
+     */
+    public File getCheckingServersFile() {
+        return checkingServersFile;
+    }
+
+    /**
      * Sets the main parent JFrame reference for the Launcher
      * 
      * @param parent
@@ -1209,6 +1247,11 @@ public class Settings {
         this.accounts.add(account);
     }
 
+    public void addCheckingServer(MinecraftServer server) {
+        this.checkingServers.add(server);
+        this.saveCheckingServers();
+    }
+
     /**
      * Switch account currently used and save it
      * 
@@ -1522,6 +1565,47 @@ public class Settings {
     }
 
     /**
+     * Loads the user servers added for checking
+     */
+    private void loadCheckingServers() {
+        this.checkingServers = new ArrayList<MinecraftServer>(); // Reset the list
+        if (checkingServersFile.exists()) {
+            FileReader fileReader = null;
+            try {
+                fileReader = new FileReader(checkingServersFile);
+            } catch (FileNotFoundException e) {
+                logStackTrace(e);
+                return;
+            }
+
+            this.checkingServers = gson.fromJson(fileReader, MinecraftServer.LIST_TYPE);
+
+            if (fileReader != null) {
+                try {
+                    fileReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void saveCheckingServers() {
+        try {
+            if (!checkingServersFile.exists()) {
+                checkingServersFile.createNewFile();
+            }
+
+            FileWriter fw = new FileWriter(checkingServersFile);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(Settings.gson.toJson(this.checkingServers));
+            bw.close();
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+    }
+
+    /**
      * Finds out if this is the first time the Launcher has been run
      * 
      * @return true if the Launcher hasn't been run and setup yet, false for otherwise
@@ -1623,7 +1707,7 @@ public class Settings {
      * 
      * @return The Instances available in the Launcher
      */
-    public ArrayList<Instance> getInstances() {
+    public List<Instance> getInstances() {
         return this.instances;
     }
 
@@ -1791,7 +1875,7 @@ public class Settings {
      * 
      * @return The Accounts added to the Launcher
      */
-    public ArrayList<Account> getAccounts() {
+    public List<Account> getAccounts() {
         return this.accounts;
     }
 
