@@ -24,6 +24,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.atlauncher.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -842,11 +843,10 @@ public class Pack {
                                         || element.getAttribute("target").contains("~\\")
                                         || !file.getCanonicalPath().contains(
                                         instance.getRootDirectory().getCanonicalPath())) {
-                                    App.settings.log(
+                                    LogManager.error(
                                             "Cannot delete the file/folder "
                                                     + file.getAbsolutePath()
-                                                    + " as it's protected.", LogMessageType.error,
-                                            false);
+                                                    + " as it's protected.");
                                 } else {
                                     files.add(file);
                                 }

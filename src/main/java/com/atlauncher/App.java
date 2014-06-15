@@ -6,20 +6,11 @@
  */
 package com.atlauncher;
 
-import io.github.asyncronous.toast.Toaster;
-import io.github.asyncronous.toast.ToasterConstants;
-
-import java.awt.AWTException;
 import java.awt.Image;
-import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Properties;
@@ -49,7 +40,6 @@ public class App {
     // Approach with caution though
     // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
-    public static final Toaster TOASTER = Toaster.instance();
 
     public static TrayMenu TRAY_MENU = new TrayMenu();
 
@@ -93,9 +83,7 @@ public class App {
         }
 
         settings = new Settings(); // Setup the Settings and wait for it to finish
-
         loadTheme();
-
         settings.loadConsole(); // Load console AFTER L&F
 
         if (settings.enableTrayIcon()) {
@@ -106,27 +94,26 @@ public class App {
             }
         }
 
-        settings.log("ATLauncher Version: " + settings.getVersion());
-        settings.log("Operating System: " + System.getProperty("os.name"));
-        settings.log("RAM Available: " + Utils.getMaximumRam() + "MB");
+        LogManager.info("ATLauncher Version: " + settings.getVersion());
+        LogManager.info("Operating System: " + System.getProperty("os.name"));
+        LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
         if (settings.isUsingCustomJavaPath()) {
-            settings.log("Custom Java Path Set!", LogMessageType.warning, false);
+            LogManager.warn("Custom Java Path Set!");
         } else {
             if (settings.isUsingMacApp()) {
                 File oracleJava = new File(
                         "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
                 if (oracleJava.exists() && oracleJava.canExecute()) {
                     settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
-                    settings.log("Launcher Forced Custom Java Path Set!", LogMessageType.warning,
-                            false);
+                    LogManager.warn("Launcher Forced Custom Java Path Set!");
                 }
             }
         }
-        settings.log("Java Version: " + Utils.getActualJavaVersion(), LogMessageType.info, false);
-        settings.log("Java Path: " + settings.getJavaPath());
-        settings.log("64 Bit Java: " + Utils.is64Bit());
-        settings.log("Launcher Directory: " + settings.getBaseDir());
-        settings.log("Using Theme: " + THEME);
+        LogManager.info("Java Version: " + Utils.getActualJavaVersion());
+        LogManager.info("Java Path: " + settings.getJavaPath());
+        LogManager.info("64 Bit Java: " + Utils.is64Bit());
+        LogManager.info("Launcher Directory: " + settings.getBaseDir());
+        LogManager.info("Using Theme: " + THEME);
 
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -149,14 +136,14 @@ public class App {
             settings.setConsoleVisible(true, false);
         }
 
-        settings.log("Showing splash screen and loading everything");
+        LogManager.info("Showing splash screen and loading everything");
         SplashScreen ss = new SplashScreen(); // Show Splash Screen
         settings.loadEverything(); // Loads everything that needs to be loaded
         ss.close(); // Close the Splash Screen
-        settings.log("Launcher finished loading everything");
+        LogManager.info("Launcher finished loading everything");
 
         if (settings.isFirstTimeRun()) {
-            settings.log("Launcher not setup. Loading Setup Dialog", LogMessageType.warning, false);
+            LogManager.warn("Launcher not setup. Loading Setup Dialog");
             new SetupDialog(settings);
         }
 
@@ -169,8 +156,7 @@ public class App {
                 if (instance.launch()) {
                     open = false;
                 } else {
-                    settings.log("Error Opening Instance  " + instance.getName(),
-                            LogMessageType.error, false);
+                    LogManager.error("Error Opening Instance  " + instance.getName());
                 }
             }
         }
@@ -212,10 +198,6 @@ public class App {
         ToolTipManager.sharedInstance().setInitialDelay(50);
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
 
-        UIManager.put(ToasterConstants.BG_COLOR, THEME.getTabBackgroundColor());
-        UIManager.put(ToasterConstants.BORDER_COLOR, THEME.getHoverBorderColor());
-        UIManager.put(ToasterConstants.MSG_COLOR, THEME.getConsoleTextColor());
-
         if (Utils.isMac()) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
             im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK),
@@ -249,7 +231,6 @@ public class App {
             Properties props = new Properties();
             props.load(new FileInputStream(f));
             props.setProperty("atl_loc", App.settings.getBaseDir().toString());
-            System.err.println(props.getProperty("atl_loc"));
             props.store(new FileOutputStream(f), "");
         } catch (IOException e) {
             e.printStackTrace();

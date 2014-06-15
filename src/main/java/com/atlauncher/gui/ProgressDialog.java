@@ -20,6 +20,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Utils;
 
@@ -59,7 +60,7 @@ public class ProgressDialog extends JDialog {
             addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    App.settings.log(closedLogMessage, LogMessageType.error, false);
+                    LogManager.error(closedLogMessage);
                     if (thread != null) {
                         if (thread.isAlive()) {
                             thread.interrupt();

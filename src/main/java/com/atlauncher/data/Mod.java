@@ -13,6 +13,7 @@ import java.io.FilenameFilter;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -437,8 +438,8 @@ public class Mod {
                     Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
                     downloadClient(installer, ++attempt); // download again
                 } else {
-                    App.settings.log("Cannot download " + fileLocation.getAbsolutePath()
-                            + ". Aborting install!", LogMessageType.error, false);
+                    LogManager.error("Cannot download " + fileLocation.getAbsolutePath()
+                            + ". Aborting install!");
                     installer.cancel(true);
                 }
             }
@@ -592,8 +593,8 @@ public class Mod {
                     Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
                     downloadServer(installer, ++attempt); // download again
                 } else {
-                    App.settings.log("Cannot download " + fileLocation.getAbsolutePath()
-                            + ". Aborting install!", LogMessageType.error, false);
+                    LogManager.error("Cannot download " + fileLocation.getAbsolutePath()
+                            + ". Aborting install!");
                     installer.cancel(true);
                 }
             }
@@ -751,8 +752,8 @@ public class Mod {
                         Utils.copyDirectory(folder, installer.getRootDirectory());
                         break;
                     default:
-                        App.settings.log("No known way to extract mod " + this.name + " with type "
-                                + this.extractTo, LogMessageType.error, false);
+                        LogManager.error("No known way to extract mod " + this.name + " with type "
+                                + this.extractTo);
                         break;
                 }
                 Utils.delete(tempDirExtract);
@@ -812,19 +813,19 @@ public class Mod {
                             }
                             break;
                         default:
-                            App.settings.log("No known way to decomp mod " + this.name
-                                    + " with type " + this.decompType, LogMessageType.error, false);
+                            LogManager.error("No known way to decomp mod " + this.name
+                                    + " with type " + this.decompType);
                             break;
                     }
                 } else {
-                    App.settings.log("Couldn't find decomp file " + this.decompFile + " for mod "
-                            + this.name, LogMessageType.error, false);
+                    LogManager.error("Couldn't find decomp file " + this.decompFile + " for mod "
+                            + this.name);
                 }
                 Utils.delete(tempDirDecomp);
                 break;
             default:
-                App.settings.log("No known way to install mod " + this.name + " with type "
-                        + thisType, LogMessageType.error, false);
+                LogManager.error("No known way to install mod " + this.name + " with type "
+                        + thisType);
                 break;
         }
     }
@@ -895,8 +896,8 @@ public class Mod {
                 base = installer.getShaderPacksDirectory();
                 break;
             default:
-                App.settings.log("No known way to find installed mod " + this.name + " with type "
-                        + thisType, LogMessageType.error, false);
+                LogManager.error("No known way to find installed mod " + this.name + " with type "
+                        + thisType);
                 break;
         }
         if (base == null) {

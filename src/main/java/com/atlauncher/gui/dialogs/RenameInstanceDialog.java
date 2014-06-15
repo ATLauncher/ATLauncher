@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Utils;
@@ -97,8 +98,7 @@ public class RenameInstanceDialog extends JDialog {
                         App.settings.saveInstances();
                         App.settings.reloadInstancesPanel();
                     } else {
-                        App.settings.log("Unknown Error Occured While Renaming Instance!",
-                                LogMessageType.error, false);
+                        LogManager.error("Unknown Error Occured While Renaming Instance!");
                         JOptionPane.showMessageDialog(
                                 RenameInstanceDialog.this,
                                 "<html><p align=\"center\">"

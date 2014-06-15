@@ -27,6 +27,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
@@ -141,8 +142,7 @@ public class LegacyMCLauncher {
                 if (!arg.isEmpty()) {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {
-                            App.settings.log("Duplicate argument " + arg + " found and not added!",
-                                    LogMessageType.error, false);
+                            LogManager.error("Duplicate argument " + arg + " found and not added!");
                         } else {
                             arguments.add(arg);
                         }

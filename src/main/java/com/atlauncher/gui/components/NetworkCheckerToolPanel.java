@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Server;
@@ -91,8 +92,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                             dialog.setReturnValue(false);
                         }
                     } else {
-                        App.settings.log("Network Test failed to submit to ATLauncher!",
-                                LogMessageType.error, false);
+                        LogManager.error("Network Test failed to submit to ATLauncher!");
                         dialog.setReturnValue(false);
                     }
 
@@ -103,7 +103,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             });
             dialog.start();
             if (dialog.getReturnValue() == null || !(Boolean) dialog.getReturnValue()) {
-                App.settings.log("Network Test failed to run!", LogMessageType.error, false);
+                LogManager.error("Network Test failed to run!");
             } else {
                 App.settings.log("Network Test ran and submitted to ATLauncher!");
                 String[] options2 = { App.settings.getLocalizedString("common.ok") };

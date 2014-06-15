@@ -71,6 +71,7 @@ import javax.swing.ImageIcon;
 import javax.swing.text.html.StyleSheet;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
@@ -101,13 +102,11 @@ public class Utils {
         URL url = System.class.getResource(path);
 
         if (url == null) {
-            App.settings.log("Unable to load resource " + path, LogMessageType.error, false);
+            LogManager.error("Unable to load resource " + path);
             return null;
         }
 
-        ImageIcon icon = new ImageIcon(url);
-
-        return icon;
+        return new ImageIcon(url);
     }
 
     public static File getCoreGracefully() {
@@ -133,8 +132,7 @@ public class Utils {
      */
     public static ImageIcon getIconImage(File file) {
         if (!file.exists()) {
-            App.settings.log("Unable to load file " + file.getAbsolutePath(), LogMessageType.error,
-                    false);
+            LogManager.error("Unable to load file " + file.getAbsolutePath());
             return null;
         }
 
@@ -209,8 +207,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().browse(new URI(URL));
             } catch (Exception e) {
-                App.settings.log("Failed to open link " + URL + " in browser!",
-                        LogMessageType.error, false);
+                LogManager.error("Failed to open link " + URL + " in browser!");
                 App.settings.logStackTrace(e);
             }
         }
@@ -227,8 +224,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().browse(URL.toURI());
             } catch (Exception e) {
-                App.settings.log("Failed to open link " + URL + " in browser!",
-                        LogMessageType.error, false);
+                LogManager.error("Failed to open link " + URL + " in browser!");
                 App.settings.logStackTrace(e);
             }
         }
@@ -523,9 +519,8 @@ public class Utils {
      */
     public static String getMD5(File file) {
         if (!file.exists()) {
-            App.settings.log(
-                    "Cannot get MD5 of " + file.getAbsolutePath() + " as it doesn't exist",
-                    LogMessageType.error, false);
+            LogManager.error(
+                    "Cannot get MD5 of " + file.getAbsolutePath() + " as it doesn't exist");
             return "0"; // File doesn't exists so MD5 is nothing
         }
         StringBuffer sb = null;
@@ -569,8 +564,8 @@ public class Utils {
      */
     public static String getSHA1(File file) {
         if (!file.exists()) {
-            App.settings.log("Cannot get SHA-1 hash of " + file.getAbsolutePath()
-                    + " as it doesn't exist", LogMessageType.error, false);
+            LogManager.error("Cannot get SHA-1 hash of " + file.getAbsolutePath()
+                    + " as it doesn't exist");
             return "0"; // File doesn't exists so MD5 is nothing
         }
         StringBuffer sb = null;
@@ -614,7 +609,7 @@ public class Utils {
      */
     public static String getMD5(String string) {
         if (string == null) {
-            App.settings.log("Cannot get MD5 of null", LogMessageType.error, false);
+            LogManager.error("Cannot get MD5 of null");
             return "0"; // String null so return 0
         }
         StringBuffer sb = null;
@@ -652,9 +647,8 @@ public class Utils {
             delete(from);
             return true;
         } else {
-            App.settings.log(
-                    "Couldn't move file " + from.getAbsolutePath() + " to " + to.getAbsolutePath(),
-                    LogMessageType.error, false);
+            LogManager.error(
+                    "Couldn't move file " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
             return false;
         }
     }
@@ -685,17 +679,14 @@ public class Utils {
      */
     public static boolean copyFile(File from, File to, boolean withFilename) {
         if (!from.isFile()) {
-            App.settings.log(
+            LogManager.error(
                     "File " + from.getAbsolutePath() + " cannot be copied to "
-                            + to.getAbsolutePath() + " as it isn't a file", LogMessageType.error,
-                    false);
-            return false;
+                            + to.getAbsolutePath() + " as it isn't a file");
         }
         if (!from.exists()) {
-            App.settings.log(
+            LogManager.error(
                     "File " + from.getAbsolutePath() + " cannot be copied to "
-                            + to.getAbsolutePath() + " as it doesn't exist", LogMessageType.error,
-                    false);
+                            + to.getAbsolutePath() + " as it doesn't exist");
             return false;
         }
         if (!withFilename) {
@@ -782,8 +773,8 @@ public class Utils {
             delete(sourceLocation);
             return true;
         } else {
-            App.settings.log("Couldn't move directory " + sourceLocation.getAbsolutePath() + " to "
-                    + targetLocation.getAbsolutePath(), LogMessageType.error, false);
+            LogManager.error("Couldn't move directory " + sourceLocation.getAbsolutePath() + " to "
+                    + targetLocation.getAbsolutePath());
             return false;
         }
     }
@@ -942,8 +933,8 @@ public class Utils {
             }
         }
         if (!file.delete()) {
-            App.settings.log((file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath()
-                    + " couldn't be deleted", LogMessageType.error, false);
+            LogManager.error((file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath()
+                    + " couldn't be deleted");
         }
     }
 
@@ -1459,9 +1450,8 @@ public class Utils {
                     }
                 }
                 if (version == -1) {
-                    App.settings.log(
-                            "Cannot get java version number from the ouput of java -version",
-                            LogMessageType.warning, false);
+                    LogManager.warn(
+                            "Cannot get java version number from the ouput of java -version");
                 } else {
                     return version >= 7;
                 }
@@ -1581,8 +1571,8 @@ public class Utils {
         StringBuilder response = null;
         String request = Utils.getFileContents(report);
         if (request == null) {
-            App.settings.log("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath()
-                    + "'. Pending report sending failed!", LogMessageType.error, false);
+            LogManager.error("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath()
+                    + "'. Pending report sending failed!");
             return null;
         }
 
@@ -1648,9 +1638,8 @@ public class Utils {
      */
     public static String getFileContents(File file) {
         if (!file.exists()) {
-            App.settings.log("File '" + file.getAbsolutePath()
-                    + "' doesn't exist so cannot read contents of file!", LogMessageType.error,
-                    false);
+            LogManager.error("File '" + file.getAbsolutePath()
+                    + "' doesn't exist so cannot read contents of file!");
             return null;
         }
         String contents = null;
@@ -1746,13 +1735,11 @@ public class Utils {
             connection.setRequestProperty("Expires", "0");
             connection.setRequestProperty("Pragma", "no-cache");
             connection.connect();
-            App.settings.log("Proxy returned code " + connection.getResponseCode()
-                    + " when testing!", (connection.getResponseCode() == 200 ? LogMessageType.info
-                    : LogMessageType.error), false);
+            LogManager.info("Proxy returned code " + connection.getResponseCode()
+                    + " when testing!");
             return connection.getResponseCode() == 200;
         } catch (IOException e) {
-            App.settings.log("Proxy couldn't establish a connection when testing!",
-                    LogMessageType.error, false);
+            LogManager.error("Proxy couldn't establish a connection when testing!");
             return false;
         }
     }

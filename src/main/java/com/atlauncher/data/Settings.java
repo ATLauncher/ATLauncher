@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.atlauncher.LogManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -161,6 +162,7 @@ public class Settings {
 
     public void loadConsole() {
         console = new LauncherConsole();
+        LogManager.start();
     }
 
     public void setupFiles() {
@@ -813,7 +815,7 @@ public class Settings {
                 }
             }
             if (this.server == null) {
-                log("Server " + serv + " is invalid", LogMessageType.warning, false);
+                LogManager.warn("Server " + serv + " is invalid");
                 this.server = getServerByName("Auto"); // Server not found, use default of Auto
                 this.originalServer = this.server;
             }
@@ -923,8 +925,7 @@ public class Settings {
             if (isLanguageByName(lang)) {
                 Language.INSTANCE.load(lang);
             } else {
-                log("Invalid language " + lang + ". Defaulting to English!",
-                        LogMessageType.warning, false);
+                LogManager.warn("Invalid language " + lang + ". Defaulting to English!");
             }
 
             this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
@@ -935,8 +936,8 @@ public class Settings {
                     && !this.forgeLoggingLevel.equalsIgnoreCase("FINE")
                     && !this.forgeLoggingLevel.equalsIgnoreCase("FINER")
                     && !this.forgeLoggingLevel.equalsIgnoreCase("FINEST")) {
-                log("Invalid Forge Logging level " + this.forgeLoggingLevel
-                        + ". Defaulting to INFO!", LogMessageType.warning, false);
+                LogManager.warn("Invalid Forge Logging level " + this.forgeLoggingLevel
+                        + ". Defaulting to INFO!");
                 this.forgeLoggingLevel = "INFO";
             }
 
@@ -945,18 +946,16 @@ public class Settings {
                 int defaultRam = (halfRam >= 4096 ? 4096 : halfRam); // Default ram
                 this.ram = Integer.parseInt(properties.getProperty("ram", defaultRam + ""));
                 if (this.ram > Utils.getMaximumRam()) {
-                    log("Tried to allocate " + this.ram + "MB of Ram but only "
-                            + Utils.getMaximumRam() + "MB is available to use!",
-                            LogMessageType.warning, false);
+                    LogManager.warn("Tried to allocate " + this.ram + "MB of Ram but only "
+                            + Utils.getMaximumRam() + "MB is available to use!");
                     this.ram = defaultRam; // User tried to allocate too much ram, set it back to
                     // half, capped at 4GB
                 }
             } else {
                 this.ram = Integer.parseInt(properties.getProperty("ram", "1024"));
                 if (this.ram > Utils.getMaximumRam()) {
-                    log("Tried to allocate " + this.ram + "MB of Ram but only "
-                            + Utils.getMaximumRam() + "MB is available to use!",
-                            LogMessageType.warning, false);
+                    LogManager.warn("Tried to allocate " + this.ram + "MB of Ram but only "
+                            + Utils.getMaximumRam() + "MB is available to use!");
                     this.ram = 1024; // User tried to allocate too much ram, set it back to 1GB
                 }
             }
@@ -967,18 +966,18 @@ public class Settings {
 
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             if (this.windowWidth > Utils.getMaximumWindowWidth()) {
-                log("Tried to set window width to " + this.windowWidth
+                LogManager.warn("Tried to set window width to " + this.windowWidth
                         + " pixels but the maximum is " + Utils.getMaximumWindowWidth()
-                        + " pixels!", LogMessageType.warning, false);
+                        + " pixels!");
                 this.windowWidth = Utils.getMaximumWindowWidth(); // User tried to make screen size
                 // wider than they have
             }
 
             this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
             if (this.windowHeight > Utils.getMaximumWindowHeight()) {
-                log("Tried to set window height to " + this.windowHeight
+                LogManager.warn("Tried to set window height to " + this.windowHeight
                         + " pixels but the maximum is " + Utils.getMaximumWindowHeight()
-                        + " pixels!", LogMessageType.warning, false);
+                        + " pixels!");
                 this.windowHeight = Utils.getMaximumWindowHeight(); // User tried to make screen
                 // size wider than they have
             }
@@ -1041,9 +1040,8 @@ public class Settings {
                 this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", "0"));
                 if (this.proxyPort <= 0 || this.proxyPort > 65535) {
                     // Proxy port is invalid so disable proxy
-                    log("Tried to set proxy port to " + this.proxyPort
-                            + " which is not a valid port! Proxy support disabled!",
-                            LogMessageType.warning, false);
+                    LogManager.warn("Tried to set proxy port to " + this.proxyPort
+                            + " which is not a valid port! Proxy support disabled!");
                     this.enableProxy = false;
                 }
 
@@ -1051,9 +1049,8 @@ public class Settings {
                 if (!this.proxyType.equals("SOCKS") && !this.proxyType.equals("HTTP")
                         && !this.proxyType.equals("DIRECT")) {
                     // Proxy type is invalid so disable proxy
-                    log("Tried to set proxy type to " + this.proxyType
-                            + " which is not valid! Proxy support disabled!",
-                            LogMessageType.warning, false);
+                    LogManager.warn("Tried to set proxy type to " + this.proxyType
+                            + " which is not valid! Proxy support disabled!");
                     this.enableProxy = false;
                 }
             } else {
@@ -1066,10 +1063,9 @@ public class Settings {
                     "5"));
             if (this.serverCheckerWait < 1 || this.serverCheckerWait > 30) {
                 // Server checker wait should be between 1 and 30
-                log("Tried to set server connection wait to "
+                LogManager.warn("Tried to set server connection wait to "
                         + this.serverCheckerWait
-                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
-                        LogMessageType.warning, false);
+                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!");
                 this.connectionTimeout = 5;
             }
 
@@ -1077,10 +1073,9 @@ public class Settings {
                     "10"));
             if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
                 // Connection timeout should be between 1 and 30
-                log("Tried to set connection timeout to "
+                LogManager.warn("Tried to set connection timeout to "
                         + this.connectionTimeout
-                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
-                        LogMessageType.warning, false);
+                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!");
                 this.connectionTimeout = 5;
             }
 
@@ -1088,10 +1083,9 @@ public class Settings {
                     "concurrentconnections", "8"));
             if (this.concurrentConnections < 1) {
                 // Concurrent connections should be more than or equal to 1
-                log("Tried to set the number of concurrent connections to "
+                LogManager.warn("Tried to set the number of concurrent connections to "
                         + this.concurrentConnections
-                        + " which is not valid! Must be 1 or more. Setting back to default of 8!",
-                        LogMessageType.warning, false);
+                        + " which is not valid! Must be 1 or more. Setting back to default of 8!");
                 this.concurrentConnections = 8;
             }
 
@@ -1102,9 +1096,8 @@ public class Settings {
                 if (isAccountByName(lastAccountTemp)) {
                     this.account = getAccountByName(lastAccountTemp);
                 } else {
-                    log("The Account " + lastAccountTemp
-                            + " is no longer available. Logging out of Account!",
-                            LogMessageType.warning, false);
+                    LogManager.warn("The Account " + lastAccountTemp
+                            + " is no longer available. Logging out of Account!");
                     this.account = null; // Account not found
                 }
             }
@@ -1226,8 +1219,8 @@ public class Settings {
         this.server.disableServer(); // Disable the server
         for (Server server : this.servers) {
             if (!server.isDisabled() && server.isUserSelectable()) {
-                log("Server " + this.server.getName() + " Not Available! Switching To "
-                        + server.getName(), LogMessageType.warning, true);
+                LogManager.warn("Server " + this.server.getName() + " Not Available! Switching To "
+                        + server.getName());
                 this.server = server; // Setup next available server
                 return true;
             }
@@ -1244,8 +1237,8 @@ public class Settings {
         for (Server server : this.servers) {
             if (!this.triedServers.contains(server) && !server.isDisabled()
                     && server.isUserSelectable()) {
-                log("Server " + this.server.getName() + " Not Available! Switching To "
-                        + server.getName(), LogMessageType.warning, true);
+                LogManager.warn("Server " + this.server.getName() + " Not Available! Switching To "
+                        + server.getName());
                 this.server = server; // Setup next available server
                 return true;
             }
@@ -1370,10 +1363,9 @@ public class Settings {
                             }
                             Instance instance = (Instance) obj;
                             if (!instance.hasBeenConverted()) {
-                                log("Instance "
+                                LogManager.warn("Instance "
                                         + instance.getName()
-                                        + " is being converted! This is normal and should only appear once!",
-                                        LogMessageType.warning, false);
+                                        + " is being converted! This is normal and should only appear once!");
                                 instance.convert();
                             }
                             if (!instance.getDisabledModsDirectory().exists()) {
@@ -2275,11 +2267,11 @@ public class Settings {
 
     public void killMinecraft() {
         if (this.minecraftProcess != null) {
-            log("Killing Minecraft", LogMessageType.error, false);
+            LogManager.error("Killing Minecraft");
             this.minecraftProcess.destroy();
             this.minecraftProcess = null;
         } else {
-            log("Cannot kill Minecraft as there is no instance open!", LogMessageType.error, false);
+            LogManager.error("Cannot kill Minecraft as there is no instance open!");
         }
     }
 
@@ -2682,9 +2674,8 @@ public class Settings {
                 type = Proxy.Type.DIRECT;
             } else {
                 // Oh noes, problem!
-                log("Tried to set proxy type to " + this.proxyType
-                        + " which is not valid! Proxy support disabled!", LogMessageType.warning,
-                        false);
+                LogManager.warn("Tried to set proxy type to " + this.proxyType
+                        + " which is not valid! Proxy support disabled!");
                 this.enableProxy = false;
                 return null;
             }
@@ -2759,9 +2750,8 @@ public class Settings {
     public void cloneInstance(Instance instance, String clonedName) {
         Instance clonedInstance = (Instance) instance.clone();
         if (clonedInstance == null) {
-            App.settings.log(
-                    "Error Occured While Cloning Instance! Instance Object Couldn't Be Cloned!",
-                    LogMessageType.error, false);
+            LogManager.error(
+                    "Error Occured While Cloning Instance! Instance Object Couldn't Be Cloned!");
         } else {
             clonedInstance.setName(clonedName);
             clonedInstance.getRootDirectory().mkdir();

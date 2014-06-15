@@ -31,6 +31,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
@@ -270,9 +271,9 @@ public class AccountsTab extends JPanel {
                         }
                         accountsComboBox.setSelectedItem(account);
                     } else {
-                        App.settings.log(
+                        LogManager.error(
                                 (response == null ? "Unknown Error Logging In" : response
-                                        .getErrorMessage()), LogMessageType.error, false);
+                                        .getErrorMessage()));
                         String[] options = { App.settings.getLocalizedString("common.ok") };
                         JOptionPane.showOptionDialog(
                                 App.settings.getParent(),

@@ -34,6 +34,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.atlauncher.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1339,8 +1340,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                 + this.pack.getName(), JOptionPane.DEFAULT_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
-                    App.settings.log("Instance Install Cancelled After Viewing Message!",
-                            LogMessageType.error, false);
+                    LogManager.error("Instance Install Cancelled After Viewing Message!");
                     cancel(true);
                     return false;
                 }
@@ -1370,8 +1370,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                 + this.pack.getName(), JOptionPane.DEFAULT_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
-                    App.settings.log("Instance Install Cancelled After Viewing Message!",
-                            LogMessageType.error, false);
+                    LogManager.error("Instance Install Cancelled After Viewing Message!");
                     cancel(true);
                     return false;
                 }

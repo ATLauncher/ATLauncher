@@ -21,6 +21,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 
 public class DisableableMod implements Serializable {
@@ -184,8 +185,7 @@ public class DisableableMod implements Serializable {
                 dir = instance.getShaderPacksDirectory();
                 break;
             default:
-                App.settings.log("Unsupported mod for enabling/disabling " + this.name,
-                        LogMessageType.warning, false);
+                LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
                 break;
         }
         if (dir == null) {

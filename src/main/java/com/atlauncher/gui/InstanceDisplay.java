@@ -32,6 +32,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Pack;
@@ -379,19 +380,17 @@ public class InstanceDisplay extends CollapsiblePanel {
                     });
                     dialog.start();
                 } else if (clonedName == null || clonedName == "") {
-                    App.settings.log(
-                            "Error Occured While Cloning Instance! Dialog Closed/Cancelled!",
-                            LogMessageType.error, false);
+                    LogManager.error(
+                            "Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
                                     + App.settings.getLocalizedString("instance.errorclone",
-                                            instance.getName() + "<br/><br/>") + "</p></html>",
+                                    instance.getName() + "<br/><br/>") + "</p></html>",
                             App.settings.getLocalizedString("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                 } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                    App.settings.log("Error Occured While Cloning Instance! Invalid Name!",
-                            LogMessageType.error, false);
+                    LogManager.error("Error Occured While Cloning Instance! Invalid Name!");
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
@@ -400,9 +399,7 @@ public class InstanceDisplay extends CollapsiblePanel {
                             App.settings.getLocalizedString("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                 } else {
-                    App.settings
-                            .log("Error Occured While Cloning Instance! Instance With That Name Already Exists!",
-                                    LogMessageType.error, false);
+                    LogManager.error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"

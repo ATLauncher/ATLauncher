@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.gui.components.BottomBar;
@@ -88,15 +89,12 @@ public class ConsoleBottomBar extends BottomBar {
                 try {
                     String result = App.TASKPOOL.submit(new PasteUpload()).get();
                     if (result.contains(Constants.PASTE_CHECK_URL)) {
-                        App.settings.log("Log uploaded and link copied to clipboard: " + result);
-                        App.TOASTER.pop("Log uploaded and link copied to clipboard: " + result);
+                        LogManager.info("Log uploaded and link copied to clipboard: " + result);
                         StringSelection text = new StringSelection(result);
                         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                         clipboard.setContents(text, null);
                     } else {
-                        App.settings.log("Log failed to upload: " + result, LogMessageType.error,
-                                false);
-                        App.TOASTER.popError("Log failed to upload");
+                        LogManager.error("Log failed to upload: " + result);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace(System.err);

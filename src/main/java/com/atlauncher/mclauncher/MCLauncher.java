@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LogMessageType;
@@ -122,8 +123,7 @@ public class MCLauncher {
                 if (!arg.isEmpty()) {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {
-                            App.settings.log("Duplicate argument " + arg + " found and not added!",
-                                    LogMessageType.error, false);
+                            LogManager.error("Duplicate argument " + arg + " found and not added!");
                         } else {
                             arguments.add(arg);
                         }

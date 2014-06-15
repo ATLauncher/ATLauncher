@@ -19,26 +19,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
+import java.io.*;
 
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
-import com.atlauncher.utils.HTMLifier;
-import com.atlauncher.utils.Timestamper;
+import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Utils;
 
 public class LauncherConsole extends JFrame {
@@ -50,7 +43,7 @@ public class LauncherConsole extends JFrame {
     private final BorderLayout LAYOUT_MANAGER = new BorderLayout();
 
     private JScrollPane scrollPane;
-    private JEditorPane console;
+    public Console console;
     private HTMLEditorKit kit;
     private HTMLDocument doc;
     private ConsoleBottomBar bottomBar;
@@ -68,19 +61,10 @@ public class LauncherConsole extends JFrame {
         setMinimumSize(MINIMUM_SIZE);
         setLayout(LAYOUT_MANAGER);
 
-        console = new JEditorPane("text/html", "") {
-            public boolean getScrollableTracksViewportWidth() {
-                return true; // Fixes issues with resizing from big to small and text not shrinking
-            }
-        };
+        console = new Console();
         console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
         console.setForeground(App.THEME.getConsoleTextColor());
-        kit = new HTMLEditorKit();
-        doc = new HTMLDocument();
-        console.setEditable(false);
         console.setSelectionColor(App.THEME.getSelectionColor());
-        console.setEditorKit(kit);
-        console.setDocument(doc);
 
         setupContextMenu(); // Setup the right click menu
 
@@ -148,6 +132,7 @@ public class LauncherConsole extends JFrame {
     }
 
     public void log(String text, LogMessageType type, boolean isMinecraft) {
+        /*
         synchronized (kit) {
             text = text.replace(App.settings.getBaseDir().getAbsolutePath(), "**USERSDIR**");
             try {
@@ -186,7 +171,7 @@ public class LauncherConsole extends JFrame {
                 e.printStackTrace();
             }
             console.setCaretPosition(console.getDocument().getLength());
-        }
+        } */
     }
 
     /**

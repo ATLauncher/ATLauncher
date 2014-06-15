@@ -23,6 +23,7 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
@@ -217,9 +218,9 @@ public class ModsChooser extends JDialog {
                     } else {
                         Mod linkedMod = installer.getModByName(mod.getLinked());
                         if (linkedMod == null) {
-                            App.settings.log("The mod " + mod.getName()
+                            LogManager.error("The mod " + mod.getName()
                                     + " tried to reference a linked mod " + mod.getLinked()
-                                    + " which doesn't exist!", LogMessageType.error, false);
+                                    + " which doesn't exist!");
                             installer.cancel(true);
                             return;
                         }

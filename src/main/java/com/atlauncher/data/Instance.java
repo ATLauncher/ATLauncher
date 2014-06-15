@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.ProgressDialog;
@@ -1083,9 +1084,7 @@ public class Instance implements Cloneable {
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                         options[0]);
                 if (ret != 0) {
-                    App.settings
-                            .log("Launching of instance cancelled due to user cancelling memory warning!",
-                                    LogMessageType.warning, false);
+                    LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
                     App.settings.setMinecraftLaunched(false);
                     return false;
                 }
@@ -1105,9 +1104,7 @@ public class Instance implements Cloneable {
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
                 if (ret != 0) {
-                    App.settings
-                            .log("Launching of instance cancelled due to user cancelling memory warning!",
-                                    LogMessageType.warning, false);
+                    LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
                     App.settings.setMinecraftLaunched(false);
                     return false;
                 }
@@ -1128,8 +1125,7 @@ public class Instance implements Cloneable {
                 if (ret == JOptionPane.OK_OPTION) {
                     password = new String(passwordField.getPassword());
                 } else {
-                    App.settings.log("Aborting login for " + account.getMinecraftUsername(),
-                            LogMessageType.error, false);
+                    LogManager.error("Aborting login for " + account.getMinecraftUsername());
                     App.settings.setMinecraftLaunched(false);
                     return false;
                 }
@@ -1151,7 +1147,7 @@ public class Instance implements Cloneable {
             if (sess == null) {
                 sess = new AuthenticationResponse("token:0:0", false);
             } else if (sess.hasError()) {
-                App.settings.log(sess.getErrorMessage(), LogMessageType.error, false);
+                LogManager.error(sess.getErrorMessage());
                 String[] options = { App.settings.getLocalizedString("common.ok") };
                 JOptionPane.showOptionDialog(
                         App.settings.getParent(),
@@ -1337,8 +1333,7 @@ public class Instance implements Cloneable {
                     // Pending report was never sent due to an issue. Won't delete the file in case
                     // it's
                     // a temporary issue and can be sent again later.
-                    App.settings.log("OpenEye: Couldn't send pending crash report!",
-                            LogMessageType.warning, false);
+                    LogManager.error("OpenEye: Couldn't send pending crash report!");
                 } else {
                     // OpenEye returned a response to the report, display that to user if needed.
                     App.settings.log("OpenEye: Pending crash report sent! URL: "

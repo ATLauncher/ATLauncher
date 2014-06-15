@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.zip.GZIPInputStream;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -218,9 +219,8 @@ public class Downloadable {
                         this.connection = null;
                         return getConnection();
                     } else {
-                        App.settings.log("Failed to download " + this.beforeURL
-                                + " from all ATLauncher servers. Cancelling install!",
-                                LogMessageType.error, false);
+                        LogManager.error("Failed to download " + this.beforeURL
+                                + " from all ATLauncher servers. Cancelling install!");
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);
                         }
@@ -256,8 +256,7 @@ public class Downloadable {
                 }
             }
         } catch (SocketException e) {
-            App.settings.log("Failed to download " + this.url + " due to SocketException!",
-                    LogMessageType.error, false);
+            LogManager.error("Failed to download " + this.url + " due to SocketException!");
             // Connection reset. Close connection and try again
             App.settings.logStackTrace(e);
             this.connection.disconnect();
@@ -266,8 +265,7 @@ public class Downloadable {
                 Utils.moveFile(this.oldFile, this.file, true);
             }
         } catch (IOException e) {
-            App.settings.log("Failed to download " + this.url + " due to IOException!",
-                    LogMessageType.error, false);
+            LogManager.error("Failed to download " + this.url + " due to IOException!");
             App.settings.logStackTrace(e);
             if (this.oldFile != null && this.oldFile.exists()) {
                 Utils.moveFile(this.oldFile, this.file, true);
@@ -309,8 +307,7 @@ public class Downloadable {
             }
             in.close();
         } catch (IOException e) {
-            App.settings.log("Failed to get contents of " + this.url + " due to IOException!",
-                    LogMessageType.error, false);
+            LogManager.error("Failed to get contents of " + this.url + " due to IOException!");
             App.settings.logStackTrace(e);
             return null;
         }
@@ -329,8 +326,7 @@ public class Downloadable {
             this.connection = null;
         }
         if (this.file == null) {
-            App.settings.log("Cannot download " + this.url + " to file as one wasn't specified!",
-                    LogMessageType.error, false);
+            LogManager.error("Cannot download " + this.url + " to file as one wasn't specified!");
             return;
         }
         if (this.file.exists()) {
@@ -384,24 +380,22 @@ public class Downloadable {
             if (!done) {
                 if (this.isATLauncherDownload) {
                     if (App.settings.getNextServer()) {
-                        App.settings.log("Error downloading " + this.file.getName() + " from "
+                       LogManager.warn("Error downloading " + this.file.getName() + " from "
                                 + this.url + ". Expected hash of " + getHash() + " but got "
-                                + fileHash + " instead. Trying another server!",
-                                LogMessageType.warning, false);
+                                + fileHash + " instead. Trying another server!");
                         this.url = App.settings.getFileURL(this.beforeURL);
                         download(downloadAsLibrary); // Redownload the file
                     } else {
-                        App.settings.log("Failed to download file " + this.file.getName()
-                                + " from all ATLauncher servers. Cancelling install!",
-                                LogMessageType.error, false);
+                        LogManager.error("Failed to download file " + this.file.getName()
+                                + " from all ATLauncher servers. Cancelling install!");
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);
                         }
                     }
                 } else {
-                    App.settings.log("Error downloading " + this.file.getName() + " from "
+                    LogManager.error("Error downloading " + this.file.getName() + " from "
                             + this.url + ". Expected hash of " + getHash() + " but got " + fileHash
-                            + " instead. Cancelling install!", LogMessageType.error, false);
+                            + " instead. Cancelling install!");
                     if (this.instanceInstaller != null) {
                         instanceInstaller.cancel(true);
                     }
