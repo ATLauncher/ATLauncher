@@ -50,7 +50,6 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
         setIcon(icon);
         setText(username);
         setFont(list.getFont());
-
         return this;
     }
 }

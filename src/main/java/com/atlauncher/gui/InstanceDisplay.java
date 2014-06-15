@@ -380,7 +380,7 @@ public class InstanceDisplay extends CollapsiblePanel {
                         }
                     });
                     dialog.start();
-                } else if (clonedName == null || clonedName == "") {
+                } else if (clonedName == null || clonedName.equals("")) {
                     LogManager.error(
                             "Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
                     JOptionPane.showMessageDialog(

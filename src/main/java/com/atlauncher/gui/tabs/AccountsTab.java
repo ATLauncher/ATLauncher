@@ -338,7 +338,7 @@ public class AccountsTab extends JPanel implements Tab{
         userSkin = new JLabel(fillerAccount.getMinecraftSkin());
         userSkin.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                if (((Account) accountsComboBox.getSelectedItem()) != fillerAccount) {
+                if (accountsComboBox.getSelectedItem() != fillerAccount) {
                     if (e.getButton() == MouseEvent.BUTTON3) {
                         contextMenu.show(userSkin, e.getX(), e.getY());
                     }
