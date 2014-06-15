@@ -73,6 +73,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -116,6 +117,7 @@ public class Settings {
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private Proxy proxy = null; // The proxy object if any
     private String theme; // The theme to use
+    private String dateFormat; // The date format to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
@@ -897,6 +899,7 @@ public class Settings {
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             this.theme = properties.getProperty("theme", "ATLauncher");
+            this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon",
@@ -1129,6 +1132,8 @@ public class Settings {
 
             this.theme = properties.getProperty("theme", "ATLauncher");
 
+            this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
+
             String lastAccountTemp = properties.getProperty("lastaccount", "");
             if (!lastAccountTemp.isEmpty()) {
                 if (isAccountByName(lastAccountTemp)) {
@@ -1195,6 +1200,7 @@ public class Settings {
             properties.setProperty("servercheckerwait", this.serverCheckerWait + "");
             properties.setProperty("concurrentconnections", this.concurrentConnections + "");
             properties.setProperty("theme", this.theme);
+            properties.setProperty("dateformat", this.dateFormat);
             if (account != null) {
                 properties.setProperty("lastaccount", account.getUsername());
             } else {
@@ -2733,6 +2739,15 @@ public class Settings {
 
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+        Timestamper.updateDateFormat();
+    }
+
+    public String getDateFormat() {
+        return this.dateFormat;
     }
 
     public Proxy getProxy() {

@@ -9,8 +9,11 @@ package com.atlauncher.utils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.atlauncher.App;
+
 public final class Timestamper {
-    private static final SimpleDateFormat format = new SimpleDateFormat("dd/M/yyy HH:mm:ss a");
+    private static final SimpleDateFormat format = new SimpleDateFormat(
+            App.settings.getDateFormat() + " HH:mm:ss a");
 
     public static String now() {
         return format.format(new Date());
@@ -18,5 +21,9 @@ public final class Timestamper {
 
     public static String was(Date date) {
         return format.format(date);
+    }
+
+    public static void updateDateFormat() {
+        format.applyLocalizedPattern(App.settings.getDateFormat() + " HH:mm:ss a");
     }
 }
