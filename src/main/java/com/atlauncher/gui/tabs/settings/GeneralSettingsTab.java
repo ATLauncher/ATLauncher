@@ -23,7 +23,6 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab {
-
     private JLabelWithHover languageLabel;
     private JComboBox<String> language;
 

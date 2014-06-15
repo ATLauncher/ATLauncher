@@ -91,12 +91,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     if (restartServerChecker) {
                         App.settings.startCheckingServers();
                     }
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("settings.saved"),
-                            App.settings.getLocalizedString("settings.saved"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
-                            options, options[0]);
+                    App.TOASTER.pop("Settings Saved");
                 }
             }
         });

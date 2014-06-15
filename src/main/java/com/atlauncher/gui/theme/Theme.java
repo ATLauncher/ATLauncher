@@ -8,7 +8,10 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
 
+import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
+import io.github.asyncronous.toast.Toaster;
+import io.github.asyncronous.toast.ToasterConstants;
 
 public final class Theme {
     public static final Theme DEFAULT_THEME = new Theme("ATLauncher", "RyanTheAllmighty", true,
@@ -95,6 +98,10 @@ public final class Theme {
                     Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
             UIManager.put("Toaster.font",
                     Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
+            UIManager.put("Toaster.bgColor", this.tabBackgroundColor);
+            UIManager.put("Toaster.msgColor", this.consoleTextColor);
+            UIManager.put("Toaster.borderColor", this.hoverBorderColor);
+            UIManager.put("Toaster.opacity", 0.75F);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

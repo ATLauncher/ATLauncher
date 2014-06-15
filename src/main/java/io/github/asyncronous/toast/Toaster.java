@@ -47,6 +47,7 @@ public final class Toaster{
         UIManager.put("Toaster.time", 5000);
         UIManager.put("Toaster.opaque", false);
         UIManager.put("Toaster.opacity", 0.5F);
+        UIManager.put("Toaster.contBounds", GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds());
     }
 
     /**

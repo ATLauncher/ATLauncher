@@ -9,6 +9,7 @@ public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler 
     public void uncaughtException(Thread t, Throwable e) {
         if(e instanceof ChunkyException){
             try {
+                App.TOASTER.popWarning("Caught an exception");
                 GithubIssueReporter.submit("Strained Exception", Utils.error(e));
             } catch (Exception e1) {
                 e1.printStackTrace(System.err);

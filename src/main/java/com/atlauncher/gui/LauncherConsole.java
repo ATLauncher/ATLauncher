@@ -44,8 +44,6 @@ import com.atlauncher.utils.Utils;
 public class LauncherConsole extends JFrame implements RelocalizationListener{
     private JScrollPane scrollPane;
     public Console console;
-    private HTMLEditorKit kit;
-    private HTMLDocument doc;
     private ConsoleBottomBar bottomBar;
     private JPopupMenu contextMenu; // Right click menu
 

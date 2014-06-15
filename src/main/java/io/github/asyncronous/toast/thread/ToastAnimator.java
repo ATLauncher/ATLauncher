@@ -20,7 +20,7 @@ public final class ToastAnimator extends SwingWorker<Void, Void> {
     protected Void doInBackground()
     throws Exception {
         boolean fromBottom = true;
-        Rectangle screenRect = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        Rectangle screenRect = (Rectangle) UIManager.get("Toaster.contBounds");
 
         int startY;
         int stopY;
