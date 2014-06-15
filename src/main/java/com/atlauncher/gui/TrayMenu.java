@@ -20,6 +20,9 @@ import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 
+/**
+ * TODO: Rewrite
+ */
 public final class TrayMenu extends PopupMenu {
 	
 	public TrayMenu() {
