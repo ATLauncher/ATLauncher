@@ -170,7 +170,6 @@ public class App {
         TRAY_MENU.localize();
         integrate();
         new LauncherFrame(open); // Open the Launcher
-        throw new ChunkyException("Test");
     }
 
     public static void loadTheme() {
