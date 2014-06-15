@@ -6,67 +6,77 @@
  */
 package com.atlauncher.data;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import com.atlauncher.App;
 
-public class Language {
-    private String name;
-    private String localizedName;
-    private File file;
-    private Properties properties;
-    private Properties english;
+public enum Language{
+    INSTANCE;
 
-    public void setupLanguage() {
-        this.file = new File(App.settings.getLanguagesDir(), name.toLowerCase() + ".lang");
-        properties = new Properties();
-        try {
-            properties.load(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
-        loadEnglishBackup();
-    }
+    private final Map<String, Properties> langs = new HashMap<String, Properties>();
+    private String current;
 
-    private void loadEnglishBackup() {
-        english = new Properties();
-        try {
-            english.load(new FileInputStream(new File(App.settings.getLanguagesDir(),
-                    "english.lang")));
-        } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
+    private Language(){
+        try{
+            this.load("english");
+        } catch(Exception ex){
+            App.settings.logStackTrace(ex);
+            ex.printStackTrace(System.err);
         }
     }
 
-    public String getName() {
-        return this.name;
+    public void load(String lang)
+    throws IOException{
+        if(this.langs.containsKey(lang)){
+            App.settings.log("Double loading of language: " + lang);
+        } else{
+            Properties props = new Properties();
+            props.load(new FileInputStream(new File(App.settings.getLanguagesDir(), lang.toLowerCase() + ".lang")));
+            this.langs.put(lang, props);
+        }
+
+        this.current = lang;
     }
 
-    public String getLocalizedName() {
-        return this.localizedName;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public String getString(String property) {
-        if (properties.containsKey(property)) {
-            return properties.getProperty(property);
-        } else {
-            return english.getProperty(property, "Unknown Property: " + property);
+    public String localize(String lang, String tag){
+        if(this.langs.containsKey(lang)){
+            Properties props = this.langs.get(lang);
+            if(props.containsKey(tag)){
+                return props.getProperty(tag, tag);
+            } else{
+                return this.localize("english", tag);
+            }
+        } else{
+            return this.localize("english", tag);
         }
     }
 
-    public String toString() {
-        return this.localizedName;
+    public String localize(String tag){
+        return this.localize(this.current, tag);
+    }
+
+    public String getCurrent(){
+        return this.current;
+    }
+
+    public static String[] available(){
+        File[] files = App.settings.getLanguagesDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".lang");
+            }
+        });
+        String[] langs = new String[files.length];
+        for(int i = 0; i < files.length; i++){
+            langs[i] = files[i].getName().substring(0, files[i].getName().lastIndexOf("."));
+        }
+        return langs;
+    }
+
+    public static String current(){
+        return INSTANCE.current;
     }
 }

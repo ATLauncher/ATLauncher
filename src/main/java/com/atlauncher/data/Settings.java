@@ -11,21 +11,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
@@ -33,14 +19,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -48,6 +27,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -84,7 +64,6 @@ import com.google.gson.reflect.TypeToken;
 public class Settings {
 
     // Users Settings
-    private Language language; // Language for the Launcher
     private Server server; // Server to use for the Launcher
     private String forgeLoggingLevel; // Logging level to use when running Minecraft with Forge
     private int ram; // RAM to use when launching Minecraft
@@ -130,7 +109,6 @@ public class Settings {
     // Packs, Instances and Accounts
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<News> news; // News
-    private List<Language> languages; // Languages for the Launcher
     private List<MinecraftVersion> minecraftVersions; // Minecraft versions
     private List<Pack> packs; // Packs in the Launcher
     private ArrayList<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
@@ -216,7 +194,6 @@ public class Settings {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
         loadNews(); // Load the news
-        loadLanguages(); // Load the Languages available in the Launcher
         this.languageLoaded = true; // Languages are now loaded
         loadMinecraftVersions(); // Load info about the different Minecraft versions
         loadPacks(); // Load the Packs available in the Launcher
@@ -563,7 +540,6 @@ public class Settings {
                 }
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
-                loadLanguages(); // Load the Languages available in the Launcher
                 loadPacks(); // Load the Packs available in the Launcher
                 reloadPacksPanel(); // Reload packs panel
                 loadUsers(); // Load the Testers and Allowed Players for the packs
@@ -945,11 +921,10 @@ public class Settings {
 
             String lang = properties.getProperty("language", "English");
             if (isLanguageByName(lang)) {
-                this.language = getLanguageByName(lang);
+                Language.INSTANCE.load(lang);
             } else {
                 log("Invalid language " + lang + ". Defaulting to English!",
                         LogMessageType.warning, false);
-                this.language = getLanguageByName("English"); // Language not found, use default
             }
 
             this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
@@ -1156,7 +1131,7 @@ public class Settings {
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
             properties
                     .setProperty("hadconnectiontimeoutcheck", this.hadConnectionTimeoutCheck + "");
-            properties.setProperty("language", this.language.getName());
+            properties.setProperty("language", Language.INSTANCE.getCurrent());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
             properties.setProperty("ram", this.ram + "");
@@ -1292,27 +1267,6 @@ public class Settings {
             logStackTrace(e);
         } catch (FileNotFoundException e) {
             logStackTrace(e);
-        }
-    }
-
-    /**
-     * Loads the languages for use in the Launcher
-     */
-    private void loadLanguages() {
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<Language>>() {
-            }.getType();
-            this.languages = gson.fromJson(
-                    new FileReader(new File(getJSONDir(), "languages.json")), type);
-        } catch (JsonSyntaxException e) {
-            logStackTrace(e);
-        } catch (JsonIOException e) {
-            logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            logStackTrace(e);
-        }
-        for (Language lang : this.languages) {
-            lang.setupLanguage();
         }
     }
 
@@ -1849,8 +1803,17 @@ public class Settings {
      * 
      * @return The Languages available in the Launcher
      */
-    public List<Language> getLanguages() {
-        return this.languages;
+    public List<String> getLanguages() {
+        List<String> langs = new LinkedList<String>();
+        for(File file : this.getLanguagesDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".lang");
+            }
+        })){
+            langs.add(file.getName().substring(0, file.getName().lastIndexOf(".")));
+        }
+        return langs;
     }
 
     /**
@@ -2114,22 +2077,6 @@ public class Settings {
     }
 
     /**
-     * Finds a Language from the given name
-     * 
-     * @param name
-     *            Name of the Language to find
-     * @return Language if the language is found from the name
-     */
-    private Language getLanguageByName(String name) {
-        for (Language language : languages) {
-            if (language.getName().equalsIgnoreCase(name)) {
-                return language;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Finds a Server from the given name
      * 
      * @param name
@@ -2169,12 +2116,7 @@ public class Settings {
      * @return true if found, false if not
      */
     public boolean isLanguageByName(String name) {
-        for (Language language : languages) {
-            if (language.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
+        return this.getLanguages().contains(name);
     }
 
     /**
@@ -2342,22 +2284,17 @@ public class Settings {
     }
 
     /**
-     * Gets the users current active Language
-     * 
-     * @return The users set language
-     */
-    public Language getLanguage() {
-        return this.language;
-    }
-
-    /**
      * Sets the users current active Language
      * 
      * @param language
      *            The language to set to
      */
-    public void setLanguage(Language language) {
-        this.language = language;
+    public void setLanguage(String language){
+        try{
+            Language.INSTANCE.load(language);
+        } catch(Exception ex){
+            ex.printStackTrace(System.err);
+        }
     }
 
     /**
@@ -2765,11 +2702,11 @@ public class Settings {
     }
 
     public String getLocalizedString(String string) {
-        return language.getString(string);
+        return Language.INSTANCE.localize(string);
     }
 
     public String getLocalizedString(String string, String replace) {
-        return language.getString(string).replace("%s", replace);
+        return Language.INSTANCE.localize(string).replace("%s", replace);
     }
 
     public void restartLauncher() {

@@ -24,7 +24,7 @@ import com.atlauncher.utils.Utils;
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover languageLabel;
-    private JComboBox<Language> language;
+    private JComboBox<String> language;
     private JLabelWithHover languageLabelRestart;
     private JPanel languageLabelPanel;
 
@@ -82,11 +82,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<Language>();
-        for (Language languagee : App.settings.getLanguages()) {
-            language.addItem(languagee);
-        }
-        language.setSelectedItem(App.settings.getLanguage());
+        language = new JComboBox<String>(Language.available());
+        language.setSelectedItem(Language.current());
         add(language, gbc);
 
         gbc.gridx = 0;
@@ -232,11 +229,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     }
 
     public boolean needToRestartLauncher() {
-        return language.getSelectedItem() != App.settings.getLanguage();
+        return language.getSelectedItem() != Language.current();
     }
 
     public void save() {
-        App.settings.setLanguage((Language) language.getSelectedItem());
+        App.settings.setLanguage((String) language.getSelectedItem());
         App.settings.setTheme((String) theme.getSelectedItem());
         App.settings.setAdvancedBackups(advancedBackup.isSelected());
         App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());

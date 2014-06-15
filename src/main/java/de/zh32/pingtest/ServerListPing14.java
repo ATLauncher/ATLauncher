@@ -99,9 +99,7 @@ public final class ServerListPing14 {
 
         inputStream = socket.getInputStream();
         inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-16BE"));
-        dataOutputStream.write(new byte[] { (byte) 0xFE, (byte) 0x01
-
-        });
+        dataOutputStream.write(new byte[] { (byte) 0xFE, (byte) 0x01});
 
         int packetId = inputStream.read();
 
