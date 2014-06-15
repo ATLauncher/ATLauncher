@@ -21,6 +21,37 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.App;
 
 public final class TrayMenu extends PopupMenu {
+	
+	public TrayMenu() {
+        super();
+
+        this.setMinecraftLaunched(false); // Default Kill MC item to be disabled
+
+        // Setup default labels until proper localization is able to be done
+        this.KILLMC_BUTTON.setLabel("Kill Minecraft");
+        this.TC_BUTTON.setLabel("Toggle Console");
+        this.TC_BUTTON.setEnabled(false);
+        this.QUIT_BUTTON.setLabel("Quit");
+
+        this.add(this.KILLMC_BUTTON);
+        this.add(this.TC_BUTTON);
+        this.addSeparator();
+        this.add(this.QUIT_BUTTON);
+    }
+
+    public void localize() {
+        // Resetup TC Button
+        this.TC_BUTTON.setEnabled(true);
+        if (App.settings.isConsoleVisible()) {
+            this.TC_BUTTON.setLabel(App.settings.getLocalizedString("console.hide"));
+        } else {
+            this.TC_BUTTON.setLabel(App.settings.getLocalizedString("console.show"));
+        }
+
+        // Do localization
+        this.KILLMC_BUTTON.setLabel(App.settings.getLocalizedString("console.kill"));
+        this.QUIT_BUTTON.setLabel(App.settings.getLocalizedString("common.quit"));
+    }
 
     private final MenuItem KILLMC_BUTTON = new MenuItem() {
         {
@@ -97,38 +128,6 @@ public final class TrayMenu extends PopupMenu {
 
     public void setMinecraftLaunched(boolean launched) {
         this.KILLMC_BUTTON.setEnabled(launched);
-    }
-
-    public TrayMenu() {
-        super();
-
-        this.setMinecraftLaunched(false); // Default Kill MC item to be disabled
-
-        // Setup default labels until proper localization is able to be done
-        this.KILLMC_BUTTON.setLabel("Kill Minecraft");
-        this.TC_BUTTON.setLabel("Toggle Console");
-        this.TC_BUTTON.setEnabled(false);
-        this.QUIT_BUTTON.setLabel("Quit");
-
-        this.add(this.KILLMC_BUTTON);
-        this.add(this.TC_BUTTON);
-        this.addSeparator();
-        this.add(this.QUIT_BUTTON);
-    }
-
-    public void localize() {
-
-        // Resetup TC Button
-        this.TC_BUTTON.setEnabled(true);
-        if (App.settings.isConsoleVisible()) {
-            this.TC_BUTTON.setLabel(App.settings.getLocalizedString("console.hide"));
-        } else {
-            this.TC_BUTTON.setLabel(App.settings.getLocalizedString("console.show"));
-        }
-
-        // Do localization
-        this.KILLMC_BUTTON.setLabel(App.settings.getLocalizedString("console.kill"));
-        this.QUIT_BUTTON.setLabel(App.settings.getLocalizedString("common.quit"));
     }
 
 }

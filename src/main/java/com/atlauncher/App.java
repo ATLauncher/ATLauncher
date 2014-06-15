@@ -9,6 +9,7 @@ package com.atlauncher;
 import io.github.asyncronous.toast.Toaster;
 import io.github.asyncronous.toast.ToasterConstants;
 
+import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
@@ -50,7 +51,7 @@ public class App {
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
     public static final Toaster TOASTER = Toaster.instance();
 
-    public static PopupMenu TRAY_MENU = new TrayMenu();
+    public static TrayMenu TRAY_MENU = new TrayMenu();
 
     public static boolean wasUpdated = false;
 
@@ -173,7 +174,7 @@ public class App {
                 }
             }
         }
-        ((TrayMenu) TRAY_MENU).localize();
+        TRAY_MENU.localize();
         integrate();
         new LauncherFrame(open); // Open the Launcher
     }
@@ -228,17 +229,14 @@ public class App {
 
     private static void trySystemTrayIntegration() throws Exception {
         if (SystemTray.isSupported()) {
-            SystemTray TRAY = SystemTray.getSystemTray();
-
-            Image trayIconImage = Utils.getImage("/assets/image/Icon.png");
-            int trayIconWidth = new TrayIcon(Utils.getImage("/assets/image/Icon.png")).getSize().width;
-            TRAY.add(new TrayIcon(trayIconImage.getScaledInstance(trayIconWidth, -1,
-                    Image.SCALE_SMOOTH), "tray_icon") {
-                {
-                    this.setPopupMenu(TRAY_MENU);
-                    this.setToolTip("ATLauncher");
-                }
-            });
+            SystemTray tray = SystemTray.getSystemTray();
+            TrayIcon trayIcon = new TrayIcon(Utils.getImage("/assets/image/Icon.png"));
+            
+            trayIcon.setPopupMenu(TRAY_MENU);
+            trayIcon.setToolTip("ATLauncher");
+        	trayIcon.setImageAutoSize(true);
+        	
+    		tray.add(trayIcon);
         }
     }
 
