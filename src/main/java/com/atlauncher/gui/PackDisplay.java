@@ -35,7 +35,6 @@ import com.atlauncher.utils.Utils;
  * @author Ryan
  */
 public class PackDisplay extends CollapsiblePanel {
-
     private static final long serialVersionUID = -2617283435728223314L;
     private JPanel leftPanel; // Left panel with image
     private JPanel rightPanel; // Right panel with description and actions

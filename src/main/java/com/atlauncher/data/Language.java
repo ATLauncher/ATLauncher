@@ -15,9 +15,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 
 public enum Language {
-    INSTANCE;
+    INSTANCE, Language;
 
     private final Map<String, Properties> langs = new HashMap<String, Properties>();
     private String current;
@@ -37,6 +38,7 @@ public enum Language {
             props.load(new FileInputStream(new File(App.settings.getLanguagesDir(), lang
                     .toLowerCase() + ".lang")));
             this.langs.put(lang, props);
+            LogManager.info("Loading Language: " + lang);
         }
 
         this.current = lang;

@@ -25,13 +25,15 @@ import javax.swing.JPanel;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.LogMessageType;
+import com.atlauncher.data.Language;
+import com.atlauncher.evnt.RelocalizationEvent;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.BottomBar;
 import com.atlauncher.thread.PasteUpload;
 
 @SuppressWarnings("serial")
-public class ConsoleBottomBar extends BottomBar {
-
+public class ConsoleBottomBar extends BottomBar implements RelocalizationListener{
     private JPanel leftSide;
 
     private JButton clear;
@@ -64,6 +66,7 @@ public class ConsoleBottomBar extends BottomBar {
 
         add(leftSide, BorderLayout.WEST);
         add(rightSide, BorderLayout.EAST);
+        RelocalizationManager.addListener(this);
     }
 
     /**
@@ -106,8 +109,8 @@ public class ConsoleBottomBar extends BottomBar {
                 int ret = JOptionPane.showConfirmDialog(
                         App.settings.getParent(),
                         "<html><p align=\"center\">"
-                                + App.settings.getLocalizedString("console.killsure", "<br/><br/>")
-                                + "</p></html>", App.settings.getLocalizedString("console.kill"),
+                                + Language.INSTANCE.localize("console.killsure", "<br/><br/>")
+                                + "</p></html>", Language.INSTANCE.localize("console.kill"),
                         JOptionPane.YES_NO_OPTION);
                 if (ret == JOptionPane.YES_OPTION) {
                     App.settings.killMinecraft();
@@ -138,9 +141,17 @@ public class ConsoleBottomBar extends BottomBar {
     }
 
     public void setupLanguage() {
-        clear.setText(App.settings.getLocalizedString("console.clear"));
-        copyLog.setText(App.settings.getLocalizedString("console.copy"));
-        uploadLog.setText(App.settings.getLocalizedString("console.upload"));
-        killMinecraft.setText(App.settings.getLocalizedString("console.kill"));
+        clear.setText(Language.INSTANCE.localize("console.clear"));
+        copyLog.setText(Language.INSTANCE.localize("console.copy"));
+        uploadLog.setText(Language.INSTANCE.localize("console.upload"));
+        killMinecraft.setText(Language.INSTANCE.localize("console.kill"));
+    }
+
+    @Override
+    public void onRelocalization(RelocalizationEvent event) {
+        clear.setText(Language.INSTANCE.localize("console.clear"));
+        copyLog.setText(Language.INSTANCE.localize("console.copy"));
+        uploadLog.setText(Language.INSTANCE.localize("console.upload"));
+        killMinecraft.setText(Language.INSTANCE.localize("console.kill"));
     }
 }

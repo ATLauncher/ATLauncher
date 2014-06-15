@@ -17,6 +17,8 @@ import javax.swing.WindowConstants;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
+import com.atlauncher.evnt.RelocalizationEvent;
+import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.tabs.AccountsTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
@@ -26,7 +28,7 @@ import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
-public class LauncherFrame extends JFrame {
+public class LauncherFrame extends JFrame implements RelocalizationListener{
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;
@@ -109,5 +111,16 @@ public class LauncherFrame extends JFrame {
     private void setupBottomBar() {
         bottomBar = new LauncherBottomBar();
         App.settings.setBottomBar(bottomBar);
+    }
+
+    @Override
+    public void onRelocalization(RelocalizationEvent event) {
+        this.tabbedPane.removeAll();
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.news"), newsTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountsTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.tools"), toolsTab);
+        tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsTab);
     }
 }

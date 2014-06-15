@@ -31,17 +31,20 @@ import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
 import com.atlauncher.evnt.ConsoleCloseEvent;
 import com.atlauncher.evnt.ConsoleOpenEvent;
+import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.listener.ConsoleCloseListener;
 import com.atlauncher.evnt.listener.ConsoleOpenListener;
+import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.BottomBar;
 import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar {
+public class LauncherBottomBar extends BottomBar implements RelocalizationListener{
     private JPanel leftSide;
     private JPanel middle;
 
@@ -104,6 +107,7 @@ public class LauncherBottomBar extends BottomBar {
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
         add(rightSide, BorderLayout.EAST);
+        RelocalizationManager.addListener(this);
     }
 
     /**
@@ -260,5 +264,10 @@ public class LauncherBottomBar extends BottomBar {
             username.setSelectedItem(App.settings.getAccount());
         }
         dontSave = false;
+    }
+
+    @Override
+    public void onRelocalization(RelocalizationEvent event) {
+
     }
 }

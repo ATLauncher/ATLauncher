@@ -29,17 +29,19 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.evnt.ConsoleCloseEvent;
 import com.atlauncher.evnt.ConsoleOpenEvent;
+import com.atlauncher.evnt.RelocalizationEvent;
+import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Utils;
 
-public class LauncherConsole extends JFrame {
+public class LauncherConsole extends JFrame implements RelocalizationListener{
     private JScrollPane scrollPane;
     public Console console;
     private HTMLEditorKit kit;
@@ -69,6 +71,7 @@ public class LauncherConsole extends JFrame {
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
+        RelocalizationManager.addListener(this);
     }
 
     @Override
@@ -297,4 +300,9 @@ public class LauncherConsole extends JFrame {
         console.setText(null);
     }
 
+    @Override
+    public void onRelocalization(RelocalizationEvent event) {
+        copy.setText(App.settings.getLocalizedString("common.copy"));
+        bottomBar.setupLanguage();
+    }
 }

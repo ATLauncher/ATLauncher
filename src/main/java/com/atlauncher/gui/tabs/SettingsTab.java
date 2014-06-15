@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.atlauncher.App;
+import com.atlauncher.evnt.RelocalizationEvent;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.tabs.settings.*;
 
 @SuppressWarnings("serial")
@@ -63,7 +65,7 @@ public class SettingsTab extends JPanel {
                         && networkSettingsTab.isValidProxyPort()
                         && networkSettingsTab.canConnectWithProxy()
                         && toolsSettingsTab.isValidServerCheckerWait()) {
-                    boolean restartLauncher = generalSettingsTab.needToRestartLauncher()
+                    boolean reloadLocalizationTable = generalSettingsTab.reloadLocalizationTable()
                             || generalSettingsTab.needToReloadTheme();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                     boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
@@ -74,8 +76,8 @@ public class SettingsTab extends JPanel {
                     toolsSettingsTab.save();
                     App.settings.saveProperties();
                     App.settings.log("Settings Saved!");
-                    if (restartLauncher) {
-                        App.settings.restartLauncher();
+                    if (reloadLocalizationTable) {
+                        RelocalizationManager.post(new RelocalizationEvent());
                     }
                     if (reloadPacksPanel) {
                         App.settings.reloadPacksPanel();

@@ -255,7 +255,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         return sortPacksAlphabetically.isSelected() != App.settings.sortPacksAlphabetically();
     }
 
-    public boolean needToRestartLauncher() {
+    public boolean reloadLocalizationTable() {
         return !((String) language.getSelectedItem()).equalsIgnoreCase(Language.current());
     }
 

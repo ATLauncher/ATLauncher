@@ -22,60 +22,18 @@ import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.ConsoleCloseEvent;
 import com.atlauncher.evnt.ConsoleOpenEvent;
+import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.listener.ConsoleCloseListener;
 import com.atlauncher.evnt.listener.ConsoleOpenListener;
+import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 
 /**
  * TODO: Rewrite
  */
-public final class TrayMenu extends PopupMenu {
-	
-	public TrayMenu() {
-        super();
-
-        this.setMinecraftLaunched(false); // Default Kill MC item to be disabled
-
-        // Setup default labels until proper localization is able to be done
-        this.KILLMC_BUTTON.setLabel("Kill Minecraft");
-        this.TC_BUTTON.setLabel("Toggle Console");
-        this.TC_BUTTON.setEnabled(false);
-        this.QUIT_BUTTON.setLabel("Quit");
-
-        this.add(this.KILLMC_BUTTON);
-        this.add(this.TC_BUTTON);
-        this.addSeparator();
-        this.add(this.QUIT_BUTTON);
-    }
-
-    public void localize() {
-        // Resetup TC Button
-        this.TC_BUTTON.setEnabled(true);
-        if (App.settings.isConsoleVisible()) {
-            this.TC_BUTTON.setLabel(App.settings.getLocalizedString("console.hide"));
-        } else {
-            this.TC_BUTTON.setLabel(App.settings.getLocalizedString("console.show"));
-        }
-
-        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
-            @Override
-            public void onConsoleClose(ConsoleCloseEvent event) {
-                TC_BUTTON.setLabel(Language.INSTANCE.localize("console.show"));
-            }
-        });
-        ConsoleOpenManager.addListener(new ConsoleOpenListener() {
-            @Override
-            public void onConsoleOpen(ConsoleOpenEvent event) {
-                TC_BUTTON.setLabel(Language.INSTANCE.localize("console.hide"));
-            }
-        });
-
-        // Do localization
-        this.KILLMC_BUTTON.setLabel(App.settings.getLocalizedString("console.kill"));
-        this.QUIT_BUTTON.setLabel(App.settings.getLocalizedString("common.quit"));
-    }
-
+public final class TrayMenu extends PopupMenu implements RelocalizationListener{
     private final MenuItem KILLMC_BUTTON = new MenuItem() {
         {
             this.addActionListener(new ActionListener() {
@@ -88,8 +46,8 @@ public final class TrayMenu extends PopupMenu {
                                 int ret = JOptionPane.showConfirmDialog(
                                         App.settings.getParent(),
                                         "<html><p align=\"center\">"
-                                                + App.settings.getLocalizedString(
-                                                        "console.killsure", "<br/><br/>")
+                                                + Language.INSTANCE.localize(
+                                                "console.killsure", "<br/><br/>")
                                                 + "</p></html>", App.settings
                                                 .getLocalizedString("console.kill"),
                                         JOptionPane.YES_OPTION);
@@ -126,25 +84,65 @@ public final class TrayMenu extends PopupMenu {
             });
         }
     };
+	
+	public TrayMenu() {
+        super();
 
-    public void setConsoleVisible(boolean visible) {
-        if (visible) {
-            if (App.settings.isLanguageLoaded()) {
-                this.TC_BUTTON.setLabel(App.settings.getLocalizedString("console.hide"));
-            } else {
-                this.TC_BUTTON.setLabel("Hide Console");
+        this.setMinecraftLaunched(false); // Default Kill MC item to be disabled
+
+        // Setup default labels until proper localization is able to be done
+        this.KILLMC_BUTTON.setLabel("Kill Minecraft");
+        this.TC_BUTTON.setLabel("Toggle Console");
+        this.TC_BUTTON.setEnabled(false);
+        this.QUIT_BUTTON.setLabel("Quit");
+
+        this.add(this.KILLMC_BUTTON);
+        this.add(this.TC_BUTTON);
+        this.addSeparator();
+        this.add(this.QUIT_BUTTON);
+
+        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
+            @Override
+            public void onConsoleClose(ConsoleCloseEvent event) {
+                TC_BUTTON.setLabel(Language.INSTANCE.localize("console.show"));
             }
-        } else {
-            if (App.settings.isLanguageLoaded()) {
-                this.TC_BUTTON.setLabel(App.settings.getLocalizedString("console.show"));
-            } else {
-                this.TC_BUTTON.setLabel("Show Console");
+        });
+        ConsoleOpenManager.addListener(new ConsoleOpenListener() {
+            @Override
+            public void onConsoleOpen(ConsoleOpenEvent event) {
+                TC_BUTTON.setLabel(Language.INSTANCE.localize("console.hide"));
             }
-        }
+        });
+        RelocalizationManager.addListener(this);
     }
+
+    public void localize() {
+        // Resetup TC Button
+        this.TC_BUTTON.setEnabled(true);
+        if (App.settings.isConsoleVisible()) {
+            this.TC_BUTTON.setLabel(Language.INSTANCE.localize("console.hide"));
+        } else {
+            this.TC_BUTTON.setLabel(Language.INSTANCE.localize("console.show"));
+        }
+
+        // Do localization
+        this.KILLMC_BUTTON.setLabel(Language.INSTANCE.localize("console.kill"));
+        this.QUIT_BUTTON.setLabel(Language.INSTANCE.localize("common.quit"));
+    }
+
 
     public void setMinecraftLaunched(boolean launched) {
         this.KILLMC_BUTTON.setEnabled(launched);
     }
 
+    @Override
+    public void onRelocalization(RelocalizationEvent event) {
+        this.KILLMC_BUTTON.setLabel(Language.INSTANCE.localize("console.kill"));
+        this.QUIT_BUTTON.setLabel(Language.INSTANCE.localize("common.quit"));
+        if(App.settings.getConsole().isVisible()){
+            this.TC_BUTTON.setLabel(Language.INSTANCE.localize("console.hide"));
+        } else{
+            this.TC_BUTTON.setLabel(Language.INSTANCE.localize("console.show"));
+        }
+    }
 }
