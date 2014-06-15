@@ -1,6 +1,8 @@
 package com.atlauncher.evnt.manager;
 
+import com.atlauncher.evnt.ConsoleOpenEvent;
 import com.atlauncher.evnt.RelocalizationEvent;
+import com.atlauncher.evnt.listener.ConsoleOpenListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 
 import javax.swing.*;

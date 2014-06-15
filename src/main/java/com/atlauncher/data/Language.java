@@ -18,10 +18,10 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 
 public enum Language {
-    INSTANCE, Language;
+    INSTANCE;
 
     private final Map<String, Properties> langs = new HashMap<String, Properties>();
-    private String current;
+    private volatile String current;
 
     private Language() {
         try {
@@ -32,7 +32,7 @@ public enum Language {
         }
     }
 
-    public void load(String lang) throws IOException {
+    public synchronized void load(String lang) throws IOException {
         if (!this.langs.containsKey(lang)) {
             Properties props = new Properties();
             props.load(new FileInputStream(new File(App.settings.getLanguagesDir(), lang
@@ -44,7 +44,7 @@ public enum Language {
         this.current = lang;
     }
 
-    public String localize(String lang, String tag) {
+    public synchronized String localize(String lang, String tag) {
         if (this.langs.containsKey(lang)) {
             Properties props = this.langs.get(lang);
             if (props.containsKey(tag)) {
@@ -61,11 +61,11 @@ public enum Language {
         }
     }
 
-    public String localize(String tag) {
+    public synchronized String localize(String tag) {
         return this.localize(this.current, tag);
     }
 
-    public String getCurrent() {
+    public synchronized String getCurrent() {
         return this.current;
     }
 
@@ -84,7 +84,7 @@ public enum Language {
         return langs;
     }
 
-    public static String current() {
+    public static synchronized String current() {
         return INSTANCE.current;
     }
 }

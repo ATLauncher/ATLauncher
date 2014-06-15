@@ -15,12 +15,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class ToolsSettingsTab extends AbstractSettingsTab {
-
     private JLabelWithHover enableServerCheckerLabel;
     private JCheckBox enableServerChecker;
 
@@ -105,5 +105,10 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
         App.settings.setEnableServerChecker(enableServerChecker.isSelected());
         App.settings.setServerCheckerWait(Integer.parseInt(serverCheckerWait.getText().replaceAll(
                 "[^0-9]", "")));
+    }
+
+    @Override
+    public String getTitle() {
+        return Language.INSTANCE.localize("tabs.tools");
     }
 }

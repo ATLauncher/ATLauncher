@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
@@ -170,17 +171,17 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
      */
     private void createButtons() {
         if (App.settings.isConsoleVisible()) {
-            toggleConsole = new JButton(App.settings.getLocalizedString("console.hide"));
+            toggleConsole = new JButton(Language.INSTANCE.localize("console.hide"));
         } else {
-            toggleConsole = new JButton(App.settings.getLocalizedString("console.show"));
+            toggleConsole = new JButton(Language.INSTANCE.localize("console.show"));
         }
 
-        openFolder = new JButton(App.settings.getLocalizedString("common.openfolder"));
-        updateData = new JButton(App.settings.getLocalizedString("common.updatedata"));
+        openFolder = new JButton(Language.INSTANCE.localize("common.openfolder"));
+        updateData = new JButton(Language.INSTANCE.localize("common.updatedata"));
 
         username = new JComboBox<Account>();
         username.setRenderer(new AccountsDropDownRenderer());
-        fillerAccount = new Account(App.settings.getLocalizedString("account.select"));
+        fillerAccount = new Account(Language.INSTANCE.localize("account.select"));
         username.addItem(fillerAccount);
         for (Account account : App.settings.getAccounts()) {
             username.addItem(account);
@@ -201,7 +202,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             }
         };
         statusIcon.setBorder(BorderFactory.createEmptyBorder());
-        statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.checking"));
+        statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.checking"));
     }
 
     /**
@@ -237,20 +238,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
     }
 
-    /**
-     * Changes the text on the toggleConsole button when the console is hidden
-     */
-    public void hideConsole() {
-        toggleConsole.setText(App.settings.getLocalizedString("console.show"));
-    }
-
-    /**
-     * Changes the text on the toggleConsole button when the console is shown
-     */
-    public void showConsole() {
-        toggleConsole.setText(App.settings.getLocalizedString("console.hide"));
-    }
-
     public void reloadAccounts() {
         dontSave = true;
         username.removeAllItems();
@@ -268,6 +255,12 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
     @Override
     public void onRelocalization(RelocalizationEvent event) {
-
+        if (App.settings.getConsole().isVisible()) {
+            toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
+        } else {
+            toggleConsole.setText(Language.INSTANCE.localize("console.show"));
+        }
+        this.updateData.setText(Language.INSTANCE.localize("common.updatedata"));
+        this.openFolder.setText(Language.INSTANCE.localize("common.openfolder"));
     }
 }

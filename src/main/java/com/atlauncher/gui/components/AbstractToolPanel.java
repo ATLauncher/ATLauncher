@@ -36,5 +36,4 @@ public abstract class AbstractToolPanel extends JPanel {
         add(MIDDLE_PANEL, BorderLayout.CENTER);
         add(BOTTOM_PANEL, BorderLayout.SOUTH);
     }
-
 }

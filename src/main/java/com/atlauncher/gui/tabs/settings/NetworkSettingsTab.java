@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -26,7 +27,6 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab {
-
     private JLabelWithHover downloadServerLabel;
     private JComboBox<Server> server;
 
@@ -268,5 +268,10 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
                     .parseInt(proxyPort.getText().replaceAll("[^0-9]", "")));
             App.settings.setProxyType(((String) proxyType.getSelectedItem()));
         }
+    }
+
+    @Override
+    public String getTitle() {
+        return Language.INSTANCE.localize("settings.networktab");
     }
 }

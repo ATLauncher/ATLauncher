@@ -14,12 +14,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class LoggingSettingsTab extends AbstractSettingsTab {
-
     private JLabelWithHover forgeLoggingLevelLabel;
     private JComboBox<String> forgeLoggingLevel;
 
@@ -149,5 +149,10 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
         App.settings.setEnableLogs(enableLogs.isSelected());
         App.settings.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());
+    }
+
+    @Override
+    public String getTitle() {
+        return Language.INSTANCE.localize("settings.loggingtab");
     }
 }

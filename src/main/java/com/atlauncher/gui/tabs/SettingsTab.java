@@ -9,6 +9,8 @@ package com.atlauncher.gui.tabs;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -18,37 +20,41 @@ import javax.swing.JTabbedPane;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.RelocalizationEvent;
+import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.tabs.settings.*;
 
 @SuppressWarnings("serial")
-public class SettingsTab extends JPanel implements Tab{
+public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private JTabbedPane tabbedPane;
 
-    private GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
-    private JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
-    private NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
-    private LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
-    private ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
+    private final GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
+    private final JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
+    private final NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
+    private final LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
+    private final ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
+    private final List<Tab> tabs = Arrays.asList(new Tab[]{
+            this.generalSettingsTab,
+            this.javaSettingsTab,
+            this.networkSettingsTab,
+            this.loggingSettingsTab,
+            this.toolsSettingsTab
+    });
 
     private JPanel bottomPanel;
     private JButton saveButton = new JButton(App.settings.getLocalizedString("common.save"));
 
     public SettingsTab() {
+        RelocalizationManager.addListener(this);
         setLayout(new BorderLayout());
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         tabbedPane.setBackground(App.THEME.getBaseColor());
 
         tabbedPane.setFont(App.THEME.getDefaultFont().deriveFont(17.0F));
-        tabbedPane.addTab(App.settings.getLocalizedString("settings.generaltab"),
-                generalSettingsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("settings.javatab"), javaSettingsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("settings.networktab"),
-                networkSettingsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("settings.loggingtab"),
-                loggingSettingsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.tools"), toolsSettingsTab);
+        for(Tab tab : this.tabs){
+            this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
+        }
         tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
 
@@ -99,5 +105,12 @@ public class SettingsTab extends JPanel implements Tab{
     @Override
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.settings");
+    }
+
+    @Override
+    public void onRelocalization(RelocalizationEvent event) {
+        for(int i = 0; i < this.tabbedPane.getTabCount(); i++){
+            this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
+        }
     }
 }

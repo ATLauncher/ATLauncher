@@ -24,12 +24,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class JavaSettingsTab extends AbstractSettingsTab {
-
     private JLabelWithHover memoryLabel;
     private JComboBox<String> memory;
 
@@ -312,5 +312,10 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         App.settings.setJavaParameters(javaParameters.getText());
         App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
         App.settings.setSaveCustomMods(saveCustomMods.isSelected());
+    }
+
+    @Override
+    public String getTitle() {
+        return Language.INSTANCE.localize("settings.javatab");
     }
 }

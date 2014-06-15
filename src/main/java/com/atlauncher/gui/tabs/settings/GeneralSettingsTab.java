@@ -269,4 +269,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         App.settings.setEnableConsole(enableConsole.isSelected());
         App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
     }
+
+    @Override
+    public String getTitle(){
+        return Language.INSTANCE.localize("settings.generaltab");
+    }
 }
