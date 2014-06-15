@@ -17,7 +17,7 @@ import com.atlauncher.gui.components.NetworkCheckerToolPanel;
 import com.atlauncher.gui.components.ServerCheckerToolPanel;
 
 @SuppressWarnings("serial")
-public class ToolsTab extends JPanel implements Tab{
+public class ToolsTab extends JPanel implements Tab {
     private JPanel mainPanel;
 
     public ToolsTab() {
@@ -39,6 +39,6 @@ public class ToolsTab extends JPanel implements Tab{
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.settings");
+        return Language.INSTANCE.localize("tabs.tools");
     }
 }
