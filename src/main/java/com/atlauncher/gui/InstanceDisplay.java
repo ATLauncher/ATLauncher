@@ -40,6 +40,7 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.dialogs.BackupDialog;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.utils.Utils;
 

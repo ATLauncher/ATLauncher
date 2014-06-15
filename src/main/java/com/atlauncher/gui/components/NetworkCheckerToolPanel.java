@@ -22,7 +22,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Server;
-import com.atlauncher.gui.ProgressDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener {

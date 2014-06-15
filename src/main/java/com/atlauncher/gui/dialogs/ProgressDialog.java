@@ -8,7 +8,7 @@
  *
  * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
-package com.atlauncher.gui;
+package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;

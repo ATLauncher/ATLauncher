@@ -33,6 +33,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover themeLabelRestart;
     private JPanel themeLabelPanel;
 
+    private JLabelWithHover dateFormatLabel;
+    private JComboBox<String> dateFormat;
+
     private JLabelWithHover advancedBackupLabel;
     private JCheckBox advancedBackup;
 
@@ -86,6 +89,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         language.setSelectedItem(Language.current());
         add(language, gbc);
 
+        // Theme
+
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
@@ -115,7 +120,29 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         add(theme, gbc);
 
+        // Date Format
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        dateFormatLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.dateformat") + ":", HELP_ICON,
+                App.settings.getLocalizedString("settings.dateformathelp"));
+
+        add(dateFormatLabel, gbc);
+
         gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        dateFormat = new JComboBox<String>();
+        dateFormat.addItem("dd/M/yyy");
+        dateFormat.addItem("M/dd/yyy");
+        dateFormat.addItem("yyy/M/dd");
+        dateFormat.setSelectedItem(App.settings.getDateFormat());
+
+        add(dateFormat, gbc);
 
         // Advanced Backup
 
@@ -229,12 +256,13 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     }
 
     public boolean needToRestartLauncher() {
-        return language.getSelectedItem() != Language.current();
+        return !((String) language.getSelectedItem()).equalsIgnoreCase(Language.current());
     }
 
     public void save() {
         App.settings.setLanguage((String) language.getSelectedItem());
         App.settings.setTheme((String) theme.getSelectedItem());
+        App.settings.setDateFormat((String) dateFormat.getSelectedItem());
         App.settings.setAdvancedBackups(advancedBackup.isSelected());
         App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
         App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());

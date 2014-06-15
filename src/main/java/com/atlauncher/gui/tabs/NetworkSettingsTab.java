@@ -20,8 +20,8 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Server;
-import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -29,9 +29,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
 
     private JLabelWithHover downloadServerLabel;
     private JComboBox<Server> server;
-
-    private JLabelWithHover connectionTimeoutLabel;
-    private JTextField connectionTimeout;
 
     private JLabelWithHover concurrentConnectionsLabel;
     private JTextField concurrentConnections;
@@ -70,25 +67,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         }
         server.setSelectedItem(App.settings.getOriginalServer());
         add(server, gbc);
-
-        // Connection Timeout Settings
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        connectionTimeoutLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.connectiontimeout") + ":", HELP_ICON,
-                "<html>"
-                        + App.settings.getLocalizedString("settings.connectiontimeouthelp",
-                                "<br/><br/>" + "</html>"));
-        add(connectionTimeoutLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        connectionTimeout = new JTextField(4);
-        connectionTimeout.setText(App.settings.getConnectionTimeout() / 1000 + "");
-        add(connectionTimeout, gbc);
 
         // Concurrent Connection Settings
         gbc.gridx = 0;
@@ -206,17 +184,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         add(proxyType, gbc);
     }
 
-    public boolean isValidConnectionTimeout() {
-        if (Integer.parseInt(connectionTimeout.getText().replaceAll("[^0-9]", "")) < 1
-                || Integer.parseInt(connectionTimeout.getText().replaceAll("[^0-9]", "")) > 30) {
-            JOptionPane.showMessageDialog(App.settings.getParent(),
-                    App.settings.getLocalizedString("settings.connectiontimeoutinvalid"),
-                    App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
-            return false;
-        }
-        return true;
-    }
-
     public boolean isValidConcurrentConnections() {
         if (Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")) < 1) {
             JOptionPane.showMessageDialog(App.settings.getParent(),
@@ -268,10 +235,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         dialog.addThread(new Thread() {
             @Override
             public void run() {
-                dialog.setReturnValue(Utils.testProxy(
-                        new Proxy(theType, new InetSocketAddress(proxyHost.getText(), Integer
-                                .parseInt(proxyPort.getText().replaceAll("[^0-9]", "")))), Integer
-                                .parseInt(connectionTimeout.getText().replaceAll("[^0-9]", ""))));
+                dialog.setReturnValue(Utils.testProxy(new Proxy(theType, new InetSocketAddress(
+                        proxyHost.getText(), Integer.parseInt(proxyPort.getText().replaceAll(
+                                "[^0-9]", ""))))));
                 dialog.close();
             }
         });
@@ -293,8 +259,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
 
     public void save() {
         App.settings.setServer((Server) server.getSelectedItem());
-        App.settings.setConnectionTimeout(Integer.parseInt(connectionTimeout.getText().replaceAll(
-                "[^0-9]", "")));
         App.settings.setConcurrentConnections(Integer.parseInt(concurrentConnections.getText()
                 .replaceAll("[^0-9]", "")));
         App.settings.setEnableProxy(enableProxy.isSelected());

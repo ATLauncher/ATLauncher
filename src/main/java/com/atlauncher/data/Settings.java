@@ -11,7 +11,22 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
@@ -19,7 +34,17 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,7 +52,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.atlauncher.LogManager;
 import org.json.simple.JSONArray;
@@ -45,11 +69,12 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherBottomBar;
 import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.ProgressDialog;
 import com.atlauncher.gui.TrayMenu;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -88,14 +113,13 @@ public class Settings {
     private String proxyHost; // The proxies host
     private int proxyPort; // The proxies port
     private String proxyType; // The type of proxy (socks, http)
-    private int connectionTimeout; // Timeout in seconds when connecting to things
     private int concurrentConnections; // Number of concurrent connections to open when downloading
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private Proxy proxy = null; // The proxy object if any
     private String theme; // The theme to use
+    private String dateFormat; // The date format to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
-    private boolean hadConnectionTimeoutCheck; // If the user has had the connection timeout check
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
 
@@ -112,14 +136,15 @@ public class Settings {
     private List<News> news; // News
     private List<MinecraftVersion> minecraftVersions; // Minecraft versions
     private List<Pack> packs; // Packs in the Launcher
-    private ArrayList<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
-    private ArrayList<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
+    private List<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
+    private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
+    private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
 
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir,
             skinsDir, jarsDir, commonConfigsDir, resourcesDir, librariesDir, languagesDir,
             downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir,
-            instancesDataFile, userDataFile, propertiesFile;
+            instancesDataFile, checkingServersFile, userDataFile, propertiesFile;
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -151,6 +176,7 @@ public class Settings {
     @SuppressWarnings("unused")
     private DropboxSync dropbox;
     private boolean languageLoaded = false;
+    private Timer checkingServersTimer = null; // Timer used for checking servers
 
     public Settings() {
         setupFiles(); // Setup all the file and directory variables
@@ -185,6 +211,7 @@ public class Settings {
         serversDir = new File(baseDir, "Servers");
         tempDir = new File(baseDir, "Temp");
         instancesDataFile = new File(configsDir, "instancesdata");
+        checkingServersFile = new File(configsDir, "checkingservers.json");
         userDataFile = new File(configsDir, "userdata");
         propertiesFile = new File(configsDir, "ATLauncher.conf");
     }
@@ -202,6 +229,7 @@ public class Settings {
         loadUsers(); // Load the Testers and Allowed Players for the packs
         loadInstances(); // Load the users installed Instances
         loadAccounts(); // Load the saved Accounts
+        loadCheckingServers(); // Load the saved servers we're checking with the tool
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
@@ -253,18 +281,35 @@ public class Settings {
                 this.saveProperties();
             }
         }
-        if (!this.hadConnectionTimeoutCheck) {
-            if (this.connectionTimeout < 10) {
-                this.connectionTimeout = 10;
-                this.hadConnectionTimeoutCheck = true;
-                this.saveProperties();
-            }
-        }
         if (this.advancedBackup) {
             dropbox = new DropboxSync();
         }
         if (!this.hadPasswordDialog) {
             checkAccounts(); // Check accounts with stored passwords
+        }
+
+        if (this.enableServerChecker) {
+            this.startCheckingServers();
+        }
+    }
+
+    public void startCheckingServers() {
+        if (this.checkingServersTimer != null) {
+            // If it's not null, cancel and purge tasks left
+            this.checkingServersTimer.cancel();
+            this.checkingServersTimer.purge(); // not sure if needed or not
+        }
+
+        if (this.enableServerChecker) {
+            this.checkingServersTimer = new Timer();
+            this.checkingServersTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    for (MinecraftServer server : checkingServers) {
+                        server.checkServer();
+                    }
+                }
+            }, 0, this.getServerCheckerWaitInMilliseconds());
         }
     }
 
@@ -792,6 +837,15 @@ public class Settings {
     }
 
     /**
+     * Returns the checkingservers file
+     * 
+     * @return File object for the checkingservers file
+     */
+    public File getCheckingServersFile() {
+        return checkingServersFile;
+    }
+
+    /**
      * Sets the main parent JFrame reference for the Launcher
      * 
      * @param parent
@@ -847,6 +901,12 @@ public class Settings {
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             this.theme = properties.getProperty("theme", "ATLauncher");
+            this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
+            if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy")
+                    && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
+                    && !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
+                this.dateFormat = "dd/M/yyy";
+            }
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole",
                     "true"));
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon",
@@ -885,12 +945,6 @@ public class Settings {
                 this.proxyType = "";
             }
 
-            this.connectionTimeout = Integer.parseInt(properties.getProperty("connectiontimeout",
-                    "10"));
-            if (this.connectionTimeout < 1 || this.connectionTimeout > 30) {
-                this.connectionTimeout = 10;
-            }
-
             this.concurrentConnections = Integer.parseInt(properties.getProperty(
                     "concurrentconnections", "8"));
             if (this.concurrentConnections < 1) {
@@ -917,9 +971,6 @@ public class Settings {
 
             this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty(
                     "hideoldjavawarning", "false"));
-
-            this.hadConnectionTimeoutCheck = Boolean.parseBoolean(properties.getProperty(
-                    "hadconnectiontimeoutcheck", "false"));
 
             String lang = properties.getProperty("language", "English");
             if (isLanguageByName(lang)) {
@@ -1077,6 +1128,11 @@ public class Settings {
                         + this.connectionTimeout
                         + " which is not valid! Must be between 1 and 30. Setting back to default of 5!");
                 this.connectionTimeout = 5;
+                log("Tried to set server checker wait to "
+                        + this.serverCheckerWait
+                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
+                        LogMessageType.warning, false);
+                this.serverCheckerWait = 5;
             }
 
             this.concurrentConnections = Integer.parseInt(properties.getProperty(
@@ -1090,6 +1146,16 @@ public class Settings {
             }
 
             this.theme = properties.getProperty("theme", "ATLauncher");
+
+            this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
+            if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy")
+                    && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
+                    && !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
+                log("Tried to set the date format to " + this.dateFormat
+                        + " which is not valid! Setting back to default of dd/M/yyy!",
+                        LogMessageType.warning, false);
+                this.dateFormat = "dd/M/yyy";
+            }
 
             String lastAccountTemp = properties.getProperty("lastaccount", "");
             if (!lastAccountTemp.isEmpty()) {
@@ -1122,8 +1188,6 @@ public class Settings {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("hadpassworddialog", "true");
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
-            properties
-                    .setProperty("hadconnectiontimeoutcheck", this.hadConnectionTimeoutCheck + "");
             properties.setProperty("language", Language.INSTANCE.getCurrent());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
@@ -1156,9 +1220,9 @@ public class Settings {
             properties.setProperty("proxyport", this.proxyPort + "");
             properties.setProperty("proxytype", this.proxyType);
             properties.setProperty("servercheckerwait", this.serverCheckerWait + "");
-            properties.setProperty("connectiontimeout", this.connectionTimeout + "");
             properties.setProperty("concurrentconnections", this.concurrentConnections + "");
             properties.setProperty("theme", this.theme);
+            properties.setProperty("dateformat", this.dateFormat);
             if (account != null) {
                 properties.setProperty("lastaccount", account.getUsername());
             } else {
@@ -1178,6 +1242,11 @@ public class Settings {
 
     public void addAccount(Account account) {
         this.accounts.add(account);
+    }
+
+    public void addCheckingServer(MinecraftServer server) {
+        this.checkingServers.add(server);
+        this.saveCheckingServers();
     }
 
     /**
@@ -1492,6 +1561,47 @@ public class Settings {
     }
 
     /**
+     * Loads the user servers added for checking
+     */
+    private void loadCheckingServers() {
+        this.checkingServers = new ArrayList<MinecraftServer>(); // Reset the list
+        if (checkingServersFile.exists()) {
+            FileReader fileReader = null;
+            try {
+                fileReader = new FileReader(checkingServersFile);
+            } catch (FileNotFoundException e) {
+                logStackTrace(e);
+                return;
+            }
+
+            this.checkingServers = gson.fromJson(fileReader, MinecraftServer.LIST_TYPE);
+
+            if (fileReader != null) {
+                try {
+                    fileReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void saveCheckingServers() {
+        try {
+            if (!checkingServersFile.exists()) {
+                checkingServersFile.createNewFile();
+            }
+
+            FileWriter fw = new FileWriter(checkingServersFile);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(Settings.gson.toJson(this.checkingServers));
+            bw.close();
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+    }
+
+    /**
      * Finds out if this is the first time the Launcher has been run
      * 
      * @return true if the Launcher hasn't been run and setup yet, false for otherwise
@@ -1593,7 +1703,7 @@ public class Settings {
      * 
      * @return The Instances available in the Launcher
      */
-    public ArrayList<Instance> getInstances() {
+    public List<Instance> getInstances() {
         return this.instances;
     }
 
@@ -1761,7 +1871,7 @@ public class Settings {
      * 
      * @return The Accounts added to the Launcher
      */
-    public ArrayList<Account> getAccounts() {
+    public List<Account> getAccounts() {
         return this.accounts;
     }
 
@@ -1797,12 +1907,12 @@ public class Settings {
      */
     public List<String> getLanguages() {
         List<String> langs = new LinkedList<String>();
-        for(File file : this.getLanguagesDir().listFiles(new FilenameFilter() {
+        for (File file : this.getLanguagesDir().listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".lang");
             }
-        })){
+        })) {
             langs.add(file.getName().substring(0, file.getName().lastIndexOf(".")));
         }
         return langs;
@@ -2108,7 +2218,7 @@ public class Settings {
      * @return true if found, false if not
      */
     public boolean isLanguageByName(String name) {
-        return this.getLanguages().contains(name);
+        return this.getLanguages().contains(name.toLowerCase());
     }
 
     /**
@@ -2281,10 +2391,10 @@ public class Settings {
      * @param language
      *            The language to set to
      */
-    public void setLanguage(String language){
-        try{
+    public void setLanguage(String language) {
+        try {
             Language.INSTANCE.load(language);
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
     }
@@ -2627,14 +2737,6 @@ public class Settings {
         return this.serverCheckerWait * 60 * 1000;
     }
 
-    public void setConnectionTimeout(int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    public int getConnectionTimeout() {
-        return this.connectionTimeout * 1000;
-    }
-
     public void setConcurrentConnections(int concurrentConnections) {
         this.concurrentConnections = concurrentConnections;
     }
@@ -2658,6 +2760,15 @@ public class Settings {
 
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+        Timestamper.updateDateFormat();
+    }
+
+    public String getDateFormat() {
+        return this.dateFormat;
     }
 
     public Proxy getProxy() {

@@ -40,7 +40,8 @@ public class Authentication {
             String request = gson.toJson(new AuthenticationRequest(username, password, uuid));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            connection.setConnectTimeout(App.settings.getConnectionTimeout());
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
@@ -95,7 +96,8 @@ public class Authentication {
                     .getClientToken()));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            connection.setConnectTimeout(App.settings.getConnectionTimeout());
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
@@ -121,7 +123,8 @@ public class Authentication {
                     + URLEncoder.encode(username, "UTF-8") + "&password="
                     + URLEncoder.encode(password, "UTF-8") + "&version=999");
             URLConnection connection = urll.openConnection();
-            connection.setConnectTimeout(App.settings.getConnectionTimeout());
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
             BufferedReader in;
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             response = new StringBuilder();

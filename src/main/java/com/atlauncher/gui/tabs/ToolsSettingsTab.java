@@ -95,6 +95,12 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
         return true;
     }
 
+    public boolean needToRestartServerChecker() {
+        return ((enableServerChecker.isSelected() != App.settings.enableServerChecker()) || (App.settings
+                .getServerCheckerWait() != Integer.parseInt(serverCheckerWait.getText().replaceAll(
+                "[^0-9]", ""))));
+    }
+
     public void save() {
         App.settings.setEnableServerChecker(enableServerChecker.isSelected());
         App.settings.setServerCheckerWait(Integer.parseInt(serverCheckerWait.getText().replaceAll(
