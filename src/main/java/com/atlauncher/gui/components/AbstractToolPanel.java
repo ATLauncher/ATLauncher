@@ -16,7 +16,6 @@ import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
 public abstract class AbstractToolPanel extends JPanel {
-
     /**
      * Auto generated serial.
      */

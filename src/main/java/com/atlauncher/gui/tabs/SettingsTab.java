@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.atlauncher.App;
+import com.atlauncher.gui.tabs.settings.*;
 
 @SuppressWarnings("serial")
 public class SettingsTab extends JPanel {

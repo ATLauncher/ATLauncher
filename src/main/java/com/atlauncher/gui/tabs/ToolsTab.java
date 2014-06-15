@@ -17,7 +17,6 @@ import com.atlauncher.gui.components.ServerCheckerToolPanel;
 
 @SuppressWarnings("serial")
 public class ToolsTab extends JPanel {
-
     private JPanel mainPanel;
 
     public ToolsTab() {
