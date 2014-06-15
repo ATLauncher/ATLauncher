@@ -12,8 +12,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,13 +28,12 @@ import com.atlauncher.utils.Utils;
 
 import de.zh32.pingtest.QueryVersion;
 
-public class AddServerForCheckerDialog extends JDialog implements ActionListener {
+public class AddEditServerForCheckerDialog extends JDialog implements ActionListener {
 
     /**
-     * Auto generate serial.
+     * Auto generated serial.
      */
-    private static final long serialVersionUID = -1462218261978353036L;
-    private JPanel top;
+    private static final long serialVersionUID = 3385411077046354453L;
     private JPanel middle;
     private JPanel bottom;
 
@@ -49,12 +46,14 @@ public class AddServerForCheckerDialog extends JDialog implements ActionListener
     private JLabel serverPortLabel;
     private JTextField serverPort;
 
-    private JButton addButton;
+    private JButton addEditButton;
     private JButton closeButton;
 
-    public AddServerForCheckerDialog() {
-        super(null, App.settings.getLocalizedString("tools.addserver"),
-                ModalityType.APPLICATION_MODAL);
+    private MinecraftServer serverEditing = null;
+
+    public AddEditServerForCheckerDialog(MinecraftServer minecraftServer) {
+        super(null, App.settings.getLocalizedString((minecraftServer == null ? "tools.addserver"
+                : "tools.editserver")), ModalityType.APPLICATION_MODAL);
         setSize(300, 200);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -62,10 +61,20 @@ public class AddServerForCheckerDialog extends JDialog implements ActionListener
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
 
-        // Top Panel Stuff
-        top = new JPanel();
-        top.add(new JLabel(App.settings.getLocalizedString("tools.addserver")));
+        setupComponents();
 
+        if (minecraftServer != null) {
+            this.serverEditing = minecraftServer;
+            addEditButton.setText(App.settings.getLocalizedString("common.edit"));
+            serverName.setText(minecraftServer.getName());
+            serverHost.setText(minecraftServer.getHost());
+            serverPort.setText(minecraftServer.getPort() + "");
+        }
+
+        setVisible(true);
+    }
+
+    private void setupComponents() {
         // Middle Panel Stuff
         middle = new JPanel();
         middle.setLayout(new GridBagLayout());
@@ -118,25 +127,16 @@ public class AddServerForCheckerDialog extends JDialog implements ActionListener
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
 
-        addButton = new JButton(App.settings.getLocalizedString("common.add"));
-        addButton.addActionListener(this);
-        bottom.add(addButton);
+        addEditButton = new JButton(App.settings.getLocalizedString("common.add"));
+        addEditButton.addActionListener(this);
+        bottom.add(addEditButton);
 
         closeButton = new JButton(App.settings.getLocalizedString("common.close"));
         closeButton.addActionListener(this);
         bottom.add(closeButton);
 
-        add(top, BorderLayout.NORTH);
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
-                close();
-            }
-        });
-
-        setVisible(true);
     }
 
     public boolean isValidPort() {
@@ -148,14 +148,9 @@ public class AddServerForCheckerDialog extends JDialog implements ActionListener
         return true;
     }
 
-    public void close() {
-        setVisible(false);
-        dispose();
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == addButton) {
+        if (e.getSource() == addEditButton) {
             if (serverName.getText().isEmpty() || serverHost.getText().isEmpty()
                     || serverPort.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(App.settings.getParent(),
@@ -194,17 +189,31 @@ public class AddServerForCheckerDialog extends JDialog implements ActionListener
                             App.settings.getLocalizedString("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("tools.serverchecker.serveradded"),
-                            App.settings.getLocalizedString("tools.serverchecker.serveradded"),
+                    String message = App.settings
+                            .getLocalizedString((this.serverEditing == null ? "tools.serverchecker.serveradded"
+                                    : "tools.serverchecker.serveredited"));
+                    JOptionPane.showMessageDialog(App.settings.getParent(), message, message,
                             JOptionPane.INFORMATION_MESSAGE);
-                    App.settings.addCheckingServer(new MinecraftServer(name, host, port, qv));
+                    if (this.serverEditing == null) {
+                        App.settings.addCheckingServer(new MinecraftServer(name, host, port, qv));
+                    } else {
+                        this.serverEditing.setName(name);
+                        this.serverEditing.setHost(host);
+                        this.serverEditing.setPort(port);
+                        this.serverEditing.setQueryVersion(qv);
+                        App.settings.saveCheckingServers();
+                    }
                     close();
                 }
             }
         } else if (e.getSource() == closeButton) {
             close();
         }
+    }
+
+    public void close() {
+        setVisible(false);
+        dispose();
     }
 
 }

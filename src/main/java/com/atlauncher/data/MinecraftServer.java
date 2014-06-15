@@ -106,4 +106,36 @@ public class MinecraftServer {
         return this.name;
     }
 
+    public String getHost() {
+        return this.host;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+
+    public QueryVersion getQueryVersion() {
+        return this.queryVersion;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setQueryVersion(QueryVersion queryVersion) {
+        this.queryVersion = queryVersion;
+    }
+
+    public String toString() {
+        return String.format("%s (%s:%d)", this.name, this.host, this.port);
+    }
+
 }

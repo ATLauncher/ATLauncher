@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.gui.dialogs.AddServerForCheckerDialog;
+import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
 import com.atlauncher.utils.Utils;
 
 public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener {
@@ -50,7 +50,7 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == ADD_EDIT_SERVERS_BUTTON) {
-            new AddServerForCheckerDialog();
+            new ServerListForCheckerDialog();
         } else if (e.getSource() == LAUNCH_BUTTON) {
             System.out.println("Launched ServerCheckerTool");
         }
