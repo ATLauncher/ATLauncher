@@ -24,12 +24,13 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
 /**
  * This class extends {@link JPanel} and provides a Panel for displaying the latest news.
  */
-public class NewsTab extends JPanel {
+public class NewsTab extends JPanel implements Tab{
     /**
      * Auto generated serial.
      */
@@ -88,6 +89,11 @@ public class NewsTab extends JPanel {
         this.NEWS_PANE.setText("");
         this.NEWS_PANE.setText(App.settings.getNewsHTML());
         this.NEWS_PANE.setCaretPosition(0);
+    }
+
+    @Override
+    public String getTitle() {
+        return Language.INSTANCE.localize("tabs.news");
     }
 
     private final class ContextMenu extends JPopupMenu {

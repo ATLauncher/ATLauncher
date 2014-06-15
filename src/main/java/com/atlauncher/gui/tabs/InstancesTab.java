@@ -26,13 +26,14 @@ import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Language;
 import com.atlauncher.gui.InstanceDisplay;
 import com.atlauncher.gui.NothingToDisplay;
 
 /**
  * TODO: Rewrite this for better loading
  */
-public class InstancesTab extends JPanel {
+public class InstancesTab extends JPanel implements Tab{
 
     private static final long serialVersionUID = -969812552965390610L;
     private JPanel topPanel;
@@ -179,4 +180,8 @@ public class InstancesTab extends JPanel {
         searchBox.requestFocus();
     }
 
+    @Override
+    public String getTitle() {
+        return Language.INSTANCE.localize("tabs.instances");
+    }
 }

@@ -8,23 +8,17 @@ package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.util.Arrays;
+import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.gui.tabs.AccountsTab;
-import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.gui.tabs.NewsTab;
-import com.atlauncher.gui.tabs.PacksTab;
-import com.atlauncher.gui.tabs.SettingsTab;
-import com.atlauncher.gui.tabs.ToolsTab;
+import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.gui.tabs.*;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -36,6 +30,8 @@ public class LauncherFrame extends JFrame implements RelocalizationListener{
     private AccountsTab accountsTab;
     private ToolsTab toolsTab;
     private SettingsTab settingsTab;
+
+    private List<Tab> tabs;
 
     private LauncherBottomBar bottomBar;
 
@@ -68,6 +64,8 @@ public class LauncherFrame extends JFrame implements RelocalizationListener{
             setVisible(true);
         }
 
+        RelocalizationManager.addListener(this);
+
         App.TASKPOOL.execute(new Runnable() {
             public void run() {
                 App.settings.checkMojangStatus(); // Check Minecraft status
@@ -94,13 +92,18 @@ public class LauncherFrame extends JFrame implements RelocalizationListener{
         toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
 
+        this.tabs = Arrays.asList(new Tab[]{
+                newsTab, packsTab, instancesTab, accountsTab, toolsTab, settingsTab
+        });
+
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(34.0F));
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.news"), newsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.tools"), toolsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsTab);
+        for(Tab tab : this.tabs){
+            if(tab == null){
+                throw new NullPointerException("Tab == null");
+            }
+
+            this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
+        }
         tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
     }
@@ -115,12 +118,8 @@ public class LauncherFrame extends JFrame implements RelocalizationListener{
 
     @Override
     public void onRelocalization(RelocalizationEvent event) {
-        this.tabbedPane.removeAll();
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.news"), newsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.packs"), packsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.instances"), instancesTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.account"), accountsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.tools"), toolsTab);
-        tabbedPane.addTab(App.settings.getLocalizedString("tabs.settings"), settingsTab);
+        for(int i = 0; i < this.tabbedPane.getTabCount(); i++){
+            this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
+        }
     }
 }

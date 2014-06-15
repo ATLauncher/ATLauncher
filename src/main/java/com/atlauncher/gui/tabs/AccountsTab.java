@@ -33,13 +33,13 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 
-public class AccountsTab extends JPanel {
-
+public class AccountsTab extends JPanel implements Tab{
     private static final long serialVersionUID = 2493791137600123223L;
     private JLabel userSkin;
     private JPanel rightPanel;
@@ -348,5 +348,10 @@ public class AccountsTab extends JPanel {
         userSkin.setBorder(BorderFactory.createEmptyBorder(0, 60, 0, 0));
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
+    }
+
+    @Override
+    public String getTitle() {
+        return Language.INSTANCE.localize("tabs.account");
     }
 }

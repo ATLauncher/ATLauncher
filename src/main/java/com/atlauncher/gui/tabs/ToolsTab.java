@@ -11,12 +11,13 @@ import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 
+import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.BlankToolPanel;
 import com.atlauncher.gui.components.NetworkCheckerToolPanel;
 import com.atlauncher.gui.components.ServerCheckerToolPanel;
 
 @SuppressWarnings("serial")
-public class ToolsTab extends JPanel {
+public class ToolsTab extends JPanel implements Tab{
     private JPanel mainPanel;
 
     public ToolsTab() {
@@ -34,5 +35,10 @@ public class ToolsTab extends JPanel {
         mainPanel.add(new BlankToolPanel());
 
         add(mainPanel, BorderLayout.CENTER);
+    }
+
+    @Override
+    public String getTitle() {
+        return Language.INSTANCE.localize("tabs.settings");
     }
 }

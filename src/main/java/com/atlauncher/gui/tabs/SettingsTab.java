@@ -16,13 +16,13 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.tabs.settings.*;
 
 @SuppressWarnings("serial")
-public class SettingsTab extends JPanel {
-
+public class SettingsTab extends JPanel implements Tab{
     private JTabbedPane tabbedPane;
 
     private GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
@@ -94,5 +94,10 @@ public class SettingsTab extends JPanel {
                 }
             }
         });
+    }
+
+    @Override
+    public String getTitle() {
+        return Language.INSTANCE.localize("tabs.settings");
     }
 }

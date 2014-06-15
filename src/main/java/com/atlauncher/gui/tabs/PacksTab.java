@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.NothingToDisplay;
 import com.atlauncher.gui.PackDisplay;
@@ -33,7 +34,7 @@ import com.atlauncher.gui.dialogs.AddPackDialog;
 /**
  * TODO: Rewrite this for better loading
  */
-public class PacksTab extends JPanel {
+public class PacksTab extends JPanel implements Tab{
     private static final long serialVersionUID = -3550919682971699108L;
     private JPanel topPanel;
     private JButton addPackButton;
@@ -208,4 +209,8 @@ public class PacksTab extends JPanel {
         searchBox.requestFocus();
     }
 
+    @Override
+    public String getTitle() {
+        return Language.INSTANCE.localize("tabs.packs");
+    }
 }
