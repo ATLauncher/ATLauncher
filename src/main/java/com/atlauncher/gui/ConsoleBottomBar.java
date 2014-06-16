@@ -33,7 +33,7 @@ import com.atlauncher.gui.components.BottomBar;
 import com.atlauncher.thread.PasteUpload;
 
 @SuppressWarnings("serial")
-public class ConsoleBottomBar extends BottomBar implements RelocalizationListener{
+public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
     private JPanel leftSide;
 
     private JButton clear;
@@ -81,7 +81,8 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
         });
         copyLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.log("Copied Log To Clipboard");
+                App.TOASTER.pop("Copied Log to clipboard");
+                App.settings.log("Copied Log to clipboard");
                 StringSelection text = new StringSelection(App.settings.getLog());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);
@@ -92,11 +93,13 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                 try {
                     String result = App.TASKPOOL.submit(new PasteUpload()).get();
                     if (result.contains(Constants.PASTE_CHECK_URL)) {
+                        App.TOASTER.pop("Log uploaded and link copied to clipboard");
                         LogManager.info("Log uploaded and link copied to clipboard: " + result);
                         StringSelection text = new StringSelection(result);
                         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                         clipboard.setContents(text, null);
                     } else {
+                        App.TOASTER.popError("Log failed to upload!");
                         LogManager.error("Log failed to upload: " + result);
                     }
                 } catch (Exception ex) {
