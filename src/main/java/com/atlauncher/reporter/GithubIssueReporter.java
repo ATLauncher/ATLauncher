@@ -9,9 +9,7 @@ import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.Utils;
 
 public final class GithubIssueReporter {
-
-    private GithubIssueReporter() {
-    }
+    private GithubIssueReporter() {}
 
     public static void submit(String title, String body) throws Exception {
         body = body + "\n\n" + times('-', 50) + "\n" + "Here is my log: "

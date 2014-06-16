@@ -18,7 +18,6 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class Mod {
-
     private String name;
     private String version;
     private String url;

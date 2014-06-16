@@ -14,7 +14,6 @@ import com.google.gson.stream.JsonWriter;
  * TO @link RyanTheAllmighty - http://en.wikipedia.org/wiki/Serialization
  */
 public final class ColorTypeAdapter extends TypeAdapter<Color> {
-
     @Override
     public void write(JsonWriter writer, Color c) throws IOException {
         writer.beginObject().name("value").value("#" + toHex(c)).endObject();
@@ -52,7 +51,7 @@ public final class ColorTypeAdapter extends TypeAdapter<Color> {
      * and Blue individual hex codes.
      * 
      * <p>
-     * For example an input of "227744" returns {22, 77, 44}
+     * For example an input of "#FF00FF" returns {255, 0, 255}
      * 
      * @param hex
      *            The hex code to convert to RGB format
@@ -70,6 +69,9 @@ public final class ColorTypeAdapter extends TypeAdapter<Color> {
 
     /**
      * Converts a {@link Color} object into a hex code.
+     *
+     * <p>
+     * For example an input of Color.BLACK returns #FF00FF
      * 
      * @param c
      *            The {@link Color} object to convert to hex
