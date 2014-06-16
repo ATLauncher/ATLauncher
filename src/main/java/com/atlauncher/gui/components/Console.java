@@ -23,6 +23,11 @@ public final class Console extends JTextPane {
         return this;
     }
 
+    public Console setBold(boolean b) {
+        StyleConstants.setBold(this.attrs, b);
+        return this;
+    }
+
     public void write(String str) {
         try {
             this.getDocument().insertString(this.getDocument().getLength(), str, this.attrs);
