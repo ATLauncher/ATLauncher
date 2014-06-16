@@ -42,12 +42,12 @@ public final class LogEvent {
     public final int meta;
 
     public LogEvent(LogType type, String body) {
-        this(type, body, CONSOLE|FILE);
+        this(type, body, CONSOLE | FILE);
     }
 
     public LogEvent(LogType type, String body, int meta) {
         this.type = type;
-        this.body = (!body.endsWith("\n") ? body + "\n" : body);
+        this.body = (!body.endsWith("\n") ? body + System.getProperty("line.separator") : body);
         this.meta = meta;
     }
 

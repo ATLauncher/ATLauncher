@@ -15,7 +15,7 @@ public final class PasteUpload implements Callable<String> {
 
     @Override
     public String call() throws Exception {
-        String log = App.settings.getLog();
+        String log = App.settings.getLog().replace(System.getProperty("line.separator"), "\n");
         String urlParameters = "";
         urlParameters += "title=" + URLEncoder.encode("ATLauncher - Log", "ISO-8859-1") + "&";
         urlParameters += "language=" + URLEncoder.encode("text", "ISO-8859-1") + "&";
@@ -45,5 +45,4 @@ public final class PasteUpload implements Callable<String> {
         reader.close();
         return builder.toString();
     }
-
 }
