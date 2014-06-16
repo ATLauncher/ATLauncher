@@ -70,16 +70,41 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             dialog.addThread(new Thread() {
                 @Override
                 public void run() {
-                    dialog.setTotalTasksToDo((App.settings.getServers().size() * 2) + 1);
+                    dialog.setTotalTasksToDo((App.settings.getServers().size() * 4) + 1);
                     StringBuilder results = new StringBuilder();
+
+                    // Ping Test
                     for (Server server : App.settings.getServers()) {
                         results.append("Ping results to " + server.getHost() + " was "
                                 + Utils.pingAddress(server.getHost()) + "\n\n----------------\n\n");
                         dialog.doneTask();
                     }
+
+                    // Traceroute Test
                     results.append("Tracert to www.creeperrepo.net was "
                             + Utils.traceRoute("www.creeperrepo.net"));
                     dialog.doneTask();
+
+                    // Response Code Test
+                    for (Server server : App.settings.getServers()) {
+                        Downloadable download = new Downloadable(server
+                                .getFileURL("launcher/json/hashes.json"), false);
+                        results.append(String.format(
+                                "Response code to %s was %d\n\n----------------\n\n",
+                                server.getHost(), download.getResponseCode()));
+                        dialog.doneTask();
+                    }
+
+                    // Ping Pong Test
+                    for (Server server : App.settings.getServers()) {
+                        Downloadable download = new Downloadable(server.getFileURL("ping"), false);
+                        results.append(String.format(
+                                "Response to ping on %s was %s\n\n----------------\n\n",
+                                server.getHost(), download.getContents()));
+                        dialog.doneTask();
+                    }
+
+                    // Speed Test
                     for (Server server : App.settings.getServers()) {
                         File file = new File(App.settings.getTempDir(), "20MB.test");
                         if (file.exists()) {

@@ -434,4 +434,14 @@ public class Downloadable {
             this.connection.disconnect();
         }
     }
+
+    public int getResponseCode() {
+        try {
+            return getConnection().getResponseCode();
+        } catch (IOException e) {
+            App.settings.logStackTrace("IOException when getting response code for the url "
+                    + this.url, e);
+            return -1;
+        }
+    }
 }
