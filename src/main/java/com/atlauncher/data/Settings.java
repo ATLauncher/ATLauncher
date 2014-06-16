@@ -2309,6 +2309,7 @@ public class Settings {
     /**
      * Log a non Minecraft related info message to the console
      */
+    @Deprecated
     public void log(String message) {
         this.console.log(message, LogMessageType.info, false);
     }
@@ -2316,6 +2317,7 @@ public class Settings {
     /**
      * Log a Minecraft related message to the console
      */
+    @Deprecated
     public void logMinecraft(String message) {
         this.console.logMinecraft(message);
     }
@@ -2326,6 +2328,7 @@ public class Settings {
      * @param exception
      *            The exception to show in the console
      */
+    @Deprecated
     public void logStackTrace(Exception exception) {
         exception.printStackTrace();
         log(exception.getMessage(), LogMessageType.error, false);
@@ -2344,6 +2347,7 @@ public class Settings {
      * @param exception
      *            The exception to show in the console
      */
+    @Deprecated
     public void logStackTrace(String message, Exception exception) {
         exception.printStackTrace();
         log(message, LogMessageType.error, false);
@@ -2358,6 +2362,7 @@ public class Settings {
     /**
      * Log something to the console
      */
+    @Deprecated
     public void log(String message, LogMessageType type, boolean isMinecraft) {
         this.console.log(message, type, isMinecraft);
     }

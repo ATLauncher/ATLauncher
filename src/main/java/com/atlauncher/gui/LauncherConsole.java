@@ -113,6 +113,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
         log(text, LogMessageType.error, false);
     }
 
+    @Deprecated
     public void log(String text, LogMessageType type, boolean isMinecraft) {
         /*
          * synchronized (kit) { text = text.replace(App.settings.getBaseDir().getAbsolutePath(),
@@ -154,6 +155,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
      * @param text
      *            The text to show in the console
      */
+    @Deprecated
     public void logMinecraft(String text) {
         String message = null; // The log message
         LogMessageType type = null; // The log message type
