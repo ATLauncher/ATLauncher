@@ -1,10 +1,11 @@
 package com.atlauncher.thread;
 
-import com.atlauncher.evnt.LogEvent;
-
 import java.util.concurrent.BlockingQueue;
 
+import com.atlauncher.evnt.LogEvent;
+
 public final class LoggingThread extends Thread {
+
     private final BlockingQueue<LogEvent> queue;
 
     public LoggingThread(BlockingQueue<LogEvent> queue) {
@@ -13,16 +14,17 @@ public final class LoggingThread extends Thread {
     }
 
     @Override
-    public void run(){
-        try{
-            while(true){
+    public void run() {
+        try {
+            while (true) {
                 LogEvent next = this.queue.take();
-                if(next != null){
+                if (next != null) {
                     next.post();
                 }
             }
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
     }
+
 }

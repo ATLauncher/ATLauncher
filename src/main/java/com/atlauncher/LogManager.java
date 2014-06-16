@@ -38,9 +38,8 @@ public final class LogManager {
         queue.offer(new LogEvent(LogEvent.LogType.ERROR, message));
     }
 
-    // TODO Log minecraft calls to the console but NOT the file log
     public static void minecraft(String message) {
         Object[] value = Utils.prepareMessageForMinecraftLog(message);
-        queue.offer(new LogEvent((LogType) value[0], (String) value[1]));
+        queue.offer(new LogEvent((LogType) value[0], (String) value[1], true, false));
     }
 }
