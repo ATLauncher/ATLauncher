@@ -24,7 +24,7 @@ public final class LogEvent {
                     return App.THEME.getLogErrorColor();
                 }
                 case DEBUG: {
-                    return Color.MAGENTA;
+                    return App.THEME.getLogDebugColor();
                 }
                 default: {
                     return App.THEME.getConsoleTextColor();

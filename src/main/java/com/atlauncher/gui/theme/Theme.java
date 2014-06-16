@@ -2,16 +2,11 @@ package com.atlauncher.gui.theme;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
 
-import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
-import io.github.asyncronous.toast.Toaster;
-import io.github.asyncronous.toast.ToasterConstants;
 
 public final class Theme {
     public static final Theme DEFAULT_THEME = new Theme("ATLauncher", "RyanTheAllmighty", true,
@@ -19,8 +14,8 @@ public final class Theme {
                     204), new Color(100, 100, 200), new Color(80, 170, 107), new Color(50, 55, 60),
             new Color(50, 55, 60), new Color(30, 35, 40), new Color(255, 255, 255), new Color(255,
                     0, 0), new Color(255, 255, 255), new Color(137, 194, 54), new Color(255, 255,
-                    76), new Color(238, 34, 34), "SansSerif", "SansSerif", "Oswald-Regular",
-            "SansSerif");
+                    76), new Color(238, 34, 34), new Color(255, 0, 255), "SansSerif", "SansSerif",
+            "Oswald-Regular", "SansSerif");
 
     // Meta
     private final String name;
@@ -45,6 +40,7 @@ public final class Theme {
     private final Color logInfoColor;
     private final Color logWarnColor;
     private final Color logErrorColor;
+    private final Color logDebugColor;
 
     // Fonts
     private final String defaultFont, consoleFont, tabFont, buttonFont;
@@ -54,8 +50,8 @@ public final class Theme {
             Color hoverBorderColor, Color modSelectionBGColor, Color modInfoColor,
             Color tabBackgroundColor, Color normalInstanceColor, Color corruptedInstanceColor,
             Color consoleTextColor, Color logInfoTextColor, Color logWarnColor,
-            Color logErrorColor, String defaultFont, String consoleFont, String tabFont,
-            String buttonFont) {
+            Color logErrorColor, Color logDebugColor, String defaultFont, String consoleFont,
+            String tabFont, String buttonFont) {
         this.name = name;
         this.author = author;
         this.tabsOnRight = tabsOnRight;
@@ -74,6 +70,7 @@ public final class Theme {
         this.logInfoColor = logInfoTextColor;
         this.logWarnColor = logWarnColor;
         this.logErrorColor = logErrorColor;
+        this.logDebugColor = logDebugColor;
         this.defaultFont = defaultFont;
         this.consoleFont = consoleFont;
         this.tabFont = tabFont;
@@ -173,6 +170,10 @@ public final class Theme {
 
     public Color getLogWarnColor() {
         return this.logWarnColor;
+    }
+
+    public Color getLogDebugColor() {
+        return this.logDebugColor;
     }
 
     @Override
