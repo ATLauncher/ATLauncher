@@ -15,9 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
-import java.io.IOException;
-import java.io.StringReader;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -40,7 +37,7 @@ import com.atlauncher.evnt.manager.ReskinManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Utils;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener{
+public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener {
     private JScrollPane scrollPane;
     public Console console;
     private ConsoleBottomBar bottomBar;
@@ -245,16 +242,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
      * @return String Console Text
      */
     public String getLog() {
-        Html2Text parser = new Html2Text();
-        StringReader in = new StringReader(console.getText());
-        try {
-            parser.parse(in);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            in.close();
-        }
-        return parser.getText();
+        return console.getText();
     }
 
     public void showKillMinecraft() {
