@@ -11,18 +11,29 @@ import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.tabs.*;
+import com.atlauncher.gui.tabs.AccountsTab;
+import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.gui.tabs.NewsTab;
+import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.gui.tabs.SettingsTab;
+import com.atlauncher.gui.tabs.Tab;
+import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
-public class LauncherFrame extends JFrame implements RelocalizationListener{
+public class LauncherFrame extends JFrame implements RelocalizationListener {
+
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;
@@ -36,9 +47,9 @@ public class LauncherFrame extends JFrame implements RelocalizationListener{
     private LauncherBottomBar bottomBar;
 
     public LauncherFrame(boolean show) {
-        App.settings.log("Launcher opening");
-        App.settings.log("Made By Bob*");
-        App.settings.log("*(Not Actually)");
+        LogManager.info("Launcher opening");
+        LogManager.info("Made By Bob*");
+        LogManager.info("*(Not Actually)");
         App.settings.setParentFrame(this);
         setSize(new Dimension(1000, 575));
         setTitle("ATLauncher " + Constants.VERSION);
@@ -48,19 +59,19 @@ public class LauncherFrame extends JFrame implements RelocalizationListener{
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setLayout(new BorderLayout());
 
-        App.settings.log("Setting up Bottom Bar");
+        LogManager.info("Setting up Bottom Bar");
         setupBottomBar(); // Setup the Bottom Bar
-        App.settings.log("Finished Setting up Bottom Bar");
+        LogManager.info("Finished Setting up Bottom Bar");
 
-        App.settings.log("Setting up Tabs");
+        LogManager.info("Setting up Tabs");
         setupTabs(); // Setup the JTabbedPane
-        App.settings.log("Finished Setting up Tabs");
+        LogManager.info("Finished Setting up Tabs");
 
         add(tabbedPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
 
         if (show) {
-            App.settings.log("Showing Launcher");
+            LogManager.info("Showing Launcher");
             setVisible(true);
         }
 
@@ -92,13 +103,12 @@ public class LauncherFrame extends JFrame implements RelocalizationListener{
         toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
 
-        this.tabs = Arrays.asList(new Tab[]{
-                newsTab, packsTab, instancesTab, accountsTab, toolsTab, settingsTab
-        });
+        this.tabs = Arrays.asList(new Tab[] { newsTab, packsTab, instancesTab, accountsTab,
+                toolsTab, settingsTab });
 
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(34.0F));
-        for(Tab tab : this.tabs){
-            if(tab == null){
+        for (Tab tab : this.tabs) {
+            if (tab == null) {
                 throw new NullPointerException("Tab == null");
             }
 
@@ -118,8 +128,9 @@ public class LauncherFrame extends JFrame implements RelocalizationListener{
 
     @Override
     public void onRelocalization(RelocalizationEvent event) {
-        for(int i = 0; i < this.tabbedPane.getTabCount(); i++){
+        for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
     }
+
 }

@@ -9,26 +9,27 @@ package com.atlauncher.gui.tabs;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileReader;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
-import com.atlauncher.data.Settings;
 import com.atlauncher.evnt.RelocalizationEvent;
-import com.atlauncher.evnt.ReskinEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.ReskinManager;
-import com.atlauncher.gui.tabs.settings.*;
-import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
+import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
+import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
+import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
+import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
 
 @SuppressWarnings("serial")
 public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
+
     private JTabbedPane tabbedPane;
 
     private final GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
@@ -36,13 +37,9 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
     private final LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
     private final ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
-    private final List<Tab> tabs = Arrays.asList(new Tab[]{
-            this.generalSettingsTab,
-            this.javaSettingsTab,
-            this.networkSettingsTab,
-            this.loggingSettingsTab,
-            this.toolsSettingsTab
-    });
+    private final List<Tab> tabs = Arrays.asList(new Tab[] { this.generalSettingsTab,
+            this.javaSettingsTab, this.networkSettingsTab, this.loggingSettingsTab,
+            this.toolsSettingsTab });
 
     private JPanel bottomPanel;
     private JButton saveButton = new JButton(App.settings.getLocalizedString("common.save"));
@@ -55,7 +52,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         tabbedPane.setBackground(App.THEME.getBaseColor());
 
         tabbedPane.setFont(App.THEME.getDefaultFont().deriveFont(17.0F));
-        for(Tab tab : this.tabs){
+        for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
         tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
@@ -105,8 +102,9 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
 
     @Override
     public void onRelocalization(RelocalizationEvent event) {
-        for(int i = 0; i < this.tabbedPane.getTabCount(); i++){
+        for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
     }
+
 }

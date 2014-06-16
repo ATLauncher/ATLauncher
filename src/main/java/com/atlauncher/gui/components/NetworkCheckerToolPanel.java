@@ -25,6 +25,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener {
+
     /**
      * Auto generated serial.
      */
@@ -103,7 +104,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             if (dialog.getReturnValue() == null || !(Boolean) dialog.getReturnValue()) {
                 LogManager.error("Network Test failed to run!");
             } else {
-                App.settings.log("Network Test ran and submitted to ATLauncher!");
+                LogManager.info("Network Test ran and submitted to ATLauncher!");
                 String[] options2 = { App.settings.getLocalizedString("common.ok") };
                 JOptionPane.showOptionDialog(
                         App.settings.getParent(),
@@ -116,4 +117,5 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             }
         }
     }
+
 }

@@ -11,7 +11,6 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.EOFException;
 import java.io.File;
@@ -22,18 +21,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -443,7 +437,7 @@ public class Settings {
                 toget = "jar";
             }
             File newFile = new File(getTempDir(), saveAs);
-            log("Downloading Launcher Update");
+            LogManager.info("Downloading Launcher Update");
             Downloadable update = new Downloadable("ATLauncher." + toget, newFile, null, null, true);
             update.download(false);
             runUpdate(path, newFile.getAbsolutePath());
@@ -470,7 +464,7 @@ public class Settings {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(arguments);
 
-        log("Running launcher update with command " + arguments);
+        LogManager.info("Running launcher update with command " + arguments);
 
         try {
             processBuilder.start();
@@ -533,7 +527,8 @@ public class Settings {
                     @Override
                     public void run() {
                         if (download.needToDownload()) {
-                            log("Downloading Launcher File " + download.getFile().getName());
+                            LogManager.info("Downloading Launcher File "
+                                    + download.getFile().getName());
                             download.download(false);
                         }
                     }
@@ -553,7 +548,7 @@ public class Settings {
         if (isInOfflineMode()) {
             return false;
         }
-        log("Checking for updated files!");
+        LogManager.info("Checking for updated files!");
         ArrayList<Downloadable> downloads = getLauncherFiles();
         if (downloads == null) {
             this.offlineMode = true;
@@ -561,11 +556,11 @@ public class Settings {
         }
         for (Downloadable download : downloads) {
             if (download.needToDownload()) {
-                log("Updates found!");
+                LogManager.info("Updates found!");
                 return true; // 1 file needs to be updated so there is updated files
             }
         }
-        log("No updates found!");
+        LogManager.info("No updates found!");
         return false; // No updates
     }
 
@@ -1113,10 +1108,10 @@ public class Settings {
                     "5"));
             if (this.serverCheckerWait < 1 || this.serverCheckerWait > 30) {
                 // Server checker wait should be between 1 and 30
-                log("Tried to set server checker wait to "
-                        + this.serverCheckerWait
-                        + " which is not valid! Must be between 1 and 30. Setting back to default of 5!",
-                        LogMessageType.warning, false);
+                LogManager
+                        .warn("Tried to set server checker wait to "
+                                + this.serverCheckerWait
+                                + " which is not valid! Must be between 1 and 30. Setting back to default of 5!");
                 this.serverCheckerWait = 5;
             }
 
@@ -1136,9 +1131,8 @@ public class Settings {
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy")
                     && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
                     && !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
-                log("Tried to set the date format to " + this.dateFormat
-                        + " which is not valid! Setting back to default of dd/M/yyy!",
-                        LogMessageType.warning, false);
+                LogManager.warn("Tried to set the date format to " + this.dateFormat
+                        + " which is not valid! Setting back to default of dd/M/yyy!");
                 this.dateFormat = "dd/M/yyy";
             }
 
@@ -1248,14 +1242,14 @@ public class Settings {
      */
     public void switchAccount(Account account) {
         if (account == null) {
-            log("Logging out of account");
+            LogManager.info("Logging out of account");
             this.account = null;
         } else {
             if (account.isReal()) {
-                log("Changed account to " + account);
+                LogManager.info("Changed account to " + account);
                 this.account = account;
             } else {
-                log("Logging out of account");
+                LogManager.info("Logging out of account");
                 this.account = null;
             }
         }
@@ -1339,7 +1333,7 @@ public class Settings {
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         }
-        log("[Background] Checking Minecraft Versions Started");
+        LogManager.info("[Background] Checking Minecraft Versions Started");
         ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
         for (final MinecraftVersion mv : this.minecraftVersions) {
             executor.execute(new Runnable() {
@@ -1352,7 +1346,7 @@ public class Settings {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                log("[Background] Checking Minecraft Versions Complete");
+                LogManager.info("[Background] Checking Minecraft Versions Complete");
             }
         });
         executor.shutdown();
@@ -1733,75 +1727,6 @@ public class Settings {
             saveInstances(); // Save the instancesdata file
             reloadInstancesPanel(); // Reload the instances panel
         }
-    }
-
-    public String apiCall(String username, String action, String extra1, String extra2,
-            String extra3, boolean debug) {
-        String response = "";
-        try {
-            String data = URLEncoder.encode("username", "UTF-8") + "="
-                    + URLEncoder.encode(username, "UTF-8");
-            data += "&" + URLEncoder.encode("action", "UTF-8") + "="
-                    + URLEncoder.encode(action, "UTF-8");
-            data += "&" + URLEncoder.encode("extra1", "UTF-8") + "="
-                    + URLEncoder.encode(extra1, "UTF-8");
-            data += "&" + URLEncoder.encode("extra2", "UTF-8") + "="
-                    + URLEncoder.encode(extra2, "UTF-8");
-            data += "&" + URLEncoder.encode("extra3", "UTF-8") + "="
-                    + URLEncoder.encode(extra3, "UTF-8");
-
-            URL url = new URL(Constants.API_BASE_URL);
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(data);
-            wr.flush();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = rd.readLine()) != null) {
-                response += line;
-                if (debug) {
-                    log("API Call Response: " + line);
-                }
-            }
-            wr.close();
-        } catch (Exception e) {
-            logStackTrace(e);
-        }
-        return response;
-    }
-
-    public void apiCall(String username, String action, String extra1, String extra2, String extra3) {
-        apiCall(username, action, extra1, extra2, extra3, false);
-    }
-
-    public void apiCall(String username, String action, String extra1, String extra2) {
-        apiCall(username, action, extra1, extra2, "", false);
-    }
-
-    public void apiCall(String username, String action, String extra1) {
-        apiCall(username, action, extra1, "", "", false);
-    }
-
-    public void apiCall(String username, String action) {
-        apiCall(username, action, "", "", "", false);
-    }
-
-    public String apiCallReturn(String username, String action, String extra1, String extra2,
-            String extra3) {
-        return apiCall(username, action, extra1, extra2, extra3, false);
-    }
-
-    public String apiCallReturn(String username, String action, String extra1, String extra2) {
-        return apiCall(username, action, extra1, extra2, "", false);
-    }
-
-    public String apiCallReturn(String username, String action, String extra1) {
-        return apiCall(username, action, extra1, "", "", false);
-    }
-
-    public String apiCallReturn(String username, String action) {
-        return apiCall(username, action, "", "", "", false);
     }
 
     public boolean canViewSemiPublicPackByCode(String packCode) {
@@ -2307,34 +2232,17 @@ public class Settings {
     }
 
     /**
-     * Log a non Minecraft related info message to the console
-     */
-    @Deprecated
-    public void log(String message) {
-        this.console.log(message, LogMessageType.info, false);
-    }
-
-    /**
-     * Log a Minecraft related message to the console
-     */
-    @Deprecated
-    public void logMinecraft(String message) {
-        this.console.logMinecraft(message);
-    }
-
-    /**
      * Logs a stack trace to the console window
      * 
      * @param exception
      *            The exception to show in the console
      */
-    @Deprecated
     public void logStackTrace(Exception exception) {
         exception.printStackTrace();
-        log(exception.getMessage(), LogMessageType.error, false);
+        LogManager.error(exception.getMessage());
         for (StackTraceElement element : exception.getStackTrace()) {
             if (element.toString() != null) {
-                log(element.toString(), LogMessageType.error, false);
+                LogManager.error(element.toString());
             }
         }
     }
@@ -2347,24 +2255,9 @@ public class Settings {
      * @param exception
      *            The exception to show in the console
      */
-    @Deprecated
     public void logStackTrace(String message, Exception exception) {
-        exception.printStackTrace();
-        log(message, LogMessageType.error, false);
-        log(exception.getMessage(), LogMessageType.error, false);
-        for (StackTraceElement element : exception.getStackTrace()) {
-            if (element.toString() != null) {
-                log(element.toString(), LogMessageType.error, false);
-            }
-        }
-    }
-
-    /**
-     * Log something to the console
-     */
-    @Deprecated
-    public void log(String message, LogMessageType type, boolean isMinecraft) {
-        this.console.log(message, type, isMinecraft);
+        LogManager.error(message);
+        logStackTrace(exception);
     }
 
     public void showKillMinecraft(Process minecraft) {

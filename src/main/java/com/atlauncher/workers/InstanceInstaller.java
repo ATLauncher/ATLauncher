@@ -34,7 +34,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.atlauncher.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -43,13 +42,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Action;
 import com.atlauncher.data.DecompType;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
@@ -473,8 +472,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 App.settings.logStackTrace(e1);
             }
             if (returnValue == null) {
-                App.settings.log("Couldn't get filesizes of files. Continuing regardless!",
-                        LogMessageType.warning, false);
+                LogManager.warn("Couldn't get filesizes of files. Continuing regardless!");
             }
 
             if (returnValue != null) {
@@ -871,7 +869,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (library.exists()) {
                     Utils.copyFile(library, getBinDirectory());
                 } else {
-                    App.settings.log("Cannot install instance because the library file "
+                    LogManager.error("Cannot install instance because the library file "
                             + library.getAbsolutePath() + " wasn't found!");
                     this.cancel(true);
                     return;
@@ -888,7 +886,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             Utils.copyFile(library.getFile(), getBinDirectory());
                         }
                     } else {
-                        App.settings.log("Cannot install instance because the library file "
+                        LogManager.error("Cannot install instance because the library file "
                                 + library.getFile().getAbsolutePath() + " wasn't found!");
                         this.cancel(true);
                         return;
@@ -911,7 +909,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (toCopy.exists()) {
             Utils.copyFile(toCopy, copyTo, withFilename);
         } else {
-            App.settings.log("Cannot install instance because the library file "
+            LogManager.error("Cannot install instance because the library file "
                     + toCopy.getAbsolutePath() + " wasn't found!");
             this.cancel(true);
             return;

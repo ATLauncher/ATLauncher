@@ -23,7 +23,6 @@ import javax.swing.JScrollPane;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.evnt.ConsoleCloseEvent;
 import com.atlauncher.evnt.ConsoleOpenEvent;
 import com.atlauncher.evnt.RelocalizationEvent;
@@ -38,6 +37,11 @@ import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Utils;
 
 public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener {
+
+    /**
+     * Auto generated serial.
+     */
+    private static final long serialVersionUID = -3538990021922025818L;
     private JScrollPane scrollPane;
     public Console console;
     private ConsoleBottomBar bottomBar;
@@ -101,141 +105,6 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
                 }
             }
         });
-    }
-
-    @Deprecated
-    public void log(String text) {
-        log(text, LogMessageType.info, false);
-    }
-
-    @Deprecated
-    public void log(String text, boolean error) {
-        log(text, LogMessageType.error, false);
-    }
-
-    @Deprecated
-    public void log(String text, LogMessageType type, boolean isMinecraft) {
-        /*
-         * synchronized (kit) { text = text.replace(App.settings.getBaseDir().getAbsolutePath(),
-         * "**USERSDIR**"); try { kit.insertHTML( doc, doc.getLength(),
-         * HTMLifier.wrap(String.format("[%s] ", Timestamper.now())).bold()
-         * .font(type.getColourCode()) + text + (doc.getLength() == 0 ? "" : "<br/>"), 0, 0, null);
-         * if (!isMinecraft) { FileWriter fw = null; PrintWriter pw = null; try { fw = new
-         * FileWriter(LOG_FILE, true); pw = new PrintWriter(fw); pw.println(String.format("[%s] %s",
-         * Timestamper.now(), text)); } catch (IOException e) { e.printStackTrace(); } finally { try
-         * { if (fw != null) { fw.close(); } if (pw != null) { pw.close(); } } catch (IOException e)
-         * { e.printStackTrace(); } }
-         * 
-         * } } catch (IOException e) { e.printStackTrace(); } catch (BadLocationException e) {
-         * e.printStackTrace(); } console.setCaretPosition(console.getDocument().getLength()); }
-         */
-    }
-
-    /**
-     * Logs a stack trace to the console window
-     * 
-     * @param e
-     *            The text to show in the console
-     */
-    @Deprecated
-    public void logStackTrace(Exception e) {
-        e.printStackTrace();
-        log(e.getMessage(), LogMessageType.error, false);
-        StringBuilder sb = new StringBuilder();
-        for (StackTraceElement element : e.getStackTrace()) {
-            if (element.toString() != null) {
-                log(element.toString(), LogMessageType.error, false);
-            }
-        }
-    }
-
-    /**
-     * Logs text to the console window from Minecraft
-     * 
-     * @param text
-     *            The text to show in the console
-     */
-    @Deprecated
-    public void logMinecraft(String text) {
-        String message = null; // The log message
-        LogMessageType type = null; // The log message type
-        if (text.contains("[INFO] [STDERR]")) {
-            message = text.substring(text.indexOf("[INFO] [STDERR]"));
-            type = LogMessageType.warning;
-        } else if (text.contains("[INFO]")) {
-            message = text.substring(text.indexOf("[INFO]"));
-            if (message.contains("CONFLICT")) {
-                type = LogMessageType.error;
-            } else if (message.contains("overwriting existing item")) {
-                type = LogMessageType.warning;
-            } else {
-                type = LogMessageType.info;
-            }
-        } else if (text.contains("[WARNING]")) {
-            message = text.substring(text.indexOf("[WARNING]"));
-            type = LogMessageType.warning;
-        } else if (text.contains("WARNING:")) {
-            message = text.substring(text.indexOf("WARNING:"));
-            type = LogMessageType.warning;
-        } else if (text.contains("INFO:")) {
-            message = text.substring(text.indexOf("INFO:"));
-            type = LogMessageType.info;
-        } else if (text.contains("Exception")) {
-            message = text;
-            type = LogMessageType.error;
-        } else if (text.contains("[SEVERE]")) {
-            message = text.substring(text.indexOf("[SEVERE]"));
-            type = LogMessageType.error;
-        } else if (text.contains("[Sound Library Loader/ERROR]")) {
-            message = text.substring(text.indexOf("[Sound Library Loader/ERROR]"));
-            type = LogMessageType.error;
-        } else if (text.contains("[Sound Library Loader/WARN]")) {
-            message = text.substring(text.indexOf("[Sound Library Loader/WARN]"));
-            type = LogMessageType.warning;
-        } else if (text.contains("[Sound Library Loader/INFO]")) {
-            message = text.substring(text.indexOf("[Sound Library Loader/INFO]"));
-            type = LogMessageType.info;
-        } else if (text.contains("[MCO Availability Checker #1/ERROR]")) {
-            message = text.substring(text.indexOf("[MCO Availability Checker #1/ERROR]"));
-            type = LogMessageType.error;
-        } else if (text.contains("[MCO Availability Checker #1/WARN]")) {
-            message = text.substring(text.indexOf("[MCO Availability Checker #1/WARN]"));
-            type = LogMessageType.warning;
-        } else if (text.contains("[MCO Availability Checker #1/INFO]")) {
-            message = text.substring(text.indexOf("[MCO Availability Checker #1/INFO]"));
-            type = LogMessageType.info;
-        } else if (text.contains("[Client thread/ERROR]")) {
-            message = text.substring(text.indexOf("[Client thread/ERROR]"));
-            type = LogMessageType.error;
-        } else if (text.contains("[Client thread/WARN]")) {
-            message = text.substring(text.indexOf("[Client thread/WARN]"));
-            type = LogMessageType.warning;
-        } else if (text.contains("[Client thread/INFO]")) {
-            message = text.substring(text.indexOf("[Client thread/INFO]"));
-            type = LogMessageType.info;
-        } else if (text.contains("[Server thread/ERROR]")) {
-            message = text.substring(text.indexOf("[Server thread/ERROR]"));
-            type = LogMessageType.error;
-        } else if (text.contains("[Server thread/WARN]")) {
-            message = text.substring(text.indexOf("[Server thread/WARN]"));
-            type = LogMessageType.warning;
-        } else if (text.contains("[Server thread/INFO]")) {
-            message = text.substring(text.indexOf("[Server thread/INFO]"));
-            type = LogMessageType.info;
-        } else if (text.contains("[main/ERROR]")) {
-            message = text.substring(text.indexOf("[main/ERROR]"));
-            type = LogMessageType.error;
-        } else if (text.contains("[main/WARN]")) {
-            message = text.substring(text.indexOf("[main/WARN]"));
-            type = LogMessageType.warning;
-        } else if (text.contains("[main/INFO]")) {
-            message = text.substring(text.indexOf("[main/INFO]"));
-            type = LogMessageType.info;
-        } else {
-            message = text;
-            type = LogMessageType.info;
-        }
-        log(message, type, true);
     }
 
     /**

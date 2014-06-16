@@ -18,7 +18,6 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.data.mojang.auth.UserType;
 import com.atlauncher.utils.Utils;
@@ -201,7 +200,7 @@ public class MCLauncher {
         argsString = argsString.replace(response.getSession(), "REDACTED");
         argsString = argsString.replace(props, "REDACTED");
 
-        App.settings.log("Launching Minecraft with the following arguments "
+        LogManager.info("Launching Minecraft with the following arguments "
                 + "(user related stuff has been removed): " + argsString);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());

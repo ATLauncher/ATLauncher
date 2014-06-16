@@ -73,11 +73,11 @@ import javax.swing.text.html.StyleSheet;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Settings;
 import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 
 public class Utils {
@@ -90,16 +90,14 @@ public class Utils {
         return "#" + Integer.toHexString(c.getRGB() & 0xFFFFFF);
     }
 
-    public static String error(Throwable t){
+    public static String error(Throwable t) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(t.toString())
-                .append("\n");
+        builder.append(t.toString()).append("\n");
         StackTraceElement[] elements = t.getStackTrace();
-        for(int i = 0; i < elements.length; i++){
-            builder.append("\t")
-                    .append(elements[i].toString());
-            if(i < (elements.length - 1)){
+        for (int i = 0; i < elements.length; i++) {
+            builder.append("\t").append(elements[i].toString());
+            if (i < (elements.length - 1)) {
                 builder.append("\n");
             }
         }
@@ -535,8 +533,8 @@ public class Utils {
      */
     public static String getMD5(File file) {
         if (!file.exists()) {
-            LogManager.error(
-                    "Cannot get MD5 of " + file.getAbsolutePath() + " as it doesn't exist");
+            LogManager
+                    .error("Cannot get MD5 of " + file.getAbsolutePath() + " as it doesn't exist");
             return "0"; // File doesn't exists so MD5 is nothing
         }
         StringBuffer sb = null;
@@ -663,8 +661,8 @@ public class Utils {
             delete(from);
             return true;
         } else {
-            LogManager.error(
-                    "Couldn't move file " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+            LogManager.error("Couldn't move file " + from.getAbsolutePath() + " to "
+                    + to.getAbsolutePath());
             return false;
         }
     }
@@ -695,14 +693,12 @@ public class Utils {
      */
     public static boolean copyFile(File from, File to, boolean withFilename) {
         if (!from.isFile()) {
-            LogManager.error(
-                    "File " + from.getAbsolutePath() + " cannot be copied to "
-                            + to.getAbsolutePath() + " as it isn't a file");
+            LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to "
+                    + to.getAbsolutePath() + " as it isn't a file");
         }
         if (!from.exists()) {
-            LogManager.error(
-                    "File " + from.getAbsolutePath() + " cannot be copied to "
-                            + to.getAbsolutePath() + " as it doesn't exist");
+            LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to "
+                    + to.getAbsolutePath() + " as it doesn't exist");
             return false;
         }
         if (!withFilename) {
@@ -1356,8 +1352,7 @@ public class Utils {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    App.settings.log("Unable to close input stream");
-                    App.settings.logStackTrace(e);
+                    App.settings.logStackTrace("Unable to close input stream", e);
                 }
             }
         }
@@ -1421,8 +1416,7 @@ public class Utils {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.log("Cannot close process input stream reader");
-                        App.settings.logStackTrace(e);
+                        App.settings.logStackTrace("Cannot close process input stream reader", e);
                     }
                 }
             }
@@ -1463,8 +1457,8 @@ public class Utils {
                     }
                 }
                 if (version == -1) {
-                    LogManager.warn(
-                            "Cannot get java version number from the ouput of java -version");
+                    LogManager
+                            .warn("Cannot get java version number from the ouput of java -version");
                 } else {
                     return version >= 7;
                 }
@@ -1477,8 +1471,7 @@ public class Utils {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.log("Cannot close input stream reader ");
-                        App.settings.logStackTrace(e);
+                        App.settings.logStackTrace("Cannot close input stream reader", e);
                     }
                 }
             }
@@ -1517,8 +1510,7 @@ public class Utils {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.log("Cannot close input stream reader ");
-                        App.settings.logStackTrace(e);
+                        App.settings.logStackTrace("Cannot close input stream reader", e);
                     }
                 }
             }
@@ -1865,4 +1857,86 @@ public class Utils {
         return route;
     }
 
+    public static Object[] prepareMessageForMinecraftLog(String text) {
+        LogType type = null; // The log message type
+        String message = null; // The log message
+        if (text.contains("[INFO] [STDERR]")) {
+            message = text.substring(text.indexOf("[INFO] [STDERR]"));
+            type = LogType.WARN;
+        } else if (text.contains("[INFO]")) {
+            message = text.substring(text.indexOf("[INFO]"));
+            if (message.contains("CONFLICT")) {
+                type = LogType.ERROR;
+            } else if (message.contains("overwriting existing item")) {
+                type = LogType.WARN;
+            } else {
+                type = LogType.INFO;
+            }
+        } else if (text.contains("[WARNING]")) {
+            message = text.substring(text.indexOf("[WARNING]"));
+            type = LogType.WARN;
+        } else if (text.contains("WARNING:")) {
+            message = text.substring(text.indexOf("WARNING:"));
+            type = LogType.WARN;
+        } else if (text.contains("INFO:")) {
+            message = text.substring(text.indexOf("INFO:"));
+            type = LogType.INFO;
+        } else if (text.contains("Exception")) {
+            message = text;
+            type = LogType.ERROR;
+        } else if (text.contains("[SEVERE]")) {
+            message = text.substring(text.indexOf("[SEVERE]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[Sound Library Loader/ERROR]")) {
+            message = text.substring(text.indexOf("[Sound Library Loader/ERROR]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[Sound Library Loader/WARN]")) {
+            message = text.substring(text.indexOf("[Sound Library Loader/WARN]"));
+            type = LogType.WARN;
+        } else if (text.contains("[Sound Library Loader/INFO]")) {
+            message = text.substring(text.indexOf("[Sound Library Loader/INFO]"));
+            type = LogType.INFO;
+        } else if (text.contains("[MCO Availability Checker #1/ERROR]")) {
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/ERROR]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[MCO Availability Checker #1/WARN]")) {
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/WARN]"));
+            type = LogType.WARN;
+        } else if (text.contains("[MCO Availability Checker #1/INFO]")) {
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/INFO]"));
+            type = LogType.INFO;
+        } else if (text.contains("[Client thread/ERROR]")) {
+            message = text.substring(text.indexOf("[Client thread/ERROR]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[Client thread/WARN]")) {
+            message = text.substring(text.indexOf("[Client thread/WARN]"));
+            type = LogType.WARN;
+        } else if (text.contains("[Client thread/INFO]")) {
+            message = text.substring(text.indexOf("[Client thread/INFO]"));
+            type = LogType.INFO;
+        } else if (text.contains("[Server thread/ERROR]")) {
+            message = text.substring(text.indexOf("[Server thread/ERROR]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[Server thread/WARN]")) {
+            message = text.substring(text.indexOf("[Server thread/WARN]"));
+            type = LogType.WARN;
+        } else if (text.contains("[Server thread/INFO]")) {
+            message = text.substring(text.indexOf("[Server thread/INFO]"));
+            type = LogType.INFO;
+        } else if (text.contains("[main/ERROR]")) {
+            message = text.substring(text.indexOf("[main/ERROR]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[main/WARN]")) {
+            message = text.substring(text.indexOf("[main/WARN]"));
+            type = LogType.WARN;
+        } else if (text.contains("[main/INFO]")) {
+            message = text.substring(text.indexOf("[main/INFO]"));
+            type = LogType.INFO;
+        } else {
+            message = text;
+            type = LogType.INFO;
+        }
+
+        return new Object[] { type, message };
+    }
 }

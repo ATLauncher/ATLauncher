@@ -34,12 +34,12 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 
-public class AccountsTab extends JPanel implements Tab{
+public class AccountsTab extends JPanel implements Tab {
+
     private static final long serialVersionUID = 2493791137600123223L;
     private JLabel userSkin;
     private JPanel rightPanel;
@@ -209,7 +209,7 @@ public class AccountsTab extends JPanel implements Tab{
                         return;
                     }
 
-                    App.settings.log("Logging into Minecraft!");
+                    LogManager.info("Logging into Minecraft!");
                     final ProgressDialog dialog = new ProgressDialog(App.settings
                             .getLocalizedString("account.loggingin"), 0, App.settings
                             .getLocalizedString("account.loggingin"), "Aborting login for "
@@ -235,7 +235,7 @@ public class AccountsTab extends JPanel implements Tab{
                             account = new Account(username, password, resp.getSelectedProfile()
                                     .getName(), remember);
                             App.settings.addAccount(account);
-                            App.settings.log("Added Account " + account);
+                            LogManager.info("Added Account " + account);
                             String[] options = { App.settings.getLocalizedString("common.yes"),
                                     App.settings.getLocalizedString("common.no") };
                             int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
@@ -254,7 +254,7 @@ public class AccountsTab extends JPanel implements Tab{
                                 account.setPassword(password);
                             }
                             account.setRemember(remember);
-                            App.settings.log("Edited Account " + account);
+                            LogManager.info("Edited Account " + account);
                             String[] options = { App.settings.getLocalizedString("common.ok") };
                             JOptionPane.showOptionDialog(App.settings.getParent(),
                                     App.settings.getLocalizedString("account.editeddone"),
@@ -271,9 +271,8 @@ public class AccountsTab extends JPanel implements Tab{
                         }
                         accountsComboBox.setSelectedItem(account);
                     } else {
-                        LogManager.error(
-                                (response == null ? "Unknown Error Logging In" : response
-                                        .getErrorMessage()));
+                        LogManager.error((response == null ? "Unknown Error Logging In" : response
+                                .getErrorMessage()));
                         String[] options = { App.settings.getLocalizedString("common.ok") };
                         JOptionPane.showOptionDialog(
                                 App.settings.getParent(),
@@ -354,4 +353,5 @@ public class AccountsTab extends JPanel implements Tab{
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.account");
     }
+
 }

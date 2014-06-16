@@ -188,7 +188,7 @@ public class LegacyMCLauncher {
         argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
         argsString = argsString.replace(sess.getAccessToken(), "REDACTED");
 
-        App.settings.log("Launching Minecraft with the following arguments "
+        LogManager.info("Launching Minecraft with the following arguments "
                 + "(user related stuff has been removed): " + argsString);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());

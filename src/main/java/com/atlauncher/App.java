@@ -162,7 +162,7 @@ public class App {
         if (autoLaunch != null) {
             if (settings.isInstanceBySafeName(autoLaunch)) {
                 Instance instance = settings.getInstanceBySafeName(autoLaunch);
-                settings.log("Opening Instance " + instance.getName());
+                LogManager.info("Opening Instance " + instance.getName());
                 if (instance.launch()) {
                     open = false;
                 } else {

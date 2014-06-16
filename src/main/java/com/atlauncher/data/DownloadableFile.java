@@ -25,6 +25,10 @@ public class DownloadableFile {
         return this.name.equalsIgnoreCase("Launcher");
     }
 
+    public String getMD5() {
+        return this.md5;
+    }
+
     public String getSHA1() {
         return this.sha1;
     }

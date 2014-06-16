@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.Utils;
@@ -60,7 +61,7 @@ public class DropboxSync extends SyncAbstract {
                 }
                 dropboxLocation = dropboxLoc;
             } catch (IOException e) {
-                App.settings.log("Couldn't auto find the dropbox settings location!");
+                LogManager.info("Couldn't auto find the dropbox settings location!");
                 promptUserDropboxLocation();
             } finally {
                 if (bufferedReader != null) {
@@ -199,7 +200,7 @@ public class DropboxSync extends SyncAbstract {
                 int returnVal = fileChooser.showOpenDialog(this);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File selectedFolder = fileChooser.getSelectedFile();
-                    App.settings.log("User selected folder " + selectedFolder);
+                    LogManager.info("User selected folder " + selectedFolder);
                     dropboxLocation = selectedFolder;
                     App.settings.setDropboxLocation(dropboxLocation.toString());
                     dispose();

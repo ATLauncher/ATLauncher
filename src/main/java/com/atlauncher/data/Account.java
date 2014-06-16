@@ -23,6 +23,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
@@ -355,7 +356,7 @@ public class Account implements Serializable {
             if (file.exists()) {
                 Utils.delete(file);
             }
-            App.settings.log("Downloading skin for " + this.minecraftUsername);
+            LogManager.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog dialog = new ProgressDialog(
                     App.settings.getLocalizedString("account.downloadingskin"), 0,
                     App.settings.getLocalizedString("account.downloadingminecraftskin",

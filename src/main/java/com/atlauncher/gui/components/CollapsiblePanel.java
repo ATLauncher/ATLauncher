@@ -39,10 +39,11 @@ import com.atlauncher.utils.Utils;
 
 /**
  * TODO: Rewrite this for easier OOP
- *
+ * 
  * The user-triggered collapsible panel containing the component (trigger) in the titled border
  */
 public class CollapsiblePanel extends JPanel {
+
     public static final long serialVersionUID = -343234;
 
     CollapsibleTitledBorder border; // includes upper left component and line type
@@ -60,9 +61,10 @@ public class CollapsiblePanel extends JPanel {
     /**
      * Constructor, using a group of option radio buttons to control the collapsible panel. The
      * buttons should be created, grouped, and then used to construct their own collapsible panels.
-     *
-     * @param component Radio button that expands and collapses the panel based on if it is selected or
-     *                  not
+     * 
+     * @param component
+     *            Radio button that expands and collapses the panel based on if it is selected or
+     *            not
      */
     public CollapsiblePanel(JRadioButton component) {
         component.addItemListener(new CollapsiblePanel.ExpandAndCollapseAction());
@@ -73,9 +75,10 @@ public class CollapsiblePanel extends JPanel {
 
     /**
      * Constructor, using a label/button to control the collapsible panel.
-     *
-     * @param text Title of the collapsible panel in string format, used to create a button with text
-     *             and an arrow icon
+     * 
+     * @param text
+     *            Title of the collapsible panel in string format, used to create a button with text
+     *            and an arrow icon
      */
     public CollapsiblePanel(String text) {
         arrow.setText(text);
@@ -121,9 +124,10 @@ public class CollapsiblePanel extends JPanel {
     /**
      * Constructor, using a group of button to control the collapsible panel while will a label
      * text.
-     *
-     * @param text Title of the collapsible panel in string format, used to create a button with text
-     *             and an arrow icon
+     * 
+     * @param text
+     *            Title of the collapsible panel in string format, used to create a button with text
+     *            and an arrow icon
      */
     public CollapsiblePanel(String text, JRadioButton component) {
         collapsed = !component.isSelected();
@@ -183,8 +187,9 @@ public class CollapsiblePanel extends JPanel {
      * Collapses or expands the panel. add or remove the content pane, alternate between a frame and
      * empty border, and change the title arrow. The current state is stored in the collapsed
      * boolean.
-     *
-     * @param collapse When set to true, the panel is collapsed, else it is expanded
+     * 
+     * @param collapse
+     *            When set to true, the panel is collapsed, else it is expanded
      */
     public void setCollapsed(boolean collapse) {
         if (collapse) {
@@ -209,9 +214,9 @@ public class CollapsiblePanel extends JPanel {
 
     /**
      * Returns an ImageIcon array with arrow images used for the different states of the panel.
-     *
+     * 
      * @return iconArrow An ImageIcon array holding the collapse and expanded versions of the right
-     * hand side arrow
+     *         hand side arrow
      */
     private ImageIcon[] createExpandAndCollapseIcon() {
         ImageIcon[] iconArrow = new ImageIcon[2];
@@ -283,7 +288,7 @@ public class CollapsiblePanel extends JPanel {
         }
 
         public CollapsibleTitledBorder(Border border, JComponent component, int titleJustification,
-                                       int titlePosition) {
+                int titlePosition) {
             // TitledBorder needs border, title, justification, position, font, and color
             super(border, null, titleJustification, titlePosition, null, null);
             this.component = component;
@@ -437,4 +442,5 @@ public class CollapsiblePanel extends JPanel {
             return compR;
         }
     }
+
 }

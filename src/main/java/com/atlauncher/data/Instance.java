@@ -1084,7 +1084,8 @@ public class Instance implements Cloneable {
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                         options[0]);
                 if (ret != 0) {
-                    LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
+                    LogManager
+                            .warn("Launching of instance cancelled due to user cancelling memory warning!");
                     App.settings.setMinecraftLaunched(false);
                     return false;
                 }
@@ -1104,7 +1105,8 @@ public class Instance implements Cloneable {
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
                 if (ret != 0) {
-                    LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
+                    LogManager
+                            .warn("Launching of instance cancelled due to user cancelling memory warning!");
                     App.settings.setMinecraftLaunched(false);
                     return false;
                 }
@@ -1130,7 +1132,7 @@ public class Instance implements Cloneable {
                     return false;
                 }
             }
-            App.settings.log("Logging into Minecraft!");
+            LogManager.info("Logging into Minecraft!");
             final String pass = password;
             final ProgressDialog dialog = new ProgressDialog(
                     App.settings.getLocalizedString("account.loggingin"), 0,
@@ -1219,7 +1221,7 @@ public class Instance implements Cloneable {
                                 line = line.replace(session.getSelectedProfile().getId(),
                                         "**PROFILEID**");
                             }
-                            App.settings.logMinecraft(line);
+                            LogManager.minecraft(line);
                         }
                         App.settings.hideKillMinecraft();
                         if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
@@ -1237,7 +1239,8 @@ public class Instance implements Cloneable {
                             process.destroy(); // Kill the process
                         }
                         if (!App.settings.keepLauncherOpen()) {
-                            App.settings.getConsole().setVisible(false); // Hide the console to pretend
+                            App.settings.getConsole().setVisible(false); // Hide the console to
+                                                                         // pretend
                             // we've closed
                         }
                         if (exitValue != 0) {
@@ -1326,7 +1329,7 @@ public class Instance implements Cloneable {
         if (reportsDir.exists()) {
             for (String filename : reportsDir.list(Utils.getOpenEyePendingReportsFileFilter())) {
                 File report = new File(reportsDir, filename);
-                App.settings.log("OpenEye: Sending pending crash report located at '"
+                LogManager.info("OpenEye: Sending pending crash report located at '"
                         + report.getAbsolutePath() + "'");
                 OpenEyeReportResponse response = Utils.sendOpenEyePendingReport(report);
                 if (response == null) {
@@ -1336,8 +1339,8 @@ public class Instance implements Cloneable {
                     LogManager.error("OpenEye: Couldn't send pending crash report!");
                 } else {
                     // OpenEye returned a response to the report, display that to user if needed.
-                    App.settings.log("OpenEye: Pending crash report sent! URL: "
-                            + response.getURL());
+                    LogManager
+                            .info("OpenEye: Pending crash report sent! URL: " + response.getURL());
                     if (response.hasNote()) {
                         String[] options = {
                                 App.settings.getLocalizedString("common.opencrashreport"),

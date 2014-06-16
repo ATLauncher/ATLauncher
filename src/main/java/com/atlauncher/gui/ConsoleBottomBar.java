@@ -76,13 +76,13 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
         clear.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 App.settings.clearConsole();
-                App.settings.log("Console Cleared");
+                LogManager.info("Console Cleared");
             }
         });
         copyLog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 App.TOASTER.pop("Copied Log to clipboard");
-                App.settings.log("Copied Log to clipboard");
+                LogManager.info("Copied Log to clipboard");
                 StringSelection text = new StringSelection(App.settings.getLog());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);

@@ -18,11 +18,17 @@ import javax.swing.JToolTip;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public abstract class BottomBar extends JPanel {
+
+    /**
+     * Auto generated serial.
+     */
+    private static final long serialVersionUID = -7488195680365431776L;
     protected JButton creeperHostIcon;
     protected JButton facebookIcon;
     protected JButton githubIcon;
@@ -116,31 +122,31 @@ public abstract class BottomBar extends JPanel {
     private void setupSocialButtonListeners() {
         creeperHostIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.log("Opening Up CreeperHost");
+                LogManager.info("Opening Up CreeperHost");
                 Utils.openBrowser("http://billing.creeperhost.net/link.php?id=7");
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.log("Opening Up ATLauncher Facebook Page");
+                LogManager.info("Opening Up ATLauncher Facebook Page");
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
         githubIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.log("Opening Up ATLauncher GitHub Page");
+                LogManager.info("Opening Up ATLauncher GitHub Page");
                 Utils.openBrowser("https://github.com/ATLauncher/ATLauncher");
             }
         });
         redditIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.log("Opening Up ATLauncher Reddit Page");
+                LogManager.info("Opening Up ATLauncher Reddit Page");
                 Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
             }
         });
         twitterIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.log("Opening Up ATLauncher Twitter Page");
+                LogManager.info("Opening Up ATLauncher Twitter Page");
                 Utils.openBrowser("http://www.twitter.com/ATLauncher");
             }
         });
