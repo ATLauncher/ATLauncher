@@ -1,10 +1,12 @@
 package com.atlauncher.evnt;
 
 import java.awt.Color;
+import java.io.IOException;
 
 import com.atlauncher.App;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Timestamper;
+import com.atlauncher.writer.LogEventWriter;
 
 public final class LogEvent {
     public static final int CONSOLE = 0xA;
@@ -40,7 +42,7 @@ public final class LogEvent {
     public final int meta;
 
     public LogEvent(LogType type, String body) {
-        this(type, body, CONSOLE);
+        this(type, body, CONSOLE|FILE);
     }
 
     public LogEvent(LogType type, String body, int meta) {
@@ -49,14 +51,18 @@ public final class LogEvent {
         this.meta = meta;
     }
 
-    public void post() {
+    public void post(LogEventWriter writer) {
         if ((this.meta & CONSOLE) == CONSOLE) {
             Console c = App.settings.getConsole().console;
             c.setColor(this.type.color()).setBold(true).write("[" + Timestamper.now() + "] ");
             c.setColor(App.THEME.getConsoleTextColor()).setBold(false).write(this.body);
         }
         if ((this.meta & FILE) == FILE) {
-            // TODO: File logging
+            try {
+                writer.write(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
