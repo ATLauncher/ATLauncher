@@ -30,6 +30,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
@@ -109,14 +110,12 @@ public class App {
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
         if (settings.isUsingCustomJavaPath()) {
             LogManager.warn("Custom Java Path Set!");
-        } else {
-            if (settings.isUsingMacApp()) {
-                File oracleJava = new File(
-                        "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
-                if (oracleJava.exists() && oracleJava.canExecute()) {
-                    settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
-                    LogManager.warn("Launcher Forced Custom Java Path Set!");
-                }
+        } else if (settings.isUsingMacApp()) {
+            File oracleJava = new File(
+                    "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
+            if (oracleJava.exists() && oracleJava.canExecute()) {
+                settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
+                LogManager.warn("Launcher Forced Custom Java Path Set!");
             }
         }
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
@@ -128,7 +127,7 @@ public class App {
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "ATLauncher "
-                    + settings.getVersion());
+                    + Constants.VERSION);
             try {
                 Class util = Class.forName("com.apple.eawt.Application");
                 Method getApplication = util.getMethod("getApplication", new Class[0]);
@@ -154,20 +153,18 @@ public class App {
 
         if (settings.isFirstTimeRun()) {
             LogManager.warn("Launcher not setup. Loading Setup Dialog");
-            new SetupDialog(settings);
+            new SetupDialog();
         }
 
         boolean open = true;
 
-        if (autoLaunch != null) {
-            if (settings.isInstanceBySafeName(autoLaunch)) {
-                Instance instance = settings.getInstanceBySafeName(autoLaunch);
-                LogManager.info("Opening Instance " + instance.getName());
-                if (instance.launch()) {
-                    open = false;
-                } else {
-                    LogManager.error("Error Opening Instance  " + instance.getName());
-                }
+        if (autoLaunch != null && settings.isInstanceBySafeName(autoLaunch)) {
+            Instance instance = settings.getInstanceBySafeName(autoLaunch);
+            LogManager.info("Opening Instance " + instance.getName());
+            if (instance.launch()) {
+                open = false;
+            } else {
+                LogManager.error("Error Opening Instance  " + instance.getName());
             }
         }
         TRAY_MENU.localize();

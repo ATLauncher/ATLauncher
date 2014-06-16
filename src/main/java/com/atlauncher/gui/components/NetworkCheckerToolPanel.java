@@ -8,6 +8,7 @@ package com.atlauncher.gui.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,12 +21,12 @@ import javax.swing.border.BevelBorder;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Server;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener {
-
     /**
      * Auto generated serial.
      */
@@ -56,8 +57,9 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 App.settings.getParent(),
                 "<html><p align=\"center\">"
                         + Utils.splitMultilinedString(App.settings.getLocalizedString(
-                                "tools.networkcheckerpopup", "1 MB.<br/><br/>"), 75, "<br>")
-                        + "</p></html>", App.settings.getLocalizedString("tools.networkchecker"),
+                                "tools.networkcheckerpopup", App.settings.getServers().size() * 20
+                                        + " MB.<br/><br/>"), 75, "<br>") + "</p></html>",
+                App.settings.getLocalizedString("tools.networkchecker"),
                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
         if (ret == 0) {
             final ProgressDialog dialog = new ProgressDialog(
@@ -68,7 +70,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             dialog.addThread(new Thread() {
                 @Override
                 public void run() {
-                    dialog.setTotalTasksToDo(App.settings.getServers().size() + 1);
+                    dialog.setTotalTasksToDo((App.settings.getServers().size() * 2) + 1);
                     StringBuilder results = new StringBuilder();
                     for (Server server : App.settings.getServers()) {
                         results.append("Ping results to " + server.getHost() + " was "
@@ -77,6 +79,30 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                     }
                     results.append("Tracert to www.creeperrepo.net was "
                             + Utils.traceRoute("www.creeperrepo.net"));
+                    dialog.doneTask();
+                    for (Server server : App.settings.getServers()) {
+                        File file = new File(App.settings.getTempDir(), "20MB.test");
+                        if (file.exists()) {
+                            Utils.delete(file);
+                        }
+                        long started = System.currentTimeMillis();
+
+                        Downloadable download = new Downloadable(server.getFileURL("20MB.test"),
+                                file);
+                        download.download(false);
+
+                        long timeTaken = System.currentTimeMillis() - started;
+                        float bps = file.length() / (timeTaken / 1000);
+                        float kbps = bps / 1024;
+                        float mbps = kbps / 1024;
+                        String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s", bps)
+                                : String.format("%.2f KB/s", kbps)) : String.format("%.2f MB/s",
+                                mbps));
+                        results.append(String
+                                .format("Download speed to %s was %s, taking %.2f seconds to download 20MB\n\n----------------\n\n",
+                                        server.getHost(), speed, (timeTaken / 1000.0)));
+                        dialog.doneTask();
+                    }
 
                     String result = Utils.uploadPaste("ATLauncher Network Test Log",
                             results.toString());
@@ -117,5 +143,4 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             }
         }
     }
-
 }

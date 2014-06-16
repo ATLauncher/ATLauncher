@@ -23,8 +23,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Language;
-import com.atlauncher.data.Settings;
 import com.atlauncher.utils.Utils;
 
 public class SetupDialog extends JDialog {
@@ -44,12 +44,10 @@ public class SetupDialog extends JDialog {
     private JCheckBox enableLeaderboards;
 
     private JButton saveButton;
-    private Settings settings;
 
-    public SetupDialog(Settings set) {
+    public SetupDialog() {
         super(null, "ATLauncher Setup", ModalityType.APPLICATION_MODAL);
         this.requestFocus();
-        this.settings = set;
         setSize(400, 200);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -96,9 +94,9 @@ public class SetupDialog extends JDialog {
         saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                settings.setLanguage((String) language.getSelectedItem());
-                settings.setEnableLeaderboards(enableLeaderboards.isSelected());
-                settings.saveProperties();
+                App.settings.setLanguage((String) language.getSelectedItem());
+                App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
+                App.settings.saveProperties();
                 setVisible(false);
                 dispose();
             }
