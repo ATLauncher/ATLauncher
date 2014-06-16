@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
@@ -32,26 +31,19 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
                     App.settings.getLocalizedString("tools.serverchecker.info"), 60, "<br>")
             + "</p></html>");
 
-    protected final JButton ADD_EDIT_SERVERS_BUTTON = new JButton(
-            App.settings.getLocalizedString("tools.serverchecker.addeditservers"));
-
     public ServerCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
         TOP_PANEL.add(TITLE_LABEL);
         MIDDLE_PANEL.add(INFO_LABEL);
-        BOTTOM_PANEL.add(ADD_EDIT_SERVERS_BUTTON);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        ADD_EDIT_SERVERS_BUTTON.addActionListener(this);
         LAUNCH_BUTTON.addActionListener(this);
         setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == ADD_EDIT_SERVERS_BUTTON) {
+        if (e.getSource() == LAUNCH_BUTTON) {
             new ServerListForCheckerDialog();
-        } else if (e.getSource() == LAUNCH_BUTTON) {
-            System.out.println("Launched ServerCheckerTool");
         }
     }
 
