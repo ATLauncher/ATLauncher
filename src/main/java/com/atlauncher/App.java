@@ -33,6 +33,7 @@ import javax.swing.text.DefaultEditorKit;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Settings;
+import com.atlauncher.exceptions.ChunkyException;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
@@ -171,6 +172,7 @@ public class App {
         TRAY_MENU.localize();
         integrate();
         new LauncherFrame(open); // Open the Launcher
+        throw new ChunkyException("TEST");
     }
 
     public static void loadTheme() {

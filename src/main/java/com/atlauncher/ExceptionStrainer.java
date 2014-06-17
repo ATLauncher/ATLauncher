@@ -7,7 +7,7 @@ import com.atlauncher.utils.Utils;
 public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        if(e instanceof ChunkyException){
+        if (e instanceof ChunkyException) {
             try {
                 App.TOASTER.popWarning("Caught an exception");
                 GithubIssueReporter.submit("Strained Exception", Utils.error(e));

@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.data.APIResponse;
+import com.atlauncher.data.Settings;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.Utils;
 
@@ -20,7 +23,13 @@ public final class GithubIssueReporter {
             request.put("issue", new GithubIssue(title, body));
 
             try {
-                Utils.sendAPICall("githubissue/", request);
+                APIResponse response = Settings.gson.fromJson(
+                        Utils.sendAPICall("githubissue/", request), APIResponse.class);
+                if (!response.wasError() && response.getMessageAsInt() != 0) {
+                    LogManager
+                            .info("Exception reported to GitHub. Track/comment on the issue at http://www.github.com/ATLauncher/ATLauncher/issues/"
+                                    + response.getMessageAsInt());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
