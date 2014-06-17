@@ -215,6 +215,7 @@ public class Settings {
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
+        checkForLauncherUpdate();
         loadNews(); // Load the news
         this.languageLoaded = true; // Languages are now loaded
         loadMinecraftVersions(); // Load info about the different Minecraft versions
@@ -469,12 +470,6 @@ public class Settings {
         System.exit(0);
     }
 
-    private void getLatestLauncherVersion() {
-        this.launcherFiles = null;
-        Downloadable download = new Downloadable("launcher/json/version.json", true);
-        this.latestLauncherVersion = gson.fromJson(download.getContents(), LauncherVersion.class);
-    }
-
     private void getFileHashes() {
         this.launcherFiles = null;
         Downloadable download = new Downloadable("launcher/json/hashes.json", true);
@@ -487,34 +482,17 @@ public class Settings {
      * This checks the servers hashes.xml file and gets the files that the Launcher needs to have
      */
     private ArrayList<Downloadable> getLauncherFiles() {
-        getLatestLauncherVersion();
         getFileHashes(); // Get File Hashes
         if (this.launcherFiles == null) {
             this.offlineMode = true;
             return null;
         }
-        if (launcherHasUpdate()) {
-            if (!App.wasUpdated) {
-                downloadUpdate(); // Update the Launcher
-            } else {
-                String[] options = { "Ok" };
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                        "<html><p align=\"center\">Launcher Update failed. Please click Ok to close "
-                                + "the launcher and open up the downloads page.<br/><br/>Download "
-                                + "the update and replace the old ATLauncher file.</p></html>",
-                        "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                        null, options, options[0]);
-                if (ret == 0) {
-                    Utils.openBrowser("http://www.atlauncher.com/downloads/");
-                    System.exit(0);
-                }
-            }
-        }
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
         for (DownloadableFile file : this.launcherFiles) {
-            if (!file.isLauncher()) {
-                downloads.add(file.getDownloadable());
+            if (file.isLauncher()) {
+                continue;
             }
+            downloads.add(file.getDownloadable());
         }
         return downloads;
     }
@@ -580,6 +558,7 @@ public class Settings {
                 if (hasUpdatedFiles()) {
                     downloadUpdatedFiles(); // Downloads updated files on the server
                 }
+                checkForLauncherUpdate();
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
                 loadPacks(); // Load the Packs available in the Launcher
@@ -592,6 +571,36 @@ public class Settings {
             }
         });
         dialog.setVisible(true);
+    }
+
+    private void checkForLauncherUpdate() {
+        try {
+            this.latestLauncherVersion = gson.fromJson(new FileReader(new File(this.jsonDir,
+                    "version.json")), LauncherVersion.class);
+        } catch (JsonSyntaxException e) {
+            this.logStackTrace("Exception when loading latest launcher version!", e);
+        } catch (JsonIOException e) {
+            this.logStackTrace("Exception when loading latest launcher version!", e);
+        } catch (FileNotFoundException e) {
+            this.logStackTrace("Exception when loading latest launcher version!", e);
+        }
+        if (launcherHasUpdate()) {
+            if (!App.wasUpdated) {
+                downloadUpdate(); // Update the Launcher
+            } else {
+                String[] options = { "Ok" };
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                        "<html><p align=\"center\">Launcher Update failed. Please click Ok to close "
+                                + "the launcher and open up the downloads page.<br/><br/>Download "
+                                + "the update and replace the old ATLauncher file.</p></html>",
+                        "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                        null, options, options[0]);
+                if (ret == 0) {
+                    Utils.openBrowser("http://www.atlauncher.com/downloads/");
+                    System.exit(0);
+                }
+            }
+        }
     }
 
     /**
