@@ -34,8 +34,10 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
     private static final long serialVersionUID = 3385411077046354453L;
 
     private final JPopupMenu CONTEXT_MENU = new JPopupMenu();
-    private final JMenuItem EDIT_BUTTON = new JMenuItem("Edit");
-    private final JMenuItem DELETE_BUTTON = new JMenuItem("Delete");
+    private final JMenuItem EDIT_BUTTON = new JMenuItem(
+            App.settings.getLocalizedString("common.edit"));
+    private final JMenuItem DELETE_BUTTON = new JMenuItem(
+            App.settings.getLocalizedString("common.delete"));
 
     private DefaultListModel<MinecraftServer> listModel;
     private JList serverList;
@@ -79,20 +81,25 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == EDIT_BUTTON) {
-            if (serverList.getSelectedIndex() != -1) {
-                new AddEditServerForCheckerDialog(((MinecraftServer) serverList.getSelectedValue()));
-                reloadServers();
-            }
+            editSelectedElement();
         } else if (e.getSource() == DELETE_BUTTON) {
             deleteSelectedElement();
         }
     }
 
-    private void deleteSelectedElement() {
+    public void editSelectedElement() {
+        if (serverList.getSelectedIndex() != -1) {
+            new AddEditServerForCheckerDialog(((MinecraftServer) serverList.getSelectedValue()));
+            reloadServers();
+        }
+    }
+
+    public void deleteSelectedElement() {
         if (serverList.getSelectedIndex() != -1) {
             MinecraftServer selectedValue = ((MinecraftServer) serverList.getSelectedValue());
             App.settings.removeCheckingServer(selectedValue);
             listModel.removeElement(selectedValue);
+            reloadServers();
         }
     }
 

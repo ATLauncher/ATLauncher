@@ -36,6 +36,9 @@ public class ServerListForCheckerDialog extends JDialog {
     private final JButton ADD_BUTTON = new JButton(App.settings.getLocalizedString("common.add"));
     private final JButton CLOSE_BUTTON = new JButton(
             App.settings.getLocalizedString("common.close"));
+    private final JButton DELETE_BUTTON = new JButton(
+            App.settings.getLocalizedString("common.delete"));
+    private final JButton EDIT_BUTTON = new JButton(App.settings.getLocalizedString("common.edit"));
 
     private final ServersForCheckerTab SERVERS_TAB = new ServersForCheckerTab();
 
@@ -63,6 +66,20 @@ public class ServerListForCheckerDialog extends JDialog {
             }
         });
 
+        EDIT_BUTTON.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SERVERS_TAB.editSelectedElement();
+            }
+        });
+
+        DELETE_BUTTON.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SERVERS_TAB.deleteSelectedElement();
+            }
+        });
+
         CLOSE_BUTTON.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,6 +90,8 @@ public class ServerListForCheckerDialog extends JDialog {
         BOTTOM_PANEL.setLayout(new FlowLayout());
 
         BOTTOM_PANEL.add(ADD_BUTTON);
+        BOTTOM_PANEL.add(EDIT_BUTTON);
+        BOTTOM_PANEL.add(DELETE_BUTTON);
         BOTTOM_PANEL.add(CLOSE_BUTTON);
 
         add(TABBED_PANE, BorderLayout.CENTER);

@@ -189,11 +189,10 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                             App.settings.getLocalizedString("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                 } else {
-                    String message = App.settings
-                            .getLocalizedString((this.serverEditing == null ? "tools.serverchecker.serveradded"
-                                    : "tools.serverchecker.serveredited"));
-                    JOptionPane.showMessageDialog(App.settings.getParent(), message, message,
-                            JOptionPane.INFORMATION_MESSAGE);
+                    App.TOASTER
+                            .pop(App.settings
+                                    .getLocalizedString((this.serverEditing == null ? "tools.serverchecker.serveradded"
+                                            : "tools.serverchecker.serveredited")));
                     if (this.serverEditing == null) {
                         App.settings.addCheckingServer(new MinecraftServer(name, host, port, qv));
                     } else {
