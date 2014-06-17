@@ -94,6 +94,7 @@ public class App {
         }
 
         settings = new Settings(); // Setup the Settings and wait for it to finish
+
         loadTheme();
         settings.loadConsole(); // Load console AFTER L&F
 
@@ -105,7 +106,7 @@ public class App {
             }
         }
 
-        LogManager.info("ATLauncher Version: " + settings.getVersion());
+        LogManager.info("ATLauncher Version: " + Constants.VERSION);
         LogManager.info("Operating System: " + System.getProperty("os.name"));
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
         if (settings.isUsingCustomJavaPath()) {

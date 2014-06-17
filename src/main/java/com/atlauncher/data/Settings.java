@@ -125,6 +125,7 @@ public class Settings {
     private String dropboxFolderLocation; // Location of dropbox if defined by user
 
     // Packs, Instances and Accounts
+    private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<News> news; // News
     private List<MinecraftVersion> minecraftVersions; // Minecraft versions
@@ -155,7 +156,6 @@ public class Settings {
     private Process minecraftProcess = null; // The process minecraft is running on
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
-    private String version = Constants.VERSION; // Version of the Launcher
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
@@ -411,16 +411,10 @@ public class Settings {
     }
 
     public boolean launcherHasUpdate() {
-        for (DownloadableFile file : this.launcherFiles) {
-            if (file.isLauncher()) {
-                if (getVersion().contains("-dev") || file.getSHA1().equalsIgnoreCase(getVersion())) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
+        if (this.latestLauncherVersion == null) {
+            return false;
         }
-        return false;
+        return Constants.VERSION.needsUpdate(this.latestLauncherVersion);
     }
 
     public void downloadUpdate() {
@@ -475,6 +469,12 @@ public class Settings {
         System.exit(0);
     }
 
+    private void getLatestLauncherVersion() {
+        this.launcherFiles = null;
+        Downloadable download = new Downloadable("launcher/json/version.json", true);
+        this.latestLauncherVersion = gson.fromJson(download.getContents(), LauncherVersion.class);
+    }
+
     private void getFileHashes() {
         this.launcherFiles = null;
         Downloadable download = new Downloadable("launcher/json/hashes.json", true);
@@ -487,6 +487,7 @@ public class Settings {
      * This checks the servers hashes.xml file and gets the files that the Launcher needs to have
      */
     private ArrayList<Downloadable> getLauncherFiles() {
+        getLatestLauncherVersion();
         getFileHashes(); // Get File Hashes
         if (this.launcherFiles == null) {
             this.offlineMode = true;
@@ -2657,12 +2658,8 @@ public class Settings {
         return this.proxy;
     }
 
-    public String getVersion() {
-        return this.version;
-    }
-
     public String getUserAgent() {
-        return this.userAgent + " ATLauncher/" + this.version;
+        return this.userAgent + " ATLauncher/" + Constants.VERSION;
     }
 
     public String getLocalizedString(String string) {
