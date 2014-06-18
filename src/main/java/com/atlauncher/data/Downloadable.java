@@ -64,6 +64,10 @@ public class Downloadable {
         this(url, file, hash, -1, instanceInstaller, isATLauncherDownload, null, false);
     }
 
+    public Downloadable(String url, File file) {
+        this(url, file, null, -1, null, false, null, false);
+    }
+
     public Downloadable(String url, boolean isATLauncherDownload) {
         this(url, null, null, -1, null, isATLauncherDownload, null, false);
     }
@@ -378,7 +382,7 @@ public class Downloadable {
             if (!done) {
                 if (this.isATLauncherDownload) {
                     if (App.settings.getNextServer()) {
-                       LogManager.warn("Error downloading " + this.file.getName() + " from "
+                        LogManager.warn("Error downloading " + this.file.getName() + " from "
                                 + this.url + ". Expected hash of " + getHash() + " but got "
                                 + fileHash + " instead. Trying another server!");
                         this.url = App.settings.getFileURL(this.beforeURL);
@@ -428,6 +432,16 @@ public class Downloadable {
 
         if (this.connection != null) {
             this.connection.disconnect();
+        }
+    }
+
+    public int getResponseCode() {
+        try {
+            return getConnection().getResponseCode();
+        } catch (IOException e) {
+            App.settings.logStackTrace("IOException when getting response code for the url "
+                    + this.url, e);
+            return -1;
         }
     }
 }

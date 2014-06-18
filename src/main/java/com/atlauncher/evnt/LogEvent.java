@@ -47,7 +47,8 @@ public final class LogEvent {
 
     public LogEvent(LogType type, String body, int meta) {
         this.type = type;
-        this.body = (!body.endsWith("\n") ? body + System.getProperty("line.separator") : body);
+        this.body = (!body.endsWith(System.getProperty("line.separator")) ? body
+                + System.getProperty("line.separator") : body);
         this.meta = meta;
     }
 

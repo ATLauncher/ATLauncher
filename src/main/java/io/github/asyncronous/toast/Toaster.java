@@ -2,18 +2,24 @@ package io.github.asyncronous.toast;
 
 import io.github.asyncronous.toast.ui.ToastWindow;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 
 /**
  * Static class to allow easier use of toaster notifications
  */
-public final class Toaster{
+public final class Toaster {
     private static Toaster instance;
 
-    public static Toaster instance(){
+    public static Toaster instance() {
         return (instance == null ? instance = new Toaster() : instance);
     }
 
@@ -35,7 +41,7 @@ public final class Toaster{
     @Intrinsic
     public static volatile int MAX_TOASTERS = 0;
 
-    private Toaster(){
+    private Toaster() {
         UIManager.put("Toaster.infoIcon", createImage("info"));
         UIManager.put("Toaster.errorIcon", createImage("error"));
         UIManager.put("Toaster.questionIcon", createImage("question"));
@@ -47,16 +53,18 @@ public final class Toaster{
         UIManager.put("Toaster.time", 5000);
         UIManager.put("Toaster.opaque", false);
         UIManager.put("Toaster.opacity", 0.5F);
-        UIManager.put("Toaster.contBounds", GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds());
+        UIManager.put("Toaster.contBounds", GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getMaximumWindowBounds());
     }
 
     /**
      * Will generate a question Toaster Notification with the chosen settings
-     *
+     * 
      * @example Toaster.popQuestion("This is a question?");
-     * @param msg The text of the message you want to display
+     * @param msg
+     *            The text of the message you want to display
      */
-    public void popQuestion(String msg){
+    public void popQuestion(String msg) {
         ToastWindow window = new ToastWindow();
         window.setText(msg);
         window.setIcon(new ImageIcon((Image) UIManager.get("Toaster.questionIcon")));
@@ -65,11 +73,12 @@ public final class Toaster{
 
     /**
      * Will generate a standard info Toaster Notification with the chosen settings
-     *
+     * 
      * @example Toaster.pop("This is some information");
-     * @param msg The text of the message you want to display
+     * @param msg
+     *            The text of the message you want to display
      */
-    public void pop(String msg){
+    public void pop(String msg) {
         ToastWindow window = new ToastWindow();
         window.setText(msg);
         window.setIcon(new ImageIcon((Image) UIManager.get("Toaster.infoIcon")));
@@ -78,11 +87,12 @@ public final class Toaster{
 
     /**
      * Will generate a warning Toaster Notification with the chosen settings
-     *
+     * 
      * @example Toaster.popWarning("This is a warning");
-     * @param msg The text of the message you want to display
+     * @param msg
+     *            The text of the message you want to display
      */
-    public void popWarning(String msg){
+    public void popWarning(String msg) {
         ToastWindow window = new ToastWindow();
         window.setText(msg);
         window.setIcon(new ImageIcon((Image) UIManager.get("Toaster.warningIcon")));
@@ -91,11 +101,12 @@ public final class Toaster{
 
     /**
      * Will generate an error Toaster Notification with the chosen settings
-     *
+     * 
      * @example Toaster.popError("This is an error");
-     * @param msg The text of the message you want to display
+     * @param msg
+     *            The text of the message you want to display
      */
-    public void popError(String msg){
+    public void popError(String msg) {
         ToastWindow window = new ToastWindow();
         window.setText(msg);
         window.setIcon(new ImageIcon((Image) UIManager.get("Toaster.errorIcon")));
@@ -104,30 +115,33 @@ public final class Toaster{
 
     /**
      * Will generate a Toaster Notification with a custom Icon & the chosen settings
-     *
-     * @example
-     *      ImageIcon image = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/assets/toaster/icons/error.png")));
-     *      Toaster.pop("This is an error", image);
-     * @param msg The text of the message you want to display
-     * @param ico The icon you would like to display
+     * 
+     * @example ImageIcon image = new
+     *          ImageIcon(ImageIO.read(getClass().getResourceAsStream("/assets/toaster/icons/error.png"
+     *          ))); Toaster.pop("This is an error", image);
+     * @param msg
+     *            The text of the message you want to display
+     * @param ico
+     *            The icon you would like to display
      */
-    public void pop(String msg, Icon ico){
+    public void pop(String msg, Icon ico) {
         ToastWindow window = new ToastWindow();
         window.setText(msg);
         window.setIcon(ico);
         window.pop();
     }
 
-    private Image createImage(String name){
-        try{
-            InputStream stream = Toaster.class.getResourceAsStream("/assets/toast/icons/" + name + ".png");
+    private Image createImage(String name) {
+        try {
+            InputStream stream = Toaster.class.getResourceAsStream("/assets/toast/icons/" + name
+                    + ".png");
 
-            if(stream == null){
+            if (stream == null) {
                 throw new NullPointerException("Stream == null");
             }
 
             return ImageIO.read(stream);
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
             return null;
         }

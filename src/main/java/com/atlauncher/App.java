@@ -33,6 +33,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
@@ -44,9 +45,8 @@ import com.atlauncher.utils.Utils;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
-    // tasks at once
-    // Approach with caution though
-    // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
+    // tasks at once. Approach with caution though. Dedicated 2 threads to the TASKPOOL shouldn't
+    // have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
     public static final Toaster TOASTER = Toaster.instance();
 
@@ -97,6 +97,7 @@ public class App {
         }
 
         settings = new Settings(); // Setup the Settings and wait for it to finish
+
         loadTheme();
         settings.loadConsole(); // Load console AFTER L&F
 
@@ -108,19 +109,17 @@ public class App {
             }
         }
 
-        LogManager.info("ATLauncher Version: " + settings.getVersion());
+        LogManager.info("ATLauncher Version: " + Constants.VERSION);
         LogManager.info("Operating System: " + System.getProperty("os.name"));
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
         if (settings.isUsingCustomJavaPath()) {
             LogManager.warn("Custom Java Path Set!");
-        } else {
-            if (settings.isUsingMacApp()) {
-                File oracleJava = new File(
-                        "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
-                if (oracleJava.exists() && oracleJava.canExecute()) {
-                    settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
-                    LogManager.warn("Launcher Forced Custom Java Path Set!");
-                }
+        } else if (settings.isUsingMacApp()) {
+            File oracleJava = new File(
+                    "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
+            if (oracleJava.exists() && oracleJava.canExecute()) {
+                settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
+                LogManager.warn("Launcher Forced Custom Java Path Set!");
             }
         }
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
@@ -132,7 +131,7 @@ public class App {
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "ATLauncher "
-                    + settings.getVersion());
+                    + Constants.VERSION);
             try {
                 Class util = Class.forName("com.apple.eawt.Application");
                 Method getApplication = util.getMethod("getApplication", new Class[0]);
@@ -158,20 +157,18 @@ public class App {
 
         if (settings.isFirstTimeRun()) {
             LogManager.warn("Launcher not setup. Loading Setup Dialog");
-            new SetupDialog(settings);
+            new SetupDialog();
         }
 
         boolean open = true;
 
-        if (autoLaunch != null) {
-            if (settings.isInstanceBySafeName(autoLaunch)) {
-                Instance instance = settings.getInstanceBySafeName(autoLaunch);
-                LogManager.info("Opening Instance " + instance.getName());
-                if (instance.launch()) {
-                    open = false;
-                } else {
-                    LogManager.error("Error Opening Instance  " + instance.getName());
-                }
+        if (autoLaunch != null && settings.isInstanceBySafeName(autoLaunch)) {
+            Instance instance = settings.getInstanceBySafeName(autoLaunch);
+            LogManager.info("Opening Instance " + instance.getName());
+            if (instance.launch()) {
+                open = false;
+            } else {
+                LogManager.error("Error Opening Instance  " + instance.getName());
             }
         }
 

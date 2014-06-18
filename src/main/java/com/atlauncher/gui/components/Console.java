@@ -27,6 +27,11 @@ public final class Console extends JTextPane {
         return this;
     }
 
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return true; // Word Wrapping
+    }
+
     public void write(String str) {
         try {
             this.getDocument().insertString(this.getDocument().getLength(), str, this.attrs);

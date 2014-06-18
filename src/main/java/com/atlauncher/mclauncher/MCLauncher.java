@@ -81,7 +81,7 @@ public class MCLauncher {
         arguments.add("-Xms256M");
 
         if (App.settings.getMemory() < instance.getMemory()) {
-            if (Utils.getMaximumRam() < instance.getMemory()) {
+            if ((Utils.getMaximumRam() / 2) < instance.getMemory()) {
                 arguments.add("-Xmx" + App.settings.getMemory() + "M");
             } else {
                 arguments.add("-Xmx" + instance.getMemory() + "M");
@@ -89,7 +89,8 @@ public class MCLauncher {
         } else {
             arguments.add("-Xmx" + App.settings.getMemory() + "M");
         }
-        if (App.settings.getPermGen() < instance.getPermGen()) {
+        if (App.settings.getPermGen() < instance.getPermGen()
+                && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
             if (Utils.isJava8()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {

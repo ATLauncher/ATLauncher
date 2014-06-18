@@ -17,15 +17,19 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.atlauncher.App;
 import com.atlauncher.gui.tabs.ServersForCheckerTab;
 import com.atlauncher.utils.Utils;
 
-public class ServerListForCheckerDialog extends JDialog {
+public class ServerListForCheckerDialog extends JDialog implements ActionListener,
+        ListSelectionListener {
 
     /**
      * Auto generate serial.
@@ -36,6 +40,9 @@ public class ServerListForCheckerDialog extends JDialog {
     private final JButton ADD_BUTTON = new JButton(App.settings.getLocalizedString("common.add"));
     private final JButton CLOSE_BUTTON = new JButton(
             App.settings.getLocalizedString("common.close"));
+    private final JButton DELETE_BUTTON = new JButton(
+            App.settings.getLocalizedString("common.delete"));
+    private final JButton EDIT_BUTTON = new JButton(App.settings.getLocalizedString("common.edit"));
 
     private final ServersForCheckerTab SERVERS_TAB = new ServersForCheckerTab();
 
@@ -55,24 +62,23 @@ public class ServerListForCheckerDialog extends JDialog {
         TABBED_PANE.addTab(App.settings.getLocalizedString("tools.serverchecker.servers"),
                 SERVERS_TAB);
 
-        ADD_BUTTON.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new AddEditServerForCheckerDialog(null);
-                SERVERS_TAB.reloadServers();
-            }
-        });
+        SERVERS_TAB.addListSelectionListener(this);
 
-        CLOSE_BUTTON.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        ADD_BUTTON.addActionListener(this);
+
+        EDIT_BUTTON.addActionListener(this);
+        EDIT_BUTTON.setEnabled(false);
+
+        DELETE_BUTTON.addActionListener(this);
+        DELETE_BUTTON.setEnabled(false);
+
+        CLOSE_BUTTON.addActionListener(this);
 
         BOTTOM_PANEL.setLayout(new FlowLayout());
 
         BOTTOM_PANEL.add(ADD_BUTTON);
+        BOTTOM_PANEL.add(EDIT_BUTTON);
+        BOTTOM_PANEL.add(DELETE_BUTTON);
         BOTTOM_PANEL.add(CLOSE_BUTTON);
 
         add(TABBED_PANE, BorderLayout.CENTER);
@@ -87,9 +93,32 @@ public class ServerListForCheckerDialog extends JDialog {
         setVisible(true);
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == ADD_BUTTON) {
+            new AddEditServerForCheckerDialog(null);
+            SERVERS_TAB.reloadServers();
+        } else if (e.getSource() == EDIT_BUTTON) {
+            SERVERS_TAB.editSelectedElement();
+        } else if (e.getSource() == DELETE_BUTTON) {
+            SERVERS_TAB.deleteSelectedElement();
+        } else if (e.getSource() == CLOSE_BUTTON) {
+            close();
+        }
+    }
+
     public void close() {
         setVisible(false);
         dispose();
     }
 
+    @Override
+    @SuppressWarnings("rawtypes")
+    public void valueChanged(ListSelectionEvent e) {
+        if (!e.getValueIsAdjusting()) {
+            JList list = (JList) e.getSource();
+            EDIT_BUTTON.setEnabled(list.getSelectedIndex() != -1);
+            DELETE_BUTTON.setEnabled(list.getSelectedIndex() != -1);
+        }
+    }
 }

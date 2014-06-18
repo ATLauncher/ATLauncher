@@ -6,6 +6,7 @@
  */
 package com.atlauncher.data;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import com.atlauncher.App;
@@ -134,8 +135,23 @@ public class MinecraftServer {
         this.queryVersion = queryVersion;
     }
 
+    public String getPrintablePlayersOnline() {
+        DecimalFormat df = new DecimalFormat("#,###,###");
+        return df.format(this.playersOnline);
+    }
+
+    private String getStatusLocalization() {
+        if (this.playersOnline == -1) {
+            return App.settings.getLocalizedString("tools.serverchecker.offline");
+        } else {
+            return App.settings.getLocalizedString("tools.serverchecker.online") + " - "
+                    + this.getPrintablePlayersOnline() + " Players";
+        }
+    }
+
     public String toString() {
-        return String.format("%s (%s:%d)", this.name, this.host, this.port);
+        return String.format("%s (%s:%d) - %s", this.name, this.host, this.port,
+                this.getStatusLocalization());
     }
 
 }

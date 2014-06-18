@@ -22,7 +22,7 @@ public class DownloadableFile {
     private String sha1;
 
     public boolean isLauncher() {
-        return this.name.equalsIgnoreCase("Launcher");
+        return this.name.equals("Launcher");
     }
 
     public String getMD5() {

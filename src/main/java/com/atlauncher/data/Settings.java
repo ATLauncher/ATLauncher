@@ -125,6 +125,7 @@ public class Settings {
     private String dropboxFolderLocation; // Location of dropbox if defined by user
 
     // Packs, Instances and Accounts
+    private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<News> news; // News
     private List<MinecraftVersion> minecraftVersions; // Minecraft versions
@@ -155,7 +156,6 @@ public class Settings {
     private Process minecraftProcess = null; // The process minecraft is running on
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
-    private String version = Constants.VERSION; // Version of the Launcher
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
@@ -215,6 +215,7 @@ public class Settings {
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
+        checkForLauncherUpdate();
         loadNews(); // Load the news
         this.languageLoaded = true; // Languages are now loaded
         loadMinecraftVersions(); // Load info about the different Minecraft versions
@@ -411,16 +412,10 @@ public class Settings {
     }
 
     public boolean launcherHasUpdate() {
-        for (DownloadableFile file : this.launcherFiles) {
-            if (file.isLauncher()) {
-                if (getVersion().contains("-dev") || file.getSHA1().equalsIgnoreCase(getVersion())) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
+        if (this.latestLauncherVersion == null) {
+            return false;
         }
-        return false;
+        return Constants.VERSION.needsUpdate(this.latestLauncherVersion);
     }
 
     public void downloadUpdate() {
@@ -492,28 +487,12 @@ public class Settings {
             this.offlineMode = true;
             return null;
         }
-        if (launcherHasUpdate()) {
-            if (!App.wasUpdated) {
-                downloadUpdate(); // Update the Launcher
-            } else {
-                String[] options = { "Ok" };
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                        "<html><p align=\"center\">Launcher Update failed. Please click Ok to close "
-                                + "the launcher and open up the downloads page.<br/><br/>Download "
-                                + "the update and replace the old ATLauncher file.</p></html>",
-                        "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                        null, options, options[0]);
-                if (ret == 0) {
-                    Utils.openBrowser("http://www.atlauncher.com/downloads/");
-                    System.exit(0);
-                }
-            }
-        }
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
         for (DownloadableFile file : this.launcherFiles) {
-            if (!file.isLauncher()) {
-                downloads.add(file.getDownloadable());
+            if (file.isLauncher()) {
+                continue;
             }
+            downloads.add(file.getDownloadable());
         }
         return downloads;
     }
@@ -579,6 +558,7 @@ public class Settings {
                 if (hasUpdatedFiles()) {
                     downloadUpdatedFiles(); // Downloads updated files on the server
                 }
+                checkForLauncherUpdate();
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
                 loadPacks(); // Load the Packs available in the Launcher
@@ -591,6 +571,36 @@ public class Settings {
             }
         });
         dialog.setVisible(true);
+    }
+
+    private void checkForLauncherUpdate() {
+        try {
+            this.latestLauncherVersion = gson.fromJson(new FileReader(new File(this.jsonDir,
+                    "version.json")), LauncherVersion.class);
+        } catch (JsonSyntaxException e) {
+            this.logStackTrace("Exception when loading latest launcher version!", e);
+        } catch (JsonIOException e) {
+            this.logStackTrace("Exception when loading latest launcher version!", e);
+        } catch (FileNotFoundException e) {
+            this.logStackTrace("Exception when loading latest launcher version!", e);
+        }
+        if (launcherHasUpdate()) {
+            if (!App.wasUpdated) {
+                downloadUpdate(); // Update the Launcher
+            } else {
+                String[] options = { "Ok" };
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                        "<html><p align=\"center\">Launcher Update failed. Please click Ok to close "
+                                + "the launcher and open up the downloads page.<br/><br/>Download "
+                                + "the update and replace the old ATLauncher file.</p></html>",
+                        "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                        null, options, options[0]);
+                if (ret == 0) {
+                    Utils.openBrowser("http://www.atlauncher.com/downloads/");
+                    System.exit(0);
+                }
+            }
+        }
     }
 
     /**
@@ -2657,12 +2667,8 @@ public class Settings {
         return this.proxy;
     }
 
-    public String getVersion() {
-        return this.version;
-    }
-
     public String getUserAgent() {
-        return this.userAgent + " ATLauncher/" + this.version;
+        return this.userAgent + " ATLauncher/" + Constants.VERSION;
     }
 
     public String getLocalizedString(String string) {

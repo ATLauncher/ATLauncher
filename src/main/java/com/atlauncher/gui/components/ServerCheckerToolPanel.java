@@ -14,10 +14,14 @@ import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.evnt.SettingsSavedEvent;
+import com.atlauncher.evnt.listener.SettingsListener;
+import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
 import com.atlauncher.utils.Utils;
 
-public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener {
+public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener,
+        SettingsListener {
     /**
      * Auto generated serial.
      */
@@ -38,6 +42,12 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
         setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        SettingsManager.addListener(this);
+        this.checkLaunchButtonEnabled();
+    }
+
+    private void checkLaunchButtonEnabled() {
+        LAUNCH_BUTTON.setEnabled(App.settings.enableServerChecker());
     }
 
     @Override
@@ -47,4 +57,8 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
         }
     }
 
+    @Override
+    public void onSettingsSaved(SettingsSavedEvent event) {
+        this.checkLaunchButtonEnabled();
+    }
 }

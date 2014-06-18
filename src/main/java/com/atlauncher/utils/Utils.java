@@ -1860,6 +1860,7 @@ public class Utils {
     public static Object[] prepareMessageForMinecraftLog(String text) {
         LogType type = null; // The log message type
         String message = null; // The log message
+
         if (text.contains("[INFO] [STDERR]")) {
             message = text.substring(text.indexOf("[INFO] [STDERR]"));
             type = LogType.WARN;
