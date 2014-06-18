@@ -19,8 +19,10 @@ import javax.swing.JTabbedPane;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.RelocalizationEvent;
+import com.atlauncher.evnt.SettingsSavedEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
@@ -80,6 +82,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     loggingSettingsTab.save();
                     toolsSettingsTab.save();
                     App.settings.saveProperties();
+                    SettingsManager.post(new SettingsSavedEvent());
                     if (reloadLocalizationTable) {
                         RelocalizationManager.post(new RelocalizationEvent());
                     }

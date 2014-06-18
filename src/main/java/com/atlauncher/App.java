@@ -42,9 +42,8 @@ import com.atlauncher.utils.Utils;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
-    // tasks at once
-    // Approach with caution though
-    // Dedicated 2 threads to the TASKPOOL shouldnt have any problems with that little
+    // tasks at once. Approach with caution though. Dedicated 2 threads to the TASKPOOL shouldn't
+    // have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
     public static final Toaster TOASTER = Toaster.instance();
 

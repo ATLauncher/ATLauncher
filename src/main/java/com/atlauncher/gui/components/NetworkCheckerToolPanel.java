@@ -23,10 +23,14 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Server;
+import com.atlauncher.evnt.SettingsSavedEvent;
+import com.atlauncher.evnt.listener.SettingsListener;
+import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
-public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener {
+public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener,
+        SettingsListener {
     /**
      * Auto generated serial.
      */
@@ -47,6 +51,12 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
         setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        SettingsManager.addListener(this);
+        this.checkLaunchButtonEnabled();
+    }
+
+    private void checkLaunchButtonEnabled() {
+        LAUNCH_BUTTON.setEnabled(App.settings.enableLogs());
     }
 
     @Override
@@ -167,5 +177,10 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         options2, options2[0]);
             }
         }
+    }
+
+    @Override
+    public void onSettingsSaved(SettingsSavedEvent event) {
+        this.checkLaunchButtonEnabled();
     }
 }

@@ -134,8 +134,18 @@ public class MinecraftServer {
         this.queryVersion = queryVersion;
     }
 
+    private String getStatusLocalization() {
+        if (this.playersOnline == -1) {
+            return App.settings.getLocalizedString("tools.serverchecker.offline");
+        } else {
+            return App.settings.getLocalizedString("tools.serverchecker.online") + " - "
+                    + this.playersOnline;
+        }
+    }
+
     public String toString() {
-        return String.format("%s (%s:%d)", this.name, this.host, this.port);
+        return String.format("%s (%s:%d) - %s", this.name, this.host, this.port,
+                this.getStatusLocalization());
     }
 
 }
