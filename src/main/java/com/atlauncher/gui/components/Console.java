@@ -7,7 +7,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 public final class Console extends JTextPane {
-
     /**
      * Auto generate serial.
      */
@@ -36,5 +35,4 @@ public final class Console extends JTextPane {
             ex.printStackTrace(System.err);
         }
     }
-
 }

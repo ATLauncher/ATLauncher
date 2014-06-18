@@ -34,8 +34,11 @@ import javax.swing.JTextArea;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.LogMessageType;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
+import com.atlauncher.evnt.RelocalizationEvent;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.dialogs.BackupDialog;
 import com.atlauncher.gui.dialogs.EditModsDialog;
@@ -51,7 +54,7 @@ import com.atlauncher.utils.Utils;
  * 
  * @author Ryan
  */
-public class InstanceDisplay extends CollapsiblePanel {
+public class InstanceDisplay extends CollapsiblePanel implements RelocalizationListener{
     private JPanel leftPanel; // Left panel with image
     private JPanel rightPanel; // Right panel with description and actions
     private JSplitPane splitPane; // The split pane
@@ -73,6 +76,7 @@ public class InstanceDisplay extends CollapsiblePanel {
 
     public InstanceDisplay(final Instance instance) {
         super(instance);
+        RelocalizationManager.addListener(this);
         pack = instance.getRealPack();
         JPanel panel = super.getContentPane();
         panel.setLayout(new BorderLayout());
@@ -96,20 +100,20 @@ public class InstanceDisplay extends CollapsiblePanel {
                     if (instance.hasUpdate()
                             && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())
                             && !instance.isDev()) {
-                        String[] options = { App.settings.getLocalizedString("common.yes"),
-                                App.settings.getLocalizedString("common.no"),
-                                App.settings.getLocalizedString("instance.dontremindmeagain") };
+                        String[] options = { Language.INSTANCE.localize("common.yes"),
+                                Language.INSTANCE.localize("common.no"),
+                                Language.INSTANCE.localize("instance.dontremindmeagain") };
                         int ret = JOptionPane.showOptionDialog(
                                 App.settings.getParent(),
                                 "<html><p align=\"center\">"
-                                        + App.settings.getLocalizedString("instance.updatenow",
+                                        + Language.INSTANCE.localize("instance.updatenow",
                                                 "<br/><br/>") + "</p></html>",
-                                App.settings.getLocalizedString("instance.updateavailable"),
+                                Language.INSTANCE.localize("instance.updateavailable"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
                         if (ret == 0) {
                             if (App.settings.getAccount() == null) {
-                                String[] optionss = { App.settings.getLocalizedString("common.ok") };
+                                String[] optionss = { Language.INSTANCE.localize("common.ok") };
                                 JOptionPane.showOptionDialog(App.settings.getParent(), App.settings
                                         .getLocalizedString("instance.cantupdate"), App.settings
                                         .getLocalizedString("instance.noaccountselected"),
@@ -167,29 +171,29 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Play Button
 
-        play = new JButton(App.settings.getLocalizedString("common.play"));
+        play = new JButton(Language.INSTANCE.localize("common.play"));
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (instance.hasUpdate()
                         && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())
                         && !instance.isDev()) {
-                    String[] options = { App.settings.getLocalizedString("common.yes"),
-                            App.settings.getLocalizedString("common.no"),
-                            App.settings.getLocalizedString("instance.dontremindmeagain") };
+                    String[] options = { Language.INSTANCE.localize("common.yes"),
+                            Language.INSTANCE.localize("common.no"),
+                            Language.INSTANCE.localize("instance.dontremindmeagain") };
                     int ret = JOptionPane.showOptionDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
-                                    + App.settings.getLocalizedString("instance.updatenow",
+                                    + Language.INSTANCE.localize("instance.updatenow",
                                             "<br/><br/>") + "</p></html>",
-                            App.settings.getLocalizedString("instance.updateavailable"),
+                            Language.INSTANCE.localize("instance.updateavailable"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                     if (ret == 0) {
                         if (App.settings.getAccount() == null) {
-                            String[] optionss = { App.settings.getLocalizedString("common.ok") };
+                            String[] optionss = { Language.INSTANCE.localize("common.ok") };
                             JOptionPane.showOptionDialog(App.settings.getParent(),
-                                    App.settings.getLocalizedString("instance.cantupdate"),
-                                    App.settings.getLocalizedString("instance.noaccountselected"),
+                                    Language.INSTANCE.localize("instance.cantupdate"),
+                                    Language.INSTANCE.localize("instance.noaccountselected"),
                                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                     optionss, optionss[0]);
                         } else {
@@ -221,14 +225,14 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Reinstall Button
 
-        reinstall = new JButton(App.settings.getLocalizedString("common.reinstall"));
+        reinstall = new JButton(Language.INSTANCE.localize("common.reinstall"));
         reinstall.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.getAccount() == null) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    String[] options = { Language.INSTANCE.localize("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.cantreinstall"),
-                            App.settings.getLocalizedString("instance.noaccountselected"),
+                            Language.INSTANCE.localize("instance.cantreinstall"),
+                            Language.INSTANCE.localize("instance.noaccountselected"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 } else {
@@ -239,7 +243,7 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Rename Button
 
-        rename = new JButton(App.settings.getLocalizedString("instance.rename"));
+        rename = new JButton(Language.INSTANCE.localize("instance.rename"));
         rename.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new RenameInstanceDialog(instance);
@@ -252,10 +256,10 @@ public class InstanceDisplay extends CollapsiblePanel {
         update.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.getAccount() == null) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    String[] options = { Language.INSTANCE.localize("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.cantupdate"),
-                            App.settings.getLocalizedString("instance.noaccountselected"),
+                            Language.INSTANCE.localize("instance.cantupdate"),
+                            Language.INSTANCE.localize("instance.noaccountselected"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 } else {
@@ -269,7 +273,7 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Backup Button
 
-        backup = new JButton(App.settings.getLocalizedString("common.backup"));
+        backup = new JButton(Language.INSTANCE.localize("common.backup"));
         backup.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isAdvancedBackupsEnabled()) {
@@ -279,13 +283,13 @@ public class InstanceDisplay extends CollapsiblePanel {
                         int ret = JOptionPane.showConfirmDialog(
                                 App.settings.getParent(),
                                 "<html><p align=\"center\">"
-                                        + App.settings.getLocalizedString("backup.sure",
+                                        + Language.INSTANCE.localize("backup.sure",
                                                 "<br/><br/>") + "</p></html>",
-                                App.settings.getLocalizedString("backup.backingup",
+                                Language.INSTANCE.localize("backup.backingup",
                                         instance.getName()), JOptionPane.YES_NO_OPTION);
                         if (ret == JOptionPane.YES_OPTION) {
                             final JDialog dialog = new JDialog(App.settings.getParent(),
-                                    App.settings.getLocalizedString("backup.backingup",
+                                    Language.INSTANCE.localize("backup.backingup",
                                             instance.getName()), ModalityType.APPLICATION_MODAL);
                             dialog.setSize(300, 100);
                             dialog.setLocationRelativeTo(App.settings.getParent());
@@ -293,7 +297,7 @@ public class InstanceDisplay extends CollapsiblePanel {
 
                             JPanel topPanel = new JPanel();
                             topPanel.setLayout(new BorderLayout());
-                            JLabel doing = new JLabel(App.settings.getLocalizedString(
+                            JLabel doing = new JLabel(Language.INSTANCE.localize(
                                     "backup.backingup", instance.getName()));
                             doing.setHorizontalAlignment(JLabel.CENTER);
                             doing.setVerticalAlignment(JLabel.TOP);
@@ -322,10 +326,10 @@ public class InstanceDisplay extends CollapsiblePanel {
                                     JOptionPane.showOptionDialog(
                                             App.settings.getParent(),
                                             "<html><p align=\"center\">"
-                                                    + App.settings.getLocalizedString(
+                                                    + Language.INSTANCE.localize(
                                                             "backup.backupcomplete", "<br/><br/>"
                                                                     + filename) + "</p></html>",
-                                            App.settings.getLocalizedString("backup.complete"),
+                                            Language.INSTANCE.localize("backup.complete"),
                                             JOptionPane.DEFAULT_OPTION,
                                             JOptionPane.INFORMATION_MESSAGE, null, options,
                                             options[0]);
@@ -341,10 +345,10 @@ public class InstanceDisplay extends CollapsiblePanel {
                             dialog.setVisible(true);
                         }
                     } else {
-                        String[] options = { App.settings.getLocalizedString("common.ok") };
+                        String[] options = { Language.INSTANCE.localize("common.ok") };
                         JOptionPane.showOptionDialog(App.settings.getParent(),
-                                App.settings.getLocalizedString("backup.nosaves"),
-                                App.settings.getLocalizedString("backup.nosavestitle"),
+                                Language.INSTANCE.localize("backup.nosaves"),
+                                Language.INSTANCE.localize("backup.nosavestitle"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
                     }
@@ -354,12 +358,12 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Clone Button
 
-        clone = new JButton(App.settings.getLocalizedString("instance.clone"));
+        clone = new JButton(Language.INSTANCE.localize("instance.clone"));
         clone.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
-                        App.settings.getLocalizedString("instance.cloneenter"),
-                        App.settings.getLocalizedString("instance.clonetitle"),
+                        Language.INSTANCE.localize("instance.cloneenter"),
+                        Language.INSTANCE.localize("instance.clonetitle"),
                         JOptionPane.INFORMATION_MESSAGE);
                 if (clonedName != null
                         && clonedName.length() >= 1
@@ -386,27 +390,27 @@ public class InstanceDisplay extends CollapsiblePanel {
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
-                                    + App.settings.getLocalizedString("instance.errorclone",
+                                    + Language.INSTANCE.localize("instance.errorclone",
                                     instance.getName() + "<br/><br/>") + "</p></html>",
-                            App.settings.getLocalizedString("common.error"),
+                            Language.INSTANCE.localize("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                 } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                     LogManager.error("Error Occured While Cloning Instance! Invalid Name!");
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
-                                    + App.settings.getLocalizedString("instance.errorclone",
+                                    + Language.INSTANCE.localize("instance.errorclone",
                                             instance.getName() + "<br/><br/>") + "</p></html>",
-                            App.settings.getLocalizedString("common.error"),
+                            Language.INSTANCE.localize("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                 } else {
                     LogManager.error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
-                                    + App.settings.getLocalizedString("instance.errorclone",
+                                    + Language.INSTANCE.localize("instance.errorclone",
                                             instance.getName() + "<br/><br/>") + "</p></html>",
-                            App.settings.getLocalizedString("common.error"),
+                            Language.INSTANCE.localize("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -414,12 +418,12 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Delete Button
 
-        delete = new JButton(App.settings.getLocalizedString("common.delete"));
+        delete = new JButton(Language.INSTANCE.localize("common.delete"));
         delete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int response = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                        App.settings.getLocalizedString("instance.deletesure"),
-                        App.settings.getLocalizedString("instance.deleteinstance"),
+                        Language.INSTANCE.localize("instance.deletesure"),
+                        Language.INSTANCE.localize("instance.deleteinstance"),
                         JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
                     final ProgressDialog dialog = new ProgressDialog(App.settings
@@ -439,7 +443,7 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Edit Mods Button
 
-        editMods = new JButton(App.settings.getLocalizedString("common.editmods"));
+        editMods = new JButton(Language.INSTANCE.localize("common.editmods"));
         editMods.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -452,7 +456,7 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         // Open Folder Button
 
-        openFolder = new JButton(App.settings.getLocalizedString("common.openfolder"));
+        openFolder = new JButton(Language.INSTANCE.localize("common.openfolder"));
         openFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Utils.openExplorer(instance.getRootDirectory());
@@ -475,10 +479,10 @@ public class InstanceDisplay extends CollapsiblePanel {
                     }
                     play.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            String[] options = { App.settings.getLocalizedString("common.ok") };
+                            String[] options = { Language.INSTANCE.localize("common.ok") };
                             JOptionPane.showOptionDialog(App.settings.getParent(),
-                                    App.settings.getLocalizedString("instance.notauthorizedplay"),
-                                    App.settings.getLocalizedString("instance.notauthorized"),
+                                    Language.INSTANCE.localize("instance.notauthorizedplay"),
+                                    Language.INSTANCE.localize("instance.notauthorized"),
                                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                     options, options[0]);
                         }
@@ -493,11 +497,11 @@ public class InstanceDisplay extends CollapsiblePanel {
                 }
                 play.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        String[] options = { App.settings.getLocalizedString("common.ok") };
+                        String[] options = { Language.INSTANCE.localize("common.ok") };
                         JOptionPane.showOptionDialog(
                                 App.settings.getParent(),
                                 "<html><p align=\"center\">"
-                                        + App.settings.getLocalizedString(
+                                        + Language.INSTANCE.localize(
                                                 "instance.notauthorizedplaydev", "<br/><br/>")
                                         + "</p></html>", App.settings
                                         .getLocalizedString("instance.notauthorized"),
@@ -516,10 +520,10 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
             play.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    String[] options = { Language.INSTANCE.localize("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.corruptplay"),
-                            App.settings.getLocalizedString("instance.corrupt"),
+                            Language.INSTANCE.localize("instance.corruptplay"),
+                            Language.INSTANCE.localize("instance.corrupt"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 }
@@ -529,10 +533,10 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
             backup.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    String[] options = { Language.INSTANCE.localize("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.corruptbackup"),
-                            App.settings.getLocalizedString("instance.corrupt"),
+                            Language.INSTANCE.localize("instance.corruptbackup"),
+                            Language.INSTANCE.localize("instance.corrupt"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 }
@@ -542,10 +546,10 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
             clone.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    String[] options = { Language.INSTANCE.localize("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.corruptclone"),
-                            App.settings.getLocalizedString("instance.corrupt"),
+                            Language.INSTANCE.localize("instance.corruptclone"),
+                            Language.INSTANCE.localize("instance.corrupt"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 }
@@ -558,10 +562,10 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
             reinstall.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    String[] options = { Language.INSTANCE.localize("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.offlinereinstall"),
-                            App.settings.getLocalizedString("common.offline"),
+                            Language.INSTANCE.localize("instance.offlinereinstall"),
+                            Language.INSTANCE.localize("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 }
@@ -571,10 +575,10 @@ public class InstanceDisplay extends CollapsiblePanel {
             }
             update.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { App.settings.getLocalizedString("common.ok") };
+                    String[] options = { Language.INSTANCE.localize("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
-                            App.settings.getLocalizedString("instance.offlineupdate"),
-                            App.settings.getLocalizedString("common.offline"),
+                            Language.INSTANCE.localize("instance.offlineupdate"),
+                            Language.INSTANCE.localize("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
                 }
@@ -606,5 +610,17 @@ public class InstanceDisplay extends CollapsiblePanel {
 
         panel.add(splitPane, BorderLayout.CENTER);
         rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 180));
+    }
+
+    @Override
+    public void onRelocalization(RelocalizationEvent event) {
+        this.play.setText(Language.INSTANCE.localize("common.play"));
+        this.reinstall.setText(Language.INSTANCE.localize("common.reinstall"));
+        this.rename.setText(Language.INSTANCE.localize("instance.rename"));
+        this.backup.setText(Language.INSTANCE.localize("common.backup"));
+        this.clone.setText(Language.INSTANCE.localize("instance.clone"));
+        this.delete.setText(Language.INSTANCE.localize("common.delete"));
+        this.editMods.setText(Language.INSTANCE.localize("common.editmods"));
+        this.openFolder.setText(Language.INSTANCE.localize("common.openfolder"));
     }
 }

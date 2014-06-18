@@ -18,6 +18,9 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.rmi.Remote;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -54,6 +57,7 @@ public class App {
     public static Settings settings;
 
     public static Theme THEME = Theme.DEFAULT_THEME;
+    private static Registry registery;
 
     static {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
@@ -170,9 +174,26 @@ public class App {
                 }
             }
         }
+
         TRAY_MENU.localize();
         integrate();
         new LauncherFrame(open); // Open the Launcher
+    }
+
+    private static void registerObject(String id, Remote remote){
+        try{
+            registery.rebind(id, remote);
+        } catch(Exception ex){
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    private static void startRMIServer(){
+        try{
+            registery = LocateRegistry.createRegistry(1337);
+        } catch(Exception ex){
+            ex.printStackTrace(System.err);
+        }
     }
 
     public static void loadTheme() {

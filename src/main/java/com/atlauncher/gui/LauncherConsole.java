@@ -66,11 +66,10 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
         bottomBar = new ConsoleBottomBar();
 
         scrollPane = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
         RelocalizationManager.addListener(this);
-        ReskinManager.addListener(this);
     }
 
     @Override
