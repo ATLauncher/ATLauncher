@@ -54,7 +54,7 @@ import com.atlauncher.utils.Utils;
  * 
  * @author Ryan
  */
-public class InstanceDisplay extends CollapsiblePanel implements RelocalizationListener{
+public class InstanceDisplay extends CollapsiblePanel implements RelocalizationListener {
     private JPanel leftPanel; // Left panel with image
     private JPanel rightPanel; // Right panel with description and actions
     private JSplitPane splitPane; // The split pane
@@ -183,7 +183,7 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                     int ret = JOptionPane.showOptionDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
-                                    + Language.INSTANCE.localize("instance.updatenow",
+                                    + App.settings.getLocalizedString("instance.updatenow",
                                             "<br/><br/>") + "</p></html>",
                             Language.INSTANCE.localize("instance.updateavailable"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
@@ -283,13 +283,13 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                         int ret = JOptionPane.showConfirmDialog(
                                 App.settings.getParent(),
                                 "<html><p align=\"center\">"
-                                        + Language.INSTANCE.localize("backup.sure",
+                                        + App.settings.getLocalizedString("backup.sure",
                                                 "<br/><br/>") + "</p></html>",
-                                Language.INSTANCE.localize("backup.backingup",
+                                App.settings.getLocalizedString("backup.backingup",
                                         instance.getName()), JOptionPane.YES_NO_OPTION);
                         if (ret == JOptionPane.YES_OPTION) {
                             final JDialog dialog = new JDialog(App.settings.getParent(),
-                                    Language.INSTANCE.localize("backup.backingup",
+                                    App.settings.getLocalizedString("backup.backingup",
                                             instance.getName()), ModalityType.APPLICATION_MODAL);
                             dialog.setSize(300, 100);
                             dialog.setLocationRelativeTo(App.settings.getParent());
@@ -297,7 +297,7 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
 
                             JPanel topPanel = new JPanel();
                             topPanel.setLayout(new BorderLayout());
-                            JLabel doing = new JLabel(Language.INSTANCE.localize(
+                            JLabel doing = new JLabel(App.settings.getLocalizedString(
                                     "backup.backingup", instance.getName()));
                             doing.setHorizontalAlignment(JLabel.CENTER);
                             doing.setVerticalAlignment(JLabel.TOP);
@@ -326,7 +326,7 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                                     JOptionPane.showOptionDialog(
                                             App.settings.getParent(),
                                             "<html><p align=\"center\">"
-                                                    + Language.INSTANCE.localize(
+                                                    + App.settings.getLocalizedString(
                                                             "backup.backupcomplete", "<br/><br/>"
                                                                     + filename) + "</p></html>",
                                             Language.INSTANCE.localize("backup.complete"),
@@ -385,33 +385,31 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                     });
                     dialog.start();
                 } else if (clonedName == null || clonedName.equals("")) {
-                    LogManager.error(
-                            "Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
+                    LogManager
+                            .error("Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
-                                    + Language.INSTANCE.localize("instance.errorclone",
-                                    instance.getName() + "<br/><br/>") + "</p></html>",
-                            Language.INSTANCE.localize("common.error"),
-                            JOptionPane.ERROR_MESSAGE);
+                                    + App.settings.getLocalizedString("instance.errorclone",
+                                            instance.getName() + "<br/><br/>") + "</p></html>",
+                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
                 } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                     LogManager.error("Error Occured While Cloning Instance! Invalid Name!");
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
-                                    + Language.INSTANCE.localize("instance.errorclone",
+                                    + App.settings.getLocalizedString("instance.errorclone",
                                             instance.getName() + "<br/><br/>") + "</p></html>",
-                            Language.INSTANCE.localize("common.error"),
-                            JOptionPane.ERROR_MESSAGE);
+                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    LogManager.error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
+                    LogManager
+                            .error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
-                                    + Language.INSTANCE.localize("instance.errorclone",
+                                    + App.settings.getLocalizedString("instance.errorclone",
                                             instance.getName() + "<br/><br/>") + "</p></html>",
-                            Language.INSTANCE.localize("common.error"),
-                            JOptionPane.ERROR_MESSAGE);
+                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -501,7 +499,7 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                         JOptionPane.showOptionDialog(
                                 App.settings.getParent(),
                                 "<html><p align=\"center\">"
-                                        + Language.INSTANCE.localize(
+                                        + App.settings.getLocalizedString(
                                                 "instance.notauthorizedplaydev", "<br/><br/>")
                                         + "</p></html>", App.settings
                                         .getLocalizedString("instance.notauthorized"),
