@@ -33,7 +33,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 /**
  * TODO: Rewrite
  */
-public final class TrayMenu extends PopupMenu implements RelocalizationListener{
+public final class TrayMenu extends PopupMenu implements RelocalizationListener {
     private final MenuItem KILLMC_BUTTON = new MenuItem() {
         {
             this.addActionListener(new ActionListener() {
@@ -46,8 +46,8 @@ public final class TrayMenu extends PopupMenu implements RelocalizationListener{
                                 int ret = JOptionPane.showConfirmDialog(
                                         App.settings.getParent(),
                                         "<html><p align=\"center\">"
-                                                + Language.INSTANCE.localize(
-                                                "console.killsure", "<br/><br/>")
+                                                + App.settings.getLocalizedString(
+                                                        "console.killsure", "<br/><br/>")
                                                 + "</p></html>", App.settings
                                                 .getLocalizedString("console.kill"),
                                         JOptionPane.YES_OPTION);
@@ -84,8 +84,8 @@ public final class TrayMenu extends PopupMenu implements RelocalizationListener{
             });
         }
     };
-	
-	public TrayMenu() {
+
+    public TrayMenu() {
         super();
 
         this.setMinecraftLaunched(false); // Default Kill MC item to be disabled
@@ -130,7 +130,6 @@ public final class TrayMenu extends PopupMenu implements RelocalizationListener{
         this.QUIT_BUTTON.setLabel(Language.INSTANCE.localize("common.quit"));
     }
 
-
     public void setMinecraftLaunched(boolean launched) {
         this.KILLMC_BUTTON.setEnabled(launched);
     }
@@ -139,9 +138,9 @@ public final class TrayMenu extends PopupMenu implements RelocalizationListener{
     public void onRelocalization(RelocalizationEvent event) {
         this.KILLMC_BUTTON.setLabel(Language.INSTANCE.localize("console.kill"));
         this.QUIT_BUTTON.setLabel(Language.INSTANCE.localize("common.quit"));
-        if(App.settings.getConsole().isVisible()){
+        if (App.settings.getConsole().isVisible()) {
             this.TC_BUTTON.setLabel(Language.INSTANCE.localize("console.hide"));
-        } else{
+        } else {
             this.TC_BUTTON.setLabel(Language.INSTANCE.localize("console.show"));
         }
     }

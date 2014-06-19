@@ -112,7 +112,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                 int ret = JOptionPane.showConfirmDialog(
                         App.settings.getParent(),
                         "<html><p align=\"center\">"
-                                + Language.INSTANCE.localize("console.killsure", "<br/><br/>")
+                                + App.settings.getLocalizedString("console.killsure", "<br/><br/>")
                                 + "</p></html>", Language.INSTANCE.localize("console.kill"),
                         JOptionPane.YES_NO_OPTION);
                 if (ret == JOptionPane.YES_OPTION) {
