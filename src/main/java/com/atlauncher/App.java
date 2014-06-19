@@ -177,18 +177,18 @@ public class App {
         new LauncherFrame(open); // Open the Launcher
     }
 
-    private static void registerObject(String id, Remote remote){
-        try{
+    private static void registerObject(String id, Remote remote) {
+        try {
             registery.rebind(id, remote);
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
     }
 
-    private static void startRMIServer(){
-        try{
+    private static void startRMIServer() {
+        try {
             registery = LocateRegistry.createRegistry(1337);
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
     }

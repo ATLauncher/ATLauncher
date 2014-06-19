@@ -24,7 +24,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.atlauncher.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,6 +32,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 
 public class Pack {
@@ -65,7 +65,7 @@ public class Pack {
     /**
      * Gets a file safe and URL safe name which simply means replacing all non alpha numerical
      * characters with nothing
-     *
+     * 
      * @return File safe and URL safe name of the pack
      */
     public String getSafeName() {
@@ -747,7 +747,7 @@ public class Pack {
                         if (dependTemp.contains(",")) {
                             depends = dependTemp.split(",");
                         } else {
-                            depends = new String[]{dependTemp};
+                            depends = new String[] { dependTemp };
                         }
                     } else {
                         depends = null;
@@ -835,17 +835,15 @@ public class Pack {
                                         || element.getAttribute("target").startsWith("DIM")
                                         || element.getAttribute("target").startsWith("saves")
                                         || element.getAttribute("target").startsWith(
-                                        "instance.json")
+                                                "instance.json")
                                         || element.getAttribute("target").contains("./")
                                         || element.getAttribute("target").contains(".\\")
                                         || element.getAttribute("target").contains("~/")
                                         || element.getAttribute("target").contains("~\\")
                                         || !file.getCanonicalPath().contains(
-                                        instance.getRootDirectory().getCanonicalPath())) {
-                                    LogManager.error(
-                                            "Cannot delete the file/folder "
-                                                    + file.getAbsolutePath()
-                                                    + " as it's protected.");
+                                                instance.getRootDirectory().getCanonicalPath())) {
+                                    LogManager.error("Cannot delete the file/folder "
+                                            + file.getAbsolutePath() + " as it's protected.");
                                 } else {
                                     files.add(file);
                                 }
