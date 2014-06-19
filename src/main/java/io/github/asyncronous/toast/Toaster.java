@@ -42,17 +42,17 @@ public final class Toaster {
     public static volatile int MAX_TOASTERS = 0;
 
     private Toaster() {
-        UIManager.put("Toaster.infoIcon", createImage("info"));
-        UIManager.put("Toaster.errorIcon", createImage("error"));
-        UIManager.put("Toaster.questionIcon", createImage("question"));
-        UIManager.put("Toaster.warningIcon", createImage("warning"));
-        UIManager.put("Toaster.font", new Font("SansSerif", Font.BOLD, 12).deriveFont(24.0F));
-        UIManager.put("Toaster.msgColor", Color.BLACK);
-        UIManager.put("Toaster.borderColor", Color.BLACK);
-        UIManager.put("Toaster.bgColor", Color.WHITE);
-        UIManager.put("Toaster.time", 5000);
-        UIManager.put("Toaster.opaque", false);
-        UIManager.put("Toaster.opacity", 0.5F);
+        UIManager.put(ToasterConstants.INFO_ICON, createImage("info"));
+        UIManager.put(ToasterConstants.ERROR_ICON, createImage("error"));
+        UIManager.put(ToasterConstants.QUESTION_ICON, createImage("question"));
+        UIManager.put(ToasterConstants.WARNING_ICON, createImage("warning"));
+        UIManager.put(ToasterConstants.FONT, new Font("SansSerif", Font.BOLD, 12).deriveFont(24.0F));
+        UIManager.put(ToasterConstants.MSG_COLOR, Color.BLACK);
+        UIManager.put(ToasterConstants.BORDER_COLOR, Color.BLACK);
+        UIManager.put(ToasterConstants.BG_COLOR, Color.WHITE);
+        UIManager.put(ToasterConstants.TIME, 5000);
+        UIManager.put(ToasterConstants.OPAQUE, false);
+        UIManager.put(ToasterConstants.OPACITY, 0.5F);
         UIManager.put("Toaster.contBounds", GraphicsEnvironment.getLocalGraphicsEnvironment()
                 .getMaximumWindowBounds());
     }
@@ -67,7 +67,7 @@ public final class Toaster {
     public void popQuestion(String msg) {
         ToastWindow window = new ToastWindow();
         window.setText(msg);
-        window.setIcon(new ImageIcon((Image) UIManager.get("Toaster.questionIcon")));
+        window.setIcon(new ImageIcon((Image) UIManager.get(ToasterConstants.QUESTION_ICON)));
         window.pop();
     }
 
@@ -81,7 +81,7 @@ public final class Toaster {
     public void pop(String msg) {
         ToastWindow window = new ToastWindow();
         window.setText(msg);
-        window.setIcon(new ImageIcon((Image) UIManager.get("Toaster.infoIcon")));
+        window.setIcon(new ImageIcon((Image) UIManager.get(ToasterConstants.INFO_ICON)));
         window.pop();
     }
 
@@ -95,7 +95,7 @@ public final class Toaster {
     public void popWarning(String msg) {
         ToastWindow window = new ToastWindow();
         window.setText(msg);
-        window.setIcon(new ImageIcon((Image) UIManager.get("Toaster.warningIcon")));
+        window.setIcon(new ImageIcon((Image) UIManager.get(ToasterConstants.WARNING_ICON)));
         window.pop();
     }
 
@@ -109,7 +109,7 @@ public final class Toaster {
     public void popError(String msg) {
         ToastWindow window = new ToastWindow();
         window.setText(msg);
-        window.setIcon(new ImageIcon((Image) UIManager.get("Toaster.errorIcon")));
+        window.setIcon(new ImageIcon((Image) UIManager.get(ToasterConstants.ERROR_ICON)));
         window.pop();
     }
 

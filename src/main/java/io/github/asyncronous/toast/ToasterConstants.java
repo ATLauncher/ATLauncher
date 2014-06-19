@@ -1,6 +1,5 @@
 package io.github.asyncronous.toast;
 
-@SuppressWarnings("unused")
 public interface ToasterConstants {
     /**
      * The icon for an Information Toast Notification
