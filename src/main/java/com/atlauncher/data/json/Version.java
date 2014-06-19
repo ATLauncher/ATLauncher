@@ -160,7 +160,6 @@ public class Version {
     public List<Mod> getClientInstallMods() {
         List<Mod> mods = new ArrayList<Mod>();
         for (Mod mod : this.mods) {
-            LogManager.debug(mod.getName());
             if (mod.installOnClient()) {
                 mods.add(mod);
             }

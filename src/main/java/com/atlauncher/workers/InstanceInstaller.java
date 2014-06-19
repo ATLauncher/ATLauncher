@@ -1483,7 +1483,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         this.jsonVersion.compileColours();
 
-        this.allJsonMods = sortJsonMods(this.jsonVersion.getClientInstallMods());
+        this.allJsonMods = sortJsonMods((this.isServer ? this.jsonVersion.getServerInstallMods()
+                : this.jsonVersion.getClientInstallMods()));
 
         boolean hasOptional = false;
         for (com.atlauncher.data.json.Mod mod : this.allJsonMods) {
