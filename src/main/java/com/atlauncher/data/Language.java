@@ -44,6 +44,20 @@ public enum Language {
         this.current = lang;
     }
 
+    public synchronized void reload(String lang) throws IOException {
+        if (this.langs.containsKey(lang)) {
+            this.langs.remove(lang);
+        }
+
+        Properties props = new Properties();
+        props.load(new FileInputStream(new File(App.settings.getLanguagesDir(), lang.toLowerCase()
+                + ".lang")));
+        this.langs.put(lang, props);
+        LogManager.info("Loading Language: " + lang);
+
+        this.current = lang;
+    }
+
     public synchronized String localize(String lang, String tag) {
         if (this.langs.containsKey(lang)) {
             Properties props = this.langs.get(lang);
