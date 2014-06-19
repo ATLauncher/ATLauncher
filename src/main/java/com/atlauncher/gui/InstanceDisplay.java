@@ -321,18 +321,8 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                                     Utils.zip(instance.getSavesDirectory(),
                                             new File(App.settings.getBackupsDir(), filename));
                                     dialog.dispose();
-                                    String[] options = { App.settings
-                                            .getLocalizedString("common.ok") };
-                                    JOptionPane.showOptionDialog(
-                                            App.settings.getParent(),
-                                            "<html><p align=\"center\">"
-                                                    + App.settings.getLocalizedString(
-                                                            "backup.backupcomplete", "<br/><br/>"
-                                                                    + filename) + "</p></html>",
-                                            Language.INSTANCE.localize("backup.complete"),
-                                            JOptionPane.DEFAULT_OPTION,
-                                            JOptionPane.INFORMATION_MESSAGE, null, options,
-                                            options[0]);
+                                    App.TOASTER.pop(App.settings.getLocalizedString(
+                                            "backup.backupcomplete", " " + filename));
                                 }
                             };
                             backupThread.start();
@@ -381,6 +371,8 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                         public void run() {
                             App.settings.cloneInstance(instance, newName);
                             dialog.close();
+                            App.TOASTER.pop(App.settings.getLocalizedString(
+                                    "instance.clonedsuccessfully", instance.getName()));
                         }
                     });
                     dialog.start();
@@ -432,6 +424,8 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                         public void run() {
                             App.settings.removeInstance(instance);
                             dialog.close();
+                            App.TOASTER.pop(App.settings.getLocalizedString(
+                                    "instance.deletedsuccessfully", instance.getName()));
                         }
                     });
                     dialog.start();
