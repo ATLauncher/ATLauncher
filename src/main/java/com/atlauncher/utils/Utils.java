@@ -358,8 +358,7 @@ public class Utils {
      * @return true, if is 64 bit
      */
     public static boolean is64Bit() {
-        String osType = System.getProperty("sun.arch.data.model");
-        return Boolean.valueOf(osType.contains("64"));
+        return System.getProperty("sun.arch.data.model").contains("64");
     }
 
     /**

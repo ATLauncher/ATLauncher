@@ -1,8 +1,10 @@
 package io.github.asyncronous.toast.ui;
 
+import io.github.asyncronous.toast.ToasterConstants;
 import io.github.asyncronous.toast.thread.ToastAnimator;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,22 +17,22 @@ public final class ToastWindow extends JWindow {
     private final JTextArea MESSAGE = new JTextArea();
 
     public ToastWindow(){
-        this.MESSAGE.setFont((Font) UIManager.get("Toaster.font"));
-        this.MESSAGE.setBackground((Color) UIManager.get("Toaster.bgColor"));
-        this.MESSAGE.setForeground((Color) UIManager.get("Toaster.msgColor"));
+        this.MESSAGE.setFont((Font) UIManager.get(ToasterConstants.FONT));
+        this.MESSAGE.setBackground((Color) UIManager.get(ToasterConstants.BG_COLOR));
+        this.MESSAGE.setForeground((Color) UIManager.get(ToasterConstants.MSG_COLOR));
         this.MESSAGE.setLineWrap(true);
         this.MESSAGE.setEditable(false);
         this.MESSAGE.setMargin(new Insets(2, 2, 2, 2));
         this.MESSAGE.setWrapStyleWord(true);
 
-        if(!((Boolean) UIManager.get("Toaster.opaque"))){
-            this.setOpacity((Float) UIManager.get("Toaster.opacity"));
+        if(!((Boolean) UIManager.get(ToasterConstants.OPAQUE))){
+            this.setOpacity((Float) UIManager.get(ToasterConstants.OPACITY));
         }
 
         JPanel CONTENT_PANEL = new JPanel(new BorderLayout(1, 1));
-        CONTENT_PANEL.setBackground((Color) UIManager.get("Toaster.borderColor"));
+        CONTENT_PANEL.setBackground((Color) UIManager.get(ToasterConstants.BORDER_COLOR));
         JPanel WRAPPER_PANEL = new JPanel(new BorderLayout(2, 2));
-        WRAPPER_PANEL.setBackground((Color) UIManager.get("Toaster.bgColor"));
+        WRAPPER_PANEL.setBackground((Color) UIManager.get(ToasterConstants.BG_COLOR));
         WRAPPER_PANEL.add(this.ICON, BorderLayout.WEST);
         WRAPPER_PANEL.add(this.MESSAGE, BorderLayout.CENTER);
         CONTENT_PANEL.setBorder(BorderFactory.createEtchedBorder());
