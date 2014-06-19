@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package com.atlauncher.gui;
+package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -25,7 +26,6 @@ import javax.swing.SwingConstants;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Language;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.data.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
@@ -37,7 +37,7 @@ public class ModsChooser extends JDialog {
     private InstanceInstaller installer;
     private JButton selectAllButton;
     private JButton clearAllButton;
-    private ArrayList<ModsJCheckBox> modCheckboxes;
+    private List<ModsJCheckBox> modCheckboxes;
 
     private boolean wasClosed = false;
 
@@ -165,7 +165,7 @@ public class ModsChooser extends JDialog {
                     if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod()
                             .isOptional())) {
                         check.setSelected(false);
-                        ArrayList<Mod> linkedMods = modsToChange(check.getMod());
+                        List<Mod> linkedMods = modsToChange(check.getMod());
                         for (Mod mod : linkedMods) {
                             for (ModsJCheckBox check1 : modCheckboxes) {
                                 if (check1.getMod() == mod) {
@@ -322,19 +322,19 @@ public class ModsChooser extends JDialog {
         checkBoxPanel2.setPreferredSize(new Dimension(0, count2 * 20));
     }
 
-    private ArrayList<Mod> modsToChange(Mod mod) {
+    private List<Mod> modsToChange(Mod mod) {
         return installer.getLinkedMods(mod);
     }
 
-    private ArrayList<Mod> modsInGroup(Mod mod) {
+    private List<Mod> modsInGroup(Mod mod) {
         return installer.getGroupedMods(mod);
     }
 
-    private ArrayList<Mod> modsDependancies(Mod mod) {
+    private List<Mod> modsDependancies(Mod mod) {
         return installer.getModsDependancies(mod);
     }
 
-    private ArrayList<Mod> dependedMods(Mod mod) {
+    private List<Mod> dependedMods(Mod mod) {
         return installer.dependedMods(mod);
     }
 
@@ -344,7 +344,7 @@ public class ModsChooser extends JDialog {
 
     public void sortOutMods(ModsJCheckBox a) {
         if (a.isSelected()) {
-            ArrayList<Mod> linkedMods = modsToChange(a.getMod());
+            List<Mod> linkedMods = modsToChange(a.getMod());
             for (Mod mod : linkedMods) {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if (check.getMod() == mod) {
@@ -353,7 +353,7 @@ public class ModsChooser extends JDialog {
                 }
             }
             if (a.getMod().hasGroup()) {
-                ArrayList<Mod> groupMods = modsInGroup(a.getMod());
+                List<Mod> groupMods = modsInGroup(a.getMod());
                 for (Mod mod : groupMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
@@ -363,7 +363,7 @@ public class ModsChooser extends JDialog {
                 }
             }
             if (a.getMod().hasDepends()) {
-                ArrayList<Mod> dependsMods = modsDependancies(a.getMod());
+                List<Mod> dependsMods = modsDependancies(a.getMod());
                 for (Mod mod : dependsMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
@@ -373,7 +373,7 @@ public class ModsChooser extends JDialog {
                 }
             }
         } else {
-            ArrayList<Mod> linkedMods = modsToChange(a.getMod());
+            List<Mod> linkedMods = modsToChange(a.getMod());
             for (Mod mod : linkedMods) {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if (check.getMod() == mod) {
@@ -383,7 +383,7 @@ public class ModsChooser extends JDialog {
                 }
             }
             if (hasADependancy(a.getMod())) {
-                ArrayList<Mod> dependedMods = dependedMods(a.getMod());
+                List<Mod> dependedMods = dependedMods(a.getMod());
                 for (Mod mod : dependedMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
@@ -392,7 +392,7 @@ public class ModsChooser extends JDialog {
                     }
                 }
             } else if (a.getMod().hasDepends()) {
-                ArrayList<Mod> dependsMods = modsDependancies(a.getMod());
+                List<Mod> dependsMods = modsDependancies(a.getMod());
                 for (Mod mod : dependsMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
@@ -406,11 +406,11 @@ public class ModsChooser extends JDialog {
         }
     }
 
-    public ArrayList<Mod> getSelectedMods() {
+    public List<Mod> getSelectedMods() {
         if (wasClosed) {
             return null;
         }
-        ArrayList<Mod> mods = new ArrayList<Mod>();
+        List<Mod> mods = new ArrayList<Mod>();
         for (ModsJCheckBox check : modCheckboxes) {
             if (check.isSelected()) {
                 mods.add(check.getMod());

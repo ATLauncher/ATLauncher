@@ -6,6 +6,8 @@
  */
 package com.atlauncher.data.json;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -155,6 +157,27 @@ public class Version {
         return this.mods;
     }
 
+    public List<Mod> getClientInstallMods() {
+        List<Mod> mods = new ArrayList<Mod>();
+        for (Mod mod : this.mods) {
+            LogManager.debug(mod.getName());
+            if (mod.installOnClient()) {
+                mods.add(mod);
+            }
+        }
+        return mods;
+    }
+
+    public List<Mod> getServerInstallMods() {
+        List<Mod> mods = new ArrayList<Mod>();
+        for (Mod mod : this.mods) {
+            if (mod.installOnServer()) {
+                mods.add(mod);
+            }
+        }
+        return mods;
+    }
+
     public List<Action> getActions() {
         return this.actions;
     }
@@ -171,16 +194,15 @@ public class Version {
     }
 
     /**
-     * Gets the HTML colour code of a given key specified in a mods colour field. This is a 6
-     * character long hex code without the beginning #. If the key is not found or the code given is
-     * incorrect, it will return null and create a warning log message.
+     * Returns a Color object of a given key specified in a mods colour field. If the key is not
+     * found or the code given is incorrect, it will return null and create a warning log message.
      * 
      * @param key
      *            The key/name given to the colour by the pack developer/s
-     * @return the hex code of the colour matching the key or null if there was an issue with the
-     *         value given
+     * @return a {@link Color} object of the colour matching the key or null if there was an issue
+     *         with the value given
      */
-    public String getColour(String key) {
+    public Color getColour(String key) {
         if (!this.isColour(key)) {
             LogManager.warn("Colour with key " + key + " not found!");
             return null;
@@ -193,6 +215,24 @@ public class Version {
             LogManager.warn("Colour with key " + key + " has invalid value of " + colour + "!");
             return null;
         }
-        return colour;
+        int r, g, b;
+        try {
+            r = Integer.parseInt(colour.substring(0, 2), 16);
+            g = Integer.parseInt(colour.substring(2, 4), 16);
+            b = Integer.parseInt(colour.substring(4, 6), 16);
+            return new Color(r, g, b);
+        } catch (NumberFormatException e) {
+            LogManager.warn("Colour with key " + key + " failed to create object with value of "
+                    + colour + "!");
+            return null;
+        }
+    }
+
+    public void compileColours() {
+        for (Mod mod : this.mods) {
+            if (mod.hasColour()) {
+                mod.setCompiledColour(this.getColour(mod.getColour()));
+            }
+        }
     }
 }

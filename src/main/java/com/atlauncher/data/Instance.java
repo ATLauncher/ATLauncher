@@ -197,7 +197,7 @@ public class Instance implements Cloneable {
      */
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int memory, int permgen,
-            ArrayList<DisableableMod> mods, String jarOrder, String librariesNeeded,
+            List<DisableableMod> mods, String jarOrder, String librariesNeeded,
             String extraArguments, String minecraftArguments, String mainClass, String assets,
             boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
@@ -266,7 +266,7 @@ public class Instance implements Cloneable {
      */
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe,
             String version, String minecraftVersion, int memory, int permgen,
-            ArrayList<DisableableMod> mods, String jarOrder, String librariesNeeded,
+            List<DisableableMod> mods, String jarOrder, String librariesNeeded,
             String extraArguments, String minecraftArguments, String mainClass, String assets,
             boolean isDev, boolean newLaunchMethod) {
         this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen,

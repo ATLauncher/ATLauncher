@@ -53,6 +53,8 @@ public class Pack {
     private List<String> allowedPlayers = new ArrayList<String>();
     private String xml; // The xml for a version of the pack
     private String xmlVersion; // The version the XML above is for
+    private String json; // The JSON for a version of the pack
+    private String jsonVersion; // The version the JSON above is for
 
     public int getID() {
         return this.id;
@@ -260,6 +262,25 @@ public class Pack {
             this.xmlVersion = version;
         }
         return this.xml;
+    }
+
+    public String getJSON(String version) {
+        return getJSON(version, true);
+    }
+
+    public String getJSON(String version, boolean redownload) {
+        if (this.json == null || !this.jsonVersion.equalsIgnoreCase(version)
+                || (isTester() && redownload)) {
+            String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.json";
+            Downloadable download = new Downloadable(path, true);
+            int tries = 1;
+            do {
+                this.json = download.getContents();
+                tries++;
+            } while (json == null && tries < 5);
+            this.jsonVersion = version;
+        }
+        return this.json;
     }
 
     public String getInstallMessage(String version) {

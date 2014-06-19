@@ -52,7 +52,10 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
+import com.atlauncher.data.Settings;
 import com.atlauncher.data.Type;
+import com.atlauncher.data.json.CaseType;
+import com.atlauncher.data.json.Version;
 import com.atlauncher.data.mojang.AssetIndex;
 import com.atlauncher.data.mojang.AssetObject;
 import com.atlauncher.data.mojang.DateTypeAdapter;
@@ -60,18 +63,21 @@ import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.data.mojang.Library;
 import com.atlauncher.data.mojang.MojangConstants;
-import com.atlauncher.gui.ModsChooser;
+import com.atlauncher.gui.dialogs.JsonModsChooser;
+import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private String instanceName;
     private Pack pack;
+    private Version jsonVersion;
     private PackVersion version;
     private boolean isReinstall;
     private boolean isServer;
@@ -92,18 +98,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private String extraArguments = null;
     private String mainClass = null;
     private int percent = 0; // Percent done installing
-    private ArrayList<Mod> allMods;
-    private ArrayList<Mod> selectedMods;
+    private List<Mod> allMods;
+    private List<com.atlauncher.data.json.Mod> allJsonMods;
+    private List<Mod> selectedMods;
+    private List<com.atlauncher.data.json.Mod> selectedJsonMods;
     private int totalDownloads = 0; // Total number of downloads to download
     private int doneDownloads = 0; // Total number of downloads downloaded
     private int totalBytes = 0; // Total number of bytes to download
     private int downloadedBytes = 0; // Total number of bytes downloaded
     private Instance instance = null;
-    private ArrayList<DisableableMod> modsInstalled;
-    private ArrayList<File> serverLibraries;
-    private ArrayList<Action> actions;
+    private List<DisableableMod> modsInstalled;
+    private List<File> serverLibraries;
+    private List<Action> actions;
     private final Gson gson; // GSON Parser
-    private ArrayList<String> forgeLibraries = new ArrayList<String>();
+    private List<String> forgeLibraries = new ArrayList<String>();
 
     public InstanceInstaller(String instanceName, Pack pack, PackVersion version,
             boolean isReinstall, boolean isServer) {
@@ -139,7 +147,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.instanceName;
     }
 
-    public ArrayList<DisableableMod> getModsInstalled() {
+    public List<DisableableMod> getModsInstalled() {
         return this.modsInstalled;
     }
 
@@ -316,8 +324,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return null;
     }
 
-    public ArrayList<Mod> getLinkedMods(Mod mod) {
-        ArrayList<Mod> linkedMods = new ArrayList<Mod>();
+    public com.atlauncher.data.json.Mod getJsonModByName(String name) {
+        for (com.atlauncher.data.json.Mod mod : allJsonMods) {
+            if (mod.getName().equalsIgnoreCase(name)) {
+                return mod;
+            }
+        }
+        return null;
+    }
+
+    public List<Mod> getLinkedMods(Mod mod) {
+        List<Mod> linkedMods = new ArrayList<Mod>();
         for (Mod modd : allMods) {
             if (modd.getLinked().equalsIgnoreCase(mod.getName())) {
                 linkedMods.add(modd);
@@ -326,8 +343,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return linkedMods;
     }
 
-    public ArrayList<Mod> getGroupedMods(Mod mod) {
-        ArrayList<Mod> groupedMods = new ArrayList<Mod>();
+    public List<com.atlauncher.data.json.Mod> getJsonLinkedMods(com.atlauncher.data.json.Mod mod) {
+        List<com.atlauncher.data.json.Mod> linkedMods = new ArrayList<com.atlauncher.data.json.Mod>();
+        for (com.atlauncher.data.json.Mod modd : allJsonMods) {
+            if (!modd.hasLinked()) {
+                continue;
+            }
+            if (modd.getLinked().equalsIgnoreCase(mod.getName())) {
+                linkedMods.add(modd);
+            }
+        }
+        return linkedMods;
+    }
+
+    public List<Mod> getGroupedMods(Mod mod) {
+        List<Mod> groupedMods = new ArrayList<Mod>();
         for (Mod modd : allMods) {
             if (modd.getGroup().equalsIgnoreCase(mod.getGroup())) {
                 if (modd != mod) {
@@ -338,8 +368,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return groupedMods;
     }
 
-    public ArrayList<Mod> getModsDependancies(Mod mod) {
-        ArrayList<Mod> dependsMods = new ArrayList<Mod>();
+    public List<com.atlauncher.data.json.Mod> getGroupedMods(com.atlauncher.data.json.Mod mod) {
+        List<com.atlauncher.data.json.Mod> groupedMods = new ArrayList<com.atlauncher.data.json.Mod>();
+        for (com.atlauncher.data.json.Mod modd : allJsonMods) {
+            if (!modd.hasGroup()) {
+                continue;
+            }
+            if (modd.getGroup().equalsIgnoreCase(mod.getGroup())) {
+                if (modd != mod) {
+                    groupedMods.add(modd);
+                }
+            }
+        }
+        return groupedMods;
+    }
+
+    public List<Mod> getModsDependancies(Mod mod) {
+        List<Mod> dependsMods = new ArrayList<Mod>();
         for (String name : mod.getDependancies()) {
             inner: {
                 for (Mod modd : allMods) {
@@ -353,9 +398,37 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return dependsMods;
     }
 
-    public ArrayList<Mod> dependedMods(Mod mod) {
-        ArrayList<Mod> dependedMods = new ArrayList<Mod>();
+    public List<com.atlauncher.data.json.Mod> getModsDependancies(com.atlauncher.data.json.Mod mod) {
+        List<com.atlauncher.data.json.Mod> dependsMods = new ArrayList<com.atlauncher.data.json.Mod>();
+        for (String name : mod.getDepends()) {
+            inner: {
+                for (com.atlauncher.data.json.Mod modd : allJsonMods) {
+                    if (modd.getName().equalsIgnoreCase(name)) {
+                        dependsMods.add(modd);
+                        break inner;
+                    }
+                }
+            }
+        }
+        return dependsMods;
+    }
+
+    public List<Mod> dependedMods(Mod mod) {
+        List<Mod> dependedMods = new ArrayList<Mod>();
         for (Mod modd : allMods) {
+            if (!modd.hasDepends()) {
+                continue;
+            }
+            if (modd.isADependancy(mod)) {
+                dependedMods.add(modd);
+            }
+        }
+        return dependedMods;
+    }
+
+    public List<com.atlauncher.data.json.Mod> dependedMods(com.atlauncher.data.json.Mod mod) {
+        List<com.atlauncher.data.json.Mod> dependedMods = new ArrayList<com.atlauncher.data.json.Mod>();
+        for (com.atlauncher.data.json.Mod modd : allJsonMods) {
             if (!modd.hasDepends()) {
                 continue;
             }
@@ -368,6 +441,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean hasADependancy(Mod mod) {
         for (Mod modd : allMods) {
+            if (!modd.hasDepends()) {
+                continue;
+            }
+            if (modd.isADependancy(mod)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasADependancy(com.atlauncher.data.json.Mod mod) {
+        for (com.atlauncher.data.json.Mod modd : allJsonMods) {
             if (!modd.hasDepends()) {
                 continue;
             }
@@ -588,7 +673,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return false;
     }
 
-    private void installMods(ArrayList<Mod> mods) {
+    private void installMods(List<Mod> mods) {
         for (Mod mod : mods) {
             if (!isCancelled()) {
                 fireTask(App.settings.getLocalizedString("common.installing") + " " + mod.getName());
@@ -607,6 +692,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return false; // No non recommended mods found
     }
 
+    public boolean hasJsonRecommendedMods() {
+        for (com.atlauncher.data.json.Mod mod : allJsonMods) {
+            if (!mod.isRecommended()) {
+                return true; // One of the mods is marked as not recommended, so return true
+            }
+        }
+        return false; // No non recommended mods found
+    }
+
     public boolean isOnlyRecommendedInGroup(Mod mod) {
         for (Mod modd : allMods) {
             if (modd == mod) {
@@ -616,6 +710,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (modd.isRecommeneded()) {
                     return false; // Another mod is recommended. Don't check anything
                 }
+            }
+        }
+        return true; // No other recommended mods found in the group
+    }
+
+    public boolean isOnlyRecommendedInGroup(com.atlauncher.data.json.Mod mod) {
+        for (com.atlauncher.data.json.Mod modd : allJsonMods) {
+            if (modd == mod || !modd.hasGroup()) {
+                continue;
+            }
+            if (modd.getGroup().equalsIgnoreCase(mod.getGroup()) && modd.isRecommended()) {
+                return false; // Another mod is recommended. Don't check anything
             }
         }
         return true; // No other recommended mods found in the group
@@ -805,10 +911,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    private void downloadMods(ArrayList<Mod> mods) {
+    private void downloadMods(List<Mod> mods) {
         fireSubProgressUnknown();
         ExecutorService executor;
-        ArrayList<Downloadable> downloads = getDownloadableMods();
+        List<Downloadable> downloads = getDownloadableMods();
         totalBytes = 0;
         downloadedBytes = 0;
 
@@ -1198,6 +1304,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
+    public Version getJsonVersion() {
+        return this.jsonVersion;
+    }
+
     public boolean hasJarMods() {
         for (Mod mod : selectedMods) {
             if (!mod.installOnServer() && isServer) {
@@ -1226,8 +1336,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return false;
     }
 
-    public ArrayList<Mod> getMods() {
+    public List<Mod> getMods() {
         return this.allMods;
+    }
+
+    public List<com.atlauncher.data.json.Mod> getJsonMods() {
+        return this.allJsonMods;
     }
 
     public boolean shouldCoruptInstance() {
@@ -1265,8 +1379,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.mainClass;
     }
 
-    public ArrayList<Mod> sortMods(ArrayList<Mod> original) {
-        ArrayList<Mod> mods = new ArrayList<Mod>(original);
+    public List<Mod> sortMods(List<Mod> original) {
+        List<Mod> mods = new ArrayList<Mod>(original);
 
         for (Mod mod : original) {
             if (mod.isOptional()) {
@@ -1283,7 +1397,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
-        ArrayList<Mod> modss = new ArrayList<Mod>();
+        List<Mod> modss = new ArrayList<Mod>();
 
         for (Mod mod : mods) {
             if (!mod.isOptional()) {
@@ -1312,7 +1426,104 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return modss;
     }
 
-    protected Boolean doInBackground() throws Exception {
+    public List<com.atlauncher.data.json.Mod> sortJsonMods(
+            List<com.atlauncher.data.json.Mod> original) {
+        List<com.atlauncher.data.json.Mod> mods = new ArrayList<com.atlauncher.data.json.Mod>(
+                original);
+
+        for (com.atlauncher.data.json.Mod mod : original) {
+            if (mod.isOptional()) {
+                if (mod.hasLinked()) {
+                    for (com.atlauncher.data.json.Mod mod1 : original) {
+                        if (mod1.getName().equalsIgnoreCase(mod.getLinked())) {
+                            mods.remove(mod);
+                            int index = mods.indexOf(mod1) + 1;
+                            mods.add(index, mod);
+                        }
+                    }
+
+                }
+            }
+        }
+
+        List<com.atlauncher.data.json.Mod> modss = new ArrayList<com.atlauncher.data.json.Mod>();
+
+        for (com.atlauncher.data.json.Mod mod : mods) {
+            if (!mod.isOptional()) {
+                modss.add(mod); // Add all non optional mods
+            }
+        }
+
+        for (com.atlauncher.data.json.Mod mod : mods) {
+            if (!modss.contains(mod)) {
+                modss.add(mod); // Add the rest
+            }
+        }
+
+        return modss;
+    }
+
+    private Boolean installUsingJSON() throws Exception {
+        if (this.jsonVersion == null) {
+            return false;
+        }
+        if (this.isReinstall && this.jsonVersion.getMessages().hasUpdateMessage()
+                && this.jsonVersion.getMessages().showUpdateMessage(this.pack) != 0) {
+            LogManager.error("Instance Install Cancelled After Viewing Message!");
+            cancel(true);
+            return false;
+        } else if (this.jsonVersion.getMessages().hasInstallMessage()
+                && this.jsonVersion.getMessages().showInstallMessage(this.pack) != 0) {
+            LogManager.error("Instance Install Cancelled After Viewing Message!");
+            cancel(true);
+            return false;
+        }
+
+        this.jsonVersion.compileColours();
+
+        this.allJsonMods = sortJsonMods(this.jsonVersion.getClientInstallMods());
+
+        boolean hasOptional = false;
+        for (com.atlauncher.data.json.Mod mod : this.allJsonMods) {
+            if (mod.isOptional()) {
+                hasOptional = true;
+                break;
+            }
+        }
+
+        if (this.allJsonMods.size() != 0 && hasOptional) {
+            JsonModsChooser modsChooser = new JsonModsChooser(this);
+            modsChooser.setVisible(true);
+            if (modsChooser.wasClosed()) {
+                this.cancel(true);
+                return false;
+            }
+            this.selectedJsonMods = modsChooser.getSelectedMods();
+        }
+        if (!hasOptional) {
+            this.selectedJsonMods = this.allJsonMods;
+        }
+        modsInstalled = new ArrayList<DisableableMod>();
+        for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+            String file = mod.getFile();
+            if (this.jsonVersion.getCaseAllFiles() == CaseType.upper) {
+                file = file.substring(0, file.lastIndexOf(".")).toUpperCase()
+                        + file.substring(file.lastIndexOf("."));
+            } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
+                file = file.substring(0, file.lastIndexOf(".")).toLowerCase()
+                        + file.substring(file.lastIndexOf("."));
+            }
+            this.modsInstalled
+                    .add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(),
+                            file, Type.valueOf(Type.class, mod.getType().toString()),
+                            this.jsonVersion.getColour(mod.getColour()), mod.getDescription(),
+                            false, false));
+        }
+
+        return false;
+    }
+
+    private Boolean installUsingXML() throws Exception {
         if (this.isReinstall) {
             if (this.pack.getUpdateMessage(this.version.getVersion()) != null) {
                 if (this.isCancelled()) {
@@ -1568,6 +1779,30 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     getServerJar());
         }
         return true;
+    }
+
+    @Override
+    protected Boolean doInBackground() throws Exception {
+        LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
+        if (this.version.hasJson()) {
+            LogManager.debug("Version " + version.getVersion() + " has JSON, using it!");
+            try {
+                this.jsonVersion = Settings.gson.fromJson(this.pack.getJSON(version.getVersion()),
+                        Version.class);
+                return installUsingJSON();
+            } catch (JsonSyntaxException e) {
+                App.settings
+                        .logStackTrace(
+                                "Couldn't read JSON of pack! Report this to the pack's developer/s and NOT ATLauncher!",
+                                e);
+            } catch (JsonParseException e) {
+                App.settings
+                        .logStackTrace(
+                                "Couldn't parse JSON of pack! Report this to the pack's developer/s and NOT ATLauncher!",
+                                e);
+            }
+        }
+        return installUsingXML();
     }
 
     private void setMainClass() {

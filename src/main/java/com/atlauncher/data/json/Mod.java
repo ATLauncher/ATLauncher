@@ -6,6 +6,9 @@
  */
 package com.atlauncher.data.json;
 
+import java.awt.Color;
+import java.util.List;
+
 public class Mod {
     private String name;
     private String version;
@@ -18,6 +21,7 @@ public class Mod {
     private String authors;
     private String sha1;
     private String colour;
+    private Color compiledColour;
     private ModType type;
     private String extractTo;
     private String extractFolder;
@@ -41,7 +45,7 @@ public class Mod {
     private boolean library;
     private String group;
     private String linked;
-    private String depends;
+    private List<String> depends;
     private String filePrefix;
     private String description;
 
@@ -85,8 +89,20 @@ public class Mod {
         return this.sha1;
     }
 
+    public boolean hasColour() {
+        return this.colour != null;
+    }
+
     public String getColour() {
         return this.colour;
+    }
+
+    public Color getCompiledColour() {
+        return this.compiledColour;
+    }
+
+    public void setCompiledColour(Color colour) {
+        this.compiledColour = colour;
     }
 
     public ModType getType() {
@@ -121,11 +137,11 @@ public class Mod {
         return this.fileCheck;
     }
 
-    public boolean isClient() {
+    public boolean installOnClient() {
         return this.client;
     }
 
-    public boolean isServer() {
+    public boolean installOnServer() {
         return this.server;
     }
 
@@ -181,7 +197,7 @@ public class Mod {
         return this.linked;
     }
 
-    public String getDepends() {
+    public List<String> getDepends() {
         return this.depends;
     }
 
@@ -191,5 +207,30 @@ public class Mod {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public boolean hasDepends() {
+        return this.depends != null && this.depends.size() != 0;
+    }
+
+    public boolean isADependancy(Mod mod) {
+        for (String name : this.depends) {
+            if (name.equalsIgnoreCase(mod.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasGroup() {
+        return this.group != null && !this.group.isEmpty();
+    }
+
+    public boolean hasLinked() {
+        return this.linked != null && !this.linked.isEmpty();
+    }
+
+    public boolean hasDescription() {
+        return this.description != null && !this.description.isEmpty();
     }
 }

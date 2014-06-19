@@ -19,6 +19,7 @@ public class PackVersion {
     private MinecraftVersion minecraftVersion;
     private boolean canUpdate = true;
     private boolean isRecommended = true;
+    private boolean hasJson = false;
     private boolean isDev;
 
     public String getVersion() {
@@ -52,6 +53,10 @@ public class PackVersion {
 
     public boolean isDev() {
         return this.isDev;
+    }
+
+    public boolean hasJson() {
+        return this.hasJson;
     }
 
     public String toString() {
