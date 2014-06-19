@@ -235,4 +235,8 @@ public class Version {
             }
         }
     }
+
+    public boolean hasMessages() {
+        return this.messages != null;
+    }
 }
