@@ -29,6 +29,7 @@ import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
+import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.utils.Utils;
 
 public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener {
