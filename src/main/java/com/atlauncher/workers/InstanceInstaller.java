@@ -1463,6 +1463,71 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return modss;
     }
 
+    private void backupSelectFiles() {
+        File reis = new File(getModsDirectory(), "rei_minimap");
+        if (reis.exists() && reis.isDirectory()) {
+            if (Utils.copyDirectory(reis, getTempDirectory(), true)) {
+                savedReis = true;
+            }
+        }
+        File zans = new File(getModsDirectory(), "VoxelMods");
+        if (zans.exists() && zans.isDirectory()) {
+            if (Utils.copyDirectory(zans, getTempDirectory(), true)) {
+                savedZans = true;
+            }
+        }
+        File neiCfg = new File(getConfigDirectory(), "NEI.cfg");
+        if (neiCfg.exists() && neiCfg.isFile()) {
+            if (Utils.copyFile(neiCfg, getTempDirectory())) {
+                savedNEICfg = true;
+            }
+        }
+        File optionsTXT = new File(getRootDirectory(), "options.txt");
+        if (optionsTXT.exists() && optionsTXT.isFile()) {
+            if (Utils.copyFile(optionsTXT, getTempDirectory())) {
+                savedOptionsTxt = true;
+            }
+        }
+        File serversDAT = new File(getRootDirectory(), "servers.dat");
+        if (serversDAT.exists() && serversDAT.isFile()) {
+            if (Utils.copyFile(serversDAT, getTempDirectory())) {
+                savedServersDat = true;
+            }
+        }
+        File portalGunSounds = new File(getModsDirectory(), "PortalGunSounds.pak");
+        if (portalGunSounds.exists() && portalGunSounds.isFile()) {
+            savedPortalGunSounds = true;
+            Utils.copyFile(portalGunSounds, getTempDirectory());
+        }
+    }
+
+    private void restoreSelectFiles() {
+        if (savedReis) {
+            Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"), new File(
+                    getModsDirectory(), "rei_minimap"));
+        }
+        if (savedZans) {
+            Utils.copyDirectory(new File(getTempDirectory(), "VoxelMods"), new File(
+                    getModsDirectory(), "VoxelMods"));
+        }
+        if (savedNEICfg) {
+            Utils.copyFile(new File(getTempDirectory(), "NEI.cfg"), new File(getConfigDirectory(),
+                    "NEI.cfg"), true);
+        }
+        if (savedOptionsTxt) {
+            Utils.copyFile(new File(getTempDirectory(), "options.txt"), new File(
+                    getRootDirectory(), "options.txt"), true);
+        }
+        if (savedServersDat) {
+            Utils.copyFile(new File(getTempDirectory(), "servers.dat"), new File(
+                    getRootDirectory(), "servers.dat"), true);
+        }
+        if (savedPortalGunSounds) {
+            Utils.copyFile(new File(getTempDirectory(), "PortalGunSounds.pak"), new File(
+                    getModsDirectory(), "PortalGunSounds.pak"), true);
+        }
+    }
+
     private Boolean installUsingJSON() throws Exception {
         if (this.jsonVersion == null) {
             return false;
@@ -1522,6 +1587,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             this.jsonVersion.getColour(mod.getColour()), mod.getDescription(),
                             false, false));
         }
+
+        if (this.isReinstall
+                && instance.hasCustomMods()
+                && instance.getMinecraftVersion().equalsIgnoreCase(
+                        version.getMinecraftVersion().getVersion())) {
+            for (DisableableMod mod : instance.getCustomDisableableMods()) {
+                modsInstalled.add(mod);
+            }
+        }
+        this.instanceIsCorrupt = true; // From this point on the instance is corrupt
+        getTempDirectory().mkdirs(); // Make the temp directory
+        backupSelectFiles();
 
         return false;
     }
@@ -1630,41 +1707,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         this.instanceIsCorrupt = true; // From this point on the instance is corrupt
         getTempDirectory().mkdirs(); // Make the temp directory
-        File reis = new File(getModsDirectory(), "rei_minimap");
-        if (reis.exists() && reis.isDirectory()) {
-            if (Utils.copyDirectory(reis, getTempDirectory(), true)) {
-                savedReis = true;
-            }
-        }
-        File zans = new File(getModsDirectory(), "VoxelMods");
-        if (zans.exists() && zans.isDirectory()) {
-            if (Utils.copyDirectory(zans, getTempDirectory(), true)) {
-                savedZans = true;
-            }
-        }
-        File neiCfg = new File(getConfigDirectory(), "NEI.cfg");
-        if (neiCfg.exists() && neiCfg.isFile()) {
-            if (Utils.copyFile(neiCfg, getTempDirectory())) {
-                savedNEICfg = true;
-            }
-        }
-        File optionsTXT = new File(getRootDirectory(), "options.txt");
-        if (optionsTXT.exists() && optionsTXT.isFile()) {
-            if (Utils.copyFile(optionsTXT, getTempDirectory())) {
-                savedOptionsTxt = true;
-            }
-        }
-        File serversDAT = new File(getRootDirectory(), "servers.dat");
-        if (serversDAT.exists() && serversDAT.isFile()) {
-            if (Utils.copyFile(serversDAT, getTempDirectory())) {
-                savedServersDat = true;
-            }
-        }
-        File portalGunSounds = new File(getModsDirectory(), "PortalGunSounds.pak");
-        if (portalGunSounds.exists() && portalGunSounds.isFile()) {
-            savedPortalGunSounds = true;
-            Utils.copyFile(portalGunSounds, getTempDirectory());
-        }
+        backupSelectFiles();
         makeDirectories();
         addPercent(5);
         setMainClass();
@@ -1754,25 +1797,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
             Utils.copyDirectory(App.settings.getCommonConfigsDir(), getRootDirectory());
         }
-        if (savedReis) {
-            Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"), reis);
-        }
-        if (savedZans) {
-            Utils.copyDirectory(new File(getTempDirectory(), "VoxelMods"), zans);
-        }
-        if (savedNEICfg) {
-            Utils.copyFile(new File(getTempDirectory(), "NEI.cfg"), neiCfg, true);
-        }
-        if (savedOptionsTxt) {
-            Utils.copyFile(new File(getTempDirectory(), "options.txt"), optionsTXT, true);
-        }
-        if (savedServersDat) {
-            Utils.copyFile(new File(getTempDirectory(), "servers.dat"), serversDAT, true);
-        }
-        if (savedPortalGunSounds) {
-            Utils.copyFile(new File(getTempDirectory(), "PortalGunSounds.pak"), portalGunSounds,
-                    true);
-        }
+        restoreSelectFiles();
         if (isServer) {
             Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"),
                     new File(getRootDirectory(), "LaunchServer.bat"), "%%SERVERJAR%%",
