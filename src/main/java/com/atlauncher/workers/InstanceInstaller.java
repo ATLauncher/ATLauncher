@@ -2317,7 +2317,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void setJsonExtraArguments() {
         if (!this.jsonVersion.getExtraArguments().hasDepends()
                 && !this.jsonVersion.getExtraArguments().hasDependsGroup()) {
-            this.extraArguments = this.jsonVersion.getMainClass().getMainClass();
+            this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
         } else if (this.jsonVersion.getExtraArguments().hasDepends()) {
             String depends = this.jsonVersion.getExtraArguments().getDepends();
             boolean found = false;
