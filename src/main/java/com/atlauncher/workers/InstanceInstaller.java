@@ -56,6 +56,7 @@ import com.atlauncher.data.Settings;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.DownloadType;
+import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.mojang.AssetIndex;
 import com.atlauncher.data.mojang.AssetObject;
@@ -1516,21 +1517,42 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public String getServerJar() {
-        Mod forge = null; // The Forge Mod
-        Mod mcpc = null; // The MCPC Mod
-        for (Mod mod : selectedMods) {
-            if (mod.getType() == Type.forge) {
-                forge = mod;
-            } else if (mod.getType() == Type.mcpc) {
-                mcpc = mod;
+        if (this.jsonVersion != null) {
+            com.atlauncher.data.json.Mod forge = null; // The Forge Mod
+            com.atlauncher.data.json.Mod mcpc = null; // The MCPC Mod
+            for (com.atlauncher.data.json.Mod mod : selectedJsonMods) {
+                if (mod.getType() == ModType.forge) {
+                    forge = mod;
+                } else if (mod.getType() == ModType.mcpc) {
+                    mcpc = mod;
+                }
             }
-        }
-        if (mcpc != null) {
-            return mcpc.getFile();
-        } else if (forge != null) {
-            return forge.getFile();
+            if (mcpc != null) {
+                return mcpc.getFile();
+            } else if (forge != null) {
+                return forge.getFile();
+            } else {
+                return "minecraft_server." + this.version.getMinecraftVersion().getVersion()
+                        + ".jar";
+            }
         } else {
-            return "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar";
+            Mod forge = null; // The Forge Mod
+            Mod mcpc = null; // The MCPC Mod
+            for (Mod mod : selectedMods) {
+                if (mod.getType() == Type.forge) {
+                    forge = mod;
+                } else if (mod.getType() == Type.mcpc) {
+                    mcpc = mod;
+                }
+            }
+            if (mcpc != null) {
+                return mcpc.getFile();
+            } else if (forge != null) {
+                return forge.getFile();
+            } else {
+                return "minecraft_server." + this.version.getMinecraftVersion().getVersion()
+                        + ".jar";
+            }
         }
     }
 
