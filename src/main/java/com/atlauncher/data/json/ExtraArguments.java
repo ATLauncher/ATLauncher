@@ -25,4 +25,12 @@ public class ExtraArguments {
     public String getDependsGroup() {
         return this.dependsGroup;
     }
+
+    public boolean hasDepends() {
+        return this.depends != null;
+    }
+
+    public boolean hasDependsGroup() {
+        return this.dependsGroup != null;
+    }
 }

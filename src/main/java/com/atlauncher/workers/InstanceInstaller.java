@@ -1599,6 +1599,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.instanceIsCorrupt = true; // From this point on the instance is corrupt
         getTempDirectory().mkdirs(); // Make the temp directory
         backupSelectFiles();
+        makeDirectories();
+        addPercent(5);
+        setJsonMainClass();
+        setJsonExtraArguments();
+        if (this.version.getMinecraftVersion().hasResources()) {
+            downloadResources(); // Download Minecraft Resources
+            if (isCancelled()) {
+                return false;
+            }
+        }
 
         return false;
     }
@@ -1867,6 +1877,43 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
+    private void setJsonMainClass() {
+        if (!this.jsonVersion.getMainClass().hasDepends()
+                && !this.jsonVersion.getMainClass().hasDependsGroup()) {
+            this.mainClass = this.jsonVersion.getMainClass().getMainClass();
+        } else if (this.jsonVersion.getMainClass().hasDepends()) {
+            String depends = this.jsonVersion.getMainClass().getDepends();
+            boolean found = false;
+            for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+                if (mod.getName().equals(depends)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                this.mainClass = this.jsonVersion.getMainClass().getMainClass();
+            }
+        } else if (this.jsonVersion.getMainClass().hasDependsGroup()) {
+            String depends = this.jsonVersion.getMainClass().getDependsGroup();
+            boolean found = false;
+            for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+                if (!mod.hasGroup()) {
+                    continue; // No group, continue
+                }
+                if (mod.getGroup().equals(depends)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                this.mainClass = this.jsonVersion.getMainClass().getMainClass();
+            }
+        }
+        if (this.mainClass == null) {
+            this.mainClass = this.version.getMinecraftVersion().getMojangVersion().getMainClass();
+        }
+    }
+
     private void setExtraArguments() {
         if (this.pack.getExtraArgumentsDepends(this.version.getVersion()) != null) {
             String depends = this.pack.getExtraArgumentsDepends(this.version.getVersion());
@@ -1895,6 +1942,40 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         } else {
             this.extraArguments = pack.getExtraArguments(this.version.getVersion());
+        }
+    }
+
+    private void setJsonExtraArguments() {
+        if (!this.jsonVersion.getExtraArguments().hasDepends()
+                && !this.jsonVersion.getExtraArguments().hasDependsGroup()) {
+            this.extraArguments = this.jsonVersion.getMainClass().getMainClass();
+        } else if (this.jsonVersion.getExtraArguments().hasDepends()) {
+            String depends = this.jsonVersion.getExtraArguments().getDepends();
+            boolean found = false;
+            for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+                if (mod.getName().equals(depends)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
+            }
+        } else if (this.jsonVersion.getMainClass().hasDependsGroup()) {
+            String depends = this.jsonVersion.getMainClass().getDependsGroup();
+            boolean found = false;
+            for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+                if (!mod.hasGroup()) {
+                    continue; // No group, continue
+                }
+                if (mod.getGroup().equals(depends)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
+            }
         }
     }
 
