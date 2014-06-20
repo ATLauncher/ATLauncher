@@ -1957,7 +1957,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             shFile.setExecutable(true);
         }
 
-        return false;
+        return true;
     }
 
     private Boolean installUsingXML() throws Exception {
