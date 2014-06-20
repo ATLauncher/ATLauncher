@@ -131,6 +131,10 @@ public class Version {
         return this.caseAllFiles;
     }
 
+    public boolean shouldCaseAllFiles() {
+        return this.caseAllFiles != null;
+    }
+
     public MainClass getMainClass() {
         return this.mainClass;
     }
@@ -145,6 +149,10 @@ public class Version {
 
     public Messages getMessages() {
         return this.messages;
+    }
+
+    public boolean hasMessages() {
+        return this.messages != null;
     }
 
     public List<Library> getLibraries() {
@@ -181,6 +189,10 @@ public class Version {
 
     public List<Action> getActions() {
         return this.actions;
+    }
+
+    public boolean hasActions() {
+        return this.actions != null && this.actions.size() != 0;
     }
 
     /**
@@ -238,9 +250,5 @@ public class Version {
                 mod.setCompiledColour(this.getColour(mod.getColour()));
             }
         }
-    }
-
-    public boolean hasMessages() {
-        return this.messages != null;
     }
 }

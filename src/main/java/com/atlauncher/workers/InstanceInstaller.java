@@ -254,10 +254,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public boolean hasActions() {
-        if (this.actions == null) {
-            return false;
+        if (this.jsonVersion != null) {
+            return this.jsonVersion.hasActions();
+        } else {
+            if (this.actions == null) {
+                return false;
+            }
+            return this.actions.size() != 0;
         }
-        return this.actions.size() != 0;
     }
 
     public PackVersion getVersion() {
@@ -610,6 +614,83 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return mods;
     }
 
+    private List<Downloadable> getDownloadableJsonMods() {
+        List<Downloadable> mods = new ArrayList<Downloadable>();
+
+        String files = "";
+
+        for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+            if (mod.getDownload() == DownloadType.server) {
+                files = files + mod.getUrl() + "|||";
+            }
+        }
+
+        Map<String, Integer> fileSizes = null;
+
+        if (!files.isEmpty()) {
+            String base64Files = Base64.encodeBytes(files.getBytes());
+
+            fileSizes = new HashMap<String, Integer>();
+            String returnValue = null;
+            try {
+                returnValue = Utils.sendPostData(App.settings.getMasterFileURL("getfilesizes.php"),
+                        base64Files, "files");
+            } catch (IOException e1) {
+                App.settings.logStackTrace(e1);
+            }
+            if (returnValue == null) {
+                LogManager.warn("Couldn't get filesizes of files. Continuing regardless!");
+            }
+
+            if (returnValue != null) {
+                try {
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    InputSource is = new InputSource(new StringReader(returnValue));
+                    Document document = builder.parse(is);
+                    document.getDocumentElement().normalize();
+                    NodeList nodeList = document.getElementsByTagName("file");
+                    for (int i = 0; i < nodeList.getLength(); i++) {
+                        Node node = nodeList.item(i);
+                        if (node.getNodeType() == Node.ELEMENT_NODE) {
+                            Element element = (Element) node;
+                            String url = element.getAttribute("url");
+                            int size = Integer.parseInt(element.getAttribute("size"));
+                            fileSizes.put(url, size);
+                        }
+                    }
+                } catch (SAXException e) {
+                    App.settings.logStackTrace(e);
+                } catch (ParserConfigurationException e) {
+                    App.settings.logStackTrace(e);
+                } catch (IOException e) {
+                    App.settings.logStackTrace(e);
+                }
+            }
+        }
+
+        for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+            if (mod.getDownload() == DownloadType.server) {
+                Downloadable downloadable;
+                int size = -1;
+                if (fileSizes.containsKey(mod.getUrl())) {
+                    size = fileSizes.get(mod.getUrl());
+                }
+                if (mod.hasMD5()) {
+                    downloadable = new Downloadable(mod.getUrl(), new File(
+                            App.settings.getDownloadsDir(), mod.getFile()), mod.getMD5(), size,
+                            this, true);
+                } else {
+                    downloadable = new Downloadable(mod.getUrl(), new File(
+                            App.settings.getDownloadsDir(), mod.getFile()), null, size, this, true);
+                }
+                mods.add(downloadable);
+            }
+        }
+
+        return mods;
+    }
+
     private void loadActions() {
         this.actions = new ArrayList<Action>();
         try {
@@ -660,8 +741,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void doActions() {
-        for (Action action : this.actions) {
-            action.execute(this);
+        if (this.jsonVersion != null) {
+            for (com.atlauncher.data.json.Action action : this.jsonVersion.getActions()) {
+                action.execute(this);
+            }
+        } else {
+            for (Action action : this.actions) {
+                action.execute(this);
+            }
         }
     }
 
@@ -674,12 +761,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return false;
     }
 
-    private void installMods(List<Mod> mods) {
-        for (Mod mod : mods) {
-            if (!isCancelled()) {
-                fireTask(App.settings.getLocalizedString("common.installing") + " " + mod.getName());
-                addPercent(mods.size() / 40);
-                mod.install(this);
+    private void installMods() {
+        if (this.jsonVersion != null) {
+            for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+                if (!isCancelled()) {
+                    fireTask(App.settings.getLocalizedString("common.installing") + " "
+                            + mod.getName());
+                    addPercent(this.selectedJsonMods.size() / 40);
+                    mod.install(this);
+                }
+            }
+        } else {
+            for (Mod mod : this.selectedMods) {
+                if (!isCancelled()) {
+                    fireTask(App.settings.getLocalizedString("common.installing") + " "
+                            + mod.getName());
+                    addPercent(this.selectedMods.size() / 40);
+                    mod.install(this);
+                }
             }
         }
     }
@@ -967,6 +1066,61 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
+    private void downloadJsonMods(List<com.atlauncher.data.json.Mod> mods) {
+        fireSubProgressUnknown();
+        ExecutorService executor;
+        List<Downloadable> downloads = getDownloadableJsonMods();
+        totalBytes = 0;
+        downloadedBytes = 0;
+
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        totalBytes += download.getFilesize();
+                    }
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        fireSubProgress(0); // Show the subprogress bar
+
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        download.download(true);
+                    }
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        fireSubProgress(-1); // Hide the subprogress bar
+
+        for (com.atlauncher.data.json.Mod mod : mods) {
+            if (!downloads.contains(mod) && !isCancelled()) {
+                fireTask(App.settings.getLocalizedString("common.downloading") + " "
+                        + (mod.isFilePattern() ? mod.getName() : mod.getFile()));
+                mod.download(this);
+                fireSubProgress(-1); // Hide the subprogress bar
+            }
+        }
+    }
+
     private void organiseLibraries() {
         fireTask(App.settings.getLocalizedString("instance.organisinglibraries"));
         fireSubProgressUnknown();
@@ -1041,18 +1195,36 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else {
             files = dir.listFiles();
         }
-        for (File file : files) {
-            if (file.isFile()
-                    && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file
-                            .getName().endsWith("litemod"))) {
-                if (this.caseAllFiles != null) {
-                    if (this.caseAllFiles.equalsIgnoreCase("upper")) {
+        if (this.jsonVersion != null) {
+            for (File file : files) {
+                if (file.isFile()
+                        && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file
+                                .getName().endsWith("litemod"))) {
+                    if (this.jsonVersion.getCaseAllFiles() == CaseType.upper) {
                         file.renameTo(new File(file.getParentFile(), file.getName()
                                 .substring(0, file.getName().lastIndexOf(".")).toUpperCase()
                                 + file.getName().substring(file.getName().lastIndexOf("."),
                                         file.getName().length())));
-                    } else if (this.caseAllFiles.equalsIgnoreCase("lower")) {
+                    } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                         file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
+                    }
+                }
+            }
+        } else {
+            for (File file : files) {
+                if (file.isFile()
+                        && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file
+                                .getName().endsWith("litemod"))) {
+                    if (this.caseAllFiles != null) {
+                        if (this.caseAllFiles.equalsIgnoreCase("upper")) {
+                            file.renameTo(new File(file.getParentFile(), file.getName()
+                                    .substring(0, file.getName().lastIndexOf(".")).toUpperCase()
+                                    + file.getName().substring(file.getName().lastIndexOf("."),
+                                            file.getName().length())));
+                        } else if (this.caseAllFiles.equalsIgnoreCase("lower")) {
+                            file.renameTo(new File(file.getParentFile(), file.getName()
+                                    .toLowerCase()));
+                        }
                     }
                 }
             }
@@ -1367,15 +1539,29 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public boolean hasJarMods() {
-        for (Mod mod : selectedMods) {
-            if (!mod.installOnServer() && isServer) {
-                continue;
-            }
-            if (mod.getType() == Type.jar) {
-                return true;
-            } else if (mod.getType() == Type.decomp) {
-                if (mod.getDecompType() == DecompType.jar) {
+        if (this.jsonVersion != null) {
+            for (com.atlauncher.data.json.Mod mod : selectedJsonMods) {
+                if (!mod.installOnServer() && this.isServer) {
+                    continue;
+                }
+                if (mod.getType() == com.atlauncher.data.json.ModType.jar) {
                     return true;
+                } else if (mod.getType() == com.atlauncher.data.json.ModType.decomp
+                        && mod.getDecompType() == com.atlauncher.data.json.DecompType.jar) {
+                    return true;
+                }
+            }
+        } else {
+            for (Mod mod : selectedMods) {
+                if (!mod.installOnServer() && isServer) {
+                    continue;
+                }
+                if (mod.getType() == Type.jar) {
+                    return true;
+                } else if (mod.getType() == Type.decomp) {
+                    if (mod.getDecompType() == DecompType.jar) {
+                        return true;
+                    }
                 }
             }
         }
@@ -1383,12 +1569,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public boolean hasForge() {
-        for (Mod mod : selectedMods) {
-            if (!mod.installOnServer() && isServer) {
-                continue;
+        if (this.jsonVersion != null) {
+            for (com.atlauncher.data.json.Mod mod : selectedJsonMods) {
+                if (!mod.installOnServer() && isServer) {
+                    continue;
+                }
+                if (mod.getType() == com.atlauncher.data.json.ModType.forge) {
+                    return true;
+                }
             }
-            if (mod.getType() == Type.forge) {
-                return true;
+        } else {
+            for (Mod mod : selectedMods) {
+                if (!mod.installOnServer() && isServer) {
+                    continue;
+                }
+                if (mod.getType() == Type.forge) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1682,6 +1879,83 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
         addPercent(5);
+        if (this.isServer && this.hasJarMods()) {
+            fireTask(App.settings.getLocalizedString("server.extractingjar"));
+            fireSubProgressUnknown();
+            Utils.unzip(getMinecraftJar(), getTempJarDirectory());
+        }
+        if (!this.isServer && this.hasJarMods() && !this.hasForge()) {
+            deleteMetaInf();
+        }
+        addPercent(5);
+        if (selectedJsonMods.size() != 0) {
+            addPercent(40);
+            fireTask(App.settings.getLocalizedString("instance.downloadingmods"));
+            downloadJsonMods(selectedJsonMods);
+            if (isCancelled()) {
+                return false;
+            }
+            addPercent(40);
+            installMods();
+        } else {
+            addPercent(80);
+        }
+        if (isCancelled()) {
+            return false;
+        }
+        if (this.jsonVersion.shouldCaseAllFiles()) {
+            doCaseConversions(getModsDirectory());
+        }
+        if (isServer && hasJarMods()) {
+            fireTask(App.settings.getLocalizedString("server.zippingjar"));
+            fireSubProgressUnknown();
+            Utils.zip(getTempJarDirectory(), getMinecraftJar());
+        }
+        if (extractedTexturePack) {
+            fireTask(App.settings.getLocalizedString("instance.zippingtexturepackfiles"));
+            fireSubProgressUnknown();
+            if (!getTexturePacksDirectory().exists()) {
+                getTexturePacksDirectory().mkdir();
+            }
+            Utils.zip(getTempTexturePackDirectory(), new File(getTexturePacksDirectory(),
+                    "TexturePack.zip"));
+        }
+        if (extractedResourcePack) {
+            fireTask(App.settings.getLocalizedString("instance.zippingresourcepackfiles"));
+            fireSubProgressUnknown();
+            if (!getResourcePacksDirectory().exists()) {
+                getResourcePacksDirectory().mkdir();
+            }
+            Utils.zip(getTempResourcePackDirectory(), new File(getResourcePacksDirectory(),
+                    "ResourcePack.zip"));
+        }
+        if (isCancelled()) {
+            return false;
+        }
+        if (hasActions()) {
+            doActions();
+        }
+        if (isCancelled()) {
+            return false;
+        }
+        if (!this.jsonVersion.hasNoConfigs()) {
+            configurePack();
+        }
+        // Copy over common configs if any
+        if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
+            Utils.copyDirectory(App.settings.getCommonConfigsDir(), getRootDirectory());
+        }
+        restoreSelectFiles();
+        if (isServer) {
+            File batFile = new File(getRootDirectory(), "LaunchServer.bat");
+            File shFile = new File(getRootDirectory(), "LaunchServer.sh");
+            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"),
+                    batFile, "%%SERVERJAR%%", getServerJar());
+            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.sh"), shFile,
+                    "%%SERVERJAR%%", getServerJar());
+            batFile.setExecutable(true);
+            shFile.setExecutable(true);
+        }
 
         return false;
     }
@@ -1833,7 +2107,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 return false;
             }
             addPercent(40);
-            installMods(selectedMods);
+            installMods();
         } else {
             addPercent(80);
         }
