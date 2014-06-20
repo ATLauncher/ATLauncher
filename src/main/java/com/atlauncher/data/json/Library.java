@@ -14,7 +14,7 @@ public class Library {
     private String file;
     private String server;
     private String md5;
-    private String download;
+    private DownloadType download;
     private String depends;
     private String dependsGroup;
 
@@ -30,11 +30,11 @@ public class Library {
         return this.server;
     }
 
-    public String getMd5() {
+    public String getMD5() {
         return this.md5;
     }
 
-    public String getDownload() {
+    public DownloadType getDownloadType() {
         return this.download;
     }
 
@@ -44,5 +44,17 @@ public class Library {
 
     public String getDependsGroup() {
         return this.dependsGroup;
+    }
+
+    public boolean hasDepends() {
+        return this.depends != null;
+    }
+
+    public boolean hasDependsGroup() {
+        return this.dependsGroup != null;
+    }
+
+    public boolean forServer() {
+        return this.server != null;
     }
 }

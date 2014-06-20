@@ -55,6 +55,7 @@ import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.Settings;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.json.CaseType;
+import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.mojang.AssetIndex;
 import com.atlauncher.data.mojang.AssetObject;
@@ -1110,89 +1111,144 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         ArrayList<Downloadable> libraries = new ArrayList<Downloadable>();
 
         // Now read in the library jars needed from the pack
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(pack.getXML(
-                    this.version.getVersion(), false)));
-            Document document = builder.parse(is);
-            document.getDocumentElement().normalize();
-            NodeList nodeList = document.getElementsByTagName("library");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    String url = element.getAttribute("url");
-                    String file = element.getAttribute("file");
-                    Download download = Download.direct;
-                    if (element.hasAttribute("download")) {
-                        download = Download.valueOf(element.getAttribute("download"));
-                    }
-                    String md5 = "-";
-                    if (element.hasAttribute("md5")) {
-                        md5 = element.getAttribute("md5");
-                    }
-                    if (element.hasAttribute("depends")) {
-                        boolean found = false;
-                        for (Mod mod : selectedMods) {
-                            if (element.getAttribute("depends").equalsIgnoreCase(mod.getName())) {
-                                found = true;
-                                break;
+        if (this.jsonVersion == null) {
+
+            try {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                InputSource is = new InputSource(new StringReader(pack.getXML(
+                        this.version.getVersion(), false)));
+                Document document = builder.parse(is);
+                document.getDocumentElement().normalize();
+                NodeList nodeList = document.getElementsByTagName("library");
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    Node node = nodeList.item(i);
+                    if (node.getNodeType() == Node.ELEMENT_NODE) {
+                        Element element = (Element) node;
+                        String url = element.getAttribute("url");
+                        String file = element.getAttribute("file");
+                        Download download = Download.direct;
+                        if (element.hasAttribute("download")) {
+                            download = Download.valueOf(element.getAttribute("download"));
+                        }
+                        String md5 = "-";
+                        if (element.hasAttribute("md5")) {
+                            md5 = element.getAttribute("md5");
+                        }
+                        if (element.hasAttribute("depends")) {
+                            boolean found = false;
+                            for (Mod mod : selectedMods) {
+                                if (element.getAttribute("depends").equalsIgnoreCase(mod.getName())) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) {
+                                continue;
+                            }
+                        } else if (element.hasAttribute("dependsgroup")) {
+                            boolean found = false;
+                            for (Mod mod : selectedMods) {
+                                if (element.getAttribute("dependsgroup").equalsIgnoreCase(
+                                        mod.getGroup())) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) {
+                                continue;
                             }
                         }
-                        if (!found) {
-                            continue;
+                        if (librariesNeeded == null) {
+                            this.librariesNeeded = file;
+                        } else {
+                            this.librariesNeeded += "," + file;
                         }
-                    } else if (element.hasAttribute("dependsgroup")) {
-                        boolean found = false;
-                        for (Mod mod : selectedMods) {
-                            if (element.getAttribute("dependsgroup").equalsIgnoreCase(
-                                    mod.getGroup())) {
-                                found = true;
-                                break;
+                        forgeLibraries.add(file);
+                        File downloadTo = null;
+                        if (isServer) {
+                            if (!element.hasAttribute("server")) {
+                                continue;
                             }
+                            serverLibraries.add(new File(new File(getLibrariesDirectory(), element
+                                    .getAttribute("server").substring(0,
+                                            element.getAttribute("server").lastIndexOf('/'))),
+                                    element.getAttribute("server").substring(
+                                            element.getAttribute("server").lastIndexOf('/'),
+                                            element.getAttribute("server").length())));
                         }
-                        if (!found) {
-                            continue;
+                        downloadTo = new File(App.settings.getLibrariesDir(), file);
+                        if (download == Download.server) {
+                            libraries.add(new Downloadable(App.settings.getFileURL(url),
+                                    downloadTo, md5, this, false));
+                        } else {
+                            libraries.add(new Downloadable(url, downloadTo, md5, this, false));
                         }
-                    }
-                    if (librariesNeeded == null) {
-                        this.librariesNeeded = file;
-                    } else {
-                        this.librariesNeeded += "," + file;
-                    }
-                    forgeLibraries.add(file);
-                    File downloadTo = null;
-                    if (isServer) {
-                        if (!element.hasAttribute("server")) {
-                            continue;
-                        }
-                        serverLibraries.add(new File(new File(getLibrariesDirectory(), element
-                                .getAttribute("server").substring(0,
-                                        element.getAttribute("server").lastIndexOf('/'))), element
-                                .getAttribute("server").substring(
-                                        element.getAttribute("server").lastIndexOf('/'),
-                                        element.getAttribute("server").length())));
-                    }
-                    downloadTo = new File(App.settings.getLibrariesDir(), file);
-                    if (download == Download.server) {
-                        libraries.add(new Downloadable(App.settings.getFileURL(url), downloadTo,
-                                md5, this, false));
-                    } else {
-                        libraries.add(new Downloadable(url, downloadTo, md5, this, false));
                     }
                 }
+            } catch (SAXException e) {
+                App.settings.logStackTrace(e);
+            } catch (ParserConfigurationException e) {
+                App.settings.logStackTrace(e);
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
             }
-        } catch (SAXException e) {
-            App.settings.logStackTrace(e);
-        } catch (ParserConfigurationException e) {
-            App.settings.logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
 
+        } else {
+            for (com.atlauncher.data.json.Library library : this.jsonVersion.getLibraries()) {
+                if (library.hasDepends()) {
+                    boolean found = false;
+                    for (com.atlauncher.data.json.Mod mod : selectedJsonMods) {
+                        if (library.getDepends().equalsIgnoreCase(mod.getName())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        continue;
+                    }
+                } else if (library.hasDependsGroup()) {
+                    boolean found = false;
+                    for (com.atlauncher.data.json.Mod mod : selectedJsonMods) {
+                        if (library.getDependsGroup().equalsIgnoreCase(mod.getGroup())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        continue;
+                    }
+                }
+                if (librariesNeeded == null) {
+                    this.librariesNeeded = library.getFile();
+                } else {
+                    this.librariesNeeded += "," + library.getFile();
+                }
+                forgeLibraries.add(library.getFile());
+                File downloadTo = null;
+                if (this.isServer) {
+                    if (!library.forServer()) {
+                        continue;
+                    }
+                    serverLibraries.add(new File(getLibrariesDirectory(), library.getServer()));
+                }
+                downloadTo = new File(App.settings.getLibrariesDir(), library.getFile());
+                if (library.getDownloadType() == DownloadType.server) {
+                    libraries.add(new Downloadable(App.settings.getFileURL(library.getUrl()),
+                            downloadTo, library.getMD5(), this, false));
+                } else if (library.getDownloadType() == DownloadType.direct) {
+                    libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(),
+                            this, false));
+                } else {
+                    LogManager.error("DownloadType for server library " + library.getFile()
+                            + " is invalid with a value of " + library.getDownloadType());
+                    this.cancel(true);
+                    return null;
+                }
+            }
+        }
         // Now read in the library jars needed from Mojang
-        if (!isServer) {
+        if (!this.isServer) {
             for (Library library : this.version.getMinecraftVersion().getMojangVersion()
                     .getLibraries()) {
                 if (library.shouldInstall()) {
@@ -1208,6 +1264,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         }
+
+        // Add Minecraft.jar
 
         if (isServer) {
             libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/"
@@ -1609,6 +1667,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 return false;
             }
         }
+        downloadLibraries(); // Download Libraries
+        if (isCancelled()) {
+            return false;
+        }
+        organiseLibraries(); // Organise the libraries
+        if (isCancelled()) {
+            return false;
+        }
+        if (this.isServer) {
+            for (File file : serverLibraries) {
+                file.mkdirs();
+                Utils.copyFile(new File(App.settings.getLibrariesDir(), file.getName()), file, true);
+            }
+        }
+        addPercent(5);
 
         return false;
     }
