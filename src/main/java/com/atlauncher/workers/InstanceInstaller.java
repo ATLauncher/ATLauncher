@@ -2191,7 +2191,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     @Override
     protected Boolean doInBackground() throws Exception {
         LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
-        if (this.version.hasJson()) {
+        if (this.version.hasJson() && App.experimentalJson) {
             LogManager.debug("Version " + version.getVersion() + " has JSON, using it!");
             try {
                 this.jsonVersion = Settings.gson.fromJson(this.pack.getJSON(version.getVersion()),

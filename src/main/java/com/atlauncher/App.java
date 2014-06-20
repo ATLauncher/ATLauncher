@@ -18,9 +18,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.rmi.Remote;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -53,6 +50,7 @@ public class App {
     public static TrayMenu TRAY_MENU = new TrayMenu();
 
     public static boolean wasUpdated = false;
+    public static boolean experimentalJson = false;
 
     public static Settings settings;
 
@@ -73,6 +71,9 @@ public class App {
                     autoLaunch = parts[1];
                 } else if (parts[0].equalsIgnoreCase("--updated")) {
                     wasUpdated = true;
+                } else if (parts[0].equalsIgnoreCase("--json")
+                        && parts[1].equalsIgnoreCase("experimental")) {
+                    experimentalJson = true;
                 }
             }
         }
@@ -126,6 +127,10 @@ public class App {
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
+        if (experimentalJson) {
+            LogManager
+                    .debug("Experimental JSON support enabled! Don't ask for support with this enabled!");
+        }
 
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
