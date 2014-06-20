@@ -12,11 +12,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.atlauncher.LogManager;
+import com.atlauncher.annot.Json;
 
 /**
  * This class contains information about a pack's version. This is a singular version and contains
  * all the information necessary to install the pack.
  */
+@Json
 public class Version {
     /**
      * The version this pack's version is.

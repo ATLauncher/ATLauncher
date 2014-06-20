@@ -9,6 +9,9 @@ package com.atlauncher.data.json;
 import java.awt.Color;
 import java.util.List;
 
+import com.atlauncher.annot.Json;
+
+@Json
 public class Mod {
     private String name;
     private String version;

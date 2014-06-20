@@ -6,6 +6,9 @@
  */
 package com.atlauncher.data.json;
 
+import com.atlauncher.annot.Json;
+
+@Json
 public class Library {
     private String url;
     private String file;

@@ -12,9 +12,11 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Json;
 import com.atlauncher.data.Pack;
 import com.atlauncher.utils.Utils;
 
+@Json
 public class Messages {
     private String install;
     private String update;

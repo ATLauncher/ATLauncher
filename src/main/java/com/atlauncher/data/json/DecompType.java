@@ -6,6 +6,9 @@
  */
 package com.atlauncher.data.json;
 
+import com.atlauncher.annot.Json;
+
+@Json
 public enum DecompType {
     jar, mods, coremods, root
 }

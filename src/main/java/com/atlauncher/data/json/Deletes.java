@@ -8,6 +8,9 @@ package com.atlauncher.data.json;
 
 import java.util.List;
 
+import com.atlauncher.annot.Json;
+
+@Json
 public class Deletes {
     private List<Delete> files;
     private List<Delete> folders;
