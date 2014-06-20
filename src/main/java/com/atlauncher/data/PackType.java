@@ -13,10 +13,7 @@ package com.atlauncher.data;
 import com.google.gson.annotations.SerializedName;
 
 public enum PackType {
-    @SerializedName("public")
-    PUBLIC,
-    @SerializedName("private")
-    PRIVATE,
-    @SerializedName("semipublic")
-    SEMIPUBLIC
+    @SerializedName("public") PUBLIC,
+    @SerializedName("private") PRIVATE,
+    @SerializedName("semipublic") SEMIPUBLIC
 }

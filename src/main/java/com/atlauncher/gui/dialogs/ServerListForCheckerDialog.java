@@ -30,7 +30,6 @@ import com.atlauncher.utils.Utils;
 
 public class ServerListForCheckerDialog extends JDialog implements ActionListener,
         ListSelectionListener {
-
     /**
      * Auto generate serial.
      */

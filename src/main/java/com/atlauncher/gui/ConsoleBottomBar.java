@@ -26,7 +26,6 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.BottomBar;
@@ -151,7 +150,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     }
 
     @Override
-    public void onRelocalization(RelocalizationEvent event) {
+    public void onRelocalization() {
         clear.setText(Language.INSTANCE.localize("console.clear"));
         copyLog.setText(Language.INSTANCE.localize("console.copy"));
         uploadLog.setText(Language.INSTANCE.localize("console.upload"));

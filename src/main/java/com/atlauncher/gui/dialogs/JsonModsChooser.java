@@ -32,7 +32,6 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class JsonModsChooser extends JDialog {
-
     private static final long serialVersionUID = -5309108183485463434L;
     private InstanceInstaller installer;
     private JButton selectAllButton;

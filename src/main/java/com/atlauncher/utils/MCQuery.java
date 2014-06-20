@@ -16,7 +16,6 @@ import de.zh32.pingtest.ServerListPing17.StatusResponse;
 import de.zh32.pingtest.ServerListPingB18;
 
 public class MCQuery {
-
     public static QueryVersion getMinecraftServerQueryVersion(String host, int port) {
         InetSocketAddress inetSocketAddress = new InetSocketAddress(host, port);
 

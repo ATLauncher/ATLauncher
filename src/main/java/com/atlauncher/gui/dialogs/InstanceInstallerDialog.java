@@ -38,7 +38,6 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class InstanceInstallerDialog extends JDialog {
-
     private static final long serialVersionUID = -6984886874482721558L;
     private boolean isReinstall = false;
     private boolean isServer = false;

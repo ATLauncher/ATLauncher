@@ -34,7 +34,6 @@ import com.atlauncher.gui.NothingToDisplay;
  * TODO: Rewrite this for better loading
  */
 public class InstancesTab extends JPanel implements Tab{
-
     private static final long serialVersionUID = -969812552965390610L;
     private JPanel topPanel;
     private JButton clearButton;

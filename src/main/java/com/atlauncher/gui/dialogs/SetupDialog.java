@@ -28,7 +28,6 @@ import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
 public class SetupDialog extends JDialog {
-
     /**
      * Auto generated serial.
      */

@@ -12,7 +12,6 @@ import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 
 public final class PasteUpload implements Callable<String> {
-
     @Override
     public String call() throws Exception {
         String log = App.settings.getLog().replace(System.getProperty("line.separator"), "\n");

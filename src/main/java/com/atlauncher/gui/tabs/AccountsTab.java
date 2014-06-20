@@ -39,7 +39,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 
 public class AccountsTab extends JPanel implements Tab {
-
     private static final long serialVersionUID = 2493791137600123223L;
     private JLabel userSkin;
     private JPanel rightPanel;

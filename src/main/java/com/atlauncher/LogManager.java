@@ -11,8 +11,7 @@ import com.atlauncher.utils.Utils;
 public final class LogManager {
     private static final BlockingQueue<LogEvent> queue = new ArrayBlockingQueue<LogEvent>(64);
 
-    private LogManager() {
-    }
+    private LogManager() {}
 
     public static void start() {
         new LoggingThread(queue).start();

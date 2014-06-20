@@ -29,7 +29,6 @@ import com.atlauncher.gui.dialogs.AddEditServerForCheckerDialog;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ServersForCheckerTab extends JPanel implements ActionListener {
-
     /**
      * Auto generated serial.
      */

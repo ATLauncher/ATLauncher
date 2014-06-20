@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
-import com.atlauncher.evnt.SettingsSavedEvent;
 import com.atlauncher.evnt.listener.SettingsListener;
 
 public final class SettingsManager {
@@ -19,12 +18,12 @@ public final class SettingsManager {
         listeners.remove(listener);
     }
 
-    public static synchronized void post(final SettingsSavedEvent event) {
+    public static synchronized void post() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 for (SettingsListener listener : listeners) {
-                    listener.onSettingsSaved(event);
+                    listener.onSettingsSaved();
                 }
             }
         });

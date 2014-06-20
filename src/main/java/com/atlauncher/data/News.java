@@ -10,9 +10,12 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.annot.Json;
+
 /**
  * News class contains a single news article.
  */
+@Json
 public class News {
     /**
      * The title of this news article.

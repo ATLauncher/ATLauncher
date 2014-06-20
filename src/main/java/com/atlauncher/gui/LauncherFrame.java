@@ -19,7 +19,6 @@ import javax.swing.WindowConstants;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.tabs.AccountsTab;
@@ -127,10 +126,9 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
     }
 
     @Override
-    public void onRelocalization(RelocalizationEvent event) {
+    public void onRelocalization() {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
     }
-
 }

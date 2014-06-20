@@ -16,8 +16,10 @@ import com.atlauncher.data.mojang.Version;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+/**
+ * TODO: Rewrite along with {@link com.atlauncher.data.Version} {@link com.atlauncher.data.LauncherVersion}
+ */
 public class MinecraftVersion {
-
     private String version;
     private boolean server;
     private boolean legacy;

@@ -33,14 +33,11 @@ import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
-// TODO: Auto-generated Javadoc
-
 /**
  * This class handles contains information about a single Instance in the Launcher. An Instance
  * being an installed version of a ModPack separate to others by file structure.
  */
 public class Instance implements Cloneable {
-
     /**
      * The name of the Instance.
      */
@@ -1140,7 +1137,7 @@ public class Instance implements Cloneable {
                             + account.getMinecraftUsername());
             dialog.addThread(new Thread() {
                 public void run() {
-                    dialog.setReturnValue(Authentication.login(account.getUsername(), pass));
+                    dialog.setReturnValue(Authentication.checkAccount(account.getUsername(), pass));
                     dialog.close();
                 }
             });

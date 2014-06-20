@@ -16,7 +16,6 @@ import com.google.gson.reflect.TypeToken;
 import de.zh32.pingtest.QueryVersion;
 
 public class MinecraftServer {
-
     /**
      * The Type used for JSON reading for a List of this type
      */
@@ -153,5 +152,4 @@ public class MinecraftServer {
         return String.format("%s (%s:%d) - %s", this.name, this.host, this.port,
                 this.getStatusLocalization());
     }
-
 }

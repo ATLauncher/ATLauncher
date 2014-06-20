@@ -81,15 +81,6 @@ import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 
 public class Utils {
-    public static String colorHex(Color c) {
-        if (c == null) {
-            System.out.println("Colour given to Utils.colorhex was null");
-            return "#000000";
-        }
-
-        return "#" + Integer.toHexString(c.getRGB() & 0xFFFFFF);
-    }
-
     public static String error(Throwable t) {
         StringBuilder builder = new StringBuilder();
 
@@ -242,43 +233,6 @@ public class Utils {
                 App.settings.logStackTrace(e);
             }
         }
-    }
-
-    /**
-     * Make font.
-     * 
-     * @param name
-     *            the name
-     * @return the font
-     */
-    public static Font makeFont(String name) {
-        Font font = null;
-        boolean found = false; // If the user has the font
-        GraphicsEnvironment g = null;
-        g = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        String[] fonts = g.getAvailableFontFamilyNames();
-        for (int i = 0; i < fonts.length; i++) {
-            if (fonts[i].equals(name)) {
-                found = true;
-            }
-        }
-        if (found) {
-            return new Font(name, Font.PLAIN, 0);
-        }
-        try {
-            URL url = System.class.getResource("/assets/font/" + name + ".ttf");
-            if (url == null) {
-                return new Font(Font.SANS_SERIF, Font.PLAIN, 0);
-            }
-            font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-        } catch (FontFormatException e) {
-            App.settings.logStackTrace(e);
-            return new Font(Font.SANS_SERIF, Font.PLAIN, 0);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-            return new Font(Font.SANS_SERIF, Font.PLAIN, 0);
-        }
-        return font;
     }
 
     /**
@@ -1143,8 +1097,7 @@ public class Utils {
      *             the exception
      */
     private static Key generateKey() throws Exception {
-        Key key = new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
-        return key;
+        return new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
     }
 
     /**
@@ -1182,27 +1135,6 @@ public class Utils {
         writer1.close();
         br.close();
         fs.close();
-    }
-
-    /**
-     * Upload log.
-     * 
-     * @return the string
-     */
-    public static String uploadLog() {
-        final ProgressDialog dialog = new ProgressDialog(
-                App.settings.getLocalizedString("console.uploadinglog"), 0,
-                App.settings.getLocalizedString("console.uploadinglog"), "Aborting log upload!");
-        dialog.addThread(new Thread() {
-            @Override
-            public void run() {
-                String result = Utils.uploadPaste("ATLauncher Log", App.settings.getLog());
-                dialog.setReturnValue(result);
-                dialog.close();
-            }
-        });
-        dialog.start();
-        return (String) dialog.getReturnValue();
     }
 
     /**
@@ -1710,19 +1642,6 @@ public class Utils {
         }
     }
 
-    public static Color getColourFromTheme(int[] colour) {
-        if (colour[0] < 0 || colour[0] > 255) {
-            colour[0] = 0; // Invalid colour
-        }
-        if (colour[1] < 0 || colour[1] > 255) {
-            colour[1] = 0; // Invalid colour
-        }
-        if (colour[2] < 0 || colour[2] > 255) {
-            colour[2] = 0; // Invalid colour
-        }
-        return new Color(colour[0], colour[1], colour[2]);
-    }
-
     public static boolean testProxy(Proxy proxy) {
         try {
             HttpURLConnection connection;
@@ -1826,7 +1745,7 @@ public class Utils {
 
     public static String traceRoute(String host) {
         String route = "";
-        StringBuilder response = new StringBuilder();
+        StringBuilder response;
         try {
             InetAddress address = InetAddress.getByName(host);
             Process traceRoute;

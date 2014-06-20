@@ -18,8 +18,6 @@ import javax.swing.JTabbedPane;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.RelocalizationEvent;
-import com.atlauncher.evnt.SettingsSavedEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.SettingsManager;
@@ -82,9 +80,9 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     loggingSettingsTab.save();
                     toolsSettingsTab.save();
                     App.settings.saveProperties();
-                    SettingsManager.post(new SettingsSavedEvent());
+                    SettingsManager.post();
                     if (reloadLocalizationTable) {
-                        RelocalizationManager.post(new RelocalizationEvent());
+                        RelocalizationManager.post();
                     }
                     if (reloadPacksPanel) {
                         App.settings.reloadPacksPanel();
@@ -104,7 +102,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     }
 
     @Override
-    public void onRelocalization(RelocalizationEvent event) {
+    public void onRelocalization() {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

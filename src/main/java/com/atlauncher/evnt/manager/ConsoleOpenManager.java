@@ -1,6 +1,5 @@
 package com.atlauncher.evnt.manager;
 
-import com.atlauncher.evnt.ConsoleOpenEvent;
 import com.atlauncher.evnt.listener.ConsoleOpenListener;
 
 import javax.swing.*;
@@ -18,12 +17,12 @@ public final class ConsoleOpenManager{
         listeners.remove(listener);
     }
 
-    public static synchronized void post(final ConsoleOpenEvent event){
+    public static synchronized void post(){
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 for(ConsoleOpenListener listener : listeners){
-                    listener.onConsoleOpen(event);
+                    listener.onConsoleOpen();
                 }
             }
         });

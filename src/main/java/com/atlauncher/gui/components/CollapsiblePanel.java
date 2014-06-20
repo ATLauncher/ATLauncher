@@ -43,7 +43,6 @@ import com.atlauncher.utils.Utils;
  * The user-triggered collapsible panel containing the component (trigger) in the titled border
  */
 public class CollapsiblePanel extends JPanel {
-
     public static final long serialVersionUID = -343234;
 
     CollapsibleTitledBorder border; // includes upper left component and line type

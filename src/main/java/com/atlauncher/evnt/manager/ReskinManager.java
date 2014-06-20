@@ -1,6 +1,5 @@
 package com.atlauncher.evnt.manager;
 
-import com.atlauncher.evnt.ReskinEvent;
 import com.atlauncher.evnt.listener.ReskinListener;
 
 import javax.swing.*;
@@ -15,12 +14,12 @@ public final class ReskinManager{
         listeners.add(listener);
     }
 
-    public static synchronized void post(final ReskinEvent event){
+    public static synchronized void post(){
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 for(ReskinListener listener : listeners){
-                    listener.onReskin(event);
+                    listener.onReskin();
                 }
             }
         });

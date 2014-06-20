@@ -24,7 +24,6 @@ import javax.swing.JTextArea;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -185,7 +184,7 @@ public class PackDisplay extends CollapsiblePanel implements RelocalizationListe
     }
 
     @Override
-    public void onRelocalization(RelocalizationEvent event) {
+    public void onRelocalization() {
         this.newInstance.setText(Language.INSTANCE.localize("common.newinstance"));
         this.support.setText(Language.INSTANCE.localize("common.support"));
         this.website.setText(Language.INSTANCE.localize("common.website"));

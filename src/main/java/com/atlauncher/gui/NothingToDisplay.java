@@ -28,7 +28,6 @@ import com.atlauncher.utils.Utils;
  * @author Ryan
  */
 public class NothingToDisplay extends JPanel {
-
     private JPanel leftPanel; // Left panel with image
     private JPanel rightPanel; // Right panel with error message
     private JSplitPane splitPane; // The split pane

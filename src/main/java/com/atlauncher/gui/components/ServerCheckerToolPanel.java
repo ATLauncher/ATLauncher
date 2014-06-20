@@ -14,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.evnt.SettingsSavedEvent;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
@@ -58,7 +57,7 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
     }
 
     @Override
-    public void onSettingsSaved(SettingsSavedEvent event) {
+    public void onSettingsSaved() {
         this.checkLaunchButtonEnabled();
     }
 }

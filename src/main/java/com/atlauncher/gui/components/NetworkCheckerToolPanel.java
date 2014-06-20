@@ -23,7 +23,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Server;
-import com.atlauncher.evnt.SettingsSavedEvent;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -180,7 +179,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     }
 
     @Override
-    public void onSettingsSaved(SettingsSavedEvent event) {
+    public void onSettingsSaved() {
         this.checkLaunchButtonEnabled();
     }
 }

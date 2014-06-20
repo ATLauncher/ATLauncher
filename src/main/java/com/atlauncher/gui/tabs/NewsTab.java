@@ -25,6 +25,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -38,7 +39,7 @@ public class NewsTab extends JPanel implements Tab{
 
     private final HTMLEditorKit NEWS_KIT = new HTMLEditorKit() {
         {
-            this.setStyleSheet(Utils.createStyleSheet("news"));
+            this.setStyleSheet(Resources.makeStyleSheet("news"));
         }
     };
 

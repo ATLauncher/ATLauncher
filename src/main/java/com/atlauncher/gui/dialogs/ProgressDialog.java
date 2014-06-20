@@ -21,11 +21,9 @@ import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Utils;
 
 public class ProgressDialog extends JDialog {
-
     private static final long serialVersionUID = -4665490255300884927L;
     private String labelText; // The text to add to the JLabel
     private JProgressBar progressBar; // The Progress Bar

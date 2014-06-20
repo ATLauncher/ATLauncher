@@ -24,7 +24,6 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public abstract class BottomBar extends JPanel {
-
     /**
      * Auto generated serial.
      */

@@ -1,6 +1,5 @@
 package com.atlauncher.evnt.manager;
 
-import com.atlauncher.evnt.ConsoleCloseEvent;
 import com.atlauncher.evnt.listener.ConsoleCloseListener;
 
 import javax.swing.*;
@@ -20,12 +19,12 @@ public final class ConsoleCloseManager{
         listeners.remove(listener);
     }
 
-    public static synchronized void post(final ConsoleCloseEvent event){
+    public static synchronized void post(){
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 for(ConsoleCloseListener listener : listeners){
-                    listener.onConsoleClose(event);
+                    listener.onConsoleClose();
                 }
             }
         });

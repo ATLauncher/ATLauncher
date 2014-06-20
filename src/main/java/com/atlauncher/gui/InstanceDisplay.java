@@ -36,7 +36,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
@@ -605,7 +604,7 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
     }
 
     @Override
-    public void onRelocalization(RelocalizationEvent event) {
+    public void onRelocalization() {
         this.play.setText(Language.INSTANCE.localize("common.play"));
         this.reinstall.setText(Language.INSTANCE.localize("common.reinstall"));
         this.rename.setText(Language.INSTANCE.localize("instance.rename"));

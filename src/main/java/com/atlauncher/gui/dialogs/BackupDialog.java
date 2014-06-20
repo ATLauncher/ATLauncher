@@ -24,7 +24,6 @@ import java.util.Map;
  * @author Kihira
  */
 public class BackupDialog extends JDialog implements ActionListener {
-
     private final Instance instance;
     private final JButton backupButton = new JButton(
             App.settings.getLocalizedString("common.backup"));

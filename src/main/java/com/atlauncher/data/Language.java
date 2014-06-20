@@ -64,7 +64,7 @@ public enum Language {
             if (props.containsKey(tag)) {
                 return props.getProperty(tag, tag);
             } else {
-                if (lang == "English") {
+                if (lang.equalsIgnoreCase("English")) {
                     return "Unknown language key " + tag;
                 } else {
                     return this.localize("English", tag);

@@ -26,11 +26,9 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.LogMessageType;
 import com.atlauncher.utils.Utils;
 
 public class RenameInstanceDialog extends JDialog {
-
     private JPanel top;
     private JPanel middle;
     private JPanel bottom;

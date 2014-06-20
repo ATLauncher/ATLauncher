@@ -9,14 +9,11 @@ package com.atlauncher.data.openmods;
 import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
-// TODO: Auto-generated Javadoc
-
 /**
  * The Class OpenEyeReportResponse contains information returned from OpenMods OpenEye system when a
  * pending crash report is reported through their API.
  */
 public class OpenEyeReportResponse {
-
     /**
      * The type of this response. Generally is only ever 'known crash'.
      */

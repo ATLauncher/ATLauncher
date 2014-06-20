@@ -6,6 +6,7 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
 
+import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
 
 public final class Theme {
@@ -90,11 +91,11 @@ public final class Theme {
             UIManager.put("Table.focusCellHighlightBorder",
                     BorderFactory.createEmptyBorder(2, 5, 2, 5));
             UIManager.put("defaultFont",
-                    Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
+                    Resources.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
             UIManager.put("Button.font",
-                    Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
+                    Resources.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
             UIManager.put("Toaster.font",
-                    Utils.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
+                    Resources.makeFont(this.defaultFont).deriveFont(Utils.getBaseFontSize()));
             UIManager.put("Toaster.bgColor", this.tabBackgroundColor);
             UIManager.put("Toaster.msgColor", this.consoleTextColor);
             UIManager.put("Toaster.borderColor", this.hoverBorderColor);
@@ -105,19 +106,19 @@ public final class Theme {
     }
 
     public Font getDefaultFont() {
-        return Utils.makeFont(this.defaultFont);
+        return Resources.makeFont(this.defaultFont);
     }
 
     public Font getConsoleFont() {
-        return Utils.makeFont(this.consoleFont);
+        return Resources.makeFont(this.consoleFont);
     }
 
     public Font getTabFont() {
-        return Utils.makeFont(this.tabFont);
+        return Resources.makeFont(this.tabFont);
     }
 
     public Font getButtonFont() {
-        return Utils.makeFont(this.buttonFont);
+        return Resources.makeFont(this.buttonFont);
     }
 
     public boolean tabsOnRight() {

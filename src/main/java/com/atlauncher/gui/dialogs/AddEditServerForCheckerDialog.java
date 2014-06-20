@@ -29,7 +29,6 @@ import com.atlauncher.utils.Utils;
 import de.zh32.pingtest.QueryVersion;
 
 public class AddEditServerForCheckerDialog extends JDialog implements ActionListener {
-
     /**
      * Auto generated serial.
      */

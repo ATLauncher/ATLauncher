@@ -35,7 +35,6 @@ import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
 
 public class EditModsDialog extends JDialog {
-
     private static final long serialVersionUID = 7004414192679481818L;
 
     private Instance instance; // The instance this is for

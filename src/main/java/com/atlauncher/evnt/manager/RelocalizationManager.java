@@ -1,8 +1,5 @@
 package com.atlauncher.evnt.manager;
 
-import com.atlauncher.evnt.ConsoleOpenEvent;
-import com.atlauncher.evnt.RelocalizationEvent;
-import com.atlauncher.evnt.listener.ConsoleOpenListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 
 import javax.swing.*;
@@ -20,12 +17,12 @@ public final class RelocalizationManager {
         listeners.remove(listener);
     }
 
-    public static synchronized void post(final RelocalizationEvent event){
+    public static synchronized void post(){
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 for (RelocalizationListener listener : listeners) {
-                    listener.onRelocalization(event);
+                    listener.onRelocalization();
                 }
             }
         });

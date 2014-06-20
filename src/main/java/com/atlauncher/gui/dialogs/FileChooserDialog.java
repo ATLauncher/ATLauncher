@@ -31,7 +31,6 @@ import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
 public class FileChooserDialog extends JDialog {
-
     private JPanel top;
     private JPanel middle;
     private JPanel bottom;

@@ -13,9 +13,7 @@ package com.atlauncher.exceptions;
  * @author Ryan
  */
 public class InvalidMinecraftVersion extends Exception {
-
     public InvalidMinecraftVersion(String message) {
         super(message);
     }
-
 }

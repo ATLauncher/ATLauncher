@@ -26,13 +26,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
-import com.atlauncher.evnt.ConsoleCloseEvent;
-import com.atlauncher.evnt.ConsoleOpenEvent;
-import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.listener.ConsoleCloseListener;
 import com.atlauncher.evnt.listener.ConsoleOpenListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -43,6 +39,10 @@ import com.atlauncher.gui.components.BottomBar;
 import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
+
+/**
+ * TODO: Rewrite with the other @link BottomBar classes
+ */
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar implements RelocalizationListener{
@@ -154,13 +154,13 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         });
         ConsoleCloseManager.addListener(new ConsoleCloseListener() {
             @Override
-            public void onConsoleClose(ConsoleCloseEvent event) {
+            public void onConsoleClose() {
                 toggleConsole.setText(Language.INSTANCE.localize("console.show"));
             }
         });
         ConsoleOpenManager.addListener(new ConsoleOpenListener(){
             @Override
-            public void onConsoleOpen(ConsoleOpenEvent event) {
+            public void onConsoleOpen() {
                 toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
             }
         });
@@ -254,7 +254,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     }
 
     @Override
-    public void onRelocalization(RelocalizationEvent event) {
+    public void onRelocalization() {
         if (App.settings.getConsole().isVisible()) {
             toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
         } else {

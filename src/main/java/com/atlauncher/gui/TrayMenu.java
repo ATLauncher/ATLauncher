@@ -20,9 +20,6 @@ import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.ConsoleCloseEvent;
-import com.atlauncher.evnt.ConsoleOpenEvent;
-import com.atlauncher.evnt.RelocalizationEvent;
 import com.atlauncher.evnt.listener.ConsoleCloseListener;
 import com.atlauncher.evnt.listener.ConsoleOpenListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -103,13 +100,13 @@ public final class TrayMenu extends PopupMenu implements RelocalizationListener 
 
         ConsoleCloseManager.addListener(new ConsoleCloseListener() {
             @Override
-            public void onConsoleClose(ConsoleCloseEvent event) {
+            public void onConsoleClose() {
                 TC_BUTTON.setLabel(Language.INSTANCE.localize("console.show"));
             }
         });
         ConsoleOpenManager.addListener(new ConsoleOpenListener() {
             @Override
-            public void onConsoleOpen(ConsoleOpenEvent event) {
+            public void onConsoleOpen() {
                 TC_BUTTON.setLabel(Language.INSTANCE.localize("console.hide"));
             }
         });
@@ -135,7 +132,7 @@ public final class TrayMenu extends PopupMenu implements RelocalizationListener 
     }
 
     @Override
-    public void onRelocalization(RelocalizationEvent event) {
+    public void onRelocalization() {
         this.KILLMC_BUTTON.setLabel(Language.INSTANCE.localize("console.kill"));
         this.QUIT_BUTTON.setLabel(Language.INSTANCE.localize("common.quit"));
         if (App.settings.getConsole().isVisible()) {
