@@ -28,6 +28,7 @@ Other than that, I am releasing this as an Open Source project in hopes that oth
 + Please keep all variables at the top of the class
 + Please keep all inner classes at the bottom
 + Please don't use star imports
++ Please mark all classes that are to be de/serialized with Gson with the @Json annotation for other developers
 
 ### Building
 
