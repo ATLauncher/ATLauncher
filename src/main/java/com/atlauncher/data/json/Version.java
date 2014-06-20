@@ -204,6 +204,9 @@ public class Version {
      *         with the value given
      */
     public Color getColour(String key) {
+        if (key == null) {
+            return null;
+        }
         if (!this.isColour(key)) {
             LogManager.warn("Colour with key " + key + " not found!");
             return null;
