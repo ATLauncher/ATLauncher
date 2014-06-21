@@ -1360,8 +1360,8 @@ public class Utils {
      * 
      * @return true if the user is using Java 7 or above else false
      */
-    public static boolean isJava7OrAbove() {
-        if (App.settings.isUsingCustomJavaPath()) {
+    public static boolean isJava7OrAbove(boolean checkCustomPath) {
+        if (App.settings.isUsingCustomJavaPath() && checkCustomPath) {
             File folder = new File(App.settings.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
             arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));

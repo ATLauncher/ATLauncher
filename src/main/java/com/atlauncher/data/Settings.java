@@ -61,9 +61,9 @@ import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.TrayMenu;
+import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
@@ -255,7 +255,7 @@ public class Settings {
                 System.exit(0);
             }
         }
-        if (!Utils.isJava7OrAbove() && !this.hideOldJavaWarning) {
+        if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
             String[] options = { App.settings.getLocalizedString("common.download"),
                     App.settings.getLocalizedString("common.ok"),
                     App.settings.getLocalizedString("instance.dontremindmeagain") };

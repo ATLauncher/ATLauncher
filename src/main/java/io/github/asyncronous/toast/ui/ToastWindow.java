@@ -3,13 +3,23 @@ package io.github.asyncronous.toast.ui;
 import io.github.asyncronous.toast.ToasterConstants;
 import io.github.asyncronous.toast.thread.ToastAnimator;
 
-import javax.swing.*;
-
-import com.atlauncher.utils.Utils;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JWindow;
+import javax.swing.UIManager;
+
+import com.atlauncher.utils.Utils;
 
 /**
  * Main Toaster Notification class
@@ -18,7 +28,7 @@ public final class ToastWindow extends JWindow {
     private final JLabel ICON = new JLabel();
     private final JTextArea MESSAGE = new JTextArea();
 
-    public ToastWindow(){
+    public ToastWindow() {
         this.MESSAGE.setFont((Font) UIManager.get(ToasterConstants.FONT));
         this.MESSAGE.setBackground((Color) UIManager.get(ToasterConstants.BG_COLOR));
         this.MESSAGE.setForeground((Color) UIManager.get(ToasterConstants.MSG_COLOR));
@@ -27,7 +37,7 @@ public final class ToastWindow extends JWindow {
         this.MESSAGE.setMargin(new Insets(2, 2, 2, 2));
         this.MESSAGE.setWrapStyleWord(true);
 
-        if(!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Utils.isJava7OrAbove()){
+        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Utils.isJava7OrAbove(false)) {
             this.setOpacity((Float) UIManager.get(ToasterConstants.OPACITY));
         }
 
@@ -58,44 +68,46 @@ public final class ToastWindow extends JWindow {
 
     /**
      * Sets the text of the message
-     *
-     * @param text The text you would like to pop
+     * 
+     * @param text
+     *            The text you would like to pop
      */
-    public void setText(String text){
+    public void setText(String text) {
         this.MESSAGE.setText(text);
     }
 
     /**
      * Gets the text of the message
-     *
+     * 
      * @return The text of the message
      */
-    public String getText(){
+    public String getText() {
         return this.MESSAGE.getText();
     }
 
     /**
      * Sets the icon of the message
-     *
-     * @param icon The icon you would like to pop
+     * 
+     * @param icon
+     *            The icon you would like to pop
      */
-    public void setIcon(Icon icon){
+    public void setIcon(Icon icon) {
         this.ICON.setIcon(icon);
     }
 
     /**
      * Gets the icon of the message
-     *
+     * 
      * @return The icon of the message
      */
-    public Icon getIcon(){
+    public Icon getIcon() {
         return this.ICON.getIcon();
     }
 
     /**
      * Called to pop the message
      */
-    public void pop(){
+    public void pop() {
         new ToastAnimator(this).execute();
     }
 }
