@@ -3,6 +3,7 @@ package com.atlauncher.rmi;
 import com.atlauncher.exceptions.ChunkyException;
 
 import java.lang.reflect.Constructor;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -38,6 +39,12 @@ public final class RMIRegistry{
             e.printStackTrace(System.err);
             return null;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Remote> T lookup(Registry r, String tag)
+    throws RemoteException, NotBoundException {
+        return (T) r.lookup(tag);
     }
 
     /**

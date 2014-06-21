@@ -6,6 +6,10 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.rmi.RMILauncherRelauncher;
+import com.atlauncher.rmi.RMILogPoster;
+import com.atlauncher.rmi.RMIMinecraftKiller;
+import com.atlauncher.rmi.RMIRegistry;
 import io.github.asyncronous.toast.Toaster;
 
 import java.awt.Image;
@@ -58,6 +62,9 @@ public class App {
 
     static {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
+        RMIRegistry.instance().register(RMILauncherRelauncher.class);
+        RMIRegistry.instance().register(RMILogPoster.class);
+        RMIRegistry.instance().register(RMIMinecraftKiller.class);
     }
 
     public static void main(String[] args) {
