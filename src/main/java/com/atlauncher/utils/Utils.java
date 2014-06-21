@@ -6,12 +6,9 @@
  */
 package com.atlauncher.utils;
 
-import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
@@ -67,6 +64,7 @@ import java.util.zip.ZipOutputStream;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.ImageIcon;
 import javax.swing.text.html.StyleSheet;
 
@@ -78,7 +76,6 @@ import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
-import com.atlauncher.gui.dialogs.ProgressDialog;
 
 public class Utils {
     public static String error(Throwable t) {
@@ -1193,7 +1190,7 @@ public class Utils {
         byte[] contents = Settings.gson.toJson(data).getBytes();
 
         URL url = new URL(Constants.API_BASE_URL + path);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
@@ -1231,7 +1228,7 @@ public class Utils {
         StringBuilder response = null;
 
         URL url = new URL(Constants.API_BASE_URL + path);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
