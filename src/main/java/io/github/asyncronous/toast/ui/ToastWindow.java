@@ -5,6 +5,8 @@ import io.github.asyncronous.toast.thread.ToastAnimator;
 
 import javax.swing.*;
 
+import com.atlauncher.utils.Utils;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -25,7 +27,7 @@ public final class ToastWindow extends JWindow {
         this.MESSAGE.setMargin(new Insets(2, 2, 2, 2));
         this.MESSAGE.setWrapStyleWord(true);
 
-        if(!((Boolean) UIManager.get(ToasterConstants.OPAQUE))){
+        if(!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Utils.isJava7OrAbove()){
             this.setOpacity((Float) UIManager.get(ToasterConstants.OPACITY));
         }
 
