@@ -30,7 +30,7 @@ public class Mod {
     private DownloadType download;
     private String website;
     private String donation;
-    private String authors;
+    private List<String> authors;
     private String sha1;
     private String colour;
     private Color compiledColour;
@@ -105,8 +105,16 @@ public class Mod {
         return this.donation;
     }
 
-    public String getAuthors() {
+    public List<String> getAuthors() {
         return this.authors;
+    }
+
+    public String getPrintableAuthors() {
+        StringBuilder sb = new StringBuilder();
+        for (String author : this.authors) {
+            sb.append(author + ", ");
+        }
+        return sb.toString();
     }
 
     public String getSha1() {
