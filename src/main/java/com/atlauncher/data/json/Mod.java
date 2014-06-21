@@ -39,23 +39,23 @@ public class Mod {
     private String extractFolder;
     private String decompFile;
     private DecompType decompType;
-    private boolean filePattern;
+    private boolean filePattern = false;
     private String filePreference;
     private String fileCheck;
-    private boolean client;
-    private boolean server;
-    private boolean serverSeparate;
+    private boolean client = true;
+    private boolean server = true;
+    private boolean serverSeparate = false;
     private String serverUrl;
     private String serverFile;
     private ModType serverType;
     private DownloadType serverDownload;
     private String serverMD5;
     private boolean serverOptional;
-    private boolean optional;
-    private boolean selected;
-    private boolean recommended;
-    private boolean hidden;
-    private boolean library;
+    private boolean optional = false;
+    private boolean selected = false;
+    private boolean recommended = true;
+    private boolean hidden = false;
+    private boolean library = false;
     private String group;
     private String linked;
     private List<String> depends;
@@ -206,6 +206,9 @@ public class Mod {
     }
 
     public boolean isServerOptional() {
+        if ((Object) this.serverOptional == null) {
+            return this.optional;
+        }
         return this.serverOptional;
     }
 
