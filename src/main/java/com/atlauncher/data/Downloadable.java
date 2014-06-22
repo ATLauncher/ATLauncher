@@ -46,7 +46,7 @@ public class Downloadable {
         }
         this.beforeURL = url;
         this.file = file;
-        this.hash = hash;
+        this.hash = hash + "3";
         this.size = size;
         this.instanceInstaller = instanceInstaller;
         this.isATLauncherDownload = isATLauncherDownload;
@@ -388,16 +388,20 @@ public class Downloadable {
                         this.url = App.settings.getFileURL(this.beforeURL);
                         download(downloadAsLibrary); // Redownload the file
                     } else {
-                        LogManager.error("Failed to download file " + this.file.getName()
-                                + " from all ATLauncher servers. Cancelling install!");
+                        Utils.copyFile(this.file, App.settings.getFailedDownloadsDir());
+                        LogManager
+                                .error("Failed to download file "
+                                        + this.file.getName()
+                                        + " from all ATLauncher servers. Copied to FailedDownloads Folder. Cancelling install!");
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);
                         }
                     }
                 } else {
+                    Utils.copyFile(this.file, App.settings.getFailedDownloadsDir());
                     LogManager.error("Error downloading " + this.file.getName() + " from "
                             + this.url + ". Expected hash of " + getHash() + " but got " + fileHash
-                            + " instead. Cancelling install!");
+                            + " instead. Copied to FailedDownloads Folder. Cancelling install!");
                     if (this.instanceInstaller != null) {
                         instanceInstaller.cancel(true);
                     }

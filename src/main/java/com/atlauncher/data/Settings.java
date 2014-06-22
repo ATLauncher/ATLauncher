@@ -138,7 +138,8 @@ public class Settings {
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir,
             skinsDir, jarsDir, commonConfigsDir, resourcesDir, librariesDir, languagesDir,
             downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir,
-            instancesDataFile, checkingServersFile, userDataFile, propertiesFile;
+            failedDownloadsDir, instancesDataFile, checkingServersFile, userDataFile,
+            propertiesFile;
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -203,6 +204,7 @@ public class Settings {
         instancesDir = new File(baseDir, "Instances");
         serversDir = new File(baseDir, "Servers");
         tempDir = new File(baseDir, "Temp");
+        failedDownloadsDir = new File(baseDir, "FailedDownloads");
         instancesDataFile = new File(configsDir, "instancesdata");
         checkingServersFile = new File(configsDir, "checkingservers.json");
         userDataFile = new File(configsDir, "userdata");
@@ -614,7 +616,7 @@ public class Settings {
     private void checkFolders() {
         File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir,
                 skinsDir, jarsDir, resourcesDir, librariesDir, languagesDir, downloadsDir,
-                instancesDir, serversDir, tempDir };
+                instancesDir, serversDir, tempDir, failedDownloadsDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -800,6 +802,10 @@ public class Settings {
      */
     public File getTempDir() {
         return this.tempDir;
+    }
+
+    public File getFailedDownloadsDir() {
+        return this.failedDownloadsDir;
     }
 
     /**
