@@ -529,10 +529,12 @@ public class Settings {
             while (!executor.isTerminated()) {
             }
         }
-        try {
-            Language.INSTANCE.reload(Language.INSTANCE.getCurrent());
-        } catch (IOException e) {
-            logStackTrace("Couldn't reload langauge " + Language.INSTANCE.getCurrent(), e);
+        if (Language.INSTANCE.getCurrent() != null) {
+            try {
+                Language.INSTANCE.reload(Language.INSTANCE.getCurrent());
+            } catch (IOException e) {
+                logStackTrace("Couldn't reload langauge " + Language.INSTANCE.getCurrent(), e);
+            }
         }
     }
 
