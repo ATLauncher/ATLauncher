@@ -46,7 +46,7 @@ public class Downloadable {
         }
         this.beforeURL = url;
         this.file = file;
-        this.hash = hash + "3";
+        this.hash = hash;
         this.size = size;
         this.instanceInstaller = instanceInstaller;
         this.isATLauncherDownload = isATLauncherDownload;
