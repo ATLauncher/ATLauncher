@@ -35,8 +35,15 @@ public enum Language {
     public synchronized void load(String lang) throws IOException {
         if (!this.langs.containsKey(lang)) {
             Properties props = new Properties();
-            props.load(new FileInputStream(new File(App.settings.getLanguagesDir(), lang
-                    .toLowerCase() + ".lang")));
+            File langFile = new File(App.settings.getLanguagesDir(), lang.toLowerCase() + ".lang");
+            if (!langFile.exists()) {
+                LogManager
+                        .error("Language file "
+                                + langFile.getName()
+                                + " doesn't exist! Ignore this if it's the first time starting up ATLauncher!");
+                return; // Silently exit if the file doesn't exist
+            }
+            props.load(new FileInputStream(langFile));
             this.langs.put(lang, props);
             LogManager.info("Loading Language: " + lang);
         }
