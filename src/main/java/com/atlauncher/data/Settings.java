@@ -414,6 +414,16 @@ public class Settings {
     }
 
     public boolean launcherHasUpdate() {
+        try {
+            this.latestLauncherVersion = gson.fromJson(new FileReader(new File(this.jsonDir,
+                    "version.json")), LauncherVersion.class);
+        } catch (JsonSyntaxException e) {
+            this.logStackTrace("Exception when loading latest launcher version!", e);
+        } catch (JsonIOException e) {
+            this.logStackTrace("Exception when loading latest launcher version!", e);
+        } catch (FileNotFoundException e) {
+            this.logStackTrace("Exception when loading latest launcher version!", e);
+        }
         if (this.latestLauncherVersion == null) {
             return false;
         }
@@ -581,16 +591,6 @@ public class Settings {
     }
 
     private void checkForLauncherUpdate() {
-        try {
-            this.latestLauncherVersion = gson.fromJson(new FileReader(new File(this.jsonDir,
-                    "version.json")), LauncherVersion.class);
-        } catch (JsonSyntaxException e) {
-            this.logStackTrace("Exception when loading latest launcher version!", e);
-        } catch (JsonIOException e) {
-            this.logStackTrace("Exception when loading latest launcher version!", e);
-        } catch (FileNotFoundException e) {
-            this.logStackTrace("Exception when loading latest launcher version!", e);
-        }
         if (launcherHasUpdate()) {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher

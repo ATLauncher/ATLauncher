@@ -6,10 +6,6 @@
  */
 package com.atlauncher;
 
-import com.atlauncher.rmi.RMILauncherRelauncher;
-import com.atlauncher.rmi.RMILogPoster;
-import com.atlauncher.rmi.RMIMinecraftKiller;
-import com.atlauncher.rmi.RMIRegistry;
 import io.github.asyncronous.toast.Toaster;
 
 import java.awt.Image;
@@ -42,6 +38,10 @@ import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.rmi.RMILauncherRelauncher;
+import com.atlauncher.rmi.RMILogPoster;
+import com.atlauncher.rmi.RMIMinecraftKiller;
+import com.atlauncher.rmi.RMIRegistry;
 import com.atlauncher.utils.Utils;
 
 public class App {
@@ -134,6 +134,7 @@ public class App {
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
+
         if (experimentalJson) {
             LogManager
                     .debug("Experimental JSON support enabled! Don't ask for support with this enabled!");

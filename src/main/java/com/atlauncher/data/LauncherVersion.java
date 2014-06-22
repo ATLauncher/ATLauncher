@@ -6,6 +6,9 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.annot.Json;
+
+@Json
 public class LauncherVersion {
     private int reserved;
     private int major;
