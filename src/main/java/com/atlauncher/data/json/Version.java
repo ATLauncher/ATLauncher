@@ -8,6 +8,7 @@ package com.atlauncher.data.json;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +57,7 @@ public class Version {
     private MainClass mainClass;
 
     /**
-     * Details about any extra arguments this version uses when launching Minecradr, usually
+     * Details about any extra arguments this version uses when launching Minecraft, usually
      * including the tweakClass for Forge.
      */
     private ExtraArguments extraArguments;
@@ -91,6 +92,17 @@ public class Version {
      * A list of actions to perform on this version.
      */
     private List<Action> actions;
+
+    /**
+     * Sets the default empty objects which are later overwritten by GSON if they exist. If they
+     * don't exist, having these here will ensure no NPE's.
+     */
+    public Version() {
+        this.libraries = new ArrayList<Library>();
+        this.colours = new HashMap<String, String>();
+        this.mods = new ArrayList<Mod>();
+        this.actions = new ArrayList<Action>();
+    }
 
     /**
      * Gets the version string of this version.
@@ -139,8 +151,16 @@ public class Version {
         return this.mainClass;
     }
 
+    public boolean hasMainClass() {
+        return this.mainClass != null && this.mainClass.getMainClass() != null;
+    }
+
     public ExtraArguments getExtraArguments() {
         return this.extraArguments;
+    }
+
+    public boolean hasExtraArguments() {
+        return this.extraArguments != null && this.extraArguments.getArguments() != null;
     }
 
     public Deletes getDeletes() {

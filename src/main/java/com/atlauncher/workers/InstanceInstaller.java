@@ -2247,35 +2247,37 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void setJsonMainClass() {
-        if (!this.jsonVersion.getMainClass().hasDepends()
-                && !this.jsonVersion.getMainClass().hasDependsGroup()) {
-            this.mainClass = this.jsonVersion.getMainClass().getMainClass();
-        } else if (this.jsonVersion.getMainClass().hasDepends()) {
-            String depends = this.jsonVersion.getMainClass().getDepends();
-            boolean found = false;
-            for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
-                if (mod.getName().equals(depends)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (found) {
+        if (this.jsonVersion.hasMainClass()) {
+            if (!this.jsonVersion.getMainClass().hasDepends()
+                    && !this.jsonVersion.getMainClass().hasDependsGroup()) {
                 this.mainClass = this.jsonVersion.getMainClass().getMainClass();
-            }
-        } else if (this.jsonVersion.getMainClass().hasDependsGroup()) {
-            String depends = this.jsonVersion.getMainClass().getDependsGroup();
-            boolean found = false;
-            for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
-                if (!mod.hasGroup()) {
-                    continue; // No group, continue
+            } else if (this.jsonVersion.getMainClass().hasDepends()) {
+                String depends = this.jsonVersion.getMainClass().getDepends();
+                boolean found = false;
+                for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+                    if (mod.getName().equals(depends)) {
+                        found = true;
+                        break;
+                    }
                 }
-                if (mod.getGroup().equals(depends)) {
-                    found = true;
-                    break;
+                if (found) {
+                    this.mainClass = this.jsonVersion.getMainClass().getMainClass();
                 }
-            }
-            if (found) {
-                this.mainClass = this.jsonVersion.getMainClass().getMainClass();
+            } else if (this.jsonVersion.getMainClass().hasDependsGroup()) {
+                String depends = this.jsonVersion.getMainClass().getDependsGroup();
+                boolean found = false;
+                for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+                    if (!mod.hasGroup()) {
+                        continue; // No group, continue
+                    }
+                    if (mod.getGroup().equals(depends)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    this.mainClass = this.jsonVersion.getMainClass().getMainClass();
+                }
             }
         }
         if (this.mainClass == null) {
@@ -2315,35 +2317,37 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void setJsonExtraArguments() {
-        if (!this.jsonVersion.getExtraArguments().hasDepends()
-                && !this.jsonVersion.getExtraArguments().hasDependsGroup()) {
-            this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
-        } else if (this.jsonVersion.getExtraArguments().hasDepends()) {
-            String depends = this.jsonVersion.getExtraArguments().getDepends();
-            boolean found = false;
-            for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
-                if (mod.getName().equals(depends)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (found) {
+        if (this.jsonVersion.hasExtraArguments()) {
+            if (!this.jsonVersion.getExtraArguments().hasDepends()
+                    && !this.jsonVersion.getExtraArguments().hasDependsGroup()) {
                 this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
-            }
-        } else if (this.jsonVersion.getMainClass().hasDependsGroup()) {
-            String depends = this.jsonVersion.getMainClass().getDependsGroup();
-            boolean found = false;
-            for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
-                if (!mod.hasGroup()) {
-                    continue; // No group, continue
+            } else if (this.jsonVersion.getExtraArguments().hasDepends()) {
+                String depends = this.jsonVersion.getExtraArguments().getDepends();
+                boolean found = false;
+                for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+                    if (mod.getName().equals(depends)) {
+                        found = true;
+                        break;
+                    }
                 }
-                if (mod.getGroup().equals(depends)) {
-                    found = true;
-                    break;
+                if (found) {
+                    this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
                 }
-            }
-            if (found) {
-                this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
+            } else if (this.jsonVersion.getMainClass().hasDependsGroup()) {
+                String depends = this.jsonVersion.getMainClass().getDependsGroup();
+                boolean found = false;
+                for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
+                    if (!mod.hasGroup()) {
+                        continue; // No group, continue
+                    }
+                    if (mod.getGroup().equals(depends)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
+                }
             }
         }
     }
