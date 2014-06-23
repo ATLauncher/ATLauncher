@@ -47,6 +47,7 @@ public final class LogEvent {
 
     public LogEvent(LogType type, String body, int meta) {
         this.type = type;
+        body = body.replace(App.settings.getBaseDir().getAbsolutePath(), "**USERSDIR**");
         this.body = (!body.endsWith(System.getProperty("line.separator")) ? body
                 + System.getProperty("line.separator") : body);
         this.meta = meta;
