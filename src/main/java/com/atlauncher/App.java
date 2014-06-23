@@ -38,10 +38,6 @@ import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
-import com.atlauncher.rmi.RMILauncherRelauncher;
-import com.atlauncher.rmi.RMILogPoster;
-import com.atlauncher.rmi.RMIMinecraftKiller;
-import com.atlauncher.rmi.RMIRegistry;
 import com.atlauncher.utils.Utils;
 
 public class App {
@@ -62,9 +58,10 @@ public class App {
 
     static {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
-        RMIRegistry.instance().register(RMILauncherRelauncher.class);
-        RMIRegistry.instance().register(RMILogPoster.class);
-        RMIRegistry.instance().register(RMIMinecraftKiller.class);
+        // Removed due to port binding issues causing non loading clients
+        // RMIRegistry.instance().register(RMILauncherRelauncher.class);
+        // RMIRegistry.instance().register(RMILogPoster.class);
+        // RMIRegistry.instance().register(RMIMinecraftKiller.class);
     }
 
     public static void main(String[] args) {
