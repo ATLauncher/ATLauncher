@@ -76,12 +76,20 @@ public class APIResponse {
     }
 
     /**
-     * Gets the data returned by the API as an Integer. If the data is not able to be parsed as an
-     * Integer, -1 is returned.
+     * Gets the data returned by the API as an Integer.
      * 
-     * @return the Integer of the message/response or -1 if it couldn't be converted
+     * @return the Integer representation of the data
      */
     public int getDataAsInt() {
         return (Integer) this.data;
+    }
+
+    /**
+     * Gets the data returned by the API as a String.
+     * 
+     * @return the String representation of the data
+     */
+    public String getDataAsString() {
+        return (String) this.data;
     }
 }

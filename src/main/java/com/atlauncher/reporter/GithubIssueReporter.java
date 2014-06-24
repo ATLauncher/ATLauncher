@@ -26,9 +26,8 @@ public final class GithubIssueReporter {
                 APIResponse response = Settings.gson.fromJson(
                         Utils.sendAPICall("githubissue/", request), APIResponse.class);
                 if (!response.wasError() && response.getDataAsInt() != 0) {
-                    LogManager
-                            .info("Exception reported to GitHub. Track/comment on the issue at http://www.github.com/ATLauncher/ATLauncher/issues/"
-                                    + response.getDataAsInt());
+                    LogManager.info("Exception reported to GitHub. Track/comment on the issue at "
+                            + response.getDataAsString());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
