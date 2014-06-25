@@ -12,7 +12,7 @@ package com.atlauncher.data.mojang;
 
 import java.util.List;
 
-public class Version {
+public class MojangVersion {
 
     private String id;
     private String minecraftArguments;

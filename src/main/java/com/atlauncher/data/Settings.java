@@ -33,9 +33,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -128,7 +131,7 @@ public class Settings {
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<News> news; // News
-    private List<MinecraftVersion> minecraftVersions; // Minecraft versions
+    private Map<String, MinecraftVersion> minecraftVersions; // Minecraft versions
     private List<Pack> packs; // Packs in the Launcher
     private List<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
     private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
@@ -1344,11 +1347,13 @@ public class Settings {
      * Loads info about the different Minecraft versions
      */
     private void loadMinecraftVersions() {
+        this.minecraftVersions = new HashMap<String, MinecraftVersion>();
+        List<MinecraftVersion> list = new ArrayList<MinecraftVersion>();
         try {
             java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
             }.getType();
-            this.minecraftVersions = gson.fromJson(new FileReader(new File(getJSONDir(),
-                    "minecraftversions.json")), type);
+            list = gson.fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")),
+                    type);
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
@@ -1356,13 +1361,20 @@ public class Settings {
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         }
+        if (list == null) {
+            LogManager.error("Error loading Minecraft Versions. List was null. Exiting!");
+            System.exit(1); // Cannot recover from this so exit
+        }
+        for (MinecraftVersion mv : list) {
+            this.minecraftVersions.put(mv.getVersion(), mv);
+        }
         LogManager.info("[Background] Checking Minecraft Versions Started");
         ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
-        for (final MinecraftVersion mv : this.minecraftVersions) {
+        for (final Entry<String, MinecraftVersion> entry : this.minecraftVersions.entrySet()) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    mv.loadVersion();
+                    entry.getValue().loadVersion();
                 }
             });
         }
@@ -1494,17 +1506,31 @@ public class Settings {
     public void saveInstances() {
         for (Instance instance : this.instances) {
             File instanceFile = new File(instance.getRootDirectory(), "instance.json");
+            FileWriter fw = null;
+            BufferedWriter bw = null;
             try {
                 if (!instanceFile.exists()) {
                     instanceFile.createNewFile();
                 }
 
-                FileWriter fw = new FileWriter(instanceFile);
-                BufferedWriter bw = new BufferedWriter(fw);
+                fw = new FileWriter(instanceFile);
+                bw = new BufferedWriter(fw);
                 bw.write(Settings.gson.toJson(instance));
-                bw.close();
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
+            } finally {
+                try {
+                    if (bw != null) {
+                        bw.close();
+                    }
+                    if (fw != null) {
+                        fw.close();
+                    }
+                } catch (IOException e) {
+                    logStackTrace(
+                            "Exception while trying to close FileWriter/BufferedWriter for saving instances json file.",
+                            e);
+                }
             }
         }
     }
@@ -1514,24 +1540,36 @@ public class Settings {
      */
     private void loadAccounts() {
         if (userDataFile.exists()) {
+            FileInputStream in = null;
+            ObjectInputStream objIn = null;
             try {
-                FileInputStream in = new FileInputStream(userDataFile);
-                ObjectInputStream objIn = new ObjectInputStream(in);
-                try {
-                    Object obj;
-                    while ((obj = objIn.readObject()) != null) {
-                        if (obj instanceof Account) {
-                            accounts.add((Account) obj);
-                        }
+                in = new FileInputStream(userDataFile);
+                objIn = new ObjectInputStream(in);
+                Object obj;
+                while ((obj = objIn.readObject()) != null) {
+                    if (obj instanceof Account) {
+                        accounts.add((Account) obj);
                     }
-                } catch (EOFException e) {
-                    // Don't log this, it always happens when it gets to the end of the file
-                } finally {
-                    objIn.close();
-                    in.close();
                 }
-            } catch (Exception e) {
-                logStackTrace(e);
+            } catch (EOFException e) {
+                // Don't log this, it always happens when it gets to the end of the file
+            } catch (IOException e) {
+                logStackTrace("Exception while trying to read accounts in from file.", e);
+            } catch (ClassNotFoundException e) {
+                logStackTrace("Exception while trying to read accounts in from file.", e);
+            } finally {
+                try {
+                    if (objIn != null) {
+                        objIn.close();
+                    }
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException e) {
+                    logStackTrace(
+                            "Exception while trying to close FileInputStream/ObjectInputStream when reading in accounts.",
+                            e);
+                }
             }
         }
     }
@@ -1549,10 +1587,16 @@ public class Settings {
             logStackTrace(e);
         } finally {
             try {
-                objOut.close();
-                out.close();
+                if (objOut != null) {
+                    objOut.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
             } catch (IOException e) {
-                logStackTrace(e);
+                logStackTrace(
+                        "Exception while trying to close FileOutputStream/ObjectOutputStream when saving accounts.",
+                        e);
             }
         }
     }
@@ -1586,24 +1630,40 @@ public class Settings {
                 try {
                     fileReader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logStackTrace(
+                            "Exception while trying to close FileReader when loading servers for server checker tool.",
+                            e);
                 }
             }
         }
     }
 
     public void saveCheckingServers() {
+        FileWriter fw = null;
+        BufferedWriter bw = null;
         try {
             if (!checkingServersFile.exists()) {
                 checkingServersFile.createNewFile();
             }
 
-            FileWriter fw = new FileWriter(checkingServersFile);
-            BufferedWriter bw = new BufferedWriter(fw);
+            fw = new FileWriter(checkingServersFile);
+            bw = new BufferedWriter(fw);
             bw.write(Settings.gson.toJson(this.checkingServers));
-            bw.close();
         } catch (IOException e) {
             App.settings.logStackTrace(e);
+        } finally {
+            try {
+                if (bw != null) {
+                    bw.close();
+                }
+                if (fw != null) {
+                    fw.close();
+                }
+            } catch (IOException e) {
+                logStackTrace(
+                        "Exception while trying to close FileWriter/BufferedWriter when saving servers for server checker tool.",
+                        e);
+            }
         }
     }
 
@@ -1733,19 +1793,22 @@ public class Settings {
     }
 
     public void setInstanceUnplayable(Instance instance) {
-        instance.setUnplayable(); // Set the instance as unplayable
-        saveInstances(); // Save the instancesdata file
-        reloadInstancesPanel(); // Reload the instances tab
+        instance.setUnplayable();
+        saveInstances();
+        reloadInstancesPanel();
     }
 
     /**
      * Removes an instance from the Launcher
+     * 
+     * @param instance
+     *            The Instance to remove from the launcher.
      */
     public void removeInstance(Instance instance) {
-        if (this.instances.remove(instance)) { // Remove the instance
+        if (this.instances.remove(instance)) {
             Utils.delete(instance.getRootDirectory());
-            saveInstances(); // Save the instancesdata file
-            reloadInstancesPanel(); // Reload the instances panel
+            saveInstances();
+            reloadInstancesPanel();
         }
     }
 
@@ -1759,10 +1822,8 @@ public class Settings {
     }
 
     public MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
-        for (MinecraftVersion minecraftVersion : minecraftVersions) {
-            if (minecraftVersion.getVersion().equalsIgnoreCase(version)) {
-                return minecraftVersion;
-            }
+        if (this.minecraftVersions.containsKey(version)) {
+            return this.minecraftVersions.get(version);
         }
         throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
     }

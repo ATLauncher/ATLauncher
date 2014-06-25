@@ -13,8 +13,10 @@ package com.atlauncher.data;
 import java.util.List;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Json;
 import com.atlauncher.exceptions.InvalidPack;
 
+@Json
 public class PackUsers {
     private int pack;
     private List<String> testers;

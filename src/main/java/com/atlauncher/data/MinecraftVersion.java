@@ -11,21 +11,24 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Json;
 import com.atlauncher.data.mojang.MojangConstants;
-import com.atlauncher.data.mojang.Version;
+import com.atlauncher.data.mojang.MojangVersion;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 /**
- * TODO: Rewrite along with {@link com.atlauncher.data.Version} {@link com.atlauncher.data.LauncherVersion}
+ * TODO: Rewrite along with {@link com.atlauncher.data.Version}
+ * {@link com.atlauncher.data.LauncherVersion}
  */
+@Json
 public class MinecraftVersion {
     private String version;
     private boolean server;
     private boolean legacy;
     private boolean coremods;
     private boolean resources;
-    private Version mojangVersion;
+    private MojangVersion mojangVersion;
 
     public void loadVersion() {
         File versionFile = new File(App.settings.getVersionsDir(), this.version + ".json");
@@ -35,7 +38,7 @@ public class MinecraftVersion {
             download.download(false);
         }
         try {
-            mojangVersion = Settings.altGson.fromJson(new FileReader(versionFile), Version.class);
+            mojangVersion = Settings.altGson.fromJson(new FileReader(versionFile), MojangVersion.class);
         } catch (JsonSyntaxException e) {
             App.settings.logStackTrace(e);
         } catch (JsonIOException e) {
@@ -53,7 +56,7 @@ public class MinecraftVersion {
         return this.version;
     }
 
-    public Version getMojangVersion() {
+    public MojangVersion getMojangVersion() {
         return this.mojangVersion;
     }
 
