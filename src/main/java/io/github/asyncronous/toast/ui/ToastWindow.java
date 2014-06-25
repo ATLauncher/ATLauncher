@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsDevice.WindowTranslucency;
+import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -37,7 +39,10 @@ public final class ToastWindow extends JWindow {
         this.MESSAGE.setMargin(new Insets(2, 2, 2, 2));
         this.MESSAGE.setWrapStyleWord(true);
 
-        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Utils.isJava7OrAbove(false)) {
+        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE))
+                && Utils.isJava7OrAbove(false)
+                && GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+                        .isWindowTranslucencySupported(WindowTranslucency.TRANSLUCENT)) {
             this.setOpacity((Float) UIManager.get(ToasterConstants.OPACITY));
         }
 
