@@ -40,6 +40,9 @@ public class PackVersion {
     }
 
     public MinecraftVersion getMinecraftVersion() {
+        if (this.minecraftVersion == null) {
+            this.setMinecraftVesion();
+        }
         return this.minecraftVersion;
     }
 
@@ -60,7 +63,7 @@ public class PackVersion {
     }
 
     public String toString() {
-        return this.version + " (Minecraft " + this.minecraftVersion.getVersion() + ")";
+        return this.version + " (Minecraft " + this.getMinecraftVersion().getVersion() + ")";
     }
 
     public boolean versionMatches(String version) {

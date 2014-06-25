@@ -1392,9 +1392,6 @@ public class Settings {
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         }
-        for (Pack pack : this.packs) {
-            pack.processVersions();
-        }
     }
 
     /**

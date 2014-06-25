@@ -181,6 +181,7 @@ public class App {
             }
         }
 
+        System.out.println(System.getProperty("_JAVA_OPTIONS"));
         TRAY_MENU.localize();
         integrate();
         new LauncherFrame(open); // Open the Launcher
