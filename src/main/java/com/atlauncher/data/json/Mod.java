@@ -50,7 +50,7 @@ public class Mod {
     private ModType serverType;
     private DownloadType serverDownload;
     private String serverMD5;
-    private boolean serverOptional;
+    private Boolean serverOptional;
     private boolean optional = false;
     private boolean selected = false;
     private boolean recommended = true;
@@ -206,10 +206,7 @@ public class Mod {
     }
 
     public boolean isServerOptional() {
-        if ((Object) this.serverOptional == null) {
-            return this.optional;
-        }
-        return this.serverOptional;
+        return (this.serverOptional == null ? this.optional : this.serverOptional);
     }
 
     public boolean isOptional() {
