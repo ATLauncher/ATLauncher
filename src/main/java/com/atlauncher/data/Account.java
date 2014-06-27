@@ -24,9 +24,11 @@ import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -52,6 +54,16 @@ public class Account implements Serializable {
      * The encrypted password.
      */
     private String encryptedPassword;
+
+    /**
+     * The client token.
+     */
+    private String clientToken;
+
+    /**
+     * The access token.
+     */
+    private String accessToken;
 
     /**
      * The account's Minecraft username.
@@ -393,9 +405,67 @@ public class Account implements Serializable {
         }
     }
 
+    public String getAccessToken() {
+        return this.accessToken;
+    }
+
+    public boolean hasAccessToken() {
+        return this.accessToken != null;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public boolean isAccessTokenValid() {
+        LogManager.info("Checking Access Token!");
+        final ProgressDialog dialog = new ProgressDialog(
+                App.settings.getLocalizedString("account.loggingin"), 0,
+                App.settings.getLocalizedString("account.loggingin"), "Aborting login for "
+                        + this.getMinecraftUsername());
+        dialog.addThread(new Thread() {
+            public void run() {
+                dialog.setReturnValue(Authentication.checkAccessToken(accessToken));
+                dialog.close();
+            }
+        });
+        dialog.start();
+        if ((Boolean) dialog.getReturnValue() == null) {
+            return false;
+        }
+        return (Boolean) dialog.getReturnValue();
+    }
+
+    public AuthenticationResponse refreshToken() {
+        LogManager.info("Refreshing Access Token!");
+        final ProgressDialog dialog = new ProgressDialog(
+                App.settings.getLocalizedString("account.loggingin"), 0,
+                App.settings.getLocalizedString("account.loggingin"), "Aborting login for "
+                        + this.getMinecraftUsername());
+        dialog.addThread(new Thread() {
+            public void run() {
+                dialog.setReturnValue(Authentication.refreshAccessToken(Account.this));
+                dialog.close();
+            }
+        });
+        dialog.start();
+        return (AuthenticationResponse) dialog.getReturnValue();
+    }
+
+    public String getClientToken() {
+        return this.clientToken;
+    }
+
+    public boolean hasClientToken() {
+        return this.clientToken != null;
+    }
+
+    public void setClientToken(String clientToken) {
+        this.clientToken = clientToken;
+    }
+
     @Override
     public String toString() {
         return this.minecraftUsername;
     }
-
 }
