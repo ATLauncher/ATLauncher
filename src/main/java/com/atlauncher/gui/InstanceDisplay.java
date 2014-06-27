@@ -441,9 +441,6 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                 new EditModsDialog(instance);
             }
         });
-        if (!instance.hasInstalledMods()) {
-            editMods.setVisible(false);
-        }
 
         // Open Folder Button
 
