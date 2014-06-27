@@ -1282,10 +1282,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public ArrayList<Downloadable> getLibraries() {
         ArrayList<Downloadable> libraries = new ArrayList<Downloadable>();
+        List<String> libraryNamesAdded = new ArrayList<String>();
 
         // Now read in the library jars needed from the pack
         if (this.jsonVersion == null) {
-
             try {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
@@ -1357,6 +1357,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         } else {
                             libraries.add(new Downloadable(url, downloadTo, md5, this, false));
                         }
+                        libraryNamesAdded.add(file.substring(0, file.lastIndexOf("-")));
                     }
                 }
             } catch (SAXException e) {
@@ -1366,7 +1367,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
             }
-
         } else {
             for (com.atlauncher.data.json.Library library : this.jsonVersion.getLibraries()) {
                 if (library.hasDepends()) {
@@ -1418,6 +1418,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     this.cancel(true);
                     return null;
                 }
+                libraryNamesAdded.add(library.getFile().substring(0,
+                        library.getFile().lastIndexOf("-")));
             }
         }
         // Now read in the library jars needed from Mojang
@@ -1425,6 +1427,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             for (Library library : this.version.getMinecraftVersion().getMojangVersion()
                     .getLibraries()) {
                 if (library.shouldInstall()) {
+                    if (libraryNamesAdded.contains(library.getFile().getName()
+                            .substring(0, library.getFile().getName().lastIndexOf("-")))) {
+                        LogManager.debug("Not adding library " + library.getName()
+                                + " as it's been overwritten already by the packs libraries!");
+                        continue;
+                    }
                     if (!library.shouldExtract()) {
                         if (librariesNeeded == null) {
                             this.librariesNeeded = library.getFile().getName();
