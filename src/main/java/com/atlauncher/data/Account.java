@@ -420,9 +420,9 @@ public class Account implements Serializable {
     public boolean isAccessTokenValid() {
         LogManager.info("Checking Access Token!");
         final ProgressDialog dialog = new ProgressDialog(
-                App.settings.getLocalizedString("account.loggingin"), 0,
-                App.settings.getLocalizedString("account.loggingin"), "Aborting login for "
-                        + this.getMinecraftUsername());
+                App.settings.getLocalizedString("account.checkingtoken"), 0,
+                App.settings.getLocalizedString("account.checkingtoken"),
+                "Aborting access token check for " + this.getMinecraftUsername());
         dialog.addThread(new Thread() {
             public void run() {
                 dialog.setReturnValue(Authentication.checkAccessToken(accessToken));
@@ -439,9 +439,9 @@ public class Account implements Serializable {
     public AuthenticationResponse refreshToken() {
         LogManager.info("Refreshing Access Token!");
         final ProgressDialog dialog = new ProgressDialog(
-                App.settings.getLocalizedString("account.loggingin"), 0,
-                App.settings.getLocalizedString("account.loggingin"), "Aborting login for "
-                        + this.getMinecraftUsername());
+                App.settings.getLocalizedString("account.refreshingtoken"), 0,
+                App.settings.getLocalizedString("account.refreshingtoken"),
+                "Aborting token refresh for " + this.getMinecraftUsername());
         dialog.addThread(new Thread() {
             public void run() {
                 dialog.setReturnValue(Authentication.refreshAccessToken(Account.this));
