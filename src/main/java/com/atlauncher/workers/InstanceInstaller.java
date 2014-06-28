@@ -1123,6 +1123,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void organiseLibraries() {
+        List<String> libraryNamesAdded = new ArrayList<String>();
         fireTask(App.settings.getLocalizedString("instance.organisinglibraries"));
         fireSubProgressUnknown();
         if (!isServer) {
@@ -1136,10 +1137,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     this.cancel(true);
                     return;
                 }
+                libraryNamesAdded.add(library.getName().substring(0,
+                        library.getName().lastIndexOf("-")));
             }
             for (Library library : this.version.getMinecraftVersion().getMojangVersion()
                     .getLibraries()) {
                 if (library.shouldInstall()) {
+                    if (libraryNamesAdded.contains(library.getFile().getName()
+                            .substring(0, library.getFile().getName().lastIndexOf("-")))) {
+                        continue;
+                    }
                     if (library.getFile().exists()) {
                         if (library.shouldExtract()) {
                             Utils.unzip(library.getFile(), getNativesDirectory(),
