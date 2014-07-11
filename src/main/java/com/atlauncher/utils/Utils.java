@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -31,6 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
@@ -49,12 +51,15 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Pack200;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -67,6 +72,8 @@ import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.ImageIcon;
 import javax.swing.text.html.StyleSheet;
+
+import org.tukaani.xz.XZInputStream;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
@@ -1854,5 +1861,113 @@ public class Utils {
         }
 
         return new Object[] { type, message };
+    }
+
+    public static byte[] readFile(File file) {
+        byte[] bytes = null;
+        RandomAccessFile f = null;
+        try {
+            f = new RandomAccessFile(file, "r");
+            bytes = new byte[(int) f.length()];
+            f.read(bytes);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        } finally {
+            if (f != null) {
+                try {
+                    f.close();
+                } catch (IOException e) {
+                    App.settings.logStackTrace(e);
+                }
+            }
+        }
+        return bytes;
+    }
+
+    public static void unXZPackFile(File xzFile, File packFile, File outputFile) {
+        unXZFile(xzFile, packFile);
+        unpackFile(packFile, outputFile);
+    }
+
+    public static void unXZFile(File input, File output) {
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        BufferedInputStream bis = null;
+        XZInputStream xzis = null;
+        try {
+            fis = new FileInputStream(input);
+            xzis = new XZInputStream(fis);
+            fos = new FileOutputStream(output);
+
+            final byte[] buffer = new byte[8192];
+            int n = 0;
+            while (-1 != (n = xzis.read(buffer))) {
+                fos.write(buffer, 0, n);
+            }
+
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+                if (bis != null) {
+                    bis.close();
+                }
+                if (fos != null) {
+                    fos.close();
+                }
+                if (xzis != null) {
+                    xzis.close();
+                }
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+            }
+        }
+    }
+
+    /*
+     * From: http://atl.pw/1
+     */
+    public static void unpackFile(File input, File output) {
+        if (output.exists()) {
+            Utils.delete(output);
+        }
+
+        byte[] decompressed = readFile(input);
+
+        if (decompressed == null) {
+            LogManager.error("unpackFile: While reading in " + input.getName()
+                    + " the file returned null");
+            return;
+        }
+
+        String end = new String(decompressed, decompressed.length - 4, 4);
+        if (!end.equals("SIGN")) {
+            LogManager.error("unpackFile: Unpacking failed, signature missing " + end);
+            return;
+        }
+
+        int x = decompressed.length;
+        int len = ((decompressed[x - 8] & 0xFF)) | ((decompressed[x - 7] & 0xFF) << 8)
+                | ((decompressed[x - 6] & 0xFF) << 16) | ((decompressed[x - 5] & 0xFF) << 24);
+        byte[] checksums = Arrays.copyOfRange(decompressed, decompressed.length - len - 8,
+                decompressed.length - 8);
+        try {
+            FileOutputStream jarBytes = new FileOutputStream(output);
+            JarOutputStream jos = new JarOutputStream(jarBytes);
+
+            Pack200.newUnpacker().unpack(new ByteArrayInputStream(decompressed), jos);
+
+            jos.putNextEntry(new JarEntry("checksums.sha1"));
+            jos.write(checksums);
+            jos.closeEntry();
+
+            jos.close();
+            jarBytes.close();
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
     }
 }
