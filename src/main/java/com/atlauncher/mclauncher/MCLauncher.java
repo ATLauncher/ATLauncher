@@ -78,16 +78,17 @@ public class MCLauncher {
         }
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
-        arguments.add("-Xms256M");
 
-        if (App.settings.getMemory() < instance.getMemory()) {
+        arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
+
+        if (App.settings.getMaximumMemory() < instance.getMemory()) {
             if ((Utils.getMaximumRam() / 2) < instance.getMemory()) {
-                arguments.add("-Xmx" + App.settings.getMemory() + "M");
+                arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
             } else {
                 arguments.add("-Xmx" + instance.getMemory() + "M");
             }
         } else {
-            arguments.add("-Xmx" + App.settings.getMemory() + "M");
+            arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
         }
         if (App.settings.getPermGen() < instance.getPermGen()
                 && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {

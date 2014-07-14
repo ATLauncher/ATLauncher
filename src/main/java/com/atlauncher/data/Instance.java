@@ -1068,7 +1068,7 @@ public class Instance implements Cloneable {
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
-            if ((App.settings.getMemory() < this.memory)
+            if ((App.settings.getMaximumMemory() < this.memory)
                     && (this.memory <= Utils.getSafeMaximumRam())) {
                 String[] options = { App.settings.getLocalizedString("common.yes"),
                         App.settings.getLocalizedString("common.no") };

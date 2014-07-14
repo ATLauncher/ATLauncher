@@ -86,7 +86,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        themeLabelRestart = new JLabelWithHover(RESTART_ICON,
+        themeLabelRestart = new JLabelWithHover(ERROR_ICON,
                 App.settings.getLocalizedString("settings.requiresrestart"), RESTART_BORDER);
 
         themeLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.theme") + ":",

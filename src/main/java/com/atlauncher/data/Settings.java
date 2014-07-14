@@ -88,7 +88,8 @@ public class Settings {
     // Users Settings
     private Server server; // Server to use for the Launcher
     private String forgeLoggingLevel; // Logging level to use when running Minecraft with Forge
-    private int ram; // RAM to use when launching Minecraft
+    private int initialMemory; // Initial RAM to use when launching Minecraft
+    private int maximumMemory; // Maximum RAM to use when launching Minecraft
     private int permGen; // PermGenSize to use when launching Minecraft in MB
     private int windowWidth; // Width of the Minecraft window
     private int windowHeight; // Height of the Minecraft window
@@ -1015,23 +1016,43 @@ public class Settings {
             if (Utils.is64Bit()) {
                 int halfRam = (Utils.getMaximumRam() / 1000) * 512;
                 int defaultRam = (halfRam >= 4096 ? 4096 : halfRam); // Default ram
-                this.ram = Integer.parseInt(properties.getProperty("ram", defaultRam + ""));
-                if (this.ram > Utils.getMaximumRam()) {
-                    LogManager.warn("Tried to allocate " + this.ram + "MB of Ram but only "
-                            + Utils.getMaximumRam() + "MB is available to use!");
-                    this.ram = defaultRam; // User tried to allocate too much ram, set it back to
+                this.maximumMemory = Integer.parseInt(properties
+                        .getProperty("ram", defaultRam + ""));
+                if (this.maximumMemory > Utils.getMaximumRam()) {
+                    LogManager.warn("Tried to allocate " + this.maximumMemory
+                            + "MB of Ram but only " + Utils.getMaximumRam()
+                            + "MB is available to use!");
+                    this.maximumMemory = defaultRam; // User tried to allocate too much ram, set it
+                                                     // back to
                     // half, capped at 4GB
                 }
             } else {
-                this.ram = Integer.parseInt(properties.getProperty("ram", "1024"));
-                if (this.ram > Utils.getMaximumRam()) {
-                    LogManager.warn("Tried to allocate " + this.ram + "MB of Ram but only "
-                            + Utils.getMaximumRam() + "MB is available to use!");
-                    this.ram = 1024; // User tried to allocate too much ram, set it back to 1GB
+                this.maximumMemory = Integer.parseInt(properties.getProperty("ram", "1024"));
+                if (this.maximumMemory > Utils.getMaximumRam()) {
+                    LogManager.warn("Tried to allocate " + this.maximumMemory
+                            + "MB of Maximum Ram but only " + Utils.getMaximumRam()
+                            + "MB is available to use!");
+                    this.maximumMemory = 1024; // User tried to allocate too much ram, set it back
+                                               // to 1GB
                 }
             }
 
-            // Default PermGen to 256 for 64 bit systems and 64 for 32 bit systems
+            this.initialMemory = Integer.parseInt(properties.getProperty("initialmemory", "256"));
+            if (this.initialMemory > Utils.getMaximumRam()) {
+                LogManager.warn("Tried to allocate " + this.initialMemory
+                        + "MB of Initial Ram but only " + Utils.getMaximumRam()
+                        + "MB is available to use!");
+                this.initialMemory = 256; // User tried to allocate too much ram, set it back to
+                                          // 256MB
+            } else if (this.initialMemory > this.maximumMemory) {
+                LogManager.warn("Tried to allocate " + this.initialMemory
+                        + "MB of Initial Ram but maximum ram is " + this.maximumMemory
+                        + "MB which is less!");
+                this.initialMemory = 256; // User tried to allocate too much ram, set it back to
+                                          // 256MB
+            }
+
+            // Default PermGen to 256 for 64 bit systems and 128 for 32 bit systems
             this.permGen = Integer.parseInt(properties.getProperty("permGen",
                     (Utils.is64Bit() ? "256" : "128")));
 
@@ -1196,7 +1217,7 @@ public class Settings {
             properties.setProperty("language", Language.INSTANCE.getCurrent());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
-            properties.setProperty("ram", this.ram + "");
+            properties.setProperty("ram", this.maximumMemory + "");
             properties.setProperty("permGen", this.permGen + "");
             properties.setProperty("windowwidth", this.windowWidth + "");
             properties.setProperty("windowheight", this.windowHeight + "");
@@ -2419,12 +2440,20 @@ public class Settings {
         this.originalServer = server;
     }
 
-    public int getMemory() {
-        return this.ram;
+    public int getInitialMemory() {
+        return this.initialMemory;
     }
 
-    public void setMemory(int memory) {
-        this.ram = memory;
+    public void setInitialMemory(int memory) {
+        this.initialMemory = memory;
+    }
+
+    public int getMaximumMemory() {
+        return this.maximumMemory;
+    }
+
+    public void setMaximumMemory(int memory) {
+        this.maximumMemory = memory;
     }
 
     public int getPermGen() {

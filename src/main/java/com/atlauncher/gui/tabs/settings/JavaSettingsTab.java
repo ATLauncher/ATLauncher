@@ -30,8 +30,11 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class JavaSettingsTab extends AbstractSettingsTab {
-    private JLabelWithHover memoryLabel;
-    private JComboBox<String> memory;
+    private JLabelWithHover initialMemoryLabel;
+    private JComboBox<String> initialMemory;
+
+    private JLabelWithHover maximumMemoryLabel;
+    private JComboBox<String> maximumMemory;
 
     private JLabelWithHover permGenLabel;
     private JTextField permGen;
@@ -58,36 +61,64 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover saveCustomModsLabel;
     private JCheckBox saveCustomMods;
 
+    private final String[] MEMORY_OPTIONS = Utils.getMemoryOptions();
+
     public JavaSettingsTab() {
-        // Memory Settings
+        // Initial Memory Settings
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        memoryLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.memory") + ":",
-                HELP_ICON,
-                (Utils.is64Bit() ? App.settings.getLocalizedString("settings.memoryhelp")
-                        : "<html>"
-                                + App.settings.getLocalizedString("settings.memoryhelp32bit",
-                                        "<br/>") + "</html>"));
-        add(memoryLabel, gbc);
+        initialMemoryLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.initialmemory") + ":", HELP_ICON,
+                App.settings.getLocalizedString("settings.initialmemoryhelp"));
+        add(initialMemoryLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        memory = new JComboBox<String>();
-        String[] memoryOptions = Utils.getMemoryOptions();
-        for (int i = 0; i < memoryOptions.length; i++) {
-            memory.addItem(memoryOptions[i]);
+        initialMemory = new JComboBox<String>();
+        for (String option : MEMORY_OPTIONS) {
+            initialMemory.addItem(option);
         }
-        memory.setSelectedItem(App.settings.getMemory() + " MB");
-        memory.addItemListener(new ItemListener() {
+        initialMemory.setSelectedItem(App.settings.getInitialMemory() + " MB");
+        initialMemory.addItemListener(new ItemListener() {
 
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    int selectedRam = Integer.parseInt(((String) memory.getSelectedItem()).replace(
-                            " MB", ""));
+                    int selectedRam = Integer.parseInt(((String) initialMemory.getSelectedItem())
+                            .replace(" MB", ""));
+                }
+            }
+        });
+        add(initialMemory, gbc);
+
+        // Maximum Memory Settings
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        maximumMemoryLabel = new JLabelWithHover(
+                App.settings.getLocalizedString("settings.maximummemory") + ":", HELP_ICON,
+                App.settings.getLocalizedString("settings.maximummemoryhelp"));
+        add(maximumMemoryLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        maximumMemory = new JComboBox<String>();
+        for (String option : MEMORY_OPTIONS) {
+            maximumMemory.addItem(option);
+        }
+        maximumMemory.setSelectedItem(App.settings.getMaximumMemory() + " MB");
+        maximumMemory.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    int selectedRam = Integer.parseInt(((String) maximumMemory.getSelectedItem())
+                            .replace(" MB", ""));
                     if (selectedRam > 4096) {
                         JOptionPane.showMessageDialog(
                                 App.settings.getParent(),
@@ -101,7 +132,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 }
             }
         });
-        add(memory, gbc);
+        add(maximumMemory, gbc);
 
         // Perm Gen Settings
         gbc.gridx = 0;
@@ -301,8 +332,10 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     }
 
     public void save() {
-        App.settings.setMemory(Integer.parseInt(((String) memory.getSelectedItem()).replace(" MB",
-                "")));
+        App.settings.setInitialMemory(Integer.parseInt(((String) maximumMemory.getSelectedItem())
+                .replace(" MB", "")));
+        App.settings.setMaximumMemory(Integer.parseInt(((String) initialMemory.getSelectedItem())
+                .replace(" MB", "")));
         App.settings.setPermGen(Integer.parseInt(permGen.getText().replaceAll("[^0-9]", "")));
         App.settings
                 .setWindowWidth(Integer.parseInt(widthField.getText().replaceAll("[^0-9]", "")));
