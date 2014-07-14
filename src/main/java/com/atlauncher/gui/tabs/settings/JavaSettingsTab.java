@@ -32,9 +32,13 @@ import com.atlauncher.utils.Utils;
 public class JavaSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover initialMemoryLabel;
     private JComboBox<String> initialMemory;
+    private JLabelWithHover initialMemoryLabelWarning;
+    private JPanel initialMemoryPanel;
 
     private JLabelWithHover maximumMemoryLabel;
     private JComboBox<String> maximumMemory;
+    private JLabelWithHover maximumMemoryLabelWarning;
+    private JPanel maximumMemoryPanel;
 
     private JLabelWithHover permGenLabel;
     private JTextField permGen;
@@ -69,10 +73,20 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
+                App.settings.getLocalizedString("settings.32bitmemorywarning"), RESTART_BORDER);
+
         initialMemoryLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.initialmemory") + ":", HELP_ICON,
                 App.settings.getLocalizedString("settings.initialmemoryhelp"));
-        add(initialMemoryLabel, gbc);
+
+        initialMemoryPanel = new JPanel();
+        initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        initialMemoryPanel.add(initialMemoryLabelWarning);
+        initialMemoryPanel.add(initialMemoryLabel);
+
+        add(initialMemoryPanel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
@@ -99,10 +113,20 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        maximumMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
+                App.settings.getLocalizedString("settings.32bitmemorywarning"), RESTART_BORDER);
+
         maximumMemoryLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.maximummemory") + ":", HELP_ICON,
                 App.settings.getLocalizedString("settings.maximummemoryhelp"));
-        add(maximumMemoryLabel, gbc);
+
+        maximumMemoryPanel = new JPanel();
+        maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        maximumMemoryPanel.add(maximumMemoryLabelWarning);
+        maximumMemoryPanel.add(maximumMemoryLabel);
+
+        add(maximumMemoryPanel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
