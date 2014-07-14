@@ -75,11 +75,17 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
-                App.settings.getLocalizedString("settings.32bitmemorywarning"), RESTART_BORDER);
+                "<html>"
+                        + Utils.splitMultilinedString(
+                                App.settings.getLocalizedString("settings.32bitmemorywarning"), 80,
+                                "<br/>") + "</html>", RESTART_BORDER);
 
         initialMemoryLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.initialmemory") + ":", HELP_ICON,
-                App.settings.getLocalizedString("settings.initialmemoryhelp"));
+                "<html>"
+                        + Utils.splitMultilinedString(
+                                App.settings.getLocalizedString("settings.initialmemoryhelp"), 80,
+                                "<br/>") + "</html>");
 
         initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -92,6 +98,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         initialMemory = new JComboBox<String>();
+        initialMemory.addItem("64 MB");
+        initialMemory.addItem("128 MB");
+        initialMemory.addItem("256 MB");
         for (String option : MEMORY_OPTIONS) {
             initialMemory.addItem(option);
         }
@@ -115,11 +124,17 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         maximumMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
-                App.settings.getLocalizedString("settings.32bitmemorywarning"), RESTART_BORDER);
+                "<html>"
+                        + Utils.splitMultilinedString(
+                                App.settings.getLocalizedString("settings.32bitmemorywarning"), 80,
+                                "<br/>") + "</html>", RESTART_BORDER);
 
         maximumMemoryLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.maximummemory") + ":", HELP_ICON,
-                App.settings.getLocalizedString("settings.maximummemoryhelp"));
+                "<html>"
+                        + Utils.splitMultilinedString(
+                                App.settings.getLocalizedString("settings.maximummemoryhelp"), 80,
+                                "<br/>") + "</html>");
 
         maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -356,9 +371,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     }
 
     public void save() {
-        App.settings.setInitialMemory(Integer.parseInt(((String) maximumMemory.getSelectedItem())
+        App.settings.setInitialMemory(Integer.parseInt(((String) initialMemory.getSelectedItem())
                 .replace(" MB", "")));
-        App.settings.setMaximumMemory(Integer.parseInt(((String) initialMemory.getSelectedItem())
+        App.settings.setMaximumMemory(Integer.parseInt(((String) maximumMemory.getSelectedItem())
                 .replace(" MB", "")));
         App.settings.setPermGen(Integer.parseInt(permGen.getText().replaceAll("[^0-9]", "")));
         App.settings
