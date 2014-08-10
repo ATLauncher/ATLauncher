@@ -107,7 +107,6 @@ public class MCLauncher {
 
         arguments.add("-Duser.language=en");
         arguments.add("-Duser.country=US");
-        arguments.add("-Dfml.ignorePatchDiscrepancies=true");
         arguments.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
 
         arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
