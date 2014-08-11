@@ -28,12 +28,16 @@ public class MCLauncher {
     public static Process launch(Account account, Instance instance, AuthenticationResponse response)
             throws IOException {
         StringBuilder cpb = new StringBuilder("");
+        boolean hasCustomJarMods = false;
 
         File jarMods = instance.getJarModsDirectory();
         if (jarMods.exists() && (instance.hasJarMods() || jarMods.listFiles().length != 0)) {
             if (instance.hasJarMods()) {
                 ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance
                         .getJarOrder().split(",")));
+                if (jarmods.size() > 1) {
+                    hasCustomJarMods = true;
+                }
                 for (String mod : jarmods) {
                     File thisFile = new File(jarMods, mod);
                     if (thisFile.exists()) {
@@ -45,11 +49,13 @@ public class MCLauncher {
                     if (jarmods.contains(file.getName())) {
                         continue;
                     }
+                    hasCustomJarMods = true;
                     cpb.append(File.pathSeparator);
                     cpb.append(file);
                 }
             } else {
                 for (File file : jarMods.listFiles()) {
+                    hasCustomJarMods = true;
                     cpb.append(File.pathSeparator);
                     cpb.append(file);
                 }
@@ -107,8 +113,13 @@ public class MCLauncher {
 
         arguments.add("-Duser.language=en");
         arguments.add("-Duser.country=US");
-        arguments.add("-Dfml.ignorePatchDiscrepancies=true");
-        arguments.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
+
+        if (hasCustomJarMods) {
+            System.out.println("OH NOES! Avert your eyes!");
+            arguments.add("-Dfml.ignorePatchDiscrepancies=true");
+            arguments.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
+            System.out.println("Okay you can look again, you saw NOTHING!");
+        }
 
         arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
 

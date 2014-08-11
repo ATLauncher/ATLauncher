@@ -75,7 +75,11 @@ public class Mod {
     }
 
     public String getUrl() {
-        return this.url;
+        return this.url.replace("&amp;", "&").replace(" ", "%20");
+    }
+
+    public String getRawFile() {
+        return this.file;
     }
 
     public String getFile() {
@@ -359,7 +363,7 @@ public class Mod {
                     int retValue = 1;
                     do {
                         if (retValue == 1) {
-                            Utils.openBrowser(this.url);
+                            Utils.openBrowser(this.getUrl());
                         }
                         String[] options = new String[] {
                                 App.settings.getLocalizedString("common.openfolder"),
@@ -447,7 +451,7 @@ public class Mod {
                 }
                 break;
             case direct:
-                Downloadable download1 = new Downloadable(this.url, fileLocation, this.md5,
+                Downloadable download1 = new Downloadable(this.getUrl(), fileLocation, this.md5,
                         installer, false);
                 if (download1.needToDownload()) {
                     installer.resetDownloadedBytes(download1.getFilesize());
@@ -455,7 +459,7 @@ public class Mod {
                 }
                 break;
             case server:
-                Downloadable download2 = new Downloadable(this.url, fileLocation, this.md5,
+                Downloadable download2 = new Downloadable(this.getUrl(), fileLocation, this.md5,
                         installer, true);
                 if (download2.needToDownload()) {
                     download2.download(false);
