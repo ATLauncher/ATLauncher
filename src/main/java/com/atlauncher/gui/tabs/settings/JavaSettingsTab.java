@@ -89,7 +89,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
 
         initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        initialMemoryPanel.add(initialMemoryLabelWarning);
+        if (!Utils.is64Bit()) {
+            initialMemoryPanel.add(initialMemoryLabelWarning);
+        }
         initialMemoryPanel.add(initialMemoryLabel);
 
         add(initialMemoryPanel, gbc);
@@ -138,7 +140,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
 
         maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        maximumMemoryPanel.add(maximumMemoryLabelWarning);
+        if (!Utils.is64Bit()) {
+            maximumMemoryPanel.add(maximumMemoryLabelWarning);
+        }
         maximumMemoryPanel.add(maximumMemoryLabel);
 
         add(maximumMemoryPanel, gbc);
