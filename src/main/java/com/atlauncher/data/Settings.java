@@ -1217,6 +1217,7 @@ public class Settings {
             properties.setProperty("language", Language.INSTANCE.getCurrent());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
+            properties.setProperty("initialmemory", this.initialMemory + "");
             properties.setProperty("ram", this.maximumMemory + "");
             properties.setProperty("permGen", this.permGen + "");
             properties.setProperty("windowwidth", this.windowWidth + "");
@@ -2444,8 +2445,8 @@ public class Settings {
         return this.initialMemory;
     }
 
-    public void setInitialMemory(int memory) {
-        this.initialMemory = memory;
+    public void setInitialMemory(int initialMemory) {
+        this.initialMemory = initialMemory;
     }
 
     public int getMaximumMemory() {
