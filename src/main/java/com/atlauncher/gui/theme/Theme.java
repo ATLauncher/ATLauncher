@@ -106,18 +106,30 @@ public final class Theme {
     }
 
     public Font getDefaultFont() {
+        if (this.defaultFont == null) {
+            return DEFAULT_THEME.getDefaultFont();
+        }
         return Resources.makeFont(this.defaultFont);
     }
 
     public Font getConsoleFont() {
+        if (this.consoleFont == null) {
+            return DEFAULT_THEME.getConsoleFont();
+        }
         return Resources.makeFont(this.consoleFont);
     }
 
     public Font getTabFont() {
+        if (this.tabFont == null) {
+            return DEFAULT_THEME.getTabFont();
+        }
         return Resources.makeFont(this.tabFont);
     }
 
     public Font getButtonFont() {
+        if (this.buttonFont == null) {
+            return DEFAULT_THEME.getButtonFont();
+        }
         return Resources.makeFont(this.buttonFont);
     }
 
@@ -126,59 +138,101 @@ public final class Theme {
     }
 
     public Color getConsoleTextColor() {
+        if (this.consoleTextColor == null) {
+            return DEFAULT_THEME.getConsoleTextColor();
+        }
         return this.consoleTextColor;
     }
 
     public Color getSelectionColor() {
+        if (this.selectionColor == null) {
+            return DEFAULT_THEME.getSelectionColor();
+        }
         return this.selectionColor;
     }
 
     public Color getHoverBorderColor() {
+        if (this.hoverBorderColor == null) {
+            return DEFAULT_THEME.getHoverBorderColor();
+        }
         return this.hoverBorderColor;
     }
 
     public Color getModInfoColor() {
+        if (this.modInfoColor == null) {
+            return DEFAULT_THEME.getModInfoColor();
+        }
         return this.modInfoColor;
     }
 
     public Color getBaseColor() {
+        if (this.baseColor == null) {
+            return DEFAULT_THEME.getBaseColor();
+        }
         return this.baseColor;
     }
 
     public Color getCorruptedInstanceColor() {
+        if (this.corruptedInstanceColor == null) {
+            return DEFAULT_THEME.getCorruptedInstanceColor();
+        }
         return this.corruptedInstanceColor;
     }
 
     public Color getNormalInstanceColor() {
+        if (this.normalInstanceColor == null) {
+            return DEFAULT_THEME.getNormalInstanceColor();
+        }
         return this.normalInstanceColor;
     }
 
     public Color getModSelectionBackgroundColor() {
+        if (this.modSelectionBGColor == null) {
+            return DEFAULT_THEME.getModSelectionBackgroundColor();
+        }
         return this.modSelectionBGColor;
     }
 
     public Color getTabBackgroundColor() {
+        if (this.tabBackgroundColor == null) {
+            return DEFAULT_THEME.getTabBackgroundColor();
+        }
         return this.tabBackgroundColor;
     }
 
     public Color getLogInfoColor() {
+        if (this.logInfoColor == null) {
+            return DEFAULT_THEME.getLogInfoColor();
+        }
         return this.logInfoColor;
     }
 
     public Color getLogErrorColor() {
+        if (this.logErrorColor == null) {
+            return DEFAULT_THEME.getLogErrorColor();
+        }
         return this.logErrorColor;
     }
 
     public Color getLogWarnColor() {
+        if (this.logWarnColor == null) {
+            return DEFAULT_THEME.getLogWarnColor();
+        }
         return this.logWarnColor;
     }
 
     public Color getLogDebugColor() {
+        if (this.logDebugColor == null) {
+            return DEFAULT_THEME.getLogDebugColor();
+        }
         return this.logDebugColor;
     }
 
     @Override
     public String toString() {
+        if (this.name == null || this.author == null) {
+            return "Unknown by Unknown";
+        }
         return this.name + " by " + this.author;
     }
 }
