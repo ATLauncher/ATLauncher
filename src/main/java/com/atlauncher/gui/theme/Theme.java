@@ -6,6 +6,7 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
 
+import com.atlauncher.LogManager;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
 
@@ -107,6 +108,7 @@ public final class Theme {
 
     public Font getDefaultFont() {
         if (this.defaultFont == null) {
+            LogManager.error("The default font for the theme you're using is corrupt!");
             return DEFAULT_THEME.getDefaultFont();
         }
         return Resources.makeFont(this.defaultFont);
@@ -114,6 +116,7 @@ public final class Theme {
 
     public Font getConsoleFont() {
         if (this.consoleFont == null) {
+            LogManager.error("The console font for the theme you're using is corrupt!");
             return DEFAULT_THEME.getConsoleFont();
         }
         return Resources.makeFont(this.consoleFont);
@@ -121,6 +124,7 @@ public final class Theme {
 
     public Font getTabFont() {
         if (this.tabFont == null) {
+            LogManager.error("The tab font for the theme you're using is corrupt!");
             return DEFAULT_THEME.getTabFont();
         }
         return Resources.makeFont(this.tabFont);
@@ -128,6 +132,7 @@ public final class Theme {
 
     public Font getButtonFont() {
         if (this.buttonFont == null) {
+            LogManager.error("The button font for the theme you're using is corrupt!");
             return DEFAULT_THEME.getButtonFont();
         }
         return Resources.makeFont(this.buttonFont);
@@ -139,6 +144,7 @@ public final class Theme {
 
     public Color getConsoleTextColor() {
         if (this.consoleTextColor == null) {
+            LogManager.error("The console text colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getConsoleTextColor();
         }
         return this.consoleTextColor;
@@ -146,6 +152,7 @@ public final class Theme {
 
     public Color getSelectionColor() {
         if (this.selectionColor == null) {
+            LogManager.error("The selection colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getSelectionColor();
         }
         return this.selectionColor;
@@ -153,6 +160,7 @@ public final class Theme {
 
     public Color getHoverBorderColor() {
         if (this.hoverBorderColor == null) {
+            LogManager.error("The border hover colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getHoverBorderColor();
         }
         return this.hoverBorderColor;
@@ -160,6 +168,7 @@ public final class Theme {
 
     public Color getModInfoColor() {
         if (this.modInfoColor == null) {
+            LogManager.error("The mod info colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getModInfoColor();
         }
         return this.modInfoColor;
@@ -167,6 +176,7 @@ public final class Theme {
 
     public Color getBaseColor() {
         if (this.baseColor == null) {
+            LogManager.error("The base colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getBaseColor();
         }
         return this.baseColor;
@@ -174,6 +184,8 @@ public final class Theme {
 
     public Color getCorruptedInstanceColor() {
         if (this.corruptedInstanceColor == null) {
+            LogManager
+                    .error("The corrupted instance text colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getCorruptedInstanceColor();
         }
         return this.corruptedInstanceColor;
@@ -181,6 +193,8 @@ public final class Theme {
 
     public Color getNormalInstanceColor() {
         if (this.normalInstanceColor == null) {
+            LogManager
+                    .error("The normal instance text colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getNormalInstanceColor();
         }
         return this.normalInstanceColor;
@@ -188,6 +202,8 @@ public final class Theme {
 
     public Color getModSelectionBackgroundColor() {
         if (this.modSelectionBGColor == null) {
+            LogManager
+                    .error("The mod selection background colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getModSelectionBackgroundColor();
         }
         return this.modSelectionBGColor;
@@ -195,6 +211,7 @@ public final class Theme {
 
     public Color getTabBackgroundColor() {
         if (this.tabBackgroundColor == null) {
+            LogManager.error("The tab background colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getTabBackgroundColor();
         }
         return this.tabBackgroundColor;
@@ -202,6 +219,7 @@ public final class Theme {
 
     public Color getLogInfoColor() {
         if (this.logInfoColor == null) {
+            LogManager.error("The log info colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getLogInfoColor();
         }
         return this.logInfoColor;
@@ -209,6 +227,7 @@ public final class Theme {
 
     public Color getLogErrorColor() {
         if (this.logErrorColor == null) {
+            LogManager.error("The log error colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getLogErrorColor();
         }
         return this.logErrorColor;
@@ -216,6 +235,7 @@ public final class Theme {
 
     public Color getLogWarnColor() {
         if (this.logWarnColor == null) {
+            LogManager.error("The log warning colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getLogWarnColor();
         }
         return this.logWarnColor;
@@ -223,6 +243,7 @@ public final class Theme {
 
     public Color getLogDebugColor() {
         if (this.logDebugColor == null) {
+            LogManager.error("The log debug colour for the theme you're using is corrupt!");
             return DEFAULT_THEME.getLogDebugColor();
         }
         return this.logDebugColor;
@@ -231,6 +252,7 @@ public final class Theme {
     @Override
     public String toString() {
         if (this.name == null || this.author == null) {
+            LogManager.error("The name and/or author for the theme you're using is corrupt!");
             return "Unknown by Unknown";
         }
         return this.name + " by " + this.author;
