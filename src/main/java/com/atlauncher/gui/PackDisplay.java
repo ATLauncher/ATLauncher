@@ -6,28 +6,21 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-
-import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.components.CollapsiblePanel;
-import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.gui.components.ImagePanel;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 
 /**
  * TODO: Rewrite along with CollapsiblePanel
@@ -36,159 +29,46 @@ import com.atlauncher.utils.Utils;
  * 
  * @author Ryan
  */
-public class PackDisplay extends CollapsiblePanel implements RelocalizationListener{
+public class PackDisplay
+extends CollapsiblePanel
+implements RelocalizationListener{
     private static final long serialVersionUID = -2617283435728223314L;
-    private JPanel leftPanel; // Left panel with image
-    private JPanel rightPanel; // Right panel with description and actions
-    private JSplitPane splitPane; // The split pane
-    private JLabel packImage; // The image for the pack
-    private JTextArea packDescription; // Description of the pack
-    private JSplitPane packActions; // All the actions that can be performed on the pack
-    private JPanel packActionsTop; // All the actions that can be performed on the pack
-    private JPanel packActionsBottom; // All the actions that can be performed on the pack
-    private JButton newInstance; // New Instance button
-    private JButton createServer; // Create Server button
-    private JButton removePack; // Remove Pack button
-    private JButton support; // Support button
-    private JButton website; // Website button
+    private final JTextArea descArea = new JTextArea();
+    private final JButton newInstanceButton = new JButton(Language.INSTANCE.localize("common.newinstance"));
+    private final JButton createServerButton = new JButton(Language.INSTANCE.localize("common.createserver"));
+    private final JButton supportButton = new JButton(Language.INSTANCE.localize("common.support"));
+    private final JButton websiteButton = new JButton(Language.INSTANCE.localize("common.website"));
+    private final JPanel actionsPanel = new JPanel(new BorderLayout());
+    private final JSplitPane splitter = new JSplitPane();
+    private final GridBagConstraints gbc = new GridBagConstraints();
 
-    public PackDisplay(final Pack pack) {
+    public PackDisplay(Pack pack){
         super(pack);
-        JPanel panel = super.getContentPane();
-        panel.setLayout(new BorderLayout());
+        this.splitter.setLeftComponent(new ImagePanel(pack.getImage().getImage()));
+        this.splitter.setRightComponent(this.actionsPanel);
+        this.splitter.setEnabled(false);
 
-        leftPanel = new JPanel();
-        leftPanel.setLayout(new BorderLayout());
+        JPanel abPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        abPanel.add(this.newInstanceButton);
+        abPanel.add(this.createServerButton);
+        abPanel.add(this.supportButton);
+        abPanel.add(this.websiteButton);
 
-        rightPanel = new JPanel();
-        rightPanel.setLayout(new BorderLayout());
+        this.descArea.setText(pack.getDescription());
+        this.descArea.setLineWrap(true);
+        this.descArea.setEditable(false);
+        this.descArea.setHighlighter(null);
+        this.descArea.setWrapStyleWord(true);
 
-        splitPane = new JSplitPane();
-        splitPane.setLeftComponent(leftPanel);
-        splitPane.setRightComponent(rightPanel);
-        splitPane.setEnabled(false);
+        this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.actionsPanel.add(abPanel, BorderLayout.SOUTH);
+        this.actionsPanel.setPreferredSize(new Dimension(this.actionsPanel.getPreferredSize().width, 180));
 
-        packImage = new JLabel(pack.getImage());
-
-        packDescription = new JTextArea();
-        packDescription.setBorder(BorderFactory.createEmptyBorder());
-        packDescription.setEditable(false);
-        packDescription.setHighlighter(null);
-        packDescription.setLineWrap(true);
-        packDescription.setWrapStyleWord(true);
-        packDescription.setText(pack.getDescription());
-        JScrollPane packDescriptionScoller = new JScrollPane(packDescription,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        packDescriptionScoller.getVerticalScrollBar().setUnitIncrement(16);
-
-        packActions = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        packActions.setEnabled(false);
-        packActions.setDividerSize(0);
-
-        packActionsTop = new JPanel();
-        packActionsTop.setLayout(new FlowLayout());
-        packActionsBottom = new JPanel();
-        packActionsBottom.setLayout(new FlowLayout());
-        packActions.setLeftComponent(packActionsTop);
-        packActions.setRightComponent(packActionsBottom);
-
-        newInstance = new JButton(Language.INSTANCE.localize("common.newinstance"));
-        newInstance.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (App.settings.isInOfflineMode()) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("pack.offlinenewinstance"),
-                            Language.INSTANCE.localize("common.offline"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                } else {
-                    if (App.settings.getAccount() == null) {
-                        String[] options = { Language.INSTANCE.localize("common.ok") };
-                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                Language.INSTANCE.localize("instance.cannotcreate"),
-                                Language.INSTANCE.localize("instance.noaccountselected"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
-                    } else {
-                        new InstanceInstallerDialog(pack);
-                    }
-                }
-            }
-        });
-
-        createServer = new JButton(Language.INSTANCE.localize("common.createserver"));
-        createServer.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (App.settings.isInOfflineMode()) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("pack.offlinecreateserver"),
-                            Language.INSTANCE.localize("common.offline"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                } else {
-                    if (App.settings.getAccount() == null) {
-                        String[] options = { Language.INSTANCE.localize("common.ok") };
-                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                Language.INSTANCE.localize("instance.cannotcreate"),
-                                Language.INSTANCE.localize("instance.noaccountselected"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
-                    } else {
-                        new InstanceInstallerDialog(pack, true);
-                    }
-                }
-            }
-        });
-
-        support = new JButton(Language.INSTANCE.localize("common.support"));
-        support.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser(pack.getSupportURL());
-            }
-        });
-
-        website = new JButton(Language.INSTANCE.localize("common.website"));
-        website.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser(pack.getWebsiteURL());
-            }
-        });
-
-        if (!pack.canCreateServer()) {
-            createServer.setVisible(false);
-        }
-
-        packActionsTop.add(newInstance);
-        packActionsTop.add(createServer);
-        if (pack.isSemiPublic() && !pack.isTester()) {
-            removePack = new JButton(Language.INSTANCE.localize("pack.removepack"));
-            removePack.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    App.settings.removePack(pack.getCode());
-                    App.settings.reloadPacksPanel();
-                }
-            });
-            packActionsTop.add(removePack);
-        }
-        packActionsBottom.add(support);
-        packActionsBottom.add(website);
-
-        leftPanel.add(packImage, BorderLayout.CENTER);
-        rightPanel.add(packDescriptionScoller, BorderLayout.CENTER);
-        rightPanel.add(packActions, BorderLayout.SOUTH);
-
-        panel.add(splitPane, BorderLayout.CENTER);
-        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 180));
+        this.getContentPane().add(this.splitter);
     }
 
     @Override
-    public void onRelocalization() {
-        this.newInstance.setText(Language.INSTANCE.localize("common.newinstance"));
-        this.support.setText(Language.INSTANCE.localize("common.support"));
-        this.website.setText(Language.INSTANCE.localize("common.website"));
-        this.createServer.setText(Language.INSTANCE.localize("common.createserver"));
-        this.removePack.setText(Language.INSTANCE.localize("pack.removepack"));
+    public void onRelocalization(){
+
     }
 }
