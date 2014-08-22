@@ -6,24 +6,25 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.*;
+import com.atlauncher.utils.Utils;
+
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-
-import javax.swing.*;
-
-import com.atlauncher.utils.Utils;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JWindow;
 
 public class SplashScreen extends JWindow {
-    private final BufferedImage img = Utils.getImage("SplashScreen");
+    private static final BufferedImage img = Utils.getImage("SplashScreen");
     private final ContextMenu CONTEXT_MENU = new ContextMenu();
 
     public SplashScreen(){
         this.setLayout(null);
-        this.setSize(this.img.getWidth(), this.img.getHeight());
+        this.setSize(img.getWidth(), img.getHeight());
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.addMouseListener(new MouseAdapter() {
@@ -39,7 +40,7 @@ public class SplashScreen extends JWindow {
     @Override
     public void paint(Graphics g){
         super.paint(g);
-        g.drawImage(this.img, 0, 0, this.getWidth(), this.getHeight(), null);
+        g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), null);
     }
 
     /**

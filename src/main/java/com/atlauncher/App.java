@@ -6,12 +6,24 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.Settings;
+import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.gui.SplashScreen;
+import com.atlauncher.gui.TrayMenu;
+import com.atlauncher.gui.dialogs.SetupDialog;
+import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.utils.Utils;
+
 import io.github.asyncronous.toast.Toaster;
 
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,23 +34,12 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
-
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.Instance;
-import com.atlauncher.data.Settings;
-import com.atlauncher.gui.LauncherFrame;
-import com.atlauncher.gui.SplashScreen;
-import com.atlauncher.gui.TrayMenu;
-import com.atlauncher.gui.dialogs.SetupDialog;
-import com.atlauncher.gui.theme.Theme;
-import com.atlauncher.utils.Utils;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -235,7 +236,16 @@ public class App {
             SystemTray tray = SystemTray.getSystemTray();
             TrayIcon trayIcon = new TrayIcon(Utils.getImage("/assets/image/Icon.png"));
 
-            trayIcon.setPopupMenu(TRAY_MENU);
+            trayIcon.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    if(e.getButton() == MouseEvent.BUTTON3){
+                        TRAY_MENU.setInvoker(TRAY_MENU);
+                        TRAY_MENU.setLocation(e.getX(), e.getY());
+                        TRAY_MENU.setVisible(true);
+                    }
+                }
+            });
             trayIcon.setToolTip("ATLauncher");
             trayIcon.setImageAutoSize(true);
 

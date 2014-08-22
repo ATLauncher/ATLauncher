@@ -29,8 +29,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 /**
- * TODO: Rewrite along with CollapsiblePanel
- *
  * Class for displaying packs in the Pack Tab
  * 
  * @author Ryan
