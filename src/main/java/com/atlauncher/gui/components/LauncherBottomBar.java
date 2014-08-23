@@ -6,25 +6,6 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JToolTip;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
@@ -37,10 +18,27 @@ import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.CustomLineBorder;
-import com.atlauncher.gui.components.BottomBar;
 import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToolTip;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 
 /**
  * TODO: Rewrite with the other @link BottomBar classes
@@ -62,18 +60,18 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
     private JLabel statusIcon;
 
-    public LauncherBottomBar() {
+    public LauncherBottomBar(){
         setBorder(BorderFactory.createEtchedBorder());
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(0, 50)); // Make the bottom bar at least
         // 50 pixels high
 
-        submitError.addActionListener(new ActionListener() {
+        submitError.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
+            public void actionPerformed(ActionEvent e){
+                SwingUtilities.invokeLater(new Runnable(){
                     @Override
-                    public void run() {
+                    public void run(){
                         new GithubIssueReporterDialog(null).setVisible(true);
                     }
                 });
@@ -116,25 +114,25 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     /**
      * Sets up the listeners on the buttons
      */
-    private void setupListeners() {
-        toggleConsole.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+    private void setupListeners(){
+        toggleConsole.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 App.settings.getConsole().setVisible(!App.settings.isConsoleVisible());
             }
         });
-        openFolder.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        openFolder.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 Utils.openExplorer(App.settings.getBaseDir());
             }
         });
-        updateData.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        updateData.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 final ProgressDialog dialog = new ProgressDialog(App.settings
                         .getLocalizedString("common.checkingforupdates"), 0, App.settings
                         .getLocalizedString("common.checkingforupdates"), "Aborting Update Check!");
-                dialog.addThread(new Thread() {
-                    public void run() {
-                        if (App.settings.hasUpdatedFiles()) {
+                dialog.addThread(new Thread(){
+                    public void run(){
+                        if(App.settings.hasUpdatedFiles()){
                             App.settings.reloadLauncherData();
                         }
                         dialog.close();
@@ -145,24 +143,24 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 dialog.start();
             }
         });
-        username.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    if (!dontSave) {
+        username.addItemListener(new ItemListener(){
+            public void itemStateChanged(ItemEvent e){
+                if(e.getStateChange() == ItemEvent.SELECTED){
+                    if(!dontSave){
                         App.settings.switchAccount((Account) username.getSelectedItem());
                     }
                 }
             }
         });
-        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
+        ConsoleCloseManager.addListener(new ConsoleCloseListener(){
             @Override
-            public void onConsoleClose() {
+            public void onConsoleClose(){
                 toggleConsole.setText(Language.INSTANCE.localize("console.show"));
             }
         });
         ConsoleOpenManager.addListener(new ConsoleOpenListener(){
             @Override
-            public void onConsoleOpen() {
+            public void onConsoleOpen(){
                 toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
             }
         });
@@ -171,10 +169,10 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     /**
      * Creates the JButton's for use in the bar
      */
-    private void createButtons() {
-        if (App.settings.isConsoleVisible()) {
+    private void createButtons(){
+        if(App.settings.isConsoleVisible()){
             toggleConsole = new JButton(Language.INSTANCE.localize("console.hide"));
-        } else {
+        } else{
             toggleConsole = new JButton(Language.INSTANCE.localize("console.show"));
         }
 
@@ -185,18 +183,18 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         username.setRenderer(new AccountsDropDownRenderer());
         fillerAccount = new Account(Language.INSTANCE.localize("account.select"));
         username.addItem(fillerAccount);
-        for (Account account : App.settings.getAccounts()) {
+        for(Account account : App.settings.getAccounts()){
             username.addItem(account);
         }
         Account active = App.settings.getAccount();
-        if (active == null) {
+        if(active == null){
             username.setSelectedIndex(0);
-        } else {
+        } else{
             username.setSelectedItem(active);
         }
 
-        statusIcon = new JLabel(Utils.getIconImage("/assets/image/StatusWhite.png")) {
-            public JToolTip createToolTip() {
+        statusIcon = new JLabel(Utils.getIconImage("/assets/image/StatusWhite.png")){
+            public JToolTip createToolTip(){
                 JToolTip tip = super.createToolTip();
                 Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
@@ -209,12 +207,11 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
     /**
      * Update the status icon to show the current Minecraft server status.
-     * 
-     * @param status
-     *            The status of servers
+     *
+     * @param status The status of servers
      */
-    public void updateStatus(Status status) {
-        switch (status) {
+    public void updateStatus(Status status){
+        switch(status){
             case UNKNOWN:
                 statusIcon.setToolTipText(App.settings
                         .getLocalizedString("status.minecraft.checking"));
@@ -240,26 +237,26 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
     }
 
-    public void reloadAccounts() {
+    public void reloadAccounts(){
         dontSave = true;
         username.removeAllItems();
         username.addItem(fillerAccount);
-        for (Account account : App.settings.getAccounts()) {
+        for(Account account : App.settings.getAccounts()){
             username.addItem(account);
         }
-        if (App.settings.getAccount() == null) {
+        if(App.settings.getAccount() == null){
             username.setSelectedIndex(0);
-        } else {
+        } else{
             username.setSelectedItem(App.settings.getAccount());
         }
         dontSave = false;
     }
 
     @Override
-    public void onRelocalization() {
-        if (App.settings.getConsole().isVisible()) {
+    public void onRelocalization(){
+        if(App.settings.getConsole().isVisible()){
             toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
-        } else {
+        } else{
             toggleConsole.setText(Language.INSTANCE.localize("console.show"));
         }
         this.updateData.setText(Language.INSTANCE.localize("common.updatedata"));

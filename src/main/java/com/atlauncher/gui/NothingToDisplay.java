@@ -26,7 +26,7 @@ import javax.swing.border.TitledBorder;
  * @author Ryan
  */
 public class NothingToDisplay
-extends JPanel{
+        extends JPanel{
     private static final Image dfImg = Utils.getIconImage(
             new File(App.settings.getImagesDir(), "defaultimage.png")
     ).getImage();

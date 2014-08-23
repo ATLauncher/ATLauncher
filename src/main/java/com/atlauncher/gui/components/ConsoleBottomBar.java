@@ -6,6 +6,14 @@
  */
 package com.atlauncher.gui.components;
 
+import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.thread.PasteUpload;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -16,23 +24,13 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.components.BottomBar;
-import com.atlauncher.thread.PasteUpload;
-
 @SuppressWarnings("serial")
-public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
+public class ConsoleBottomBar extends BottomBar implements RelocalizationListener{
     private JPanel leftSide;
 
     private JButton clear;
@@ -40,7 +38,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     private JButton uploadLog;
     private JButton killMinecraft;
 
-    public ConsoleBottomBar() {
+    public ConsoleBottomBar(){
         setBorder(BorderFactory.createEtchedBorder());
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(0, 50)); // Make the bottom bar at least 50 pixels high
@@ -71,15 +69,15 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     /**
      * Sets up the action listeners on the buttons
      */
-    private void setupActionListeners() {
-        clear.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+    private void setupActionListeners(){
+        clear.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 App.settings.clearConsole();
                 LogManager.info("Console Cleared");
             }
         });
-        copyLog.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        copyLog.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 App.TOASTER.pop("Copied Log to clipboard");
                 LogManager.info("Copied Log to clipboard");
                 StringSelection text = new StringSelection(App.settings.getLog());
@@ -87,34 +85,34 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                 clipboard.setContents(text, null);
             }
         });
-        uploadLog.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
+        uploadLog.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                try{
                     String result = App.TASKPOOL.submit(new PasteUpload()).get();
-                    if (result.contains(Constants.PASTE_CHECK_URL)) {
+                    if(result.contains(Constants.PASTE_CHECK_URL)){
                         App.TOASTER.pop("Log uploaded and link copied to clipboard");
                         LogManager.info("Log uploaded and link copied to clipboard: " + result);
                         StringSelection text = new StringSelection(result);
                         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                         clipboard.setContents(text, null);
-                    } else {
+                    } else{
                         App.TOASTER.popError("Log failed to upload!");
                         LogManager.error("Log failed to upload: " + result);
                     }
-                } catch (Exception ex) {
+                } catch(Exception ex){
                     ex.printStackTrace(System.err);
                 }
             }
         });
-        killMinecraft.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
+        killMinecraft.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
                 int ret = JOptionPane.showConfirmDialog(
                         App.settings.getParent(),
                         "<html><p align=\"center\">"
                                 + App.settings.getLocalizedString("console.killsure", "<br/><br/>")
                                 + "</p></html>", Language.INSTANCE.localize("console.kill"),
                         JOptionPane.YES_NO_OPTION);
-                if (ret == JOptionPane.YES_OPTION) {
+                if(ret == JOptionPane.YES_OPTION){
                     App.settings.killMinecraft();
                     killMinecraft.setVisible(false);
                 }
@@ -125,7 +123,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     /**
      * Creates the JButton's for use in the bar
      */
-    private void createButtons() {
+    private void createButtons(){
         clear = new JButton("Clear");
         copyLog = new JButton("Copy Log");
         uploadLog = new JButton("Upload Log");
@@ -134,15 +132,15 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
         killMinecraft.setVisible(false);
     }
 
-    public void showKillMinecraft() {
+    public void showKillMinecraft(){
         killMinecraft.setVisible(true);
     }
 
-    public void hideKillMinecraft() {
+    public void hideKillMinecraft(){
         killMinecraft.setVisible(false);
     }
 
-    public void setupLanguage() {
+    public void setupLanguage(){
         clear.setText(Language.INSTANCE.localize("console.clear"));
         copyLog.setText(Language.INSTANCE.localize("console.copy"));
         uploadLog.setText(Language.INSTANCE.localize("console.upload"));
@@ -150,7 +148,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     }
 
     @Override
-    public void onRelocalization() {
+    public void onRelocalization(){
         clear.setText(Language.INSTANCE.localize("console.clear"));
         copyLog.setText(Language.INSTANCE.localize("console.copy"));
         uploadLog.setText(Language.INSTANCE.localize("console.upload"));

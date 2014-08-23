@@ -18,7 +18,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JWindow;
 
-public class SplashScreen extends JWindow {
+public class SplashScreen extends JWindow{
     private static final BufferedImage img = Utils.getImage("SplashScreen");
     private final ContextMenu CONTEXT_MENU = new ContextMenu();
 
@@ -27,9 +27,9 @@ public class SplashScreen extends JWindow {
         this.setSize(img.getWidth(), img.getHeight());
         this.setVisible(true);
         this.setLocationRelativeTo(null);
-        this.addMouseListener(new MouseAdapter() {
+        this.addMouseListener(new MouseAdapter(){
             @Override
-            public void mouseReleased(MouseEvent e) {
+            public void mouseReleased(MouseEvent e){
                 if(e.getButton() == MouseEvent.BUTTON3){
                     CONTEXT_MENU.show(SplashScreen.this, e.getX(), e.getY());
                 }
@@ -46,7 +46,7 @@ public class SplashScreen extends JWindow {
     /**
      * Closes and disposes of the splash screen
      */
-    public void close() {
+    public void close(){
         this.setVisible(false);
         this.dispose();
     }
@@ -57,9 +57,9 @@ public class SplashScreen extends JWindow {
         public ContextMenu(){
             super();
 
-            this.FORCE_QUIT.addActionListener(new ActionListener() {
+            this.FORCE_QUIT.addActionListener(new ActionListener(){
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(ActionEvent e){
                     System.exit(0);
                 }
             });

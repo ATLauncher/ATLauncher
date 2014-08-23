@@ -30,12 +30,12 @@ import javax.swing.JTextArea;
 
 /**
  * Class for displaying packs in the Pack Tab
- * 
+ *
  * @author Ryan
  */
 public class PackDisplay
-extends CollapsiblePanel
-implements RelocalizationListener{
+        extends CollapsiblePanel
+        implements RelocalizationListener{
     private static final long serialVersionUID = -2617283435728223314L;
     private final JTextArea descArea = new JTextArea();
     private final JButton newInstanceButton = new JButton(Language.INSTANCE.localize("common.newinstance"));
@@ -67,7 +67,8 @@ implements RelocalizationListener{
         this.descArea.setHighlighter(null);
         this.descArea.setWrapStyleWord(true);
 
-        this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         this.actionsPanel.add(abPanel, BorderLayout.SOUTH);
         this.actionsPanel.setPreferredSize(new Dimension(this.actionsPanel.getPreferredSize().width, 180));
 
@@ -80,22 +81,22 @@ implements RelocalizationListener{
         this.newInstanceButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                if (App.settings.isInOfflineMode()) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
+                if(App.settings.isInOfflineMode()){
+                    String[] options = {Language.INSTANCE.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(),
                             Language.INSTANCE.localize("pack.offlinenewinstance"),
                             Language.INSTANCE.localize("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
-                } else {
-                    if (App.settings.getAccount() == null) {
-                        String[] options = { Language.INSTANCE.localize("common.ok") };
+                } else{
+                    if(App.settings.getAccount() == null){
+                        String[] options = {Language.INSTANCE.localize("common.ok")};
                         JOptionPane.showOptionDialog(App.settings.getParent(),
                                 Language.INSTANCE.localize("instance.cannotcreate"),
                                 Language.INSTANCE.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
-                    } else {
+                    } else{
                         new InstanceInstallerDialog(pack);
                     }
                 }
@@ -104,22 +105,22 @@ implements RelocalizationListener{
         this.createServerButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                if (App.settings.isInOfflineMode()) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
+                if(App.settings.isInOfflineMode()){
+                    String[] options = {Language.INSTANCE.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(),
                             Language.INSTANCE.localize("pack.offlinecreateserver"),
                             Language.INSTANCE.localize("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                             options[0]);
-                } else {
-                    if (App.settings.getAccount() == null) {
-                        String[] options = { Language.INSTANCE.localize("common.ok") };
+                } else{
+                    if(App.settings.getAccount() == null){
+                        String[] options = {Language.INSTANCE.localize("common.ok")};
                         JOptionPane.showOptionDialog(App.settings.getParent(),
                                 Language.INSTANCE.localize("instance.cannotcreate"),
                                 Language.INSTANCE.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
-                    } else {
+                    } else{
                         new InstanceInstallerDialog(pack, true);
                     }
                 }

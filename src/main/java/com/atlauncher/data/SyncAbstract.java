@@ -12,20 +12,20 @@ import java.util.List;
  *
  * @author Kihira
  */
-public abstract class SyncAbstract {
+public abstract class SyncAbstract{
     public static final HashMap<String, SyncAbstract> syncList = new HashMap<String, SyncAbstract>();
     private final String syncName;
 
-    public SyncAbstract(String name) {
-        if (syncList.containsKey(name))
+    public SyncAbstract(String name){
+        if(syncList.containsKey(name)){
             throw new IllegalArgumentException("A sync handler with the name " + name + " has already been created!");
-        else {
+        } else{
             syncList.put(name, this);
             syncName = name;
         }
     }
 
-    public String getName() {
+    public String getName(){
         return syncName;
     }
 

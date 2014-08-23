@@ -10,30 +10,30 @@
  */
 package com.atlauncher.data.mojang;
 
-import java.io.File;
-
 import com.atlauncher.utils.Utils;
 
-public class AssetObject {
+import java.io.File;
+
+public class AssetObject{
     private String hash;
     private long size;
 
-    public String getHash() {
+    public String getHash(){
         return hash;
     }
 
-    public long getSize() {
+    public long getSize(){
         return size;
     }
 
-    public boolean needToDownload(File file) {
-        if (!file.exists() || !file.isFile()) {
+    public boolean needToDownload(File file){
+        if(!file.exists() || !file.isFile()){
             return true;
         }
-        if (file.length() != this.size) {
+        if(file.length() != this.size){
             return true;
         }
-        if (!this.hash.equalsIgnoreCase(Utils.getSHA1(file))) {
+        if(!this.hash.equalsIgnoreCase(Utils.getSHA1(file))){
             return true;
         }
         return false;

@@ -10,20 +10,20 @@
  */
 package com.atlauncher.data.mojang.auth;
 
-import java.util.List;
-
 import com.atlauncher.data.mojang.Property;
 
-public class User {
+import java.util.List;
+
+public class User{
 
     private String id;
     private List<Property> properties;
 
-    public String getId() {
+    public String getId(){
         return this.id;
     }
 
-    public List<Property> getProperties() {
+    public List<Property> getProperties(){
         return this.properties;
     }
 

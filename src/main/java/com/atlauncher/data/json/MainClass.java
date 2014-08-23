@@ -9,28 +9,28 @@ package com.atlauncher.data.json;
 import com.atlauncher.annot.Json;
 
 @Json
-public class MainClass {
+public class MainClass{
     private String mainClass;
     private String depends;
     private String dependsGroup;
 
-    public String getMainClass() {
+    public String getMainClass(){
         return this.mainClass;
     }
 
-    public String getDepends() {
+    public String getDepends(){
         return this.depends;
     }
 
-    public String getDependsGroup() {
+    public String getDependsGroup(){
         return this.dependsGroup;
     }
 
-    public boolean hasDepends() {
+    public boolean hasDepends(){
         return this.depends != null;
     }
 
-    public boolean hasDependsGroup() {
+    public boolean hasDependsGroup(){
         return this.dependsGroup != null;
     }
 }

@@ -21,17 +21,17 @@ import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
 
 @SuppressWarnings("serial")
-public class LauncherFrame extends JFrame implements RelocalizationListener {
+public class LauncherFrame extends JFrame implements RelocalizationListener{
 
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
@@ -45,7 +45,7 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
 
     private LauncherBottomBar bottomBar;
 
-    public LauncherFrame(boolean show) {
+    public LauncherFrame(boolean show){
         LogManager.info("Launcher opening");
         LogManager.info("Made By Bob*");
         LogManager.info("*(Not Actually)");
@@ -69,15 +69,15 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
         add(tabbedPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
 
-        if (show) {
+        if(show){
             LogManager.info("Showing Launcher");
             setVisible(true);
         }
 
         RelocalizationManager.addListener(this);
 
-        App.TASKPOOL.execute(new Runnable() {
-            public void run() {
+        App.TASKPOOL.execute(new Runnable(){
+            public void run(){
                 App.settings.checkMojangStatus(); // Check Minecraft status
                 bottomBar.updateStatus(App.settings.getMojangStatus());
             }
@@ -87,7 +87,7 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
     /**
      * Setup the individual tabs used in the Launcher sidebar
      */
-    private void setupTabs() {
+    private void setupTabs(){
         tabbedPane = new JTabbedPane((App.THEME.tabsOnRight() ? JTabbedPane.RIGHT : JTabbedPane.LEFT));
         tabbedPane.setBackground(App.THEME.getBaseColor());
 
@@ -101,11 +101,18 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
         toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
 
-        this.tabs = Arrays.asList(new Tab[]{newsTab, packsTab, instancesTab, accountsTab, toolsTab, settingsTab});
+        this.tabs = Arrays.asList(new Tab[]{
+                newsTab,
+                packsTab,
+                instancesTab,
+                accountsTab,
+                toolsTab,
+                settingsTab
+        });
 
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(34.0F));
-        for (Tab tab : this.tabs) {
-            if (tab == null) {
+        for(Tab tab : this.tabs){
+            if(tab == null){
                 throw new NullPointerException("Tab == null");
             }
 
@@ -118,14 +125,14 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
     /**
      * Setup the bottom bar of the Launcher
      */
-    private void setupBottomBar() {
+    private void setupBottomBar(){
         bottomBar = new LauncherBottomBar();
         App.settings.setBottomBar(bottomBar);
     }
 
     @Override
-    public void onRelocalization() {
-        for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
+    public void onRelocalization(){
+        for(int i = 0; i < this.tabbedPane.getTabCount(); i++){
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
     }

@@ -6,13 +6,18 @@
  */
 package com.atlauncher.gui.dialogs;
 
+import com.atlauncher.App;
+import com.atlauncher.data.MinecraftServer;
+import com.atlauncher.utils.MCQuery;
+import com.atlauncher.utils.Utils;
+import de.zh32.pingtest.QueryVersion;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -21,14 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.atlauncher.App;
-import com.atlauncher.data.MinecraftServer;
-import com.atlauncher.utils.MCQuery;
-import com.atlauncher.utils.Utils;
-
-import de.zh32.pingtest.QueryVersion;
-
-public class AddEditServerForCheckerDialog extends JDialog implements ActionListener {
+public class AddEditServerForCheckerDialog extends JDialog implements ActionListener{
     /**
      * Auto generated serial.
      */
@@ -50,7 +48,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
 
     private MinecraftServer serverEditing = null;
 
-    public AddEditServerForCheckerDialog(MinecraftServer minecraftServer) {
+    public AddEditServerForCheckerDialog(MinecraftServer minecraftServer){
         super(null, App.settings.getLocalizedString((minecraftServer == null ? "tools.addserver"
                 : "tools.editserver")), ModalityType.APPLICATION_MODAL);
         setSize(300, 200);
@@ -62,7 +60,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
 
         setupComponents();
 
-        if (minecraftServer != null) {
+        if(minecraftServer != null){
             this.serverEditing = minecraftServer;
             addEditButton.setText(App.settings.getLocalizedString("common.edit"));
             serverName.setText(minecraftServer.getName());
@@ -73,7 +71,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         setVisible(true);
     }
 
-    private void setupComponents() {
+    private void setupComponents(){
         // Middle Panel Stuff
         middle = new JPanel();
         middle.setLayout(new GridBagLayout());
@@ -138,28 +136,28 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         add(bottom, BorderLayout.SOUTH);
     }
 
-    public boolean isValidPort() {
-        if (serverPort.getText().isEmpty()
+    public boolean isValidPort(){
+        if(serverPort.getText().isEmpty()
                 || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) < 1
-                || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) > 65535) {
+                || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) > 65535){
             return false;
         }
         return true;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == addEditButton) {
-            if (serverName.getText().isEmpty() || serverHost.getText().isEmpty()
-                    || serverPort.getText().isEmpty()) {
+    public void actionPerformed(ActionEvent e){
+        if(e.getSource() == addEditButton){
+            if(serverName.getText().isEmpty() || serverHost.getText().isEmpty()
+                    || serverPort.getText().isEmpty()){
                 JOptionPane.showMessageDialog(App.settings.getParent(),
                         App.settings.getLocalizedString("tools.serverchecker.notallfields"),
                         App.settings.getLocalizedString("common.error"), JOptionPane.ERROR_MESSAGE);
-            } else if (!isValidPort()) {
+            } else if(!isValidPort()){
                 JOptionPane.showMessageDialog(App.settings.getParent(),
                         App.settings.getLocalizedString("settings.proxyportinvalid"),
                         App.settings.getLocalizedString("common.error"), JOptionPane.ERROR_MESSAGE);
-            } else {
+            } else{
                 String name = serverName.getText();
                 final String host = serverHost.getText();
                 final int port = Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", ""));
@@ -169,32 +167,32 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                         App.settings.getLocalizedString("tools.serverchecker.checkingserver"), 0,
                         App.settings.getLocalizedString("tools.serverchecker.checkingserver"),
                         "Cancelled Server Check!");
-                dialog.addThread(new Thread() {
+                dialog.addThread(new Thread(){
                     @Override
-                    public void run() {
+                    public void run(){
                         dialog.setReturnValue(MCQuery.getMinecraftServerQueryVersion(host, port));
                         dialog.close();
                     }
                 });
                 dialog.start();
 
-                if (dialog.getReturnValue() != null) {
+                if(dialog.getReturnValue() != null){
                     qv = (QueryVersion) dialog.getReturnValue();
                 }
 
-                if (qv == null) {
+                if(qv == null){
                     JOptionPane.showMessageDialog(App.settings.getParent(),
                             App.settings.getLocalizedString("tools.serverchecker.couldntconnect"),
                             App.settings.getLocalizedString("common.error"),
                             JOptionPane.ERROR_MESSAGE);
-                } else {
+                } else{
                     App.TOASTER
                             .pop(App.settings
                                     .getLocalizedString((this.serverEditing == null ? "tools.serverchecker.serveradded"
                                             : "tools.serverchecker.serveredited")));
-                    if (this.serverEditing == null) {
+                    if(this.serverEditing == null){
                         App.settings.addCheckingServer(new MinecraftServer(name, host, port, qv));
-                    } else {
+                    } else{
                         this.serverEditing.setName(name);
                         this.serverEditing.setHost(host);
                         this.serverEditing.setPort(port);
@@ -204,12 +202,12 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                     close();
                 }
             }
-        } else if (e.getSource() == closeButton) {
+        } else if(e.getSource() == closeButton){
             close();
         }
     }
 
-    public void close() {
+    public void close(){
         setVisible(false);
         dispose();
     }

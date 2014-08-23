@@ -6,7 +6,7 @@
  */
 package com.atlauncher.data;
 
-public enum Type {
+public enum Type{
     jar, dependency, depandency,
     forge, mcpc, mods, plugins,
     ic2lib, denlib, flan, coremods,

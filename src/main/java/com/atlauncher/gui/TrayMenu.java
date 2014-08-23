@@ -27,10 +27,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 public final class TrayMenu
-extends JPopupMenu
-implements RelocalizationListener,
-           ConsoleCloseListener,
-           ConsoleOpenListener{
+        extends JPopupMenu
+        implements RelocalizationListener,
+                   ConsoleCloseListener,
+                   ConsoleOpenListener{
 
     private final JMenuItem killMCButton = new JMenuItem();
     private final JMenuItem tcButton = new JMenuItem();
@@ -98,16 +98,16 @@ implements RelocalizationListener,
         });
     }
 
-    public void localize() {
+    public void localize(){
         this.tcButton.setEnabled(true);
-        if (App.settings.isConsoleVisible()) {
-            this.tcButton.setLabel(Language.INSTANCE.localize("console.hide"));
-        } else {
-            this.tcButton.setLabel(Language.INSTANCE.localize("console.show"));
+        if(App.settings.isConsoleVisible()){
+            this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
+        } else{
+            this.tcButton.setText(Language.INSTANCE.localize("console.show"));
         }
 
-        this.killMCButton.setLabel(Language.INSTANCE.localize("console.kill"));
-        this.quitButton.setLabel(Language.INSTANCE.localize("common.quit"));
+        this.killMCButton.setText(Language.INSTANCE.localize("console.kill"));
+        this.quitButton.setText(Language.INSTANCE.localize("common.quit"));
     }
 
     public void setMinecraftLaunched(boolean l){

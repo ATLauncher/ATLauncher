@@ -10,31 +10,31 @@
  */
 package com.atlauncher.data.mojang;
 
-public enum OperatingSystem {
+public enum OperatingSystem{
     LINUX("linux"), WINDOWS("windows"), OSX("osx");
 
     private final String name;
 
-    private OperatingSystem(String name) {
+    private OperatingSystem(String name){
         this.name = name;
     }
 
-    public String getName() {
+    public String getName(){
         return this.name;
     }
 
-    public static OperatingSystem getOS() {
+    public static OperatingSystem getOS(){
         String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("win")) {
+        if(osName.contains("win")){
             return OperatingSystem.WINDOWS;
-        } else if (osName.contains("mac")) {
+        } else if(osName.contains("mac")){
             return OperatingSystem.OSX;
-        } else {
+        } else{
             return OperatingSystem.LINUX;
         }
     }
 
-    public static String getVersion() {
+    public static String getVersion(){
         return System.getProperty("os.version");
     }
 

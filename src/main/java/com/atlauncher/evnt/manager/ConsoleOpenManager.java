@@ -2,9 +2,9 @@ package com.atlauncher.evnt.manager;
 
 import com.atlauncher.evnt.listener.ConsoleOpenListener;
 
-import javax.swing.*;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.SwingUtilities;
 
 public final class ConsoleOpenManager{
     private static final List<ConsoleOpenListener> listeners = new LinkedList<ConsoleOpenListener>();
@@ -18,9 +18,9 @@ public final class ConsoleOpenManager{
     }
 
     public static synchronized void post(){
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable(){
             @Override
-            public void run() {
+            public void run(){
                 for(ConsoleOpenListener listener : listeners){
                     listener.onConsoleOpen();
                 }

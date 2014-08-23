@@ -41,7 +41,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
-public class App {
+public class App{
     // Using this will help spread the workload across multiple threads allowing you to do many
     // tasks at once. Approach with caution though. Dedicated 2 threads to the TASKPOOL shouldn't
     // have any problems with that little
@@ -57,37 +57,36 @@ public class App {
 
     public static Theme THEME = Theme.DEFAULT_THEME;
 
-    static {
+    static{
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
-        // Removed due to port binding issues causing non loading clients
-        // RMIRegistry.instance().register(RMILauncherRelauncher.class);
-        // RMIRegistry.instance().register(RMILogPoster.class);
-        // RMIRegistry.instance().register(RMIMinecraftKiller.class);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         Locale.setDefault(Locale.ENGLISH); // Set English as the default locale
         System.setProperty("java.net.preferIPv4Stack", "true");
         String autoLaunch = null;
-        if (args != null) {
-            for (String arg : args) {
+        if(args != null){
+            for(String arg : args){
                 String[] parts = arg.split("=");
-                if (parts[0].equalsIgnoreCase("--launch")) {
+                if(parts[0].equalsIgnoreCase("--launch")){
                     autoLaunch = parts[1];
-                } else if (parts[0].equalsIgnoreCase("--updated")) {
+                } else if(parts[0].equalsIgnoreCase("--updated")){
                     wasUpdated = true;
-                } else if (parts[0].equalsIgnoreCase("--json")
-                        && parts[1].equalsIgnoreCase("experimental")) {
+                } else if(parts[0].equalsIgnoreCase("--json")
+                        && parts[1].equalsIgnoreCase("experimental")){
                     experimentalJson = true;
                 }
             }
         }
 
         File config = new File(Utils.getCoreGracefully(), "Configs");
-        if (!config.exists()) {
+        if(!config.exists()){
             int files = config.getParentFile().list().length;
-            if (files > 1) {
-                String[] options = { "Yes It's Fine", "Whoops. I'll Change That Now" };
+            if(files > 1){
+                String[] options = {
+                        "Yes It's Fine",
+                        "Whoops. I'll Change That Now"
+                };
                 int ret = JOptionPane.showOptionDialog(null,
                         "<html><p align=\"center\">I've detected that you may not have installed this "
                                 + "in the right location.<br/><br/>The exe or jar file"
@@ -95,7 +94,7 @@ public class App {
                                 + "in it<br/><br/>Are you 100% sure that's what you've"
                                 + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                if (ret != 0) {
+                if(ret != 0){
                     System.exit(0);
                 }
             }
@@ -106,10 +105,10 @@ public class App {
         loadTheme();
         settings.loadConsole(); // Load console AFTER L&F
 
-        if (settings.enableTrayIcon()) {
-            try {
+        if(settings.enableTrayIcon()){
+            try{
                 trySystemTrayIntegration(); // Try to enable the tray icon
-            } catch (Exception e) {
+            } catch(Exception e){
                 settings.logStackTrace(e);
             }
         }
@@ -117,12 +116,12 @@ public class App {
         LogManager.info("ATLauncher Version: " + Constants.VERSION);
         LogManager.info("Operating System: " + System.getProperty("os.name"));
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
-        if (settings.isUsingCustomJavaPath()) {
+        if(settings.isUsingCustomJavaPath()){
             LogManager.warn("Custom Java Path Set!");
-        } else if (settings.isUsingMacApp()) {
+        } else if(settings.isUsingMacApp()){
             File oracleJava = new File(
                     "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
-            if (oracleJava.exists() && oracleJava.canExecute()) {
+            if(oracleJava.exists() && oracleJava.canExecute()){
                 settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
                 LogManager.warn("Launcher Forced Custom Java Path Set!");
             }
@@ -133,16 +132,16 @@ public class App {
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
 
-        if (experimentalJson) {
+        if(experimentalJson){
             LogManager
                     .debug("Experimental JSON support enabled! Don't ask for support with this enabled!");
         }
 
-        if (Utils.isMac()) {
+        if(Utils.isMac()){
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "ATLauncher "
                     + Constants.VERSION);
-            try {
+            try{
                 Class util = Class.forName("com.apple.eawt.Application");
                 Method getApplication = util.getMethod("getApplication", new Class[0]);
                 Object application = getApplication.invoke(util);
@@ -150,12 +149,12 @@ public class App {
                 params[0] = Image.class;
                 Method setDockIconImage = util.getMethod("setDockIconImage", params);
                 setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
-            } catch (Exception ex) {
+            } catch(Exception ex){
                 ex.printStackTrace(System.err);
             }
         }
 
-        if (settings.enableConsole()) {
+        if(settings.enableConsole()){
             settings.getConsole().setVisible(true);
         }
 
@@ -165,19 +164,19 @@ public class App {
         ss.close(); // Close the Splash Screen
         LogManager.info("Launcher finished loading everything");
 
-        if (settings.isFirstTimeRun()) {
+        if(settings.isFirstTimeRun()){
             LogManager.warn("Launcher not setup. Loading Setup Dialog");
             new SetupDialog();
         }
 
         boolean open = true;
 
-        if (autoLaunch != null && settings.isInstanceBySafeName(autoLaunch)) {
+        if(autoLaunch != null && settings.isInstanceBySafeName(autoLaunch)){
             Instance instance = settings.getInstanceBySafeName(autoLaunch);
             LogManager.info("Opening Instance " + instance.getName());
-            if (instance.launch()) {
+            if(instance.launch()){
                 open = false;
-            } else {
+            } else{
                 LogManager.error("Error Opening Instance  " + instance.getName());
             }
         }
@@ -187,40 +186,40 @@ public class App {
         new LauncherFrame(open); // Open the Launcher
     }
 
-    public static void loadTheme() {
+    public static void loadTheme(){
         File themeFile = settings.getThemeFile();
-        if (themeFile != null) {
-            try {
+        if(themeFile != null){
+            try{
                 THEME = Settings.themeGson.fromJson(new FileReader(themeFile), Theme.class);
-            } catch (Exception ex) {
+            } catch(Exception ex){
                 ex.printStackTrace();
                 THEME = Theme.DEFAULT_THEME;
             }
         }
 
-        try {
+        try{
             setLAF();
             modifyLAF();
-        } catch (Exception ex) {
+        } catch(Exception ex){
             throw new RuntimeException(ex);
         }
     }
 
-    private static void setLAF() throws Exception {
-        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if (info.getName().equalsIgnoreCase("nimbus")) {
+    private static void setLAF() throws Exception{
+        for(UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()){
+            if(info.getName().equalsIgnoreCase("nimbus")){
                 UIManager.setLookAndFeel(info.getClassName());
             }
         }
     }
 
-    private static void modifyLAF() throws Exception {
+    private static void modifyLAF() throws Exception{
         THEME.apply();
         ToolTipManager.sharedInstance().setDismissDelay(15000);
         ToolTipManager.sharedInstance().setInitialDelay(50);
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
 
-        if (Utils.isMac()) {
+        if(Utils.isMac()){
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
             im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK),
                     DefaultEditorKit.copyAction);
@@ -231,8 +230,8 @@ public class App {
         }
     }
 
-    private static void trySystemTrayIntegration() throws Exception {
-        if (SystemTray.isSupported()) {
+    private static void trySystemTrayIntegration() throws Exception{
+        if(SystemTray.isSupported()){
             SystemTray tray = SystemTray.getSystemTray();
             TrayIcon trayIcon = new TrayIcon(Utils.getImage("/assets/image/Icon.png"));
 
@@ -253,17 +252,17 @@ public class App {
         }
     }
 
-    public static void integrate() {
-        try {
+    public static void integrate(){
+        try{
             File f = new File(new File(System.getProperty("user.home")), ".atl.properties");
-            if (!f.exists()) {
+            if(!f.exists()){
                 f.createNewFile();
             }
             Properties props = new Properties();
             props.load(new FileInputStream(f));
             props.setProperty("atl_loc", App.settings.getBaseDir().toString());
             props.store(new FileOutputStream(f), "");
-        } catch (IOException e) {
+        } catch(IOException e){
             e.printStackTrace();
         }
     }

@@ -6,24 +6,23 @@
  */
 package com.atlauncher.gui.components;
 
+import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.utils.Utils;
+
 import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolTip;
 import javax.swing.border.Border;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.gui.CustomLineBorder;
-import com.atlauncher.utils.Utils;
-
 @SuppressWarnings("serial")
-public abstract class BottomBar extends JPanel {
+public abstract class BottomBar extends JPanel{
     /**
      * Auto generated serial.
      */
@@ -36,7 +35,7 @@ public abstract class BottomBar extends JPanel {
 
     protected JPanel rightSide;
 
-    public BottomBar() {
+    public BottomBar(){
         this.setupSocialButtons();
         this.setupSocialButtonListeners();
 
@@ -50,9 +49,9 @@ public abstract class BottomBar extends JPanel {
         rightSide.add(twitterIcon);
     }
 
-    private void setupSocialButtons() {
-        creeperHostIcon = new JButton(Utils.getIconImage("/assets/image/CreeperHostIcon.png")) {
-            public JToolTip createToolTip() {
+    private void setupSocialButtons(){
+        creeperHostIcon = new JButton(Utils.getIconImage("/assets/image/CreeperHostIcon.png")){
+            public JToolTip createToolTip(){
                 JToolTip tip = super.createToolTip();
                 Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
@@ -65,8 +64,8 @@ public abstract class BottomBar extends JPanel {
         creeperHostIcon
                 .setToolTipText("CreeperHost - Minecraft servers for ATLauncher packs and more");
 
-        facebookIcon = new JButton(Utils.getIconImage("/assets/image/FacebookIcon.png")) {
-            public JToolTip createToolTip() {
+        facebookIcon = new JButton(Utils.getIconImage("/assets/image/FacebookIcon.png")){
+            public JToolTip createToolTip(){
                 JToolTip tip = super.createToolTip();
                 Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
@@ -78,8 +77,8 @@ public abstract class BottomBar extends JPanel {
         facebookIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
         facebookIcon.setToolTipText("Facebook");
 
-        githubIcon = new JButton(Utils.getIconImage("/assets/image/GitHubIcon.png")) {
-            public JToolTip createToolTip() {
+        githubIcon = new JButton(Utils.getIconImage("/assets/image/GitHubIcon.png")){
+            public JToolTip createToolTip(){
                 JToolTip tip = super.createToolTip();
                 Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
@@ -91,8 +90,8 @@ public abstract class BottomBar extends JPanel {
         githubIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
         githubIcon.setToolTipText("GitHub");
 
-        redditIcon = new JButton(Utils.getIconImage("/assets/image/RedditIcon.png")) {
-            public JToolTip createToolTip() {
+        redditIcon = new JButton(Utils.getIconImage("/assets/image/RedditIcon.png")){
+            public JToolTip createToolTip(){
                 JToolTip tip = super.createToolTip();
                 Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
@@ -104,8 +103,8 @@ public abstract class BottomBar extends JPanel {
         redditIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
         redditIcon.setToolTipText("Reddit");
 
-        twitterIcon = new JButton(Utils.getIconImage("/assets/image/TwitterIcon.png")) {
-            public JToolTip createToolTip() {
+        twitterIcon = new JButton(Utils.getIconImage("/assets/image/TwitterIcon.png")){
+            public JToolTip createToolTip(){
                 JToolTip tip = super.createToolTip();
                 Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
@@ -118,33 +117,33 @@ public abstract class BottomBar extends JPanel {
         twitterIcon.setToolTipText("Twitter");
     }
 
-    private void setupSocialButtonListeners() {
-        creeperHostIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+    private void setupSocialButtonListeners(){
+        creeperHostIcon.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 LogManager.info("Opening Up CreeperHost");
                 Utils.openBrowser("http://billing.creeperhost.net/link.php?id=7");
             }
         });
-        facebookIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        facebookIcon.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 LogManager.info("Opening Up ATLauncher Facebook Page");
                 Utils.openBrowser("http://www.facebook.com/ATLauncher");
             }
         });
-        githubIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        githubIcon.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 LogManager.info("Opening Up ATLauncher GitHub Page");
                 Utils.openBrowser("https://github.com/ATLauncher/ATLauncher");
             }
         });
-        redditIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        redditIcon.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 LogManager.info("Opening Up ATLauncher Reddit Page");
                 Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
             }
         });
-        twitterIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        twitterIcon.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 LogManager.info("Opening Up ATLauncher Twitter Page");
                 Utils.openBrowser("http://www.twitter.com/ATLauncher");
             }

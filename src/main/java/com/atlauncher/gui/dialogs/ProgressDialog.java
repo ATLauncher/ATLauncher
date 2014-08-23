@@ -10,20 +10,19 @@
  */
 package com.atlauncher.gui.dialogs;
 
+import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.utils.Utils;
+
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.utils.Utils;
-
-public class ProgressDialog extends JDialog {
+public class ProgressDialog extends JDialog{
     private static final long serialVersionUID = -4665490255300884927L;
     private String labelText; // The text to add to the JLabel
     private JProgressBar progressBar; // The Progress Bar
@@ -35,7 +34,7 @@ public class ProgressDialog extends JDialog {
     private int tasksDone;
 
     public ProgressDialog(String title, int initMax, String initLabelText,
-            String initClosedLogMessage) {
+                          String initClosedLogMessage){
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
         this.labelText = initLabelText;
         this.max = initMax;
@@ -48,19 +47,19 @@ public class ProgressDialog extends JDialog {
         setLayout(new BorderLayout());
         setResizable(false);
         progressBar = new JProgressBar();
-        if (max <= 0) {
+        if(max <= 0){
             progressBar.setIndeterminate(true);
         }
         JLabel label = new JLabel(this.labelText, SwingConstants.CENTER);
         add(label, BorderLayout.CENTER);
         add(progressBar, BorderLayout.SOUTH);
-        if (this.closedLogMessage != null) {
-            addWindowListener(new WindowAdapter() {
+        if(this.closedLogMessage != null){
+            addWindowListener(new WindowAdapter(){
                 @Override
-                public void windowClosing(WindowEvent e) {
+                public void windowClosing(WindowEvent e){
                     LogManager.error(closedLogMessage);
-                    if (thread != null) {
-                        if (thread.isAlive()) {
+                    if(thread != null){
+                        if(thread.isAlive()){
                             thread.interrupt();
                         }
                     }
@@ -70,18 +69,18 @@ public class ProgressDialog extends JDialog {
         }
     }
 
-    public void addThread(Thread thread) {
+    public void addThread(Thread thread){
         this.thread = thread;
     }
 
-    public void start() {
-        if (this.thread != null) {
+    public void start(){
+        if(this.thread != null){
             thread.start();
         }
         setVisible(true);
     }
 
-    public void setTotalTasksToDo(int tasksToDo) {
+    public void setTotalTasksToDo(int tasksToDo){
         this.tasksToDo = tasksToDo;
         this.tasksDone = 0;
         this.progressBar.setString("0/" + this.tasksToDo + " "
@@ -90,21 +89,21 @@ public class ProgressDialog extends JDialog {
         this.progressBar.setMaximum(this.tasksToDo);
     }
 
-    public void doneTask() {
+    public void doneTask(){
         this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " "
                 + App.settings.getLocalizedString("common.tasksdone"));
         this.progressBar.setValue(this.tasksDone);
     }
 
-    public void setReturnValue(Object returnValue) {
+    public void setReturnValue(Object returnValue){
         this.returnValue = returnValue;
     }
 
-    public Object getReturnValue() {
+    public Object getReturnValue(){
         return this.returnValue;
     }
 
-    public void close() {
+    public void close(){
         setVisible(false); // Remove the dialog
         dispose(); // Dispose the dialog
     }

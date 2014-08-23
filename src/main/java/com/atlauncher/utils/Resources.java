@@ -2,19 +2,21 @@ package com.atlauncher.utils;
 
 import com.atlauncher.exceptions.ChunkyException;
 
-import javax.swing.text.html.StyleSheet;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.text.html.StyleSheet;
 
 public final class Resources{
     private static final Map<String, Object> resources = new HashMap<String, Object>();
     public static final String[] FONT_FAMILIES = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 
-    private Resources(){}
+    private Resources(){
+    }
 
     public static boolean isSystemFont(String name){
         for(String str : FONT_FAMILIES){
@@ -31,7 +33,8 @@ public final class Resources{
             if(resources.containsKey(name)){
                 Object obj = resources.get(name);
                 if(!(obj instanceof StyleSheet)){
-                    throw new ChunkyException("Reference for " + name + " ended up with a bad value, suggested=" + StyleSheet.class.getName() + "; got=" + obj.getClass().getName());
+                    throw new ChunkyException(
+                            "Reference for " + name + " ended up with a bad value, suggested=" + StyleSheet.class.getName() + "; got=" + obj.getClass().getName());
                 } else{
                     return (StyleSheet) obj;
                 }
@@ -54,7 +57,8 @@ public final class Resources{
             if(resources.containsKey(name)){
                 Object obj = resources.get(name);
                 if(!(obj instanceof Font)){
-                    throw new ChunkyException("Reference for " + name + " ended up with a bad value, suggested=" + Font.class.getName() + "; got=" + obj.getClass().getName());
+                    throw new ChunkyException(
+                            "Reference for " + name + " ended up with a bad value, suggested=" + Font.class.getName() + "; got=" + obj.getClass().getName());
                 } else{
                     return (Font) obj;
                 }

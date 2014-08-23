@@ -6,21 +6,6 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -32,7 +17,21 @@ import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.utils.Utils;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener {
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+
+public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener{
     /**
      * Auto generated serial.
      */
@@ -44,7 +43,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
 
     private JMenuItem copy;
 
-    public LauncherConsole() {
+    public LauncherConsole(){
         setTitle("ATLauncher Console " + Constants.VERSION);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -68,21 +67,21 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
     }
 
     @Override
-    public void setVisible(boolean flag) {
+    public void setVisible(boolean flag){
         super.setVisible(flag);
-        if (flag) {
+        if(flag){
             ConsoleOpenManager.post();
-        } else {
+        } else{
             ConsoleCloseManager.post();
         }
     }
 
-    private void setupContextMenu() {
+    private void setupContextMenu(){
         contextMenu = new JPopupMenu();
 
         copy = new JMenuItem("Copy");
-        copy.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        copy.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 StringSelection text = new StringSelection(console.getSelectedText());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);
@@ -90,10 +89,10 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
         });
         contextMenu.add(copy);
 
-        console.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                if (console.getSelectedText() != null) {
-                    if (e.getButton() == MouseEvent.BUTTON3) {
+        console.addMouseListener(new MouseAdapter(){
+            public void mousePressed(MouseEvent e){
+                if(console.getSelectedText() != null){
+                    if(e.getButton() == MouseEvent.BUTTON3){
                         contextMenu.show(console, e.getX(), e.getY());
                     }
                 }
@@ -103,38 +102,38 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
 
     /**
      * Returns a string with the text currently in the console
-     * 
+     *
      * @return String Console Text
      */
-    public String getLog() {
+    public String getLog(){
         return console.getText();
     }
 
-    public void showKillMinecraft() {
+    public void showKillMinecraft(){
         bottomBar.showKillMinecraft();
     }
 
-    public void hideKillMinecraft() {
+    public void hideKillMinecraft(){
         bottomBar.hideKillMinecraft();
     }
 
-    public void setupLanguage() {
+    public void setupLanguage(){
         copy.setText(App.settings.getLocalizedString("common.copy"));
         bottomBar.setupLanguage();
     }
 
-    public void clearConsole() {
+    public void clearConsole(){
         console.setText(null);
     }
 
     @Override
-    public void onRelocalization() {
+    public void onRelocalization(){
         copy.setText(App.settings.getLocalizedString("common.copy"));
         bottomBar.setupLanguage();
     }
 
     @Override
-    public void onReskin() {
+    public void onReskin(){
         console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
         console.setForeground(App.THEME.getConsoleTextColor());
         console.setSelectionColor(App.THEME.getSelectionColor());

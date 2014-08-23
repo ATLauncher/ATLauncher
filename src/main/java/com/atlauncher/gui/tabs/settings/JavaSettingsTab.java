@@ -6,6 +6,11 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.utils.Utils;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -14,7 +19,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -23,13 +27,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.utils.Utils;
-
 @SuppressWarnings("serial")
-public class JavaSettingsTab extends AbstractSettingsTab {
+public class JavaSettingsTab extends AbstractSettingsTab{
     private JLabelWithHover initialMemoryLabel;
     private JComboBox<String> initialMemory;
     private JLabelWithHover initialMemoryLabelWarning;
@@ -67,7 +66,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
 
     private final String[] MEMORY_OPTIONS = Utils.getMemoryOptions();
 
-    public JavaSettingsTab() {
+    public JavaSettingsTab(){
         // Initial Memory Settings
         gbc.gridx = 0;
         gbc.gridy++;
@@ -77,19 +76,19 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
                 "<html>"
                         + Utils.splitMultilinedString(
-                                App.settings.getLocalizedString("settings.32bitmemorywarning"), 80,
-                                "<br/>") + "</html>", RESTART_BORDER);
+                        App.settings.getLocalizedString("settings.32bitmemorywarning"), 80,
+                        "<br/>") + "</html>", RESTART_BORDER);
 
         initialMemoryLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.initialmemory") + ":", HELP_ICON,
                 "<html>"
                         + Utils.splitMultilinedString(
-                                App.settings.getLocalizedString("settings.initialmemoryhelp"), 80,
-                                "<br/>") + "</html>");
+                        App.settings.getLocalizedString("settings.initialmemoryhelp"), 80,
+                        "<br/>") + "</html>");
 
         initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (!Utils.is64Bit()) {
+        if(!Utils.is64Bit()){
             initialMemoryPanel.add(initialMemoryLabelWarning);
         }
         initialMemoryPanel.add(initialMemoryLabel);
@@ -103,15 +102,15 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         initialMemory.addItem("64 MB");
         initialMemory.addItem("128 MB");
         initialMemory.addItem("256 MB");
-        for (String option : MEMORY_OPTIONS) {
+        for(String option : MEMORY_OPTIONS){
             initialMemory.addItem(option);
         }
         initialMemory.setSelectedItem(App.settings.getInitialMemory() + " MB");
-        initialMemory.addItemListener(new ItemListener() {
+        initialMemory.addItemListener(new ItemListener(){
 
             @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
+            public void itemStateChanged(ItemEvent e){
+                if(e.getStateChange() == ItemEvent.SELECTED){
                     int selectedRam = Integer.parseInt(((String) initialMemory.getSelectedItem())
                             .replace(" MB", ""));
                 }
@@ -128,19 +127,19 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         maximumMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
                 "<html>"
                         + Utils.splitMultilinedString(
-                                App.settings.getLocalizedString("settings.32bitmemorywarning"), 80,
-                                "<br/>") + "</html>", RESTART_BORDER);
+                        App.settings.getLocalizedString("settings.32bitmemorywarning"), 80,
+                        "<br/>") + "</html>", RESTART_BORDER);
 
         maximumMemoryLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.maximummemory") + ":", HELP_ICON,
                 "<html>"
                         + Utils.splitMultilinedString(
-                                App.settings.getLocalizedString("settings.maximummemoryhelp"), 80,
-                                "<br/>") + "</html>");
+                        App.settings.getLocalizedString("settings.maximummemoryhelp"), 80,
+                        "<br/>") + "</html>");
 
         maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (!Utils.is64Bit()) {
+        if(!Utils.is64Bit()){
             maximumMemoryPanel.add(maximumMemoryLabelWarning);
         }
         maximumMemoryPanel.add(maximumMemoryLabel);
@@ -151,23 +150,23 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         maximumMemory = new JComboBox<String>();
-        for (String option : MEMORY_OPTIONS) {
+        for(String option : MEMORY_OPTIONS){
             maximumMemory.addItem(option);
         }
         maximumMemory.setSelectedItem(App.settings.getMaximumMemory() + " MB");
-        maximumMemory.addItemListener(new ItemListener() {
+        maximumMemory.addItemListener(new ItemListener(){
 
             @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
+            public void itemStateChanged(ItemEvent e){
+                if(e.getStateChange() == ItemEvent.SELECTED){
                     int selectedRam = Integer.parseInt(((String) maximumMemory.getSelectedItem())
                             .replace(" MB", ""));
-                    if (selectedRam > 4096) {
+                    if(selectedRam > 4096){
                         JOptionPane.showMessageDialog(
                                 App.settings.getParent(),
                                 "<html>"
                                         + App.settings.getLocalizedString(
-                                                "settings.toomuchramallocated", "<br/><br/>")
+                                        "settings.toomuchramallocated", "<br/><br/>")
                                         + "</html>", App.settings
                                         .getLocalizedString("settings.help"),
                                 JOptionPane.PLAIN_MESSAGE);
@@ -216,20 +215,20 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         commonScreenSizes = new JComboBox<String>();
         commonScreenSizes.addItem("Select An Option");
         commonScreenSizes.addItem("854x480");
-        if (Utils.getMaximumWindowWidth() >= 1280 && Utils.getMaximumWindowHeight() >= 720) {
+        if(Utils.getMaximumWindowWidth() >= 1280 && Utils.getMaximumWindowHeight() >= 720){
             commonScreenSizes.addItem("1280x720");
         }
-        if (Utils.getMaximumWindowWidth() >= 1600 && Utils.getMaximumWindowHeight() >= 900) {
+        if(Utils.getMaximumWindowWidth() >= 1600 && Utils.getMaximumWindowHeight() >= 900){
             commonScreenSizes.addItem("1600x900");
         }
-        if (Utils.getMaximumWindowWidth() >= 1920 && Utils.getMaximumWindowHeight() >= 1080) {
+        if(Utils.getMaximumWindowWidth() >= 1920 && Utils.getMaximumWindowHeight() >= 1080){
             commonScreenSizes.addItem("1920x1080");
         }
-        commonScreenSizes.addActionListener(new ActionListener() {
+        commonScreenSizes.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
                 String selected = (String) commonScreenSizes.getSelectedItem();
-                if (selected.contains("x")) {
+                if(selected.contains("x")){
                     String[] parts = selected.split("x");
                     widthField.setText(parts[0]);
                     heightField.setText(parts[1]);
@@ -238,7 +237,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         });
         commonScreenSizes.setPreferredSize(new Dimension(
                 commonScreenSizes.getPreferredSize().width + 10, commonScreenSizes
-                        .getPreferredSize().height));
+                .getPreferredSize().height));
         windowSizePanel.add(widthField);
         windowSizePanel.add(new JLabel("x"));
         windowSizePanel.add(heightField);
@@ -265,8 +264,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaPath = new JTextField(20);
         javaPath.setText(App.settings.getJavaPath());
         javaPathResetButton = new JButton(App.settings.getLocalizedString("settings.javapathreset"));
-        javaPathResetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        javaPathResetButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 javaPath.setText(Utils.getJavaHome());
             }
         });
@@ -295,8 +294,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaParameters.setText(App.settings.getJavaParameters());
         javaParametersResetButton = new JButton(
                 App.settings.getLocalizedString("settings.javapathreset"));
-        javaParametersResetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        javaParametersResetButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 javaParameters.setText("");
             }
         });
@@ -319,7 +318,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         startMinecraftMaximised = new JCheckBox();
-        if (App.settings.startMinecraftMaximised()) {
+        if(App.settings.startMinecraftMaximised()){
             startMinecraftMaximised.setSelected(true);
         }
         add(startMinecraftMaximised, gbc);
@@ -339,42 +338,42 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         saveCustomMods = new JCheckBox();
-        if (App.settings.saveCustomMods()) {
+        if(App.settings.saveCustomMods()){
             saveCustomMods.setSelected(true);
         }
         add(saveCustomMods, gbc);
     }
 
-    public boolean isValidJavaPath() {
+    public boolean isValidJavaPath(){
         File jPath = new File(javaPath.getText(), "bin");
-        if (!jPath.exists()) {
+        if(!jPath.exists()){
             JOptionPane.showMessageDialog(
                     App.settings.getParent(),
                     "<html>"
                             + App.settings.getLocalizedString("settings.javapathincorrect",
-                                    "<br/><br/>") + "</html>",
+                            "<br/><br/>") + "</html>",
                     App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
         return true;
     }
 
-    public boolean isValidJavaParamaters() {
-        if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
+    public boolean isValidJavaParamaters(){
+        if(javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
                 || javaParameters.getText().contains("-XX:PermSize")
-                || javaParameters.getText().contains("-XX:MetaspaceSize")) {
+                || javaParameters.getText().contains("-XX:MetaspaceSize")){
             JOptionPane.showMessageDialog(
                     App.settings.getParent(),
                     "<html>"
                             + App.settings.getLocalizedString("settings.javaparametersincorrect",
-                                    "<br/><br/>") + "</html>",
+                            "<br/><br/>") + "</html>",
                     App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
         return true;
     }
 
-    public void save() {
+    public void save(){
         App.settings.setInitialMemory(Integer.parseInt(((String) initialMemory.getSelectedItem())
                 .replace(" MB", "")));
         App.settings.setMaximumMemory(Integer.parseInt(((String) maximumMemory.getSelectedItem())
@@ -391,7 +390,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     }
 
     @Override
-    public String getTitle() {
+    public String getTitle(){
         return Language.INSTANCE.localize("settings.javatab");
     }
 }

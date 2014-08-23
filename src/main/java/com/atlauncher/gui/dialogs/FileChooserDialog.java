@@ -6,6 +6,9 @@
  */
 package com.atlauncher.gui.dialogs;
 
+import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -16,7 +19,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -27,10 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
-import com.atlauncher.App;
-import com.atlauncher.utils.Utils;
-
-public class FileChooserDialog extends JDialog {
+public class FileChooserDialog extends JDialog{
     private JPanel top;
     private JPanel middle;
     private JPanel bottom;
@@ -48,7 +47,7 @@ public class FileChooserDialog extends JDialog {
     private JButton selectButton;
 
     public FileChooserDialog(String title, String labelName, String bottomText,
-                             String selectorText, String selectorSelectText, String[] subOptions, String[] options) {
+                             String selectorText, String selectorSelectText, String[] subOptions, String[] options){
         super(App.settings.getParent(), title, ModalityType.APPLICATION_MODAL);
         this.fileOptions = options;
         setSize(400, 175);
@@ -82,25 +81,25 @@ public class FileChooserDialog extends JDialog {
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         selectButton = new JButton(App.settings.getLocalizedString("common.select"));
-        selectButton.addActionListener(new ActionListener() {
+        selectButton.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
                 JFileChooser fileChooser = new JFileChooser(App.settings.getBaseDir());
                 fileChooser.setMultiSelectionEnabled(true);
-                fileChooser.setFileFilter(new FileFilter() {
+                fileChooser.setFileFilter(new FileFilter(){
                     @Override
-                    public String getDescription() {
+                    public String getDescription(){
                         return "Mod Files (.jar; .zip; .litemod)";
                     }
 
                     @Override
-                    public boolean accept(File f) {
-                        if (f.isDirectory()) {
+                    public boolean accept(File f){
+                        if(f.isDirectory()){
                             return true;
                         }
 
-                        for (String ext : fileOptions) {
-                            if (f.getName().endsWith(ext)) {
+                        for(String ext : fileOptions){
+                            if(f.getName().endsWith(ext)){
                                 return true;
                             }
                         }
@@ -109,10 +108,10 @@ public class FileChooserDialog extends JDialog {
                 });
                 fileChooser.showOpenDialog(App.settings.getParent());
                 filesChosen = fileChooser.getSelectedFiles();
-                if (filesChosen != null && filesChosen.length >= 1) {
-                    if (filesChosen.length == 1) {
+                if(filesChosen != null && filesChosen.length >= 1){
+                    if(filesChosen.length == 1){
                         textField.setText(filesChosen[0].getAbsolutePath());
-                    } else {
+                    } else{
                         textField.setText(filesChosen.length + " Files Selected!");
                     }
                 }
@@ -130,7 +129,7 @@ public class FileChooserDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         selector = new JComboBox<String>();
         selector.addItem(selectorSelectText);
-        for (String item : subOptions) {
+        for(String item : subOptions){
             selector.addItem(item);
         }
         middle.add(selector, gbc);
@@ -139,8 +138,8 @@ public class FileChooserDialog extends JDialog {
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         bottomButton = new JButton(bottomText);
-        bottomButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        bottomButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 close();
             }
         });
@@ -150,8 +149,8 @@ public class FileChooserDialog extends JDialog {
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
+        addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent arg0){
                 close();
             }
         });
@@ -159,19 +158,19 @@ public class FileChooserDialog extends JDialog {
         setVisible(true);
     }
 
-    private void close() {
+    private void close(){
         setVisible(false);
         dispose();
     }
 
-    public ArrayList<File> getChosenFiles() {
+    public ArrayList<File> getChosenFiles(){
         ArrayList<File> files = new ArrayList<File>();
-        if (this.filesChosen == null) {
+        if(this.filesChosen == null){
             return null;
         }
-        for (File file : filesChosen) {
-            for (String ext : fileOptions) {
-                if (file.getName().endsWith(ext)) {
+        for(File file : filesChosen){
+            for(String ext : fileOptions){
+                if(file.getName().endsWith(ext)){
                     files.add(file);
                 }
             }
@@ -179,10 +178,10 @@ public class FileChooserDialog extends JDialog {
         return files;
     }
 
-    public String getSelectorValue() {
-        if (this.selector.getSelectedIndex() == 0) {
+    public String getSelectorValue(){
+        if(this.selector.getSelectedIndex() == 0){
             return null;
-        } else {
+        } else{
             return (String) this.selector.getSelectedItem();
         }
     }

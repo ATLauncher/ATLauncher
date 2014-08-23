@@ -6,6 +6,11 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.InstanceInstaller;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,12 +22,7 @@ import java.net.SocketException;
 import java.net.URL;
 import java.util.zip.GZIPInputStream;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.InstanceInstaller;
-
-public class Downloadable {
+public class Downloadable{
     private String beforeURL;
     private String url;
     private File file;
@@ -37,11 +37,11 @@ public class Downloadable {
     private int attempts = 0;
 
     public Downloadable(String url, File file, String hash, int size,
-            InstanceInstaller instanceInstaller, boolean isATLauncherDownload, File copyTo,
-            boolean actuallyCopy) {
-        if (isATLauncherDownload) {
+                        InstanceInstaller instanceInstaller, boolean isATLauncherDownload, File copyTo,
+                        boolean actuallyCopy){
+        if(isATLauncherDownload){
             this.url = App.settings.getFileURL(url);
-        } else {
+        } else{
             this.url = url;
         }
         this.beforeURL = url;
@@ -55,86 +55,86 @@ public class Downloadable {
     }
 
     public Downloadable(String url, File file, String hash, int size,
-            InstanceInstaller instanceInstaller, boolean isATLauncherDownload) {
+                        InstanceInstaller instanceInstaller, boolean isATLauncherDownload){
         this(url, file, hash, size, instanceInstaller, isATLauncherDownload, null, false);
     }
 
     public Downloadable(String url, File file, String hash, InstanceInstaller instanceInstaller,
-            boolean isATLauncherDownload) {
+                        boolean isATLauncherDownload){
         this(url, file, hash, -1, instanceInstaller, isATLauncherDownload, null, false);
     }
 
-    public Downloadable(String url, File file) {
+    public Downloadable(String url, File file){
         this(url, file, null, -1, null, false, null, false);
     }
 
-    public Downloadable(String url, boolean isATLauncherDownload) {
+    public Downloadable(String url, boolean isATLauncherDownload){
         this(url, null, null, -1, null, isATLauncherDownload, null, false);
     }
 
-    public String getFilename() {
-        if (this.copyTo == null) {
+    public String getFilename(){
+        if(this.copyTo == null){
             return this.file.getName();
         }
         return this.copyTo.getName();
     }
 
-    public boolean isMD5() {
-        if (hash == null) {
+    public boolean isMD5(){
+        if(hash == null){
             return true;
         }
-        if (hash.length() == 40) {
+        if(hash.length() == 40){
             return false;
         }
         return true;
     }
 
-    public String getHashFromURL() throws IOException {
+    public String getHashFromURL() throws IOException{
         String etag = null;
         etag = getConnection().getHeaderField("ETag");
 
-        if (etag == null) {
+        if(etag == null){
             etag = getConnection().getHeaderField("ATLauncher-MD5");
         }
 
-        if (etag == null) {
+        if(etag == null){
             return "-";
         }
 
-        if ((etag.startsWith("\"")) && (etag.endsWith("\""))) {
+        if((etag.startsWith("\"")) && (etag.endsWith("\""))){
             etag = etag.substring(1, etag.length() - 1);
         }
 
-        if (etag.matches("[A-Za-z0-9]{32}")) {
+        if(etag.matches("[A-Za-z0-9]{32}")){
             return etag;
-        } else {
+        } else{
             return "-";
         }
     }
 
-    public int getFilesize() {
-        if (this.size == -1) {
+    public int getFilesize(){
+        if(this.size == -1){
             int size = getConnection().getContentLength();
-            if (size == -1) {
+            if(size == -1){
                 this.size = 0;
-            } else {
+            } else{
                 this.size = size;
             }
         }
         return this.size;
     }
 
-    public boolean needToDownload() {
-        if (this.file == null) {
+    public boolean needToDownload(){
+        if(this.file == null){
             return true;
         }
-        if (this.file.exists()) {
-            if (isMD5()) {
-                if (Utils.getMD5(this.file).equalsIgnoreCase(getHash())) {
+        if(this.file.exists()){
+            if(isMD5()){
+                if(Utils.getMD5(this.file).equalsIgnoreCase(getHash())){
                     return false;
                 }
-            } else {
-                if (Utils.getSHA1(this.file).equalsIgnoreCase(getHash())) {
+            } else{
+                if(Utils.getSHA1(this.file).equalsIgnoreCase(getHash())){
                     return false;
                 }
             }
@@ -142,9 +142,9 @@ public class Downloadable {
         return true;
     }
 
-    public void copyFile() {
-        if (this.copyTo != null && this.actuallyCopy) {
-            if (this.copyTo.exists()) {
+    public void copyFile(){
+        if(this.copyTo != null && this.actuallyCopy){
+            if(this.copyTo.exists()){
                 Utils.delete(this.copyTo);
             }
             new File(this.copyTo.getAbsolutePath().substring(0,
@@ -153,11 +153,11 @@ public class Downloadable {
         }
     }
 
-    public String getHash() {
-        if (this.hash == null || this.hash.isEmpty()) {
-            try {
+    public String getHash(){
+        if(this.hash == null || this.hash.isEmpty()){
+            try{
                 this.hash = getHashFromURL();
-            } catch (IOException e) {
+            } catch(IOException e){
                 App.settings.logStackTrace(e);
                 this.hash = "-";
                 this.connection = null;
@@ -166,36 +166,36 @@ public class Downloadable {
         return this.hash;
     }
 
-    public File getFile() {
+    public File getFile(){
         return this.file;
     }
 
-    public File getCopyToFile() {
+    public File getCopyToFile(){
         return this.copyTo;
     }
 
-    public boolean isGziped() {
-        if (getConnection().getContentEncoding() == null) {
+    public boolean isGziped(){
+        if(getConnection().getContentEncoding() == null){
             return false;
-        } else if (getConnection().getContentEncoding().equalsIgnoreCase("gzip")) {
+        } else if(getConnection().getContentEncoding().equalsIgnoreCase("gzip")){
             return true;
-        } else {
+        } else{
             return false;
         }
     }
 
-    private HttpURLConnection getConnection() {
-        if (this.instanceInstaller != null) {
-            if (this.instanceInstaller.isCancelled()) {
+    private HttpURLConnection getConnection(){
+        if(this.instanceInstaller != null){
+            if(this.instanceInstaller.isCancelled()){
                 return null;
             }
         }
-        if (this.connection == null) {
-            try {
-                if (App.settings.getEnableProxy()) {
+        if(this.connection == null){
+            try{
+                if(App.settings.getEnableProxy()){
                     this.connection = (HttpURLConnection) new URL(this.url)
                             .openConnection(App.settings.getProxy());
-                } else {
+                } else{
                     this.connection = (HttpURLConnection) new URL(this.url).openConnection();
                 }
                 this.connection.setUseCaches(false);
@@ -206,24 +206,24 @@ public class Downloadable {
                 this.connection.setRequestProperty("Expires", "0");
                 this.connection.setRequestProperty("Pragma", "no-cache");
                 this.connection.connect();
-                if (this.connection.getResponseCode() / 100 != 2) {
+                if(this.connection.getResponseCode() / 100 != 2){
                     throw new IOException(this.url
                             + " returned response code "
                             + this.connection.getResponseCode()
                             + (this.connection.getResponseMessage() != null ? " with message of "
-                                    + this.connection.getResponseMessage() : ""));
+                            + this.connection.getResponseMessage() : ""));
                 }
-            } catch (IOException e) {
+            } catch(IOException e){
                 App.settings.logStackTrace(e);
-                if (this.isATLauncherDownload) {
-                    if (App.settings.getNextServer()) {
+                if(this.isATLauncherDownload){
+                    if(App.settings.getNextServer()){
                         this.url = App.settings.getFileURL(this.beforeURL);
                         this.connection = null;
                         return getConnection();
-                    } else {
+                    } else{
                         LogManager.error("Failed to download " + this.beforeURL
                                 + " from all ATLauncher servers. Cancelling install!");
-                        if (this.instanceInstaller != null) {
+                        if(this.instanceInstaller != null){
                             instanceInstaller.cancel(true);
                         }
                     }
@@ -233,82 +233,82 @@ public class Downloadable {
         return this.connection;
     }
 
-    private void downloadFile(boolean downloadAsLibrary) {
-        if (instanceInstaller != null) {
-            if (instanceInstaller.isCancelled()) {
+    private void downloadFile(boolean downloadAsLibrary){
+        if(instanceInstaller != null){
+            if(instanceInstaller.isCancelled()){
                 return;
             }
         }
         InputStream in = null;
         FileOutputStream writer = null;
-        try {
-            if (isGziped()) {
+        try{
+            if(isGziped()){
                 in = new GZIPInputStream(getConnection().getInputStream());
-            } else {
+            } else{
                 in = getConnection().getInputStream();
             }
             writer = new FileOutputStream(this.file);
             byte[] buffer = new byte[2048];
             int bytesRead = 0;
-            while ((bytesRead = in.read(buffer)) > 0) {
+            while((bytesRead = in.read(buffer)) > 0){
                 writer.write(buffer, 0, bytesRead);
                 buffer = new byte[2048];
-                if (this.instanceInstaller != null && downloadAsLibrary && getFilesize() != 0) {
+                if(this.instanceInstaller != null && downloadAsLibrary && getFilesize() != 0){
                     this.instanceInstaller.addDownloadedBytes(bytesRead);
                 }
             }
-        } catch (SocketException e) {
+        } catch(SocketException e){
             LogManager.error("Failed to download " + this.url + " due to SocketException!");
             // Connection reset. Close connection and try again
             App.settings.logStackTrace(e);
             this.connection.disconnect();
             this.connection = null;
-            if (this.oldFile != null && this.oldFile.exists()) {
+            if(this.oldFile != null && this.oldFile.exists()){
                 Utils.moveFile(this.oldFile, this.file, true);
             }
-        } catch (IOException e) {
+        } catch(IOException e){
             LogManager.error("Failed to download " + this.url + " due to IOException!");
             App.settings.logStackTrace(e);
-            if (this.oldFile != null && this.oldFile.exists()) {
+            if(this.oldFile != null && this.oldFile.exists()){
                 Utils.moveFile(this.oldFile, this.file, true);
             }
         } finally {
-            try {
-                if (writer != null) {
+            try{
+                if(writer != null){
                     writer.close();
                 }
-                if (in != null) {
+                if(in != null){
                     in.close();
                 }
-            } catch (IOException e1) {
+            } catch(IOException e1){
                 App.settings.logStackTrace(e1);
             }
         }
     }
 
-    public String getContents() {
-        if (instanceInstaller != null) {
-            if (instanceInstaller.isCancelled()) {
+    public String getContents(){
+        if(instanceInstaller != null){
+            if(instanceInstaller.isCancelled()){
                 return null;
             }
         }
         StringBuilder response = null;
-        try {
+        try{
             InputStream in = null;
-            if (isGziped()) {
+            if(isGziped()){
                 in = new GZIPInputStream(getConnection().getInputStream());
-            } else {
+            } else{
                 in = getConnection().getInputStream();
             }
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             response = new StringBuilder();
             String inputLine;
 
-            while ((inputLine = br.readLine()) != null) {
+            while((inputLine = br.readLine()) != null){
                 response.append(inputLine);
             }
             in.close();
-        } catch (IOException e) {
+        } catch(IOException e){
             LogManager.error("Failed to get contents of " + this.url + " due to IOException!");
             App.settings.logStackTrace(e);
             return null;
@@ -317,108 +317,108 @@ public class Downloadable {
         return response.toString();
     }
 
-    public void download(boolean downloadAsLibrary) {
+    public void download(boolean downloadAsLibrary){
         download(downloadAsLibrary, false);
     }
 
-    public void download(boolean downloadAsLibrary, boolean force) {
+    public void download(boolean downloadAsLibrary, boolean force){
         this.attempts = 0;
-        if (this.connection != null) {
+        if(this.connection != null){
             this.connection.disconnect();
             this.connection = null;
         }
-        if (this.file == null) {
+        if(this.file == null){
             LogManager.error("Cannot download " + this.url + " to file as one wasn't specified!");
             return;
         }
-        if (this.file.exists()) {
+        if(this.file.exists()){
             this.oldFile = new File(this.file.getParent(), this.file.getName() + ".bak");
             Utils.moveFile(this.file, this.oldFile, true);
         }
-        if (instanceInstaller != null) {
-            if (instanceInstaller.isCancelled()) {
+        if(instanceInstaller != null){
+            if(instanceInstaller.isCancelled()){
                 return;
             }
         }
-        if (!this.file.canWrite()) {
+        if(!this.file.canWrite()){
             Utils.delete(this.file);
         }
-        if (this.file.exists() && this.file.isFile()) {
+        if(this.file.exists() && this.file.isFile()){
             Utils.delete(this.file);
         }
         // Create the directory structure
         new File(this.file.getAbsolutePath().substring(0,
                 this.file.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
-        if (getHash().equalsIgnoreCase("-")) {
+        if(getHash().equalsIgnoreCase("-")){
             downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to
             // check
-        } else {
+        } else{
             String fileHash = "0";
             boolean done = false;
-            while (attempts <= 3) {
+            while(attempts <= 3){
                 attempts++;
-                if (this.file.exists()) {
-                    if (isMD5()) {
+                if(this.file.exists()){
+                    if(isMD5()){
                         fileHash = Utils.getMD5(this.file);
-                    } else {
+                    } else{
                         fileHash = Utils.getSHA1(this.file);
                     }
-                } else {
+                } else{
                     fileHash = "0";
                 }
-                if (fileHash.equalsIgnoreCase(getHash())) {
+                if(fileHash.equalsIgnoreCase(getHash())){
                     done = true;
                     break; // Hash matches, file is good
                 }
-                if (this.connection != null) {
+                if(this.connection != null){
                     this.connection.disconnect();
                     this.connection = null;
                 }
-                if (this.file.exists()) {
+                if(this.file.exists()){
                     Utils.delete(this.file); // Delete file since it doesn't match MD5
                 }
                 downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
             }
-            if (!done) {
-                if (this.isATLauncherDownload) {
-                    if (App.settings.getNextServer()) {
+            if(!done){
+                if(this.isATLauncherDownload){
+                    if(App.settings.getNextServer()){
                         LogManager.warn("Error downloading " + this.file.getName() + " from "
                                 + this.url + ". Expected hash of " + getHash() + " but got "
                                 + fileHash + " instead. Trying another server!");
                         this.url = App.settings.getFileURL(this.beforeURL);
                         download(downloadAsLibrary); // Redownload the file
-                    } else {
+                    } else{
                         Utils.copyFile(this.file, App.settings.getFailedDownloadsDir());
                         LogManager
                                 .error("Failed to download file "
                                         + this.file.getName()
                                         + " from all ATLauncher servers. Copied to FailedDownloads Folder. Cancelling install!");
-                        if (this.instanceInstaller != null) {
+                        if(this.instanceInstaller != null){
                             instanceInstaller.cancel(true);
                         }
                     }
-                } else {
+                } else{
                     Utils.copyFile(this.file, App.settings.getFailedDownloadsDir());
                     LogManager.error("Error downloading " + this.file.getName() + " from "
                             + this.url + ". Expected hash of " + getHash() + " but got " + fileHash
                             + " instead. Copied to FailedDownloads Folder. Cancelling install!");
-                    if (this.instanceInstaller != null) {
+                    if(this.instanceInstaller != null){
                         instanceInstaller.cancel(true);
                     }
                 }
-            } else if (this.copyTo != null && this.actuallyCopy) {
+            } else if(this.copyTo != null && this.actuallyCopy){
                 String fileHash2;
-                if (this.copyTo.exists()) {
-                    if (isMD5()) {
+                if(this.copyTo.exists()){
+                    if(isMD5()){
                         fileHash2 = Utils.getMD5(this.file);
-                    } else {
+                    } else{
                         fileHash2 = Utils.getSHA1(this.file);
                     }
-                } else {
+                } else{
                     fileHash2 = "0";
                 }
-                if (!fileHash2.equalsIgnoreCase(getHash())) {
-                    if (this.copyTo.exists()) {
+                if(!fileHash2.equalsIgnoreCase(getHash())){
+                    if(this.copyTo.exists()){
                         Utils.delete(this.copyTo);
                     }
                     new File(this.copyTo.getAbsolutePath().substring(0,
@@ -430,19 +430,19 @@ public class Downloadable {
             App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used
         }
 
-        if (this.oldFile != null && this.oldFile.exists()) {
+        if(this.oldFile != null && this.oldFile.exists()){
             Utils.delete(this.oldFile);
         }
 
-        if (this.connection != null) {
+        if(this.connection != null){
             this.connection.disconnect();
         }
     }
 
-    public int getResponseCode() {
-        try {
+    public int getResponseCode(){
+        try{
             return getConnection().getResponseCode();
-        } catch (IOException e) {
+        } catch(IOException e){
             App.settings.logStackTrace("IOException when getting response code for the url "
                     + this.url, e);
             return -1;

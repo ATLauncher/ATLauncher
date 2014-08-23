@@ -10,30 +10,30 @@
  */
 package com.atlauncher.data;
 
-import java.util.List;
-
 import com.atlauncher.App;
 import com.atlauncher.annot.Json;
 import com.atlauncher.exceptions.InvalidPack;
 
+import java.util.List;
+
 @Json
-public class PackUsers {
+public class PackUsers{
     private int pack;
     private List<String> testers;
     private List<String> allowedPlayers;
 
-    public void addUsers() {
+    public void addUsers(){
         Pack pack = null;
-        try {
+        try{
             pack = App.settings.getPackByID(this.pack);
-        } catch (InvalidPack e) {
+        } catch(InvalidPack e){
             App.settings.logStackTrace(e);
             return;
         }
-        if (this.testers != null) {
+        if(this.testers != null){
             pack.addTesters(testers);
         }
-        if (this.allowedPlayers != null) {
+        if(this.allowedPlayers != null){
             pack.addAllowedPlayers(allowedPlayers);
         }
     }

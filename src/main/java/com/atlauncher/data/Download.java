@@ -6,6 +6,6 @@
  */
 package com.atlauncher.data;
 
-public enum Download {
+public enum Download{
     browser, direct, server
 }

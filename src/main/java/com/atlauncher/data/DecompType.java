@@ -6,6 +6,6 @@
  */
 package com.atlauncher.data;
 
-public enum DecompType {
+public enum DecompType{
     jar, mods, coremods, root
 }

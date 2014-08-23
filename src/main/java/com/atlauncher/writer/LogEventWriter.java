@@ -39,13 +39,13 @@ public final class LogEventWriter implements Closeable, Flushable{
 
     @Override
     public void flush()
-    throws IOException {
+    throws IOException{
         this.writer.flush();
     }
 
     @Override
     public void close()
-    throws IOException {
+    throws IOException{
         this.writer.close();
     }
 }

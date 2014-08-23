@@ -6,19 +6,18 @@
  */
 package com.atlauncher.gui;
 
+import com.atlauncher.data.Account;
+
 import java.awt.Component;
 import java.awt.Dimension;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import com.atlauncher.data.Account;
-
 @SuppressWarnings("serial")
-public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<Account> {
-    public AccountsDropDownRenderer() {
+public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<Account>{
+    public AccountsDropDownRenderer(){
         setOpaque(true);
         setHorizontalAlignment(CENTER);
         setVerticalAlignment(CENTER);
@@ -32,15 +31,15 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
      */
     @SuppressWarnings("rawtypes")
     public Component getListCellRendererComponent(JList list, Account account, int index,
-                                                  boolean isSelected, boolean cellHasFocus) {
-        if (account == null) {
+                                                  boolean isSelected, boolean cellHasFocus){
+        if(account == null){
             return this;
         }
 
-        if (isSelected) {
+        if(isSelected){
             setBackground(list.getSelectionBackground());
             setForeground(list.getSelectionForeground());
-        } else {
+        } else{
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }

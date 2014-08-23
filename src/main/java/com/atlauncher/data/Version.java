@@ -6,30 +6,30 @@
  */
 package com.atlauncher.data;
 
-public class Version {
+public class Version{
     private boolean isDev;
     private String version;
     private MinecraftVersion minecraftVersion;
 
-    public Version(boolean isDev, String version, MinecraftVersion minecraftVersion) {
+    public Version(boolean isDev, String version, MinecraftVersion minecraftVersion){
         this.isDev = isDev;
         this.version = version;
         this.minecraftVersion = minecraftVersion;
     }
 
-    public boolean isDevVersion() {
+    public boolean isDevVersion(){
         return this.isDev;
     }
 
-    public String getVersion() {
+    public String getVersion(){
         return this.version;
     }
 
-    public MinecraftVersion getMinecraftVersion() {
+    public MinecraftVersion getMinecraftVersion(){
         return this.minecraftVersion;
     }
 
-    public String toString() {
+    public String toString(){
         return this.version + " (Minecraft " + this.minecraftVersion.getVersion() + ")";
     }
 

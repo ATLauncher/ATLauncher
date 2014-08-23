@@ -10,13 +10,13 @@
  */
 package com.atlauncher.data;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
-public class Action {
+import java.io.File;
+import java.util.ArrayList;
+
+public class Action{
     private ArrayList<Mod> mod;
     private String action;
     private Type type;
@@ -26,7 +26,7 @@ public class Action {
     private boolean server;
 
     public Action(String action, Type type, String after, String saveAs, boolean client,
-                  boolean server) {
+                  boolean server){
         this.mod = new ArrayList<Mod>();
         this.action = action;
         this.type = type;
@@ -36,7 +36,7 @@ public class Action {
         this.server = server;
     }
 
-    public Action(String action, String after, String saveAs, boolean client, boolean server) {
+    public Action(String action, String after, String saveAs, boolean client, boolean server){
         this.mod = new ArrayList<Mod>();
         this.action = action;
         this.after = after;
@@ -45,35 +45,35 @@ public class Action {
         this.server = server;
     }
 
-    public void addMod(Mod mod) {
-        if (!this.mod.contains(mod)) {
+    public void addMod(Mod mod){
+        if(!this.mod.contains(mod)){
             this.mod.add(mod);
         }
     }
 
-    public void execute(InstanceInstaller instanceInstaller) {
-        if ((instanceInstaller.isServer() && !server) || (!instanceInstaller.isServer() && !client)) {
+    public void execute(InstanceInstaller instanceInstaller){
+        if((instanceInstaller.isServer() && !server) || (!instanceInstaller.isServer() && !client)){
             return;
         }
         Utils.deleteContents(instanceInstaller.getTempActionsDirectory());
         instanceInstaller.fireTask("Executing Action");
         instanceInstaller.fireSubProgressUnknown();
-        if (this.action.equalsIgnoreCase("createzip")) {
-            if (mod.size() >= 2) {
-                for (Mod mod : this.mod) {
+        if(this.action.equalsIgnoreCase("createzip")){
+            if(mod.size() >= 2){
+                for(Mod mod : this.mod){
                     Utils.unzip(mod.getInstalledFile(instanceInstaller),
                             instanceInstaller.getTempActionsDirectory());
                 }
-                switch (this.type) {
+                switch(this.type){
                     case mods:
                         Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(
                                 instanceInstaller.getModsDirectory(), saveAs));
                         break;
                     case coremods:
-                        if (instanceInstaller.getVersion().getMinecraftVersion().usesCoreMods()) {
+                        if(instanceInstaller.getVersion().getMinecraftVersion().usesCoreMods()){
                             Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(
                                     instanceInstaller.getCoreModsDirectory(), saveAs));
-                        } else {
+                        } else{
                             Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(
                                     instanceInstaller.getModsDirectory(), saveAs));
                         }
@@ -87,15 +87,15 @@ public class Action {
                         break;
                 }
             }
-        } else if (this.action.equalsIgnoreCase("rename")) {
-            if (mod.size() == 1) {
+        } else if(this.action.equalsIgnoreCase("rename")){
+            if(mod.size() == 1){
                 File from = mod.get(0).getInstalledFile(instanceInstaller);
                 File to = new File(from.getParentFile(), saveAs);
                 Utils.moveFile(from, to, true);
             }
         }
-        if (this.after.equalsIgnoreCase("delete")) {
-            for (Mod mod : this.mod) {
+        if(this.after.equalsIgnoreCase("delete")){
+            for(Mod mod : this.mod){
                 Utils.delete(mod.getInstalledFile(instanceInstaller));
             }
         }

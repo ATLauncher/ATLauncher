@@ -12,32 +12,29 @@ package com.atlauncher.gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.Insets;
-
-import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
-public class CustomLineBorder extends LineBorder {
+public class CustomLineBorder extends LineBorder{
     private int insets = 0;
 
-    public CustomLineBorder(int insets, Color color) {
+    public CustomLineBorder(int insets, Color color){
         super(color);
         this.insets = insets;
     }
 
-    public CustomLineBorder(int insets, Color color, int thickness) {
+    public CustomLineBorder(int insets, Color color, int thickness){
         super(color, thickness);
         this.insets = insets;
     }
 
-    public CustomLineBorder(int insets, Color color, int thickness, boolean rounded) {
+    public CustomLineBorder(int insets, Color color, int thickness, boolean rounded){
         super(color, thickness, rounded);
         this.insets = insets;
     }
 
     @Override
-    public Insets getBorderInsets(Component c, Insets insets) {
+    public Insets getBorderInsets(Component c, Insets insets){
         return new Insets(this.insets, this.insets, this.insets, this.insets);
     }
 }

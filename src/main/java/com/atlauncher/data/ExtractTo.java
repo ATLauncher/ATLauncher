@@ -6,7 +6,7 @@
  */
 package com.atlauncher.data;
 
-public enum ExtractTo {
+public enum ExtractTo{
 
     root, mods, coremods
 

@@ -9,6 +9,6 @@ package com.atlauncher.data.json;
 import com.atlauncher.annot.Json;
 
 @Json
-public enum ActionAfter {
+public enum ActionAfter{
     delete, nothing
 }

@@ -6,7 +6,7 @@
  */
 package com.atlauncher.gui.components;
 
-public class BlankToolPanel extends AbstractToolPanel {
+public class BlankToolPanel extends AbstractToolPanel{
     /**
      * Auto generated serial.
      */

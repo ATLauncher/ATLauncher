@@ -13,7 +13,7 @@ import com.atlauncher.utils.Utils;
  * The Class OpenEyeReportResponse contains information returned from OpenMods OpenEye system when a
  * pending crash report is reported through their API.
  */
-public class OpenEyeReportResponse {
+public class OpenEyeReportResponse{
     /**
      * The type of this response. Generally is only ever 'known crash'.
      */
@@ -35,7 +35,7 @@ public class OpenEyeReportResponse {
      *
      * @return the type
      */
-    public String getType() {
+    public String getType(){
         return this.type;
     }
 
@@ -44,7 +44,7 @@ public class OpenEyeReportResponse {
      *
      * @return the url to the OpenEye website
      */
-    public String getURL() {
+    public String getURL(){
         return this.url;
     }
 
@@ -53,7 +53,7 @@ public class OpenEyeReportResponse {
      *
      * @return the note or null if none
      */
-    public String getNote() {
+    public String getNote(){
         return this.getNote();
     }
 
@@ -62,7 +62,7 @@ public class OpenEyeReportResponse {
      *
      * @return true, if there is an attached note
      */
-    public boolean hasNote() {
+    public boolean hasNote(){
         return (this.note != null);
     }
 
@@ -71,11 +71,11 @@ public class OpenEyeReportResponse {
      *
      * @return the string to add to the dialog box for the note
      */
-    public String getNoteDisplay() {
-        if (this.hasNote()) {
+    public String getNoteDisplay(){
+        if(this.hasNote()){
             return App.settings.getLocalizedString("instance.openeyehasnote") + "<br/><br/>"
                     + Utils.splitMultilinedString(this.getNote(), 100, "<br/>") + "<br/><br/>";
-        } else {
+        } else{
             return App.settings.getLocalizedString("instance.openeyenonote") + "<br/><br/>";
         }
     }

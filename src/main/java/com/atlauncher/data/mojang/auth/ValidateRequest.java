@@ -6,10 +6,10 @@
  */
 package com.atlauncher.data.mojang.auth;
 
-public class ValidateRequest {
+public class ValidateRequest{
     private String accessToken;
 
-    public ValidateRequest(String accessToken) {
+    public ValidateRequest(String accessToken){
         this.accessToken = accessToken;
     }
 }

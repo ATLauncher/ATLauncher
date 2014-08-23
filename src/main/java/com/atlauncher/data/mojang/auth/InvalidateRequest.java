@@ -10,12 +10,12 @@
  */
 package com.atlauncher.data.mojang.auth;
 
-public class InvalidateRequest {
+public class InvalidateRequest{
 
     private String accessToken;
     private String clientToken;
 
-    public InvalidateRequest(String accessToken, String clientToken) {
+    public InvalidateRequest(String accessToken, String clientToken){
         this.accessToken = accessToken;
         this.clientToken = clientToken;
     }

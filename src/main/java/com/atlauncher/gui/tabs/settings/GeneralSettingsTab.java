@@ -6,23 +6,22 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+
 @SuppressWarnings("serial")
-public class GeneralSettingsTab extends AbstractSettingsTab {
+public class GeneralSettingsTab extends AbstractSettingsTab{
     private JLabelWithHover languageLabel;
     private JComboBox<String> language;
 
@@ -49,18 +48,18 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover enableTrayIconLabel;
     private JCheckBox enableTrayIcon;
 
-    private final JButton TCDL_BUTTON = new JButton("Get the creator!") {
+    private final JButton TCDL_BUTTON = new JButton("Get the creator!"){
         {
-            this.addActionListener(new ActionListener() {
+            this.addActionListener(new ActionListener(){
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(ActionEvent e){
 
                 }
             });
         }
     };
 
-    public GeneralSettingsTab() {
+    public GeneralSettingsTab(){
         // Language
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -103,7 +102,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<String>();
-        for (String themee : App.settings.getThemesDir().list(Utils.getThemesFileFilter())) {
+        for(String themee : App.settings.getThemesDir().list(Utils.getThemesFileFilter())){
             theme.addItem(themee.replace(".json", ""));
         }
         theme.setSelectedItem(App.settings.getTheme());
@@ -150,7 +149,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         advancedBackup = new JCheckBox();
-        if (App.settings.isAdvancedBackupsEnabled()) {
+        if(App.settings.isAdvancedBackupsEnabled()){
             advancedBackup.setSelected(true);
         }
         add(advancedBackup, gbc);
@@ -170,7 +169,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         sortPacksAlphabetically = new JCheckBox();
-        if (App.settings.sortPacksAlphabetically()) {
+        if(App.settings.sortPacksAlphabetically()){
             sortPacksAlphabetically.setSelected(true);
         }
         add(sortPacksAlphabetically, gbc);
@@ -190,7 +189,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         keepLauncherOpen = new JCheckBox();
-        if (App.settings.keepLauncherOpen()) {
+        if(App.settings.keepLauncherOpen()){
             keepLauncherOpen.setSelected(true);
         }
         add(keepLauncherOpen, gbc);
@@ -210,7 +209,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableConsole = new JCheckBox();
-        if (App.settings.enableConsole()) {
+        if(App.settings.enableConsole()){
             enableConsole.setSelected(true);
         }
         add(enableConsole, gbc);
@@ -223,33 +222,33 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableTrayIconLabel = new JLabelWithHover(
                 App.settings.getLocalizedString("settings.traymenu") + "?", HELP_ICON, "<html>"
-                        + App.settings.getLocalizedString("settings.traymenuhelp", "<br/>")
-                        + "</html>");
+                + App.settings.getLocalizedString("settings.traymenuhelp", "<br/>")
+                + "</html>");
         add(enableTrayIconLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableTrayIcon = new JCheckBox();
-        if (App.settings.enableTrayIcon()) {
+        if(App.settings.enableTrayIcon()){
             enableTrayIcon.setSelected(true);
         }
         add(enableTrayIcon, gbc);
     }
 
-    public boolean needToReloadTheme() {
+    public boolean needToReloadTheme(){
         return !((String) theme.getSelectedItem()).equalsIgnoreCase(App.settings.getTheme());
     }
 
-    public boolean needToReloadPacksPanel() {
+    public boolean needToReloadPacksPanel(){
         return sortPacksAlphabetically.isSelected() != App.settings.sortPacksAlphabetically();
     }
 
-    public boolean reloadLocalizationTable() {
+    public boolean reloadLocalizationTable(){
         return !((String) language.getSelectedItem()).equalsIgnoreCase(Language.current());
     }
 
-    public void save() {
+    public void save(){
         App.settings.setLanguage((String) language.getSelectedItem());
         App.settings.setTheme((String) theme.getSelectedItem());
         App.settings.setDateFormat((String) dateFormat.getSelectedItem());
@@ -261,7 +260,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     }
 
     @Override
-    public String getTitle() {
+    public String getTitle(){
         return Language.INSTANCE.localize("settings.generaltab");
     }
 }

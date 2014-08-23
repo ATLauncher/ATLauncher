@@ -6,24 +6,24 @@
  */
 package com.atlauncher.utils;
 
+import com.atlauncher.App;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.atlauncher.App;
-
-public final class Timestamper {
+public final class Timestamper{
     private static final SimpleDateFormat format = new SimpleDateFormat(
             App.settings.getDateFormat() + " HH:mm:ss a");
 
-    public static String now() {
+    public static String now(){
         return format.format(new Date());
     }
 
-    public static String was(Date date) {
+    public static String was(Date date){
         return format.format(date);
     }
 
-    public static void updateDateFormat() {
+    public static void updateDateFormat(){
         format.applyLocalizedPattern(App.settings.getDateFormat() + " HH:mm:ss a");
     }
 }

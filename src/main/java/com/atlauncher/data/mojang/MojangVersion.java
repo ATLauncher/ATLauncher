@@ -12,7 +12,7 @@ package com.atlauncher.data.mojang;
 
 import java.util.List;
 
-public class MojangVersion {
+public class MojangVersion{
 
     private String id;
     private String minecraftArguments;
@@ -21,30 +21,30 @@ public class MojangVersion {
     private List<Rule> rules;
     private String mainClass;
 
-    public String getId() {
+    public String getId(){
         return id;
     }
 
-    public String getMinecraftArguments() {
+    public String getMinecraftArguments(){
         return this.minecraftArguments;
     }
 
-    public String getAssets() {
-        if (this.assets == null) {
+    public String getAssets(){
+        if(this.assets == null){
             return "legacy";
         }
         return this.assets;
     }
 
-    public List<Library> getLibraries() {
+    public List<Library> getLibraries(){
         return this.libraries;
     }
 
-    public List<Rule> getRules() {
+    public List<Rule> getRules(){
         return this.rules;
     }
 
-    public String getMainClass() {
+    public String getMainClass(){
         return this.mainClass;
     }
 

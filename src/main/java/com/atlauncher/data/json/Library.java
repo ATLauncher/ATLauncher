@@ -9,7 +9,7 @@ package com.atlauncher.data.json;
 import com.atlauncher.annot.Json;
 
 @Json
-public class Library {
+public class Library{
     private String url;
     private String file;
     private String server;
@@ -18,43 +18,43 @@ public class Library {
     private String depends;
     private String dependsGroup;
 
-    public String getUrl() {
+    public String getUrl(){
         return this.url;
     }
 
-    public String getFile() {
+    public String getFile(){
         return this.file;
     }
 
-    public String getServer() {
+    public String getServer(){
         return this.server;
     }
 
-    public String getMD5() {
+    public String getMD5(){
         return this.md5;
     }
 
-    public DownloadType getDownloadType() {
+    public DownloadType getDownloadType(){
         return this.download;
     }
 
-    public String getDepends() {
+    public String getDepends(){
         return this.depends;
     }
 
-    public String getDependsGroup() {
+    public String getDependsGroup(){
         return this.dependsGroup;
     }
 
-    public boolean hasDepends() {
+    public boolean hasDepends(){
         return this.depends != null;
     }
 
-    public boolean hasDependsGroup() {
+    public boolean hasDependsGroup(){
         return this.dependsGroup != null;
     }
 
-    public boolean forServer() {
+    public boolean forServer(){
         return this.server != null;
     }
 }

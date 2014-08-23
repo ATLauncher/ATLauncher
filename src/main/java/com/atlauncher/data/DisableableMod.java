@@ -10,6 +10,10 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.utils.Utils;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,11 +24,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.utils.Utils;
-
-public class DisableableMod implements Serializable {
+public class DisableableMod implements Serializable{
     private static final long serialVersionUID = 8429405767313518704L;
     private String name;
     private String version;
@@ -37,7 +37,7 @@ public class DisableableMod implements Serializable {
     private boolean userAdded = false; // Default to not being user added
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type,
-                          Color colour, String description, boolean disabled, boolean userAdded) {
+                          Color colour, String description, boolean disabled, boolean userAdded){
         this.name = name;
         this.version = version;
         this.optional = optional;
@@ -49,75 +49,75 @@ public class DisableableMod implements Serializable {
         this.userAdded = userAdded;
     }
 
-    public String getName() {
+    public String getName(){
         return this.name;
     }
 
-    public String getVersion() {
+    public String getVersion(){
         return this.version;
     }
 
-    public boolean isOptional() {
+    public boolean isOptional(){
         return this.optional;
     }
 
-    public boolean hasColour() {
-        if (this.colour == null) {
+    public boolean hasColour(){
+        if(this.colour == null){
             return false;
-        } else {
+        } else{
             return true;
         }
     }
 
-    public Color getColour() {
+    public Color getColour(){
         return this.colour;
     }
 
-    public String getDescription() {
-        if (this.description == null) {
+    public String getDescription(){
+        if(this.description == null){
             return "";
         }
         return this.description;
     }
 
-    public boolean isDisabled() {
+    public boolean isDisabled(){
         return this.disabled;
     }
 
-    public boolean isUserAdded() {
+    public boolean isUserAdded(){
         return this.userAdded;
     }
 
-    public String getFilename() {
+    public String getFilename(){
         return this.file;
     }
 
-    public boolean enable(Instance instance) {
-        if (this.disabled) {
-            if (!getFile(instance).getParentFile().exists()) {
+    public boolean enable(Instance instance){
+        if(this.disabled){
+            if(!getFile(instance).getParentFile().exists()){
                 getFile(instance).getParentFile().mkdir();
             }
-            if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
-                if (this.type == Type.jar) {
+            if(Utils.moveFile(getDisabledFile(instance), getFile(instance), true)){
+                if(this.type == Type.jar){
                     File inputFile = instance.getMinecraftJar();
                     File outputTmpFile = new File(App.settings.getTempDir(), instance.getSafeName()
                             + "-minecraft.jar");
-                    if (Utils.hasMetaInf(inputFile)) {
-                        try {
+                    if(Utils.hasMetaInf(inputFile)){
+                        try{
                             JarInputStream input = new JarInputStream(
                                     new FileInputStream(inputFile));
                             JarOutputStream output = new JarOutputStream(new FileOutputStream(
                                     outputTmpFile));
                             JarEntry entry;
 
-                            while ((entry = input.getNextJarEntry()) != null) {
-                                if (entry.getName().contains("META-INF")) {
+                            while((entry = input.getNextJarEntry()) != null){
+                                if(entry.getName().contains("META-INF")){
                                     continue;
                                 }
                                 output.putNextEntry(entry);
                                 byte buffer[] = new byte[1024];
                                 int amo;
-                                while ((amo = input.read(buffer, 0, 1024)) != -1) {
+                                while((amo = input.read(buffer, 0, 1024)) != -1){
                                     output.write(buffer, 0, amo);
                                 }
                                 output.closeEntry();
@@ -128,7 +128,7 @@ public class DisableableMod implements Serializable {
 
                             inputFile.delete();
                             outputTmpFile.renameTo(inputFile);
-                        } catch (IOException e) {
+                        } catch(IOException e){
                             App.settings.logStackTrace(e);
                         }
                     }
@@ -140,9 +140,9 @@ public class DisableableMod implements Serializable {
         return false;
     }
 
-    public boolean disable(Instance instance) {
-        if (!this.disabled) {
-            if (Utils.moveFile(getFile(instance), instance.getDisabledModsDirectory(), false)) {
+    public boolean disable(Instance instance){
+        if(!this.disabled){
+            if(Utils.moveFile(getFile(instance), instance.getDisabledModsDirectory(), false)){
                 this.disabled = true;
                 return true;
             }
@@ -150,13 +150,13 @@ public class DisableableMod implements Serializable {
         return false;
     }
 
-    public File getDisabledFile(Instance instance) {
+    public File getDisabledFile(Instance instance){
         return new File(instance.getDisabledModsDirectory(), this.file);
     }
 
-    public File getFile(Instance instance) {
+    public File getFile(Instance instance){
         File dir = null;
-        switch (type) {
+        switch(type){
             case jar:
             case forge:
             case mcpc:
@@ -187,13 +187,13 @@ public class DisableableMod implements Serializable {
                 LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
                 break;
         }
-        if (dir == null) {
+        if(dir == null){
             return null;
         }
         return new File(dir, file);
     }
 
-    public Type getType() {
+    public Type getType(){
         return this.type;
     }
 

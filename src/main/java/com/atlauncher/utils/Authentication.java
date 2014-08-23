@@ -10,6 +10,16 @@
  */
 package com.atlauncher.utils;
 
+import com.atlauncher.App;
+import com.atlauncher.data.Account;
+import com.atlauncher.data.mojang.auth.AuthenticationRequest;
+import com.atlauncher.data.mojang.auth.AuthenticationResponse;
+import com.atlauncher.data.mojang.auth.RefreshRequest;
+import com.atlauncher.data.mojang.auth.ValidateRequest;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -19,21 +29,12 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Account;
-import com.atlauncher.data.mojang.auth.AuthenticationRequest;
-import com.atlauncher.data.mojang.auth.AuthenticationResponse;
-import com.atlauncher.data.mojang.auth.RefreshRequest;
-import com.atlauncher.data.mojang.auth.ValidateRequest;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
-public class Authentication {
-    public static AuthenticationResponse checkAccount(String username, String password) {
+public class Authentication{
+    public static AuthenticationResponse checkAccount(String username, String password){
         String uuid = UUID.randomUUID() + "";
         Gson gson = new Gson();
         StringBuilder response = null;
-        try {
+        try{
             URL url = new URL("https://authserver.mojang.com/authenticate");
             String request = gson.toJson(new AuthenticationRequest(username, password, uuid));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -57,41 +58,41 @@ public class Authentication {
             // Read the result
 
             BufferedReader reader = null;
-            try {
+            try{
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            } catch (IOException e) {
+            } catch(IOException e){
                 reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
             }
             response = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) {
+            while((line = reader.readLine()) != null){
                 response.append(line);
                 response.append('\r');
             }
             reader.close();
-        } catch (IOException e) {
+        } catch(IOException e){
             App.settings.logStackTrace(e);
             return null;
         }
         AuthenticationResponse result = null;
-        if (response != null) {
-            try {
+        if(response != null){
+            try{
                 result = gson.fromJson(response.toString(), AuthenticationResponse.class);
-            } catch (JsonSyntaxException e) {
+            } catch(JsonSyntaxException e){
                 App.settings.logStackTrace(e);
             }
-            if (result != null) {
+            if(result != null){
                 result.setUUID(uuid);
             }
         }
         return result;
     }
 
-    public static boolean checkAccessToken(String accessToken) {
+    public static boolean checkAccessToken(String accessToken){
         boolean success = false;
         Gson gson = new Gson();
         StringBuilder response = null;
-        try {
+        try{
             URL url = new URL("https://authserver.mojang.com/validate");
             String request = gson.toJson(new ValidateRequest(accessToken));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -115,31 +116,31 @@ public class Authentication {
             // Read the result
 
             BufferedReader reader = null;
-            try {
+            try{
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 success = true; // All Good, token refreshed
-            } catch (IOException e) {
+            } catch(IOException e){
                 reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
                 // Nope token is bad, not good
             }
             response = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) {
+            while((line = reader.readLine()) != null){
                 response.append(line);
                 response.append('\r');
             }
             reader.close();
-        } catch (IOException e) {
+        } catch(IOException e){
             App.settings.logStackTrace(e);
             return false; // Something bad happened, assume token is bad
         }
         return success;
     }
 
-    public static AuthenticationResponse refreshAccessToken(Account account) {
+    public static AuthenticationResponse refreshAccessToken(Account account){
         Gson gson = new Gson();
         StringBuilder response = null;
-        try {
+        try{
             URL url = new URL("https://authserver.mojang.com/refresh");
             String request = gson.toJson(new RefreshRequest(account.getAccessToken(), account
                     .getClientToken()));
@@ -164,30 +165,30 @@ public class Authentication {
             // Read the result
 
             BufferedReader reader = null;
-            try {
+            try{
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            } catch (IOException e) {
+            } catch(IOException e){
                 reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
             }
             response = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) {
+            while((line = reader.readLine()) != null){
                 response.append(line);
                 response.append('\r');
             }
             reader.close();
-        } catch (IOException e) {
+        } catch(IOException e){
             App.settings.logStackTrace(e);
             return null;
         }
         AuthenticationResponse result = null;
-        if (response != null) {
-            try {
+        if(response != null){
+            try{
                 result = gson.fromJson(response.toString(), AuthenticationResponse.class);
-            } catch (JsonSyntaxException e) {
+            } catch(JsonSyntaxException e){
                 App.settings.logStackTrace(e);
             }
-            if (result != null) {
+            if(result != null){
                 result.setUUID(UUID.randomUUID().toString());
             }
         }

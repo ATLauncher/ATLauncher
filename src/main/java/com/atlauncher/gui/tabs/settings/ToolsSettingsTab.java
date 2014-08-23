@@ -6,28 +6,27 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
 @SuppressWarnings("serial")
-public class ToolsSettingsTab extends AbstractSettingsTab {
+public class ToolsSettingsTab extends AbstractSettingsTab{
     private JLabelWithHover enableServerCheckerLabel;
     private JCheckBox enableServerChecker;
 
     private JLabelWithHover serverCheckerWaitLabel;
     private JTextField serverCheckerWait;
 
-    public ToolsSettingsTab() {
+    public ToolsSettingsTab(){
         // Enable Server Checker
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -37,23 +36,23 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
                 App.settings.getLocalizedString("settings.serverchecker") + "?", HELP_ICON,
                 "<html>"
                         + App.settings.getLocalizedString("settings.servercheckerhelp", "<br/>"
-                                + "</html>"));
+                        + "</html>"));
         add(enableServerCheckerLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableServerChecker = new JCheckBox();
-        if (App.settings.enableServerChecker()) {
+        if(App.settings.enableServerChecker()){
             enableServerChecker.setSelected(true);
         }
-        enableServerChecker.addActionListener(new ActionListener() {
+        enableServerChecker.addActionListener(new ActionListener(){
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!enableServerChecker.isSelected()) {
+            public void actionPerformed(ActionEvent e){
+                if(!enableServerChecker.isSelected()){
                     serverCheckerWait.setEnabled(false);
-                } else {
+                } else{
                     serverCheckerWait.setEnabled(true);
                 }
             }
@@ -69,8 +68,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
                 App.settings.getLocalizedString("settings.servercheckerwait") + ":", HELP_ICON,
                 "<html>"
                         + Utils.splitMultilinedString(
-                                App.settings.getLocalizedString("settings.servercheckerwaithelp"),
-                                75, "<br/>") + "</html>");
+                        App.settings.getLocalizedString("settings.servercheckerwaithelp"),
+                        75, "<br/>") + "</html>");
         add(serverCheckerWaitLabel, gbc);
 
         gbc.gridx++;
@@ -78,15 +77,15 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         serverCheckerWait = new JTextField(4);
         serverCheckerWait.setText(App.settings.getServerCheckerWait() + "");
-        if (!App.settings.enableServerChecker()) {
+        if(!App.settings.enableServerChecker()){
             serverCheckerWait.setEnabled(false);
         }
         add(serverCheckerWait, gbc);
     }
 
-    public boolean isValidServerCheckerWait() {
-        if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1
-                || Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
+    public boolean isValidServerCheckerWait(){
+        if(Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1
+                || Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30){
             JOptionPane.showMessageDialog(App.settings.getParent(),
                     App.settings.getLocalizedString("settings.servercheckerwaitinvalid"),
                     App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
@@ -95,20 +94,20 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
         return true;
     }
 
-    public boolean needToRestartServerChecker() {
+    public boolean needToRestartServerChecker(){
         return ((enableServerChecker.isSelected() != App.settings.enableServerChecker()) || (App.settings
                 .getServerCheckerWait() != Integer.parseInt(serverCheckerWait.getText().replaceAll(
                 "[^0-9]", ""))));
     }
 
-    public void save() {
+    public void save(){
         App.settings.setEnableServerChecker(enableServerChecker.isSelected());
         App.settings.setServerCheckerWait(Integer.parseInt(serverCheckerWait.getText().replaceAll(
                 "[^0-9]", "")));
     }
 
     @Override
-    public String getTitle() {
+    public String getTitle(){
         return Language.INSTANCE.localize("tabs.tools");
     }
 }

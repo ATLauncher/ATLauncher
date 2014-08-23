@@ -6,6 +6,10 @@
  */
 package com.atlauncher.gui.dialogs;
 
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.utils.Utils;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -14,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -23,11 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.utils.Utils;
-
-public class SetupDialog extends JDialog {
+public class SetupDialog extends JDialog{
     /**
      * Auto generated serial.
      */
@@ -44,10 +43,10 @@ public class SetupDialog extends JDialog {
 
     private JButton saveButton;
 
-    public SetupDialog() {
+    public SetupDialog(){
         super(null, "ATLauncher Setup", ModalityType.APPLICATION_MODAL);
         this.requestFocus();
-        setSize(400, 200);
+        this.setSize(400, 200);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -91,8 +90,8 @@ public class SetupDialog extends JDialog {
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton("Save");
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        saveButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
                 App.settings.setLanguage((String) language.getSelectedItem());
                 App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
                 App.settings.saveProperties();
@@ -106,8 +105,8 @@ public class SetupDialog extends JDialog {
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
+        addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent arg0){
                 System.exit(0);
             }
         });

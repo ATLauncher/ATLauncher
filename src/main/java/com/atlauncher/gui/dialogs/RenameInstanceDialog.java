@@ -6,6 +6,11 @@
  */
 package com.atlauncher.gui.dialogs;
 
+import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.data.Instance;
+import com.atlauncher.utils.Utils;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -14,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -23,12 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.data.Instance;
-import com.atlauncher.utils.Utils;
-
-public class RenameInstanceDialog extends JDialog {
+public class RenameInstanceDialog extends JDialog{
     private JPanel top;
     private JPanel middle;
     private JPanel bottom;
@@ -38,7 +37,7 @@ public class RenameInstanceDialog extends JDialog {
 
     private JButton saveButton;
 
-    public RenameInstanceDialog(final Instance instance) {
+    public RenameInstanceDialog(final Instance instance){
         super(null, App.settings.getLocalizedString("instance.renaminginstance"),
                 ModalityType.APPLICATION_MODAL);
         setSize(300, 150);
@@ -73,35 +72,35 @@ public class RenameInstanceDialog extends JDialog {
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton(App.settings.getLocalizedString("common.save"));
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (App.settings.isInstance(instanceName.getText())) {
+        saveButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(App.settings.isInstance(instanceName.getText())){
                     JOptionPane.showMessageDialog(RenameInstanceDialog.this,
                             App.settings.getLocalizedString("instance.alreadyinstance",
                                     instanceName.getText()), App.settings
                                     .getLocalizedString("common.error"), JOptionPane.ERROR_MESSAGE);
-                } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+                } else if(instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0){
                     JOptionPane.showMessageDialog(
                             App.settings.getParent(),
                             "<html><p align=\"center\">"
                                     + App.settings.getLocalizedString("common.error")
                                     + "<br/><br/>"
                                     + App.settings.getLocalizedString("instance.invalidname",
-                                            instanceName.getText()) + "</p></html>",
+                                    instanceName.getText()) + "</p></html>",
                             App.settings.getLocalizedString("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                     return;
-                } else {
-                    if (instance.rename(instanceName.getText())) {
+                } else{
+                    if(instance.rename(instanceName.getText())){
                         App.settings.saveInstances();
                         App.settings.reloadInstancesPanel();
-                    } else {
+                    } else{
                         LogManager.error("Unknown Error Occured While Renaming Instance!");
                         JOptionPane.showMessageDialog(
                                 RenameInstanceDialog.this,
                                 "<html><p align=\"center\">"
                                         + App.settings.getLocalizedString("instance.errorrenaming",
-                                                instance.getName() + "<br/><br/>") + "</p></html>",
+                                        instance.getName() + "<br/><br/>") + "</p></html>",
                                 App.settings.getLocalizedString("common.error"),
                                 JOptionPane.ERROR_MESSAGE);
                     }
@@ -115,8 +114,8 @@ public class RenameInstanceDialog extends JDialog {
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
+        addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent arg0){
                 close();
             }
         });
@@ -124,7 +123,7 @@ public class RenameInstanceDialog extends JDialog {
         setVisible(true);
     }
 
-    private void close() {
+    private void close(){
         setVisible(false);
         dispose();
     }

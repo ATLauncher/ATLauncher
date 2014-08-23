@@ -6,21 +6,20 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.border.BevelBorder;
-
 import com.atlauncher.App;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
 import com.atlauncher.utils.Utils;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.border.BevelBorder;
+
 public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener,
-        SettingsListener {
+                                                                         SettingsListener{
     /**
      * Auto generated serial.
      */
@@ -31,10 +30,10 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
 
     private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">"
             + Utils.splitMultilinedString(
-                    App.settings.getLocalizedString("tools.serverchecker.info"), 60, "<br>")
+            App.settings.getLocalizedString("tools.serverchecker.info"), 60, "<br>")
             + "</p></html>");
 
-    public ServerCheckerToolPanel() {
+    public ServerCheckerToolPanel(){
         TITLE_LABEL.setFont(BOLD_FONT);
         TOP_PANEL.add(TITLE_LABEL);
         MIDDLE_PANEL.add(INFO_LABEL);
@@ -45,19 +44,19 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
         this.checkLaunchButtonEnabled();
     }
 
-    private void checkLaunchButtonEnabled() {
+    private void checkLaunchButtonEnabled(){
         LAUNCH_BUTTON.setEnabled(App.settings.enableServerChecker());
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == LAUNCH_BUTTON) {
+    public void actionPerformed(ActionEvent e){
+        if(e.getSource() == LAUNCH_BUTTON){
             new ServerListForCheckerDialog();
         }
     }
 
     @Override
-    public void onSettingsSaved() {
+    public void onSettingsSaved(){
         this.checkLaunchButtonEnabled();
     }
 }

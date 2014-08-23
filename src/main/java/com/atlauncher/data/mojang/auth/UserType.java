@@ -10,16 +10,16 @@
  */
 package com.atlauncher.data.mojang.auth;
 
-public enum UserType {
+public enum UserType{
     LEGACY("legacy"), MOJANG("mojang");
 
     private final String name;
 
-    private UserType(String name) {
+    private UserType(String name){
         this.name = name;
     }
 
-    public String getName() {
+    public String getName(){
         return this.name;
     }
 }

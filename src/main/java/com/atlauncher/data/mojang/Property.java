@@ -10,16 +10,16 @@
  */
 package com.atlauncher.data.mojang;
 
-public class Property {
+public class Property{
 
     private String name;
     private String value;
 
-    public String getKey() {
+    public String getKey(){
         return this.name;
     }
 
-    public String getValue() {
+    public String getValue(){
         return this.value;
     }
 

@@ -4,14 +4,15 @@ import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.util.Date;
 
-public final class Gsons {
+public final class Gsons{
     public static final Gson DEFAULT = new GsonBuilder()
             .setPrettyPrinting()
             .create();
@@ -27,5 +28,6 @@ public final class Gsons {
             .registerTypeAdapter(File.class, new FileTypeAdapter())
             .create();
 
-    private Gsons(){}
+    private Gsons(){
+    }
 }

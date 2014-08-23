@@ -7,7 +7,7 @@ import java.awt.Image;
 import javax.swing.JPanel;
 
 public final class ImagePanel
-extends JPanel{
+        extends JPanel{
     private final Image image;
 
     public ImagePanel(Image image){

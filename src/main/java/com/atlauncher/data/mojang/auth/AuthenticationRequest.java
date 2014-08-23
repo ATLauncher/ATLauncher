@@ -10,7 +10,7 @@
  */
 package com.atlauncher.data.mojang.auth;
 
-public class AuthenticationRequest {
+public class AuthenticationRequest{
 
     private Agent agent;
     private String username;
@@ -18,30 +18,30 @@ public class AuthenticationRequest {
     private String clientToken;
     private boolean requestUser = true;
 
-    public AuthenticationRequest(String username, String password, String clientToken) {
+    public AuthenticationRequest(String username, String password, String clientToken){
         this.agent = new Agent("Minecraft", 10);
         this.username = username;
         this.password = password;
         this.clientToken = clientToken;
     }
 
-    public Agent getAgent() {
+    public Agent getAgent(){
         return agent;
     }
 
-    public String getUsername() {
+    public String getUsername(){
         return username;
     }
 
-    public String getPassword() {
+    public String getPassword(){
         return password;
     }
 
-    public String getClientToken() {
+    public String getClientToken(){
         return clientToken;
     }
 
-    public boolean isRequestUser() {
+    public boolean isRequestUser(){
         return requestUser;
     }
 
