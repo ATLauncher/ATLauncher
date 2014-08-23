@@ -10,6 +10,7 @@ import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -49,6 +50,7 @@ public class PackDisplay
 
     public PackDisplay(Pack pack){
         super(pack);
+        RelocalizationManager.addListener(this);
         this.pack = pack;
 
         this.splitter.setLeftComponent(new ImagePanel(pack.getImage().getImage()));
@@ -142,6 +144,9 @@ public class PackDisplay
 
     @Override
     public void onRelocalization(){
-
+        this.newInstanceButton.setText(Language.INSTANCE.localize("common.newinstance"));
+        this.createServerButton.setText(Language.INSTANCE.localize("common.createserver"));
+        this.supportButton.setText(Language.INSTANCE.localize("common.support"));
+        this.websiteButton.setText(Language.INSTANCE.localize("common.website"));
     }
 }
