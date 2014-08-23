@@ -23,7 +23,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -61,11 +60,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     private JLabel statusIcon;
 
     public LauncherBottomBar(){
-        setBorder(BorderFactory.createEtchedBorder());
-        setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(0, 50)); // Make the bottom bar at least
-        // 50 pixels high
-
         submitError.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
@@ -107,7 +101,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
-        add(rightSide, BorderLayout.EAST);
         RelocalizationManager.addListener(this);
     }
 

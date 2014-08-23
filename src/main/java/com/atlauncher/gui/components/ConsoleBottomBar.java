@@ -15,68 +15,53 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.thread.PasteUpload;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-@SuppressWarnings("serial")
-public class ConsoleBottomBar extends BottomBar implements RelocalizationListener{
-    private JPanel leftSide;
+public class ConsoleBottomBar
+extends BottomBar
+implements RelocalizationListener{
 
-    private JButton clear;
-    private JButton copyLog;
-    private JButton uploadLog;
-    private JButton killMinecraft;
+    private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 10));
+
+    private final JButton clearButton = new JButton("Clear");
+    private final JButton copyLogButton = new JButton("Copy Log");
+    private final JButton uploadLogButton = new JButton("Upload Log");
+    private final JButton killMinecraftButton = new JButton("Kill Minecraft");
 
     public ConsoleBottomBar(){
-        setBorder(BorderFactory.createEtchedBorder());
-        setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(0, 50)); // Make the bottom bar at least 50 pixels high
+        this.addActionListeners(); // Setup Action Listeners
 
-        createButtons(); // Create the buttons
-        setupActionListeners(); // Setup Action Listeners
+        this.leftSide.add(this.clearButton);
+        this.leftSide.add(this.copyLogButton);
+        this.leftSide.add(this.uploadLogButton);
+        this.leftSide.add(this.killMinecraftButton);
 
-        leftSide = new JPanel();
-        leftSide.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
+        this.killMinecraftButton.setVisible(false);
 
-        gbc.gridx = 0;
-        gbc.gridy = GridBagConstraints.RELATIVE;
-        gbc.insets = new Insets(0, 5, 0, 0);
-        leftSide.add(clear, gbc);
-        gbc.gridx++;
-        leftSide.add(copyLog, gbc);
-        gbc.gridx++;
-        leftSide.add(uploadLog, gbc);
-        gbc.gridx++;
-        leftSide.add(killMinecraft, gbc);
+        this.add(this.leftSide, BorderLayout.WEST);
 
-        add(leftSide, BorderLayout.WEST);
-        add(rightSide, BorderLayout.EAST);
         RelocalizationManager.addListener(this);
     }
 
     /**
      * Sets up the action listeners on the buttons
      */
-    private void setupActionListeners(){
-        clear.addActionListener(new ActionListener(){
+    private void addActionListeners(){
+        clearButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 App.settings.clearConsole();
                 LogManager.info("Console Cleared");
             }
         });
-        copyLog.addActionListener(new ActionListener(){
+        copyLogButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 App.TOASTER.pop("Copied Log to clipboard");
                 LogManager.info("Copied Log to clipboard");
@@ -85,7 +70,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                 clipboard.setContents(text, null);
             }
         });
-        uploadLog.addActionListener(new ActionListener(){
+        uploadLogButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 try{
                     String result = App.TASKPOOL.submit(new PasteUpload()).get();
@@ -104,7 +89,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                 }
             }
         });
-        killMinecraft.addActionListener(new ActionListener(){
+        killMinecraftButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent arg0){
                 int ret = JOptionPane.showConfirmDialog(
                         App.settings.getParent(),
@@ -114,44 +99,32 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                         JOptionPane.YES_NO_OPTION);
                 if(ret == JOptionPane.YES_OPTION){
                     App.settings.killMinecraft();
-                    killMinecraft.setVisible(false);
+                    killMinecraftButton.setVisible(false);
                 }
             }
         });
     }
 
-    /**
-     * Creates the JButton's for use in the bar
-     */
-    private void createButtons(){
-        clear = new JButton("Clear");
-        copyLog = new JButton("Copy Log");
-        uploadLog = new JButton("Upload Log");
-
-        killMinecraft = new JButton("Kill Minecraft");
-        killMinecraft.setVisible(false);
-    }
-
     public void showKillMinecraft(){
-        killMinecraft.setVisible(true);
+        killMinecraftButton.setVisible(true);
     }
 
     public void hideKillMinecraft(){
-        killMinecraft.setVisible(false);
+        killMinecraftButton.setVisible(false);
     }
 
     public void setupLanguage(){
-        clear.setText(Language.INSTANCE.localize("console.clear"));
-        copyLog.setText(Language.INSTANCE.localize("console.copy"));
-        uploadLog.setText(Language.INSTANCE.localize("console.upload"));
-        killMinecraft.setText(Language.INSTANCE.localize("console.kill"));
+        clearButton.setText(Language.INSTANCE.localize("console.clear"));
+        copyLogButton.setText(Language.INSTANCE.localize("console.copy"));
+        uploadLogButton.setText(Language.INSTANCE.localize("console.upload"));
+        killMinecraftButton.setText(Language.INSTANCE.localize("console.kill"));
     }
 
     @Override
     public void onRelocalization(){
-        clear.setText(Language.INSTANCE.localize("console.clear"));
-        copyLog.setText(Language.INSTANCE.localize("console.copy"));
-        uploadLog.setText(Language.INSTANCE.localize("console.upload"));
-        killMinecraft.setText(Language.INSTANCE.localize("console.kill"));
+        clearButton.setText(Language.INSTANCE.localize("console.clear"));
+        copyLogButton.setText(Language.INSTANCE.localize("console.copy"));
+        uploadLogButton.setText(Language.INSTANCE.localize("console.upload"));
+        killMinecraftButton.setText(Language.INSTANCE.localize("console.kill"));
     }
 }

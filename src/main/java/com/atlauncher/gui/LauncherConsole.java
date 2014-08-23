@@ -31,10 +31,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener{
-    /**
-     * Auto generated serial.
-     */
+public class LauncherConsole
+extends JFrame
+implements RelocalizationListener,
+           ReskinListener{
+
     private static final long serialVersionUID = -3538990021922025818L;
     private JScrollPane scrollPane;
     public Console console;
@@ -44,10 +45,10 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
     private JMenuItem copy;
 
     public LauncherConsole(){
-        setTitle("ATLauncher Console " + Constants.VERSION);
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setMinimumSize(new Dimension(600, 400));
+        this.setTitle("ATLauncher Console " + Constants.VERSION);
+        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        this.setIconImage(Utils.getImage("/assets/image/Icon.png"));
+        this.setMinimumSize(new Dimension(600, 400));
         this.setLayout(new BorderLayout());
 
         console = new Console();

@@ -6,115 +6,41 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.App;
 import com.atlauncher.LogManager;
-import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.utils.Utils;
 
-import java.awt.Cursor;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JToolTip;
-import javax.swing.border.Border;
 
-@SuppressWarnings("serial")
-public abstract class BottomBar extends JPanel{
-    /**
-     * Auto generated serial.
-     */
+public abstract class BottomBar
+extends JPanel{
     private static final long serialVersionUID = -7488195680365431776L;
-    protected JButton creeperHostIcon;
-    protected JButton facebookIcon;
-    protected JButton githubIcon;
-    protected JButton twitterIcon;
-    protected JButton redditIcon;
 
-    protected JPanel rightSide;
+    protected final JButton creeperHostIcon = new SMButton("/assets/image/CreeperHostIcon.png", "CreeperHost - Minecraft servers for ATLauncher packs & more");
+    protected final JButton facebookIcon = new SMButton("/assets/image/FacebookIcon.png", "Facebook");
+    protected final JButton githubIcon = new SMButton("/assets/image/GitHubIcon.png", "GitHub");
+    protected final JButton twitterIcon = new SMButton("/assets/image/TwitterIcon.png", "Twitter");
+    protected final JButton redditIcon = new SMButton("/assets/image/RedditIcon.png", "Reddit");
+
+    protected final JPanel rightSide = new JPanel(new FlowLayout());
 
     public BottomBar(){
-        this.setupSocialButtons();
+        super(new BorderLayout());
+        this.setBorder(BorderFactory.createEtchedBorder());
+        this.setPreferredSize(new Dimension(0, 50));
+        this.add(this.rightSide, BorderLayout.EAST);
         this.setupSocialButtonListeners();
-
-        rightSide = new JPanel();
-        rightSide.setLayout(new FlowLayout());
-
-        rightSide.add(creeperHostIcon);
-        rightSide.add(facebookIcon);
-        rightSide.add(githubIcon);
-        rightSide.add(redditIcon);
-        rightSide.add(twitterIcon);
-    }
-
-    private void setupSocialButtons(){
-        creeperHostIcon = new JButton(Utils.getIconImage("/assets/image/CreeperHostIcon.png")){
-            public JToolTip createToolTip(){
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        creeperHostIcon.setBorder(BorderFactory.createEmptyBorder());
-        creeperHostIcon.setContentAreaFilled(false);
-        creeperHostIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        creeperHostIcon
-                .setToolTipText("CreeperHost - Minecraft servers for ATLauncher packs and more");
-
-        facebookIcon = new JButton(Utils.getIconImage("/assets/image/FacebookIcon.png")){
-            public JToolTip createToolTip(){
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        facebookIcon.setBorder(BorderFactory.createEmptyBorder());
-        facebookIcon.setContentAreaFilled(false);
-        facebookIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        facebookIcon.setToolTipText("Facebook");
-
-        githubIcon = new JButton(Utils.getIconImage("/assets/image/GitHubIcon.png")){
-            public JToolTip createToolTip(){
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        githubIcon.setBorder(BorderFactory.createEmptyBorder());
-        githubIcon.setContentAreaFilled(false);
-        githubIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        githubIcon.setToolTipText("GitHub");
-
-        redditIcon = new JButton(Utils.getIconImage("/assets/image/RedditIcon.png")){
-            public JToolTip createToolTip(){
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        redditIcon.setBorder(BorderFactory.createEmptyBorder());
-        redditIcon.setContentAreaFilled(false);
-        redditIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        redditIcon.setToolTipText("Reddit");
-
-        twitterIcon = new JButton(Utils.getIconImage("/assets/image/TwitterIcon.png")){
-            public JToolTip createToolTip(){
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        twitterIcon.setBorder(BorderFactory.createEmptyBorder());
-        twitterIcon.setContentAreaFilled(false);
-        twitterIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        twitterIcon.setToolTipText("Twitter");
+        this.rightSide.add(this.creeperHostIcon);
+        this.rightSide.add(this.facebookIcon);
+        this.rightSide.add(this.githubIcon);
+        this.rightSide.add(this.redditIcon);
+        this.rightSide.add(this.twitterIcon);
     }
 
     private void setupSocialButtonListeners(){
@@ -149,5 +75,4 @@ public abstract class BottomBar extends JPanel{
             }
         });
     }
-
 }
