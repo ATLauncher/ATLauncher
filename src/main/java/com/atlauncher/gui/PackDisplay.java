@@ -143,7 +143,6 @@ implements RelocalizationListener{
 
     @Override
     public void onRelocalization(){
-        System.out.println("Ahhh!");
         this.newInstanceButton.setText(Language.INSTANCE.localize("common.newinstance"));
         this.createServerButton.setText(Language.INSTANCE.localize("common.createserver"));
         this.supportButton.setText(Language.INSTANCE.localize("common.support"));
