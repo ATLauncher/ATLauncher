@@ -1436,8 +1436,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void>{
                     this.cancel(true);
                     return null;
                 }
-                libraryNamesAdded.add(library.getFile().substring(0,
-                        library.getFile().lastIndexOf("-")));
+                if(library.getFile().contains("-")) {
+                    libraryNamesAdded.add(library.getFile().substring(0, library.getFile().lastIndexOf("-")));
+                }else{
+                    libraryNamesAdded.add(library.getFile());
+                }
             }
         }
         // Now read in the library jars needed from Mojang
