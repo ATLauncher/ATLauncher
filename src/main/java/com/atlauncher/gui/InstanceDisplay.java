@@ -21,6 +21,16 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.utils.Utils;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
@@ -35,16 +45,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.Date;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 
 /**
  * TODO: Rewrite along with CollapsiblePanel
@@ -53,7 +53,7 @@ import javax.swing.JTextArea;
  *
  * @author Ryan
  */
-public class InstanceDisplay extends CollapsiblePanel implements RelocalizationListener{
+public class InstanceDisplay extends CollapsiblePanel implements RelocalizationListener {
     private JPanel leftPanel; // Left panel with image
     private JPanel rightPanel; // Right panel with description and actions
     private JSplitPane splitPane; // The split pane
@@ -73,7 +73,7 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
     private JButton openFolder; // Open Folder button
     private Pack pack; // The pack this instance is
 
-    public InstanceDisplay(final Instance instance){
+    public InstanceDisplay(final Instance instance) {
         super(instance);
         RelocalizationManager.addListener(this);
         pack = instance.getRealPack();
@@ -92,54 +92,48 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
         splitPane.setEnabled(false);
 
         instanceImage = new JLabel(instance.getImage());
-        instanceImage.addMouseListener(new MouseAdapter(){
+        instanceImage.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
-                if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2){
-                    if(instance.hasUpdate()
-                            && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())
-                            && !instance.isDev()){
-                        String[] options = {
-                                Language.INSTANCE.localize("common.yes"),
-                                Language.INSTANCE.localize("common.no"),
-                                Language.INSTANCE.localize("instance.dontremindmeagain")
-                        };
-                        int ret = JOptionPane.showOptionDialog(
-                                App.settings.getParent(),
-                                "<html><p align=\"center\">"
-                                        + Language.INSTANCE.localize("instance.updatenow",
-                                        "<br/><br/>") + "</p></html>",
-                                Language.INSTANCE.localize("instance.updateavailable"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
-                        if(ret == 0){
-                            if(App.settings.getAccount() == null){
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2) {
+                    if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) &&
+                            !instance.isDev()) {
+                        String[] options = {Language.INSTANCE.localize("common.yes"),
+                                Language.INSTANCE.localize("common.no"), Language.INSTANCE.localize("instance" +
+                                ".dontremindmeagain")};
+                        int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                                "<html><p align=\"center\">" + Language.INSTANCE.localize("instance.updatenow",
+                                        "<br/><br/>") + "</p></html>", Language.INSTANCE.localize("instance" +
+                                        ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                                null, options, options[0]);
+                        if (ret == 0) {
+                            if (App.settings.getAccount() == null) {
                                 String[] optionss = {Language.INSTANCE.localize("common.ok")};
-                                JOptionPane.showOptionDialog(App.settings.getParent(), App.settings
-                                                .getLocalizedString("instance.cantupdate"), App.settings
-                                                .getLocalizedString("instance.noaccountselected"),
-                                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                                        null, optionss, optionss[0]);
-                            } else{
+                                JOptionPane.showOptionDialog(App.settings.getParent(),
+                                        App.settings.getLocalizedString("instance.cantupdate"),
+                                        App.settings.getLocalizedString("instance.noaccountselected"),
+                                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, optionss,
+                                        optionss[0]);
+                            } else {
                                 new InstanceInstallerDialog(instance, true, false);
                             }
-                        } else if(ret == 1 || ret == JOptionPane.CLOSED_OPTION){
-                            if(!App.settings.isMinecraftLaunched()){
-                                if(instance.launch()){
+                        } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
+                            if (!App.settings.isMinecraftLaunched()) {
+                                if (instance.launch()) {
                                     App.settings.setMinecraftLaunched(true);
                                 }
                             }
-                        } else if(ret == 2){
+                        } else if (ret == 2) {
                             instance.ignoreUpdate();
-                            if(!App.settings.isMinecraftLaunched()){
-                                if(instance.launch()){
+                            if (!App.settings.isMinecraftLaunched()) {
+                                if (instance.launch()) {
                                     App.settings.setMinecraftLaunched(true);
                                 }
                             }
                         }
-                    } else{
-                        if(!App.settings.isMinecraftLaunched()){
-                            if(instance.launch()){
+                    } else {
+                        if (!App.settings.isMinecraftLaunched()) {
+                            if (instance.launch()) {
                                 App.settings.setMinecraftLaunched(true);
                             }
                         }
@@ -148,13 +142,13 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
             }
 
             @Override
-            public void mouseEntered(MouseEvent e){
+            public void mouseEntered(MouseEvent e) {
                 super.mouseEntered(e);
                 setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
 
             @Override
-            public void mouseExited(MouseEvent e){
+            public void mouseExited(MouseEvent e) {
                 super.mouseExited(e);
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
@@ -185,52 +179,44 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
         // Play Button
 
         play = new JButton(Language.INSTANCE.localize("common.play"));
-        play.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(instance.hasUpdate()
-                        && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())
-                        && !instance.isDev()){
-                    String[] options = {
-                            Language.INSTANCE.localize("common.yes"),
-                            Language.INSTANCE.localize("common.no"),
-                            Language.INSTANCE.localize("instance.dontremindmeagain")
-                    };
-                    int ret = JOptionPane.showOptionDialog(
-                            App.settings.getParent(),
-                            "<html><p align=\"center\">"
-                                    + App.settings.getLocalizedString("instance.updatenow",
-                                    "<br/><br/>") + "</p></html>",
-                            Language.INSTANCE.localize("instance.updateavailable"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                    if(ret == 0){
-                        if(App.settings.getAccount() == null){
+        play.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) && !instance
+                        .isDev()) {
+                    String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common" +
+                            ".no"), Language.INSTANCE.localize("instance.dontremindmeagain")};
+                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                            "<html><p align=\"center\">" + App.settings.getLocalizedString("instance.updatenow",
+                                    "<br/><br/>") + "</p></html>", Language.INSTANCE.localize("instance" +
+                                    ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                            options, options[0]);
+                    if (ret == 0) {
+                        if (App.settings.getAccount() == null) {
                             String[] optionss = {Language.INSTANCE.localize("common.ok")};
                             JOptionPane.showOptionDialog(App.settings.getParent(),
                                     Language.INSTANCE.localize("instance.cantupdate"),
                                     Language.INSTANCE.localize("instance.noaccountselected"),
-                                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                    optionss, optionss[0]);
-                        } else{
+                                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, optionss, optionss[0]);
+                        } else {
                             new InstanceInstallerDialog(instance, true, false);
                         }
-                    } else if(ret == 1 || ret == JOptionPane.CLOSED_OPTION){
-                        if(!App.settings.isMinecraftLaunched()){
-                            if(instance.launch()){
+                    } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
+                        if (!App.settings.isMinecraftLaunched()) {
+                            if (instance.launch()) {
                                 App.settings.setMinecraftLaunched(true);
                             }
                         }
-                    } else if(ret == 2){
+                    } else if (ret == 2) {
                         instance.ignoreUpdate();
-                        if(!App.settings.isMinecraftLaunched()){
-                            if(instance.launch()){
+                        if (!App.settings.isMinecraftLaunched()) {
+                            if (instance.launch()) {
                                 App.settings.setMinecraftLaunched(true);
                             }
                         }
                     }
-                } else{
-                    if(!App.settings.isMinecraftLaunched()){
-                        if(instance.launch()){
+                } else {
+                    if (!App.settings.isMinecraftLaunched()) {
+                        if (instance.launch()) {
                             App.settings.setMinecraftLaunched(true);
                         }
                     }
@@ -241,16 +227,14 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
         // Reinstall Button
 
         reinstall = new JButton(Language.INSTANCE.localize("common.reinstall"));
-        reinstall.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(App.settings.getAccount() == null){
+        reinstall.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (App.settings.getAccount() == null) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.cantreinstall"),
-                            Language.INSTANCE.localize("instance.noaccountselected"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                } else{
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
+                            ".cantreinstall"), Language.INSTANCE.localize("instance.noaccountselected"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                } else {
                     new InstanceInstallerDialog(instance);
                 }
             }
@@ -259,8 +243,8 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
         // Rename Button
 
         rename = new JButton(Language.INSTANCE.localize("instance.rename"));
-        rename.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        rename.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 new RenameInstanceDialog(instance);
             }
         });
@@ -268,52 +252,47 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
         // Update Button
 
         update = new JButton("Update");
-        update.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(App.settings.getAccount() == null){
+        update.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (App.settings.getAccount() == null) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.cantupdate"),
-                            Language.INSTANCE.localize("instance.noaccountselected"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                } else{
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
+                            ".cantupdate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                } else {
                     new InstanceInstallerDialog(instance, true, false);
                 }
             }
         });
-        if(!instance.hasUpdate()){
+        if (!instance.hasUpdate()) {
             update.setVisible(false);
         }
 
         // Backup Button
 
         backup = new JButton(Language.INSTANCE.localize("common.backup"));
-        backup.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(App.settings.isAdvancedBackupsEnabled()){
+        backup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (App.settings.isAdvancedBackupsEnabled()) {
                     new BackupDialog(instance).setVisible(true);
-                } else{
-                    if(instance.getSavesDirectory().exists()){
-                        int ret = JOptionPane.showConfirmDialog(
-                                App.settings.getParent(),
-                                "<html><p align=\"center\">"
-                                        + App.settings.getLocalizedString("backup.sure",
-                                        "<br/><br/>") + "</p></html>",
-                                App.settings.getLocalizedString("backup.backingup",
-                                        instance.getName()), JOptionPane.YES_NO_OPTION);
-                        if(ret == JOptionPane.YES_OPTION){
+                } else {
+                    if (instance.getSavesDirectory().exists()) {
+                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(),
+                                "<html><p align=\"center\">" + App.settings.getLocalizedString("backup.sure",
+                                        "<br/><br/>") + "</p></html>", App.settings.getLocalizedString("backup" +
+                                        ".backingup", instance.getName()), JOptionPane.YES_NO_OPTION);
+                        if (ret == JOptionPane.YES_OPTION) {
                             final JDialog dialog = new JDialog(App.settings.getParent(),
-                                    App.settings.getLocalizedString("backup.backingup",
-                                            instance.getName()), ModalityType.APPLICATION_MODAL);
+                                    App.settings.getLocalizedString("backup.backingup", instance.getName()),
+                                    ModalityType.APPLICATION_MODAL);
                             dialog.setSize(300, 100);
                             dialog.setLocationRelativeTo(App.settings.getParent());
                             dialog.setResizable(false);
 
                             JPanel topPanel = new JPanel();
                             topPanel.setLayout(new BorderLayout());
-                            JLabel doing = new JLabel(App.settings.getLocalizedString(
-                                    "backup.backingup", instance.getName()));
+                            JLabel doing = new JLabel(App.settings.getLocalizedString("backup.backingup",
+                                    instance.getName()));
                             doing.setHorizontalAlignment(JLabel.CENTER);
                             doing.setVerticalAlignment(JLabel.TOP);
                             topPanel.add(doing);
@@ -327,35 +306,33 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                             dialog.add(topPanel, BorderLayout.CENTER);
                             dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-                            final Thread backupThread = new Thread(){
-                                public void run(){
+                            final Thread backupThread = new Thread() {
+                                public void run() {
                                     Timestamp timestamp = new Timestamp(new Date().getTime());
                                     String time = timestamp.toString().replaceAll("[^0-9]", "_");
-                                    String filename = instance.getSafeName() + "-"
-                                            + time.substring(0, time.lastIndexOf("_")) + ".zip";
-                                    Utils.zip(instance.getSavesDirectory(),
-                                            new File(App.settings.getBackupsDir(), filename));
+                                    String filename = instance.getSafeName() + "-" + time.substring(0,
+                                            time.lastIndexOf("_")) + ".zip";
+                                    Utils.zip(instance.getSavesDirectory(), new File(App.settings.getBackupsDir(),
+                                            filename));
                                     dialog.dispose();
-                                    App.TOASTER.pop(App.settings.getLocalizedString(
-                                            "backup.backupcomplete", " " + filename));
+                                    App.TOASTER.pop(App.settings.getLocalizedString("backup.backupcomplete",
+                                            " " + filename));
                                 }
                             };
                             backupThread.start();
-                            dialog.addWindowListener(new WindowAdapter(){
-                                public void windowClosing(WindowEvent e){
+                            dialog.addWindowListener(new WindowAdapter() {
+                                public void windowClosing(WindowEvent e) {
                                     backupThread.interrupt();
                                     dialog.dispose();
                                 }
                             });
                             dialog.setVisible(true);
                         }
-                    } else{
+                    } else {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                Language.INSTANCE.localize("backup.nosaves"),
-                                Language.INSTANCE.localize("backup.nosavestitle"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
+                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("backup" +
+                                ".nosaves"), Language.INSTANCE.localize("backup.nosavestitle"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     }
                 }
             }
@@ -364,59 +341,43 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
         // Clone Button
 
         clone = new JButton(Language.INSTANCE.localize("instance.clone"));
-        clone.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        clone.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
-                        Language.INSTANCE.localize("instance.cloneenter"),
-                        Language.INSTANCE.localize("instance.clonetitle"),
-                        JOptionPane.INFORMATION_MESSAGE);
-                if(clonedName != null
-                        && clonedName.length() >= 1
-                        && App.settings.getInstanceByName(clonedName) == null
-                        && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]",
-                        "")) == null
-                        && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1){
+                        Language.INSTANCE.localize("instance.cloneenter"), Language.INSTANCE.localize("instance" +
+                                ".clonetitle"), JOptionPane.INFORMATION_MESSAGE);
+                if (clonedName != null && clonedName.length() >= 1 && App.settings.getInstanceByName(clonedName) ==
+                        null && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]",
+                        "")) == null && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
 
                     final String newName = clonedName;
-                    final ProgressDialog dialog = new ProgressDialog(App.settings
-                            .getLocalizedString("instance.clonetitle"), 0, App.settings
-                            .getLocalizedString("instance.cloninginstance"), null);
-                    dialog.addThread(new Thread(){
+                    final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("instance" +
+                            ".clonetitle"), 0, App.settings.getLocalizedString("instance.cloninginstance"), null);
+                    dialog.addThread(new Thread() {
                         @Override
-                        public void run(){
+                        public void run() {
                             App.settings.cloneInstance(instance, newName);
                             dialog.close();
-                            App.TOASTER.pop(App.settings.getLocalizedString(
-                                    "instance.clonedsuccessfully", instance.getName()));
+                            App.TOASTER.pop(App.settings.getLocalizedString("instance.clonedsuccessfully",
+                                    instance.getName()));
                         }
                     });
                     dialog.start();
-                } else if(clonedName == null || clonedName.equals("")){
-                    LogManager
-                            .error("Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
-                    JOptionPane.showMessageDialog(
-                            App.settings.getParent(),
-                            "<html><p align=\"center\">"
-                                    + App.settings.getLocalizedString("instance.errorclone",
-                                    instance.getName() + "<br/><br/>") + "</p></html>",
-                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
-                } else if(clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0){
+                } else if (clonedName == null || clonedName.equals("")) {
+                    LogManager.error("Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
+                    JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
+                            .settings.getLocalizedString("instance.errorclone", instance.getName() + "<br/><br/>") +
+                            "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                     LogManager.error("Error Occured While Cloning Instance! Invalid Name!");
-                    JOptionPane.showMessageDialog(
-                            App.settings.getParent(),
-                            "<html><p align=\"center\">"
-                                    + App.settings.getLocalizedString("instance.errorclone",
-                                    instance.getName() + "<br/><br/>") + "</p></html>",
-                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
-                } else{
-                    LogManager
-                            .error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
-                    JOptionPane.showMessageDialog(
-                            App.settings.getParent(),
-                            "<html><p align=\"center\">"
-                                    + App.settings.getLocalizedString("instance.errorclone",
-                                    instance.getName() + "<br/><br/>") + "</p></html>",
-                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
+                            .settings.getLocalizedString("instance.errorclone", instance.getName() + "<br/><br/>") +
+                            "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                } else {
+                    LogManager.error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
+                    JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
+                            .settings.getLocalizedString("instance.errorclone", instance.getName() + "<br/><br/>") +
+                            "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -424,23 +385,21 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
         // Delete Button
 
         delete = new JButton(Language.INSTANCE.localize("common.delete"));
-        delete.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        delete.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 int response = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                        Language.INSTANCE.localize("instance.deletesure"),
-                        Language.INSTANCE.localize("instance.deleteinstance"),
-                        JOptionPane.YES_NO_OPTION);
-                if(response == JOptionPane.YES_OPTION){
-                    final ProgressDialog dialog = new ProgressDialog(App.settings
-                            .getLocalizedString("instance.deletetitle"), 0, App.settings
-                            .getLocalizedString("instance.deletinginstance"), null);
-                    dialog.addThread(new Thread(){
+                        Language.INSTANCE.localize("instance.deletesure"), Language.INSTANCE.localize("instance" +
+                                ".deleteinstance"), JOptionPane.YES_NO_OPTION);
+                if (response == JOptionPane.YES_OPTION) {
+                    final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("instance" +
+                            ".deletetitle"), 0, App.settings.getLocalizedString("instance.deletinginstance"), null);
+                    dialog.addThread(new Thread() {
                         @Override
-                        public void run(){
+                        public void run() {
                             App.settings.removeInstance(instance);
                             dialog.close();
-                            App.TOASTER.pop(App.settings.getLocalizedString(
-                                    "instance.deletedsuccessfully", instance.getName()));
+                            App.TOASTER.pop(App.settings.getLocalizedString("instance.deletedsuccessfully",
+                                    instance.getName()));
                         }
                     });
                     dialog.start();
@@ -451,9 +410,9 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
         // Edit Mods Button
 
         editMods = new JButton(Language.INSTANCE.localize("common.editmods"));
-        editMods.addActionListener(new ActionListener(){
+        editMods.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 new EditModsDialog(instance);
             }
         });
@@ -461,55 +420,50 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
         // Open Folder Button
 
         openFolder = new JButton(Language.INSTANCE.localize("common.openfolder"));
-        openFolder.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        openFolder.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 Utils.openExplorer(instance.getRootDirectory());
             }
         });
 
         // Check if pack can be installed and remove buttons if not
 
-        if(!instance.canInstall()){
+        if (!instance.canInstall()) {
             reinstall.setVisible(false);
             update.setVisible(false);
         }
 
-        if(this.pack != null){
+        if (this.pack != null) {
             // Check if pack is a private pack and if the user can play it
-            if(pack.isPrivate() && !App.settings.isInOfflineMode() && (!pack.isAllowedPlayer())){
-                if(!(instance.isDev() && pack.isTester())){
-                    for(ActionListener al : play.getActionListeners()){
+            if (pack.isPrivate() && !App.settings.isInOfflineMode() && (!pack.isAllowedPlayer())) {
+                if (!(instance.isDev() && pack.isTester())) {
+                    for (ActionListener al : play.getActionListeners()) {
                         play.removeActionListener(al);
                     }
-                    play.addActionListener(new ActionListener(){
-                        public void actionPerformed(ActionEvent e){
+                    play.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
                             String[] options = {Language.INSTANCE.localize("common.ok")};
                             JOptionPane.showOptionDialog(App.settings.getParent(),
                                     Language.INSTANCE.localize("instance.notauthorizedplay"),
-                                    Language.INSTANCE.localize("instance.notauthorized"),
-                                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                    options, options[0]);
+                                    Language.INSTANCE.localize("instance.notauthorized"), JOptionPane.DEFAULT_OPTION,
+                                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                         }
                     });
                 }
             }
             // Check if instance is a dev version and if the user still has access
 
-            if(instance.isDev() && !App.settings.isInOfflineMode() && !pack.isTester()){
-                for(ActionListener al : play.getActionListeners()){
+            if (instance.isDev() && !App.settings.isInOfflineMode() && !pack.isTester()) {
+                for (ActionListener al : play.getActionListeners()) {
                     play.removeActionListener(al);
                 }
-                play.addActionListener(new ActionListener(){
-                    public void actionPerformed(ActionEvent e){
+                play.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(
-                                App.settings.getParent(),
-                                "<html><p align=\"center\">"
-                                        + App.settings.getLocalizedString(
-                                        "instance.notauthorizedplaydev", "<br/><br/>")
-                                        + "</p></html>", App.settings
-                                        .getLocalizedString("instance.notauthorized"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                        JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
+                                .settings.getLocalizedString("instance.notauthorizedplaydev",
+                                        "<br/><br/>") + "</p></html>", App.settings.getLocalizedString("instance" +
+                                ".notauthorized"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                                 options, options[0]);
                     }
                 });
@@ -518,78 +472,68 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
 
         // Check is instance is playable and disable buttons if not
 
-        if(!instance.isPlayable()){
-            for(ActionListener al : play.getActionListeners()){
+        if (!instance.isPlayable()) {
+            for (ActionListener al : play.getActionListeners()) {
                 play.removeActionListener(al);
             }
-            play.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
+            play.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.corruptplay"),
-                            Language.INSTANCE.localize("instance.corrupt"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
+                            ".corruptplay"), Language.INSTANCE.localize("instance.corrupt"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 }
             });
-            for(ActionListener al : backup.getActionListeners()){
+            for (ActionListener al : backup.getActionListeners()) {
                 backup.removeActionListener(al);
             }
-            backup.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
+            backup.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.corruptbackup"),
-                            Language.INSTANCE.localize("instance.corrupt"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
+                            ".corruptbackup"), Language.INSTANCE.localize("instance.corrupt"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 }
             });
-            for(ActionListener al : clone.getActionListeners()){
+            for (ActionListener al : clone.getActionListeners()) {
                 clone.removeActionListener(al);
             }
-            clone.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
+            clone.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.corruptclone"),
-                            Language.INSTANCE.localize("instance.corrupt"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
+                            ".corruptclone"), Language.INSTANCE.localize("instance.corrupt"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 }
             });
         }
 
-        if(App.settings.isInOfflineMode()){
-            for(ActionListener al : reinstall.getActionListeners()){
+        if (App.settings.isInOfflineMode()) {
+            for (ActionListener al : reinstall.getActionListeners()) {
                 reinstall.removeActionListener(al);
             }
-            reinstall.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
+            reinstall.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.offlinereinstall"),
-                            Language.INSTANCE.localize("common.offline"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
+                            ".offlinereinstall"), Language.INSTANCE.localize("common.offline"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 }
             });
-            for(ActionListener al : update.getActionListeners()){
+            for (ActionListener al : update.getActionListeners()) {
                 update.removeActionListener(al);
             }
-            update.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
+            update.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.offlineupdate"),
-                            Language.INSTANCE.localize("common.offline"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
+                            ".offlineupdate"), Language.INSTANCE.localize("common.offline"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 }
             });
         }
 
-        if(instance.isDev()){
+        if (instance.isDev()) {
             update.setVisible(false);
         }
 
@@ -617,7 +561,7 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
     }
 
     @Override
-    public void onRelocalization(){
+    public void onRelocalization() {
         this.play.setText(Language.INSTANCE.localize("common.play"));
         this.reinstall.setText(Language.INSTANCE.localize("common.reinstall"));
         this.rename.setText(Language.INSTANCE.localize("instance.rename"));

@@ -7,25 +7,24 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Extend this class if you wish to add a backup/sync method. You will need to track
- * any backups you make yourself.
+ * Extend this class if you wish to add a backup/sync method. You will need to track any backups you make yourself.
  *
  * @author Kihira
  */
-public abstract class SyncAbstract{
+public abstract class SyncAbstract {
     public static final HashMap<String, SyncAbstract> syncList = new HashMap<String, SyncAbstract>();
     private final String syncName;
 
-    public SyncAbstract(String name){
-        if(syncList.containsKey(name)){
+    public SyncAbstract(String name) {
+        if (syncList.containsKey(name)) {
             throw new IllegalArgumentException("A sync handler with the name " + name + " has already been created!");
-        } else{
+        } else {
             syncList.put(name, this);
             syncName = name;
         }
     }
 
-    public String getName(){
+    public String getName() {
         return syncName;
     }
 
@@ -58,8 +57,10 @@ public abstract class SyncAbstract{
     public abstract void deleteBackup(String backupName, Instance instance);
 
     /**
-     * If the sync addon has settings then you should return an instance of {@link com.atlauncher.gui.components.CollapsiblePanel CollapsiblePanel}.
-     * It is recommended you extend that class. Look at {@link com.atlauncher.data.DropboxSync DropboxSync} for example.
+     * If the sync addon has settings then you should return an instance of {@link com.atlauncher.gui.components
+     * .CollapsiblePanel
+     * CollapsiblePanel}. It is recommended you extend that class. Look at {@link com.atlauncher.data.DropboxSync
+     * DropboxSync} for example.
      *
      * @return The settings panel
      */

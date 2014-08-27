@@ -1,5 +1,8 @@
 package de.zh32.pingtest;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,11 +14,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
 /**
- * 
  * @author zh32 <zh32 at zh32.de>
  */
 public class ServerListPing17 {
@@ -62,10 +61,12 @@ public class ServerListPing17 {
         while (true) {
             int k = in.readByte();
             i |= (k & 0x7F) << j++ * 7;
-            if (j > 5)
+            if (j > 5) {
                 throw new RuntimeException("VarInt too big");
-            if ((k & 0x80) != 128)
+            }
+            if ((k & 0x80) != 128) {
                 break;
+            }
         }
         return i;
     }

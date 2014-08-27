@@ -1,4 +1,3 @@
-
 public final class Test {
     public static void main(String... args) throws Exception {
         // Removed due to port binding issues causing non loading clients

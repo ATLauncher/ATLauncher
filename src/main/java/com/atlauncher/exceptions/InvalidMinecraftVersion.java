@@ -7,13 +7,12 @@
 package com.atlauncher.exceptions;
 
 /**
- * InvalidMinecraftVersion is thrown when a given Minecraft version number isn't supported by the
- * Launcher
+ * InvalidMinecraftVersion is thrown when a given Minecraft version number isn't supported by the Launcher
  *
  * @author Ryan
  */
-public class InvalidMinecraftVersion extends Exception{
-    public InvalidMinecraftVersion(String message){
+public class InvalidMinecraftVersion extends Exception {
+    public InvalidMinecraftVersion(String message) {
         super(message);
     }
 }

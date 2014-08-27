@@ -3,8 +3,9 @@ package io.github.asyncronous.toast.thread;
 import io.github.asyncronous.toast.Toaster;
 import io.github.asyncronous.toast.ui.ToastWindow;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.SwingWorker;
+import javax.swing.UIManager;
+import java.awt.Rectangle;
 
 /**
  * The main Toaster animation class, controls the entire window - location, whether or not to display, etc...
@@ -17,15 +18,14 @@ public final class ToastAnimator extends SwingWorker<Void, Void> {
     }
 
     @Override
-    protected Void doInBackground()
-    throws Exception {
+    protected Void doInBackground() throws Exception {
         boolean fromBottom = true;
         Rectangle screenRect = (Rectangle) UIManager.get("Toaster.contBounds");
 
         int startY;
         int stopY;
 
-        if(screenRect.y > 0){
+        if (screenRect.y > 0) {
             fromBottom = false;
         }
 
@@ -34,21 +34,21 @@ public final class ToastAnimator extends SwingWorker<Void, Void> {
         this.window.setLocation(posX, screenRect.height);
         this.window.setVisible(true);
 
-        if(fromBottom){
+        if (fromBottom) {
             startY = screenRect.height;
             stopY = startY - this.window.getHeight() - 1;
-            if(Toaster.CURRENT_TOASTER_NUMBER > 0){
+            if (Toaster.CURRENT_TOASTER_NUMBER > 0) {
                 stopY = stopY - (Toaster.MAX_TOASTERS % Toaster.MAX_TOASTER_IN_SCREEN * this.window.getHeight());
-            } else{
+            } else {
                 Toaster.MAX_TOASTERS = 0;
             }
-        } else{
+        } else {
             startY = screenRect.y - this.window.getHeight();
             stopY = screenRect.y;
 
-            if(Toaster.CURRENT_TOASTER_NUMBER > 0){
+            if (Toaster.CURRENT_TOASTER_NUMBER > 0) {
                 stopY = stopY + (Toaster.MAX_TOASTERS % Toaster.MAX_TOASTER_IN_SCREEN * this.window.getHeight());
-            } else{
+            } else {
                 Toaster.MAX_TOASTERS = 0;
             }
         }
@@ -66,16 +66,15 @@ public final class ToastAnimator extends SwingWorker<Void, Void> {
         return null;
     }
 
-    private void moveVert(int posx, int fromY, int toY)
-    throws Exception{
+    private void moveVert(int posx, int fromY, int toY) throws Exception {
         this.window.setLocation(posx, fromY);
-        if(toY < fromY){
-            for(int i = fromY; i > toY; i -= 20){
+        if (toY < fromY) {
+            for (int i = fromY; i > toY; i -= 20) {
                 this.window.setLocation(posx, i);
                 Thread.sleep(20);
             }
-        } else{
-            for(int i = fromY; i < toY; i += 20){
+        } else {
+            for (int i = fromY; i < toY; i += 20) {
                 this.window.setLocation(posx, i);
                 Thread.sleep(20);
             }

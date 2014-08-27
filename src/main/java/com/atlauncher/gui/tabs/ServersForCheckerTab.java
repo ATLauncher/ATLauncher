@@ -10,13 +10,6 @@ import com.atlauncher.App;
 import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.gui.dialogs.AddEditServerForCheckerDialog;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
@@ -25,27 +18,29 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-@SuppressWarnings({
-        "rawtypes",
-        "unchecked"
-})
-public class ServersForCheckerTab extends JPanel implements ActionListener{
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class ServersForCheckerTab extends JPanel implements ActionListener {
     /**
      * Auto generated serial.
      */
     private static final long serialVersionUID = 3385411077046354453L;
 
     private final JPopupMenu CONTEXT_MENU = new JPopupMenu();
-    private final JMenuItem EDIT_BUTTON = new JMenuItem(
-            App.settings.getLocalizedString("common.edit"));
-    private final JMenuItem DELETE_BUTTON = new JMenuItem(
-            App.settings.getLocalizedString("common.delete"));
+    private final JMenuItem EDIT_BUTTON = new JMenuItem(App.settings.getLocalizedString("common.edit"));
+    private final JMenuItem DELETE_BUTTON = new JMenuItem(App.settings.getLocalizedString("common.delete"));
 
     private DefaultListModel<MinecraftServer> listModel;
     private JList serverList;
 
-    public ServersForCheckerTab(){
+    public ServersForCheckerTab() {
         setLayout(new BorderLayout());
         EDIT_BUTTON.addActionListener(this);
         DELETE_BUTTON.addActionListener(this);
@@ -53,18 +48,18 @@ public class ServersForCheckerTab extends JPanel implements ActionListener{
         CONTEXT_MENU.add(DELETE_BUTTON);
 
         listModel = new DefaultListModel<MinecraftServer>();
-        for(MinecraftServer server : App.settings.getCheckingServers()){
+        for (MinecraftServer server : App.settings.getCheckingServers()) {
             listModel.addElement(server);
         }
         serverList = new JList(listModel);
         serverList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        serverList.setSelectionModel(new DefaultListSelectionModel(){
+        serverList.setSelectionModel(new DefaultListSelectionModel() {
             private static final long serialVersionUID = -88997910673981243L;
 
             @Override
-            public void setSelectionInterval(int index0, int index1){
-                if(index0 == index1){
-                    if(isSelectedIndex(index0)){
+            public void setSelectionInterval(int index0, int index1) {
+                if (index0 == index1) {
+                    if (isSelectedIndex(index0)) {
                         removeSelectionInterval(index0, index0);
                         return;
                     }
@@ -73,9 +68,9 @@ public class ServersForCheckerTab extends JPanel implements ActionListener{
             }
 
             @Override
-            public void addSelectionInterval(int index0, int index1){
-                if(index0 == index1){
-                    if(isSelectedIndex(index0)){
+            public void addSelectionInterval(int index0, int index1) {
+                if (index0 == index1) {
+                    if (isSelectedIndex(index0)) {
                         removeSelectionInterval(index0, index0);
                         return;
                     }
@@ -83,20 +78,20 @@ public class ServersForCheckerTab extends JPanel implements ActionListener{
                 }
             }
         });
-        serverList.addKeyListener(new KeyAdapter(){
+        serverList.addKeyListener(new KeyAdapter() {
 
             @Override
-            public void keyTyped(KeyEvent e){
+            public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
-                if(e.getKeyChar() == KeyEvent.VK_DELETE){
+                if (e.getKeyChar() == KeyEvent.VK_DELETE) {
                     deleteSelectedElement();
                 }
             }
 
         });
-        serverList.addMouseListener(new MouseAdapter(){
-            public void mousePressed(MouseEvent e){
-                if(e.getButton() == MouseEvent.BUTTON3){
+        serverList.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3) {
                     CONTEXT_MENU.show(serverList, e.getX(), e.getY());
                 }
             }
@@ -105,15 +100,15 @@ public class ServersForCheckerTab extends JPanel implements ActionListener{
         add(serverList, BorderLayout.CENTER);
     }
 
-    public void editSelectedElement(){
-        if(serverList.getSelectedIndex() != -1){
+    public void editSelectedElement() {
+        if (serverList.getSelectedIndex() != -1) {
             new AddEditServerForCheckerDialog(((MinecraftServer) serverList.getSelectedValue()));
             reloadServers();
         }
     }
 
-    public void deleteSelectedElement(){
-        if(serverList.getSelectedIndex() != -1){
+    public void deleteSelectedElement() {
+        if (serverList.getSelectedIndex() != -1) {
             MinecraftServer selectedValue = ((MinecraftServer) serverList.getSelectedValue());
             App.settings.removeCheckingServer(selectedValue);
             listModel.removeElement(selectedValue);
@@ -121,22 +116,22 @@ public class ServersForCheckerTab extends JPanel implements ActionListener{
         }
     }
 
-    public void reloadServers(){
+    public void reloadServers() {
         listModel.removeAllElements();
-        for(MinecraftServer server : App.settings.getCheckingServers()){
+        for (MinecraftServer server : App.settings.getCheckingServers()) {
             listModel.addElement(server);
         }
     }
 
-    public void addListSelectionListener(ListSelectionListener listener){
+    public void addListSelectionListener(ListSelectionListener listener) {
         this.serverList.addListSelectionListener(listener);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e){
-        if(e.getSource() == EDIT_BUTTON){
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == EDIT_BUTTON) {
             editSelectedElement();
-        } else if(e.getSource() == DELETE_BUTTON){
+        } else if (e.getSource() == DELETE_BUTTON) {
             deleteSelectedElement();
         }
     }

@@ -9,56 +9,56 @@ package com.atlauncher.data;
 import com.atlauncher.annot.Json;
 
 @Json
-public class LauncherVersion{
+public class LauncherVersion {
     private int reserved;
     private int major;
     private int minor;
     private int revision;
 
-    public LauncherVersion(int reserved, int major, int minor, int revision){
+    public LauncherVersion(int reserved, int major, int minor, int revision) {
         this.reserved = reserved;
         this.major = major;
         this.minor = minor;
         this.revision = revision;
     }
 
-    public int getReserved(){
+    public int getReserved() {
         return this.reserved;
     }
 
-    public int getMajor(){
+    public int getMajor() {
         return this.major;
     }
 
-    public int getMinor(){
+    public int getMinor() {
         return this.minor;
     }
 
-    public int getRevision(){
+    public int getRevision() {
         return this.revision;
     }
 
-    public boolean needsUpdate(LauncherVersion toThis){
-        if(this.reserved > toThis.getReserved()){
+    public boolean needsUpdate(LauncherVersion toThis) {
+        if (this.reserved > toThis.getReserved()) {
             return false;
-        } else if(this.reserved < toThis.getReserved()){
+        } else if (this.reserved < toThis.getReserved()) {
             return true;
-        } else{
-            if(this.major > toThis.getMajor()){
+        } else {
+            if (this.major > toThis.getMajor()) {
                 return false;
-            } else if(this.major < toThis.getMajor()){
+            } else if (this.major < toThis.getMajor()) {
                 return true;
-            } else{
-                if(this.minor > toThis.getMinor()){
+            } else {
+                if (this.minor > toThis.getMinor()) {
                     return false;
-                } else if(this.minor < toThis.getMinor()){
+                } else if (this.minor < toThis.getMinor()) {
                     return true;
-                } else{
-                    if(this.revision > toThis.getRevision()){
+                } else {
+                    if (this.revision > toThis.getRevision()) {
                         return false;
-                    } else if(this.revision < toThis.getRevision()){
+                    } else if (this.revision < toThis.getRevision()) {
                         return true;
-                    } else{
+                    } else {
                         return false; // Same version so doesn't need to update
                     }
                 }
@@ -67,7 +67,7 @@ public class LauncherVersion{
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("%d.%d.%d.%d", this.reserved, this.major, this.minor, this.revision);
     }
 }

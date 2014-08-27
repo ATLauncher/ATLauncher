@@ -1,5 +1,5 @@
 package com.atlauncher.evnt.listener;
 
-public interface MinecraftLaunchListener{
+public interface MinecraftLaunchListener {
 
 }

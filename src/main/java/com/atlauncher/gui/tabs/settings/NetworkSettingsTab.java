@@ -13,19 +13,19 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
-public class NetworkSettingsTab extends AbstractSettingsTab{
+public class NetworkSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover downloadServerLabel;
     private JComboBox<Server> server;
 
@@ -44,23 +44,22 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
     private JLabelWithHover proxyTypeLabel;
     private JComboBox<String> proxyType;
 
-    public NetworkSettingsTab(){
+    public NetworkSettingsTab() {
         // Download Server
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        downloadServerLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.downloadserver") + ":", HELP_ICON,
-                App.settings.getLocalizedString("settings.downloadserverhelp"));
+        downloadServerLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.downloadserver") + ":",
+                HELP_ICON, App.settings.getLocalizedString("settings.downloadserverhelp"));
         add(downloadServerLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         server = new JComboBox<Server>();
-        for(Server serverr : App.settings.getServers()){
-            if(serverr.isUserSelectable()){
+        for (Server serverr : App.settings.getServers()) {
+            if (serverr.isUserSelectable()) {
                 server.addItem(serverr);
             }
         }
@@ -72,11 +71,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        concurrentConnectionsLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.concurrentconnections") + ":", HELP_ICON,
-                "<html>"
-                        + App.settings.getLocalizedString("settings.concurrentconnectionshelp",
-                        "<br/><br/>") + "</html>");
+        concurrentConnectionsLabel = new JLabelWithHover(App.settings.getLocalizedString("settings" +
+                ".concurrentconnections") + ":", HELP_ICON, "<html>" + App.settings.getLocalizedString("settings" +
+                ".concurrentconnectionshelp", "<br/><br/>") + "</html>");
         add(concurrentConnectionsLabel, gbc);
 
         gbc.gridx++;
@@ -92,27 +89,26 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableProxyLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.enableproxy") + "?", HELP_ICON,
-                App.settings.getLocalizedString("settings.enableproxyhelp"));
+        enableProxyLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.enableproxy") + "?",
+                HELP_ICON, App.settings.getLocalizedString("settings.enableproxyhelp"));
         add(enableProxyLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableProxy = new JCheckBox();
-        if(App.settings.getEnableProxy()){
+        if (App.settings.getEnableProxy()) {
             enableProxy.setSelected(true);
         }
-        enableProxy.addActionListener(new ActionListener(){
+        enableProxy.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e){
-                if(!enableProxy.isSelected()){
+            public void actionPerformed(ActionEvent e) {
+                if (!enableProxy.isSelected()) {
                     proxyHost.setEnabled(false);
                     proxyPort.setEnabled(false);
                     proxyType.setEnabled(false);
-                } else{
+                } else {
                     proxyHost.setEnabled(true);
                     proxyPort.setEnabled(true);
                     proxyType.setEnabled(true);
@@ -126,8 +122,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        proxyHostLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.proxyhost")
-                + ":", HELP_ICON, App.settings.getLocalizedString("settings.proxyhosthelp"));
+        proxyHostLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.proxyhost") + ":", HELP_ICON,
+                App.settings.getLocalizedString("settings.proxyhosthelp"));
         add(proxyHostLabel, gbc);
 
         gbc.gridx++;
@@ -135,7 +131,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyHost = new JTextField(20);
         proxyHost.setText(App.settings.getProxyHost());
-        if(!enableProxy.isSelected()){
+        if (!enableProxy.isSelected()) {
             proxyHost.setEnabled(false);
         }
         add(proxyHost, gbc);
@@ -145,17 +141,16 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        proxyPortLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.proxyport")
-                + ":", HELP_ICON, App.settings.getLocalizedString("settings.proxyporthelp"));
+        proxyPortLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.proxyport") + ":", HELP_ICON,
+                App.settings.getLocalizedString("settings.proxyporthelp"));
         add(proxyPortLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyPort = new JTextField(4);
-        proxyPort.setText((App.settings.getProxyPort() == 0 ? "" : App.settings.getProxyPort())
-                + "");
-        if(!enableProxy.isSelected()){
+        proxyPort.setText((App.settings.getProxyPort() == 0 ? "" : App.settings.getProxyPort()) + "");
+        if (!enableProxy.isSelected()) {
             proxyPort.setEnabled(false);
         }
         add(proxyPort, gbc);
@@ -165,8 +160,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        proxyTypeLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.proxytype")
-                + ":", HELP_ICON, App.settings.getLocalizedString("settings.proxytypehelp"));
+        proxyTypeLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.proxytype") + ":", HELP_ICON,
+                App.settings.getLocalizedString("settings.proxytypehelp"));
         add(proxyTypeLabel, gbc);
 
         gbc.gridx++;
@@ -177,100 +172,96 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         proxyType.addItem("SOCKS");
         proxyType.addItem("DIRECT");
         proxyType.setSelectedItem(App.settings.getProxyType());
-        if(!enableProxy.isSelected()){
+        if (!enableProxy.isSelected()) {
             proxyType.setEnabled(false);
         }
         add(proxyType, gbc);
     }
 
-    public boolean isValidConcurrentConnections(){
-        if(Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")) < 1){
-            JOptionPane.showMessageDialog(App.settings.getParent(),
-                    App.settings.getLocalizedString("settings.concurrentconnectionsinvalid"),
-                    App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
+    public boolean isValidConcurrentConnections() {
+        if (Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")) < 1) {
+            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" +
+                    ".concurrentconnectionsinvalid"), App.settings.getLocalizedString("settings.help"),
+                    JOptionPane.PLAIN_MESSAGE);
             return false;
         }
         return true;
     }
 
-    public boolean isValidProxyPort(){
-        if(!enableProxy.isSelected()){
+    public boolean isValidProxyPort() {
+        if (!enableProxy.isSelected()) {
             return true;
         }
-        if(proxyPort.getText().isEmpty()
-                || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) < 1
-                || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) > 65535){
-            JOptionPane.showMessageDialog(App.settings.getParent(),
-                    App.settings.getLocalizedString("settings.proxyportinvalid"),
-                    App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
+        if (proxyPort.getText().isEmpty() || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]",
+                "")) < 1 || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) > 65535) {
+            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" +
+                    ".proxyportinvalid"), App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
         return true;
     }
 
-    public boolean canConnectWithProxy(){
-        if(!enableProxy.isSelected()){
+    public boolean canConnectWithProxy() {
+        if (!enableProxy.isSelected()) {
             return true;
         }
 
         Type type = null;
 
-        if(proxyType.getSelectedItem().equals("HTTP")){
+        if (proxyType.getSelectedItem().equals("HTTP")) {
             type = Proxy.Type.HTTP;
-        } else if(proxyType.getSelectedItem().equals("SOCKS")){
+        } else if (proxyType.getSelectedItem().equals("SOCKS")) {
             type = Proxy.Type.SOCKS;
-        } else if(proxyType.getSelectedItem().equals("DIRECT")){
+        } else if (proxyType.getSelectedItem().equals("DIRECT")) {
             type = Proxy.Type.DIRECT;
         }
 
-        if(type == null){
+        if (type == null) {
             return false;
         }
 
         final Type theType = type;
-        final ProgressDialog dialog = new ProgressDialog(
-                App.settings.getLocalizedString("settings.checkingproxytitle"), 0,
-                App.settings.getLocalizedString("settings.checkingproxy"), "Cancelled Proxy Test!");
-        dialog.addThread(new Thread(){
+        final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("settings" +
+                ".checkingproxytitle"), 0, App.settings.getLocalizedString("settings.checkingproxy"),
+                "Cancelled Proxy Test!");
+        dialog.addThread(new Thread() {
             @Override
-            public void run(){
-                dialog.setReturnValue(Utils.testProxy(new Proxy(theType, new InetSocketAddress(
-                        proxyHost.getText(), Integer.parseInt(proxyPort.getText().replaceAll(
-                        "[^0-9]", ""))))));
+            public void run() {
+                dialog.setReturnValue(Utils.testProxy(new Proxy(theType, new InetSocketAddress(proxyHost.getText(),
+                        Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", ""))))));
                 dialog.close();
             }
         });
         dialog.start();
 
-        if(dialog.getReturnValue() == null){
+        if (dialog.getReturnValue() == null) {
             return false;
         }
 
-        if(!(Boolean) dialog.getReturnValue()){
-            JOptionPane.showMessageDialog(App.settings.getParent(),
-                    App.settings.getLocalizedString("settings.proxycannotconnect"),
-                    App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
+        if (!(Boolean) dialog.getReturnValue()) {
+            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" +
+                    ".proxycannotconnect"), App.settings.getLocalizedString("settings.help"),
+                    JOptionPane.PLAIN_MESSAGE);
             return false;
         }
 
         return true;
     }
 
-    public void save(){
+    public void save() {
         App.settings.setServer((Server) server.getSelectedItem());
-        App.settings.setConcurrentConnections(Integer.parseInt(concurrentConnections.getText()
-                .replaceAll("[^0-9]", "")));
+        App.settings.setConcurrentConnections(Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]",
+                "")));
         App.settings.setEnableProxy(enableProxy.isSelected());
-        if(enableProxy.isSelected()){
+        if (enableProxy.isSelected()) {
             App.settings.setProxyHost(proxyHost.getText());
-            App.settings.setProxyPort(Integer
-                    .parseInt(proxyPort.getText().replaceAll("[^0-9]", "")));
+            App.settings.setProxyPort(Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")));
             App.settings.setProxyType(((String) proxyType.getSelectedItem()));
         }
     }
 
     @Override
-    public String getTitle(){
+    public String getTitle() {
         return Language.INSTANCE.localize("settings.networktab");
     }
 }

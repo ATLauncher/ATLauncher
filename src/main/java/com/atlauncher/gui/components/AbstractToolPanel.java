@@ -9,12 +9,12 @@ package com.atlauncher.gui.components;
 import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Font;
 
-public abstract class AbstractToolPanel extends JPanel{
+public abstract class AbstractToolPanel extends JPanel {
     /**
      * Auto generated serial.
      */
@@ -28,7 +28,7 @@ public abstract class AbstractToolPanel extends JPanel{
 
     protected final JButton LAUNCH_BUTTON = new JButton(App.settings.getLocalizedString("tools.launch"));
 
-    public AbstractToolPanel(){
+    public AbstractToolPanel() {
         setLayout(new BorderLayout());
         add(TOP_PANEL, BorderLayout.NORTH);
         add(MIDDLE_PANEL, BorderLayout.CENTER);

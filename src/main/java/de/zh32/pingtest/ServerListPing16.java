@@ -99,7 +99,7 @@ public final class ServerListPing16 {
 
         inputStream = socket.getInputStream();
         inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-16BE"));
-        dataOutputStream.write(new byte[] { (byte) 0xFE, (byte) 0x01, (byte) 0xFA
+        dataOutputStream.write(new byte[]{(byte) 0xFE, (byte) 0x01, (byte) 0xFA
 
         });
         dataOutputStream.write("MC|PingHost".getBytes("UTF-16BE"));

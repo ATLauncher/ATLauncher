@@ -11,15 +11,15 @@ import com.atlauncher.annot.Json;
 import java.util.List;
 
 @Json
-public class Deletes{
+public class Deletes {
     private List<Delete> files;
     private List<Delete> folders;
 
-    public List<Delete> getFiles(){
+    public List<Delete> getFiles() {
         return this.files;
     }
 
-    public List<Delete> getFolders(){
+    public List<Delete> getFolders() {
         return this.folders;
     }
 }

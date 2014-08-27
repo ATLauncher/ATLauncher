@@ -22,14 +22,6 @@ import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -38,13 +30,21 @@ import javax.swing.JPanel;
 import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * TODO: Rewrite with the other @link BottomBar classes
  */
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar implements RelocalizationListener{
+public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
     private JPanel leftSide;
     private JPanel middle;
 
@@ -59,13 +59,13 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
     private JLabel statusIcon;
 
-    public LauncherBottomBar(){
-        submitError.addActionListener(new ActionListener(){
+    public LauncherBottomBar() {
+        submitError.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                SwingUtilities.invokeLater(new Runnable(){
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
                     @Override
-                    public void run(){
+                    public void run() {
                         new GithubIssueReporterDialog(null).setVisible(true);
                     }
                 });
@@ -107,25 +107,25 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     /**
      * Sets up the listeners on the buttons
      */
-    private void setupListeners(){
-        toggleConsole.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+    private void setupListeners() {
+        toggleConsole.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 App.settings.getConsole().setVisible(!App.settings.isConsoleVisible());
             }
         });
-        openFolder.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        openFolder.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 Utils.openExplorer(App.settings.getBaseDir());
             }
         });
-        updateData.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                final ProgressDialog dialog = new ProgressDialog(App.settings
-                        .getLocalizedString("common.checkingforupdates"), 0, App.settings
-                        .getLocalizedString("common.checkingforupdates"), "Aborting Update Check!");
-                dialog.addThread(new Thread(){
-                    public void run(){
-                        if(App.settings.hasUpdatedFiles()){
+        updateData.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("common" +
+                        ".checkingforupdates"), 0, App.settings.getLocalizedString("common.checkingforupdates"),
+                        "Aborting Update Check!");
+                dialog.addThread(new Thread() {
+                    public void run() {
+                        if (App.settings.hasUpdatedFiles()) {
                             App.settings.reloadLauncherData();
                         }
                         dialog.close();
@@ -136,24 +136,24 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 dialog.start();
             }
         });
-        username.addItemListener(new ItemListener(){
-            public void itemStateChanged(ItemEvent e){
-                if(e.getStateChange() == ItemEvent.SELECTED){
-                    if(!dontSave){
+        username.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    if (!dontSave) {
                         App.settings.switchAccount((Account) username.getSelectedItem());
                     }
                 }
             }
         });
-        ConsoleCloseManager.addListener(new ConsoleCloseListener(){
+        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
             @Override
-            public void onConsoleClose(){
+            public void onConsoleClose() {
                 toggleConsole.setText(Language.INSTANCE.localize("console.show"));
             }
         });
-        ConsoleOpenManager.addListener(new ConsoleOpenListener(){
+        ConsoleOpenManager.addListener(new ConsoleOpenListener() {
             @Override
-            public void onConsoleOpen(){
+            public void onConsoleOpen() {
                 toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
             }
         });
@@ -162,10 +162,10 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     /**
      * Creates the JButton's for use in the bar
      */
-    private void createButtons(){
-        if(App.settings.isConsoleVisible()){
+    private void createButtons() {
+        if (App.settings.isConsoleVisible()) {
             toggleConsole = new JButton(Language.INSTANCE.localize("console.hide"));
-        } else{
+        } else {
             toggleConsole = new JButton(Language.INSTANCE.localize("console.show"));
         }
 
@@ -176,18 +176,18 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         username.setRenderer(new AccountsDropDownRenderer());
         fillerAccount = new Account(Language.INSTANCE.localize("account.select"));
         username.addItem(fillerAccount);
-        for(Account account : App.settings.getAccounts()){
+        for (Account account : App.settings.getAccounts()) {
             username.addItem(account);
         }
         Account active = App.settings.getAccount();
-        if(active == null){
+        if (active == null) {
             username.setSelectedIndex(0);
-        } else{
+        } else {
             username.setSelectedItem(active);
         }
 
-        statusIcon = new JLabel(Utils.getIconImage("/assets/image/StatusWhite.png")){
-            public JToolTip createToolTip(){
+        statusIcon = new JLabel(Utils.getIconImage("/assets/image/StatusWhite.png")) {
+            public JToolTip createToolTip() {
                 JToolTip tip = super.createToolTip();
                 Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
                 tip.setBorder(border);
@@ -203,26 +203,22 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
      *
      * @param status The status of servers
      */
-    public void updateStatus(Status status){
-        switch(status){
+    public void updateStatus(Status status) {
+        switch (status) {
             case UNKNOWN:
-                statusIcon.setToolTipText(App.settings
-                        .getLocalizedString("status.minecraft.checking"));
+                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.checking"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusWhite.png"));
                 break;
             case ONLINE:
-                statusIcon.setToolTipText(App.settings
-                        .getLocalizedString("status.minecraft.online"));
+                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.online"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusGreen.png"));
                 break;
             case OFFLINE:
-                statusIcon.setToolTipText(App.settings
-                        .getLocalizedString("status.minecraft.offline"));
+                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.offline"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusRed.png"));
                 break;
             case PARTIAL:
-                statusIcon.setToolTipText(App.settings
-                        .getLocalizedString("status.minecraft.partial"));
+                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.partial"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusYellow.png"));
                 break;
             default:
@@ -230,26 +226,26 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
     }
 
-    public void reloadAccounts(){
+    public void reloadAccounts() {
         dontSave = true;
         username.removeAllItems();
         username.addItem(fillerAccount);
-        for(Account account : App.settings.getAccounts()){
+        for (Account account : App.settings.getAccounts()) {
             username.addItem(account);
         }
-        if(App.settings.getAccount() == null){
+        if (App.settings.getAccount() == null) {
             username.setSelectedIndex(0);
-        } else{
+        } else {
             username.setSelectedItem(App.settings.getAccount());
         }
         dontSave = false;
     }
 
     @Override
-    public void onRelocalization(){
-        if(App.settings.getConsole().isVisible()){
+    public void onRelocalization() {
+        if (App.settings.getConsole().isVisible()) {
             toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
-        } else{
+        } else {
             toggleConsole.setText(Language.INSTANCE.localize("console.show"));
         }
         this.updateData.setText(Language.INSTANCE.localize("common.updatedata"));

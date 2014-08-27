@@ -8,29 +8,29 @@ package com.atlauncher.gui;
 
 import com.atlauncher.utils.Utils;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JWindow;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JWindow;
 
-public class SplashScreen extends JWindow{
+public class SplashScreen extends JWindow {
     private static final BufferedImage img = Utils.getImage("SplashScreen");
     private final ContextMenu CONTEXT_MENU = new ContextMenu();
 
-    public SplashScreen(){
+    public SplashScreen() {
         this.setLayout(null);
         this.setSize(img.getWidth(), img.getHeight());
         this.setVisible(true);
         this.setLocationRelativeTo(null);
-        this.addMouseListener(new MouseAdapter(){
+        this.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e){
-                if(e.getButton() == MouseEvent.BUTTON3){
+            public void mouseReleased(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3) {
                     CONTEXT_MENU.show(SplashScreen.this, e.getX(), e.getY());
                 }
             }
@@ -38,7 +38,7 @@ public class SplashScreen extends JWindow{
     }
 
     @Override
-    public void paint(Graphics g){
+    public void paint(Graphics g) {
         super.paint(g);
         g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), null);
     }
@@ -46,20 +46,20 @@ public class SplashScreen extends JWindow{
     /**
      * Closes and disposes of the splash screen
      */
-    public void close(){
+    public void close() {
         this.setVisible(false);
         this.dispose();
     }
 
-    private final class ContextMenu extends JPopupMenu{
+    private final class ContextMenu extends JPopupMenu {
         private final JMenuItem FORCE_QUIT = new JMenuItem("Force Quit");
 
-        public ContextMenu(){
+        public ContextMenu() {
             super();
 
-            this.FORCE_QUIT.addActionListener(new ActionListener(){
+            this.FORCE_QUIT.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e){
+                public void actionPerformed(ActionEvent e) {
                     System.exit(0);
                 }
             });

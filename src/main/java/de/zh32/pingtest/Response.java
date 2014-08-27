@@ -3,7 +3,6 @@ package de.zh32.pingtest;
 import java.util.List;
 
 /**
- * 
  * @author zh32 <zh32 at zh32.de>
  */
 public class Response {

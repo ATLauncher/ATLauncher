@@ -11,14 +11,14 @@ import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 
 @SuppressWarnings("serial")
-public class LoggingSettingsTab extends AbstractSettingsTab{
+public class LoggingSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover forgeLoggingLevelLabel;
     private JComboBox<String> forgeLoggingLevel;
 
@@ -31,17 +31,15 @@ public class LoggingSettingsTab extends AbstractSettingsTab{
     private JLabelWithHover enableOpenEyeReportingLabel;
     private JCheckBox enableOpenEyeReporting;
 
-    public LoggingSettingsTab(){
+    public LoggingSettingsTab() {
         // Forge Logging Level
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        forgeLoggingLevelLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.forgelogginglevel") + ":", HELP_ICON,
-                "<html>"
-                        + App.settings.getLocalizedString("settings.forgelogginglevelhelp",
-                        "<br/><br/>") + "</html>");
+        forgeLoggingLevelLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.forgelogginglevel") +
+                ":", HELP_ICON, "<html>" + App.settings.getLocalizedString("settings.forgelogginglevelhelp",
+                "<br/><br/>") + "</html>");
         add(forgeLoggingLevelLabel, gbc);
 
         gbc.gridx++;
@@ -64,19 +62,18 @@ public class LoggingSettingsTab extends AbstractSettingsTab{
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLeaderboardsLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.leaderboards") + "?", HELP_ICON,
-                App.settings.getLocalizedString("settings.leaderboardshelp"));
+        enableLeaderboardsLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.leaderboards") + "?",
+                HELP_ICON, App.settings.getLocalizedString("settings.leaderboardshelp"));
         add(enableLeaderboardsLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLeaderboards = new JCheckBox();
-        if(App.settings.enableLeaderboards()){
+        if (App.settings.enableLeaderboards()) {
             enableLeaderboards.setSelected(true);
         }
-        if(!App.settings.enableLogs()){
+        if (!App.settings.enableLogs()) {
             enableLeaderboards.setEnabled(false);
         }
         add(enableLeaderboards, gbc);
@@ -87,24 +84,22 @@ public class LoggingSettingsTab extends AbstractSettingsTab{
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLoggingLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.logging") + "?", HELP_ICON, "<html>"
-                + App.settings.getLocalizedString("settings.logginghelp", "<br/>"
-                + "</html>"));
+        enableLoggingLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.logging") + "?",
+                HELP_ICON, "<html>" + App.settings.getLocalizedString("settings.logginghelp", "<br/>" + "</html>"));
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLogs = new JCheckBox();
-        enableLogs.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(!enableLogs.isSelected()){
+        enableLogs.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (!enableLogs.isSelected()) {
                     enableOpenEyeReporting.setSelected(false);
                     enableOpenEyeReporting.setEnabled(false);
                     enableLeaderboards.setSelected(false);
                     enableLeaderboards.setEnabled(false);
-                } else{
+                } else {
                     enableOpenEyeReporting.setSelected(true);
                     enableOpenEyeReporting.setEnabled(true);
                     enableLeaderboards.setSelected(true);
@@ -112,7 +107,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab{
                 }
             }
         });
-        if(App.settings.enableLogs()){
+        if (App.settings.enableLogs()) {
             enableLogs.setSelected(true);
         }
         add(enableLogs, gbc);
@@ -123,27 +118,25 @@ public class LoggingSettingsTab extends AbstractSettingsTab{
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableOpenEyeReportingLabel = new JLabelWithHover(
-                App.settings.getLocalizedString("settings.openeye") + "?", HELP_ICON, "<html>"
-                + Utils.splitMultilinedString(
-                App.settings.getLocalizedString("settings.openeyehelp"), 80,
-                "<br/>") + "</html>");
+        enableOpenEyeReportingLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.openeye") + "?",
+                HELP_ICON, "<html>" + Utils.splitMultilinedString(App.settings.getLocalizedString("settings" +
+                ".openeyehelp"), 80, "<br/>") + "</html>");
         add(enableOpenEyeReportingLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableOpenEyeReporting = new JCheckBox();
-        if(!App.settings.enableLogs()){
+        if (!App.settings.enableLogs()) {
             enableOpenEyeReporting.setEnabled(false);
         }
-        if(App.settings.enableOpenEyeReporting()){
+        if (App.settings.enableOpenEyeReporting()) {
             enableOpenEyeReporting.setSelected(true);
         }
         add(enableOpenEyeReporting, gbc);
     }
 
-    public void save(){
+    public void save() {
         App.settings.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
         App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
         App.settings.setEnableLogs(enableLogs.isSelected());
@@ -151,7 +144,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab{
     }
 
     @Override
-    public String getTitle(){
+    public String getTitle() {
         return Language.INSTANCE.localize("settings.loggingtab");
     }
 }

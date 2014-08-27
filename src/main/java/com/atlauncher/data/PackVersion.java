@@ -13,7 +13,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 
-public class PackVersion{
+public class PackVersion {
     private String version;
     private String minecraft;
     private MinecraftVersion minecraftVersion;
@@ -22,51 +22,51 @@ public class PackVersion{
     private boolean hasJson = false;
     private boolean isDev;
 
-    public String getVersion(){
+    public String getVersion() {
         return this.version;
     }
 
-    public String getSafeVersion(){
+    public String getSafeVersion() {
         return this.version.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    public void setMinecraftVesion(){
-        try{
+    public void setMinecraftVesion() {
+        try {
             this.minecraftVersion = App.settings.getMinecraftVersion(this.minecraft);
-        } catch(InvalidMinecraftVersion e){
+        } catch (InvalidMinecraftVersion e) {
             this.minecraftVersion = null;
             App.settings.logStackTrace(e);
         }
     }
 
-    public MinecraftVersion getMinecraftVersion(){
-        if(this.minecraftVersion == null){
+    public MinecraftVersion getMinecraftVersion() {
+        if (this.minecraftVersion == null) {
             this.setMinecraftVesion();
         }
         return this.minecraftVersion;
     }
 
-    public boolean canUpdate(){
+    public boolean canUpdate() {
         return this.canUpdate;
     }
 
-    public boolean isRecommended(){
+    public boolean isRecommended() {
         return this.isRecommended;
     }
 
-    public boolean isDev(){
+    public boolean isDev() {
         return this.isDev;
     }
 
-    public boolean hasJson(){
+    public boolean hasJson() {
         return this.hasJson;
     }
 
-    public String toString(){
+    public String toString() {
         return this.version + " (Minecraft " + this.getMinecraftVersion().getVersion() + ")";
     }
 
-    public boolean versionMatches(String version){
+    public boolean versionMatches(String version) {
         return this.version.equalsIgnoreCase(version);
     }
 

@@ -16,7 +16,7 @@ import com.atlauncher.annot.Json;
  * News class contains a single news article.
  */
 @Json
-public class News{
+public class News {
     /**
      * The title of this news article.
      */
@@ -40,9 +40,9 @@ public class News{
     /**
      * Gets the HTML of this object.
      */
-    public String getHTML(){
-        return "<p id=\"newsHeader\">- <a href=\"" + this.link + "\">" + this.title + "</a> ("
-                + this.comments + " " + (this.comments == 1 ? "comment" : "comments") + ")</p>"
-                + "<p id=\"newsBody\">" + this.content + "</p><br/>";
+    public String getHTML() {
+        return "<p id=\"newsHeader\">- <a href=\"" + this.link + "\">" + this.title + "</a> (" + this.comments + " "
+                + (this.comments == 1 ? "comment" : "comments") + ")</p>" + "<p id=\"newsBody\">" + this.content +
+                "</p><br/>";
     }
 }

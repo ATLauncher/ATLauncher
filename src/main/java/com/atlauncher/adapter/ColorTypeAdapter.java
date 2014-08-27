@@ -13,17 +13,17 @@ import java.io.IOException;
  * <p/>
  * TO @link RyanTheAllmighty - http://en.wikipedia.org/wiki/Serialization
  */
-public final class ColorTypeAdapter extends TypeAdapter<Color>{
+public final class ColorTypeAdapter extends TypeAdapter<Color> {
     @Override
-    public void write(JsonWriter writer, Color c) throws IOException{
+    public void write(JsonWriter writer, Color c) throws IOException {
         writer.beginObject().name("value").value("#" + toHex(c)).endObject();
     }
 
     @Override
-    public Color read(JsonReader reader) throws IOException{
+    public Color read(JsonReader reader) throws IOException {
         reader.beginObject();
         String next = reader.nextName();
-        if(!next.equalsIgnoreCase("value")){
+        if (!next.equalsIgnoreCase("value")) {
             throw new JsonParseException("Key " + next + " isnt a valid key");
         }
         String hex = reader.nextString();
@@ -38,16 +38,16 @@ public final class ColorTypeAdapter extends TypeAdapter<Color>{
      * @param hex The hex code to clamp to a length of 6 characters
      * @return The hex after claming to 6 characters length
      */
-    private String clamp(String hex){
-        while(hex.length() < 6){
+    private String clamp(String hex) {
+        while (hex.length() < 6) {
             hex += '0';
         }
         return hex;
     }
 
     /**
-     * Turns a hex colour code into a int array of length 3 with each element being the Red, Green
-     * and Blue individual hex codes.
+     * Turns a hex colour code into a int array of length 3 with each element being the Red, Green and Blue individual
+     * hex codes.
      * <p/>
      * <p/>
      * For example an input of "#FF00FF" returns {255, 0, 255}
@@ -55,10 +55,10 @@ public final class ColorTypeAdapter extends TypeAdapter<Color>{
      * @param hex The hex code to convert to RGB format
      * @return The int array containing the RGB individual hex codes
      */
-    private int[] toRGB(String hex){
+    private int[] toRGB(String hex) {
         int[] ret = new int[3];
 
-        for(int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             ret[i] = Integer.parseInt(hex.substring(i * 2, i * 2 + 2), 16);
         }
 
@@ -74,7 +74,7 @@ public final class ColorTypeAdapter extends TypeAdapter<Color>{
      * @param c The {@link Color} object to convert to hex
      * @return The hex string representing the given Color
      */
-    private String toHex(Color c){
+    private String toHex(Color c) {
         return Integer.toHexString(c.getRGB() & 0xFFFFFF);
     }
 }

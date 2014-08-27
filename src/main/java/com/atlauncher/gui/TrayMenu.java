@@ -19,24 +19,21 @@ import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public final class TrayMenu
-        extends JPopupMenu
-        implements RelocalizationListener,
-                   ConsoleCloseListener,
-                   ConsoleOpenListener{
+public final class TrayMenu extends JPopupMenu implements RelocalizationListener, ConsoleCloseListener,
+        ConsoleOpenListener {
 
     private final JMenuItem killMCButton = new JMenuItem();
     private final JMenuItem tcButton = new JMenuItem();
     private final JMenuItem quitButton = new JMenuItem();
 
-    public TrayMenu(){
+    public TrayMenu() {
         super();
 
         this.setMinecraftLaunched(false);
@@ -59,24 +56,20 @@ public final class TrayMenu
         this.addActionListeners();
     }
 
-    private void addActionListeners(){
-        this.killMCButton.addActionListener(new ActionListener(){
+    private void addActionListeners() {
+        this.killMCButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                SwingUtilities.invokeLater(new Runnable(){
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
                     @Override
-                    public void run(){
-                        if(App.settings.isMinecraftLaunched()){
-                            int ret = JOptionPane.showConfirmDialog(
-                                    App.settings.getParent(),
-                                    "<html><p align=\"center\">"
-                                            + App.settings.getLocalizedString(
-                                            "console.killsure", "<br/><br/>")
-                                            + "</p></html>", App.settings
-                                            .getLocalizedString("console.kill"),
-                                    JOptionPane.YES_OPTION);
+                    public void run() {
+                        if (App.settings.isMinecraftLaunched()) {
+                            int ret = JOptionPane.showConfirmDialog(App.settings.getParent(),
+                                    "<html><p align=\"center\">" + App.settings.getLocalizedString("console" +
+                                            ".killsure", "<br/><br/>") + "</p></html>",
+                                    App.settings.getLocalizedString("console.kill"), JOptionPane.YES_OPTION);
 
-                            if(ret == JOptionPane.YES_OPTION){
+                            if (ret == JOptionPane.YES_OPTION) {
                                 App.settings.killMinecraft();
                             }
                         }
@@ -84,25 +77,25 @@ public final class TrayMenu
                 });
             }
         });
-        this.tcButton.addActionListener(new ActionListener(){
+        this.tcButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 App.settings.getConsole().setVisible(!App.settings.getConsole().isVisible());
             }
         });
-        this.quitButton.addActionListener(new ActionListener(){
+        this.quitButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
         });
     }
 
-    public void localize(){
+    public void localize() {
         this.tcButton.setEnabled(true);
-        if(App.settings.isConsoleVisible()){
+        if (App.settings.isConsoleVisible()) {
             this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
-        } else{
+        } else {
             this.tcButton.setText(Language.INSTANCE.localize("console.show"));
         }
 
@@ -110,27 +103,27 @@ public final class TrayMenu
         this.quitButton.setText(Language.INSTANCE.localize("common.quit"));
     }
 
-    public void setMinecraftLaunched(boolean l){
+    public void setMinecraftLaunched(boolean l) {
         this.killMCButton.setEnabled(l);
     }
 
     @Override
-    public void onConsoleClose(){
+    public void onConsoleClose() {
         this.tcButton.setText(Language.INSTANCE.localize("console.show"));
     }
 
     @Override
-    public void onConsoleOpen(){
+    public void onConsoleOpen() {
         this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
     }
 
     @Override
-    public void onRelocalization(){
+    public void onRelocalization() {
         this.killMCButton.setText(Language.INSTANCE.localize("console.kill"));
         this.quitButton.setText(Language.INSTANCE.localize("common.quit"));
-        if(App.settings.getConsole().isVisible()){
+        if (App.settings.getConsole().isVisible()) {
             this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
-        } else{
+        } else {
             this.tcButton.setText(Language.INSTANCE.localize("console.show"));
         }
     }

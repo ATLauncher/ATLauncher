@@ -1,8 +1,16 @@
 package io.github.asyncronous.toast.ui;
 
+import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.ToasterConstants;
 import io.github.asyncronous.toast.thread.ToastAnimator;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JWindow;
+import javax.swing.UIManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,16 +20,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JWindow;
-import javax.swing.UIManager;
-
-import com.atlauncher.utils.Utils;
 
 /**
  * Main Toaster Notification class
@@ -39,10 +37,9 @@ public final class ToastWindow extends JWindow {
         this.MESSAGE.setMargin(new Insets(2, 2, 2, 2));
         this.MESSAGE.setWrapStyleWord(true);
 
-        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE))
-                && Utils.isJava7OrAbove(false)
-                && GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-                        .isWindowTranslucencySupported(WindowTranslucency.TRANSLUCENT)) {
+        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Utils.isJava7OrAbove(false) && GraphicsEnvironment
+                .getLocalGraphicsEnvironment().getDefaultScreenDevice().isWindowTranslucencySupported
+                        (WindowTranslucency.TRANSLUCENT)) {
             this.setOpacity((Float) UIManager.get(ToasterConstants.OPACITY));
         }
 
@@ -73,9 +70,8 @@ public final class ToastWindow extends JWindow {
 
     /**
      * Sets the text of the message
-     * 
-     * @param text
-     *            The text you would like to pop
+     *
+     * @param text The text you would like to pop
      */
     public void setText(String text) {
         this.MESSAGE.setText(text);
@@ -83,7 +79,7 @@ public final class ToastWindow extends JWindow {
 
     /**
      * Gets the text of the message
-     * 
+     *
      * @return The text of the message
      */
     public String getText() {
@@ -92,9 +88,8 @@ public final class ToastWindow extends JWindow {
 
     /**
      * Sets the icon of the message
-     * 
-     * @param icon
-     *            The icon you would like to pop
+     *
+     * @param icon The icon you would like to pop
      */
     public void setIcon(Icon icon) {
         this.ICON.setIcon(icon);
@@ -102,7 +97,7 @@ public final class ToastWindow extends JWindow {
 
     /**
      * Gets the icon of the message
-     * 
+     *
      * @return The icon of the message
      */
     public Icon getIcon() {
