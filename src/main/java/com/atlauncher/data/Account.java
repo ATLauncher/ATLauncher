@@ -19,11 +19,14 @@ import com.atlauncher.utils.Utils;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
@@ -391,43 +394,93 @@ public class Account implements Serializable {
                     ".downloadingskin"), 0, App.settings.getLocalizedString("account.downloadingminecraftskin",
                     this.minecraftUsername), "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             dialog.addThread(new Thread() {
-                String skinURL = getSkinURL();
-
                 public void run() {
+                    dialog.setReturnValue(false);
+                    String skinURL = getSkinURL();
                     if (skinURL == null) {
-                        Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                        if (!file.exists()) {
+                            // Only copy over the default skin if there is no skin for the user
+                            Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                        }
                     } else {
                         try {
                             HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
                             if (conn.getResponseCode() == 200) {
                                 Downloadable skin = new Downloadable(skinURL, file, null, null, false);
                                 skin.download(false);
+                                dialog.setReturnValue(true);
                             } else {
-                                Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                                if (!file.exists()) {
+                                    // Only copy over the default skin if there is no skin for the user
+                                    Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                                }
                             }
                         } catch (MalformedURLException e) {
                             App.settings.logStackTrace(e);
                         } catch (IOException e) {
                             App.settings.logStackTrace(e);
                         }
+                        App.settings.reloadAccounts();
                     }
-                    App.settings.reloadAccounts();
                     dialog.close();
                 }
 
                 ;
             });
             dialog.start();
+            if (!(Boolean) dialog.getReturnValue()) {
+                String[] options = {App.settings.getLocalizedString("common.ok")};
+                JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" +
+                                ".skinerror"),
+                        Language.INSTANCE.localize("common.error"),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                        options[0]);
+            }
             this.skinUpdating = false;
         }
     }
 
     public String getSkinURL() {
-        Downloadable downloadable = new Downloadable("https://sessionserver.mojang.com/session/minecraft/profile/" +
-                this.getUUID(), false);
+        StringBuilder response = null;
+        try {
+            URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + this.getUUID());
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        MinecraftProfileResponse profile = Gsons.DEFAULT.fromJson(downloadable.getContents(),
-                MinecraftProfileResponse.class);
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
+            connection.setRequestMethod("GET");
+
+            connection.setUseCaches(false);
+
+            // Read the result
+
+            if (connection.getResponseCode() != 200) {
+                return null;
+            }
+
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            } catch (IOException e) {
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+            }
+            response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+            reader.close();
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+            response = null;
+        }
+
+        if (response == null) {
+            return null;
+        }
+
+        MinecraftProfileResponse profile = Gsons.DEFAULT.fromJson(response.toString(), MinecraftProfileResponse.class);
 
         return profile.getUserProperty("textures").getTexture("SKIN").getUrl();
     }
