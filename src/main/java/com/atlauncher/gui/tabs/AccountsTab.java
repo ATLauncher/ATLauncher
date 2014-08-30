@@ -215,7 +215,7 @@ public class AccountsTab extends JPanel implements Tab {
 
                         if (accountsComboBox.getSelectedIndex() == 0) {
                             account = new Account(username, password, response.getSelectedProfile().getName(),
-                                    remember);
+                                    response.getSelectedProfile().getId(), remember);
                             App.settings.addAccount(account);
                             LogManager.info("Added Account " + account);
                             String[] options = {App.settings.getLocalizedString("common.yes"),
@@ -231,6 +231,7 @@ public class AccountsTab extends JPanel implements Tab {
                             account = (Account) accountsComboBox.getSelectedItem();
                             account.setUsername(username);
                             account.setMinecraftUsername(response.getSelectedProfile().getName());
+                            account.setUUID(response.getSelectedProfile().getId());
                             if (remember) {
                                 account.setPassword(password);
                             }

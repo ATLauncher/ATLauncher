@@ -7,7 +7,9 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -29,6 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * This class deals with the Accounts in the launcher.
@@ -70,6 +73,11 @@ public class Account implements Serializable {
     private String minecraftUsername;
 
     /**
+     * The UUID of the account.
+     */
+    private String uuid;
+
+    /**
      * If this account should remember the password or not.
      */
     private boolean remember;
@@ -100,15 +108,17 @@ public class Account implements Serializable {
      * @param username          The name of the Account
      * @param password          The password of the Account
      * @param minecraftUsername The Minecraft username of the Account
+     * @param uuid              The UUID of the Account
      * @param remember          If this Account's password should be remembered or not
      */
-    public Account(String username, String password, String minecraftUsername, boolean remember) {
+    public Account(String username, String password, String minecraftUsername, String uuid, boolean remember) {
         this.username = username;
         if (remember) {
             this.password = password;
             this.encryptedPassword = Utils.encrypt(password);
         }
         this.minecraftUsername = minecraftUsername;
+        this.uuid = uuid;
         this.remember = remember;
         this.isReal = true;
         this.collapsedPacks = new ArrayList<String>();
@@ -123,6 +133,7 @@ public class Account implements Serializable {
     public Account(String name) {
         this.username = "";
         this.minecraftUsername = name;
+        this.uuid = UUID.randomUUID() + "";
         this.remember = false;
         this.isReal = false;
         this.collapsedPacks = new ArrayList<String>();
@@ -265,6 +276,24 @@ public class Account implements Serializable {
     }
 
     /**
+     * Gets the UUID of this account.
+     *
+     * @return The UUID for this Account
+     */
+    public String getUUID() {
+        return this.uuid;
+    }
+
+    /**
+     * Sets the uuid for this Account.
+     *
+     * @param uuid The new UUID for this Account
+     */
+    public void setUUID(String uuid) {
+        this.uuid = uuid;
+    }
+
+    /**
      * Gets the password for logging into Mojang servers for this Account.
      *
      * @return The password for logging into Mojang servers
@@ -358,25 +387,29 @@ public class Account implements Serializable {
                 Utils.delete(file);
             }
             LogManager.info("Downloading skin for " + this.minecraftUsername);
-            final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("account" +
+            final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("account" + "" +
                     ".downloadingskin"), 0, App.settings.getLocalizedString("account.downloadingminecraftskin",
                     this.minecraftUsername), "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             dialog.addThread(new Thread() {
+                String skinURL = getSkinURL();
+
                 public void run() {
-                    try {
-                        HttpURLConnection conn = (HttpURLConnection) new URL("http://s3.amazonaws" +
-                                ".com/MinecraftSkins/" + minecraftUsername + ".png").openConnection();
-                        if (conn.getResponseCode() == 200) {
-                            Downloadable skin = new Downloadable("http://s3.amazonaws.com/MinecraftSkins/" +
-                                    minecraftUsername + ".png", file, null, null, false);
-                            skin.download(false);
-                        } else {
-                            Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                    if (skinURL == null) {
+                        Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                    } else {
+                        try {
+                            HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
+                            if (conn.getResponseCode() == 200) {
+                                Downloadable skin = new Downloadable(skinURL, file, null, null, false);
+                                skin.download(false);
+                            } else {
+                                Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                            }
+                        } catch (MalformedURLException e) {
+                            App.settings.logStackTrace(e);
+                        } catch (IOException e) {
+                            App.settings.logStackTrace(e);
                         }
-                    } catch (MalformedURLException e) {
-                        App.settings.logStackTrace(e);
-                    } catch (IOException e) {
-                        App.settings.logStackTrace(e);
                     }
                     App.settings.reloadAccounts();
                     dialog.close();
@@ -389,16 +422,26 @@ public class Account implements Serializable {
         }
     }
 
+    public String getSkinURL() {
+        Downloadable downloadable = new Downloadable("https://sessionserver.mojang.com/session/minecraft/profile/" +
+                this.getUUID(), false);
+
+        MinecraftProfileResponse profile = Gsons.DEFAULT.fromJson(downloadable.getContents(),
+                MinecraftProfileResponse.class);
+
+        return profile.getUserProperty("textures").getTexture("SKIN").getUrl();
+    }
+
     public String getAccessToken() {
         return this.accessToken;
     }
 
-    public boolean hasAccessToken() {
-        return this.accessToken != null;
-    }
-
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public boolean hasAccessToken() {
+        return this.accessToken != null;
     }
 
     public boolean isAccessTokenValid() {
@@ -438,12 +481,12 @@ public class Account implements Serializable {
         return this.clientToken;
     }
 
-    public boolean hasClientToken() {
-        return this.clientToken != null;
-    }
-
     public void setClientToken(String clientToken) {
         this.clientToken = clientToken;
+    }
+
+    public boolean hasClientToken() {
+        return this.clientToken != null;
     }
 
     @Override

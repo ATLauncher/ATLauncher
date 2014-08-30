@@ -22,6 +22,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
@@ -83,6 +84,12 @@ import java.util.concurrent.Executors;
  * @author Ryan
  */
 public class Settings {
+    public static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    public static Gson altGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapterFactory(new
+            EnumTypeAdapterFactory()).registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File
+            .class, new FileTypeAdapter()).create();
+    public static Gson themeGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class,
+            new ColorTypeAdapter()).create();
     // Users Settings
     private Server server; // Server to use for the Launcher
     private String forgeLoggingLevel; // Logging level to use when running Minecraft with Forge
@@ -117,15 +124,12 @@ public class Settings {
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
-
     // General backup settings
     private boolean autoBackup; // Whether backups are created on instance close
     private String lastSelectedSync; // The last service selected for syncing
     private boolean notifyBackup; // Whether to notify the user on successful backup or restore
-
     // Dropbox settings
     private String dropboxFolderLocation; // Location of dropbox if defined by user
-
     // Packs, Instances and Accounts
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
@@ -135,13 +139,11 @@ public class Settings {
     private List<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
     private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
-
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
             commonConfigsDir, resourcesDir, librariesDir, languagesDir, downloadsDir, usersDownloadsFolder,
             instancesDir, serversDir, tempDir, failedDownloadsDir, instancesDataFile, checkingServersFile,
             userDataFile, propertiesFile;
-
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -159,15 +161,9 @@ public class Settings {
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, " +
-            "like Gecko) Chrome/28.0.1500.72 Safari/537.36";
+            "" + "like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
-    public static Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    public static Gson altGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapterFactory(new
-            EnumTypeAdapterFactory()).registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File
-            .class, new FileTypeAdapter()).create();
-    public static Gson themeGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class,
-            new ColorTypeAdapter()).create();
     @SuppressWarnings("unused")
     private DropboxSync dropbox;
     private boolean languageLoaded = false;
@@ -230,6 +226,7 @@ public class Settings {
         loadProperties(); // Load the users Properties
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
+        checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
         OUTER:
         for (Pack pack : this.packs) {
             if (pack.isTester()) {
@@ -256,7 +253,7 @@ public class Settings {
         }
         if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
             String[] options = {App.settings.getLocalizedString("common.download"),
-                    App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("instance" +
+                    App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("instance" + "" +
                     ".dontremindmeagain")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
                     .settings.getLocalizedString("settings.unsupportedjava", "<br/><br/>") + "</p></html>",
@@ -358,6 +355,18 @@ public class Settings {
             dialog.addThread(thread);
             dialog.start();
 
+        }
+    }
+
+    public void checkAccountUUIDs() {
+        LogManager.info("Checking account UUID's!");
+        for (Account account : this.accounts) {
+            if (account.getUUID() == null) {
+                account.setUUID(Authentication.getUUID(account.getMinecraftUsername()));
+                this.saveAccounts();
+                LogManager.debug("UUID for " + account.getMinecraftUsername() + " has been set!");
+            }
+            LogManager.debug("UUID for " + account.getMinecraftUsername() + " is " + account.getUUID());
         }
     }
 
@@ -585,10 +594,11 @@ public class Settings {
             } else {
                 String[] options = {"Ok"};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
-                        "Update failed. Please click Ok to close " + "the launcher and open up the downloads page" +
-                        ".<br/><br/>Download " + "the update and replace the old ATLauncher file.</p></html>",
-                        "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                        options[0]);
+                                "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
+                        "page" +
+                                ".<br/><br/>Download " + "the update and replace the old ATLauncher file" +
+                        ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                        null, options, options[0]);
                 if (ret == 0) {
                     Utils.openBrowser("http://www.atlauncher.com/downloads/");
                     System.exit(0);
@@ -820,8 +830,9 @@ public class Settings {
         } catch (IOException e) {
             String[] options = {"OK"};
             JOptionPane.showOptionDialog(null, "<html><p align=\"center\">Cannot create the log file.<br/><br/>Make " +
-                    "sure" + " you are running the Launcher from somewhere with<br/>write" + " permissions for your " +
-                    "user account such as your Home/Users folder" + " or desktop.</p></html>", "Warning",
+                            "sure" + " you are running the Launcher from somewhere with<br/>write" + " permissions " +
+                    "for your " +
+                            "user account such as your Home/Users folder" + " or desktop.</p></html>", "Warning",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             System.exit(0);
         }
@@ -890,9 +901,11 @@ public class Settings {
         } catch (IOException e) {
             String[] options = {"OK"};
             JOptionPane.showOptionDialog(null, "<html><p align=\"center\">Cannot create the config file" +
-                    ".<br/><br/>Make sure" + " you are running the Launcher from somewhere with<br/>write" + " " +
-                    "permissions for your user account such as your Home/Users folder" + " or desktop.</p></html>",
-                    "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                            ".<br/><br/>Make sure" + " you are running the Launcher from somewhere with<br/>write" +
+                    " " +
+                            "permissions for your user account such as your Home/Users folder" + " or desktop" +
+                    ".</p></html>", "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                    options[0]);
             System.exit(0);
         }
         try {
@@ -1038,7 +1051,7 @@ public class Settings {
             } else {
                 this.javaPath = Utils.getJavaHome();
                 if (this.isUsingMacApp()) {
-                    File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin" +
+                    File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin" + "" +
                             ".plugin/Contents/Home/bin/java");
                     if (oracleJava.exists() && oracleJava.canExecute()) {
                         this.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
@@ -1515,7 +1528,7 @@ public class Settings {
                     }
                 } catch (IOException e) {
                     logStackTrace("Exception while trying to close FileInputStream/ObjectInputStream when reading in " +
-                            "accounts.", e);
+                            "" + "accounts.", e);
                 }
             }
         }
@@ -1576,8 +1589,8 @@ public class Settings {
                 try {
                     fileReader.close();
                 } catch (IOException e) {
-                    logStackTrace("Exception while trying to close FileReader when loading servers for server checker" +
-                            " tool.", e);
+                    logStackTrace("Exception while trying to close FileReader when loading servers for server " +
+                            "checker" + " tool.", e);
                 }
             }
         }
@@ -2303,6 +2316,16 @@ public class Settings {
     }
 
     /**
+     * Sets the users current active Server
+     *
+     * @param server The server to set to
+     */
+    public void setServer(Server server) {
+        this.server = server;
+        this.originalServer = server;
+    }
+
+    /**
      * Gets the users saved Server
      *
      * @return The users saved server
@@ -2325,16 +2348,6 @@ public class Settings {
      */
     public void setForgeLoggingLevel(String forgeLoggingLevel) {
         this.forgeLoggingLevel = forgeLoggingLevel;
-    }
-
-    /**
-     * Sets the users current active Server
-     *
-     * @param server The server to set to
-     */
-    public void setServer(Server server) {
-        this.server = server;
-        this.originalServer = server;
     }
 
     public int getInitialMemory() {
@@ -2488,11 +2501,6 @@ public class Settings {
         this.keepLauncherOpen = keepLauncherOpen;
     }
 
-    public void setLastSelectedSync(String lastSelected) {
-        this.lastSelectedSync = lastSelected;
-        saveProperties();
-    }
-
     public String getLastSelectedSync() {
         if (this.lastSelectedSync == null) {
             setLastSelectedSync("Dropbox");
@@ -2500,8 +2508,8 @@ public class Settings {
         return this.lastSelectedSync;
     }
 
-    public void setNotifyBackup(boolean notify) {
-        this.notifyBackup = notify;
+    public void setLastSelectedSync(String lastSelected) {
+        this.lastSelectedSync = lastSelected;
         saveProperties();
     }
 
@@ -2509,8 +2517,8 @@ public class Settings {
         return this.notifyBackup;
     }
 
-    public void setAutoBackup(boolean enableBackup) {
-        this.autoBackup = enableBackup;
+    public void setNotifyBackup(boolean notify) {
+        this.notifyBackup = notify;
         saveProperties();
     }
 
@@ -2525,6 +2533,11 @@ public class Settings {
 
     public boolean getAutoBackup() {
         return this.autoBackup;
+    }
+
+    public void setAutoBackup(boolean enableBackup) {
+        this.autoBackup = enableBackup;
+        saveProperties();
     }
 
     public void setEnableTrayIcon(boolean enableTrayIcon) {
@@ -2571,12 +2584,12 @@ public class Settings {
         this.enableProxy = enableProxy;
     }
 
-    public void setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
-    }
-
     public String getProxyHost() {
         return this.proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
     }
 
     public int getProxyPort() {
@@ -2587,36 +2600,40 @@ public class Settings {
         this.proxyPort = proxyPort;
     }
 
-    public void setProxyType(String proxyType) {
-        this.proxyType = proxyType;
-    }
-
     public String getProxyType() {
         return this.proxyType;
     }
 
-    public void setServerCheckerWait(int serverCheckerWait) {
-        this.serverCheckerWait = serverCheckerWait;
+    public void setProxyType(String proxyType) {
+        this.proxyType = proxyType;
     }
 
     public int getServerCheckerWait() {
         return this.serverCheckerWait;
     }
 
-    public int getServerCheckerWaitInMilliseconds() {
-        return this.serverCheckerWait * 60 * 1000;
+    public void setServerCheckerWait(int serverCheckerWait) {
+        this.serverCheckerWait = serverCheckerWait;
     }
 
-    public void setConcurrentConnections(int concurrentConnections) {
-        this.concurrentConnections = concurrentConnections;
+    public int getServerCheckerWaitInMilliseconds() {
+        return this.serverCheckerWait * 60 * 1000;
     }
 
     public int getConcurrentConnections() {
         return this.concurrentConnections;
     }
 
+    public void setConcurrentConnections(int concurrentConnections) {
+        this.concurrentConnections = concurrentConnections;
+    }
+
     public String getTheme() {
         return this.theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     public File getThemeFile() {
@@ -2628,17 +2645,13 @@ public class Settings {
         }
     }
 
-    public void setTheme(String theme) {
-        this.theme = theme;
+    public String getDateFormat() {
+        return this.dateFormat;
     }
 
     public void setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
         Timestamper.updateDateFormat();
-    }
-
-    public String getDateFormat() {
-        return this.dateFormat;
     }
 
     public Proxy getProxy() {

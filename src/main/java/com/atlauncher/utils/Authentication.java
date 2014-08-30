@@ -11,7 +11,10 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.mojang.api.ProfileResponse;
 import com.atlauncher.data.mojang.auth.AuthenticationRequest;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.data.mojang.auth.RefreshRequest;
@@ -191,5 +194,14 @@ public class Authentication {
             }
         }
         return result;
+    }
+
+    public static String getUUID(String username) {
+        Downloadable downloadable = new Downloadable("https://api.mojang.com/users/profiles/minecraft/" + username,
+                false);
+
+        ProfileResponse profile = Gsons.DEFAULT.fromJson(downloadable.getContents(), ProfileResponse.class);
+        
+        return profile.getId();
     }
 }
