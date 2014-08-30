@@ -73,6 +73,11 @@ public class Version {
     private Messages messages;
 
     /**
+     * The warning messages that should be shown to the user when an optional mod is selected.
+     */
+    private Map<String, String> warnings;
+
+    /**
      * A list of Libraries this version requires.
      */
     private List<Library> libraries;
@@ -222,6 +227,26 @@ public class Version {
      */
     public boolean isColour(String key) {
         return this.colours.containsKey(key);
+    }
+
+    /**
+     * Checks to see if there is a warning message with the provided key.
+     *
+     * @param key The key/name given to the warning by the pack developer/s
+     * @return true if the warning is defined, otherwise false
+     */
+    public boolean hasWarningMessage(String key) {
+        return this.warnings.containsKey(key);
+    }
+
+    /**
+     * Gets the warning message from the provided key.
+     *
+     * @param key The key/name given to the warning by the pack developer/s
+     * @return the warning message to display to the user
+     */
+    public String getWarningMessage(String key) {
+        return this.warnings.get(key);
     }
 
     /**

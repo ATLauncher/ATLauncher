@@ -24,6 +24,7 @@ public class Mod {
     private String website;
     private String donation;
     private Color colour;
+    private String warning;
     private String md5;
     private Type type;
     private ExtractTo extractTo;
@@ -55,7 +56,7 @@ public class Mod {
     private String description;
 
     public Mod(String name, String version, String url, String file, String website, String donation, Color colour,
-               String md5, Type type, ExtractTo extractTo, String extractFolder, String decompFile,
+               String warning, String md5, Type type, ExtractTo extractTo, String extractFolder, String decompFile,
                DecompType decompType, boolean filePattern, String filePreference, String fileCheck, boolean client,
                boolean server, String serverURL, String serverFile, Download serverDownload, String serverMD5,
                Type serverType, boolean optional, boolean serverOptional, boolean selected, Download download,
@@ -68,6 +69,7 @@ public class Mod {
         this.website = website;
         this.donation = donation;
         this.colour = colour;
+        this.warning = warning;
         this.md5 = md5;
         this.type = type;
         this.extractTo = extractTo;
@@ -176,6 +178,14 @@ public class Mod {
 
     public Color getColour() {
         return this.colour;
+    }
+
+    public boolean hasWarning() {
+        return this.warning != null;
+    }
+
+    public String getWarning() {
+        return this.warning;
     }
 
     public boolean isServerOptional() {
@@ -321,7 +331,7 @@ public class Mod {
                         String[] options = new String[]{App.settings.getLocalizedString("common.openfolder"),
                                 App.settings.getLocalizedString("instance.ivedownloaded")};
                         retValue = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                "<html><p align=\"center\">" + App.settings.getLocalizedString("instance" +
+                                "<html><p align=\"center\">" + App.settings.getLocalizedString("instance" + "" +
                                         ".browseropened", (serverFile == null ? (isFilePattern() ? getName() :
                                         getFile()) : (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>"
                                         + App.settings.getLocalizedString("instance.pleasesave") + "<br/><br/>" +

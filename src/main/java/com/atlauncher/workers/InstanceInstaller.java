@@ -140,6 +140,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return etag;
     }
 
+    public Pack getPack() {
+        return this.pack;
+    }
+
     public void setInstance(Instance instance) {
         this.instance = instance;
     }

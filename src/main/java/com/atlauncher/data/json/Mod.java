@@ -32,6 +32,7 @@ public class Mod {
     private List<String> authors;
     private String sha1;
     private String colour;
+    private String warning;
     private Color compiledColour;
     private ModType type;
     private ExtractToType extractTo;
@@ -130,6 +131,14 @@ public class Mod {
 
     public String getColour() {
         return this.colour;
+    }
+
+    public boolean hasWarning() {
+        return this.warning != null;
+    }
+
+    public String getWarning() {
+        return this.warning;
     }
 
     public Color getCompiledColour() {

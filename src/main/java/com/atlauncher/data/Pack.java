@@ -277,6 +277,35 @@ public class Pack {
         return this.json;
     }
 
+    public String getWarningMessage(String version, String name) {
+        String xml = getXML(version, false);
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(xml));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("warning");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    NodeList nodeList1 = element.getChildNodes();
+                    if (element.getAttribute("name").equals(name)) {
+                        return nodeList1.item(0).getNodeValue();
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return null;
+    }
+
     public String getInstallMessage(String version) {
         String xml = getXML(version, false);
         try {
@@ -668,6 +697,10 @@ public class Pack {
                             }
                         }
                     }
+                    String warning = null;
+                    if (element.hasAttribute("warning")) {
+                        warning = element.getAttribute("warning");
+                    }
                     String md5 = element.getAttribute("md5");
                     Type type = Type.valueOf(element.getAttribute("type").toLowerCase());
                     ExtractTo extractTo = null;
@@ -769,9 +802,9 @@ public class Pack {
                     }
 
                     String description = element.getAttribute("description");
-                    mods.add(new Mod(name, version, url, file, website, donation, colour, md5, type, extractTo,
-                            extractFolder, decompFile, decompType, filePattern, filePreference, fileCheck, client,
-                            server, serverURL, serverFile, serverDownload, serverMD5, serverType, optional,
+                    mods.add(new Mod(name, version, url, file, website, donation, colour, warning, md5, type,
+                            extractTo, extractFolder, decompFile, decompType, filePattern, filePreference, fileCheck,
+                            client, server, serverURL, serverFile, serverDownload, serverMD5, serverType, optional,
                             serverOptional, selected, download, hidden, library, group, category, linked, depends,
                             filePrefix, recommended, description));
                 }

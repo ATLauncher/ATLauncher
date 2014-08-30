@@ -17,6 +17,7 @@ import com.atlauncher.workers.InstanceInstaller;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -188,7 +189,7 @@ public class JsonModsChooser extends JDialog {
 
         for (int i = 0; i < installer.getJsonMods().size(); ) {
             boolean skip = false;
-            Mod mod = installer.getJsonMods().get(i);
+            final Mod mod = installer.getJsonMods().get(i);
             if (installer.isServer() && !mod.installOnServer()) {
                 continue;
             }
@@ -244,6 +245,33 @@ public class JsonModsChooser extends JDialog {
                     } else {
                         count1++;
                     }
+                }
+
+                if (mod.hasWarning()) {
+                    final ModsJCheckBox finalCheckBox = checkBox;
+                    checkBox.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (finalCheckBox.isSelected() && installer.getJsonVersion().hasWarningMessage(mod
+                                    .getWarning())) {
+                                String message = installer.getJsonVersion().getWarningMessage(mod.getWarning());
+
+                                if (message != null) {
+                                    String[] options = {App.settings.getLocalizedString("common.yes"),
+                                            App.settings.getLocalizedString("common.no")};
+                                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                                            "<html>" + message + "<br/>" +
+                                                    Language.INSTANCE.localize("instance.warningsure") + "</html>",
+                                            Language.INSTANCE.localize("instance.warning"),
+                                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options,
+                                            options[1]);
+                                    if (ret != 0) {
+                                        finalCheckBox.setSelected(false);
+                                    }
+                                }
+                            }
+                        }
+                    });
                 }
             } else {
                 checkBox = new ModsJCheckBox(mod);
