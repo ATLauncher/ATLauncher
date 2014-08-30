@@ -386,9 +386,6 @@ public class Account implements Serializable {
         if (!this.skinUpdating) {
             this.skinUpdating = true;
             final File file = new File(App.settings.getSkinsDir(), this.minecraftUsername + ".png");
-            if (file.exists()) {
-                Utils.delete(file);
-            }
             LogManager.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("account" + "" +
                     ".downloadingskin"), 0, App.settings.getLocalizedString("account.downloadingminecraftskin",
@@ -406,6 +403,9 @@ public class Account implements Serializable {
                         try {
                             HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
                             if (conn.getResponseCode() == 200) {
+                                if (file.exists()) {
+                                    Utils.delete(file);
+                                }
                                 Downloadable skin = new Downloadable(skinURL, file, null, null, false);
                                 skin.download(false);
                                 dialog.setReturnValue(true);
@@ -430,11 +430,9 @@ public class Account implements Serializable {
             dialog.start();
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {App.settings.getLocalizedString("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" +
-                                ".skinerror"),
-                        Language.INSTANCE.localize("common.error"),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                        options[0]);
+                JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
+                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
