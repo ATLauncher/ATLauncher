@@ -364,9 +364,7 @@ public class Settings {
             if (account.getUUID() == null) {
                 account.setUUID(Authentication.getUUID(account.getMinecraftUsername()));
                 this.saveAccounts();
-                LogManager.debug("UUID for " + account.getMinecraftUsername() + " has been set!");
             }
-            LogManager.debug("UUID for " + account.getMinecraftUsername() + " is " + account.getUUID());
         }
     }
 

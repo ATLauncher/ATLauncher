@@ -201,7 +201,7 @@ public class Authentication {
                 false);
 
         ProfileResponse profile = Gsons.DEFAULT.fromJson(downloadable.getContents(), ProfileResponse.class);
-        
+
         return profile.getId();
     }
 }
