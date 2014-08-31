@@ -1853,6 +1853,7 @@ public class Settings {
                 news += "<hr/>";
             }
         }
+        news += "</html>";
         return news;
     }
 
