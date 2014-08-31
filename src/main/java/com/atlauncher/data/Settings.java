@@ -1898,7 +1898,7 @@ public class Settings {
             server.enableServer();
         }
         this.offlineMode = false;
-        Downloadable download = new Downloadable("launcher/users.xml", true);
+        Downloadable download = new Downloadable(server.getTestURL(), true);
         String test = download.getContents();
         if (test != null && test.equalsIgnoreCase("pong")) {
             this.offlineMode = false;
