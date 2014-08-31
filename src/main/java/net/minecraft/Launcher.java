@@ -63,8 +63,9 @@ public class Launcher extends Applet implements AppletStub {
     @Override
     public String getParameter(String name) {
         String param = params.get(name);
-        if (param != null)
+        if (param != null) {
             return param;
+        }
         try {
             return super.getParameter(name);
         } catch (Exception ignore) {

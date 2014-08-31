@@ -17,22 +17,21 @@ import java.awt.event.WindowListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class MCFrame extends Frame implements WindowListener{
+public class MCFrame extends Frame implements WindowListener {
 
     private static final long serialVersionUID = -2036853903287698498L;
     private Launcher appletWrap = null;
 
-    public MCFrame(String title){
+    public MCFrame(String title) {
         super(title);
         setIconImage(Utils.getImage("/assets/image/OldMinecraftIcon.png"));
         this.addWindowListener(this);
     }
 
-    public void start(Applet mcApplet, String user, String session, Dimension winSize,
-                      boolean maximize){
-        try{
+    public void start(Applet mcApplet, String user, String session, Dimension winSize, boolean maximize) {
+        try {
             appletWrap = new Launcher(mcApplet, new URL("http://www.minecraft.net/game"));
-        } catch(MalformedURLException ignored){
+        } catch (MalformedURLException ignored) {
         }
 
         appletWrap.setParameter("username", user);
@@ -45,7 +44,7 @@ public class MCFrame extends Frame implements WindowListener{
         this.pack();
         this.setLocationRelativeTo(null);
         this.setResizable(true);
-        if(maximize){
+        if (maximize) {
             this.setExtendedState(MAXIMIZED_BOTH);
         }
 
@@ -56,20 +55,20 @@ public class MCFrame extends Frame implements WindowListener{
     }
 
     @Override
-    public void windowActivated(WindowEvent e){
+    public void windowActivated(WindowEvent e) {
     }
 
     @Override
-    public void windowClosed(WindowEvent e){
+    public void windowClosed(WindowEvent e) {
     }
 
     @Override
-    public void windowClosing(WindowEvent e){
-        new Thread(){
-            public void run(){
-                try{
+    public void windowClosing(WindowEvent e) {
+        new Thread() {
+            public void run() {
+                try {
                     Thread.sleep(30000L);
-                } catch(InterruptedException localInterruptedException){
+                } catch (InterruptedException localInterruptedException) {
                     localInterruptedException.printStackTrace();
                 }
                 System.out.println("FORCING EXIT!");
@@ -77,7 +76,7 @@ public class MCFrame extends Frame implements WindowListener{
             }
         }.start();
 
-        if(appletWrap != null){
+        if (appletWrap != null) {
             appletWrap.stop();
             appletWrap.destroy();
         }
@@ -86,18 +85,18 @@ public class MCFrame extends Frame implements WindowListener{
     }
 
     @Override
-    public void windowDeactivated(WindowEvent e){
+    public void windowDeactivated(WindowEvent e) {
     }
 
     @Override
-    public void windowDeiconified(WindowEvent e){
+    public void windowDeiconified(WindowEvent e) {
     }
 
     @Override
-    public void windowIconified(WindowEvent e){
+    public void windowIconified(WindowEvent e) {
     }
 
     @Override
-    public void windowOpened(WindowEvent e){
+    public void windowOpened(WindowEvent e) {
     }
 }

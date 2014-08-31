@@ -10,7 +10,7 @@
  */
 package com.atlauncher.data.mojang;
 
-public enum MojangConstants{
+public enum MojangConstants {
 
     LIBRARIES_BASE("https://libraries.minecraft.net/"),
     RESOURCES_BASE("http://resources.download.minecraft.net/"),
@@ -18,11 +18,11 @@ public enum MojangConstants{
 
     private final String url;
 
-    private MojangConstants(String url){
+    private MojangConstants(String url) {
         this.url = url;
     }
 
-    public String getURL(String path){
+    public String getURL(String path) {
         return this.url + path;
     }
 }

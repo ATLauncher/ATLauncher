@@ -10,42 +10,38 @@ import com.atlauncher.App;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.utils.Utils;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.Image;
-import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.Image;
+import java.io.File;
 
 /**
  * Class for displaying packs in the Pack Tab
  *
  * @author Ryan
  */
-public class NothingToDisplay
-extends JPanel{
-    private static final Image dfImg = Utils.getIconImage(
-            new File(App.settings.getImagesDir(), "defaultimage.png")
-    ).getImage();
+public class NothingToDisplay extends JPanel {
+    private static final Image dfImg = Utils.getIconImage(new File(App.settings.getImagesDir(),
+            "defaultimage.png")).getImage();
 
     private final JTextArea error = new JTextArea();
     private final JSplitPane splitter = new JSplitPane();
 
-    public NothingToDisplay(String message){
+    public NothingToDisplay(String message) {
         super(new BorderLayout());
-        if(Utils.isMac()){
-            this.setBorder(new TitledBorder(null,
-                    App.settings.getLocalizedString("common.nothingtoshow"),
-                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(
-                    "SansSerif", Font.BOLD, 14)));
-        } else{
-            this.setBorder(new TitledBorder(null,
-                    App.settings.getLocalizedString("common.nothingtoshow"),
-                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(
-                    "SansSerif", Font.BOLD, 15)));
+        if (Utils.isMac()) {
+            this.setBorder(new TitledBorder(null, App.settings.getLocalizedString("common.nothingtoshow"),
+                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("SansSerif",
+                    Font.BOLD, 14)));
+        } else {
+            this.setBorder(new TitledBorder(null, App.settings.getLocalizedString("common.nothingtoshow"),
+                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("SansSerif",
+                    Font.BOLD, 15)));
         }
 
         this.error.setBorder(BorderFactory.createEmptyBorder());

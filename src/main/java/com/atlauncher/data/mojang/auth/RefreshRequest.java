@@ -6,11 +6,11 @@
  */
 package com.atlauncher.data.mojang.auth;
 
-public class RefreshRequest{
+public class RefreshRequest {
     private String accessToken;
     private String clientToken;
 
-    public RefreshRequest(String accessToken, String clientToken){
+    public RefreshRequest(String accessToken, String clientToken) {
         this.accessToken = accessToken;
         this.clientToken = clientToken;
     }

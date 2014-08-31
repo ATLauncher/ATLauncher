@@ -9,6 +9,7 @@ package com.atlauncher.data.json;
 import com.atlauncher.annot.Json;
 
 @Json
-public enum ModType{
-    jar, dependency, depandency, forge, mcpc, mods, plugins, ic2lib, denlib, flan, coremods, extract, decomp, millenaire, texturepack, resourcepack, texturepackextract, resourcepackextract, shaderpack
+public enum ModType {
+    jar, dependency, depandency, forge, mcpc, mods, plugins, ic2lib, denlib, flan, coremods, extract, decomp,
+    millenaire, texturepack, resourcepack, texturepackextract, resourcepackextract, shaderpack
 }

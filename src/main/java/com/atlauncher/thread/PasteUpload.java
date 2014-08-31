@@ -11,9 +11,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 
-public final class PasteUpload implements Callable<String>{
+public final class PasteUpload implements Callable<String> {
     @Override
-    public String call() throws Exception{
+    public String call() throws Exception {
         String log = App.settings.getLog().replace(System.getProperty("line.separator"), "\n");
         String urlParameters = "";
         urlParameters += "title=" + URLEncoder.encode("ATLauncher - Log", "ISO-8859-1") + "&";
@@ -30,14 +30,14 @@ public final class PasteUpload implements Callable<String>{
         String line;
         StringBuilder builder = new StringBuilder();
         InputStream stream;
-        try{
+        try {
             stream = conn.getInputStream();
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
             stream = conn.getErrorStream();
         }
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        while((line = reader.readLine()) != null){
+        while ((line = reader.readLine()) != null) {
             builder.append(line);
         }
         reader.close();

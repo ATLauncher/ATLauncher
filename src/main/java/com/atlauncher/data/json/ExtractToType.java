@@ -6,6 +6,6 @@
  */
 package com.atlauncher.data.json;
 
-public enum ExtractToType{
+public enum ExtractToType {
     root, mods, coremods
 }

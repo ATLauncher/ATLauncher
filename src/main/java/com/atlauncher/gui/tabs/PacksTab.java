@@ -13,6 +13,13 @@ import com.atlauncher.gui.NothingToDisplay;
 import com.atlauncher.gui.PackDisplay;
 import com.atlauncher.gui.dialogs.AddPackDialog;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -22,18 +29,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 /**
  * TODO: Rewrite this for better loading
  */
-public class PacksTab extends JPanel implements Tab{
+public class PacksTab extends JPanel implements Tab {
     private static final long serialVersionUID = -3550919682971699108L;
     private JPanel topPanel;
     private JButton addPackButton;
@@ -53,18 +53,18 @@ public class PacksTab extends JPanel implements Tab{
     private JScrollPane scrollPane;
     private int currentPosition = 0;
 
-    public PacksTab(){
+    public PacksTab() {
         setLayout(new BorderLayout());
         loadContent(false);
     }
 
-    public void loadContent(boolean keepFilters){
+    public void loadContent(boolean keepFilters) {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         addPackButton = new JButton(App.settings.getLocalizedString("pack.addpack"));
-        addPackButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        addPackButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 new AddPackDialog();
                 reload();
             }
@@ -72,8 +72,8 @@ public class PacksTab extends JPanel implements Tab{
         topPanel.add(addPackButton);
 
         clearButton = new JButton(App.settings.getLocalizedString("common.clear"));
-        clearButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        clearButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 searchBox.setText("");
                 servers.setSelected(false);
                 privatePacks.setSelected(false);
@@ -83,12 +83,12 @@ public class PacksTab extends JPanel implements Tab{
         topPanel.add(clearButton);
 
         searchBox = new JTextField(16);
-        if(keepFilters){
+        if (keepFilters) {
             searchBox.setText(this.searchText);
         }
-        searchBox.addKeyListener(new KeyAdapter(){
-            public void keyPressed(KeyEvent e){
-                if(e.getKeyChar() == KeyEvent.VK_ENTER){
+        searchBox.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     reload();
                 }
             }
@@ -96,8 +96,8 @@ public class PacksTab extends JPanel implements Tab{
         topPanel.add(searchBox);
 
         searchButton = new JButton(App.settings.getLocalizedString("common.search"));
-        searchButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        searchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 reload();
             }
         });
@@ -105,8 +105,8 @@ public class PacksTab extends JPanel implements Tab{
 
         servers = new JCheckBox();
         servers.setSelected(isServers);
-        servers.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        servers.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 reload();
             }
         });
@@ -117,8 +117,8 @@ public class PacksTab extends JPanel implements Tab{
 
         privatePacks = new JCheckBox();
         privatePacks.setSelected(isPrivatePacks);
-        privatePacks.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        privatePacks.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 reload();
             }
         });
@@ -143,62 +143,60 @@ public class PacksTab extends JPanel implements Tab{
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for(Pack pack : (App.settings.sortPacksAlphabetically() ? App.settings
-                .getPacksSortedAlphabetically() : App.settings.getPacksSortedPositionally())){
-            if(pack.canInstall()){
-                if(keepFilters){
+        for (Pack pack : (App.settings.sortPacksAlphabetically() ? App.settings.getPacksSortedAlphabetically() : App
+                .settings.getPacksSortedPositionally())) {
+            if (pack.canInstall()) {
+                if (keepFilters) {
                     boolean showPack = true;
 
-                    if(searchText != null){
-                        if(!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
-                                .matcher(pack.getName()).find()){
+                    if (searchText != null) {
+                        if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(pack
+                                .getName()).find()) {
                             showPack = false;
                         }
                     }
 
-                    if(isServers){
-                        if(!pack.canCreateServer()){
+                    if (isServers) {
+                        if (!pack.canCreateServer()) {
                             showPack = false;
                         }
                     }
 
-                    if(isPrivatePacks){
-                        if(!pack.isPrivate()){
+                    if (isPrivatePacks) {
+                        if (!pack.isPrivate()) {
                             showPack = false;
                         }
                     }
 
-                    if(showPack){
+                    if (showPack) {
                         panel.add(new PackDisplay(pack), gbc);
                         gbc.gridy++;
                         count++;
                     }
-                } else{
+                } else {
                     panel.add(new PackDisplay(pack), gbc);
                     gbc.gridy++;
                     count++;
                 }
             }
         }
-        if(count == 0){
-            panel.add(
-                    new NothingToDisplay(App.settings.getLocalizedString("pack.nodisplay", "\n\n")),
-                    gbc);
+        if (count == 0) {
+            panel.add(new NothingToDisplay(App.settings.getLocalizedString("pack.nodisplay", "\n\n")), gbc);
         }
 
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run(){
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
                 scrollPane.getVerticalScrollBar().setValue(currentPosition);
             }
         });
     }
 
-    public void reload(){
+    public void reload() {
         this.currentPosition = scrollPane.getVerticalScrollBar().getValue();
         this.searchText = searchBox.getText();
         this.isServers = servers.isSelected();
         this.isPrivatePacks = privatePacks.isSelected();
-        if(this.searchText.isEmpty()){
+        if (this.searchText.isEmpty()) {
             this.searchText = null;
         }
         removeAll();
@@ -209,7 +207,7 @@ public class PacksTab extends JPanel implements Tab{
     }
 
     @Override
-    public String getTitle(){
+    public String getTitle() {
         return Language.INSTANCE.localize("tabs.packs");
     }
 }

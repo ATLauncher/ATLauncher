@@ -1,13 +1,12 @@
 package com.atlauncher.gui.components;
 
+import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import javax.swing.JPanel;
 
-public final class ImagePanel
-extends JPanel{
+public final class ImagePanel extends JPanel {
     private volatile Image image;
 
     public ImagePanel(Image image) {

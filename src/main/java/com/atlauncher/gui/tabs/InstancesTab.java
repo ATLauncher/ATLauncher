@@ -12,6 +12,13 @@ import com.atlauncher.data.Language;
 import com.atlauncher.gui.InstanceDisplay;
 import com.atlauncher.gui.NothingToDisplay;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -21,18 +28,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.regex.Pattern;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 /**
  * TODO: Rewrite this for better loading
  */
-public class InstancesTab extends JPanel implements Tab{
+public class InstancesTab extends JPanel implements Tab {
     private static final long serialVersionUID = -969812552965390610L;
     private JPanel topPanel;
     private JButton clearButton;
@@ -48,18 +48,18 @@ public class InstancesTab extends JPanel implements Tab{
     private JScrollPane scrollPane;
     private int currentPosition = 0;
 
-    public InstancesTab(){
+    public InstancesTab() {
         setLayout(new BorderLayout());
         loadContent(false);
     }
 
-    public void loadContent(boolean keepFilters){
+    public void loadContent(boolean keepFilters) {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         clearButton = new JButton(App.settings.getLocalizedString("common.clear"));
-        clearButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        clearButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 searchBox.setText("");
                 hasUpdate.setSelected(false);
                 reload();
@@ -68,27 +68,27 @@ public class InstancesTab extends JPanel implements Tab{
         topPanel.add(clearButton);
 
         searchBox = new JTextField(16);
-        if(keepFilters){
+        if (keepFilters) {
             searchBox.setText(this.searchText);
         }
-        searchBox.addKeyListener(new KeyListener(){
-            public void keyPressed(KeyEvent e){
-                if(e.getKeyChar() == KeyEvent.VK_ENTER){
+        searchBox.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     reload();
                 }
             }
 
-            public void keyTyped(KeyEvent e){
+            public void keyTyped(KeyEvent e) {
             }
 
-            public void keyReleased(KeyEvent e){
+            public void keyReleased(KeyEvent e) {
             }
         });
         topPanel.add(searchBox);
 
         searchButton = new JButton(App.settings.getLocalizedString("common.search"));
-        searchButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        searchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 reload();
             }
         });
@@ -96,8 +96,8 @@ public class InstancesTab extends JPanel implements Tab{
 
         hasUpdate = new JCheckBox();
         hasUpdate.setSelected(isUpdate);
-        hasUpdate.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        hasUpdate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 reload();
             }
         });
@@ -121,54 +121,52 @@ public class InstancesTab extends JPanel implements Tab{
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for(Instance instance : App.settings.getInstancesSorted()){
-            if(instance.canPlay()){
-                if(keepFilters){
+        for (Instance instance : App.settings.getInstancesSorted()) {
+            if (instance.canPlay()) {
+                if (keepFilters) {
                     boolean showInstance = true;
 
-                    if(searchText != null){
-                        if(!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
-                                .matcher(instance.getName()).find()){
+                    if (searchText != null) {
+                        if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(instance
+                                .getName()).find()) {
                             showInstance = false;
                         }
                     }
 
-                    if(isUpdate){
-                        if(!instance.hasUpdate()){
+                    if (isUpdate) {
+                        if (!instance.hasUpdate()) {
                             showInstance = false;
                         }
                     }
 
-                    if(showInstance){
+                    if (showInstance) {
                         panel.add(new InstanceDisplay(instance), gbc);
                         gbc.gridy++;
                         count++;
                     }
-                } else{
+                } else {
                     panel.add(new InstanceDisplay(instance), gbc);
                     gbc.gridy++;
                     count++;
                 }
             }
         }
-        if(count == 0){
-            panel.add(
-                    new NothingToDisplay(App.settings.getLocalizedString("instance.nodisplay",
-                            "\n\n")), gbc);
+        if (count == 0) {
+            panel.add(new NothingToDisplay(App.settings.getLocalizedString("instance.nodisplay", "\n\n")), gbc);
         }
 
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run(){
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
                 scrollPane.getVerticalScrollBar().setValue(currentPosition);
             }
         });
     }
 
-    public void reload(){
+    public void reload() {
         this.currentPosition = scrollPane.getVerticalScrollBar().getValue();
         this.searchText = searchBox.getText();
         this.isUpdate = hasUpdate.isSelected();
-        if(this.searchText.isEmpty()){
+        if (this.searchText.isEmpty()) {
             this.searchText = null;
         }
         removeAll();
@@ -179,7 +177,7 @@ public class InstancesTab extends JPanel implements Tab{
     }
 
     @Override
-    public String getTitle(){
+    public String getTitle() {
         return Language.INSTANCE.localize("tabs.instances");
     }
 }

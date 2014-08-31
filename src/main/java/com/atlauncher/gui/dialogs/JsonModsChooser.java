@@ -14,6 +14,14 @@ import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -22,15 +30,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
 
-public class JsonModsChooser extends JDialog{
+public class JsonModsChooser extends JDialog {
     private static final long serialVersionUID = -5309108183485463434L;
     private InstanceInstaller installer;
     private JButton selectAllButton;
@@ -39,7 +40,7 @@ public class JsonModsChooser extends JDialog{
 
     private boolean wasClosed = false;
 
-    public JsonModsChooser(InstanceInstaller installerr){
+    public JsonModsChooser(InstanceInstaller installerr) {
         super(App.settings.getParent(), Language.INSTANCE.localize("instance.selectmods"),
                 ModalityType.APPLICATION_MODAL);
         this.installer = installerr;
@@ -49,8 +50,8 @@ public class JsonModsChooser extends JDialog{
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        addWindowListener(new WindowAdapter(){
-            public void windowClosing(WindowEvent arg0){
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent arg0) {
                 wasClosed = true;
                 dispose();
             }
@@ -94,8 +95,8 @@ public class JsonModsChooser extends JDialog{
         checkBoxPanel1.setLayout(null);
         checkBoxPanel1.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        JScrollPane scroller1 = new JScrollPane(checkBoxPanel1,
-                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
         scroller1.setPreferredSize(new Dimension(275, 350));
         modsInPack.setRightComponent(scroller1);
@@ -104,8 +105,8 @@ public class JsonModsChooser extends JDialog{
         checkBoxPanel2.setLayout(null);
         checkBoxPanel2.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        JScrollPane scroller2 = new JScrollPane(checkBoxPanel2,
-                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
         scroller2.setPreferredSize(new Dimension(275, 350));
         modsInPack.setLeftComponent(scroller2);
@@ -115,33 +116,33 @@ public class JsonModsChooser extends JDialog{
 
         selectAllButton = new JButton();
 
-        if(installer.hasJsonRecommendedMods()){
+        if (installer.hasJsonRecommendedMods()) {
             selectAllButton.setText(Language.INSTANCE.localize("instance.selectrecommended"));
-        } else{
+        } else {
             selectAllButton.setText(Language.INSTANCE.localize("instance.selectall"));
         }
 
-        selectAllButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                for(ModsJCheckBox check : modCheckboxes){
-                    if((installer.isServer() ? check.getJsonMod().isServerOptional() : check
-                            .getJsonMod().isOptional())){
-                        if(check.getJsonMod().isRecommended()){
-                            if(check.getJsonMod().hasGroup()){
-                                if(check.getJsonMod().isRecommended()
-                                        && installer.isOnlyRecommendedInGroup(check.getJsonMod())){
+        selectAllButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (ModsJCheckBox check : modCheckboxes) {
+                    if ((installer.isServer() ? check.getJsonMod().isServerOptional() : check.getJsonMod().isOptional
+                            ())) {
+                        if (check.getJsonMod().isRecommended()) {
+                            if (check.getJsonMod().hasGroup()) {
+                                if (check.getJsonMod().isRecommended() && installer.isOnlyRecommendedInGroup(check
+                                        .getJsonMod())) {
                                     check.setSelected(true);
                                     check.setEnabled(true);
                                     sortOutMods(check);
-                                } else if(installer.hasJsonRecommendedMods()){
+                                } else if (installer.hasJsonRecommendedMods()) {
                                     check.setSelected(false);
                                 }
-                            } else{
+                            } else {
                                 check.setSelected(true);
                                 check.setEnabled(true);
                                 sortOutMods(check);
                             }
-                        } else{
+                        } else {
                             check.setSelected(false);
                         }
                     }
@@ -151,19 +152,19 @@ public class JsonModsChooser extends JDialog{
         bottomPanel.add(selectAllButton);
 
         clearAllButton = new JButton(Language.INSTANCE.localize("instance.clearall"));
-        clearAllButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                for(ModsJCheckBox check : modCheckboxes){
-                    if(check.isCategory()){
+        clearAllButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (ModsJCheckBox check : modCheckboxes) {
+                    if (check.isCategory()) {
                         continue;
                     }
-                    if((installer.isServer() ? check.getJsonMod().isServerOptional() : check
-                            .getJsonMod().isOptional())){
+                    if ((installer.isServer() ? check.getJsonMod().isServerOptional() : check.getJsonMod().isOptional
+                            ())) {
                         check.setSelected(false);
                         List<Mod> linkedMods = modsToChange(check.getJsonMod());
-                        for(Mod mod : linkedMods){
-                            for(ModsJCheckBox check1 : modCheckboxes){
-                                if(check1.getJsonMod() == mod){
+                        for (Mod mod : linkedMods) {
+                            for (ModsJCheckBox check1 : modCheckboxes) {
+                                if (check1.getJsonMod() == mod) {
                                     check1.setEnabled(false);
                                 }
                             }
@@ -175,8 +176,8 @@ public class JsonModsChooser extends JDialog{
         bottomPanel.add(clearAllButton);
 
         JButton installButton = new JButton(Language.INSTANCE.localize("common.install"));
-        installButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        installButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });
@@ -186,118 +187,138 @@ public class JsonModsChooser extends JDialog{
         int count1 = 0;
         int count2 = 0;
 
-        for(int i = 0; i < installer.getJsonMods().size(); ){
+        for (int i = 0; i < installer.getJsonMods().size(); ) {
             boolean skip = false;
-            Mod mod = installer.getJsonMods().get(i);
-            if(installer.isServer() && !mod.installOnServer()){
+            final Mod mod = installer.getJsonMods().get(i);
+            if (installer.isServer() && !mod.installOnServer()) {
                 continue;
             }
             ModsJCheckBox checkBox = null;
-            if((installer.isServer() ? mod.isServerOptional() : mod.isOptional())){
-                if(!skip){
+            if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
+                if (!skip) {
                     checkBox = new ModsJCheckBox(mod);
                     checkBox.setEnabled(true);
-                    if(!mod.hasLinked()){
+                    if (!mod.hasLinked()) {
                         checkBox.setBounds(0, (count1 * 20), checkBox.getPreferredSize().width, 20);
-                    } else{
+                    } else {
                         Mod linkedMod = installer.getJsonModByName(mod.getLinked());
-                        if(linkedMod == null){
-                            LogManager.error("The mod " + mod.getName()
-                                    + " tried to reference a linked mod " + mod.getLinked()
-                                    + " which doesn't exist!");
+                        if (linkedMod == null) {
+                            LogManager.error("The mod " + mod.getName() + " tried to reference a linked mod " + mod
+                                    .getLinked() + " which doesn't exist!");
                             installer.cancel(true);
                             return;
                         }
-                        if((installer.isServer() ? linkedMod.isServerOptional() : linkedMod
-                                .isOptional())){
+                        if ((installer.isServer() ? linkedMod.isServerOptional() : linkedMod.isOptional())) {
                             checkBox.setEnabled(false);
-                            checkBox.setBounds(20, (count1 * 20),
-                                    checkBox.getPreferredSize().width, 20);
-                        } else{
-                            checkBox.setBounds(0, (count1 * 20), checkBox.getPreferredSize().width,
-                                    20);
+                            checkBox.setBounds(20, (count1 * 20), checkBox.getPreferredSize().width, 20);
+                        } else {
+                            checkBox.setBounds(0, (count1 * 20), checkBox.getPreferredSize().width, 20);
                         }
-                        if(mod.isSelected()){
+                        if (mod.isSelected()) {
                             checkBox.setEnabled(true);
                             checkBox.setSelected(true);
-                            if(!linkedMod.isSelected()){
+                            if (!linkedMod.isSelected()) {
                                 boolean needToEnableChildren = false;
-                                for(ModsJCheckBox checkbox : modCheckboxes){
-                                    if(checkbox.getJsonMod().getName()
-                                            .equalsIgnoreCase(mod.getLinked())){
+                                for (ModsJCheckBox checkbox : modCheckboxes) {
+                                    if (checkbox.getJsonMod().getName().equalsIgnoreCase(mod.getLinked())) {
                                         checkbox.setSelected(true); // Select the checkbox
                                         needToEnableChildren = true;
                                         break;
                                     }
                                 }
-                                if(needToEnableChildren){
-                                    for(ModsJCheckBox checkbox : modCheckboxes){
-                                        if(checkbox.getJsonMod().getLinked()
-                                                .equalsIgnoreCase(mod.getLinked())){
+                                if (needToEnableChildren) {
+                                    for (ModsJCheckBox checkbox : modCheckboxes) {
+                                        if (checkbox.getJsonMod().getLinked().equalsIgnoreCase(mod.getLinked())) {
                                             checkbox.setEnabled(true);
                                         }
                                     }
                                 }
                             }
-                        } else{
-                            if(linkedMod.isSelected()){
+                        } else {
+                            if (linkedMod.isSelected()) {
                                 checkBox.setEnabled(true);
                             }
                         }
                     }
-                    if(mod.isHidden() || mod.isLibrary()){
+                    if (mod.isHidden() || mod.isLibrary()) {
                         checkBox.setVisible(false);
-                    } else{
+                    } else {
                         count1++;
                     }
                 }
-            } else{
+
+                if (mod.hasWarning()) {
+                    final ModsJCheckBox finalCheckBox = checkBox;
+                    checkBox.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (finalCheckBox.isSelected() && installer.getJsonVersion().hasWarningMessage(mod
+                                    .getWarning())) {
+                                String message = installer.getJsonVersion().getWarningMessage(mod.getWarning());
+
+                                if (message != null) {
+                                    String[] options = {App.settings.getLocalizedString("common.yes"),
+                                            App.settings.getLocalizedString("common.no")};
+                                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                                            "<html>" + message + "<br/>" +
+                                                    Language.INSTANCE.localize("instance.warningsure") + "</html>",
+                                            Language.INSTANCE.localize("instance.warning"),
+                                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options,
+                                            options[1]);
+                                    if (ret != 0) {
+                                        finalCheckBox.setSelected(false);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            } else {
                 checkBox = new ModsJCheckBox(mod);
                 checkBox.setBounds(0, (count2 * 20), checkBox.getPreferredSize().width, 20);
                 checkBox.setSelected(true);
                 checkBox.setEnabled(false);
 
-                if(mod.isHidden() || mod.isLibrary()){
+                if (mod.isHidden() || mod.isLibrary()) {
                     checkBox.setVisible(false);
-                } else{
+                } else {
                     count2++;
                 }
             }
-            if(!checkBox.isCategory()){
-                if(installer.isReinstall()){
-                    if(installer.wasModInstalled(mod.getName())){
-                        if((installer.isServer() ? mod.isServerOptional() : mod.isOptional())){
+            if (!checkBox.isCategory()) {
+                if (installer.isReinstall()) {
+                    if (installer.wasModInstalled(mod.getName())) {
+                        if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
                             checkBox.setSelected(true);
                             checkBox.setEnabled(true);
                         }
                     }
-                } else{
-                    if((installer.isServer() ? mod.isServerOptional() : mod.isOptional())
-                            && mod.isSelected()){
+                } else {
+                    if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional()) && mod.isSelected()) {
                         checkBox.setSelected(true);
                         checkBox.setEnabled(true);
                     }
                 }
-                checkBox.addActionListener(new ActionListener(){
-                    public void actionPerformed(ActionEvent e){
+                checkBox.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
                         ModsJCheckBox a = (ModsJCheckBox) e.getSource();
                         sortOutMods(a);
                     }
                 });
             }
             modCheckboxes.add(checkBox);
-            if(!skip){
+            if (!skip) {
                 i++;
             }
         }
-        for(int i = 0; i < modCheckboxes.size(); i++){
+        for (int i = 0; i < modCheckboxes.size(); i++) {
             ModsJCheckBox checkBox = modCheckboxes.get(i);
-            if(checkBox.isCategory()){
+            if (checkBox.isCategory()) {
                 checkBoxPanel1.add(checkBox);
-            } else if((installer.isServer() ? checkBox.getJsonMod().isServerOptional() : checkBox
-                    .getJsonMod().isOptional())){
+            } else if ((installer.isServer() ? checkBox.getJsonMod().isServerOptional() : checkBox.getJsonMod()
+                    .isOptional())) {
                 checkBoxPanel1.add(checkBox);
-            } else{
+            } else {
                 checkBoxPanel2.add(checkBox);
             }
         }
@@ -305,81 +326,81 @@ public class JsonModsChooser extends JDialog{
         checkBoxPanel2.setPreferredSize(new Dimension(0, count2 * 20));
     }
 
-    private List<Mod> modsToChange(Mod mod){
+    private List<Mod> modsToChange(Mod mod) {
         return installer.getJsonLinkedMods(mod);
     }
 
-    private List<Mod> modsInGroup(Mod mod){
+    private List<Mod> modsInGroup(Mod mod) {
         return installer.getGroupedMods(mod);
     }
 
-    private List<Mod> modsDependancies(Mod mod){
+    private List<Mod> modsDependancies(Mod mod) {
         return installer.getModsDependancies(mod);
     }
 
-    private List<Mod> dependedMods(Mod mod){
+    private List<Mod> dependedMods(Mod mod) {
         return installer.dependedMods(mod);
     }
 
-    private boolean hasADependancy(Mod mod){
+    private boolean hasADependancy(Mod mod) {
         return installer.hasADependancy(mod);
     }
 
-    public void sortOutMods(ModsJCheckBox a){
-        if(a.isSelected()){
+    public void sortOutMods(ModsJCheckBox a) {
+        if (a.isSelected()) {
             List<Mod> linkedMods = modsToChange(a.getJsonMod());
-            for(Mod mod : linkedMods){
-                for(ModsJCheckBox check : modCheckboxes){
-                    if(check.getJsonMod() == mod){
+            for (Mod mod : linkedMods) {
+                for (ModsJCheckBox check : modCheckboxes) {
+                    if (check.getJsonMod() == mod) {
                         check.setEnabled(true);
                     }
                 }
             }
-            if(a.getJsonMod().hasGroup()){
+            if (a.getJsonMod().hasGroup()) {
                 List<Mod> groupMods = modsInGroup(a.getJsonMod());
-                for(Mod mod : groupMods){
-                    for(ModsJCheckBox check : modCheckboxes){
-                        if(check.getJsonMod() == mod){
+                for (Mod mod : groupMods) {
+                    for (ModsJCheckBox check : modCheckboxes) {
+                        if (check.getJsonMod() == mod) {
                             check.setSelected(false);
                         }
                     }
                 }
             }
-            if(a.getJsonMod().hasDepends()){
+            if (a.getJsonMod().hasDepends()) {
                 List<Mod> dependsMods = modsDependancies(a.getJsonMod());
-                for(Mod mod : dependsMods){
-                    for(ModsJCheckBox check : modCheckboxes){
-                        if(check.getJsonMod() == mod){
+                for (Mod mod : dependsMods) {
+                    for (ModsJCheckBox check : modCheckboxes) {
+                        if (check.getJsonMod() == mod) {
                             check.setSelected(true);
                         }
                     }
                 }
             }
-        } else{
+        } else {
             List<Mod> linkedMods = modsToChange(a.getJsonMod());
-            for(Mod mod : linkedMods){
-                for(ModsJCheckBox check : modCheckboxes){
-                    if(check.getJsonMod() == mod){
+            for (Mod mod : linkedMods) {
+                for (ModsJCheckBox check : modCheckboxes) {
+                    if (check.getJsonMod() == mod) {
                         check.setEnabled(false);
                         check.setSelected(false);
                     }
                 }
             }
-            if(hasADependancy(a.getJsonMod())){
+            if (hasADependancy(a.getJsonMod())) {
                 List<Mod> dependedMods = dependedMods(a.getJsonMod());
-                for(Mod mod : dependedMods){
-                    for(ModsJCheckBox check : modCheckboxes){
-                        if(check.getJsonMod() == mod){
+                for (Mod mod : dependedMods) {
+                    for (ModsJCheckBox check : modCheckboxes) {
+                        if (check.getJsonMod() == mod) {
                             check.setSelected(false);
                         }
                     }
                 }
-            } else if(a.getJsonMod().hasDepends()){
+            } else if (a.getJsonMod().hasDepends()) {
                 List<Mod> dependsMods = modsDependancies(a.getJsonMod());
-                for(Mod mod : dependsMods){
-                    for(ModsJCheckBox check : modCheckboxes){
-                        if(check.getJsonMod() == mod){
-                            if(check.getJsonMod().isLibrary()){
+                for (Mod mod : dependsMods) {
+                    for (ModsJCheckBox check : modCheckboxes) {
+                        if (check.getJsonMod() == mod) {
+                            if (check.getJsonMod().isLibrary()) {
                                 check.setSelected(false);
                             }
                         }
@@ -389,20 +410,20 @@ public class JsonModsChooser extends JDialog{
         }
     }
 
-    public List<Mod> getSelectedMods(){
-        if(wasClosed){
+    public List<Mod> getSelectedMods() {
+        if (wasClosed) {
             return null;
         }
         List<Mod> mods = new ArrayList<Mod>();
-        for(ModsJCheckBox check : modCheckboxes){
-            if(check.isSelected()){
+        for (ModsJCheckBox check : modCheckboxes) {
+            if (check.isSelected()) {
                 mods.add(check.getJsonMod());
             }
         }
         return mods;
     }
 
-    public boolean wasClosed(){
+    public boolean wasClosed() {
         return this.wasClosed;
     }
 

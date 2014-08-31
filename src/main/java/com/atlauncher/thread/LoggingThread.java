@@ -10,42 +10,42 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
-public final class LoggingThread extends Thread{
+public final class LoggingThread extends Thread {
     private final LogEventWriter writer;
     private final BlockingQueue<LogEvent> queue;
 
-    public LoggingThread(BlockingQueue<LogEvent> queue){
+    public LoggingThread(BlockingQueue<LogEvent> queue) {
         this.queue = queue;
         this.setName("ATL-Logging-Thread");
-        try{
-            this.writer = new LogEventWriter(
-                    new FileWriter(new File(App.settings.getBaseDir(), "ATLauncher-Log-1.txt")));
+        try {
+            this.writer = new LogEventWriter(new FileWriter(new File(App.settings.getBaseDir(),
+                    "ATLauncher-Log-1.txt")));
             this.writer.write("Generated on " + Timestamper.now() + "\n");
-            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
+            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
                 @Override
-                public void run(){
-                    try{
+                public void run() {
+                    try {
                         writer.close();
-                    } catch(IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             }));
-        } catch(IOException e){
+        } catch (IOException e) {
             throw new RuntimeException("Couldn't create LogEventWriter");
         }
     }
 
     @Override
-    public void run(){
-        try{
-            while(true){
+    public void run() {
+        try {
+            while (true) {
                 LogEvent next = this.queue.take();
-                if(next != null){
+                if (next != null) {
                     next.post(this.writer);
                 }
             }
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
     }

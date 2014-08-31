@@ -13,14 +13,14 @@ import com.atlauncher.data.Downloadable;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
+import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 @Json
-public class Mod{
+public class Mod {
     private String name;
     private String version;
     private String url;
@@ -32,6 +32,7 @@ public class Mod{
     private List<String> authors;
     private String sha1;
     private String colour;
+    private String warning;
     private Color compiledColour;
     private ModType type;
     private ExtractToType extractTo;
@@ -61,234 +62,242 @@ public class Mod{
     private String filePrefix;
     private String description;
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public String getSafeName(){
+    public String getSafeName() {
         return this.name.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    public String getVersion(){
+    public String getVersion() {
         return this.version;
     }
 
-    public String getUrl(){
+    public String getUrl() {
         return this.url.replace("&amp;", "&").replace(" ", "%20");
     }
 
-    public String getRawFile(){
+    public String getRawFile() {
         return this.file;
     }
 
-    public String getFile(){
-        if(this.hasFilePrefix()){
+    public String getFile() {
+        if (this.hasFilePrefix()) {
             return this.filePrefix + this.file;
         }
         return this.file;
     }
 
-    public String getMD5(){
+    public String getMD5() {
         return this.md5;
     }
 
-    public boolean hasMD5(){
+    public boolean hasMD5() {
         return this.md5 != null;
     }
 
-    public DownloadType getDownload(){
+    public DownloadType getDownload() {
         return this.download;
     }
 
-    public String getWebsite(){
+    public String getWebsite() {
         return this.website;
     }
 
-    public String getDonation(){
+    public String getDonation() {
         return this.donation;
     }
 
-    public List<String> getAuthors(){
+    public List<String> getAuthors() {
         return this.authors;
     }
 
-    public String getPrintableAuthors(){
+    public String getPrintableAuthors() {
         StringBuilder sb = new StringBuilder();
-        for(String author : this.authors){
+        for (String author : this.authors) {
             sb.append(author + ", ");
         }
         return sb.toString();
     }
 
-    public String getSha1(){
+    public String getSha1() {
         return this.sha1;
     }
 
-    public boolean hasColour(){
+    public boolean hasColour() {
         return this.colour != null;
     }
 
-    public String getColour(){
+    public String getColour() {
         return this.colour;
     }
 
-    public Color getCompiledColour(){
+    public boolean hasWarning() {
+        return this.warning != null;
+    }
+
+    public String getWarning() {
+        return this.warning;
+    }
+
+    public Color getCompiledColour() {
         return this.compiledColour;
     }
 
-    public void setCompiledColour(Color colour){
+    public void setCompiledColour(Color colour) {
         this.compiledColour = colour;
     }
 
-    public ModType getType(){
+    public ModType getType() {
         return this.type;
     }
 
-    public ExtractToType getExtractTo(){
+    public ExtractToType getExtractTo() {
         return this.extractTo;
     }
 
-    public String getExtractFolder(){
+    public String getExtractFolder() {
         return this.extractFolder;
     }
 
-    public String getDecompFile(){
+    public String getDecompFile() {
         return this.decompFile;
     }
 
-    public DecompType getDecompType(){
+    public DecompType getDecompType() {
         return this.decompType;
     }
 
-    public boolean isFilePattern(){
+    public boolean isFilePattern() {
         return this.filePattern;
     }
 
-    public String getFilePreference(){
+    public String getFilePreference() {
         return this.filePreference;
     }
 
-    public String getFileCheck(){
+    public String getFileCheck() {
         return this.fileCheck;
     }
 
-    public boolean installOnClient(){
+    public boolean installOnClient() {
         return this.client;
     }
 
-    public boolean installOnServer(){
+    public boolean installOnServer() {
         return this.server;
     }
 
-    public boolean isServerSeparate(){
+    public boolean isServerSeparate() {
         return this.serverSeparate;
     }
 
-    public String getServerUrl(){
+    public String getServerUrl() {
         return this.serverUrl;
     }
 
-    public String getServerFile(){
+    public String getServerFile() {
         return this.serverFile;
     }
 
-    public ModType getServerType(){
+    public ModType getServerType() {
         return this.serverType;
     }
 
-    public DownloadType getServerDownload(){
+    public DownloadType getServerDownload() {
         return this.serverDownload;
     }
 
-    public String getServerMD5(){
+    public String getServerMD5() {
         return this.serverMD5;
     }
 
-    public boolean hasServerMD5(){
+    public boolean hasServerMD5() {
         return this.serverMD5 != null;
     }
 
-    public boolean isServerOptional(){
+    public boolean isServerOptional() {
         return (this.serverOptional == null ? this.optional : this.serverOptional);
     }
 
-    public boolean isOptional(){
+    public boolean isOptional() {
         return this.optional;
     }
 
-    public boolean isSelected(){
+    public boolean isSelected() {
         return this.selected;
     }
 
-    public boolean isRecommended(){
+    public boolean isRecommended() {
         return this.recommended;
     }
 
-    public boolean isHidden(){
+    public boolean isHidden() {
         return this.hidden;
     }
 
-    public boolean isLibrary(){
+    public boolean isLibrary() {
         return this.library;
     }
 
-    public String getGroup(){
+    public String getGroup() {
         return this.group;
     }
 
-    public String getLinked(){
+    public String getLinked() {
         return this.linked;
     }
 
-    public List<String> getDepends(){
+    public List<String> getDepends() {
         return this.depends;
     }
 
-    public String getFilePrefix(){
+    public String getFilePrefix() {
         return this.filePrefix;
     }
 
-    public boolean hasFilePrefix(){
+    public boolean hasFilePrefix() {
         return this.filePrefix != null;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return this.description;
     }
 
-    public boolean hasDepends(){
+    public boolean hasDepends() {
         return this.depends != null && this.depends.size() != 0;
     }
 
-    public boolean isADependancy(Mod mod){
-        for(String name : this.depends){
-            if(name.equalsIgnoreCase(mod.getName())){
+    public boolean isADependancy(Mod mod) {
+        for (String name : this.depends) {
+            if (name.equalsIgnoreCase(mod.getName())) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean hasGroup(){
+    public boolean hasGroup() {
         return this.group != null && !this.group.isEmpty();
     }
 
-    public boolean hasLinked(){
+    public boolean hasLinked() {
         return this.linked != null && !this.linked.isEmpty();
     }
 
-    public boolean hasDescription(){
+    public boolean hasDescription() {
         return this.description != null && !this.description.isEmpty();
     }
 
-    public FilenameFilter getFileNameFilter(){
-        FilenameFilter filter = new FilenameFilter(){
+    public FilenameFilter getFileNameFilter() {
+        FilenameFilter filter = new FilenameFilter() {
 
             @Override
-            public boolean accept(File dir, String name){
-                if(name.matches(file)){
+            public boolean accept(File dir, String name) {
+                if (name.matches(file)) {
                     return true;
-                } else{
+                } else {
                     return false;
                 }
             }
@@ -296,153 +305,128 @@ public class Mod{
         return filter;
     }
 
-    public void download(InstanceInstaller installer){
+    public void download(InstanceInstaller installer) {
         download(installer, 1);
     }
 
-    public void download(InstanceInstaller installer, int attempt){
-        if(installer.isServer() && this.serverUrl != null){
+    public void download(InstanceInstaller installer, int attempt) {
+        if (installer.isServer() && this.serverUrl != null) {
             downloadServer(installer, attempt);
-        } else{
+        } else {
             downloadClient(installer, attempt);
         }
     }
 
-    public void downloadClient(InstanceInstaller installer, int attempt){
+    public void downloadClient(InstanceInstaller installer, int attempt) {
         File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
-        if(fileLocation.exists()){
-            if(hasMD5()){
-                if(Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)){
+        if (fileLocation.exists()) {
+            if (hasMD5()) {
+                if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
                     return; // File already exists and matches hash, don't download it
-                } else{
+                } else {
                     Utils.delete(fileLocation); // File exists but is corrupt, delete it
                 }
-            } else{
-                if(fileLocation.length() != 0){
+            } else {
+                if (fileLocation.length() != 0) {
                     return; // No MD5, but file is there, can only assume it's fine
                 }
             }
         }
-        switch(this.download){
+        switch (this.download) {
             case browser:
                 File downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(), getFile());
-                if(downloadsFolderFile.exists()){
+                if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
                 }
-                if(fileCheck != null && fileCheck.equalsIgnoreCase("before") && isFilePattern()){
-                    String[] files = (App.settings.isUsingMacApp() ? App.settings
-                            .getUsersDownloadsDir() : App.settings.getDownloadsDir())
-                            .list(getFileNameFilter());
-                    if(files.length == 1){
+                if (fileCheck != null && fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
+                    String[] files = (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
+                            .settings.getDownloadsDir()).list(getFileNameFilter());
+                    if (files.length == 1) {
                         this.file = files[0];
-                        fileLocation = new File(
-                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                        : App.settings.getDownloadsDir()), files[0]);
-                    } else if(files.length > 1){
-                        for(int i = 0; i < files.length; i++){
-                            if(this.filePreference.equalsIgnoreCase("first") && i == 0){
+                        fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() :
+                                App.settings.getDownloadsDir()), files[0]);
+                    } else if (files.length > 1) {
+                        for (int i = 0; i < files.length; i++) {
+                            if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                                 this.file = files[i];
-                                fileLocation = new File(
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                                : App.settings.getDownloadsDir()), files[i]);
+                                fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                        .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
-                            if(this.filePreference.equalsIgnoreCase("last")
-                                    && (i + 1) == files.length){
+                            if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                                 this.file = files[i];
-                                fileLocation = new File(
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                                : App.settings.getDownloadsDir()), files[i]);
+                                fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                        .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
                         }
                     }
                 }
-                while(!fileLocation.exists()){
+                while (!fileLocation.exists()) {
                     int retValue = 1;
-                    do{
-                        if(retValue == 1){
+                    do {
+                        if (retValue == 1) {
                             Utils.openBrowser(this.getUrl());
                         }
-                        String[] options = new String[]{
-                                App.settings.getLocalizedString("common.openfolder"),
-                                App.settings.getLocalizedString("instance.ivedownloaded")
-                        };
-                        retValue = JOptionPane.showOptionDialog(
-                                App.settings.getParent(),
-                                "<html><p align=\"center\">"
-                                        + App.settings.getLocalizedString("instance.browseropened",
-                                        (serverFile == null ? (isFilePattern() ? getName()
-                                                : getFile()) : (isFilePattern() ? getName()
-                                                : getServerFile())))
-                                        + "<br/><br/>"
-                                        + App.settings.getLocalizedString("instance.pleasesave")
-                                        + "<br/><br/>"
-                                        + (App.settings.isUsingMacApp() ? App.settings
-                                        .getUsersDownloadsDir().getAbsolutePath()
-                                        : (isFilePattern() ? App.settings.getDownloadsDir()
-                                        .getAbsolutePath() : App.settings
-                                        .getDownloadsDir().getAbsolutePath()
-                                        + " or<br/>"
-                                        + App.settings.getUsersDownloadsDir()))
-                                        + "</p></html>",
-                                App.settings.getLocalizedString("common.downloading")
-                                        + " "
-                                        + (serverFile == null ? (isFilePattern() ? getName()
-                                        : getFile()) : (isFilePattern() ? getName()
-                                        : getServerFile())), JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                        if(retValue == JOptionPane.CLOSED_OPTION){
+                        String[] options = new String[]{App.settings.getLocalizedString("common.openfolder"),
+                                App.settings.getLocalizedString("instance.ivedownloaded")};
+                        retValue = JOptionPane.showOptionDialog(App.settings.getParent(),
+                                "<html><p align=\"center\">" + App.settings.getLocalizedString("instance" +
+                                        ".browseropened", (serverFile == null ? (isFilePattern() ? getName() :
+                                        getFile()) : (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>"
+                                        + App.settings.getLocalizedString("instance.pleasesave") + "<br/><br/>" +
+                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                                .getAbsolutePath() : (isFilePattern() ? App.settings.getDownloadsDir
+                                                ().getAbsolutePath() : App.settings.getDownloadsDir().getAbsolutePath
+                                                () + " or<br/>" + App.settings.getUsersDownloadsDir())) +
+                                        "</p></html>", App.settings.getLocalizedString("common.downloading") + " " +
+                                        (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
+                                                (isFilePattern() ? getName() : getServerFile())),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                        if (retValue == JOptionPane.CLOSED_OPTION) {
                             installer.cancel(true);
                             return;
-                        } else if(retValue == 0){
+                        } else if (retValue == 0) {
                             Utils.openExplorer(App.settings.getDownloadsDir());
                         }
-                    } while(retValue != 1);
+                    } while (retValue != 1);
 
-                    if(isFilePattern()){
-                        String[] files = (App.settings.isUsingMacApp() ? App.settings
-                                .getUsersDownloadsDir() : App.settings.getDownloadsDir())
-                                .list(getFileNameFilter());
-                        if(files.length == 1){
+                    if (isFilePattern()) {
+                        String[] files = (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
+                                .settings.getDownloadsDir()).list(getFileNameFilter());
+                        if (files.length == 1) {
                             this.file = files[0];
-                            fileLocation = new File(
-                                    (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                            : App.settings.getDownloadsDir()), files[0]);
-                        } else if(files.length > 1){
-                            for(int i = 0; i < files.length; i++){
-                                if(this.filePreference.equalsIgnoreCase("first") && i == 0){
+                            fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir
+                                    () : App.settings.getDownloadsDir()), files[0]);
+                        } else if (files.length > 1) {
+                            for (int i = 0; i < files.length; i++) {
+                                if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                                     this.file = files[i];
-                                    fileLocation = new File(
-                                            (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                                    : App.settings.getDownloadsDir()), files[i]);
+                                    fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                            .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                     break;
                                 }
-                                if(this.filePreference.equalsIgnoreCase("last")
-                                        && (i + 1) == files.length){
+                                if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                                     this.file = files[i];
-                                    fileLocation = new File(
-                                            (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                                    : App.settings.getDownloadsDir()), files[i]);
+                                    fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                            .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                     break;
                                 }
                             }
                         }
-                    } else{
-                        if(!fileLocation.exists()){
+                    } else {
+                        if (!fileLocation.exists()) {
                             // Check users downloads folder to see if it's there
-                            if(downloadsFolderFile.exists()){
+                            if (downloadsFolderFile.exists()) {
                                 Utils.moveFile(downloadsFolderFile, fileLocation, true);
                             }
                             // Check to see if a browser has added a .zip to the end of the file
-                            File zipAddedFile = new File(App.settings.getDownloadsDir(), getFile()
-                                    + ".zip");
-                            if(zipAddedFile.exists()){
+                            File zipAddedFile = new File(App.settings.getDownloadsDir(), getFile() + ".zip");
+                            if (zipAddedFile.exists()) {
                                 Utils.moveFile(zipAddedFile, fileLocation, true);
-                            } else{
-                                zipAddedFile = new File(App.settings.getUsersDownloadsDir(),
-                                        getFile() + ".zip");
-                                if(zipAddedFile.exists()){
+                            } else {
+                                zipAddedFile = new File(App.settings.getUsersDownloadsDir(), getFile() + ".zip");
+                                if (zipAddedFile.exists()) {
                                     Utils.moveFile(zipAddedFile, fileLocation, true);
                                 }
                             }
@@ -451,213 +435,184 @@ public class Mod{
                 }
                 break;
             case direct:
-                Downloadable download1 = new Downloadable(this.getUrl(), fileLocation, this.md5,
-                        installer, false);
-                if(download1.needToDownload()){
+                Downloadable download1 = new Downloadable(this.getUrl(), fileLocation, this.md5, installer, false);
+                if (download1.needToDownload()) {
                     installer.resetDownloadedBytes(download1.getFilesize());
                     download1.download(true);
                 }
                 break;
             case server:
-                Downloadable download2 = new Downloadable(this.getUrl(), fileLocation, this.md5,
-                        installer, true);
-                if(download2.needToDownload()){
+                Downloadable download2 = new Downloadable(this.getUrl(), fileLocation, this.md5, installer, true);
+                if (download2.needToDownload()) {
                     download2.download(false);
                 }
                 break;
         }
-        if(hasMD5()){
-            if(Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)){
+        if (hasMD5()) {
+            if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
                 return; // MD5 hash matches
-            } else{
-                if(attempt < 5){
+            } else {
+                if (attempt < 5) {
                     Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
                     downloadClient(installer, ++attempt); // download again
-                } else{
-                    LogManager.error("Cannot download " + fileLocation.getAbsolutePath()
-                            + ". Aborting install!");
+                } else {
+                    LogManager.error("Cannot download " + fileLocation.getAbsolutePath() + ". Aborting install!");
                     installer.cancel(true);
                 }
             }
-        } else{
+        } else {
             return; // No MD5, but file is there, can only assume it's fine
         }
     }
 
-    public void downloadServer(InstanceInstaller installer, int attempt){
+    public void downloadServer(InstanceInstaller installer, int attempt) {
         File fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
-        if(fileLocation.exists()){
-            if(this.hasServerMD5()){
-                if(Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)){
+        if (fileLocation.exists()) {
+            if (this.hasServerMD5()) {
+                if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)) {
                     return; // File already exists and matches hash, don't download it
-                } else{
+                } else {
                     Utils.delete(fileLocation); // File exists but is corrupt, delete it
                 }
-            } else{
+            } else {
                 return; // No MD5, but file is there, can only assume it's fine
             }
         }
-        if(this.serverDownload == DownloadType.browser){
-            File downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(),
-                    getServerFile());
-            if(downloadsFolderFile.exists()){
+        if (this.serverDownload == DownloadType.browser) {
+            File downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(), getServerFile());
+            if (downloadsFolderFile.exists()) {
                 Utils.moveFile(downloadsFolderFile, fileLocation, true);
             }
 
-            if(fileCheck.equalsIgnoreCase("before") && isFilePattern()){
-                String[] files = (App.settings.isUsingMacApp() ? App.settings
-                        .getUsersDownloadsDir() : App.settings.getDownloadsDir())
-                        .list(getFileNameFilter());
-                if(files.length == 1){
+            if (fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
+                String[] files = (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App.settings
+                        .getDownloadsDir()).list(getFileNameFilter());
+                if (files.length == 1) {
                     this.file = files[0];
-                    fileLocation = new File(
-                            (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                    : App.settings.getDownloadsDir()), files[0]);
-                } else if(files.length > 1){
-                    for(int i = 0; i < files.length; i++){
-                        if(this.filePreference.equalsIgnoreCase("first") && i == 0){
+                    fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
+                            .settings.getDownloadsDir()), files[0]);
+                } else if (files.length > 1) {
+                    for (int i = 0; i < files.length; i++) {
+                        if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                             this.file = files[i];
-                            fileLocation = new File(
-                                    (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                            : App.settings.getDownloadsDir()), files[i]);
+                            fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir
+                                    () : App.settings.getDownloadsDir()), files[i]);
                             break;
                         }
-                        if(this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length){
+                        if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                             this.file = files[i];
-                            fileLocation = new File(
-                                    (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                            : App.settings.getDownloadsDir()), files[i]);
+                            fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir
+                                    () : App.settings.getDownloadsDir()), files[i]);
                             break;
                         }
                     }
                 }
             }
 
-            while(!fileLocation.exists()){
+            while (!fileLocation.exists()) {
                 Utils.openBrowser(this.serverUrl);
-                String[] options = new String[]{
-                        App.settings
-                                .getLocalizedString("instance.ivedownloaded")
-                };
-                int retValue = JOptionPane.showOptionDialog(
-                        App.settings.getParent(),
-                        "<html><p align=\"center\">"
-                                + App.settings.getLocalizedString("instance.browseropened",
-                                (serverFile == null ? getFile() : getServerFile()))
-                                + "<br/><br/>"
-                                + App.settings.getLocalizedString("instance.pleasesave")
-                                + "<br/><br/>"
-                                + (App.settings.isUsingMacApp() ? App.settings
-                                .getUsersDownloadsDir().getAbsolutePath() : App.settings
-                                .getDownloadsDir().getAbsolutePath()
-                                + " or<br/>"
-                                + App.settings.getUsersDownloadsDir()) + "</p></html>",
-                        App.settings.getLocalizedString("common.downloading") + " "
-                                + (serverFile == null ? getFile() : getServerFile()),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
-                        options[0]);
-                if(retValue == JOptionPane.CLOSED_OPTION){
+                String[] options = new String[]{App.settings.getLocalizedString("instance.ivedownloaded")};
+                int retValue = JOptionPane.showOptionDialog(App.settings.getParent(),
+                        "<html><p align=\"center\">" + App.settings.getLocalizedString("instance.browseropened",
+                                (serverFile == null ? getFile() : getServerFile())) + "<br/><br/>" + App.settings
+                                .getLocalizedString("instance.pleasesave") + "<br/><br/>" + (App.settings
+                                .isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath() : App
+                                .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
+                                .getUsersDownloadsDir()) + "</p></html>", App.settings.getLocalizedString("common" +
+                                ".downloading") + " " + (serverFile == null ? getFile() : getServerFile()),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                if (retValue == JOptionPane.CLOSED_OPTION) {
                     installer.cancel(true);
                     return;
                 }
 
-                if(isFilePattern()){
-                    String[] files = (App.settings.isUsingMacApp() ? App.settings
-                            .getUsersDownloadsDir() : App.settings.getDownloadsDir())
-                            .list(getFileNameFilter());
-                    if(files.length == 1){
+                if (isFilePattern()) {
+                    String[] files = (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
+                            .settings.getDownloadsDir()).list(getFileNameFilter());
+                    if (files.length == 1) {
                         this.file = files[0];
-                        fileLocation = new File(
-                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                        : App.settings.getDownloadsDir()), files[0]);
-                    } else if(files.length > 1){
-                        for(int i = 0; i < files.length; i++){
-                            if(this.filePreference.equalsIgnoreCase("first") && i == 0){
+                        fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() :
+                                App.settings.getDownloadsDir()), files[0]);
+                    } else if (files.length > 1) {
+                        for (int i = 0; i < files.length; i++) {
+                            if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                                 this.file = files[i];
-                                fileLocation = new File(
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                                : App.settings.getDownloadsDir()), files[i]);
+                                fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                        .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
-                            if(this.filePreference.equalsIgnoreCase("last")
-                                    && (i + 1) == files.length){
+                            if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                                 this.file = files[i];
-                                fileLocation = new File(
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                                : App.settings.getDownloadsDir()), files[i]);
+                                fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                        .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
                         }
                     }
-                } else{
-                    if(!fileLocation.exists()){
+                } else {
+                    if (!fileLocation.exists()) {
                         // Check users downloads folder to see if it's there
-                        if(downloadsFolderFile.exists()){
+                        if (downloadsFolderFile.exists()) {
                             Utils.moveFile(downloadsFolderFile, fileLocation, true);
                         }
                         // Check to see if a browser has added a .zip to the end of the file
-                        File zipAddedFile = new File(App.settings.getDownloadsDir(),
-                                getServerFile() + ".zip");
-                        if(zipAddedFile.exists()){
+                        File zipAddedFile = new File(App.settings.getDownloadsDir(), getServerFile() + ".zip");
+                        if (zipAddedFile.exists()) {
                             Utils.moveFile(zipAddedFile, fileLocation, true);
-                        } else{
-                            zipAddedFile = new File(App.settings.getUsersDownloadsDir(),
-                                    getServerFile() + ".zip");
-                            if(zipAddedFile.exists()){
+                        } else {
+                            zipAddedFile = new File(App.settings.getUsersDownloadsDir(), getServerFile() + ".zip");
+                            if (zipAddedFile.exists()) {
                                 Utils.moveFile(zipAddedFile, fileLocation, true);
                             }
                         }
                     }
                 }
             }
-        } else if(this.serverDownload == DownloadType.direct){
-            Downloadable download = new Downloadable(this.serverUrl, fileLocation, this.serverMD5,
-                    installer, false);
-            if(download.needToDownload()){
+        } else if (this.serverDownload == DownloadType.direct) {
+            Downloadable download = new Downloadable(this.serverUrl, fileLocation, this.serverMD5, installer, false);
+            if (download.needToDownload()) {
                 download.download(false);
             }
-        } else if(this.serverDownload == DownloadType.server){
-            Downloadable download = new Downloadable(this.serverUrl, fileLocation, this.serverMD5,
-                    installer, true);
-            if(download.needToDownload()){
+        } else if (this.serverDownload == DownloadType.server) {
+            Downloadable download = new Downloadable(this.serverUrl, fileLocation, this.serverMD5, installer, true);
+            if (download.needToDownload()) {
                 download.download(false);
             }
         }
-        if(hasServerMD5()){
-            if(Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)){
+        if (hasServerMD5()) {
+            if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)) {
                 return; // MD5 hash matches
-            } else{
-                if(attempt < 5){
+            } else {
+                if (attempt < 5) {
                     Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
                     downloadServer(installer, ++attempt); // download again
-                } else{
-                    LogManager.error("Cannot download " + fileLocation.getAbsolutePath()
-                            + ". Aborting install!");
+                } else {
+                    LogManager.error("Cannot download " + fileLocation.getAbsolutePath() + ". Aborting install!");
                     installer.cancel(true);
                 }
             }
-        } else{
+        } else {
             return; // No MD5, but file is there, can only assume it's fine
         }
     }
 
-    public void install(InstanceInstaller installer){
+    public void install(InstanceInstaller installer) {
         File fileLocation;
         ModType thisType;
-        if(installer.isServer() && this.serverUrl != null){
+        if (installer.isServer() && this.serverUrl != null) {
             fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
             thisType = this.serverType;
-        } else{
+        } else {
             fileLocation = new File(App.settings.getDownloadsDir(), getFile());
             thisType = this.type;
         }
-        switch(thisType){
+        switch (thisType) {
             case jar:
             case forge:
-                if(installer.isServer() && thisType == ModType.forge){
+                if (installer.isServer() && thisType == ModType.forge) {
                     Utils.copyFile(fileLocation, installer.getRootDirectory());
                     break;
-                } else if(installer.isServer() && thisType == ModType.jar){
+                } else if (installer.isServer() && thisType == ModType.jar) {
                     Utils.unzip(fileLocation, installer.getTempJarDirectory());
                     break;
                 }
@@ -665,32 +620,32 @@ public class Mod{
                 installer.addToJarOrder(getFile());
                 break;
             case mcpc:
-                if(installer.isServer()){
+                if (installer.isServer()) {
                     Utils.copyFile(fileLocation, installer.getRootDirectory());
                     break;
                 }
                 break;
             case texturepack:
-                if(!installer.getTexturePacksDirectory().exists()){
+                if (!installer.getTexturePacksDirectory().exists()) {
                     installer.getTexturePacksDirectory().mkdir();
                 }
                 Utils.copyFile(fileLocation, installer.getTexturePacksDirectory());
                 break;
             case resourcepack:
-                if(!installer.getResourcePacksDirectory().exists()){
+                if (!installer.getResourcePacksDirectory().exists()) {
                     installer.getResourcePacksDirectory().mkdir();
                 }
                 Utils.copyFile(fileLocation, installer.getResourcePacksDirectory());
                 break;
             case texturepackextract:
-                if(!installer.getTexturePacksDirectory().exists()){
+                if (!installer.getTexturePacksDirectory().exists()) {
                     installer.getTexturePacksDirectory().mkdir();
                 }
                 Utils.unzip(fileLocation, installer.getTempTexturePackDirectory());
                 installer.setTexturePackExtracted();
                 break;
             case resourcepackextract:
-                if(!installer.getResourcePacksDirectory().exists()){
+                if (!installer.getResourcePacksDirectory().exists()) {
                     installer.getResourcePacksDirectory().mkdir();
                 }
                 Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
@@ -699,19 +654,19 @@ public class Mod{
             case millenaire:
                 File tempDirMillenaire = new File(App.settings.getTempDir(), getSafeName());
                 Utils.unzip(fileLocation, tempDirMillenaire);
-                for(String folder : tempDirMillenaire.list()){
+                for (String folder : tempDirMillenaire.list()) {
                     File thisFolder = new File(tempDirMillenaire, folder);
-                    for(String dir : thisFolder.list(new FilenameFilter(){
+                    for (String dir : thisFolder.list(new FilenameFilter() {
                         @Override
-                        public boolean accept(File dir, String name){
+                        public boolean accept(File dir, String name) {
                             File thisFile = new File(dir, name);
-                            if(thisFile.isDirectory()){
+                            if (thisFile.isDirectory()) {
                                 return true;
-                            } else{
+                            } else {
                                 return false;
                             }
                         }
-                    })){
+                    })) {
                         Utils.copyDirectory(new File(thisFolder, dir), installer.getModsDirectory());
                     }
                 }
@@ -721,48 +676,48 @@ public class Mod{
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
                 break;
             case ic2lib:
-                if(!installer.getIC2LibDirectory().exists()){
+                if (!installer.getIC2LibDirectory().exists()) {
                     installer.getIC2LibDirectory().mkdir();
                 }
                 Utils.copyFile(fileLocation, installer.getIC2LibDirectory());
                 break;
             case flan:
-                if(!installer.getFlanDirectory().exists()){
+                if (!installer.getFlanDirectory().exists()) {
                     installer.getFlanDirectory().mkdir();
                 }
                 Utils.copyFile(fileLocation, installer.getFlanDirectory());
                 break;
             case denlib:
-                if(!installer.getDenLibDirectory().exists()){
+                if (!installer.getDenLibDirectory().exists()) {
                     installer.getDenLibDirectory().mkdir();
                 }
                 Utils.copyFile(fileLocation, installer.getDenLibDirectory());
                 break;
             case depandency:
             case dependency:
-                if(!installer.getDependencyDirectory().exists()){
+                if (!installer.getDependencyDirectory().exists()) {
                     installer.getDependencyDirectory().mkdirs();
                 }
                 Utils.copyFile(fileLocation, installer.getDependencyDirectory());
                 break;
             case plugins:
-                if(!installer.getPluginsDirectory().exists()){
+                if (!installer.getPluginsDirectory().exists()) {
                     installer.getPluginsDirectory().mkdir();
                 }
                 Utils.copyFile(fileLocation, installer.getPluginsDirectory());
                 break;
             case coremods:
-                if(installer.getVersion().getMinecraftVersion().usesCoreMods()){
-                    if(!installer.getCoreModsDirectory().exists()){
+                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                    if (!installer.getCoreModsDirectory().exists()) {
                         installer.getCoreModsDirectory().mkdir();
                     }
                     Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
-                } else{
+                } else {
                     Utils.copyFile(fileLocation, installer.getModsDirectory());
                 }
                 break;
             case shaderpack:
-                if(!installer.getShaderPacksDirectory().exists()){
+                if (!installer.getShaderPacksDirectory().exists()) {
                     installer.getShaderPacksDirectory().mkdir();
                 }
                 Utils.copyFile(fileLocation, installer.getShaderPacksDirectory());
@@ -770,16 +725,15 @@ public class Mod{
             case extract:
                 File tempDirExtract = new File(App.settings.getTempDir(), getSafeName());
                 Utils.unzip(fileLocation, tempDirExtract);
-                File folder = new File(new File(App.settings.getTempDir(), getSafeName()),
-                        this.extractFolder);
-                switch(extractTo){
+                File folder = new File(new File(App.settings.getTempDir(), getSafeName()), this.extractFolder);
+                switch (extractTo) {
                     case coremods:
-                        if(installer.getVersion().getMinecraftVersion().usesCoreMods()){
-                            if(!installer.getCoreModsDirectory().exists()){
+                        if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                            if (!installer.getCoreModsDirectory().exists()) {
                                 installer.getCoreModsDirectory().mkdir();
                             }
                             Utils.copyDirectory(folder, installer.getCoreModsDirectory());
-                        } else{
+                        } else {
                             Utils.copyDirectory(folder, installer.getModsDirectory());
                         }
                         break;
@@ -790,8 +744,7 @@ public class Mod{
                         Utils.copyDirectory(folder, installer.getRootDirectory());
                         break;
                     default:
-                        LogManager.error("No known way to extract mod " + this.name + " with type "
-                                + this.extractTo);
+                        LogManager.error("No known way to extract mod " + this.name + " with type " + this.extractTo);
                         break;
                 }
                 Utils.delete(tempDirExtract);
@@ -800,96 +753,91 @@ public class Mod{
                 File tempDirDecomp = new File(App.settings.getTempDir(), getSafeName());
                 Utils.unzip(fileLocation, tempDirDecomp);
                 File tempFileDecomp = new File(tempDirDecomp, decompFile);
-                if(tempFileDecomp.exists()){
-                    switch(decompType){
+                if (tempFileDecomp.exists()) {
+                    switch (decompType) {
                         case coremods:
-                            if(tempFileDecomp.isFile()){
-                                if(installer.getVersion().getMinecraftVersion().usesCoreMods()){
-                                    if(!installer.getCoreModsDirectory().exists()){
+                            if (tempFileDecomp.isFile()) {
+                                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                                    if (!installer.getCoreModsDirectory().exists()) {
                                         installer.getCoreModsDirectory().mkdir();
                                     }
                                     Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
-                                } else{
+                                } else {
                                     Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
                                 }
-                            } else{
-                                if(installer.getVersion().getMinecraftVersion().usesCoreMods()){
-                                    if(!installer.getCoreModsDirectory().exists()){
+                            } else {
+                                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                                    if (!installer.getCoreModsDirectory().exists()) {
                                         installer.getCoreModsDirectory().mkdir();
                                     }
-                                    Utils.copyDirectory(tempFileDecomp,
-                                            installer.getCoreModsDirectory());
-                                } else{
-                                    Utils.copyDirectory(tempFileDecomp,
-                                            installer.getModsDirectory());
+                                    Utils.copyDirectory(tempFileDecomp, installer.getCoreModsDirectory());
+                                } else {
+                                    Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
                                 }
                             }
                             break;
                         case jar:
-                            if(tempFileDecomp.isFile()){
+                            if (tempFileDecomp.isFile()) {
                                 Utils.copyFile(tempFileDecomp, installer.getJarModsDirectory());
                                 installer.addToJarOrder(decompFile);
-                            } else{
-                                File newFile = new File(installer.getJarModsDirectory(),
-                                        getSafeName() + ".zip");
+                            } else {
+                                File newFile = new File(installer.getJarModsDirectory(), getSafeName() + ".zip");
                                 Utils.zip(tempFileDecomp, newFile);
                                 installer.addToJarOrder(getSafeName() + ".zip");
                             }
                             break;
                         case mods:
-                            if(tempFileDecomp.isFile()){
+                            if (tempFileDecomp.isFile()) {
                                 Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
-                            } else{
+                            } else {
                                 Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
                             }
                             break;
                         case root:
-                            if(tempFileDecomp.isFile()){
+                            if (tempFileDecomp.isFile()) {
                                 Utils.copyFile(tempFileDecomp, installer.getRootDirectory());
-                            } else{
+                            } else {
                                 Utils.copyDirectory(tempFileDecomp, installer.getRootDirectory());
                             }
                             break;
                         default:
-                            LogManager.error("No known way to decomp mod " + this.name
-                                    + " with type " + this.decompType);
+                            LogManager.error("No known way to decomp mod " + this.name + " with type " + this
+                                    .decompType);
                             break;
                     }
-                } else{
-                    LogManager.error("Couldn't find decomp file " + this.decompFile + " for mod "
-                            + this.name);
+                } else {
+                    LogManager.error("Couldn't find decomp file " + this.decompFile + " for mod " + this.name);
                 }
                 Utils.delete(tempDirDecomp);
                 break;
             default:
-                LogManager.error("No known way to install mod " + this.name + " with type "
-                        + thisType);
+                LogManager.error("No known way to install mod " + this.name + " with type " + thisType);
                 break;
         }
     }
 
-    public File getInstalledFile(InstanceInstaller installer){
+    public File getInstalledFile(InstanceInstaller installer) {
         ModType thisType;
         String file;
         File base = null;
-        if(installer.isServer()){
+        if (installer.isServer()) {
             file = getServerFile();
             thisType = this.serverType;
-        } else{
+        } else {
             file = getFile();
             thisType = this.type;
         }
-        switch(thisType){
+        switch (thisType) {
             case jar:
             case forge:
-                if(installer.isServer() && thisType == ModType.forge){
+                if (installer.isServer() && thisType == ModType.forge) {
                     base = installer.getRootDirectory();
                     break;
                 }
                 base = installer.getJarModsDirectory();
                 break;
             case mcpc:
-                if(installer.isServer()){
+                if (installer.isServer()) {
                     base = installer.getRootDirectory();
                     break;
                 }
@@ -913,9 +861,9 @@ public class Mod{
                 base = installer.getPluginsDirectory();
                 break;
             case coremods:
-                if(installer.getVersion().getMinecraftVersion().usesCoreMods()){
+                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                     base = installer.getCoreModsDirectory();
-                } else{
+                } else {
                     base = installer.getModsDirectory();
                 }
                 break;
@@ -923,11 +871,10 @@ public class Mod{
                 base = installer.getShaderPacksDirectory();
                 break;
             default:
-                LogManager.error("No known way to find installed mod " + this.name + " with type "
-                        + thisType);
+                LogManager.error("No known way to find installed mod " + this.name + " with type " + thisType);
                 break;
         }
-        if(base == null){
+        if (base == null) {
             return null;
         }
         return new File(base, file);

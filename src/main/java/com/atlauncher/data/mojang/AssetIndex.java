@@ -13,20 +13,20 @@ package com.atlauncher.data.mojang;
 import java.util.HashSet;
 import java.util.Map;
 
-public class AssetIndex{
+public class AssetIndex {
 
     private Map<String, AssetObject> objects;
     private boolean virtual;
 
-    public Map<String, AssetObject> getObjects(){
+    public Map<String, AssetObject> getObjects() {
         return this.objects;
     }
 
-    public HashSet<AssetObject> getUniqueObjects(){
+    public HashSet<AssetObject> getUniqueObjects() {
         return new HashSet<AssetObject>(this.objects.values());
     }
 
-    public boolean isVirtual(){
+    public boolean isVirtual() {
         return this.virtual;
     }
 }

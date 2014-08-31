@@ -12,8 +12,8 @@ package com.atlauncher.exceptions;
  *
  * @author Ryan
  */
-public class InvalidPack extends Exception{
-    public InvalidPack(String message){
+public class InvalidPack extends Exception {
+    public InvalidPack(String message) {
         super(message);
     }
 }

@@ -1,5 +1,5 @@
 package com.atlauncher.data;
 
-public enum Status{
+public enum Status {
     ONLINE, OFFLINE, PARTIAL, UNKNOWN
 }

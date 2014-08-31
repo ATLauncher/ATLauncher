@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public class Library{
+public class Library {
 
     private String name;
     private Map<OperatingSystem, String> natives;
@@ -25,50 +25,49 @@ public class Library{
     private ExtractRule extract;
     private String url;
 
-    public boolean shouldInstall(){
-        if(this.rules == null){
+    public boolean shouldInstall() {
+        if (this.rules == null) {
             return true; // No rules setup so we need it
         }
         Action lastAction = Action.DISALLOW;
-        for(Rule rule : this.rules){ // Loop through all the rules
-            if(rule.ruleApplies()){ // See if this rule applies to this system
+        for (Rule rule : this.rules) { // Loop through all the rules
+            if (rule.ruleApplies()) { // See if this rule applies to this system
                 lastAction = rule.getAction();
             }
         }
         return (lastAction == Action.ALLOW); // Check if we are allowing it
     }
 
-    public boolean shouldExtract(){
-        if(this.extract == null){
+    public boolean shouldExtract() {
+        if (this.extract == null) {
             return false;
         }
         return true;
     }
 
-    public ExtractRule getExtractRule(){
+    public ExtractRule getExtractRule() {
         return this.extract;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public String getURL(){
+    public String getURL() {
         String path;
         String[] parts = this.name.split(":", 3);
-        path = parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2] + "/" + parts[1] + "-"
-                + parts[2] + getClassifier() + ".jar";
+        path = parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2] + "/" + parts[1] + "-" + parts[2] +
+                getClassifier() + ".jar";
         return MojangConstants.LIBRARIES_BASE.getURL(path);
     }
 
-    public File getFile(){
+    public File getFile() {
         String[] parts = this.name.split(":", 3);
-        return new File(App.settings.getLibrariesDir(), parts[1] + "-" + parts[2] + getClassifier()
-                + ".jar");
+        return new File(App.settings.getLibrariesDir(), parts[1] + "-" + parts[2] + getClassifier() + ".jar");
     }
 
-    public String getClassifier(){
-        if(this.natives == null){
+    public String getClassifier() {
+        if (this.natives == null) {
             return "";
         }
         return "-" + this.natives.get(OperatingSystem.getOS()).replace("${arch}", Utils.getArch());

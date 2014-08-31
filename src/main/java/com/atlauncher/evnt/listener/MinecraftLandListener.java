@@ -1,5 +1,5 @@
 package com.atlauncher.evnt.listener;
 
-public interface MinecraftLandListener{
+public interface MinecraftLandListener {
 
 }

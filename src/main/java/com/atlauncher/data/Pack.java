@@ -20,6 +20,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.swing.ImageIcon;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -28,12 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.ImageIcon;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
-public class Pack{
+public class Pack {
     private int id;
     private int position;
     private String name;
@@ -54,602 +54,627 @@ public class Pack{
     private String json; // The JSON for a version of the pack
     private String jsonVersion; // The version the JSON above is for
 
-    public int getID(){
+    public int getID() {
         return this.id;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
     /**
-     * Gets a file safe and URL safe name which simply means replacing all non alpha numerical
-     * characters with nothing
+     * Gets a file safe and URL safe name which simply means replacing all non alpha numerical characters with nothing
      *
      * @return File safe and URL safe name of the pack
      */
-    public String getSafeName(){
+    public String getSafeName() {
         return this.name.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    public int getPosition(){
+    public int getPosition() {
         return this.position;
     }
 
-    public ImageIcon getImage(){
+    public ImageIcon getImage() {
         File imageFile = new File(App.settings.getImagesDir(), getSafeName().toLowerCase() + ".png");
-        if(!imageFile.exists()){
+        if (!imageFile.exists()) {
             imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
         }
         return Utils.getIconImage(imageFile);
     }
 
-    public boolean isPublic(){
+    public boolean isPublic() {
         return this.type == PackType.PUBLIC;
     }
 
-    public boolean isSemiPublic(){
+    public boolean isSemiPublic() {
         return this.type == PackType.SEMIPUBLIC;
     }
 
-    public boolean isPrivate(){
+    public boolean isPrivate() {
         return this.type == PackType.PRIVATE;
     }
 
-    public String getCode(){
-        if(!isSemiPublic()){
+    public String getCode() {
+        if (!isSemiPublic()) {
             return "";
         }
         return this.code;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return this.description;
     }
 
-    public String getSupportURL(){
+    public String getSupportURL() {
         return this.supportURL;
     }
 
-    public String getWebsiteURL(){
+    public String getWebsiteURL() {
         return this.websiteURL;
     }
 
-    public boolean canCreateServer(){
+    public boolean canCreateServer() {
         return this.createServer;
     }
 
-    public boolean isLoggingEnabled(){
+    public boolean isLoggingEnabled() {
         return this.logging;
     }
 
-    public boolean isLeaderboardsEnabled(){
+    public boolean isLeaderboardsEnabled() {
         return this.leaderboards;
     }
 
-    public void addTesters(List<String> users){
+    public void addTesters(List<String> users) {
         this.testers.addAll(users);
     }
 
-    public void addAllowedPlayers(List<String> users){
+    public void addAllowedPlayers(List<String> users) {
         this.allowedPlayers.addAll(users);
     }
 
-    public List<PackVersion> getVersions(){
+    public List<PackVersion> getVersions() {
         return this.versions;
     }
 
-    public List<PackVersion> getDevVersions(){
+    public List<PackVersion> getDevVersions() {
         return this.devVersions;
     }
 
-    public void processVersions(){
-        for(PackVersion pv : this.versions){
+    public void processVersions() {
+        for (PackVersion pv : this.versions) {
             pv.setMinecraftVesion();
         }
-        for(PackVersion dpv : this.devVersions){
+        for (PackVersion dpv : this.devVersions) {
             dpv.setMinecraftVesion();
         }
     }
 
-    public boolean isTester(){
+    public boolean isTester() {
         Account account = App.settings.getAccount();
-        if(account == null){
+        if (account == null) {
             return false;
         }
-        for(String tester : this.testers){
-            if(tester.equalsIgnoreCase(account.getMinecraftUsername())){
+        for (String tester : this.testers) {
+            if (tester.equalsIgnoreCase(account.getMinecraftUsername())) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean hasVersions(){
-        if(this.versions.size() == 0){
+    public boolean hasVersions() {
+        if (this.versions.size() == 0) {
             return false;
-        } else{
+        } else {
             return true;
         }
     }
 
-    public boolean hasDevVersions(){
-        if(this.devVersions.size() == 0){
+    public boolean hasDevVersions() {
+        if (this.devVersions.size() == 0) {
             return false;
-        } else{
+        } else {
             return true;
         }
     }
 
-    public boolean canInstall(){
-        if(this.type == PackType.PRIVATE){
-            if(isTester() || (hasVersions() && isAllowedPlayer())){
+    public boolean canInstall() {
+        if (this.type == PackType.PRIVATE) {
+            if (isTester() || (hasVersions() && isAllowedPlayer())) {
                 return true;
             }
-        } else if(this.type == PackType.SEMIPUBLIC){
-            if(isTester()
-                    || (hasVersions() && App.settings.canViewSemiPublicPackByCode(this.code))){
+        } else if (this.type == PackType.SEMIPUBLIC) {
+            if (isTester() || (hasVersions() && App.settings.canViewSemiPublicPackByCode(this.code))) {
                 return true;
             }
-        } else{
-            if(isTester() || hasVersions()){
+        } else {
+            if (isTester() || hasVersions()) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean isAllowedPlayer(){
-        if(this.type != PackType.PRIVATE){
+    public boolean isAllowedPlayer() {
+        if (this.type != PackType.PRIVATE) {
             return true;
         }
         Account account = App.settings.getAccount();
-        if(account == null){
+        if (account == null) {
             return false;
         }
-        for(String player : this.allowedPlayers){
-            if(player.equalsIgnoreCase(account.getMinecraftUsername())){
+        for (String player : this.allowedPlayers) {
+            if (player.equalsIgnoreCase(account.getMinecraftUsername())) {
                 return true;
             }
         }
         return false;
     }
 
-    public int getVersionCount(){
+    public int getVersionCount() {
         return this.versions.size();
     }
 
-    public int getDevVersionCount(){
+    public int getDevVersionCount() {
         return this.devVersions.size();
     }
 
-    public PackVersion getLatestVersion(){
-        if(this.versions.size() == 0){
+    public PackVersion getLatestVersion() {
+        if (this.versions.size() == 0) {
             return null;
         }
         return this.versions.get(0);
     }
 
-    public boolean isLatestVersionNoUpdate(){
-        if(this.versions.size() == 0){
+    public boolean isLatestVersionNoUpdate() {
+        if (this.versions.size() == 0) {
             return false;
         }
-        if(!getLatestVersion().canUpdate()){
+        if (!getLatestVersion().canUpdate()) {
             return true;
         }
-        if(!getLatestVersion().isRecommended()){
+        if (!getLatestVersion().isRecommended()) {
             return true;
         }
         return false;
     }
 
-    public String getXML(String version){
+    public String getXML(String version) {
         return getXML(version, true);
     }
 
-    public String getXML(String version, boolean redownload){
-        if(this.xml == null || !this.xmlVersion.equalsIgnoreCase(version)
-                || (isTester() && redownload)){
+    public String getXML(String version, boolean redownload) {
+        if (this.xml == null || !this.xmlVersion.equalsIgnoreCase(version) || (isTester() && redownload)) {
             String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.xml";
             Downloadable download = new Downloadable(path, true);
             int tries = 1;
-            do{
+            do {
                 this.xml = download.getContents();
                 tries++;
-            } while(xml == null && tries < 5);
+            } while (xml == null && tries < 5);
             this.xmlVersion = version;
         }
         return this.xml;
     }
 
-    public String getJSON(String version){
+    public String getJSON(String version) {
         return getJSON(version, true);
     }
 
-    public String getJSON(String version, boolean redownload){
-        if(this.json == null || !this.jsonVersion.equalsIgnoreCase(version)
-                || (isTester() && redownload)){
+    public String getJSON(String version, boolean redownload) {
+        if (this.json == null || !this.jsonVersion.equalsIgnoreCase(version) || (isTester() && redownload)) {
             String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.json";
             Downloadable download = new Downloadable(path, true);
             int tries = 1;
-            do{
+            do {
                 this.json = download.getContents();
                 tries++;
-            } while(json == null && tries < 5);
+            } while (json == null && tries < 5);
             this.jsonVersion = version;
         }
         return this.json;
     }
 
-    public String getInstallMessage(String version){
+    public String getWarningMessage(String version, String name) {
         String xml = getXML(version, false);
-        try{
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(xml));
+            Document document = builder.parse(is);
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("warning");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    NodeList nodeList1 = element.getChildNodes();
+                    if (element.getAttribute("name").equals(name)) {
+                        return nodeList1.item(0).getNodeValue();
+                    }
+                }
+            }
+        } catch (SAXException e) {
+            App.settings.logStackTrace(e);
+        } catch (ParserConfigurationException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return null;
+    }
+
+    public String getInstallMessage(String version) {
+        String xml = getXML(version, false);
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("install");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     NodeList nodeList1 = element.getChildNodes();
                     return nodeList1.item(0).getNodeValue();
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return null;
     }
 
-    public String getUpdateMessage(String version){
+    public String getUpdateMessage(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("update");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     NodeList nodeList1 = element.getChildNodes();
                     return nodeList1.item(0).getNodeValue();
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return null;
     }
 
-    public int getMemory(String version){
+    public int getMemory(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("memory");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     NodeList nodeList1 = element.getChildNodes();
                     return Integer.parseInt(nodeList1.item(0).getNodeValue());
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return 0;
     }
 
-    public String getMainClass(String version){
+    public String getMainClass(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("mainclass");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     NodeList nodeList1 = element.getChildNodes();
                     return nodeList1.item(0).getNodeValue();
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return null;
     }
 
-    public String getMainClassDepends(String version){
+    public String getMainClassDepends(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("mainclass");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
-                    if(element.hasAttribute("depends")){
+                    if (element.hasAttribute("depends")) {
                         return element.getAttribute("depends");
                     }
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return null;
     }
 
-    public String getMainClassDependsGroup(String version){
+    public String getMainClassDependsGroup(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("mainclass");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
-                    if(element.hasAttribute("dependsgroup")){
+                    if (element.hasAttribute("dependsgroup")) {
                         return element.getAttribute("dependsgroup");
                     }
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return null;
     }
 
-    public String getExtraArguments(String version){
+    public String getExtraArguments(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("extraarguments");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     NodeList nodeList1 = element.getChildNodes();
                     return nodeList1.item(0).getNodeValue();
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return null;
     }
 
-    public String getExtraArgumentsDepends(String version){
+    public String getExtraArgumentsDepends(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("extraarguments");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
-                    if(element.hasAttribute("depends")){
+                    if (element.hasAttribute("depends")) {
                         return element.getAttribute("depends");
                     }
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return null;
     }
 
-    public String getExtraArgumentsDependsGroup(String version){
+    public String getExtraArgumentsDependsGroup(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("extraarguments");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
-                    if(element.hasAttribute("dependsgroup")){
+                    if (element.hasAttribute("dependsgroup")) {
                         return element.getAttribute("dependsgroup");
                     }
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return null;
     }
 
-    public int getPermGen(String version){
+    public int getPermGen(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("permgen");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     NodeList nodeList1 = element.getChildNodes();
                     return Integer.parseInt(nodeList1.item(0).getNodeValue());
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return 0;
     }
 
-    public String getCaseAllFiles(String version){
+    public String getCaseAllFiles(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("caseallfiles");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     NodeList nodeList1 = element.getChildNodes();
                     return nodeList1.item(0).getNodeValue();
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return null;
     }
 
-    public boolean hasConfigs(String version){
+    public boolean hasConfigs(String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("noconfigs");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     NodeList nodeList1 = element.getChildNodes();
                     return !Boolean.parseBoolean(nodeList1.item(0).getNodeValue());
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return true;
     }
 
-    public String getColour(String version, String name){
+    public String getColour(String version, String name) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("colour");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
-                    if(element.getAttribute("name").equalsIgnoreCase(name)){
+                    if (element.getAttribute("name").equalsIgnoreCase(name)) {
                         return element.getAttribute("code").replace("#", "");
                     }
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return null;
     }
 
-    public ArrayList<Mod> getMods(String versionToInstall, boolean isServer){
+    public ArrayList<Mod> getMods(String versionToInstall, boolean isServer) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
         String xml = getXML(versionToInstall);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("mod");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     String name = element.getAttribute("name");
                     String version = element.getAttribute("version");
@@ -658,20 +683,23 @@ public class Pack{
                     String website = element.getAttribute("website");
                     String donation = element.getAttribute("donation");
                     Color colour = null;
-                    if(element.hasAttribute("colour")){
-                        String tempColour = getColour(versionToInstall,
-                                element.getAttribute("colour"));
-                        if(tempColour != null && tempColour.length() == 6){
+                    if (element.hasAttribute("colour")) {
+                        String tempColour = getColour(versionToInstall, element.getAttribute("colour"));
+                        if (tempColour != null && tempColour.length() == 6) {
                             int r, g, b;
-                            try{
+                            try {
                                 r = Integer.parseInt(tempColour.substring(0, 2), 16);
                                 g = Integer.parseInt(tempColour.substring(2, 4), 16);
                                 b = Integer.parseInt(tempColour.substring(4, 6), 16);
                                 colour = new Color(r, g, b);
-                            } catch(NumberFormatException e){
+                            } catch (NumberFormatException e) {
                                 colour = null;
                             }
                         }
+                    }
+                    String warning = null;
+                    if (element.hasAttribute("warning")) {
+                        warning = element.getAttribute("warning");
                     }
                     String md5 = element.getAttribute("md5");
                     Type type = Type.valueOf(element.getAttribute("type").toLowerCase());
@@ -679,35 +707,33 @@ public class Pack{
                     String extractFolder = null;
                     String decompFile = null;
                     DecompType decompType = null;
-                    if(type == Type.extract){
-                        extractTo = ExtractTo.valueOf(element.getAttribute("extractto")
-                                .toLowerCase());
-                        if(element.hasAttribute("extractfolder")){
+                    if (type == Type.extract) {
+                        extractTo = ExtractTo.valueOf(element.getAttribute("extractto").toLowerCase());
+                        if (element.hasAttribute("extractfolder")) {
                             extractFolder = element.getAttribute("extractfolder");
-                        } else{
+                        } else {
                             extractFolder = "/";
                         }
-                    } else if(type == Type.decomp){
+                    } else if (type == Type.decomp) {
                         decompFile = element.getAttribute("decompfile");
-                        decompType = DecompType.valueOf(element.getAttribute("decomptype")
-                                .toLowerCase());
+                        decompType = DecompType.valueOf(element.getAttribute("decomptype").toLowerCase());
                     }
                     boolean filePattern = false;
-                    if(element.getAttribute("filepattern").equalsIgnoreCase("yes")){
+                    if (element.getAttribute("filepattern").equalsIgnoreCase("yes")) {
                         filePattern = true;
                     }
                     String filePreference = null;
-                    if(element.hasAttribute("filepreference")){
+                    if (element.hasAttribute("filepreference")) {
                         filePreference = element.getAttribute("filepreference");
                     }
                     String fileCheck = null;
-                    if(element.hasAttribute("filecheck")){
+                    if (element.hasAttribute("filecheck")) {
                         fileCheck = element.getAttribute("filecheck");
                     }
                     boolean client = true;
-                    if(element.getAttribute("client").equalsIgnoreCase("no")){
+                    if (element.getAttribute("client").equalsIgnoreCase("no")) {
                         client = false;
-                        if(!isServer){
+                        if (!isServer) {
                             continue; // Don't add this mod as its specified as server only
                         }
                     }
@@ -717,153 +743,144 @@ public class Pack{
                     Type serverType = null;
                     Download serverDownload = null;
                     String serverMD5 = null;
-                    if(element.getAttribute("server").equalsIgnoreCase("seperate")){
+                    if (element.getAttribute("server").equalsIgnoreCase("seperate")) {
                         server = false;
                         serverURL = element.getAttribute("serverurl");
                         serverFile = element.getAttribute("serverfile");
                         serverType = Type.valueOf(element.getAttribute("servertype").toLowerCase());
-                        serverDownload = Download.valueOf(element.getAttribute("serverdownload")
-                                .toLowerCase());
+                        serverDownload = Download.valueOf(element.getAttribute("serverdownload").toLowerCase());
                         serverMD5 = element.getAttribute("servermd5");
-                    } else if(element.getAttribute("server").equalsIgnoreCase("no")){
+                    } else if (element.getAttribute("server").equalsIgnoreCase("no")) {
                         server = false;
-                        if(isServer){
+                        if (isServer) {
                             continue;
                         }
                     }
                     boolean optional = false;
-                    if(element.getAttribute("optional").equalsIgnoreCase("yes")){
+                    if (element.getAttribute("optional").equalsIgnoreCase("yes")) {
                         optional = true;
                     }
                     boolean serverOptional = optional;
-                    if(element.getAttribute("serveroptional").equalsIgnoreCase("yes")){
+                    if (element.getAttribute("serveroptional").equalsIgnoreCase("yes")) {
                         serverOptional = true;
-                    } else if(element.getAttribute("serveroptional").equalsIgnoreCase("no")){
+                    } else if (element.getAttribute("serveroptional").equalsIgnoreCase("no")) {
                         serverOptional = false;
                     }
                     boolean selected = false;
-                    if(element.hasAttribute("selected")){
-                        if(element.getAttribute("selected").equalsIgnoreCase("yes")){
+                    if (element.hasAttribute("selected")) {
+                        if (element.getAttribute("selected").equalsIgnoreCase("yes")) {
                             selected = true;
                         }
                     }
-                    Download download = Download.valueOf(element.getAttribute("download")
-                            .toLowerCase());
+                    Download download = Download.valueOf(element.getAttribute("download").toLowerCase());
                     boolean hidden = false;
-                    if(element.getAttribute("hidden").equalsIgnoreCase("yes")){
+                    if (element.getAttribute("hidden").equalsIgnoreCase("yes")) {
                         hidden = true;
                     }
                     boolean library = false;
-                    if(element.getAttribute("library").equalsIgnoreCase("yes")){
+                    if (element.getAttribute("library").equalsIgnoreCase("yes")) {
                         library = true;
                     }
                     String group = element.getAttribute("group");
                     String category = element.getAttribute("category");
                     String linked = element.getAttribute("linked");
                     String[] depends;
-                    if(element.hasAttribute("depends")){
+                    if (element.hasAttribute("depends")) {
                         String dependTemp = element.getAttribute("depends");
-                        if(dependTemp.contains(",")){
+                        if (dependTemp.contains(",")) {
                             depends = dependTemp.split(",");
-                        } else{
+                        } else {
                             depends = new String[]{dependTemp};
                         }
-                    } else{
+                    } else {
                         depends = null;
                     }
                     String filePrefix = element.getAttribute("fileprefix");
                     boolean recommended = true;
-                    if(element.getAttribute("recommended").equalsIgnoreCase("no")){
+                    if (element.getAttribute("recommended").equalsIgnoreCase("no")) {
                         recommended = false;
                     }
 
                     String description = element.getAttribute("description");
-                    mods.add(new Mod(name, version, url, file, website, donation, colour, md5,
-                            type, extractTo, extractFolder, decompFile, decompType, filePattern,
-                            filePreference, fileCheck, client, server, serverURL, serverFile,
-                            serverDownload, serverMD5, serverType, optional, serverOptional,
-                            selected, download, hidden, library, group, category, linked, depends,
+                    mods.add(new Mod(name, version, url, file, website, donation, colour, warning, md5, type,
+                            extractTo, extractFolder, decompFile, decompType, filePattern, filePreference, fileCheck,
+                            client, server, serverURL, serverFile, serverDownload, serverMD5, serverType, optional,
+                            serverOptional, selected, download, hidden, library, group, category, linked, depends,
                             filePrefix, recommended, description));
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return mods;
     }
 
-    public boolean hasDeleteArguments(boolean getFiles, String version){
+    public boolean hasDeleteArguments(boolean getFiles, String version) {
         String xml = getXML(version, false);
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("delete");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
                 NodeList nodeListInside = node.getChildNodes();
-                for(int j = 0; j < nodeListInside.getLength(); j++){
+                for (int j = 0; j < nodeListInside.getLength(); j++) {
                     Node nodeInside = nodeListInside.item(j);
-                    if(nodeInside.getNodeType() == Node.ELEMENT_NODE){
-                        if(nodeInside.getNodeName().equalsIgnoreCase(
-                                (getFiles ? "file" : "folder"))){
+                    if (nodeInside.getNodeType() == Node.ELEMENT_NODE) {
+                        if (nodeInside.getNodeName().equalsIgnoreCase((getFiles ? "file" : "folder"))) {
                             return true;
                         }
                     }
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return false;
     }
 
-    public List<File> getDeletes(boolean getFiles, String version, Instance instance){
+    public List<File> getDeletes(boolean getFiles, String version, Instance instance) {
         String xml = getXML(version, false);
         List<File> files = new ArrayList<File>();
-        try{
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(xml));
             Document document = builder.parse(is);
             document.getDocumentElement().normalize();
             NodeList nodeList = document.getElementsByTagName("delete");
-            for(int i = 0; i < nodeList.getLength(); i++){
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
                 NodeList nodeListInside = node.getChildNodes();
-                for(int j = 0; j < nodeListInside.getLength(); j++){
+                for (int j = 0; j < nodeListInside.getLength(); j++) {
                     Node nodeInside = nodeListInside.item(j);
-                    if(nodeInside.getNodeType() == Node.ELEMENT_NODE){
-                        if(nodeInside.getNodeName().equalsIgnoreCase(
-                                (getFiles ? "file" : "folder"))){
+                    if (nodeInside.getNodeType() == Node.ELEMENT_NODE) {
+                        if (nodeInside.getNodeName().equalsIgnoreCase((getFiles ? "file" : "folder"))) {
                             Element element = (Element) nodeInside;
-                            File file = new File(instance.getRootDirectory(), element.getAttribute(
-                                    "target").replace("%s%", File.separator));
-                            if(element.getAttribute("base").equalsIgnoreCase("root")){
-                                if(element.getAttribute("target").startsWith("world")
-                                        || element.getAttribute("target").startsWith("DIM")
-                                        || element.getAttribute("target").startsWith("saves")
-                                        || element.getAttribute("target").startsWith(
-                                        "instance.json")
-                                        || element.getAttribute("target").contains("./")
-                                        || element.getAttribute("target").contains(".\\")
-                                        || element.getAttribute("target").contains("~/")
-                                        || element.getAttribute("target").contains("~\\")
-                                        || !file.getCanonicalPath().contains(
-                                        instance.getRootDirectory().getCanonicalPath())){
-                                    LogManager.error("Cannot delete the file/folder "
-                                            + file.getAbsolutePath() + " as it's protected.");
-                                } else{
+                            File file = new File(instance.getRootDirectory(), element.getAttribute("target").replace
+                                    ("%s%", File.separator));
+                            if (element.getAttribute("base").equalsIgnoreCase("root")) {
+                                if (element.getAttribute("target").startsWith("world") || element.getAttribute
+                                        ("target").startsWith("DIM") || element.getAttribute("target").startsWith
+                                        ("saves") || element.getAttribute("target").startsWith("instance.json") ||
+                                        element.getAttribute("target").contains("./") || element.getAttribute
+                                        ("target").contains(".\\") || element.getAttribute("target").contains("~/")
+                                        || element.getAttribute("target").contains("~\\") || !file.getCanonicalPath()
+                                        .contains(instance.getRootDirectory().getCanonicalPath())) {
+                                    LogManager.error("Cannot delete the file/folder " + file.getAbsolutePath() + " as" +
+                                            " it's protected.");
+                                } else {
                                     files.add(file);
                                 }
                             }
@@ -871,25 +888,25 @@ public class Pack{
                     }
                 }
             }
-        } catch(SAXException e){
+        } catch (SAXException e) {
             App.settings.logStackTrace(e);
-        } catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return files;
     }
 
-    public String addInstall(String version){
+    public String addInstall(String version) {
         Map<String, Object> request = new HashMap<String, Object>();
 
         request.put("username", App.settings.getAccount().getMinecraftUsername());
         request.put("version", version);
 
-        try{
+        try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
-        } catch(IOException e){
+        } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
         return "Install Not Added!";

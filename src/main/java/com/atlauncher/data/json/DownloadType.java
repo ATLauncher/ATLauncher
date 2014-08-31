@@ -6,6 +6,6 @@
  */
 package com.atlauncher.data.json;
 
-public enum DownloadType{
+public enum DownloadType {
     server, browser, direct
 }

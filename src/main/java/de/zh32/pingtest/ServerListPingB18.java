@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.nio.charset.Charset;
 
 /**
- * 
  * @author zh32 <zh32 at zh32.de>
  */
 public class ServerListPingB18 {
@@ -76,7 +75,7 @@ public class ServerListPingB18 {
 
         inputStream = socket.getInputStream();
         inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-16BE"));
-        dataOutputStream.write(new byte[] { (byte) 0xFE });
+        dataOutputStream.write(new byte[]{(byte) 0xFE});
 
         int packetId = inputStream.read();
 

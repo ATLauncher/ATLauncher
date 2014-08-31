@@ -34,58 +34,51 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-public class LegacyMCLauncher{
+public class LegacyMCLauncher {
 
-    public static Process launch(Account account, Instance instance, AuthenticationResponse sess)
-    throws IOException{
+    public static Process launch(Account account, Instance instance, AuthenticationResponse sess) throws IOException {
         String lwjgl = "lwjgl.jar";
         String lwjgl_util = "lwjgl_util.jar";
         String jinput = "jinput.jar";
         File[] files = instance.getBinDirectory().listFiles();
-        for(File file : files){
-            if(file.getName().startsWith("lwjgl-")){
+        for (File file : files) {
+            if (file.getName().startsWith("lwjgl-")) {
                 lwjgl = file.getName();
-            } else if(file.getName().startsWith("lwjgl_util-")){
+            } else if (file.getName().startsWith("lwjgl_util-")) {
                 lwjgl_util = file.getName();
-            } else if(file.getName().startsWith("jinput-")){
+            } else if (file.getName().startsWith("jinput-")) {
                 jinput = file.getName();
             }
         }
-        String[] jarFiles = new String[]{
-                "minecraft.jar",
-                lwjgl,
-                lwjgl_util,
-                jinput
-        };
+        String[] jarFiles = new String[]{"minecraft.jar", lwjgl, lwjgl_util, jinput};
         StringBuilder cpb = new StringBuilder("");
         File jarMods = instance.getJarModsDirectory();
-        if(jarMods.exists() && (instance.hasJarMods() || jarMods.listFiles().length != 0)){
-            if(instance.hasJarMods()){
-                ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance
-                        .getJarOrder().split(",")));
-                for(File file : jarMods.listFiles()){
-                    if(jarmods.contains(file.getName())){
+        if (jarMods.exists() && (instance.hasJarMods() || jarMods.listFiles().length != 0)) {
+            if (instance.hasJarMods()) {
+                ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance.getJarOrder().split(",")));
+                for (File file : jarMods.listFiles()) {
+                    if (jarmods.contains(file.getName())) {
                         continue;
                     }
                     cpb.append(File.pathSeparator);
                     cpb.append(file);
                 }
-                for(String mod : jarmods){
+                for (String mod : jarmods) {
                     File thisFile = new File(jarMods, mod);
-                    if(thisFile.exists()){
+                    if (thisFile.exists()) {
                         cpb.append(File.pathSeparator);
                         cpb.append(thisFile);
                     }
                 }
-            } else{
-                for(File file : jarMods.listFiles()){
+            } else {
+                for (File file : jarMods.listFiles()) {
                     cpb.append(File.pathSeparator);
                     cpb.append(file);
                 }
             }
         }
 
-        for(String jarFile : jarFiles){
+        for (String jarFile : jarFiles) {
             cpb.append(File.pathSeparator);
             cpb.append(new File(instance.getBinDirectory(), jarFile));
         }
@@ -93,40 +86,38 @@ public class LegacyMCLauncher{
         List<String> arguments = new ArrayList<String>();
 
         String path = App.settings.getJavaPath() + File.separator + "bin" + File.separator + "java";
-        if(Utils.isWindows()){
+        if (Utils.isWindows()) {
             path += "w";
         }
         arguments.add(path);
 
-        if(Utils.isWindows()){
-            arguments
-                    .add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
+        if (Utils.isWindows()) {
+            arguments.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
         }
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
         arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
 
-        if(App.settings.getMaximumMemory() < instance.getMemory()){
-            if((Utils.getMaximumRam() / 2) < instance.getMemory()){
+        if (App.settings.getMaximumMemory() < instance.getMemory()) {
+            if ((Utils.getMaximumRam() / 2) < instance.getMemory()) {
                 arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
-            } else{
+            } else {
                 arguments.add("-Xmx" + instance.getMemory() + "M");
             }
-        } else{
+        } else {
             arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
         }
-        if(App.settings.getPermGen() < instance.getPermGen()
-                && (Utils.getMaximumRam() / 8) < instance.getPermGen()){
-            if(Utils.isJava8()){
+        if (App.settings.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
+            if (Utils.isJava8()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
-            } else{
+            } else {
                 arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
             }
-        } else{
-            if(Utils.isJava8()){
+        } else {
+            if (Utils.isJava8()) {
                 arguments.add("-XX:MetaspaceSize=" + App.settings.getPermGen() + "M");
-            } else{
+            } else {
                 arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
             }
         }
@@ -135,24 +126,23 @@ public class LegacyMCLauncher{
         arguments.add("-Duser.country=US");
         arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
 
-        if(Utils.isMac()){
+        if (Utils.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
-            arguments.add("-Xdock:icon="
-                    + new File(App.settings.getImagesDir(), "OldMinecraftIcon.png")
-                    .getAbsolutePath());
+            arguments.add("-Xdock:icon=" + new File(App.settings.getImagesDir(),
+                    "OldMinecraftIcon.png").getAbsolutePath());
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
-        if(!App.settings.getJavaParameters().isEmpty()){
-            for(String arg : App.settings.getJavaParameters().split(" ")){
-                if(!arg.isEmpty()){
-                    if(instance.hasExtraArguments()){
-                        if(instance.getExtraArguments().contains(arg)){
+        if (!App.settings.getJavaParameters().isEmpty()) {
+            for (String arg : App.settings.getJavaParameters().split(" ")) {
+                if (!arg.isEmpty()) {
+                    if (instance.hasExtraArguments()) {
+                        if (instance.getExtraArguments().contains(arg)) {
                             LogManager.error("Duplicate argument " + arg + " found and not added!");
-                        } else{
+                        } else {
                             arguments.add(arg);
                         }
-                    } else{
+                    } else {
                         arguments.add(arg);
                     }
                 }
@@ -160,16 +150,15 @@ public class LegacyMCLauncher{
         }
 
         arguments.add("-cp");
-        File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
-                .getPath());
+        File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         String pathh = null;
-        try{
+        try {
             pathh = thisFile.getCanonicalPath();
             pathh = URLDecoder.decode(pathh, "UTF-8");
-        } catch(UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e) {
             pathh = System.getProperty("java.class.path");
             App.settings.logStackTrace(e);
-        } catch(IOException e){
+        } catch (IOException e) {
             pathh = System.getProperty("java.class.path");
             App.settings.logStackTrace(e);
         }
@@ -185,9 +174,9 @@ public class LegacyMCLauncher{
         arguments.add(instance.getName()); // Instance Name
         arguments.add(App.settings.getWindowWidth() + ""); // Window Width
         arguments.add(App.settings.getWindowHeight() + ""); // Window Height
-        if(App.settings.startMinecraftMaximised()){
+        if (App.settings.startMinecraftMaximised()) {
             arguments.add("true"); // Maximised
-        } else{
+        } else {
             arguments.add("false"); // Not Maximised
         }
 
@@ -195,15 +184,15 @@ public class LegacyMCLauncher{
         argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
         argsString = argsString.replace(sess.getAccessToken(), "REDACTED");
 
-        LogManager.info("Launching Minecraft with the following arguments "
-                + "(user related stuff has been removed): " + argsString);
+        LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):" +
+                " " + argsString);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
         return processBuilder.start();
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         String workingDirectory = args[0];
         String username = args[1];
         String session = args[2];
@@ -217,7 +206,7 @@ public class LegacyMCLauncher{
 
         File cwd = new File(workingDirectory);
 
-        try{
+        try {
             File binDir = new File(cwd, "bin");
             File lwjglDir = binDir;
 
@@ -226,34 +215,30 @@ public class LegacyMCLauncher{
             String lwjgl_util = "lwjgl_util.jar";
             String jinput = "jinput.jar";
             File[] files = new File(workingDirectory, "bin").listFiles();
-            for(File file : files){
-                if(file.getName().startsWith("lwjgl-")){
+            for (File file : files) {
+                if (file.getName().startsWith("lwjgl-")) {
                     lwjgl = file.getName();
-                } else if(file.getName().startsWith("lwjgl_util-")){
+                } else if (file.getName().startsWith("lwjgl_util-")) {
                     lwjgl_util = file.getName();
-                } else if(file.getName().startsWith("jinput-")){
+                } else if (file.getName().startsWith("jinput-")) {
                     jinput = file.getName();
                 }
             }
-            String[] lwjglJars = new String[]{
-                    lwjgl,
-                    lwjgl_util,
-                    jinput
-            };
+            String[] lwjglJars = new String[]{lwjgl, lwjgl_util, jinput};
 
             URL[] urls = new URL[4];
 
-            try{
+            try {
                 File f = new File(binDir, "minecraft.jar");
                 urls[0] = f.toURI().toURL();
                 System.out.println("Loading URL: " + urls[0].toString());
 
-                for(int i = 1; i <= lwjglJars.length; i++){
+                for (int i = 1; i <= lwjglJars.length; i++) {
                     File jar = new File(lwjglDir, lwjglJars[i - 1]);
                     urls[i] = jar.toURI().toURL();
                     System.out.println("Loading URL: " + urls[i].toString());
                 }
-            } catch(MalformedURLException e){
+            } catch (MalformedURLException e) {
                 System.err.println("MalformedURLException, " + e.toString());
                 System.exit(5);
             }
@@ -270,12 +255,12 @@ public class LegacyMCLauncher{
 
             // Get the Minecraft Class.
             Class<?> mc = null;
-            try{
+            try {
                 mc = cl.loadClass("net.minecraft.client.Minecraft");
 
                 Field f = getMCPathField(mc);
 
-                if(f == null){
+                if (f == null) {
                     System.err.println("Could not find Minecraft path field. Launch failed.");
                     System.exit(-1);
                 }
@@ -284,19 +269,19 @@ public class LegacyMCLauncher{
                 f.set(null, cwd);
                 // And set it.
                 System.out.println("Fixed Minecraft Path: Field was " + f.toString());
-            } catch(ClassNotFoundException e){
+            } catch (ClassNotFoundException e) {
                 System.err.println("Can't find main class. Searching...");
 
                 // Look for any class that looks like the main class.
                 File mcJar = new File(new File(cwd, "bin"), "minecraft.jar");
                 ZipFile zip = null;
-                try{
+                try {
                     zip = new ZipFile(mcJar);
-                } catch(ZipException e1){
+                } catch (ZipException e1) {
                     e1.printStackTrace();
                     System.err.println("Search failed.");
                     System.exit(-1);
-                } catch(IOException e1){
+                } catch (IOException e1) {
                     e1.printStackTrace();
                     System.err.println("Search failed.");
                     System.exit(-1);
@@ -305,46 +290,44 @@ public class LegacyMCLauncher{
                 Enumeration<? extends ZipEntry> entries = zip.entries();
                 ArrayList<String> classes = new ArrayList<String>();
 
-                while(entries.hasMoreElements()){
+                while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
-                    if(entry.getName().endsWith(".class")){
-                        String entryName = entry.getName().substring(0,
-                                entry.getName().lastIndexOf('.'));
+                    if (entry.getName().endsWith(".class")) {
+                        String entryName = entry.getName().substring(0, entry.getName().lastIndexOf('.'));
                         entryName = entryName.replace('/', '.');
                         System.out.println("Found class: " + entryName);
                         classes.add(entryName);
                     }
                 }
 
-                for(String clsName : classes){
-                    try{
+                for (String clsName : classes) {
+                    try {
                         Class<?> cls = cl.loadClass(clsName);
-                        if(!Runnable.class.isAssignableFrom(cls)){
+                        if (!Runnable.class.isAssignableFrom(cls)) {
                             continue;
-                        } else{
-                            System.out.println("Found class implementing runnable: "
-                                    + cls.getName());
+                        } else {
+                            System.out.println("Found class implementing runnable: " + cls.getName());
                         }
 
-                        if(getMCPathField(cls) == null){
+                        if (getMCPathField(cls) == null) {
                             continue;
-                        } else{
-                            System.out.println("Found class implementing runnable "
-                                    + "with mcpath field: " + cls.getName());
+                        } else {
+                            System.out.println("Found class implementing runnable " + "with mcpath field: " + cls
+                                    .getName());
                         }
 
                         mc = cls;
                         break;
-                    } catch(ClassNotFoundException e1){
+                    } catch (ClassNotFoundException e1) {
                         // Ignore
                         continue;
                     }
                 }
 
-                if(mc == null){
+                if (mc == null) {
                     System.err.println("Failed to find Minecraft main class.");
                     System.exit(-1);
-                } else{
+                } else {
                     System.out.println("Found main class: " + mc.getName());
                 }
             }
@@ -355,59 +338,58 @@ public class LegacyMCLauncher{
             mcArgs[0] = username;
             mcArgs[1] = session;
 
-            if(compatMode){
+            if (compatMode) {
                 System.out.println("Launching in compatibility mode...");
                 mc.getMethod("main", String[].class).invoke(null, (Object) mcArgs);
-            } else{
+            } else {
                 System.out.println("Launching with applet wrapper...");
-                try{
+                try {
                     Class<?> MCAppletClass = cl.loadClass("net.minecraft.client.MinecraftApplet");
                     Applet mcappl = (Applet) MCAppletClass.newInstance();
                     MCFrame mcWindow = new MCFrame("ATLauncher - " + instanceName);
                     mcWindow.start(mcappl, username, session, winSize, maximize);
-                } catch(InstantiationException e){
-                    System.out.println("Applet wrapper failed! Falling back "
-                            + "to compatibility mode.");
+                } catch (InstantiationException e) {
+                    System.out.println("Applet wrapper failed! Falling back " + "to compatibility mode.");
                     mc.getMethod("main", String[].class).invoke(null, (Object) mcArgs);
                 } finally {
-                    try{
+                    try {
                         cl.close();
-                    } catch(IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             }
-        } catch(ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
             System.exit(1);
-        } catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
             System.exit(2);
-        } catch(IllegalAccessException e){
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
             System.exit(2);
-        } catch(InvocationTargetException e){
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
             System.exit(3);
-        } catch(NoSuchMethodException e){
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
             System.exit(3);
-        } catch(SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
             System.exit(4);
         }
     }
 
-    public static Field getMCPathField(Class<?> mc){
+    public static Field getMCPathField(Class<?> mc) {
         Field[] fields = mc.getDeclaredFields();
 
-        for(int i = 0; i < fields.length; i++){
+        for (int i = 0; i < fields.length; i++) {
             Field f = fields[i];
-            if(f.getType() != File.class){
+            if (f.getType() != File.class) {
                 // Has to be File
                 continue;
             }
-            if(f.getModifiers() != (Modifier.PRIVATE + Modifier.STATIC)){
+            if (f.getModifiers() != (Modifier.PRIVATE + Modifier.STATIC)) {
                 // And Private Static.
                 continue;
             }

@@ -11,16 +11,16 @@ import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.utils.Utils;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 @SuppressWarnings("serial")
-public abstract class AbstractSettingsTab extends JPanel implements Tab{
+public abstract class AbstractSettingsTab extends JPanel implements Tab {
     final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);
     final Insets FIELD_INSETS = new Insets(5, 0, 5, 0);
     final Insets LABEL_INSETS_SMALL = new Insets(0, 0, 0, 10);
@@ -35,7 +35,7 @@ public abstract class AbstractSettingsTab extends JPanel implements Tab{
 
     final GridBagConstraints gbc;
 
-    public AbstractSettingsTab(){
+    public AbstractSettingsTab() {
         setLayout(new GridBagLayout());
         this.gbc = new GridBagConstraints();
     }

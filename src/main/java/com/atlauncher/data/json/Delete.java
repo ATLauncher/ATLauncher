@@ -9,15 +9,15 @@ package com.atlauncher.data.json;
 import com.atlauncher.annot.Json;
 
 @Json
-public class Delete{
+public class Delete {
     private String base;
     private String target;
 
-    public String getBase(){
+    public String getBase() {
         return this.base;
     }
 
-    public String getTarget(){
+    public String getTarget() {
         return this.target;
     }
 }

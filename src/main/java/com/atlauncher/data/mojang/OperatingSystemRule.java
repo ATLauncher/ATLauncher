@@ -10,16 +10,16 @@
  */
 package com.atlauncher.data.mojang;
 
-public class OperatingSystemRule{
+public class OperatingSystemRule {
 
     private OperatingSystem name;
     private String version;
 
-    public OperatingSystem getName(){
+    public OperatingSystem getName() {
         return this.name;
     }
 
-    public String getVersion(){
+    public String getVersion() {
         return this.version;
     }
 

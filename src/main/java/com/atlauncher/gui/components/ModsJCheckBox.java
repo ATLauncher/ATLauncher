@@ -20,21 +20,20 @@ import javax.swing.JToolTip;
 import javax.swing.border.Border;
 
 /**
- * This class extends {@link JCheckBox} and overrides the need to use JCheckBox in the
- * {@link ModsChooser}, {@link JsonModsChooser} and {@link EditModsDialog}, providing specific
- * functionality for those two components. Mainly providing a hover tooltip for a mods description,
- * as well as giving pack developers a way to colour mod's names. Alternatively can be used to
- * display categories.
+ * This class extends {@link JCheckBox} and overrides the need to use JCheckBox in the {@link ModsChooser}, {@link
+ * JsonModsChooser} and {@link EditModsDialog}, providing specific functionality for those two components. Mainly
+ * providing a hover tooltip for a mods description, as well as giving pack developers a way to colour mod's names.
+ * Alternatively can be used to display categories.
  */
-public class ModsJCheckBox extends JCheckBox{
+public class ModsJCheckBox extends JCheckBox {
     /**
      * Auto generated serial.
      */
     private static final long serialVersionUID = -4560260483416099547L;
 
     /**
-     * The mod this object will use to display it's data. Will be type {@link Mod},
-     * {@link com.atlauncher.data.json.Mod} or {@link DisableableMod}.
+     * The mod this object will use to display it's data. Will be type {@link Mod}, {@link com.atlauncher.data.json.Mod}
+     * or {@link DisableableMod}.
      */
     private Object mod;
 
@@ -51,23 +50,21 @@ public class ModsJCheckBox extends JCheckBox{
     /**
      * Static object for the {@link Border} to show around the tooltips for mods with descriptions.
      */
-    private static final Border HOVER_BORDER = new CustomLineBorder(5,
-            App.THEME.getHoverBorderColor(), 2);
+    private static final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
 
     /**
      * Constructor for use in the {@link ModsChooser} dialog.
      *
      * @param mod The mod this object is displaying data for
      */
-    public ModsJCheckBox(Mod mod){
+    public ModsJCheckBox(Mod mod) {
         super(mod.getName());
-        if(mod.hasColour()){
+        if (mod.hasColour()) {
             setForeground(mod.getColour());
         }
         this.mod = mod;
-        if(mod.getDescription() != null && !mod.getDescription().isEmpty()){
-            this.setToolTipText("<html>"
-                    + Utils.splitMultilinedString(mod.getDescription(), 100, "<br/>") + "</html>");
+        if (mod.getDescription() != null && !mod.getDescription().isEmpty()) {
+            this.setToolTipText("<html>" + Utils.splitMultilinedString(mod.getDescription(), 100, "<br/>") + "</html>");
         }
     }
 
@@ -76,15 +73,14 @@ public class ModsJCheckBox extends JCheckBox{
      *
      * @param mod The mod this object is displaying data for
      */
-    public ModsJCheckBox(com.atlauncher.data.json.Mod mod){
+    public ModsJCheckBox(com.atlauncher.data.json.Mod mod) {
         super(mod.getName());
-        if(mod.hasColour() && mod.getCompiledColour() != null){
+        if (mod.hasColour() && mod.getCompiledColour() != null) {
             setForeground(mod.getCompiledColour());
         }
         this.mod = mod;
-        if(mod.hasDescription()){
-            this.setToolTipText("<html>"
-                    + Utils.splitMultilinedString(mod.getDescription(), 100, "<br/>") + "</html>");
+        if (mod.hasDescription()) {
+            this.setToolTipText("<html>" + Utils.splitMultilinedString(mod.getDescription(), 100, "<br/>") + "</html>");
         }
     }
 
@@ -93,13 +89,13 @@ public class ModsJCheckBox extends JCheckBox{
      *
      * @param mod The mod this object is displaying data for
      */
-    public ModsJCheckBox(DisableableMod mod){
+    public ModsJCheckBox(DisableableMod mod) {
         super(mod.getName());
-        if(mod.hasColour()){
+        if (mod.hasColour()) {
             setForeground(mod.getColour());
         }
         this.mod = mod;
-        if(mod.getDescription() != null && !mod.getDescription().isEmpty()){
+        if (mod.getDescription() != null && !mod.getDescription().isEmpty()) {
             this.setToolTipText(mod.getDescription());
         }
     }
@@ -109,7 +105,7 @@ public class ModsJCheckBox extends JCheckBox{
      *
      * @param categoryName The name of the category to show
      */
-    public ModsJCheckBox(String categoryName){
+    public ModsJCheckBox(String categoryName) {
         super(categoryName);
         this.isCategory = true;
     }
@@ -119,7 +115,7 @@ public class ModsJCheckBox extends JCheckBox{
      *
      * @return true if this object represents a category
      */
-    public boolean isCategory(){
+    public boolean isCategory() {
         return this.isCategory;
     }
 
@@ -128,7 +124,7 @@ public class ModsJCheckBox extends JCheckBox{
      *
      * @return The categories name
      */
-    public String getCategoryName(){
+    public String getCategoryName() {
         return this.categoryName;
     }
 
@@ -137,7 +133,7 @@ public class ModsJCheckBox extends JCheckBox{
      *
      * @return The mod for this object
      */
-    public Mod getMod(){
+    public Mod getMod() {
         return (Mod) this.mod;
     }
 
@@ -146,7 +142,7 @@ public class ModsJCheckBox extends JCheckBox{
      *
      * @return The mod for this object
      */
-    public com.atlauncher.data.json.Mod getJsonMod(){
+    public com.atlauncher.data.json.Mod getJsonMod() {
         return (com.atlauncher.data.json.Mod) this.mod;
     }
 
@@ -155,12 +151,12 @@ public class ModsJCheckBox extends JCheckBox{
      *
      * @return The mod for this object
      */
-    public DisableableMod getDisableableMod(){
+    public DisableableMod getDisableableMod() {
         return (DisableableMod) this.mod;
     }
 
     @Override
-    public JToolTip createToolTip(){
+    public JToolTip createToolTip() {
         JToolTip tip = super.createToolTip();
         tip.setBorder(HOVER_BORDER);
         return tip;

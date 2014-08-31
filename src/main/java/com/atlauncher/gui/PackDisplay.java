@@ -16,27 +16,25 @@ import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.utils.Utils;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Class for displaying packs in the Pack Tab
  *
  * @author Ryan
  */
-public class PackDisplay
-        extends CollapsiblePanel
-        implements RelocalizationListener{
+public class PackDisplay extends CollapsiblePanel implements RelocalizationListener {
     private static final long serialVersionUID = -2617283435728223314L;
     private final JTextArea descArea = new JTextArea();
     private final JButton newInstanceButton = new JButton(Language.INSTANCE.localize("common.newinstance"));
@@ -48,7 +46,7 @@ public class PackDisplay
     private final GridBagConstraints gbc = new GridBagConstraints();
     private final Pack pack;
 
-    public PackDisplay(Pack pack){
+    public PackDisplay(Pack pack) {
         super(pack);
         RelocalizationManager.addListener(this);
         this.pack = pack;
@@ -79,71 +77,63 @@ public class PackDisplay
         this.addActionListeners();
     }
 
-    private void addActionListeners(){
-        this.newInstanceButton.addActionListener(new ActionListener(){
+    private void addActionListeners() {
+        this.newInstanceButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                if(App.settings.isInOfflineMode()){
+            public void actionPerformed(ActionEvent e) {
+                if (App.settings.isInOfflineMode()) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("pack.offlinenewinstance"),
-                            Language.INSTANCE.localize("common.offline"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                } else{
-                    if(App.settings.getAccount() == null){
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" +
+                            ".offlinenewinstance"), Language.INSTANCE.localize("common.offline"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                } else {
+                    if (App.settings.getAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                Language.INSTANCE.localize("instance.cannotcreate"),
-                                Language.INSTANCE.localize("instance.noaccountselected"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
-                    } else{
+                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
+                                ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    } else {
                         new InstanceInstallerDialog(pack);
                     }
                 }
             }
         });
-        this.createServerButton.addActionListener(new ActionListener(){
+        this.createServerButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                if(App.settings.isInOfflineMode()){
+            public void actionPerformed(ActionEvent e) {
+                if (App.settings.isInOfflineMode()) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("pack.offlinecreateserver"),
-                            Language.INSTANCE.localize("common.offline"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                            options[0]);
-                } else{
-                    if(App.settings.getAccount() == null){
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" +
+                            ".offlinecreateserver"), Language.INSTANCE.localize("common.offline"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                } else {
+                    if (App.settings.getAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                Language.INSTANCE.localize("instance.cannotcreate"),
-                                Language.INSTANCE.localize("instance.noaccountselected"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                                options, options[0]);
-                    } else{
+                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
+                                ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    } else {
                         new InstanceInstallerDialog(pack, true);
                     }
                 }
             }
         });
-        this.supportButton.addActionListener(new ActionListener(){
+        this.supportButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 Utils.openBrowser(pack.getSupportURL());
             }
         });
-        this.websiteButton.addActionListener(new ActionListener(){
+        this.websiteButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 Utils.openBrowser(pack.getWebsiteURL());
             }
         });
     }
 
     @Override
-    public void onRelocalization(){
+    public void onRelocalization() {
         this.newInstanceButton.setText(Language.INSTANCE.localize("common.newinstance"));
         this.createServerButton.setText(Language.INSTANCE.localize("common.createserver"));
         this.supportButton.setText(Language.INSTANCE.localize("common.support"));
