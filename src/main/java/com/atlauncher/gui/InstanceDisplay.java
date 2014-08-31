@@ -33,11 +33,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -45,6 +47,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * TODO: Rewrite along with CollapsiblePanel
@@ -72,9 +75,11 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
     private JButton editMods; // Edit mods button
     private JButton openFolder; // Open Folder button
     private Pack pack; // The pack this instance is
+    private final Instance instance;
 
     public InstanceDisplay(final Instance instance){
         super(instance);
+        this.instance = instance;
         RelocalizationManager.addListener(this);
         pack = instance.getRealPack();
         JPanel panel = super.getContentPane();
@@ -92,6 +97,7 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
         splitPane.setEnabled(false);
 
         instanceImage = new JLabel(instance.getImage());
+        instanceImage.setPreferredSize(new Dimension(300, 150));
         instanceImage.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e){
@@ -142,6 +148,23 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                             if(instance.launch()){
                                 App.settings.setMinecraftLaunched(true);
                             }
+                        }
+                    }
+                } else if(e.getButton() == MouseEvent.BUTTON3){
+                    JFileChooser chooser = new JFileChooser();
+                    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    chooser.setAcceptAllFileFilterUsed(false);
+                    chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
+                    int ret = chooser.showOpenDialog(App.settings.getParent());
+                    if(ret == JFileChooser.APPROVE_OPTION){
+                        File img = chooser.getSelectedFile();
+                        try{
+                            Utils.safeCopy(img, new File(App.settings.getImagesDir(), img.getName()));
+                            instance.setImage(img);
+                            instanceImage.setIcon(instance.getImage());
+                            instance.save();
+                        } catch(IOException e1){
+                            e1.printStackTrace(System.err);
                         }
                     }
                 }

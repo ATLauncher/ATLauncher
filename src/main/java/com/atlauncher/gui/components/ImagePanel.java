@@ -8,11 +8,16 @@ import javax.swing.JPanel;
 
 public final class ImagePanel
 extends JPanel{
-    private final Image image;
+    private volatile Image image;
 
     public ImagePanel(Image image) {
         this.image = image;
-        this.setPreferredSize(new Dimension(image.getWidth(null), image.getHeight(null)));
+        this.setPreferredSize(new Dimension(Math.min(image.getWidth(null), 300), Math.min(image.getWidth(null), 150)));
+    }
+
+    public void setImage(Image img){
+        this.image = img;
+        this.repaint();
     }
 
     @Override

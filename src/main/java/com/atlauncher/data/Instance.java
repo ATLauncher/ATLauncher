@@ -7,6 +7,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
@@ -19,6 +20,7 @@ import com.atlauncher.utils.Utils;
 import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -129,6 +131,8 @@ public class Instance implements Cloneable{
      * files are found corrupt.
      */
     private boolean isPlayable;
+
+    private String image;
 
     /**
      * If this instance uses the MCLauncher or the LegacyMCLauncher class to load Minecraft.
@@ -359,14 +363,13 @@ public class Instance implements Cloneable{
      * @return ImageIcon for this Instances Pack
      */
     public ImageIcon getImage(){
-        File imageFile = new File(App.settings.getImagesDir(), getSafePackName().toLowerCase()
-                + ".png");
+        File imageFile = this.image != null ? new File(App.settings.getImagesDir(), this.image + ".png") :
+                new File(App.settings.getImagesDir(), getSafePackName().toLowerCase() + ".png");
 
         if(!imageFile.exists()){
             imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
         }
 
-        System.out.println(imageFile);
         return Utils.getIconImage(imageFile);
     }
 
@@ -1379,5 +1382,27 @@ public class Instance implements Cloneable{
             }
         }
         return customMods;
+    }
+
+    public void setImage(File file){
+        this.image = file.getName().substring(0, file.getName().lastIndexOf('.'));
+    }
+
+    public void save(){
+        try{
+            FileWriter writer = null;
+            try{
+                writer = new FileWriter(new File(new File(App.settings.getInstancesDir(), this.getSafeName()), "instance.json"));
+                writer.write(Gsons.DEFAULT.toJson(this));
+                writer.flush();
+                App.TOASTER.pop("Instance " + this.getName());
+            } finally{
+                if(writer != null){
+                    writer.close();
+                }
+            }
+        } catch(IOException e){
+            e.printStackTrace(System.err);
+        }
     }
 }
