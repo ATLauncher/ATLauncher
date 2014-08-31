@@ -325,7 +325,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 }
                                 App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();
-                                if (pack.isLoggingEnabled() && App.settings.enableLogs()) {
+                                if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev()) {
                                     pack.addInstall(version.getVersion());
                                 }
                             } else {

@@ -286,6 +286,15 @@ public class Instance implements Cloneable {
     }
 
     /**
+     * Sets the order to load the jars from the jarmods folder.
+     *
+     * @param jarOrder comma separated list of filenames for the order to load the mods from the jarmods folder
+     */
+    public void setJarOrder(String jarOrder) {
+        this.jarOrder = jarOrder;
+    }
+
+    /**
      * Gets the minimum recommended RAM/memory for this Instance based off what the Pack specifies. Defaults to 0 if
      * there is none specified by the pack. Value is in MB.
      *
@@ -293,6 +302,15 @@ public class Instance implements Cloneable {
      */
     public int getMemory() {
         return this.memory;
+    }
+
+    /**
+     * Sets the minimum recommended RAM/memory for this Instance in MB.
+     *
+     * @param memory the minimum recommended RAM/memory for this Instance in MB
+     */
+    public void setMemory(int memory) {
+        this.memory = memory;
     }
 
     /**
@@ -469,12 +487,30 @@ public class Instance implements Cloneable {
     }
 
     /**
+     * Sets the version of the Pack this Instance was created from.
+     *
+     * @param version the version of the Pack this Instance was created from
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    /**
      * Gets the Minecraft Version that this Instance uses.
      *
      * @return the Minecraft Version that this Instance uses
      */
     public String getMinecraftVersion() {
         return this.minecraftVersion;
+    }
+
+    /**
+     * Sets the Minecraft version of the Pack this Instance was created from.
+     *
+     * @param minecraftVersion the new minecraft version
+     */
+    public void setMinecraftVersion(String minecraftVersion) {
+        this.minecraftVersion = minecraftVersion;
     }
 
     /**
@@ -665,42 +701,6 @@ public class Instance implements Cloneable {
      */
     public boolean hasJarMods() {
         return this.jarOrder != null;
-    }
-
-    /**
-     * Sets the version of the Pack this Instance was created from.
-     *
-     * @param version the version of the Pack this Instance was created from
-     */
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    /**
-     * Sets the Minecraft version of the Pack this Instance was created from.
-     *
-     * @param minecraftVersion the new minecraft version
-     */
-    public void setMinecraftVersion(String minecraftVersion) {
-        this.minecraftVersion = minecraftVersion;
-    }
-
-    /**
-     * Sets the order to load the jars from the jarmods folder.
-     *
-     * @param jarOrder comma separated list of filenames for the order to load the mods from the jarmods folder
-     */
-    public void setJarOrder(String jarOrder) {
-        this.jarOrder = jarOrder;
-    }
-
-    /**
-     * Sets the minimum recommended RAM/memory for this Instance in MB.
-     *
-     * @param memory the minimum recommended RAM/memory for this Instance in MB
-     */
-    public void setMemory(int memory) {
-        this.memory = memory;
     }
 
     /**
@@ -982,7 +982,7 @@ public class Instance implements Cloneable {
         final Account account = App.settings.getAccount();
         if (account == null) {
             String[] options = {App.settings.getLocalizedString("common.ok")};
-            JOptionPane.showOptionDialog(App.settings.getParent(), App.settings.getLocalizedString("instance" +
+            JOptionPane.showOptionDialog(App.settings.getParent(), App.settings.getLocalizedString("instance" + "" +
                     ".noaccount"), App.settings.getLocalizedString("instance.noaccountselected"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
@@ -1067,7 +1067,7 @@ public class Instance implements Cloneable {
                 String[] options = {App.settings.getLocalizedString("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App.settings
                         .getLocalizedString("instance.errorloggingin", "<br/><br/>" + sess.getErrorMessage()) +
-                        "</p></html>", App.settings.getLocalizedString("instance.errorloggingintitle"),
+                                "</p></html>", App.settings.getLocalizedString("instance.errorloggingintitle"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 App.settings.setMinecraftLaunched(false);
                 return false;
@@ -1183,7 +1183,8 @@ public class Instance implements Cloneable {
 
                         App.settings.setMinecraftLaunched(false);
                         if (!App.settings.isInOfflineMode()) {
-                            if (isLeaderboardsEnabled() && isLoggingEnabled() && App.settings.enableLogs()) {
+                            if (isLeaderboardsEnabled() && isLoggingEnabled() && !isDev() && App.settings.enableLogs
+                                    ()) {
                                 final int timePlayed = (int) (end - start) / 1000;
                                 App.TASKPOOL.submit(new Runnable() {
                                     public void run() {
@@ -1232,7 +1233,7 @@ public class Instance implements Cloneable {
                         String[] options = {App.settings.getLocalizedString("common.opencrashreport"),
                                 App.settings.getLocalizedString("common.ok")};
                         int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                "<html><p align=\"center\">" + App.settings.getLocalizedString("instance" +
+                                "<html><p align=\"center\">" + App.settings.getLocalizedString("instance" + "" +
                                         ".openeyereport1", "<br/><br/>") + response.getNoteDisplay() + App.settings
                                         .getLocalizedString("instance.openeyereport2") + "</p></html>",
                                 App.settings.getLocalizedString("instance.aboutyourcrash"),
