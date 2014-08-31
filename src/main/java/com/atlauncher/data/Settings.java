@@ -486,7 +486,7 @@ public class Settings {
     }
 
     /**
-     * This checks the servers hashes.xml file and gets the files that the Launcher needs to have
+     * This checks the servers hashes.json file and gets the files that the Launcher needs to have
      */
     private ArrayList<Downloadable> getLauncherFiles() {
         getFileHashes(); // Get File Hashes
@@ -533,7 +533,7 @@ public class Settings {
     }
 
     /**
-     * This checks the servers hashes.xml file and looks for new/updated files that differ from what the user has
+     * This checks the servers hashes.json file and looks for new/updated files that differ from what the user has
      */
     public boolean hasUpdatedFiles() {
         if (isInOfflineMode()) {
@@ -1641,7 +1641,7 @@ public class Settings {
 
     public void setMinecraftLaunched(boolean launched) {
         this.minecraftLaunched = launched;
-        ((TrayMenu) App.TRAY_MENU).setMinecraftLaunched(launched);
+        App.TRAY_MENU.setMinecraftLaunched(launched);
     }
 
     /**
