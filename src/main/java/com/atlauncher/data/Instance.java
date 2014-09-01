@@ -131,8 +131,6 @@ public class Instance implements Cloneable {
      */
     private boolean isPlayable;
 
-    private String image;
-
     /**
      * If this instance uses the MCLauncher or the LegacyMCLauncher class to load Minecraft.
      *
@@ -370,14 +368,18 @@ public class Instance implements Cloneable {
      *
      * @return ImageIcon for this Instances Pack
      */
-    public ImageIcon getImage(){
-        File imageFile = this.image != null ? new File(App.settings.getImagesDir(), this.image + ".png") :
-                new File(App.settings.getImagesDir(), getSafePackName().toLowerCase() + ".png");
-        if (!imageFile.exists()) {
-            imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
-        }
+    public ImageIcon getImage() {
+        File customImage = new File(this.getRootDirectory(), "instance.png");
+        File instancesImage = new File(App.settings.getImagesDir(), getSafePackName().toLowerCase() + ".png");
 
-        return Utils.getIconImage(imageFile);
+        if (customImage.exists()) {
+            return Utils.getIconImage(customImage);
+        } else if (instancesImage.exists()) {
+            return Utils.getIconImage(instancesImage);
+
+        } else {
+            return Utils.getIconImage(new File(App.settings.getImagesDir(), "defaultimage.png"));
+        }
     }
 
     /**
@@ -986,7 +988,7 @@ public class Instance implements Cloneable {
         if (account == null) {
             String[] options = {App.settings.getLocalizedString("common.ok")};
             JOptionPane.showOptionDialog(App.settings.getParent(), App.settings.getLocalizedString("instance" + "" +
-                    ".noaccount"), App.settings.getLocalizedString("instance.noaccountselected"),
+                            ".noaccount"), App.settings.getLocalizedString("instance.noaccountselected"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
             return false;
@@ -1314,24 +1316,21 @@ public class Instance implements Cloneable {
         return customMods;
     }
 
-    public void setImage(File file){
-        this.image = file.getName().substring(0, file.getName().lastIndexOf('.'));
-    }
-
-    public void save(){
-        try{
+    public void save() {
+        try {
             FileWriter writer = null;
-            try{
-                writer = new FileWriter(new File(new File(App.settings.getInstancesDir(), this.getSafeName()), "instance.json"));
+            try {
+                writer = new FileWriter(new File(new File(App.settings.getInstancesDir(), this.getSafeName()),
+                        "instance.json"));
                 writer.write(Gsons.DEFAULT.toJson(this));
                 writer.flush();
                 App.TOASTER.pop("Instance " + this.getName());
-            } finally{
-                if(writer != null){
+            } finally {
+                if (writer != null) {
                     writer.close();
                 }
             }
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace(System.err);
         }
     }
