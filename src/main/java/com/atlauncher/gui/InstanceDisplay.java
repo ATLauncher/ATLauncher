@@ -148,7 +148,7 @@ public class InstanceDisplay extends CollapsiblePanel implements RelocalizationL
                     }
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     JPopupMenu rightClickMenu = new JPopupMenu();
-                    JMenuItem changeImageItem = new JMenuItem("Change Image");
+                    JMenuItem changeImageItem = new JMenuItem(Language.INSTANCE.localize("instance.changeimage"));
                     rightClickMenu.add(changeImageItem);
                     rightClickMenu.show(instanceImage, e.getX(), e.getY());
                     changeImageItem.addActionListener(new ActionListener() {
