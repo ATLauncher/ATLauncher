@@ -17,12 +17,15 @@ import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import java.awt.BorderLayout;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -373,8 +376,17 @@ public class Instance implements Cloneable {
         File instancesImage = new File(App.settings.getImagesDir(), getSafePackName().toLowerCase() + ".png");
 
         if (customImage.exists()) {
-            return Utils.getIconImage(customImage);
-        } else if (instancesImage.exists()) {
+            try {
+                BufferedImage img = ImageIO.read(customImage);
+                Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
+                return new ImageIcon(dimg);
+            } catch (IOException e) {
+                App.settings.logStackTrace("Error creating scaled image from the custom image of instance " + this
+                        .getName(), e);
+            }
+        }
+
+        if (instancesImage.exists()) {
             return Utils.getIconImage(instancesImage);
 
         } else {
