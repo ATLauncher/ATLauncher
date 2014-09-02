@@ -231,7 +231,7 @@ public class Settings {
         for (Pack pack : this.packs) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
-                    if (server.getName() == "Master Server (Testing Only)") {
+                    if (server.getName().equals("Master Server (Testing Only)")) {
                         server.setUserSelectable(true);
                         break OUTER; // Don't need to check anymore so break the outer loop
                     }
