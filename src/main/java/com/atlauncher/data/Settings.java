@@ -1898,10 +1898,9 @@ public class Settings {
             server.enableServer();
         }
         this.offlineMode = false;
-        Downloadable download = new Downloadable(server.getTestURL(), true);
+        Downloadable download = new Downloadable("ping", true);
         String test = download.getContents();
         if (test != null && test.equalsIgnoreCase("pong")) {
-            this.offlineMode = false;
             reloadPacksPanel();
             reloadInstancesPanel();
         } else {
