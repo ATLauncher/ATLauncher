@@ -159,7 +159,7 @@ public class MCLauncher {
                 argument = argument.replace("${game_assets}", instance.getAssetsDir().getAbsolutePath());
                 argument = argument.replace("${assets_root}", App.settings.getResourcesDir().getAbsolutePath());
                 argument = argument.replace("${assets_index_name}", instance.getAssets());
-                argument = argument.replace("${auth_uuid}", response.getSelectedProfile().getId());
+                argument = argument.replace("${auth_uuid}", account.getUUID());
                 argument = argument.replace("${auth_access_token}", response.getAccessToken());
                 argument = argument.replace("${auth_session}", response.getSession());
                 argument = argument.replace("${user_type}", (response.getSelectedProfile().isLegacy() ? UserType
@@ -172,7 +172,7 @@ public class MCLauncher {
 
             // This is for 1.7
             arguments.add("--accessToken=" + response.getAccessToken());
-            arguments.add("--uuid=" + response.getSelectedProfile().getId());
+            arguments.add("--uuid=" + account.getUUID());
             // End of stuff for 1.7
 
             arguments.add("--version=" + instance.getMinecraftVersion());
