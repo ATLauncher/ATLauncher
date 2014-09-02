@@ -404,7 +404,7 @@ public class Instance implements Cloneable {
         if (this.realPack != null) {
             return this.realPack.getDescription();
         } else {
-            return "No Description!"; // TODO: Localise the No Description text
+            return App.settings.getLocalizedString("pack.nodescription");
         }
     }
 
