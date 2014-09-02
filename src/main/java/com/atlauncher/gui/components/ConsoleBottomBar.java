@@ -109,10 +109,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     }
 
     public void setupLanguage() {
-        clearButton.setText(Language.INSTANCE.localize("console.clear"));
-        copyLogButton.setText(Language.INSTANCE.localize("console.copy"));
-        uploadLogButton.setText(Language.INSTANCE.localize("console.upload"));
-        killMinecraftButton.setText(Language.INSTANCE.localize("console.kill"));
+        this.onRelocalization();
     }
 
     @Override
