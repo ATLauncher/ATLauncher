@@ -106,6 +106,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
+        this.saveButton.setText(App.settings.getLocalizedString("common.save"));
     }
 
 }
