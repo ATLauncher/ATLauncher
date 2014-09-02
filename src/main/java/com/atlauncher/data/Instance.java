@@ -1091,6 +1091,7 @@ public class Instance implements Cloneable {
             } else {
                 account.setAccessToken(sess.getAccessToken());
                 account.setClientToken(sess.getClientToken());
+                account.setUUID(sess.getSelectedProfile().getId());
                 App.settings.saveAccounts();
             }
 
@@ -1128,14 +1129,16 @@ public class Instance implements Cloneable {
                         BufferedReader br = new BufferedReader(isr);
                         String line;
                         while ((line = br.readLine()) != null) {
-                            line = line.replace(App.settings.getAccount().getMinecraftUsername(),
-                                    "**MINECRAFTUSERNAME**");
-                            line = line.replace(App.settings.getAccount().getUsername(), "**MINECRAFTUSERNAME**");
-                            if (session.isReal()) {
-                                line = line.replace(session.getAccessToken(), "**ACCESSTOKEN**");
-                                line = line.replace(session.getClientToken(), "**CLIENTTOKEN**");
-                                line = line.replace(session.getUUID(), "**UUID**");
-                                line = line.replace(session.getSelectedProfile().getId(), "**PROFILEID**");
+                            line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
+                            line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
+                            if (account.hasAccessToken()) {
+                                line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
+                            }
+                            if (account.hasClientToken()) {
+                                line = line.replace(account.getClientToken(), "**CLIENTTOKEN**");
+                            }
+                            if (account.hasUUID()) {
+                                line = line.replace(account.getUUID(), "**UUID**");
                             }
                             LogManager.minecraft(line);
                         }

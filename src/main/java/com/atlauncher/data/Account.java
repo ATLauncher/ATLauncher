@@ -284,7 +284,7 @@ public class Account implements Serializable {
      * @return The UUID for this Account
      */
     public String getUUID() {
-        return this.uuid;
+        return (this.uuid == null ? "0" : this.uuid);
     }
 
     /**
@@ -294,6 +294,10 @@ public class Account implements Serializable {
      */
     public void setUUID(String uuid) {
         this.uuid = uuid;
+    }
+
+    public boolean hasUUID() {
+        return this.uuid != null;
     }
 
     /**
@@ -431,8 +435,8 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {App.settings.getLocalizedString("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                ".skinerror"), Language.INSTANCE.localize("common.error"),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
@@ -484,7 +488,7 @@ public class Account implements Serializable {
     }
 
     public String getAccessToken() {
-        return this.accessToken;
+        return (this.accessToken == null ? "0" : this.accessToken);
     }
 
     public void setAccessToken(String accessToken) {
@@ -529,7 +533,7 @@ public class Account implements Serializable {
     }
 
     public String getClientToken() {
-        return this.clientToken;
+        return (this.clientToken == null ? "0" : this.clientToken);
     }
 
     public void setClientToken(String clientToken) {
@@ -543,5 +547,9 @@ public class Account implements Serializable {
     @Override
     public String toString() {
         return this.minecraftUsername;
+    }
+
+    public String getSession() {
+        return "token:" + this.getAccessToken() + ":" + this.getUUID();
     }
 }
