@@ -8,6 +8,8 @@ package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
@@ -19,7 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class ToolsSettingsTab extends AbstractSettingsTab {
+public class ToolsSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private JLabelWithHover enableServerCheckerLabel;
     private JCheckBox enableServerChecker;
 
@@ -27,6 +29,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
     private JTextField serverCheckerWait;
 
     public ToolsSettingsTab() {
+        RelocalizationManager.addListener(this);
         // Enable Server Checker
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -63,7 +66,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         serverCheckerWaitLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.servercheckerwait") +
-                ":", HELP_ICON, "<html>" + Utils.splitMultilinedString(App.settings.getLocalizedString("settings" +
+                ":", HELP_ICON, "<html>" + Utils.splitMultilinedString(App.settings.getLocalizedString("settings" + "" +
                 ".servercheckerwaithelp"), 75, "<br/>") + "</html>");
         add(serverCheckerWaitLabel, gbc);
 
@@ -81,7 +84,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
     public boolean isValidServerCheckerWait() {
         if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]",
                 "")) < 1 || Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" +
+            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" + "" +
                     ".servercheckerwaitinvalid"), App.settings.getLocalizedString("settings.help"),
                     JOptionPane.PLAIN_MESSAGE);
             return false;
@@ -102,5 +105,16 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
     @Override
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.tools");
+    }
+
+    @Override
+    public void onRelocalization() {
+        this.enableServerCheckerLabel.setText(App.settings.getLocalizedString("settings.serverchecker") + "?");
+        this.enableServerCheckerLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings" +
+                ".servercheckerhelp", "<br/>" + "</html>"));
+
+        this.serverCheckerWaitLabel.setText(App.settings.getLocalizedString("settings.servercheckerwait") + ":");
+        this.serverCheckerWaitLabel.setToolTipText("<html>" + Utils.splitMultilinedString(App.settings
+                .getLocalizedString("settings.servercheckerwaithelp"), 75, "<br/>") + "</html>");
     }
 }

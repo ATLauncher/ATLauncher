@@ -16,7 +16,6 @@ import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -231,7 +230,7 @@ public class Settings {
         for (Pack pack : this.packs) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
-                    if (server.getName() == "Master Server (Testing Only)") {
+                    if (server.getName().equals("Master Server (Testing Only)")) {
                         server.setUserSelectable(true);
                         break OUTER; // Don't need to check anymore so break the outer loop
                     }
@@ -1898,10 +1897,9 @@ public class Settings {
             server.enableServer();
         }
         this.offlineMode = false;
-        Downloadable download = new Downloadable(server.getTestURL(), true);
+        Downloadable download = new Downloadable("ping", true);
         String test = download.getContents();
         if (test != null && test.equalsIgnoreCase("pong")) {
-            this.offlineMode = false;
             reloadPacksPanel();
             reloadInstancesPanel();
         } else {

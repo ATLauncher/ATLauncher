@@ -8,6 +8,8 @@ package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
@@ -28,45 +30,38 @@ import java.awt.event.ItemListener;
 import java.io.File;
 
 @SuppressWarnings("serial")
-public class JavaSettingsTab extends AbstractSettingsTab {
+public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
+    private final String[] MEMORY_OPTIONS = Utils.getMemoryOptions();
     private JLabelWithHover initialMemoryLabel;
     private JComboBox<String> initialMemory;
     private JLabelWithHover initialMemoryLabelWarning;
     private JPanel initialMemoryPanel;
-
     private JLabelWithHover maximumMemoryLabel;
     private JComboBox<String> maximumMemory;
     private JLabelWithHover maximumMemoryLabelWarning;
     private JPanel maximumMemoryPanel;
-
     private JLabelWithHover permGenLabel;
     private JTextField permGen;
-
     private JPanel windowSizePanel;
     private JLabelWithHover windowSizeLabel;
     private JTextField widthField;
     private JTextField heightField;
     private JComboBox<String> commonScreenSizes;
-
     private JPanel javaPathPanel;
     private JLabelWithHover javaPathLabel;
     private JTextField javaPath;
     private JButton javaPathResetButton;
-
     private JPanel javaParametersPanel;
     private JLabelWithHover javaParametersLabel;
     private JTextField javaParameters;
     private JButton javaParametersResetButton;
-
     private JLabelWithHover startMinecraftMaximisedLabel;
     private JCheckBox startMinecraftMaximised;
-
     private JLabelWithHover saveCustomModsLabel;
     private JCheckBox saveCustomMods;
 
-    private final String[] MEMORY_OPTIONS = Utils.getMemoryOptions();
-
     public JavaSettingsTab() {
+        RelocalizationManager.addListener(this);
         // Initial Memory Settings
         gbc.gridx = 0;
         gbc.gridy++;
@@ -77,7 +72,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 .settings.getLocalizedString("settings.32bitmemorywarning"), 80, "<br/>") + "</html>", RESTART_BORDER);
 
         initialMemoryLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.initialmemory") + ":",
-                HELP_ICON, "<html>" + Utils.splitMultilinedString(App.settings.getLocalizedString("settings" +
+                HELP_ICON, "<html>" + Utils.splitMultilinedString(App.settings.getLocalizedString("settings" + "" +
                 ".initialmemoryhelp"), 80, "<br/>") + "</html>");
 
         initialMemoryPanel = new JPanel();
@@ -121,7 +116,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 .settings.getLocalizedString("settings.32bitmemorywarning"), 80, "<br/>") + "</html>", RESTART_BORDER);
 
         maximumMemoryLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.maximummemory") + ":",
-                HELP_ICON, "<html>" + Utils.splitMultilinedString(App.settings.getLocalizedString("settings" +
+                HELP_ICON, "<html>" + Utils.splitMultilinedString(App.settings.getLocalizedString("settings" + "" +
                 ".maximummemoryhelp"), 80, "<br/>") + "</html>");
 
         maximumMemoryPanel = new JPanel();
@@ -286,8 +281,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        startMinecraftMaximisedLabel = new JLabelWithHover(App.settings.getLocalizedString("settings" +
-                ".startminecraftmaximised") + "?", HELP_ICON, App.settings.getLocalizedString("settings" +
+        startMinecraftMaximisedLabel = new JLabelWithHover(App.settings.getLocalizedString("settings" + "" +
+                ".startminecraftmaximised") + "?", HELP_ICON, App.settings.getLocalizedString("settings" + "" +
                 ".startminecraftmaximisedhelp"));
         add(startMinecraftMaximisedLabel, gbc);
 
@@ -357,5 +352,49 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     @Override
     public String getTitle() {
         return Language.INSTANCE.localize("settings.javatab");
+    }
+
+    @Override
+    public void onRelocalization() {
+        this.initialMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(App.settings
+                .getLocalizedString("settings.32bitmemorywarning"), 80, "<br/>") + "</html>");
+
+        this.initialMemoryLabel.setText(App.settings.getLocalizedString("settings.initialmemory") + ":");
+        this.initialMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(App.settings.getLocalizedString
+                ("settings" + ".initialmemoryhelp"), 80, "<br/>") + "</html>");
+
+        this.maximumMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(App.settings
+                .getLocalizedString("settings.32bitmemorywarning"), 80, "<br/>") + "</html>");
+
+        this.maximumMemoryLabel.setText(App.settings.getLocalizedString("settings.maximummemory") + ":");
+        this.maximumMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(App.settings.getLocalizedString
+                ("settings" + "" +
+                ".maximummemoryhelp"), 80, "<br/>") + "</html>");
+
+
+        this.permGenLabel.setText(App.settings.getLocalizedString("settings.permgen") + ":");
+        this.permGenLabel.setToolTipText(App.settings.getLocalizedString("settings.permgenhelp"));
+
+        this.windowSizeLabel.setText(App.settings.getLocalizedString("settings.windowsize") + ":");
+        this.windowSizeLabel.setToolTipText(App.settings.getLocalizedString("settings.windowsizehelp"));
+
+        this.javaPathLabel.setText(App.settings.getLocalizedString("settings.javapath") + ":");
+        this.javaPathLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings.javapathhelp",
+                "<br/>") + "</html>");
+
+        this.javaPathResetButton.setText(App.settings.getLocalizedString("settings.javapathreset"));
+
+        this.javaParametersLabel.setText(App.settings.getLocalizedString("settings.javaparameters") + ":");
+        this.javaParametersLabel.setToolTipText(App.settings.getLocalizedString("settings.javaparametershelp"));
+
+        this.javaParametersResetButton.setText(App.settings.getLocalizedString("settings.javapathreset"));
+
+        this.startMinecraftMaximisedLabel.setText(App.settings.getLocalizedString("settings" + "" +
+                ".startminecraftmaximised") + "?");
+        this.startMinecraftMaximisedLabel.setToolTipText(App.settings.getLocalizedString("settings" + "" +
+                ".startminecraftmaximisedhelp"));
+
+        this.saveCustomModsLabel.setText(App.settings.getLocalizedString("settings.savecustommods") + "?");
+        this.saveCustomModsLabel.setToolTipText(App.settings.getLocalizedString("settings.savecustommodshelp"));
     }
 }

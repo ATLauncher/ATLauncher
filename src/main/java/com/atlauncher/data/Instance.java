@@ -17,12 +17,15 @@ import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import java.awt.BorderLayout;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -130,8 +133,6 @@ public class Instance implements Cloneable {
      * corrupt.
      */
     private boolean isPlayable;
-
-    private String image;
 
     /**
      * If this instance uses the MCLauncher or the LegacyMCLauncher class to load Minecraft.
@@ -370,14 +371,27 @@ public class Instance implements Cloneable {
      *
      * @return ImageIcon for this Instances Pack
      */
-    public ImageIcon getImage(){
-        File imageFile = this.image != null ? new File(App.settings.getImagesDir(), this.image + ".png") :
-                new File(App.settings.getImagesDir(), getSafePackName().toLowerCase() + ".png");
-        if (!imageFile.exists()) {
-            imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
+    public ImageIcon getImage() {
+        File customImage = new File(this.getRootDirectory(), "instance.png");
+        File instancesImage = new File(App.settings.getImagesDir(), getSafePackName().toLowerCase() + ".png");
+
+        if (customImage.exists()) {
+            try {
+                BufferedImage img = ImageIO.read(customImage);
+                Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
+                return new ImageIcon(dimg);
+            } catch (IOException e) {
+                App.settings.logStackTrace("Error creating scaled image from the custom image of instance " + this
+                        .getName(), e);
+            }
         }
 
-        return Utils.getIconImage(imageFile);
+        if (instancesImage.exists()) {
+            return Utils.getIconImage(instancesImage);
+
+        } else {
+            return Utils.getIconImage(new File(App.settings.getImagesDir(), "defaultimage.png"));
+        }
     }
 
     /**
@@ -390,7 +404,7 @@ public class Instance implements Cloneable {
         if (this.realPack != null) {
             return this.realPack.getDescription();
         } else {
-            return "No Description!"; // TODO: Localise the No Description text
+            return App.settings.getLocalizedString("pack.nodescription");
         }
     }
 
@@ -986,7 +1000,7 @@ public class Instance implements Cloneable {
         if (account == null) {
             String[] options = {App.settings.getLocalizedString("common.ok")};
             JOptionPane.showOptionDialog(App.settings.getParent(), App.settings.getLocalizedString("instance" + "" +
-                    ".noaccount"), App.settings.getLocalizedString("instance.noaccountselected"),
+                            ".noaccount"), App.settings.getLocalizedString("instance.noaccountselected"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
             return false;
@@ -1077,6 +1091,7 @@ public class Instance implements Cloneable {
             } else {
                 account.setAccessToken(sess.getAccessToken());
                 account.setClientToken(sess.getClientToken());
+                account.setUUID(sess.getSelectedProfile().getId());
                 App.settings.saveAccounts();
             }
 
@@ -1114,14 +1129,16 @@ public class Instance implements Cloneable {
                         BufferedReader br = new BufferedReader(isr);
                         String line;
                         while ((line = br.readLine()) != null) {
-                            line = line.replace(App.settings.getAccount().getMinecraftUsername(),
-                                    "**MINECRAFTUSERNAME**");
-                            line = line.replace(App.settings.getAccount().getUsername(), "**MINECRAFTUSERNAME**");
-                            if (session.isReal()) {
-                                line = line.replace(session.getAccessToken(), "**ACCESSTOKEN**");
-                                line = line.replace(session.getClientToken(), "**CLIENTTOKEN**");
-                                line = line.replace(session.getUUID(), "**UUID**");
-                                line = line.replace(session.getSelectedProfile().getId(), "**PROFILEID**");
+                            line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
+                            line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
+                            if (account.hasAccessToken()) {
+                                line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
+                            }
+                            if (account.hasClientToken()) {
+                                line = line.replace(account.getClientToken(), "**CLIENTTOKEN**");
+                            }
+                            if (account.hasUUID()) {
+                                line = line.replace(account.getUUID(), "**UUID**");
                             }
                             LogManager.minecraft(line);
                         }
@@ -1314,24 +1331,21 @@ public class Instance implements Cloneable {
         return customMods;
     }
 
-    public void setImage(File file){
-        this.image = file.getName().substring(0, file.getName().lastIndexOf('.'));
-    }
-
-    public void save(){
-        try{
+    public void save() {
+        try {
             FileWriter writer = null;
-            try{
-                writer = new FileWriter(new File(new File(App.settings.getInstancesDir(), this.getSafeName()), "instance.json"));
+            try {
+                writer = new FileWriter(new File(new File(App.settings.getInstancesDir(), this.getSafeName()),
+                        "instance.json"));
                 writer.write(Gsons.DEFAULT.toJson(this));
                 writer.flush();
                 App.TOASTER.pop("Instance " + this.getName());
-            } finally{
-                if(writer != null){
+            } finally {
+                if (writer != null) {
                     writer.close();
                 }
             }
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace(System.err);
         }
     }

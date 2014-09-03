@@ -9,6 +9,8 @@ package com.atlauncher.gui.tabs.settings;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
@@ -25,7 +27,7 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 
 @SuppressWarnings("serial")
-public class NetworkSettingsTab extends AbstractSettingsTab {
+public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private JLabelWithHover downloadServerLabel;
     private JComboBox<Server> server;
 
@@ -45,6 +47,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
     private JComboBox<String> proxyType;
 
     public NetworkSettingsTab() {
+        RelocalizationManager.addListener(this);
         // Download Server
         gbc.gridx = 0;
         gbc.gridy++;
@@ -71,8 +74,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        concurrentConnectionsLabel = new JLabelWithHover(App.settings.getLocalizedString("settings" +
-                ".concurrentconnections") + ":", HELP_ICON, "<html>" + App.settings.getLocalizedString("settings" +
+        concurrentConnectionsLabel = new JLabelWithHover(App.settings.getLocalizedString("settings" + "" +
+                ".concurrentconnections") + ":", HELP_ICON, "<html>" + App.settings.getLocalizedString("settings" + "" +
                 ".concurrentconnectionshelp", "<br/><br/>") + "</html>");
         add(concurrentConnectionsLabel, gbc);
 
@@ -180,7 +183,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
 
     public boolean isValidConcurrentConnections() {
         if (Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")) < 1) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" +
+            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" + "" +
                     ".concurrentconnectionsinvalid"), App.settings.getLocalizedString("settings.help"),
                     JOptionPane.PLAIN_MESSAGE);
             return false;
@@ -194,7 +197,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         }
         if (proxyPort.getText().isEmpty() || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]",
                 "")) < 1 || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) > 65535) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" +
+            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" + "" +
                     ".proxyportinvalid"), App.settings.getLocalizedString("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
@@ -221,7 +224,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         }
 
         final Type theType = type;
-        final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("settings" +
+        final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("settings" + "" +
                 ".checkingproxytitle"), 0, App.settings.getLocalizedString("settings.checkingproxy"),
                 "Cancelled Proxy Test!");
         dialog.addThread(new Thread() {
@@ -239,7 +242,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         }
 
         if (!(Boolean) dialog.getReturnValue()) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" +
+            JOptionPane.showMessageDialog(App.settings.getParent(), App.settings.getLocalizedString("settings" + "" +
                     ".proxycannotconnect"), App.settings.getLocalizedString("settings.help"),
                     JOptionPane.PLAIN_MESSAGE);
             return false;
@@ -263,5 +266,28 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
     @Override
     public String getTitle() {
         return Language.INSTANCE.localize("settings.networktab");
+    }
+
+    @Override
+    public void onRelocalization() {
+        this.downloadServerLabel.setText(App.settings.getLocalizedString("settings.downloadserver") + ":");
+        this.downloadServerLabel.setToolTipText(App.settings.getLocalizedString("settings.downloadserverhelp"));
+
+        this.concurrentConnectionsLabel.setText(App.settings.getLocalizedString("settings" + "" +
+                ".concurrentconnections") + ":");
+        this.concurrentConnectionsLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings" + "" +
+                ".concurrentconnectionshelp", "<br/><br/>") + "</html>");
+
+        this.enableProxyLabel.setText(App.settings.getLocalizedString("settings.enableproxy") + "?");
+        this.enableProxyLabel.setToolTipText(App.settings.getLocalizedString("settings.enableproxyhelp"));
+
+        this.proxyHostLabel.setText(App.settings.getLocalizedString("settings.proxyhost") + ":");
+        this.proxyHostLabel.setToolTipText(App.settings.getLocalizedString("settings.proxyhosthelp"));
+
+        this.proxyPortLabel.setText(App.settings.getLocalizedString("settings.proxyport") + ":");
+        this.proxyPortLabel.setToolTipText(App.settings.getLocalizedString("settings.proxyporthelp"));
+
+        this.proxyTypeLabel.setText(App.settings.getLocalizedString("settings.proxytype") + ":");
+        this.proxyTypeLabel.setToolTipText(App.settings.getLocalizedString("settings.proxytypehelp"));
     }
 }

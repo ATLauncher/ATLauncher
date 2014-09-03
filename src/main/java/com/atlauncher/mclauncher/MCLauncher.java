@@ -151,7 +151,7 @@ public class MCLauncher {
         if (instance.hasMinecraftArguments()) {
             String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
             for (String argument : minecraftArguments) {
-                argument = argument.replace("${auth_player_name}", response.getSelectedProfile().getName());
+                argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
                 argument = argument.replace("${profile_name}", instance.getName());
                 argument = argument.replace("${user_properties}", props);
                 argument = argument.replace("${version_name}", instance.getMinecraftVersion());
@@ -159,20 +159,20 @@ public class MCLauncher {
                 argument = argument.replace("${game_assets}", instance.getAssetsDir().getAbsolutePath());
                 argument = argument.replace("${assets_root}", App.settings.getResourcesDir().getAbsolutePath());
                 argument = argument.replace("${assets_index_name}", instance.getAssets());
-                argument = argument.replace("${auth_uuid}", response.getSelectedProfile().getId());
-                argument = argument.replace("${auth_access_token}", response.getAccessToken());
-                argument = argument.replace("${auth_session}", response.getSession());
+                argument = argument.replace("${auth_uuid}", account.getUUID());
+                argument = argument.replace("${auth_access_token}", account.getAccessToken());
+                argument = argument.replace("${auth_session}", account.getSession());
                 argument = argument.replace("${user_type}", (response.getSelectedProfile().isLegacy() ? UserType
                         .LEGACY.getName() : UserType.MOJANG.getName()));
                 arguments.add(argument);
             }
         } else {
-            arguments.add("--username=" + response.getSelectedProfile().getName());
-            arguments.add("--session=" + response.getSession());
+            arguments.add("--username=" + account.getMinecraftUsername());
+            arguments.add("--session=" + account.getSession());
 
             // This is for 1.7
-            arguments.add("--accessToken=" + response.getAccessToken());
-            arguments.add("--uuid=" + response.getSelectedProfile().getId());
+            arguments.add("--accessToken=" + account.getAccessToken());
+            arguments.add("--uuid=" + account.getUUID());
             // End of stuff for 1.7
 
             arguments.add("--version=" + instance.getMinecraftVersion());
@@ -198,10 +198,10 @@ public class MCLauncher {
         }
 
         String argsString = arguments.toString();
-        argsString = argsString.replace(response.getSelectedProfile().getName(), "REDACTED");
-        argsString = argsString.replace(response.getSelectedProfile().getId(), "REDACTED");
-        argsString = argsString.replace(response.getAccessToken(), "REDACTED");
-        argsString = argsString.replace(response.getSession(), "REDACTED");
+        argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
+        argsString = argsString.replace(account.getUUID(), "REDACTED");
+        argsString = argsString.replace(account.getAccessToken(), "REDACTED");
+        argsString = argsString.replace(account.getSession(), "REDACTED");
         argsString = argsString.replace(props, "REDACTED");
 
         LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):" +

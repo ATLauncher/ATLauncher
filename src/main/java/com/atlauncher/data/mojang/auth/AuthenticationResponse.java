@@ -92,10 +92,6 @@ public class AuthenticationResponse {
         return this.cause;
     }
 
-    public String getSession() {
-        return "token:" + this.accessToken + ":" + this.selectedProfile.getId();
-    }
-
     public String getAccessToken() {
         return this.accessToken;
     }

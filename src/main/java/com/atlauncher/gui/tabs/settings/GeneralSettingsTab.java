@@ -8,58 +8,40 @@ package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class GeneralSettingsTab extends AbstractSettingsTab {
+public class GeneralSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private JLabelWithHover languageLabel;
     private JComboBox<String> language;
-
     private JLabelWithHover themeLabel;
     private JComboBox<String> theme;
     private JLabelWithHover themeLabelRestart;
     private JPanel themeLabelPanel;
-
     private JLabelWithHover dateFormatLabel;
     private JComboBox<String> dateFormat;
-
     private JLabelWithHover advancedBackupLabel;
     private JCheckBox advancedBackup;
-
     private JLabelWithHover sortPacksAlphabeticallyLabel;
     private JCheckBox sortPacksAlphabetically;
-
     private JLabelWithHover keepLauncherOpenLabel;
     private JCheckBox keepLauncherOpen;
-
     private JLabelWithHover enableConsoleLabel;
     private JCheckBox enableConsole;
-
     private JLabelWithHover enableTrayIconLabel;
     private JCheckBox enableTrayIcon;
 
-    private final JButton TCDL_BUTTON = new JButton("Get the creator!") {
-        {
-            this.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-
-                }
-            });
-        }
-    };
-
     public GeneralSettingsTab() {
+        RelocalizationManager.addListener(this);
         // Language
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -85,7 +67,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        themeLabelRestart = new JLabelWithHover(ERROR_ICON, App.settings.getLocalizedString("settings" +
+        themeLabelRestart = new JLabelWithHover(ERROR_ICON, App.settings.getLocalizedString("settings" + "" +
                 ".requiresrestart"), RESTART_BORDER);
 
         themeLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.theme") + ":", HELP_ICON,
@@ -158,8 +140,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        sortPacksAlphabeticallyLabel = new JLabelWithHover(App.settings.getLocalizedString("settings" +
-                ".sortpacksalphabetically") + "?", HELP_ICON, App.settings.getLocalizedString("settings" +
+        sortPacksAlphabeticallyLabel = new JLabelWithHover(App.settings.getLocalizedString("settings" + "" +
+                ".sortpacksalphabetically") + "?", HELP_ICON, App.settings.getLocalizedString("settings" + "" +
                 ".sortpacksalphabeticallyhelp"));
         add(sortPacksAlphabeticallyLabel, gbc);
 
@@ -256,5 +238,37 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     @Override
     public String getTitle() {
         return Language.INSTANCE.localize("settings.generaltab");
+    }
+
+    @Override
+    public void onRelocalization() {
+        this.languageLabel.setText(App.settings.getLocalizedString("settings.language") + ":");
+        this.languageLabel.setToolTipText(App.settings.getLocalizedString("settings.languagehelp"));
+
+        this.themeLabelRestart.setToolTipText(App.settings.getLocalizedString("settings.requiresrestart"));
+
+        this.themeLabel.setText(App.settings.getLocalizedString("settings.theme") + ":");
+        this.themeLabel.setToolTipText(App.settings.getLocalizedString("settings.themehelp"));
+
+        this.dateFormatLabel.setText(App.settings.getLocalizedString("settings.dateformat") + ":");
+        this.dateFormatLabel.setToolTipText(App.settings.getLocalizedString("settings.dateformathelp"));
+
+        this.advancedBackupLabel.setText(App.settings.getLocalizedString("settings.advancedbackup") + "?");
+        this.advancedBackupLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings.advancedbackuphelp",
+                "<br/>") + "</html>");
+
+        this.sortPacksAlphabeticallyLabel.setText(App.settings.getLocalizedString("settings.sortpacksalphabetically") + "?");
+        this.sortPacksAlphabeticallyLabel.setToolTipText(App.settings.getLocalizedString("settings" +
+                ".sortpacksalphabeticallyhelp"));
+
+        this.keepLauncherOpenLabel.setText(App.settings.getLocalizedString("settings.keeplauncheropen") + "?");
+        this.keepLauncherOpenLabel.setToolTipText(App.settings.getLocalizedString("settings.keeplauncheropenhelp"));
+
+        this.enableConsoleLabel.setText(App.settings.getLocalizedString("settings.console") + "?");
+        this.enableConsoleLabel.setToolTipText(App.settings.getLocalizedString("settings.consolehelp"));
+
+        this.enableTrayIconLabel.setText(App.settings.getLocalizedString("settings.traymenu") + "?");
+        this.enableTrayIconLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings.traymenuhelp",
+                "<br/>") + "</html>");
     }
 }
