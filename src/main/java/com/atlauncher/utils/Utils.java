@@ -125,7 +125,7 @@ public class Utils {
                 return new File(System.getProperty("user.dir"), "ATLauncher");
             }
         } else {
-            return new File(System.getProperty("user.dir"));
+            return new File(System.getProperty("user.dir"), "ATLauncher");
         }
     }
 
@@ -1408,7 +1408,7 @@ public class Utils {
             return sheet;
         } catch (Exception e) {
             App.settings.logStackTrace(e);
-            return new StyleSheet(); // If fails just return blank StyleSheetF
+            return new StyleSheet(); // If fails just return blank StyleSheet
         }
     }
 

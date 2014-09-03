@@ -97,7 +97,7 @@ public class NewsTab extends JPanel implements Tab {
     }
 
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem COPY_ITEM = new JMenuItem("Copy");
+        private final JMenuItem COPY_ITEM = new JMenuItem(App.settings.getLocalizedString("common.copy"));
 
         public ContextMenu() {
             super();
