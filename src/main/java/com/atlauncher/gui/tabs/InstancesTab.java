@@ -9,9 +9,18 @@ package com.atlauncher.gui.tabs;
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
-import com.atlauncher.gui.InstanceDisplay;
-import com.atlauncher.gui.NothingToDisplay;
+import com.atlauncher.gui.card.InstanceCard;
+import com.atlauncher.gui.card.NilCard;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -19,15 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.regex.Pattern;
 
 /**
  * TODO: Rewrite this for better loading
@@ -71,17 +71,11 @@ public class InstancesTab extends JPanel implements Tab {
         if (keepFilters) {
             searchBox.setText(this.searchText);
         }
-        searchBox.addKeyListener(new KeyListener() {
+        searchBox.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     reload();
                 }
-            }
-
-            public void keyTyped(KeyEvent e) {
-            }
-
-            public void keyReleased(KeyEvent e) {
             }
         });
         topPanel.add(searchBox);
@@ -109,7 +103,7 @@ public class InstancesTab extends JPanel implements Tab {
         add(topPanel, BorderLayout.NORTH);
 
         panel = new JPanel();
-        scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
@@ -140,19 +134,19 @@ public class InstancesTab extends JPanel implements Tab {
                     }
 
                     if (showInstance) {
-                        panel.add(new InstanceDisplay(instance), gbc);
+                        panel.add(new InstanceCard(instance), gbc);
                         gbc.gridy++;
                         count++;
                     }
                 } else {
-                    panel.add(new InstanceDisplay(instance), gbc);
+                    panel.add(new InstanceCard(instance), gbc);
                     gbc.gridy++;
                     count++;
                 }
             }
         }
         if (count == 0) {
-            panel.add(new NothingToDisplay(App.settings.getLocalizedString("instance.nodisplay", "\n\n")), gbc);
+            panel.add(new NilCard(App.settings.getLocalizedString("instance.nodisplay", "\n\n")), gbc);
         }
 
         SwingUtilities.invokeLater(new Runnable() {

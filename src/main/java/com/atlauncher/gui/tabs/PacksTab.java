@@ -9,17 +9,10 @@ package com.atlauncher.gui.tabs;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
-import com.atlauncher.gui.NothingToDisplay;
-import com.atlauncher.gui.PackDisplay;
+import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddPackDialog;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -29,6 +22,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 /**
  * TODO: Rewrite this for better loading
@@ -130,7 +130,7 @@ public class PacksTab extends JPanel implements Tab {
         add(topPanel, BorderLayout.NORTH);
 
         panel = new JPanel();
-        scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.getVerticalScrollBar().setValue(currentPosition);
@@ -169,19 +169,19 @@ public class PacksTab extends JPanel implements Tab {
                     }
 
                     if (showPack) {
-                        panel.add(new PackDisplay(pack), gbc);
+                        panel.add(new PackCard(pack), gbc);
                         gbc.gridy++;
                         count++;
                     }
                 } else {
-                    panel.add(new PackDisplay(pack), gbc);
+                    panel.add(new PackCard(pack), gbc);
                     gbc.gridy++;
                     count++;
                 }
             }
         }
         if (count == 0) {
-            panel.add(new NothingToDisplay(App.settings.getLocalizedString("pack.nodisplay", "\n\n")), gbc);
+            panel.add(new NilCard(App.settings.getLocalizedString("pack.nodisplay", "\n\n")), gbc);
         }
 
         SwingUtilities.invokeLater(new Runnable() {

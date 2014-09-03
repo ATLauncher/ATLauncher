@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package com.atlauncher.gui;
+package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
@@ -16,25 +16,25 @@ import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 
 /**
  * Class for displaying packs in the Pack Tab
  *
  * @author Ryan
  */
-public class PackDisplay extends CollapsiblePanel implements RelocalizationListener {
+public class PackCard extends CollapsiblePanel implements RelocalizationListener {
     private static final long serialVersionUID = -2617283435728223314L;
     private final JTextArea descArea = new JTextArea();
     private final JButton newInstanceButton = new JButton(Language.INSTANCE.localize("common.newinstance"));
@@ -46,7 +46,7 @@ public class PackDisplay extends CollapsiblePanel implements RelocalizationListe
     private final GridBagConstraints gbc = new GridBagConstraints();
     private final Pack pack;
 
-    public PackDisplay(Pack pack) {
+    public PackCard(Pack pack) {
         super(pack);
         RelocalizationManager.addListener(this);
         this.pack = pack;
@@ -67,7 +67,7 @@ public class PackDisplay extends CollapsiblePanel implements RelocalizationListe
         this.descArea.setHighlighter(null);
         this.descArea.setWrapStyleWord(true);
 
-        this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         this.actionsPanel.add(abPanel, BorderLayout.SOUTH);
         this.actionsPanel.setPreferredSize(new Dimension(this.actionsPanel.getPreferredSize().width, 180));

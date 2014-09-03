@@ -4,35 +4,35 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package com.atlauncher.gui;
+package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.utils.Utils;
 
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.Image;
+import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.Image;
-import java.io.File;
 
 /**
  * Class for displaying packs in the Pack Tab
  *
  * @author Ryan
  */
-public class NothingToDisplay extends JPanel {
+public class NilCard extends JPanel {
     private static final Image dfImg = Utils.getIconImage(new File(App.settings.getImagesDir(),
             "defaultimage.png")).getImage();
 
     private final JTextArea error = new JTextArea();
     private final JSplitPane splitter = new JSplitPane();
 
-    public NothingToDisplay(String message) {
+    public NilCard(String message) {
         super(new BorderLayout());
         if (Utils.isMac()) {
             this.setBorder(new TitledBorder(null, App.settings.getLocalizedString("common.nothingtoshow"),
