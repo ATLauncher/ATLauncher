@@ -125,7 +125,7 @@ public class Utils {
                 return new File(System.getProperty("user.dir"), "ATLauncher");
             }
         } else {
-            return new File(System.getProperty("user.dir"), "ATLauncher");
+            return new File(System.getProperty("user.dir"));
         }
     }
 
