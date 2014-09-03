@@ -1408,7 +1408,7 @@ public class Utils {
             return sheet;
         } catch (Exception e) {
             App.settings.logStackTrace(e);
-            return new StyleSheet(); // If fails just return blank StyleSheetF
+            return new StyleSheet(); // If fails just return blank StyleSheet
         }
     }
 
