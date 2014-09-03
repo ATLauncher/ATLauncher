@@ -93,14 +93,7 @@ public final class TrayMenu extends JPopupMenu implements RelocalizationListener
 
     public void localize() {
         this.tcButton.setEnabled(true);
-        if (App.settings.isConsoleVisible()) {
-            this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
-        } else {
-            this.tcButton.setText(Language.INSTANCE.localize("console.show"));
-        }
-
-        this.killMCButton.setText(Language.INSTANCE.localize("console.kill"));
-        this.quitButton.setText(Language.INSTANCE.localize("common.quit"));
+        this.onRelocalization();
     }
 
     public void setMinecraftLaunched(boolean l) {
