@@ -55,7 +55,7 @@ Make sure to add the directory containing launch4jc to your executable path whic
 C:\Program Files (x86)\Launch4j
 ```
 
-### Pluging In Your Data
+### Plugging In Your Data
 
 To get started with the code and plug in your own data, you need to create a src/main/java/com/atlauncher/data/Constants.java file. Below is a starter to get you going:
 
