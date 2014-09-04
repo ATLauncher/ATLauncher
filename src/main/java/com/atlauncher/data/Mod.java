@@ -653,7 +653,6 @@ public class Mod {
                 }
                 Utils.copyFile(fileLocation, installer.getDenLibDirectory());
                 break;
-            case depandency:
             case dependency:
                 if (!installer.getDependencyDirectory().exists()) {
                     installer.getDependencyDirectory().mkdirs();
