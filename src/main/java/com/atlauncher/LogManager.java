@@ -9,7 +9,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public final class LogManager {
-    private static final BlockingQueue<LogEvent> queue = new ArrayBlockingQueue<LogEvent>(64);
+    private static final BlockingQueue<LogEvent> queue = new ArrayBlockingQueue<LogEvent>(128);
 
     private LogManager() {
     }
