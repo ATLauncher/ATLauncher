@@ -55,12 +55,7 @@ implements Tab{
         this.add(this.topPanel, BorderLayout.NORTH);
 
         this.setupTopPanel();
-        App.TASKPOOL.execute(new Runnable(){
-            @Override
-            public void run(){
-                load(false);
-            }
-        });
+        load(false);
         this.scrollPane.getVerticalScrollBar().setBlockIncrement(16);
 
         this.addButton.addActionListener(new ActionListener(){
