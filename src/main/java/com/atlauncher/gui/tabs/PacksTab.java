@@ -125,9 +125,7 @@ implements Tab{
                     }
 
                     if(this.searchDescBox.isSelected()){
-                        if(pack.getDescription().contains(this.searchField.getText())){
-                            show = true;
-                        }
+                        show = pack.getDescription().contains(this.searchField.getText());
                     }
 
                     if(this.serversBox.isSelected()){
