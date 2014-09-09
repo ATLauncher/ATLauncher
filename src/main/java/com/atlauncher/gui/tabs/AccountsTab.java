@@ -263,7 +263,7 @@ public class AccountsTab extends JPanel implements Tab {
                 }
             }
         });
-        rightButton = new JButton("Clear");
+        rightButton = new JButton(App.settings.getLocalizedString("common.clear"));
         rightButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (accountsComboBox.getSelectedIndex() == 0) {
