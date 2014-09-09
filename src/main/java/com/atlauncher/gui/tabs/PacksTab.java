@@ -44,19 +44,20 @@ implements Tab{
     private final JTextField searchField = new JTextField(16);
     private final JCheckBox serversBox = new JCheckBox(Language.INSTANCE.localize("pack.cancreateserver"));
     private final JCheckBox privateBox = new JCheckBox(Language.INSTANCE.localize("pack.privatepacksonly"));
-    private final JScrollPane scrollPane = new JScrollPane(this.contentPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
     public PacksTab(){
         super(new BorderLayout());
         this.topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.contentPanel.setLayout(new GridBagLayout());
 
-        this.add(this.scrollPane, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(this.contentPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setBlockIncrement(16);
+        this.add(scrollPane, BorderLayout.CENTER);
         this.add(this.topPanel, BorderLayout.NORTH);
 
         this.setupTopPanel();
         load(false);
-        this.scrollPane.getVerticalScrollBar().setBlockIncrement(16);
 
         this.addButton.addActionListener(new ActionListener(){
             @Override
