@@ -1,11 +1,6 @@
 ATLauncher
-====================================
-
 ### What is it?
-
 ATLauncher is a Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install ModPacks easily and quickly.
-
-
 ### Links
 [ATLauncher Website](http://www.atlauncher.com)
 
@@ -14,31 +9,20 @@ ATLauncher is a Launcher for Minecraft which integrates multiple different ModPa
 [ATLauncher Reddit](http://www.reddit.com/r/ATLauncher)
 
 [ATLauncher Twitter](http://twitter.com/ATLauncher)
-
-
 ### Things to Note
-
 Please note that I (RyanTheAllmighty) have created this alone up until now and being a 1st year Computer Science student, my coding may not be the best, most accurate or efficient, so please keep that in mind.
-
 Other than that, I am releasing this as an Open Source project in hopes that others may contribute to better our Launcher and because I think Open Source is a good thing.
-
 ### Coding Standards
-
 + Please keep all line lengths to 120 characters and use 4 spaces rather than tab characters
 + Please keep all variables at the top of the class
 + Please keep all inner classes at the bottom
 + Please don't use star imports
 + Please mark all classes that are to be de/serialized with Gson with the @Json annotation for other developers
 + Please use the IntelliJ-Coding-Style.xml for the project (if using IntelliJ) in order to keep all formatting consistent
-
 ### Building
-
 #### Windows
-
 ##### Requirements
-
 ###### Java Development Kit (JDK)
-
 Download and install the latest version from [Oracle's Java Downloads page](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
 
 ###### Apache Maven
