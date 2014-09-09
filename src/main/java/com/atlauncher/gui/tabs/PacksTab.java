@@ -31,9 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-/**
- * TODO: Rewrite this for better loading
- */
 public final class PacksTab
 extends JPanel
 implements Tab{
@@ -44,6 +41,7 @@ implements Tab{
     private final JTextField searchField = new JTextField(16);
     private final JCheckBox serversBox = new JCheckBox(Language.INSTANCE.localize("pack.cancreateserver"));
     private final JCheckBox privateBox = new JCheckBox(Language.INSTANCE.localize("pack.privatepacksonly"));
+    private final JCheckBox searchDescBox = new JCheckBox("Search Description");
 
     public PacksTab(){
         super(new BorderLayout());
@@ -66,6 +64,7 @@ implements Tab{
                 reload();
             }
         });
+
         this.searchField.addKeyListener(new KeyAdapter(){
             @Override
             public void keyPressed(KeyEvent e){
@@ -84,6 +83,12 @@ implements Tab{
                 reload();
             }
         });
+        this.searchDescBox.addItemListener(new ItemListener(){
+            @Override
+            public void itemStateChanged(ItemEvent e){
+                reload();
+            }
+        });
     }
 
     private void setupTopPanel(){
@@ -92,6 +97,7 @@ implements Tab{
         this.topPanel.add(this.searchField);
         this.topPanel.add(this.serversBox);
         this.topPanel.add(this.privateBox);
+        this.topPanel.add(this.searchDescBox);
     }
 
     private void load(boolean keep){
@@ -115,6 +121,12 @@ implements Tab{
                         if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE).matcher(pack
                                 .getName()).find()) {
                             show = false;
+                        }
+                    }
+
+                    if(this.searchDescBox.isSelected()){
+                        if(pack.getDescription().contains(this.searchField.getText())){
+                            show = true;
                         }
                     }
 
