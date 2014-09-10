@@ -48,9 +48,9 @@ implements Tab{
         this.topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.contentPanel.setLayout(new GridBagLayout());
 
-        JScrollPane scrollPane = new JScrollPane(this.contentPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        final JScrollPane scrollPane = new JScrollPane(this.contentPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.getVerticalScrollBar().setBlockIncrement(16);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         this.add(scrollPane, BorderLayout.CENTER);
         this.add(this.topPanel, BorderLayout.NORTH);
 
@@ -61,6 +61,16 @@ implements Tab{
             @Override
             public void actionPerformed(ActionEvent e){
                 new AddPackDialog();
+                reload();
+            }
+        });
+        this.clearButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                searchField.setText("");
+                searchDescBox.setSelected(false);
+                serversBox.setSelected(false);
+                privateBox.setSelected(false);
                 reload();
             }
         });
@@ -125,7 +135,7 @@ implements Tab{
                     }
 
                     if(this.searchDescBox.isSelected()){
-                        show = pack.getDescription().contains(this.searchField.getText());
+                        show = Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE).matcher(pack.getDescription()).find();
                     }
 
                     if(this.serversBox.isSelected()){
@@ -154,7 +164,7 @@ implements Tab{
         }
 
         if(count == 0){
-            this.contentPanel.add(new NilCard(Language.INSTANCE.localize("pack.nodisplay", "\n\n")), gbc);
+            this.contentPanel.add(new NilCard(App.settings.getLocalizedString("pack.nodisplay", "\n\n")), gbc);
         }
     }
 

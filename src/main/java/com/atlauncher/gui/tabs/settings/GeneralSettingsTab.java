@@ -13,11 +13,11 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
@@ -39,6 +39,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JCheckBox enableConsole;
     private JLabelWithHover enableTrayIconLabel;
     private JCheckBox enableTrayIcon;
+    private JLabelWithHover enablePPNotifiersLabel;
+    private JCheckBox enablePPNotifiers;
 
     public GeneralSettingsTab() {
         RelocalizationManager.addListener(this);
@@ -210,6 +212,20 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
             enableTrayIcon.setSelected(true);
         }
         add(enableTrayIcon, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        enablePPNotifiersLabel = new JLabelWithHover("Enable Public/Private Notifiers?", HELP_ICON, "<html>Public/Private tags are notifications showing if a pack is public or private</html>");
+        add(enablePPNotifiersLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        enablePPNotifiers = new JCheckBox();
+        enablePPNotifiers.setSelected(App.settings.enabledPPNotifiers());
+        add(enablePPNotifiers, gbc);
     }
 
     public boolean needToReloadTheme() {
@@ -233,6 +249,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
         App.settings.setEnableConsole(enableConsole.isSelected());
         App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
+        App.settings.setPPNotifiers(enablePPNotifiers.isSelected());
     }
 
     @Override

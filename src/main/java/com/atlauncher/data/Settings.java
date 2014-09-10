@@ -24,20 +24,17 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
@@ -76,6 +73,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user
@@ -111,6 +112,7 @@ public class Settings {
     private boolean enableLogs; // If to enable logs
     private boolean enableOpenEyeReporting; // If to enable OpenEye reporting
     private boolean enableProxy = false; // If proxy is in use
+    private boolean enablePPNotifiers = false;
     private String proxyHost; // The proxies host
     private int proxyPort; // The proxies port
     private String proxyType; // The type of proxy (socks, http)
@@ -913,6 +915,7 @@ public class Settings {
                     !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
                 this.dateFormat = "dd/M/yyy";
             }
+            this.enablePPNotifiers = Boolean.parseBoolean(properties.getProperty("enablePublicPrivateNotifiers", "false"));
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "true"));
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
             if (!properties.containsKey("usingcustomjavapath")) {
@@ -957,6 +960,14 @@ public class Settings {
         } catch (IOException e) {
             logStackTrace(e);
         }
+    }
+
+    public boolean enabledPPNotifiers(){
+        return this.enablePPNotifiers;
+    }
+
+    public void setPPNotifiers(boolean b){
+        this.enablePPNotifiers = b;
     }
 
     /**
@@ -1657,8 +1668,8 @@ public class Settings {
      *
      * @return The Packs available in the Launcher sorted alphabetically
      */
-    public ArrayList<Pack> getPacksSortedAlphabetically() {
-        ArrayList<Pack> packs = new ArrayList<Pack>(this.packs);
+    public List<Pack> getPacksSortedAlphabetically() {
+        List<Pack> packs = new LinkedList<Pack>(this.packs);
         Collections.sort(packs, new Comparator<Pack>() {
             public int compare(Pack result1, Pack result2) {
                 return result1.getName().compareTo(result2.getName());
@@ -1672,11 +1683,11 @@ public class Settings {
      *
      * @return The Packs available in the Launcher sorted by position
      */
-    public ArrayList<Pack> getPacksSortedPositionally() {
-        ArrayList<Pack> packs = new ArrayList<Pack>(this.packs);
+    public List<Pack> getPacksSortedPositionally() {
+        List<Pack> packs = new LinkedList<Pack>(this.packs);
         Collections.sort(packs, new Comparator<Pack>() {
             public int compare(Pack result1, Pack result2) {
-                return result1.getPosition() - result2.getPosition();
+                return Integer.compare(result1.getPosition(), result2.getPosition());
             }
         });
         return packs;

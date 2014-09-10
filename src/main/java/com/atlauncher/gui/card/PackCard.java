@@ -12,7 +12,7 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
-import com.atlauncher.gui.components.ImagePanel;
+import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.utils.Utils;
 
@@ -51,7 +51,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         RelocalizationManager.addListener(this);
         this.pack = pack;
 
-        this.splitter.setLeftComponent(new ImagePanel(pack.getImage().getImage()));
+        this.splitter.setLeftComponent(new PackImagePanel(pack));
         this.splitter.setRightComponent(this.actionsPanel);
         this.splitter.setEnabled(false);
 

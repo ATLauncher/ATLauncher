@@ -15,14 +15,9 @@ import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
+
 import io.github.asyncronous.toast.Toaster;
 
-import javax.swing.InputMap;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.text.DefaultEditorKit;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -39,6 +34,12 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.swing.InputMap;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.text.DefaultEditorKit;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -182,7 +183,6 @@ public class App {
             try {
                 THEME = Settings.themeGson.fromJson(new FileReader(themeFile), Theme.class);
             } catch (Exception ex) {
-                ex.printStackTrace();
                 THEME = Theme.DEFAULT_THEME;
             }
         }
