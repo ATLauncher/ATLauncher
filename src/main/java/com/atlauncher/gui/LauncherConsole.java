@@ -13,14 +13,11 @@ import com.atlauncher.evnt.listener.ReskinListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.ReskinManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -30,6 +27,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 
 public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener {
 
@@ -62,6 +63,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
         RelocalizationManager.addListener(this);
+        ReskinManager.addListener(this);
     }
 
     @Override
@@ -136,7 +138,5 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
         console.setForeground(App.THEME.getConsoleTextColor());
         console.setSelectionColor(App.THEME.getSelectionColor());
         console.setBackground(App.THEME.getBaseColor());
-        console.revalidate();
-        console.repaint();
     }
 }

@@ -12,6 +12,7 @@ package com.atlauncher.utils;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.mojang.api.ProfileResponse;
@@ -25,6 +26,7 @@ import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -34,20 +36,15 @@ import java.util.UUID;
 public class Authentication {
     public static AuthenticationResponse checkAccount(String username, String password) {
         String uuid = UUID.randomUUID() + "";
-        Gson gson = new Gson();
-        StringBuilder response = null;
         try {
             URL url = new URL("https://authserver.mojang.com/authenticate");
-            String request = gson.toJson(new AuthenticationRequest(username, password, uuid));
+            String request = Gsons.DEFAULT.toJson(new AuthenticationRequest(username, password, uuid));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
             connection.setConnectTimeout(15000);
             connection.setReadTimeout(15000);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-
             connection.setRequestProperty("Content-Length", "" + request.getBytes().length);
-
             connection.setUseCaches(false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -57,37 +54,18 @@ public class Authentication {
             writer.flush();
             writer.close();
 
-            // Read the result
+            InputStream in;
+            try{
+                in = connection.getInputStream();
+            } catch(Exception e){
+                in = connection.getErrorStream();
+            }
 
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            } catch (IOException e) {
-                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-            }
-            response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-                response.append('\r');
-            }
-            reader.close();
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            return Gsons.DEFAULT.fromJson(new InputStreamReader(in), AuthenticationResponse.class);
+        } catch(Exception e){
+            LogManager.error(e.getLocalizedMessage());
             return null;
         }
-        AuthenticationResponse result = null;
-        if (response != null) {
-            try {
-                result = gson.fromJson(response.toString(), AuthenticationResponse.class);
-            } catch (JsonSyntaxException e) {
-                App.settings.logStackTrace(e);
-            }
-            if (result != null) {
-                result.setUUID(uuid);
-            }
-        }
-        return result;
     }
 
     public static boolean checkAccessToken(String accessToken) {
