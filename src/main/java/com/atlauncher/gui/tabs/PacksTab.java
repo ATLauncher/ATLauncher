@@ -188,10 +188,12 @@ implements Tab{
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
 
-        boolean show = true;
+        Pack pack;
+        boolean show;
         int count = 0;
         for(PackCard card : this.cards){
-            Pack pack = card.getPack();
+            show = true;
+            pack = card.getPack();
             if(keep){
                 if(!this.searchField.getText().isEmpty()){
                     if(!Pattern.compile(Pattern.quote(this.searchField.getText()),
@@ -202,8 +204,10 @@ implements Tab{
                 }
 
                 if(this.searchDescBox.isSelected()){
-                    show = Pattern.compile(Pattern.quote(this.searchField.getText()),
-                            Pattern.CASE_INSENSITIVE).matcher(pack.getDescription()).find();
+                    if(Pattern.compile(Pattern.quote(this.searchField.getText()),
+                            Pattern.CASE_INSENSITIVE).matcher(pack.getDescription()).find()){
+                        show = true;
+                    }
                 }
 
                 if(this.serversBox.isSelected()){
