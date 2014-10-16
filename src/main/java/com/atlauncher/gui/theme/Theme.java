@@ -4,10 +4,10 @@ import com.atlauncher.LogManager;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.BorderFactory;
-import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Font;
+import javax.swing.BorderFactory;
+import javax.swing.UIManager;
 
 public final class Theme {
     public static final Theme DEFAULT_THEME = new Theme("ATLauncher", "RyanTheAllmighty", true, new Color(40, 45,

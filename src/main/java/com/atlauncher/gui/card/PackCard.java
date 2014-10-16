@@ -77,6 +77,10 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.addActionListeners();
     }
 
+    public Pack getPack(){
+        return this.pack;
+    }
+
     private void addActionListeners() {
         this.newInstanceButton.addActionListener(new ActionListener() {
             @Override

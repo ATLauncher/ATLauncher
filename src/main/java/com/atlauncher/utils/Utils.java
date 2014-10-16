@@ -16,12 +16,6 @@ import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 import org.tukaani.xz.XZInputStream;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
-import javax.swing.ImageIcon;
-import javax.swing.text.html.StyleSheet;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -81,6 +75,11 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
+import javax.swing.ImageIcon;
 
 public class Utils {
     public static String error(Throwable t) {
@@ -1387,28 +1386,6 @@ public class Utils {
             return false; // Can't determine version, so fall back to not being Java 8
         } else {
             return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.8");
-        }
-    }
-
-    /**
-     * Creates the style sheet.
-     *
-     * @param name the name
-     * @return the style sheet
-     */
-    public static StyleSheet createStyleSheet(String name) {
-        try {
-            StyleSheet sheet = new StyleSheet();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(App.class.getResourceAsStream
-                    ("/assets/css/" + name + ".css")));
-            sheet.loadRules(reader, null);
-            reader.close();
-
-            return sheet;
-        } catch (Exception e) {
-            App.settings.logStackTrace(e);
-            return new StyleSheet(); // If fails just return blank StyleSheet
         }
     }
 

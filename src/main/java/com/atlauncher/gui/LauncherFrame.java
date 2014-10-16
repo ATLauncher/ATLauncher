@@ -11,6 +11,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.tabs.AccountsTab;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -21,18 +22,19 @@ import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 @SuppressWarnings("serial")
-public class LauncherFrame extends JFrame implements RelocalizationListener {
-
+public final class LauncherFrame extends JFrame implements RelocalizationListener {
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;
@@ -49,6 +51,7 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
         LogManager.info("Launcher opening");
         LogManager.info("Made By Bob*");
         LogManager.info("*(Not Actually)");
+
         App.settings.setParentFrame(this);
         setSize(new Dimension(1000, 575));
         setTitle("ATLauncher " + Constants.VERSION);
@@ -84,6 +87,10 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
         });
     }
 
+    public void updateTitle(String str){
+        setTitle("ATLauncher " + Constants.VERSION + " - " + str);
+    }
+
     /**
      * Setup the individual tabs used in the Launcher sidebar
      */
@@ -105,12 +112,21 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
 
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(34.0F));
         for (Tab tab : this.tabs) {
-            if (tab == null) {
-                throw new NullPointerException("Tab == null");
-            }
-
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
+        tabbedPane.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent e){
+                String tabName = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
+                if(tabbedPane.getSelectedIndex() == 1){
+                    updateTitle("Packs - " + App.settings.getPackInstallableCount());
+                } else{
+                    updateTitle(tabName);
+                }
+
+                TabChangeManager.post();
+            }
+        });
         tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
     }

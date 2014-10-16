@@ -2738,10 +2738,6 @@ public class Settings {
         System.exit(0);
     }
 
-    public boolean isLanguageLoaded() {
-        return this.languageLoaded;
-    }
-
     public void cloneInstance(Instance instance, String clonedName) {
         Instance clonedInstance = (Instance) instance.clone();
         if (clonedInstance == null) {
@@ -2756,4 +2752,13 @@ public class Settings {
         }
     }
 
+    public String getPackInstallableCount(){
+       int count = 0;
+       for(Pack pack : this.getPacks()){
+           if(pack.canInstall()){
+               count++;
+           }
+       }
+        return count + "";
+    }
 }

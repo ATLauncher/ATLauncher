@@ -10,8 +10,6 @@ import java.io.IOException;
 
 /**
  * This class will ensure that colors are serialized to a hex value for easy editing
- * <p/>
- * TO @link RyanTheAllmighty - http://en.wikipedia.org/wiki/Serialization
  */
 public final class ColorTypeAdapter extends TypeAdapter<Color> {
     @Override
