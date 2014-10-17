@@ -3,6 +3,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.Utils;
 
 import java.awt.BorderLayout;
@@ -21,7 +22,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
-import javax.xml.bind.DatatypeConverter;
 
 /**
  * @author Kihira
@@ -55,7 +55,7 @@ public class DropboxSync extends SyncAbstract {
                 String line;
                 File dropboxLoc = null;
                 while ((line = bufferedReader.readLine()) != null) {
-                    dropboxLoc = new File(new String(DatatypeConverter.parseBase64Binary(line)));
+                    dropboxLoc = new File(new String(Base64.decode(line)));
                     if (dropboxLoc.exists()) {
                         break;
                     }

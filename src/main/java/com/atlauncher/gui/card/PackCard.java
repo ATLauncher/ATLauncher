@@ -14,6 +14,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.utils.Utils;
 
 import java.awt.BorderLayout;
@@ -41,12 +42,13 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     private final JButton createServerButton = new JButton(Language.INSTANCE.localize("common.createserver"));
     private final JButton supportButton = new JButton(Language.INSTANCE.localize("common.support"));
     private final JButton websiteButton = new JButton(Language.INSTANCE.localize("common.website"));
+    private final JButton modsButton = new JButton("View Mods");
     private final JPanel actionsPanel = new JPanel(new BorderLayout());
     private final JSplitPane splitter = new JSplitPane();
     private final GridBagConstraints gbc = new GridBagConstraints();
     private final Pack pack;
 
-    public PackCard(Pack pack) {
+    public PackCard(final Pack pack) {
         super(pack);
         RelocalizationManager.addListener(this);
         this.pack = pack;
@@ -60,6 +62,14 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         abPanel.add(this.createServerButton);
         abPanel.add(this.supportButton);
         abPanel.add(this.websiteButton);
+        abPanel.add(this.modsButton);
+
+        this.modsButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                new ViewModsDialog(pack).setVisible(true);
+            }
+        });
 
         this.descArea.setText(pack.getDescription());
         this.descArea.setLineWrap(true);

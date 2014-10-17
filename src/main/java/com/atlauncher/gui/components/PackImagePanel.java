@@ -20,6 +20,7 @@ extends JPanel{
         this.image = pack.getImage().getImage();
         this.setPreferredSize(new Dimension(Math.min(image.getWidth(null), 300), Math.min(image.getWidth(null), 150)));
     }
+
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
