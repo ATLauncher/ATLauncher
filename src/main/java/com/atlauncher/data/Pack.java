@@ -911,4 +911,32 @@ public class Pack {
         }
         return "Install Not Added!";
     }
+
+    public String addServerInstall(String version) {
+        Map<String, Object> request = new HashMap<String, Object>();
+
+        request.put("username", App.settings.getAccount().getMinecraftUsername());
+        request.put("version", version);
+
+        try {
+            return Utils.sendAPICall("pack/" + getSafeName() + "/serverinstalled/", request);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return "Install Not Added!";
+    }
+
+    public String addUpdate(String version) {
+        Map<String, Object> request = new HashMap<String, Object>();
+
+        request.put("username", App.settings.getAccount().getMinecraftUsername());
+        request.put("version", version);
+
+        try {
+            return Utils.sendAPICall("pack/" + getSafeName() + "/updated/", request);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return "Install Not Added!";
+    }
 }
