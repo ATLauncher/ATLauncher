@@ -664,7 +664,7 @@ public class Pack {
 
     public ArrayList<Mod> getMods(String versionToInstall, boolean isServer) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
-        String xml = getXML(versionToInstall);
+        String xml = getXML(versionToInstall, false);
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();

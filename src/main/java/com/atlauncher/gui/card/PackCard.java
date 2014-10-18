@@ -42,7 +42,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     private final JButton createServerButton = new JButton(Language.INSTANCE.localize("common.createserver"));
     private final JButton supportButton = new JButton(Language.INSTANCE.localize("common.support"));
     private final JButton websiteButton = new JButton(Language.INSTANCE.localize("common.website"));
-    private final JButton modsButton = new JButton("View Mods");
+    private final JButton modsButton = new JButton(Language.INSTANCE.localize("pack.viewmods"));
     private final JPanel actionsPanel = new JPanel(new BorderLayout());
     private final JSplitPane splitter = new JSplitPane();
     private final GridBagConstraints gbc = new GridBagConstraints();
@@ -152,5 +152,6 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.createServerButton.setText(Language.INSTANCE.localize("common.createserver"));
         this.supportButton.setText(Language.INSTANCE.localize("common.support"));
         this.websiteButton.setText(Language.INSTANCE.localize("common.website"));
+        this.modsButton.setText(Language.INSTANCE.localize("pack.viewmods"));
     }
 }

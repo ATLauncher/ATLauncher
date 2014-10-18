@@ -1,10 +1,16 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.card.ModCard;
 
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -17,33 +23,28 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
-public final class ViewModsDialog
-extends JDialog{
+public final class ViewModsDialog extends JDialog {
     private final Pack pack;
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
-    private final JPanel topPanel =new JPanel(new FlowLayout(FlowLayout.LEFT));
+    private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JTextField searchField = new JTextField(16);
     private final List<ModCard> cards = new LinkedList<ModCard>();
 
-    public ViewModsDialog(Pack pack){
-        super(App.settings.getParent(), pack.getName() + " Mods", ModalityType.APPLICATION_MODAL);
+    public ViewModsDialog(Pack pack) {
+        super(App.settings.getParent(), App.settings.getLocalizedString("pack.mods", pack.getName()),
+                ModalityType.APPLICATION_MODAL);
         this.pack = pack;
 
         this.setPreferredSize(new Dimension(550, 450));
         this.setResizable(false);
         this.setLocationRelativeTo(null);
 
-        this.topPanel.add(new JLabel("Search: "));
+        this.topPanel.add(new JLabel(Language.INSTANCE.localize("common.search") + ": "));
         this.topPanel.add(this.searchField);
 
         this.add(this.topPanel, BorderLayout.NORTH);
-        this.add(new JScrollPane(this.contentPanel){
+        this.add(new JScrollPane(this.contentPanel) {
             {
                 this.getVerticalScrollBar().setUnitIncrement(16);
             }
@@ -56,22 +57,22 @@ extends JDialog{
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets.set(2, 2, 2, 2);
 
-        this.searchField.addKeyListener(new KeyAdapter(){
+        this.searchField.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyTyped(KeyEvent e){
+            public void keyTyped(KeyEvent e) {
                 reload();
             }
         });
 
-        List<Mod> mods = pack.getMods(pack.getLatestVersion().getVersion(), false);
-        Collections.sort(mods, new Comparator<Mod>(){
+        List<Mod> mods = this.pack.getMods(this.pack.getLatestVersion().getVersion(), false);
+        Collections.sort(mods, new Comparator<Mod>() {
             @Override
-            public int compare(Mod o1, Mod o2){
+            public int compare(Mod o1, Mod o2) {
                 return o1.getName().compareToIgnoreCase(o2.getName());
             }
         });
 
-        for(Mod mod : mods){
+        for (Mod mod : mods) {
             ModCard card = new ModCard(mod);
             cards.add(card);
             contentPanel.add(card, gbc);
@@ -81,7 +82,7 @@ extends JDialog{
         this.pack();
     }
 
-    private void reload(){
+    private void reload() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -90,18 +91,18 @@ extends JDialog{
         gbc.insets.set(2, 2, 2, 2);
 
         this.contentPanel.removeAll();
-        for(ModCard card : this.cards){
+        for (ModCard card : this.cards) {
             boolean show = true;
 
-            if(!this.searchField.getText().isEmpty()){
-                if(!Pattern.compile(Pattern.quote(this.searchField.getText()),
-                        Pattern.CASE_INSENSITIVE).matcher(card.mod.getName()).find()){
+            if (!this.searchField.getText().isEmpty()) {
+                if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE).matcher
+                        (card.mod.getName()).find()) {
 
                     show = false;
                 }
             }
 
-            if(show){
+            if (show) {
                 this.contentPanel.add(card, gbc);
                 gbc.gridy++;
             }
