@@ -1038,12 +1038,19 @@ public class Instance implements Cloneable {
                 LogManager.info("Access token checked and is valid!");
                 sess = account.refreshToken();
             } else {
+            	LogManager.error("Problem with access token, trying to do something...");
             	int tryCounter = 0;
-            	while(!(account.hasAccessToken() && account.isAccessTokenValid()) && 
-            			tryCounter < Constants.MAX_TRY_GET_VALID_ACCESS_TOKEN) {
+            	do{
 	                if (account.hasAccessToken()) {
 	                    LogManager.error("Access token checked and is NOT valid!");
 	                    LogManager.error("We'll try to get you another valid token");
+	                }
+	                if(tryCounter >= Constants.MAX_TRY_GET_VALID_ACCESS_TOKEN) {
+	                	if (account.hasAccessToken()) {
+	    	                LogManager.error("Access token checked and is NOT valid!");
+	    	                account.setAccessToken(null);
+	    	                App.settings.saveAccounts();
+	    	            }
 	                }
 	                String password = account.getPassword();
 	                if (!account.isRemembered()) {
@@ -1097,11 +1104,8 @@ public class Instance implements Cloneable {
 		            }
 		            tryCounter++;
             	}
-            }
-            if (!account.hasAccessToken() || !account.isAccessTokenValid()) {
-                LogManager.error("Access token checked and is NOT valid!");
-                account.setAccessToken(null);
-                App.settings.saveAccounts();
+            	while(!(account.hasAccessToken() && account.isAccessTokenValid()) && 
+            			tryCounter < Constants.MAX_TRY_GET_VALID_ACCESS_TOKEN);
             }
             final AuthenticationResponse session = sess;
             Thread launcher = new Thread() {
