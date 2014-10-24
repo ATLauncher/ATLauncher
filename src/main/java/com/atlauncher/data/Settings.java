@@ -24,17 +24,20 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
@@ -73,10 +76,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user
@@ -123,6 +122,7 @@ public class Settings {
     private String theme; // The theme to use
     private String dateFormat; // The date format to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
+    private boolean hideJava8Warning; // If the user has hidden the Java 8 warning
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
     // General backup settings
@@ -228,6 +228,7 @@ public class Settings {
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
         checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
+        
         OUTER:
         for (Pack pack : this.packs) {
             if (pack.isTester()) {
@@ -239,7 +240,9 @@ public class Settings {
                 }
             }
         }
+
         loadServerProperty(true); // Get users Server preference
+
         if (Utils.isWindows() && this.javaPath.contains("x86")) {
             String[] options = {App.settings.getLocalizedString("common.yes"),
                     App.settings.getLocalizedString("common.no")};
@@ -252,6 +255,7 @@ public class Settings {
                 System.exit(0);
             }
         }
+
         if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
             String[] options = {App.settings.getLocalizedString("common.download"),
                     App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("instance" + "" +
@@ -269,9 +273,29 @@ public class Settings {
                 this.saveProperties();
             }
         }
+
+        if (Utils.isJava8() && !this.hideJava8Warning) {
+            String[] options = {App.settings.getLocalizedString("common.download"),
+                    App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("instance" + "" +
+                    ".dontremindmeagain")};
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
+                    .settings.getLocalizedString("settings.java8warning", "<br/><br/>") + "</p></html>",
+                    App.settings.getLocalizedString("settings.java8warningtitle"), JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            if (ret == 0) {
+                Utils.openBrowser("http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261" +
+                        ".html");
+                System.exit(0);
+            } else if (ret == 2) {
+                this.hideJava8Warning = true;
+                this.saveProperties();
+            }
+        }
+
         if (this.advancedBackup) {
             dropbox = new DropboxSync();
         }
+
         if (!this.hadPasswordDialog) {
             checkAccounts(); // Check accounts with stored passwords
         }
@@ -594,10 +618,10 @@ public class Settings {
                 String[] options = {"Ok"};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
                                 "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
-                        "page" +
+                                "page" +
                                 ".<br/><br/>Download " + "the update and replace the old ATLauncher file" +
-                        ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                        null, options, options[0]);
+                                ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret == 0) {
                     Utils.openBrowser("http://www.atlauncher.com/downloads/");
                     System.exit(0);
@@ -830,7 +854,7 @@ public class Settings {
             String[] options = {"OK"};
             JOptionPane.showOptionDialog(null, "<html><p align=\"center\">Cannot create the log file.<br/><br/>Make " +
                             "sure" + " you are running the Launcher from somewhere with<br/>write" + " permissions " +
-                    "for your " +
+                            "for your " +
                             "user account such as your Home/Users folder" + " or desktop.</p></html>", "Warning",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             System.exit(0);
@@ -901,10 +925,10 @@ public class Settings {
             String[] options = {"OK"};
             JOptionPane.showOptionDialog(null, "<html><p align=\"center\">Cannot create the config file" +
                             ".<br/><br/>Make sure" + " you are running the Launcher from somewhere with<br/>write" +
-                    " " +
+                            " " +
                             "permissions for your user account such as your Home/Users folder" + " or desktop" +
-                    ".</p></html>", "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                    options[0]);
+                            ".</p></html>", "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                    options, options[0]);
             System.exit(0);
         }
         try {
@@ -915,7 +939,8 @@ public class Settings {
                     !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
                 this.dateFormat = "dd/M/yyy";
             }
-            this.enablePPNotifiers = Boolean.parseBoolean(properties.getProperty("enablePublicPrivateNotifiers", "false"));
+            this.enablePPNotifiers = Boolean.parseBoolean(properties.getProperty("enablePublicPrivateNotifiers",
+                    "false"));
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "true"));
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
             if (!properties.containsKey("usingcustomjavapath")) {
@@ -962,11 +987,11 @@ public class Settings {
         }
     }
 
-    public boolean enabledPPNotifiers(){
+    public boolean enabledPPNotifiers() {
         return this.enablePPNotifiers;
     }
 
-    public void setPPNotifiers(boolean b){
+    public void setPPNotifiers(boolean b) {
         this.enablePPNotifiers = b;
     }
 
@@ -2753,13 +2778,13 @@ public class Settings {
         }
     }
 
-    public String getPackInstallableCount(){
-       int count = 0;
-       for(Pack pack : this.getPacks()){
-           if(pack.canInstall()){
-               count++;
-           }
-       }
+    public String getPackInstallableCount() {
+        int count = 0;
+        for (Pack pack : this.getPacks()) {
+            if (pack.canInstall()) {
+                count++;
+            }
+        }
         return count + "";
     }
 }
