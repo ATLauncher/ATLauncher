@@ -140,9 +140,7 @@ public class Utils {
             return null;
         }
 
-        ImageIcon icon = new ImageIcon(file.getAbsolutePath());
-
-        return icon;
+        return new ImageIcon(file.getAbsolutePath());
     }
 
     /**

@@ -32,16 +32,35 @@ public enum Language {
         }
     }
 
+    public static String[] available() {
+        File[] files = App.settings.getLanguagesDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".lang");
+            }
+        });
+        String[] langs = new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            langs[i] = files[i].getName().substring(0, 1).toUpperCase() + files[i].getName().substring(1,
+                    files[i].getName().lastIndexOf("."));
+        }
+        return langs;
+    }
+
+    public static synchronized String current() {
+        return INSTANCE.current;
+    }
+
     public synchronized void load(String lang) throws IOException {
         if (!this.langs.containsKey(lang)) {
             Properties props = new Properties();
             File langFile = new File(App.settings.getLanguagesDir(), lang.toLowerCase() + ".lang");
             if (!langFile.exists()) {
-                LogManager.error("Language file " + langFile.getName() + " doesn't exist! Ignore this if it's the " +
-                        "first time starting up ATLauncher!");
-                return; // Silently exit if the file doesn't exist
+                LogManager.error("Language file " + langFile.getName() + " doesn't exist! Defaulting it inbuilt one!");
+                props.load(App.class.getResourceAsStream("/assets/lang/english.lang"));
+            } else {
+                props.load(new FileInputStream(langFile));
             }
-            props.load(new FileInputStream(langFile));
             this.langs.put(lang, props);
             LogManager.info("Loading Language: " + lang);
         }
@@ -85,24 +104,5 @@ public enum Language {
 
     public synchronized String getCurrent() {
         return this.current;
-    }
-
-    public static String[] available() {
-        File[] files = App.settings.getLanguagesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".lang");
-            }
-        });
-        String[] langs = new String[files.length];
-        for (int i = 0; i < files.length; i++) {
-            langs[i] = files[i].getName().substring(0, 1).toUpperCase() + files[i].getName().substring(1,
-                    files[i].getName().lastIndexOf("."));
-        }
-        return langs;
-    }
-
-    public static synchronized String current() {
-        return INSTANCE.current;
     }
 }
