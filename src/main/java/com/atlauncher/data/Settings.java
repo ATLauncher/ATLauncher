@@ -228,7 +228,7 @@ public class Settings {
         console.setupLanguage(); // Setup language on the console
         checkResources(); // Check for new format of resources
         checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
-        
+
         OUTER:
         for (Pack pack : this.packs) {
             if (pack.isTester()) {
@@ -1713,7 +1713,8 @@ public class Settings {
         List<Pack> packs = new LinkedList<Pack>(this.packs);
         Collections.sort(packs, new Comparator<Pack>() {
             public int compare(Pack result1, Pack result2) {
-                return Integer.compare(result1.getPosition(), result2.getPosition());
+                return (result1.getPosition() < result2.getPosition()) ? -1 : ((result1.getPosition() == result2
+                        .getPosition()) ? 0 : 1);
             }
         });
         return packs;
