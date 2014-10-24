@@ -983,11 +983,12 @@ public class Settings {
             this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty("hideoldjavawarning", "false"));
 
             String lang = properties.getProperty("language", "English");
-            if (isLanguageByName(lang)) {
-                Language.INSTANCE.load(lang);
-            } else {
+            if (!isLanguageByName(lang)) {
                 LogManager.warn("Invalid language " + lang + ". Defaulting to English!");
+                lang = "English";
             }
+
+            Language.INSTANCE.load(lang);
 
             this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
             if (!this.forgeLoggingLevel.equalsIgnoreCase("SEVERE") && !this.forgeLoggingLevel.equalsIgnoreCase
