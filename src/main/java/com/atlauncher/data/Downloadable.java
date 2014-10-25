@@ -204,6 +204,7 @@ public class Downloadable {
                 this.connection.setRequestProperty("Expires", "0");
                 this.connection.setRequestProperty("Pragma", "no-cache");
                 this.connection.connect();
+
                 if (this.connection.getResponseCode() / 100 != 2) {
                     throw new IOException(this.url + " returned response code " + this.connection.getResponseCode() +
                             (this.connection.getResponseMessage() != null ? " with message of " + this.connection
@@ -238,7 +239,7 @@ public class Downloadable {
         InputStream in = null;
         FileOutputStream writer = null;
         try {
-            if (isGziped()) {
+            if (isGziped() && App.useGzipForDownloads) {
                 in = new GZIPInputStream(getConnection().getInputStream());
             } else {
                 in = getConnection().getInputStream();
@@ -291,7 +292,7 @@ public class Downloadable {
         StringBuilder response = null;
         try {
             InputStream in = null;
-            if (isGziped()) {
+            if (isGziped() && App.useGzipForDownloads) {
                 in = new GZIPInputStream(getConnection().getInputStream());
             } else {
                 in = getConnection().getInputStream();

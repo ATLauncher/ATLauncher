@@ -215,35 +215,52 @@ public class Settings {
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
+
         checkForLauncherUpdate();
+
         loadNews(); // Load the news
+
         this.languageLoaded = true; // Languages are now loaded
+
         loadMinecraftVersions(); // Load info about the different Minecraft versions
+
         loadPacks(); // Load the Packs available in the Launcher
+
         loadUsers(); // Load the Testers and Allowed Players for the packs
+
         loadInstances(); // Load the users installed Instances
+
         loadAccounts(); // Load the saved Accounts
+
         loadCheckingServers(); // Load the saved servers we're checking with the tool
+
         loadProperties(); // Load the users Properties
+
         console.setupLanguage(); // Setup language on the console
+
         checkResources(); // Check for new format of resources
+
         checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
 
+        LogManager.debug("Checking for access to master server");
         OUTER:
         for (Pack pack : this.packs) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
                     if (server.getName().equals("Master Server (Testing Only)")) {
                         server.setUserSelectable(true);
+                        LogManager.debug("Access to master server granted");
                         break OUTER; // Don't need to check anymore so break the outer loop
                     }
                 }
             }
         }
+        LogManager.debug("Finished checking for access to master server");
 
         loadServerProperty(true); // Get users Server preference
 
         if (Utils.isWindows() && this.javaPath.contains("x86")) {
+            LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {App.settings.getLocalizedString("common.yes"),
                     App.settings.getLocalizedString("common.no")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
@@ -257,6 +274,7 @@ public class Settings {
         }
 
         if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
+            LogManager.warn("You're using an old unsupported version of Java (Java 6 or older)!");
             String[] options = {App.settings.getLocalizedString("common.download"),
                     App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("instance" + "" +
                     ".dontremindmeagain")};
@@ -275,6 +293,7 @@ public class Settings {
         }
 
         if (Utils.isJava8() && !this.hideJava8Warning) {
+            LogManager.warn("You're using a possible game breaking version of Java (Java 8)!");
             String[] options = {App.settings.getLocalizedString("common.download"),
                     App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("instance" + "" +
                     ".dontremindmeagain")};
@@ -354,6 +373,7 @@ public class Settings {
     }
 
     public void checkResources() {
+        LogManager.debug("Checking if using old format of resources");
         File indexesDir = new File(this.resourcesDir, "indexes");
         if (!indexesDir.exists() || !indexesDir.isDirectory()) {
             final ProgressDialog dialog = new ProgressDialog(getLocalizedString("settings.rearrangingresources"), 0,
@@ -381,9 +401,11 @@ public class Settings {
             dialog.start();
 
         }
+        LogManager.debug("Finished checking if using old format of resources");
     }
 
     public void checkAccountUUIDs() {
+        LogManager.debug("Checking account UUID's");
         LogManager.info("Checking account UUID's!");
         for (Account account : this.accounts) {
             if (account.getUUID() == null) {
@@ -391,6 +413,7 @@ public class Settings {
                 this.saveAccounts();
             }
         }
+        LogManager.debug("Finished checking account UUID's");
     }
 
     public void checkMojangStatus() {
@@ -548,6 +571,9 @@ public class Settings {
             while (!executor.isTerminated()) {
             }
         }
+
+        LogManager.info("Finished downloading updated files!");
+
         if (Language.INSTANCE.getCurrent() != null) {
             try {
                 Language.INSTANCE.reload(Language.INSTANCE.getCurrent());
@@ -611,6 +637,7 @@ public class Settings {
     }
 
     private void checkForLauncherUpdate() {
+        LogManager.debug("Checking for launcher update");
         if (launcherHasUpdate()) {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
@@ -628,6 +655,7 @@ public class Settings {
                 }
             }
         }
+        LogManager.debug("Finished checking for launcher update");
     }
 
     /**
@@ -892,6 +920,7 @@ public class Settings {
      * Load the users Server preference from file
      */
     public void loadServerProperty(boolean userSelectableOnly) {
+        LogManager.debug("Loading server to use");
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             String serv = properties.getProperty("server", "Auto");
@@ -911,6 +940,7 @@ public class Settings {
         } catch (IOException e) {
             logStackTrace(e);
         }
+        LogManager.debug("Finished loading server to use");
     }
 
     /**
@@ -999,6 +1029,7 @@ public class Settings {
      * Load the properties from file
      */
     public void loadProperties() {
+        LogManager.debug("Loading properties");
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             this.firstTimeRun = Boolean.parseBoolean(properties.getProperty("firsttimerun", "true"));
@@ -1192,6 +1223,7 @@ public class Settings {
         } catch (IOException e) {
             logStackTrace(e);
         }
+        LogManager.debug("Finished loading properties");
     }
 
     /**
@@ -1329,6 +1361,7 @@ public class Settings {
      * Loads the languages for use in the Launcher
      */
     private void loadNews() {
+        LogManager.debug("Loading news");
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
@@ -1340,12 +1373,14 @@ public class Settings {
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         }
+        LogManager.debug("Finished loading news");
     }
 
     /**
      * Loads info about the different Minecraft versions
      */
     private void loadMinecraftVersions() {
+        LogManager.debug("Loading Minecraft versions");
         this.minecraftVersions = new HashMap<String, MinecraftVersion>();
         List<MinecraftVersion> list = new ArrayList<MinecraftVersion>();
         try {
@@ -1385,12 +1420,14 @@ public class Settings {
         executor.shutdown();
         while (!executor.isShutdown()) {
         }
+        LogManager.debug("Finished loading Minecraft versions");
     }
 
     /**
      * Loads the Packs for use in the Launcher
      */
     private void loadPacks() {
+        LogManager.debug("Loading packs");
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
@@ -1402,12 +1439,14 @@ public class Settings {
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         }
+        LogManager.debug("Finished loading packs");
     }
 
     /**
      * Loads the Testers and Allowed Players for the packs in the Launcher
      */
     private void loadUsers() {
+        LogManager.debug("Loading users");
         Downloadable download = new Downloadable("launcher/json/users.json", true);
         List<PackUsers> packUsers = null;
         try {
@@ -1426,12 +1465,14 @@ public class Settings {
         for (PackUsers pu : packUsers) {
             pu.addUsers();
         }
+        LogManager.debug("Finished loading users");
     }
 
     /**
      * Loads the user installed Instances
      */
     private void loadInstances() {
+        LogManager.debug("Loading instances");
         this.instances = new ArrayList<Instance>(); // Reset the instances list
         if (instancesDataFile.exists()) {
             try {
@@ -1497,6 +1538,7 @@ public class Settings {
                 Utils.delete(instancesDataFile); // Remove old instances data file
             }
         }
+        LogManager.debug("Finished loading instances");
     }
 
     public void saveInstances() {
@@ -1534,6 +1576,7 @@ public class Settings {
      * Loads the saved Accounts
      */
     private void loadAccounts() {
+        LogManager.debug("Loading accounts");
         if (userDataFile.exists()) {
             FileInputStream in = null;
             ObjectInputStream objIn = null;
@@ -1566,6 +1609,7 @@ public class Settings {
                 }
             }
         }
+        LogManager.debug("Finished loading accounts");
     }
 
     public void saveAccounts() {
@@ -1607,6 +1651,7 @@ public class Settings {
      * Loads the user servers added for checking
      */
     private void loadCheckingServers() {
+        LogManager.debug("Loading servers to check");
         this.checkingServers = new ArrayList<MinecraftServer>(); // Reset the list
         if (checkingServersFile.exists()) {
             FileReader fileReader = null;
@@ -1628,6 +1673,7 @@ public class Settings {
                 }
             }
         }
+        LogManager.debug("Finished loading servers to check");
     }
 
     public void saveCheckingServers() {

@@ -73,12 +73,7 @@ public enum Language {
             this.langs.remove(lang);
         }
 
-        Properties props = new Properties();
-        props.load(new FileInputStream(new File(App.settings.getLanguagesDir(), lang.toLowerCase() + ".lang")));
-        this.langs.put(lang, props);
-        LogManager.info("Loading Language: " + lang);
-
-        this.current = lang;
+        this.load(lang);
     }
 
     public synchronized String localize(String lang, String tag) {

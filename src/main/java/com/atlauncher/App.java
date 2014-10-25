@@ -51,6 +51,7 @@ public class App {
 
     public static boolean wasUpdated = false;
     public static boolean experimentalJson = false;
+    public static boolean useGzipForDownloads = true;
 
     public static Settings settings;
 
@@ -77,8 +78,12 @@ public class App {
                             true);
                 } else if (parts[0].equalsIgnoreCase("--debug")) {
                     LogManager.showDebug = true;
-                    LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of " +
-                            "user data!");
+                    LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
+                            + "user data!");
+                } else if (parts[0].equalsIgnoreCase("--usegzip") && parts[1].equalsIgnoreCase("false")) {
+                    useGzipForDownloads = false;
+                    LogManager.debug("GZip has been turned off for downloads!  Don't ask for support with this " +
+                            "disabled!", true);
                 }
             }
         }

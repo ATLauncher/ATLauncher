@@ -7,6 +7,7 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.ReskinListener;
@@ -118,8 +119,10 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
     }
 
     public void setupLanguage() {
+        LogManager.debug("Setting up language for console");
         copy.setText(App.settings.getLocalizedString("common.copy"));
         bottomBar.setupLanguage();
+        LogManager.debug("Finished setting up language for console");
     }
 
     public void clearConsole() {
