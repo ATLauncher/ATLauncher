@@ -11,6 +11,8 @@ import java.util.concurrent.BlockingQueue;
 public final class LogManager {
     private static final BlockingQueue<LogEvent> queue = new ArrayBlockingQueue<LogEvent>(128);
 
+    public static boolean showDebug = false;
+
     private LogManager() {
     }
 
@@ -27,7 +29,13 @@ public final class LogManager {
     }
 
     public static void debug(String message) {
-        queue.offer(new LogEvent(LogEvent.LogType.DEBUG, message));
+        debug(message, false);
+    }
+
+    public static void debug(String message, boolean force) {
+        if (showDebug || force) {
+            queue.offer(new LogEvent(LogEvent.LogType.DEBUG, message));
+        }
     }
 
     public static void warn(String message) {
