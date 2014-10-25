@@ -84,6 +84,8 @@ public class App {
                     useGzipForDownloads = false;
                     LogManager.debug("GZip has been turned off for downloads!  Don't ask for support with this " +
                             "disabled!", true);
+                    LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
+                            + "user data!");
                 }
             }
         }

@@ -69,6 +69,7 @@ common.downloading=Downloading
 common.edit=Edit
 common.editmods=Edit Mods
 common.error=Error
+common.forcequit=Force Quit
 common.hasbeen=Has Been
 common.install=Install
 common.installed=Installed

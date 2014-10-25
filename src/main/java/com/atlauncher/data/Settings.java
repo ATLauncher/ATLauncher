@@ -1751,7 +1751,7 @@ public class Settings {
     }
 
     /**
-     * Get the Packs available in the Launcher sorted positionally
+     * Get the Packs available in the Launcher sorted by position
      *
      * @return The Packs available in the Launcher sorted by position
      */
@@ -2078,7 +2078,7 @@ public class Settings {
      */
     public void reloadAccounts() {
         if (this.bottomBar == null) {
-            return; // Bottom Bar hasnt been made yet, so don't do anything
+            return; // Bottom Bar hasn't been made yet, so don't do anything
         }
         this.bottomBar.reloadAccounts(); // Reload the Bottom Bar accounts combobox
     }
@@ -2535,7 +2535,7 @@ public class Settings {
     }
 
     /**
-     * If the user has selected to display packs alphabetically or nto
+     * If the user has selected to display packs alphabetically or not
      *
      * @return true if yes, false if not
      */
