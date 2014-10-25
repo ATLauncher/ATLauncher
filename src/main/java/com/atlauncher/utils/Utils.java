@@ -16,6 +16,11 @@ import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 import org.tukaani.xz.XZInputStream;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
+import javax.swing.ImageIcon;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -75,11 +80,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
-import javax.swing.ImageIcon;
 
 public class Utils {
     public static String error(Throwable t) {
@@ -1554,7 +1554,9 @@ public class Utils {
             connection = (HttpURLConnection) url.openConnection(proxy);
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);
-            connection.setRequestProperty("Accept-Encoding", "gzip");
+            if (App.useGzipForDownloads) {
+                connection.setRequestProperty("Accept-Encoding", "gzip");
+            }
             connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
             connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
             connection.setRequestProperty("Expires", "0");
