@@ -11,6 +11,43 @@ import java.io.IOException;
 public final class LogEvent {
     public static final int CONSOLE = 0xA;
     public static final int FILE = 0xB;
+    public final LogType type;
+    public final String body;
+    public final int meta;
+
+    public LogEvent(LogType type, String body) {
+        this(type, body, CONSOLE | FILE);
+    }
+
+    public LogEvent(LogType type, String body, int meta) {
+        this.type = type;
+        if (App.settings != null) {
+            body = body.replace(App.settings.getBaseDir().getAbsolutePath(), "**USERSDIR**");
+        }
+        this.body = (!body.endsWith(System.getProperty("line.separator")) ? body + System.getProperty("line" + "" +
+                ".separator") : body);
+        this.meta = meta;
+    }
+
+    public void post(LogEventWriter writer) {
+        if ((this.meta & CONSOLE) == CONSOLE) {
+            Console c = App.settings.getConsole().console;
+            c.setColor(this.type.color()).setBold(true).write("[" + Timestamper.now() + "] ");
+            c.setColor(App.THEME.getConsoleTextColor()).setBold(false).write(this.body);
+        }
+        if ((this.meta & FILE) == FILE) {
+            try {
+                writer.write(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "[" + Timestamper.now() + "] " + this.body;
+    }
 
     public static enum LogType {
         INFO, WARN, ERROR, DEBUG;
@@ -35,41 +72,5 @@ public final class LogEvent {
             }
         }
 
-    }
-
-    public final LogType type;
-    public final String body;
-    public final int meta;
-
-    public LogEvent(LogType type, String body) {
-        this(type, body, CONSOLE | FILE);
-    }
-
-    public LogEvent(LogType type, String body, int meta) {
-        this.type = type;
-        body = body.replace(App.settings.getBaseDir().getAbsolutePath(), "**USERSDIR**");
-        this.body = (!body.endsWith(System.getProperty("line.separator")) ? body + System.getProperty("line" +
-                ".separator") : body);
-        this.meta = meta;
-    }
-
-    public void post(LogEventWriter writer) {
-        if ((this.meta & CONSOLE) == CONSOLE) {
-            Console c = App.settings.getConsole().console;
-            c.setColor(this.type.color()).setBold(true).write("[" + Timestamper.now() + "] ");
-            c.setColor(App.THEME.getConsoleTextColor()).setBold(false).write(this.body);
-        }
-        if ((this.meta & FILE) == FILE) {
-            try {
-                writer.write(this);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "[" + Timestamper.now() + "] " + this.body;
     }
 }

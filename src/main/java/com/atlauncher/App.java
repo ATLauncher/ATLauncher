@@ -15,9 +15,14 @@ import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
-
 import io.github.asyncronous.toast.Toaster;
 
+import javax.swing.InputMap;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.text.DefaultEditorKit;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -34,12 +39,6 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.swing.InputMap;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.text.DefaultEditorKit;
 
 public class App {
     // Using this will help spread the workload across multiple threads allowing you to do many
@@ -74,6 +73,11 @@ public class App {
                     wasUpdated = true;
                 } else if (parts[0].equalsIgnoreCase("--json") && parts[1].equalsIgnoreCase("experimental")) {
                     experimentalJson = true;
+                    LogManager.debug("Experimental JSON support enabled! Don't ask for support with this enabled!",
+                            true);
+                } else if (parts[0].equalsIgnoreCase("--debug")) {
+                    LogManager.showDebug = true;
+                    LogManager.debug("Debug logging is enabled!");
                 }
             }
         }
@@ -84,9 +88,11 @@ public class App {
             if (files > 1) {
                 String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, "<html><p align=\"center\">I've detected that you may " +
-                        "not have installed this " + "in the right location.<br/><br/>The exe or jar file" + "should " +
-                        "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure that's " +
-                        "what you've" + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
+                                "not have installed this " + "in the right location.<br/><br/>The exe or jar file" +
+                        "should " +
+                                "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure" +
+                        " that's " +
+                                "what you've" + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     System.exit(0);
@@ -124,10 +130,6 @@ public class App {
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
-
-        if (experimentalJson) {
-            LogManager.debug("Experimental JSON support enabled! Don't ask for support with this enabled!");
-        }
 
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
