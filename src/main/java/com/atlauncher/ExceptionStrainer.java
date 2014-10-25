@@ -1,18 +1,13 @@
 package com.atlauncher;
 
-import com.atlauncher.exceptions.ChunkyException;
-import com.atlauncher.reporter.GithubIssueReporter;
-import com.atlauncher.utils.Utils;
-
 public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        if (e instanceof ChunkyException) {
-            try {
-                App.TOASTER.popWarning("Caught an exception");
-                GithubIssueReporter.submit("Strained Exception", Utils.error(e));
-            } catch (Exception e1) {
-                e1.printStackTrace(System.err);
+        e.printStackTrace();
+        LogManager.error(e.getMessage());
+        for (StackTraceElement element : e.getStackTrace()) {
+            if (element.toString() != null) {
+                LogManager.error(element.toString());
             }
         }
     }
