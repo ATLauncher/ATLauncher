@@ -6,6 +6,7 @@
  */
 package com.atlauncher.gui;
 
+import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
 import java.awt.Graphics;
@@ -14,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JWindow;
@@ -51,7 +53,7 @@ public class SplashScreen extends JWindow {
     }
 
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem FORCE_QUIT = new JMenuItem("Force Quit");
+        private final JMenuItem FORCE_QUIT = new JMenuItem(App.settings.getLocalizedString("common.forcequit"));
 
         public ContextMenu() {
             super();
