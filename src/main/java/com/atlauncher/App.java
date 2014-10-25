@@ -77,7 +77,8 @@ public class App {
                             true);
                 } else if (parts[0].equalsIgnoreCase("--debug")) {
                     LogManager.showDebug = true;
-                    LogManager.debug("Debug logging is enabled!");
+                    LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of " +
+                            "user data!");
                 }
             }
         }
@@ -89,9 +90,9 @@ public class App {
                 String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, "<html><p align=\"center\">I've detected that you may " +
                                 "not have installed this " + "in the right location.<br/><br/>The exe or jar file" +
-                        "should " +
+                                "should " +
                                 "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure" +
-                        " that's " +
+                                " that's " +
                                 "what you've" + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {

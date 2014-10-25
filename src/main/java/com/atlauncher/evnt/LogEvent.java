@@ -1,6 +1,7 @@
 package com.atlauncher.evnt;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.writer.LogEventWriter;
@@ -21,7 +22,7 @@ public final class LogEvent {
 
     public LogEvent(LogType type, String body, int meta) {
         this.type = type;
-        if (App.settings != null) {
+        if (App.settings != null && !LogManager.showDebug) {
             body = body.replace(App.settings.getBaseDir().getAbsolutePath(), "**USERSDIR**");
         }
         this.body = (!body.endsWith(System.getProperty("line.separator")) ? body + System.getProperty("line" + "" +
