@@ -21,20 +21,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.utils.Utils;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -49,6 +35,21 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * <p/>
@@ -56,24 +57,23 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  * @author Ryan
  */
-public class InstanceCard
-extends CollapsiblePanel
-implements RelocalizationListener{
+public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
     private final JSplitPane splitter = new JSplitPane();
     private final Instance instance;
     private final JPanel rightPanel = new JPanel();
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
-    private final JButton playButton = new JButton("Play");
-    private final JButton reinstallButton = new JButton("Reinstall");
-    private final JButton renameButton  = new JButton("Rename");
-    private final JButton backupButton = new JButton("Backup");
-    private final JButton cloneButton = new JButton("Clone");
-    private final JButton deleteButton = new JButton("Delete");
-    private final JButton editButton = new JButton("Edit Mods");
-    private final JButton openButton = new JButton("Open Folder");
+    private final JButton playButton = new JButton(Language.INSTANCE.localize("common.play"));
+    private final JButton reinstallButton = new JButton(Language.INSTANCE.localize("common.reinstall"));
+    private final JButton updateButton = new JButton(Language.INSTANCE.localize("common.update"));
+    private final JButton renameButton = new JButton(Language.INSTANCE.localize("common.rename"));
+    private final JButton backupButton = new JButton(Language.INSTANCE.localize("common.backup"));
+    private final JButton cloneButton = new JButton(Language.INSTANCE.localize("instance.clone"));
+    private final JButton deleteButton = new JButton(Language.INSTANCE.localize("common.delete"));
+    private final JButton editButton = new JButton(Language.INSTANCE.localize("common.editmods"));
+    private final JButton openButton = new JButton(Language.INSTANCE.localize("common.openfolder"));
 
-    public InstanceCard(Instance instance){
+    public InstanceCard(Instance instance) {
         super(instance);
         this.instance = instance;
         this.image = new ImagePanel(instance.getImage().getImage());
@@ -97,6 +97,7 @@ implements RelocalizationListener{
         as.setBottomComponent(bottom);
         top.add(this.playButton);
         top.add(this.reinstallButton);
+        top.add(this.updateButton);
         top.add(this.renameButton);
         top.add(this.backupButton);
         bottom.add(this.cloneButton);
@@ -106,7 +107,8 @@ implements RelocalizationListener{
 
         this.rightPanel.setLayout(new BorderLayout());
         this.rightPanel.setPreferredSize(new Dimension(this.rightPanel.getPreferredSize().width, 180));
-        this.rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         this.rightPanel.add(as, BorderLayout.SOUTH);
 
         this.getContentPane().setLayout(new BorderLayout());
@@ -114,12 +116,16 @@ implements RelocalizationListener{
 
         RelocalizationManager.addListener(this);
 
+        if (!instance.hasUpdate()) {
+            this.updateButton.setVisible(false);
+        }
+
         this.addActionListeners();
         this.addMouseListeners();
         this.validatePlayable();
     }
 
-    private void validatePlayable(){
+    private void validatePlayable() {
         if (!instance.isPlayable()) {
             for (ActionListener al : playButton.getActionListeners()) {
                 playButton.removeActionListener(al);
@@ -157,10 +163,10 @@ implements RelocalizationListener{
         }
     }
 
-    private void addActionListeners(){
-        this.playButton.addActionListener(new ActionListener(){
+    private void addActionListeners() {
+        this.playButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) && !instance
                         .isDev()) {
                     String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common"
@@ -203,9 +209,9 @@ implements RelocalizationListener{
                 }
             }
         });
-        this.reinstallButton.addActionListener(new ActionListener(){
+        this.reinstallButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 if (App.settings.getAccount() == null) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" + "" +
@@ -216,15 +222,27 @@ implements RelocalizationListener{
                 }
             }
         });
-        this.renameButton.addActionListener(new ActionListener(){
+        this.updateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (App.settings.getAccount() == null) {
+                    String[] options = {Language.INSTANCE.localize("common.ok")};
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" + "" +
+                                    ".cantupdate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                } else {
+                    new InstanceInstallerDialog(instance, true, false);
+                }
+            }
+        });
+        this.renameButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 new RenameInstanceDialog(instance);
             }
         });
-        this.backupButton.addActionListener(new ActionListener(){
+        this.backupButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 if (App.settings.isAdvancedBackupsEnabled()) {
                     new BackupDialog(instance).setVisible(true);
                 } else {
@@ -283,27 +301,27 @@ implements RelocalizationListener{
                     } else {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
                         JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("backup" +
-                                        ".nosaves"), Language.INSTANCE.localize("backup.nosavestitle"),
+                                ".nosaves"), Language.INSTANCE.localize("backup.nosavestitle"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     }
                 }
             }
         });
-        this.editButton.addActionListener(new ActionListener(){
+        this.editButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 new EditModsDialog(instance);
             }
         });
-        this.openButton.addActionListener(new ActionListener(){
+        this.openButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 Utils.openExplorer(instance.getRootDirectory());
             }
         });
-        this.cloneButton.addActionListener(new ActionListener(){
+        this.cloneButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
                         Language.INSTANCE.localize("instance.cloneenter"), Language.INSTANCE.localize("instance" + "" +
                                 ".clonetitle"), JOptionPane.INFORMATION_MESSAGE);
@@ -342,9 +360,9 @@ implements RelocalizationListener{
                 }
             }
         });
-        this.deleteButton.addActionListener(new ActionListener(){
+        this.deleteButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 int response = JOptionPane.showConfirmDialog(App.settings.getParent(),
                         Language.INSTANCE.localize("instance.deletesure"), Language.INSTANCE.localize("instance" + "" +
                                 ".deleteinstance"), JOptionPane.YES_NO_OPTION);
@@ -366,77 +384,74 @@ implements RelocalizationListener{
         });
     }
 
-    private void addMouseListeners(){
-        this.image.addMouseListener(new MouseAdapter(){
+    private void addMouseListeners() {
+        this.image.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
-                if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2){
-                    if(instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) &&
-                            !instance.isDev()){
-                        String[] options = {
-                                Language.INSTANCE.localize("common.yes"),
-                                Language.INSTANCE.localize("common.no"),
-                                Language.INSTANCE.localize("instance" + "" +
-                                        ".dontremindmeagain")
-                        };
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2) {
+                    if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) &&
+                            !instance.isDev()) {
+                        String[] options = {Language.INSTANCE.localize("common.yes"),
+                                Language.INSTANCE.localize("common.no"), Language.INSTANCE.localize("instance" + "" +
+                                ".dontremindmeagain")};
                         int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
                                 "<html><p align=\"center\">" + Language.INSTANCE.localize("instance.updatenow",
                                         "<br/><br/>") + "</p></html>", Language.INSTANCE.localize("instance" + "" +
                                         ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
                                 null, options, options[0]);
-                        if(ret == 0){
-                            if(App.settings.getAccount() == null){
+                        if (ret == 0) {
+                            if (App.settings.getAccount() == null) {
                                 String[] optionss = {Language.INSTANCE.localize("common.ok")};
                                 JOptionPane.showOptionDialog(App.settings.getParent(),
                                         App.settings.getLocalizedString("instance.cantupdate"),
                                         App.settings.getLocalizedString("instance.noaccountselected"),
                                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, optionss,
                                         optionss[0]);
-                            } else{
+                            } else {
                                 new InstanceInstallerDialog(instance, true, false);
                             }
-                        } else if(ret == 1 || ret == JOptionPane.CLOSED_OPTION){
-                            if(!App.settings.isMinecraftLaunched()){
-                                if(instance.launch()){
+                        } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
+                            if (!App.settings.isMinecraftLaunched()) {
+                                if (instance.launch()) {
                                     App.settings.setMinecraftLaunched(true);
                                 }
                             }
-                        } else if(ret == 2){
+                        } else if (ret == 2) {
                             instance.ignoreUpdate();
-                            if(!App.settings.isMinecraftLaunched()){
-                                if(instance.launch()){
+                            if (!App.settings.isMinecraftLaunched()) {
+                                if (instance.launch()) {
                                     App.settings.setMinecraftLaunched(true);
                                 }
                             }
                         }
-                    } else{
-                        if(!App.settings.isMinecraftLaunched()){
-                            if(instance.launch()){
+                    } else {
+                        if (!App.settings.isMinecraftLaunched()) {
+                            if (instance.launch()) {
                                 App.settings.setMinecraftLaunched(true);
                             }
                         }
                     }
-                } else if(e.getButton() == MouseEvent.BUTTON3){
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
                     JPopupMenu rightClickMenu = new JPopupMenu();
                     JMenuItem changeImageItem = new JMenuItem(Language.INSTANCE.localize("instance.changeimage"));
                     rightClickMenu.add(changeImageItem);
                     rightClickMenu.show(image, e.getX(), e.getY());
-                    changeImageItem.addActionListener(new ActionListener(){
+                    changeImageItem.addActionListener(new ActionListener() {
                         @Override
-                        public void actionPerformed(ActionEvent e){
+                        public void actionPerformed(ActionEvent e) {
                             JFileChooser chooser = new JFileChooser();
                             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                             chooser.setAcceptAllFileFilterUsed(false);
                             chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
                             int ret = chooser.showOpenDialog(App.settings.getParent());
-                            if(ret == JFileChooser.APPROVE_OPTION){
+                            if (ret == JFileChooser.APPROVE_OPTION) {
                                 File img = chooser.getSelectedFile();
-                                if(img.getAbsolutePath().endsWith(".png")){
-                                    try{
+                                if (img.getAbsolutePath().endsWith(".png")) {
+                                    try {
                                         Utils.safeCopy(img, new File(instance.getRootDirectory(), "instance.png"));
                                         image.setImage(instance.getImage().getImage());
                                         instance.save();
-                                    } catch(IOException e1){
+                                    } catch (IOException e1) {
                                         e1.printStackTrace(System.err);
                                     }
                                 }
@@ -445,6 +460,18 @@ implements RelocalizationListener{
                     });
                 }
             }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
         });
     }
 
@@ -452,6 +479,7 @@ implements RelocalizationListener{
     public void onRelocalization() {
         this.playButton.setText(Language.INSTANCE.localize("common.play"));
         this.reinstallButton.setText(Language.INSTANCE.localize("common.reinstall"));
+        this.updateButton.setText(Language.INSTANCE.localize("common.update"));
         this.renameButton.setText(Language.INSTANCE.localize("instance.rename"));
         this.backupButton.setText(Language.INSTANCE.localize("common.backup"));
         this.cloneButton.setText(Language.INSTANCE.localize("instance.clone"));
