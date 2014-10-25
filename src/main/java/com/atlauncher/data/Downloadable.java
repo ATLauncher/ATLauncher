@@ -198,12 +198,15 @@ public class Downloadable {
                 }
                 this.connection.setUseCaches(false);
                 this.connection.setDefaultUseCaches(false);
-                this.connection.setRequestProperty("Accept-Encoding", "gzip");
+                if (App.useGzipForDownloads) {
+                    this.connection.setRequestProperty("Accept-Encoding", "gzip");
+                }
                 this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
                 this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
                 this.connection.setRequestProperty("Expires", "0");
                 this.connection.setRequestProperty("Pragma", "no-cache");
                 this.connection.connect();
+
                 if (this.connection.getResponseCode() / 100 != 2) {
                     throw new IOException(this.url + " returned response code " + this.connection.getResponseCode() +
                             (this.connection.getResponseMessage() != null ? " with message of " + this.connection
@@ -238,7 +241,7 @@ public class Downloadable {
         InputStream in = null;
         FileOutputStream writer = null;
         try {
-            if (isGziped()) {
+            if (isGziped() && App.useGzipForDownloads) {
                 in = new GZIPInputStream(getConnection().getInputStream());
             } else {
                 in = getConnection().getInputStream();
@@ -291,7 +294,7 @@ public class Downloadable {
         StringBuilder response = null;
         try {
             InputStream in = null;
-            if (isGziped()) {
+            if (isGziped() && App.useGzipForDownloads) {
                 in = new GZIPInputStream(getConnection().getInputStream());
             } else {
                 in = getConnection().getInputStream();

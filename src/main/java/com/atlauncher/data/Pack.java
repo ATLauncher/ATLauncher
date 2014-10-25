@@ -664,7 +664,7 @@ public class Pack {
 
     public ArrayList<Mod> getMods(String versionToInstall, boolean isServer) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
-        String xml = getXML(versionToInstall);
+        String xml = getXML(versionToInstall, false);
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -906,6 +906,34 @@ public class Pack {
 
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return "Install Not Added!";
+    }
+
+    public String addServerInstall(String version) {
+        Map<String, Object> request = new HashMap<String, Object>();
+
+        request.put("username", App.settings.getAccount().getMinecraftUsername());
+        request.put("version", version);
+
+        try {
+            return Utils.sendAPICall("pack/" + getSafeName() + "/serverinstalled/", request);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return "Install Not Added!";
+    }
+
+    public String addUpdate(String version) {
+        Map<String, Object> request = new HashMap<String, Object>();
+
+        request.put("username", App.settings.getAccount().getMinecraftUsername());
+        request.put("version", version);
+
+        try {
+            return Utils.sendAPICall("pack/" + getSafeName() + "/updated/", request);
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         }

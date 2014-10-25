@@ -1206,13 +1206,13 @@ public class Instance implements Cloneable {
                             if (isLeaderboardsEnabled() && isLoggingEnabled() && !isDev() && App.settings.enableLogs
                                     ()) {
                                 final int timePlayed = (int) (end - start) / 1000;
-                                App.TASKPOOL.submit(new Runnable() {
-                                    public void run() {
-                                        addTimePlayed(timePlayed, (isDev ? "dev" : getVersion()));
-                                    }
-
-                                    ;
-                                });
+                                if (timePlayed > 0) {
+                                    App.TASKPOOL.submit(new Runnable() {
+                                        public void run() {
+                                            addTimePlayed(timePlayed, (isDev ? "dev" : getVersion()));
+                                        }
+                                    });
+                                }
                             }
                             if (App.settings.keepLauncherOpen() && App.settings.hasUpdatedFiles()) {
                                 App.settings.reloadLauncherData();

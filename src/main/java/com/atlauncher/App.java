@@ -50,6 +50,7 @@ public class App {
 
     public static boolean wasUpdated = false;
     public static boolean experimentalJson = false;
+    public static boolean useGzipForDownloads = true;
 
     public static Settings settings;
 
@@ -73,6 +74,16 @@ public class App {
                     wasUpdated = true;
                 } else if (parts[0].equalsIgnoreCase("--json") && parts[1].equalsIgnoreCase("experimental")) {
                     experimentalJson = true;
+                    LogManager.debug("Experimental JSON support enabled! Don't ask for support with this enabled!",
+                            true);
+                } else if (parts[0].equalsIgnoreCase("--debug")) {
+                    LogManager.showDebug = true;
+                    LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
+                            + "user data!");
+                } else if (parts[0].equalsIgnoreCase("--usegzip") && parts[1].equalsIgnoreCase("false")) {
+                    useGzipForDownloads = false;
+                    LogManager.debug("GZip has been turned off for downloads!  Don't ask for support with this " +
+                            "disabled!", true);
                 }
             }
         }
@@ -88,6 +99,10 @@ public class App {
                 int ret = JOptionPane.showOptionDialog(null, "<html><p align=\"center\">I've detected that you may " +
                                 "not have installed this " + "in the right location.<br/><br/>The exe or jar file" + "should " +
                                 "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure that's " +
+                                "not have installed this " + "in the right location.<br/><br/>The exe or jar file" +
+                                "should " +
+                                "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure" +
+                                " that's " +
                                 "what you've" + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if(ret != 0){
@@ -133,10 +148,6 @@ public class App {
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
-
-        if (experimentalJson) {
-            LogManager.debug("Experimental JSON support enabled! Don't ask for support with this enabled!");
-        }
 
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");

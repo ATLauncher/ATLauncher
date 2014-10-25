@@ -881,8 +881,16 @@ public class Mod {
         return this.serverFile;
     }
 
+    public boolean hasWebsite() {
+        return (this.website != null && this.website.substring(0, 4).equalsIgnoreCase("http"));
+    }
+
     public String getWebsite() {
         return this.website;
+    }
+
+    public boolean hasDonation() {
+        return (this.donation != null && this.donation.substring(0, 4).equalsIgnoreCase("http"));
     }
 
     public String getDonation() {

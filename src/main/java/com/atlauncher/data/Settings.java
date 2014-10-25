@@ -24,17 +24,20 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
@@ -73,10 +76,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user
@@ -123,6 +122,7 @@ public class Settings {
     private String theme; // The theme to use
     private String dateFormat; // The date format to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
+    private boolean hideJava8Warning; // If the user has hidden the Java 8 warning
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
     // General backup settings
@@ -215,32 +215,52 @@ public class Settings {
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
+
         checkForLauncherUpdate();
+
         loadNews(); // Load the news
+
         this.languageLoaded = true; // Languages are now loaded
+
         loadMinecraftVersions(); // Load info about the different Minecraft versions
+
         loadPacks(); // Load the Packs available in the Launcher
+
         loadUsers(); // Load the Testers and Allowed Players for the packs
+
         loadInstances(); // Load the users installed Instances
+
         loadAccounts(); // Load the saved Accounts
+
         loadCheckingServers(); // Load the saved servers we're checking with the tool
+
         loadProperties(); // Load the users Properties
+
         console.setupLanguage(); // Setup language on the console
+
         checkResources(); // Check for new format of resources
+
         checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
+
+        LogManager.debug("Checking for access to master server");
         OUTER:
         for (Pack pack : this.packs) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
                     if (server.getName().equals("Master Server (Testing Only)")) {
                         server.setUserSelectable(true);
+                        LogManager.debug("Access to master server granted");
                         break OUTER; // Don't need to check anymore so break the outer loop
                     }
                 }
             }
         }
+        LogManager.debug("Finished checking for access to master server");
+
         loadServerProperty(true); // Get users Server preference
+
         if (Utils.isWindows() && this.javaPath.contains("x86")) {
+            LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {App.settings.getLocalizedString("common.yes"),
                     App.settings.getLocalizedString("common.no")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
@@ -252,7 +272,9 @@ public class Settings {
                 System.exit(0);
             }
         }
+
         if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
+            LogManager.warn("You're using an old unsupported version of Java (Java 6 or older)!");
             String[] options = {App.settings.getLocalizedString("common.download"),
                     App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("instance" + "" +
                     ".dontremindmeagain")};
@@ -269,9 +291,30 @@ public class Settings {
                 this.saveProperties();
             }
         }
+
+        if (Utils.isJava8() && !this.hideJava8Warning) {
+            LogManager.warn("You're using a possible game breaking version of Java (Java 8)!");
+            String[] options = {App.settings.getLocalizedString("common.download"),
+                    App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("instance" + "" +
+                    ".dontremindmeagain")};
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
+                    .settings.getLocalizedString("settings.java8warning", "<br/><br/>") + "</p></html>",
+                    App.settings.getLocalizedString("settings.java8warningtitle"), JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            if (ret == 0) {
+                Utils.openBrowser("http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261" +
+                        ".html");
+                System.exit(0);
+            } else if (ret == 2) {
+                this.hideJava8Warning = true;
+                this.saveProperties();
+            }
+        }
+
         if (this.advancedBackup) {
             dropbox = new DropboxSync();
         }
+
         if (!this.hadPasswordDialog) {
             checkAccounts(); // Check accounts with stored passwords
         }
@@ -330,6 +373,7 @@ public class Settings {
     }
 
     public void checkResources() {
+        LogManager.debug("Checking if using old format of resources");
         File indexesDir = new File(this.resourcesDir, "indexes");
         if (!indexesDir.exists() || !indexesDir.isDirectory()) {
             final ProgressDialog dialog = new ProgressDialog(getLocalizedString("settings.rearrangingresources"), 0,
@@ -357,9 +401,11 @@ public class Settings {
             dialog.start();
 
         }
+        LogManager.debug("Finished checking if using old format of resources");
     }
 
     public void checkAccountUUIDs() {
+        LogManager.debug("Checking account UUID's");
         LogManager.info("Checking account UUID's!");
         for (Account account : this.accounts) {
             if (account.getUUID() == null) {
@@ -367,6 +413,7 @@ public class Settings {
                 this.saveAccounts();
             }
         }
+        LogManager.debug("Finished checking account UUID's");
     }
 
     public void checkMojangStatus() {
@@ -524,6 +571,9 @@ public class Settings {
             while (!executor.isTerminated()) {
             }
         }
+
+        LogManager.info("Finished downloading updated files!");
+
         if (Language.INSTANCE.getCurrent() != null) {
             try {
                 Language.INSTANCE.reload(Language.INSTANCE.getCurrent());
@@ -587,6 +637,7 @@ public class Settings {
     }
 
     private void checkForLauncherUpdate() {
+        LogManager.debug("Checking for launcher update");
         if (launcherHasUpdate()) {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
@@ -594,16 +645,17 @@ public class Settings {
                 String[] options = {"Ok"};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
                                 "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
-                        "page" +
+                                "page" +
                                 ".<br/><br/>Download " + "the update and replace the old ATLauncher file" +
-                        ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                        null, options, options[0]);
+                                ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret == 0) {
                     Utils.openBrowser("http://www.atlauncher.com/downloads/");
                     System.exit(0);
                 }
             }
         }
+        LogManager.debug("Finished checking for launcher update");
     }
 
     /**
@@ -830,7 +882,7 @@ public class Settings {
             String[] options = {"OK"};
             JOptionPane.showOptionDialog(null, "<html><p align=\"center\">Cannot create the log file.<br/><br/>Make " +
                             "sure" + " you are running the Launcher from somewhere with<br/>write" + " permissions " +
-                    "for your " +
+                            "for your " +
                             "user account such as your Home/Users folder" + " or desktop.</p></html>", "Warning",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             System.exit(0);
@@ -868,6 +920,7 @@ public class Settings {
      * Load the users Server preference from file
      */
     public void loadServerProperty(boolean userSelectableOnly) {
+        LogManager.debug("Loading server to use");
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             String serv = properties.getProperty("server", "Auto");
@@ -887,6 +940,7 @@ public class Settings {
         } catch (IOException e) {
             logStackTrace(e);
         }
+        LogManager.debug("Finished loading server to use");
     }
 
     /**
@@ -901,10 +955,10 @@ public class Settings {
             String[] options = {"OK"};
             JOptionPane.showOptionDialog(null, "<html><p align=\"center\">Cannot create the config file" +
                             ".<br/><br/>Make sure" + " you are running the Launcher from somewhere with<br/>write" +
-                    " " +
+                            " " +
                             "permissions for your user account such as your Home/Users folder" + " or desktop" +
-                    ".</p></html>", "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                    options[0]);
+                            ".</p></html>", "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                    options, options[0]);
             System.exit(0);
         }
         try {
@@ -915,7 +969,8 @@ public class Settings {
                     !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
                 this.dateFormat = "dd/M/yyy";
             }
-            this.enablePPNotifiers = Boolean.parseBoolean(properties.getProperty("enablePublicPrivateNotifiers", "false"));
+            this.enablePPNotifiers = Boolean.parseBoolean(properties.getProperty("enablePublicPrivateNotifiers",
+                    "false"));
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "true"));
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
             if (!properties.containsKey("usingcustomjavapath")) {
@@ -962,11 +1017,11 @@ public class Settings {
         }
     }
 
-    public boolean enabledPPNotifiers(){
+    public boolean enabledPPNotifiers() {
         return this.enablePPNotifiers;
     }
 
-    public void setPPNotifiers(boolean b){
+    public void setPPNotifiers(boolean b) {
         this.enablePPNotifiers = b;
     }
 
@@ -974,6 +1029,7 @@ public class Settings {
      * Load the properties from file
      */
     public void loadProperties() {
+        LogManager.debug("Loading properties");
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             this.firstTimeRun = Boolean.parseBoolean(properties.getProperty("firsttimerun", "true"));
@@ -983,11 +1039,12 @@ public class Settings {
             this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty("hideoldjavawarning", "false"));
 
             String lang = properties.getProperty("language", "English");
-            if (isLanguageByName(lang)) {
-                Language.INSTANCE.load(lang);
-            } else {
+            if (!isLanguageByName(lang)) {
                 LogManager.warn("Invalid language " + lang + ". Defaulting to English!");
+                lang = "English";
             }
+
+            Language.INSTANCE.load(lang);
 
             this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
             if (!this.forgeLoggingLevel.equalsIgnoreCase("SEVERE") && !this.forgeLoggingLevel.equalsIgnoreCase
@@ -1166,6 +1223,7 @@ public class Settings {
         } catch (IOException e) {
             logStackTrace(e);
         }
+        LogManager.debug("Finished loading properties");
     }
 
     /**
@@ -1303,6 +1361,7 @@ public class Settings {
      * Loads the languages for use in the Launcher
      */
     private void loadNews() {
+        LogManager.debug("Loading news");
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
@@ -1314,12 +1373,14 @@ public class Settings {
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         }
+        LogManager.debug("Finished loading news");
     }
 
     /**
      * Loads info about the different Minecraft versions
      */
     private void loadMinecraftVersions() {
+        LogManager.debug("Loading Minecraft versions");
         this.minecraftVersions = new HashMap<String, MinecraftVersion>();
         List<MinecraftVersion> list = new ArrayList<MinecraftVersion>();
         try {
@@ -1359,12 +1420,14 @@ public class Settings {
         executor.shutdown();
         while (!executor.isShutdown()) {
         }
+        LogManager.debug("Finished loading Minecraft versions");
     }
 
     /**
      * Loads the Packs for use in the Launcher
      */
     private void loadPacks() {
+        LogManager.debug("Loading packs");
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
@@ -1376,12 +1439,14 @@ public class Settings {
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         }
+        LogManager.debug("Finished loading packs");
     }
 
     /**
      * Loads the Testers and Allowed Players for the packs in the Launcher
      */
     private void loadUsers() {
+        LogManager.debug("Loading users");
         Downloadable download = new Downloadable("launcher/json/users.json", true);
         List<PackUsers> packUsers = null;
         try {
@@ -1400,12 +1465,14 @@ public class Settings {
         for (PackUsers pu : packUsers) {
             pu.addUsers();
         }
+        LogManager.debug("Finished loading users");
     }
 
     /**
      * Loads the user installed Instances
      */
     private void loadInstances() {
+        LogManager.debug("Loading instances");
         this.instances = new ArrayList<Instance>(); // Reset the instances list
         if (instancesDataFile.exists()) {
             try {
@@ -1471,6 +1538,7 @@ public class Settings {
                 Utils.delete(instancesDataFile); // Remove old instances data file
             }
         }
+        LogManager.debug("Finished loading instances");
     }
 
     public void saveInstances() {
@@ -1508,6 +1576,7 @@ public class Settings {
      * Loads the saved Accounts
      */
     private void loadAccounts() {
+        LogManager.debug("Loading accounts");
         if (userDataFile.exists()) {
             FileInputStream in = null;
             ObjectInputStream objIn = null;
@@ -1540,6 +1609,7 @@ public class Settings {
                 }
             }
         }
+        LogManager.debug("Finished loading accounts");
     }
 
     public void saveAccounts() {
@@ -1581,6 +1651,7 @@ public class Settings {
      * Loads the user servers added for checking
      */
     private void loadCheckingServers() {
+        LogManager.debug("Loading servers to check");
         this.checkingServers = new ArrayList<MinecraftServer>(); // Reset the list
         if (checkingServersFile.exists()) {
             FileReader fileReader = null;
@@ -1602,6 +1673,7 @@ public class Settings {
                 }
             }
         }
+        LogManager.debug("Finished loading servers to check");
     }
 
     public void saveCheckingServers() {
@@ -1679,7 +1751,7 @@ public class Settings {
     }
 
     /**
-     * Get the Packs available in the Launcher sorted positionally
+     * Get the Packs available in the Launcher sorted by position
      *
      * @return The Packs available in the Launcher sorted by position
      */
@@ -1687,7 +1759,8 @@ public class Settings {
         List<Pack> packs = new LinkedList<Pack>(this.packs);
         Collections.sort(packs, new Comparator<Pack>() {
             public int compare(Pack result1, Pack result2) {
-                return Integer.compare(result1.getPosition(), result2.getPosition());
+                return (result1.getPosition() < result2.getPosition()) ? -1 : ((result1.getPosition() == result2
+                        .getPosition()) ? 0 : 1);
             }
         });
         return packs;
@@ -2005,7 +2078,7 @@ public class Settings {
      */
     public void reloadAccounts() {
         if (this.bottomBar == null) {
-            return; // Bottom Bar hasnt been made yet, so don't do anything
+            return; // Bottom Bar hasn't been made yet, so don't do anything
         }
         this.bottomBar.reloadAccounts(); // Reload the Bottom Bar accounts combobox
     }
@@ -2462,7 +2535,7 @@ public class Settings {
     }
 
     /**
-     * If the user has selected to display packs alphabetically or nto
+     * If the user has selected to display packs alphabetically or not
      *
      * @return true if yes, false if not
      */
@@ -2752,13 +2825,13 @@ public class Settings {
         }
     }
 
-    public String getPackInstallableCount(){
-       int count = 0;
-       for(Pack pack : this.getPacks()){
-           if(pack.canInstall()){
-               count++;
-           }
-       }
+    public String getPackInstallableCount() {
+        int count = 0;
+        for (Pack pack : this.getPacks()) {
+            if (pack.canInstall()) {
+                count++;
+            }
+        }
         return count + "";
     }
 }

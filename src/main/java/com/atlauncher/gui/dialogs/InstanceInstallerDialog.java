@@ -67,7 +67,7 @@ public class InstanceInstallerDialog extends JDialog {
         this((Object) pack, false, true);
     }
 
-    public InstanceInstallerDialog(Object object, boolean isUpdate, final boolean isServer) {
+    public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
         if (object instanceof Pack) {
             pack = (Pack) object;
@@ -206,8 +206,8 @@ public class InstanceInstallerDialog extends JDialog {
                     } else {
                         JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
                                 .settings.getLocalizedString("common.error") + "<br/><br/>" + App.settings
-                                .getLocalizedString("instance.alreadyinstance", instanceNameField.getText() +
-                                        "<br/><br/>") + "</p></html>",
+                                .getLocalizedString("instance.alreadyinstance",
+                                        instanceNameField.getText() + "<br/><br/>") + "</p></html>",
                                 App.settings.getLocalizedString("common.error"), JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -264,8 +264,8 @@ public class InstanceInstallerDialog extends JDialog {
                             text = pack.getName() + " " + version.getVersion() + " " + App.settings
                                     .getLocalizedString("common.wasnt") + " " + ((isReinstall) ? App.settings
                                     .getLocalizedString("common.reinstalled") : App.settings.getLocalizedString
-                                    ("common.installed")) + "<br/><br/>" + App.settings.getLocalizedString("instance" +
-                                    ".checkerrorlogs");
+                                    ("common.installed")) + "<br/><br/>" + App.settings.getLocalizedString("instance"
+                                    + ".checkerrorlogs");
                             title = pack.getName() + " " + version.getVersion() + " " + App.settings
                                     .getLocalizedString("common.not") + " " + ((isReinstall) ? App.settings
                                     .getLocalizedString("common.reinstalled") : App.settings.getLocalizedString
@@ -289,8 +289,8 @@ public class InstanceInstallerDialog extends JDialog {
                                         .getLocalizedString("common.hasbeen") + " " + ((isReinstall) ? App.settings
                                         .getLocalizedString("common.reinstalled") : App.settings.getLocalizedString
                                         ("common.installed")) + "<br/><br/>" + ((isServer) ? App.settings
-                                        .getLocalizedString("instance.finditserver", "<br/><br/>" + this
-                                                .getRootDirectory().getAbsolutePath()) : App
+                                        .getLocalizedString("instance.finditserver",
+                                                "<br/><br/>" + this.getRootDirectory().getAbsolutePath()) : App
                                         .settings.getLocalizedString("instance.findit"));
                                 title = pack.getName() + " " + version.getVersion() + " " + App.settings
                                         .getLocalizedString("common.installed");
@@ -330,7 +330,13 @@ public class InstanceInstallerDialog extends JDialog {
                                 App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();
                                 if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev()) {
-                                    pack.addInstall(version.getVersion());
+                                    if (isServer) {
+                                        pack.addServerInstall(version.getVersion());
+                                    } else if (isUpdate) {
+                                        pack.addUpdate(version.getVersion());
+                                    } else {
+                                        pack.addInstall(version.getVersion());
+                                    }
                                 }
                             } else {
                                 if (isReinstall) {
@@ -338,7 +344,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     text = pack.getName() + " " + version.getVersion() + " " + App.settings
                                             .getLocalizedString("common.wasnt") + " " + App.settings
                                             .getLocalizedString("common.reinstalled") + "<br/><br/>" + (this
-                                            .shouldCoruptInstance() ? App.settings.getLocalizedString("instance" +
+                                            .shouldCoruptInstance() ? App.settings.getLocalizedString("instance" + "" +
                                             ".nolongerplayable") : "") + "<br/><br/>" + App.settings
                                             .getLocalizedString("instance.checkerrorlogs") + "!";
                                     title = pack.getName() + " " + version.getVersion() + " " + App.settings
