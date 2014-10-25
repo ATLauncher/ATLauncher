@@ -37,14 +37,12 @@ import java.util.concurrent.Executors;
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
 public class App {
-    // Using this will help spread the workload across multiple threads allowing you to do many
-    // tasks at once. Approach with caution though. Dedicated 2 threads to the TASKPOOL shouldn't
-    // have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
     public static final Toaster TOASTER = Toaster.instance();
 
@@ -62,6 +60,7 @@ public class App {
     }
 
     public static void main(String[] args) {
+        final SplashScreen ss = new SplashScreen();
         Locale.setDefault(Locale.ENGLISH); // Set English as the default locale
         System.setProperty("java.net.preferIPv4Stack", "true");
         String autoLaunch = null;
@@ -79,20 +78,30 @@ public class App {
         }
 
         File config = new File(Utils.getCoreGracefully(), "Configs");
-        if (!config.exists()) {
+        if (!config.exists()){
             int files = config.getParentFile().list().length;
-            if (files > 1) {
-                String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
+            if(files > 1){
+                String[] options = {
+                        "Yes It's Fine",
+                        "Whoops. I'll Change That Now"
+                };
                 int ret = JOptionPane.showOptionDialog(null, "<html><p align=\"center\">I've detected that you may " +
-                        "not have installed this " + "in the right location.<br/><br/>The exe or jar file" + "should " +
-                        "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure that's " +
-                        "what you've" + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
+                                "not have installed this " + "in the right location.<br/><br/>The exe or jar file" + "should " +
+                                "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure that's " +
+                                "what you've" + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                if (ret != 0) {
+                if(ret != 0){
                     System.exit(0);
                 }
             }
         }
+
+        SwingUtilities.invokeLater(new Runnable(){
+            @Override
+            public void run(){
+                ss.setVisible(true);
+            }
+        });
 
         settings = new Settings(); // Setup the Settings and wait for it to finish
 
@@ -150,9 +159,7 @@ public class App {
         }
 
         LogManager.info("Showing splash screen and loading everything");
-        SplashScreen ss = new SplashScreen(); // Show Splash Screen
         settings.loadEverything(); // Loads everything that needs to be loaded
-        ss.close(); // Close the Splash Screen
         LogManager.info("Launcher finished loading everything");
 
         if (settings.isFirstTimeRun()) {
@@ -174,6 +181,7 @@ public class App {
 
         TRAY_MENU.localize();
         integrate();
+        ss.close();
         new LauncherFrame(open); // Open the Launcher
     }
 

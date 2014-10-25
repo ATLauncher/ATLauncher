@@ -13,6 +13,7 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
+import com.atlauncher.gui.layer.BlurLayer;
 import com.atlauncher.gui.tabs.AccountsTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
@@ -27,6 +28,7 @@ import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
@@ -34,7 +36,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 @SuppressWarnings("serial")
-public final class LauncherFrame extends JFrame implements RelocalizationListener {
+public final class LauncherFrame
+extends JFrame
+implements RelocalizationListener{
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;
@@ -42,6 +46,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
     private AccountsTab accountsTab;
     private ToolsTab toolsTab;
     private SettingsTab settingsTab;
+
+    public final BlurLayer blur = new BlurLayer();
 
     private List<Tab> tabs;
 
@@ -59,7 +65,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setLayout(new BorderLayout());
 
         LogManager.info("Setting up Bottom Bar");
         setupBottomBar(); // Setup the Bottom Bar
@@ -69,8 +74,11 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         setupTabs(); // Setup the JTabbedPane
         LogManager.info("Finished Setting up Tabs");
 
-        add(tabbedPane, BorderLayout.CENTER);
-        add(bottomBar, BorderLayout.SOUTH);
+        JPanel content = new JPanel(new BorderLayout());
+        this.add(new JLayer<JPanel>(content, this.blur));
+
+        content.add(tabbedPane, BorderLayout.CENTER);
+        content.add(bottomBar, BorderLayout.SOUTH);
 
         if (show) {
             LogManager.info("Showing Launcher");
@@ -79,8 +87,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         RelocalizationManager.addListener(this);
 
-        App.TASKPOOL.execute(new Runnable() {
-            public void run() {
+        App.TASKPOOL.execute(new Runnable(){
+            public void run(){
                 App.settings.checkMojangStatus(); // Check Minecraft status
                 bottomBar.updateStatus(App.settings.getMojangStatus());
             }

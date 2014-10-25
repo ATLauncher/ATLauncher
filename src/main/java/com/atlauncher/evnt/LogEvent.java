@@ -70,6 +70,6 @@ public final class LogEvent {
 
     @Override
     public String toString() {
-        return "[" + Timestamper.now() + "] " + this.body;
+        return "[" + Timestamper.now() + "] [" + this.type.name() + "]" + this.body;
     }
 }

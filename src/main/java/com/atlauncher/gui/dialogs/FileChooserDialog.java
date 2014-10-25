@@ -7,17 +7,9 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -28,6 +20,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 
 public class FileChooserDialog extends JDialog {
     private JPanel top;
@@ -156,6 +157,14 @@ public class FileChooserDialog extends JDialog {
         });
 
         setVisible(true);
+
+        ((LauncherFrame) App.settings.getParent()).blur.setBlur(true);
+    }
+
+    @Override
+    public void dispose(){
+        ((LauncherFrame) App.settings.getParent()).blur.setBlur(false);
+        super.dispose();
     }
 
     private void close() {

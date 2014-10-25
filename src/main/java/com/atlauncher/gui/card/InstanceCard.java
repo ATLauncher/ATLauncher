@@ -369,7 +369,7 @@ implements RelocalizationListener{
     private void addMouseListeners(){
         this.image.addMouseListener(new MouseAdapter(){
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mousePressed(MouseEvent e){
                 if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2){
                     if(instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) &&
                             !instance.isDev()){
@@ -419,7 +419,9 @@ implements RelocalizationListener{
                 } else if(e.getButton() == MouseEvent.BUTTON3){
                     JPopupMenu rightClickMenu = new JPopupMenu();
                     JMenuItem changeImageItem = new JMenuItem(Language.INSTANCE.localize("instance.changeimage"));
+                    JMenuItem updateItem = new JMenuItem("Update Instance");
                     rightClickMenu.add(changeImageItem);
+                    rightClickMenu.add(updateItem);
                     rightClickMenu.show(image, e.getX(), e.getY());
                     changeImageItem.addActionListener(new ActionListener(){
                         @Override
@@ -438,6 +440,56 @@ implements RelocalizationListener{
                                         instance.save();
                                     } catch(IOException e1){
                                         e1.printStackTrace(System.err);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    updateItem.addActionListener(new ActionListener(){
+                        @Override
+                        public void actionPerformed(ActionEvent e){
+                            if(instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) &&
+                                    !instance.isDev()){
+                                String[] options = {
+                                        Language.INSTANCE.localize("common.yes"),
+                                        Language.INSTANCE.localize("common.no"),
+                                        Language.INSTANCE.localize("instance" + "" +
+                                                ".dontremindmeagain")
+                                };
+                                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                                        "<html><p align=\"center\">" + Language.INSTANCE.localize("instance.updatenow",
+                                                "<br/><br/>") + "</p></html>", Language.INSTANCE.localize("instance" + "" +
+                                                ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                                        null, options, options[0]);
+                                if(ret == 0){
+                                    if(App.settings.getAccount() == null){
+                                        String[] optionss = {Language.INSTANCE.localize("common.ok")};
+                                        JOptionPane.showOptionDialog(App.settings.getParent(),
+                                                App.settings.getLocalizedString("instance.cantupdate"),
+                                                App.settings.getLocalizedString("instance.noaccountselected"),
+                                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, optionss,
+                                                optionss[0]);
+                                    } else{
+                                        new InstanceInstallerDialog(instance, true, false);
+                                    }
+                                } else if(ret == 1 || ret == JOptionPane.CLOSED_OPTION){
+                                    if(!App.settings.isMinecraftLaunched()){
+                                        if(instance.launch()){
+                                            App.settings.setMinecraftLaunched(true);
+                                        }
+                                    }
+                                } else if(ret == 2){
+                                    instance.ignoreUpdate();
+                                    if(!App.settings.isMinecraftLaunched()){
+                                        if(instance.launch()){
+                                            App.settings.setMinecraftLaunched(true);
+                                        }
+                                    }
+                                }
+                            } else{
+                                if(!App.settings.isMinecraftLaunched()){
+                                    if(instance.launch()){
+                                        App.settings.setMinecraftLaunched(true);
                                     }
                                 }
                             }

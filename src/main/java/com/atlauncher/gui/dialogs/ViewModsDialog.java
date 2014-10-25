@@ -3,6 +3,7 @@ package com.atlauncher.gui.dialogs;
 import com.atlauncher.App;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
+import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.card.ModCard;
 
 import java.awt.BorderLayout;
@@ -35,9 +36,11 @@ extends JDialog{
         super(App.settings.getParent(), pack.getName() + " Mods", ModalityType.APPLICATION_MODAL);
         this.pack = pack;
 
+        ((LauncherFrame) App.settings.getParent()).blur.setBlur(true);
+
         this.setPreferredSize(new Dimension(550, 450));
         this.setResizable(false);
-        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         this.topPanel.add(new JLabel("Search: "));
         this.topPanel.add(this.searchField);
@@ -79,6 +82,13 @@ extends JDialog{
         }
 
         this.pack();
+        this.setLocationRelativeTo(App.settings.getParent());
+    }
+
+    @Override
+    public void dispose(){
+        ((LauncherFrame) App.settings.getParent()).blur.setBlur(false);
+        super.dispose();
     }
 
     private void reload(){

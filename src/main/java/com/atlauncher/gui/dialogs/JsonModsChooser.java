@@ -10,18 +10,11 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Mod;
+import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -30,6 +23,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
 
 public class JsonModsChooser extends JDialog {
     private static final long serialVersionUID = -5309108183485463434L;
@@ -56,6 +57,7 @@ public class JsonModsChooser extends JDialog {
                 dispose();
             }
         });
+        ((LauncherFrame) App.settings.getParent()).blur.setBlur(true);
 
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         split.setDividerSize(0);
@@ -408,6 +410,12 @@ public class JsonModsChooser extends JDialog {
                 }
             }
         }
+    }
+
+    @Override
+    public void dispose(){
+        ((LauncherFrame) App.settings.getParent()).blur.setBlur(false);
+        super.dispose();
     }
 
     public List<Mod> getSelectedMods() {

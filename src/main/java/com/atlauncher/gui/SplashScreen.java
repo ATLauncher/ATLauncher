@@ -25,7 +25,6 @@ public class SplashScreen extends JWindow {
     public SplashScreen() {
         this.setLayout(null);
         this.setSize(img.getWidth(), img.getHeight());
-        this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.addMouseListener(new MouseAdapter() {
             @Override
@@ -35,6 +34,7 @@ public class SplashScreen extends JWindow {
                 }
             }
         });
+        this.setAlwaysOnTop(true);
     }
 
     @Override

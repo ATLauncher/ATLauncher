@@ -9,15 +9,9 @@ package com.atlauncher.gui.dialogs;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
+import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -26,6 +20,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class RenameInstanceDialog extends JDialog {
     private JPanel top;
@@ -39,11 +39,13 @@ public class RenameInstanceDialog extends JDialog {
 
     public RenameInstanceDialog(final Instance instance) {
         super(null, App.settings.getLocalizedString("instance.renaminginstance"), ModalityType.APPLICATION_MODAL);
+        ((LauncherFrame) App.settings.getParent()).blur.setBlur(true);
+
         setSize(300, 150);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         // Top Panel Stuff
@@ -118,4 +120,9 @@ public class RenameInstanceDialog extends JDialog {
         dispose();
     }
 
+    @Override
+    public void dispose(){
+        ((LauncherFrame) App.settings.getParent()).blur.setBlur(false);
+        super.dispose();
+    }
 }

@@ -3,6 +3,7 @@ package com.atlauncher.gui.card;
 import com.atlauncher.data.Mod;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
@@ -12,6 +13,7 @@ extends JPanel{
     public final Mod mod;
 
     public ModCard(Mod mod){
+        this.setPreferredSize(new Dimension(this.getPreferredSize().width, (int) (this.getPreferredSize().height * 1.5)));
         this.mod = mod;
     }
 

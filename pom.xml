@@ -74,6 +74,7 @@
 							<mainClass>${mainclass}</mainClass>
 						</manifest>
 						<manifestEntries>
+                            <SplashScreen-Image>/assets/image/SplashScreen.png</SplashScreen-Image>
 							<Implementation-Vender>RyanTheAllmighty</Implementation-Vender>
 							<Implementation-Version>${project.version}</Implementation-Version>
 							<Built-By>${user.name}</Built-By>
