@@ -373,7 +373,6 @@ public class BackupDialog extends JDialog implements ActionListener {
         private GridBagConstraints getGBCForField() {
             gbc.gridx++;
             gbc.insets = new Insets(3, 0, 3, 0);
-            ;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             return gbc;
         }
