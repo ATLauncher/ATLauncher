@@ -13,7 +13,6 @@ package com.atlauncher.gui.dialogs;
 import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
-import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
 
@@ -49,8 +48,6 @@ public class EditModsDialog extends JDialog {
     public EditModsDialog(final Instance instance) {
         super(App.settings.getParent(), App.settings.getLocalizedString("instance.editingmods", instance.getName()),
                 ModalityType.APPLICATION_MODAL);
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(true);
-
         this.instance = instance;
         setSize(550, 450);
         setLocationRelativeTo(App.settings.getParent());
@@ -201,12 +198,6 @@ public class EditModsDialog extends JDialog {
         loadMods();
 
         setVisible(true);
-    }
-
-    @Override
-    public void dispose(){
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(false);
-        super.dispose();
     }
 
     private void loadMods() {

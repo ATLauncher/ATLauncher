@@ -4,14 +4,8 @@ import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
-import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.card.ModCard;
 
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -24,6 +18,11 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 public final class ViewModsDialog extends JDialog {
     private final Pack pack;
@@ -36,8 +35,6 @@ public final class ViewModsDialog extends JDialog {
         super(App.settings.getParent(), App.settings.getLocalizedString("pack.mods", pack.getName()),
                 ModalityType.APPLICATION_MODAL);
         this.pack = pack;
-
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(true);
 
         this.setPreferredSize(new Dimension(550, 450));
         this.setResizable(false);
@@ -84,12 +81,6 @@ public final class ViewModsDialog extends JDialog {
 
         this.pack();
         this.setLocationRelativeTo(App.settings.getParent());
-    }
-
-    @Override
-    public void dispose(){
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(false);
-        super.dispose();
     }
 
     private void reload() {

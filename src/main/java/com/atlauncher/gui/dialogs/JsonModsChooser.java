@@ -57,7 +57,6 @@ public class JsonModsChooser extends JDialog {
                 dispose();
             }
         });
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(true);
 
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         split.setDividerSize(0);
@@ -410,12 +409,6 @@ public class JsonModsChooser extends JDialog {
                 }
             }
         }
-    }
-
-    @Override
-    public void dispose(){
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(false);
-        super.dispose();
     }
 
     public List<Mod> getSelectedMods() {

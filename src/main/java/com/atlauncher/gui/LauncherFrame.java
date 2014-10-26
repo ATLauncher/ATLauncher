@@ -13,7 +13,6 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
-import com.atlauncher.gui.layer.BlurLayer;
 import com.atlauncher.gui.tabs.AccountsTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
@@ -28,7 +27,6 @@ import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.JFrame;
-import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
@@ -47,8 +45,6 @@ implements RelocalizationListener{
     private ToolsTab toolsTab;
     private SettingsTab settingsTab;
 
-    public final BlurLayer blur = new BlurLayer();
-
     private List<Tab> tabs;
 
     private LauncherBottomBar bottomBar;
@@ -64,6 +60,7 @@ implements RelocalizationListener{
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
+        this.setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
 
         LogManager.info("Setting up Bottom Bar");
@@ -74,11 +71,8 @@ implements RelocalizationListener{
         setupTabs(); // Setup the JTabbedPane
         LogManager.info("Finished Setting up Tabs");
 
-        JPanel content = new JPanel(new BorderLayout());
-        this.add(new JLayer<JPanel>(content, this.blur));
-
-        content.add(tabbedPane, BorderLayout.CENTER);
-        content.add(bottomBar, BorderLayout.SOUTH);
+        this.add(tabbedPane, BorderLayout.CENTER);
+        this.add(bottomBar, BorderLayout.SOUTH);
 
         if (show) {
             LogManager.info("Showing Launcher");

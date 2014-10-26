@@ -9,7 +9,6 @@ package com.atlauncher.gui.dialogs;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
-import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.utils.Utils;
 
 import java.awt.BorderLayout;
@@ -39,8 +38,6 @@ public class RenameInstanceDialog extends JDialog {
 
     public RenameInstanceDialog(final Instance instance) {
         super(null, App.settings.getLocalizedString("instance.renaminginstance"), ModalityType.APPLICATION_MODAL);
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(true);
-
         setSize(300, 150);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -118,11 +115,5 @@ public class RenameInstanceDialog extends JDialog {
     private void close() {
         setVisible(false);
         dispose();
-    }
-
-    @Override
-    public void dispose(){
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(false);
-        super.dispose();
     }
 }

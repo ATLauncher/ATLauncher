@@ -89,8 +89,6 @@ public class InstanceInstallerDialog extends JDialog {
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(true);
-
         // Top Panel Stuff
         top = new JPanel();
         top.add(new JLabel(((isReinstall) ? App.settings.getLocalizedString("common.reinstalling") : App.settings
@@ -466,11 +464,5 @@ public class InstanceInstallerDialog extends JDialog {
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
         setVisible(true);
-    }
-
-    @Override
-    public void dispose(){
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(false);
-        super.dispose();
     }
 }

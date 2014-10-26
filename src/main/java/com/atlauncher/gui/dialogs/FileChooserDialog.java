@@ -7,7 +7,6 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
-import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.utils.Utils;
 
 import java.awt.BorderLayout;
@@ -157,14 +156,6 @@ public class FileChooserDialog extends JDialog {
         });
 
         setVisible(true);
-
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(true);
-    }
-
-    @Override
-    public void dispose(){
-        ((LauncherFrame) App.settings.getParent()).blur.setBlur(false);
-        super.dispose();
     }
 
     private void close() {

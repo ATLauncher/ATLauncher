@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 public final class ModCard extends JPanel {
     public final Mod mod;
 
-    public ModCard(Mod mod){
+    public ModCard(final Mod mod){
         this.setPreferredSize(new Dimension(this.getPreferredSize().width, (int) (this.getPreferredSize().height * 1.5)));
         this.mod = mod;
         if (this.mod.hasWebsite()) {
@@ -26,7 +26,11 @@ public final class ModCard extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (ModCard.this.mod.hasWebsite()) {
-                    Utils.openBrowser(ModCard.this.mod.getWebsite());
+                    try{
+                        Utils.openBrowser(mod.getWebsite());
+                    } catch(Exception e1){
+                        e1.printStackTrace(System.err);
+                    }
                 }
             }
 
