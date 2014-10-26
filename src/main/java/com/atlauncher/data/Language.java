@@ -27,7 +27,6 @@ public enum Language {
         try {
             this.load("English");
         } catch (Exception ex) {
-            App.settings.logStackTrace(ex);
             ex.printStackTrace(System.err);
         }
     }

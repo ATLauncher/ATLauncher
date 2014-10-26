@@ -21,20 +21,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
@@ -50,6 +36,20 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * <p/>
@@ -387,18 +387,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private void addMouseListeners() {
         this.image.addMouseListener(new MouseAdapter() {
             @Override
-<<<<<<< HEAD
-            public void mousePressed(MouseEvent e){
-                if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2){
-                    if(instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) &&
-                            !instance.isDev()){
-                        String[] options = {
-                                Language.INSTANCE.localize("common.yes"),
-                                Language.INSTANCE.localize("common.no"),
-                                Language.INSTANCE.localize("instance" + "" +
-                                        ".dontremindmeagain")
-                        };
-=======
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2) {
                     if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) &&
@@ -406,7 +394,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         String[] options = {Language.INSTANCE.localize("common.yes"),
                                 Language.INSTANCE.localize("common.no"), Language.INSTANCE.localize("instance" + "" +
                                 ".dontremindmeagain")};
->>>>>>> 7e8269a95a8bd1a413999dc1725337f80302975f
                         int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
                                 "<html><p align=\"center\">" + Language.INSTANCE.localize("instance.updatenow",
                                         "<br/><br/>") + "</p></html>", Language.INSTANCE.localize("instance" + "" +

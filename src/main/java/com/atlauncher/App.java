@@ -61,7 +61,6 @@ public class App {
     }
 
     public static void main(String[] args) {
-        final SplashScreen ss = new SplashScreen();
         Locale.setDefault(Locale.ENGLISH); // Set English as the default locale
         System.setProperty("java.net.preferIPv4Stack", "true");
         String autoLaunch = null;
@@ -110,16 +109,14 @@ public class App {
                 }
             }
         }
-
+        settings = new Settings(); // Setup the Settings and wait for it to finish
+        final SplashScreen ss = new SplashScreen();
         SwingUtilities.invokeLater(new Runnable(){
             @Override
             public void run(){
                 ss.setVisible(true);
             }
         });
-
-        settings = new Settings(); // Setup the Settings and wait for it to finish
-
         loadTheme();
         settings.loadConsole(); // Load console AFTER L&F
 
