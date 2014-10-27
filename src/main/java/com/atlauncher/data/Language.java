@@ -96,6 +96,10 @@ public enum Language {
         return this.localize(this.current, tag);
     }
 
+    public synchronized String localizeWithReplace(String tag, String replaceWith) {
+        return this.localize(this.current, tag).replace("%s", replaceWith);
+    }
+
     public synchronized String getCurrent() {
         return this.current;
     }
