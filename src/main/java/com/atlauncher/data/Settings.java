@@ -111,7 +111,7 @@ public class Settings {
     private boolean enableLogs; // If to enable logs
     private boolean enableOpenEyeReporting; // If to enable OpenEye reporting
     private boolean enableProxy = false; // If proxy is in use
-    private boolean enablePPNotifiers = false;
+    private boolean enablePackTags = false;
     private String proxyHost; // The proxies host
     private int proxyPort; // The proxies port
     private String proxyType; // The type of proxy (socks, http)
@@ -969,8 +969,7 @@ public class Settings {
                     !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
                 this.dateFormat = "dd/M/yyy";
             }
-            this.enablePPNotifiers = Boolean.parseBoolean(properties.getProperty("enablePublicPrivateNotifiers",
-                    "false"));
+            this.enablePackTags = Boolean.parseBoolean(properties.getProperty("enablepacktags", "false"));
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "true"));
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
             if (!properties.containsKey("usingcustomjavapath")) {
@@ -1017,12 +1016,12 @@ public class Settings {
         }
     }
 
-    public boolean enabledPPNotifiers() {
-        return this.enablePPNotifiers;
+    public boolean enabledPackTags() {
+        return this.enablePackTags;
     }
 
-    public void setPPNotifiers(boolean b) {
-        this.enablePPNotifiers = b;
+    public void setPackTags(boolean b) {
+        this.enablePackTags = b;
     }
 
     /**
@@ -1254,6 +1253,7 @@ public class Settings {
             properties.setProperty("enabletrayicon", (this.enableTrayIcon) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true" : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
+            properties.setProperty("enablepacktags", (this.enablePackTags) ? "true" : "false");
             properties.setProperty("enableserverchecker", (this.enableServerChecker) ? "true" : "false");
             properties.setProperty("enableopeneyereporting", (this.enableOpenEyeReporting) ? "true" : "false");
             properties.setProperty("enableproxy", (this.enableProxy) ? "true" : "false");

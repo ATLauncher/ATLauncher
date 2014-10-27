@@ -39,8 +39,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JCheckBox enableConsole;
     private JLabelWithHover enableTrayIconLabel;
     private JCheckBox enableTrayIcon;
-    private JLabelWithHover enablePPNotifiersLabel;
-    private JCheckBox enablePPNotifiers;
+    private JLabelWithHover enablePackTagsLabel;
+    private JCheckBox enablePackTags;
 
     public GeneralSettingsTab() {
         RelocalizationManager.addListener(this);
@@ -217,16 +217,16 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enablePPNotifiersLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.packtags"), HELP_ICON,
+        enablePackTagsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.packtags"), HELP_ICON,
                 Language.INSTANCE.localize("settings.packtagshelp"));
-        add(enablePPNotifiersLabel, gbc);
+        add(enablePackTagsLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enablePPNotifiers = new JCheckBox();
-        enablePPNotifiers.setSelected(App.settings.enabledPPNotifiers());
-        add(enablePPNotifiers, gbc);
+        enablePackTags = new JCheckBox();
+        enablePackTags.setSelected(App.settings.enabledPackTags());
+        add(enablePackTags, gbc);
     }
 
     public boolean needToReloadTheme() {
@@ -250,7 +250,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
         App.settings.setEnableConsole(enableConsole.isSelected());
         App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
-        App.settings.setPPNotifiers(enablePPNotifiers.isSelected());
+        App.settings.setPackTags(enablePackTags.isSelected());
     }
 
     @Override

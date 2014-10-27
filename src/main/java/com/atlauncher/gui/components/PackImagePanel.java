@@ -27,7 +27,7 @@ extends JPanel{
         int y = (this.getHeight() - 150) / 2;
         g2.drawImage(this.image, 0, y, 300, 150, null);
 
-        if(App.settings.enabledPPNotifiers()){
+        if(App.settings.enabledPackTags()){
             String text = this.isPrivate ? "Private" : "Public";
 
             g2.setColor(this.isPrivate ? Color.red : Color.green);
