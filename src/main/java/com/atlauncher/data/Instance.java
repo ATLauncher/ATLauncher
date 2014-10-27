@@ -1039,7 +1039,7 @@ public class Instance implements Cloneable {
                 sess = account.refreshToken();
             } else {
                 if (account.hasAccessToken()) {
-                    LogManager.error("Access token checked and is NOT valid!");
+                    LogManager.error("Access token checked and is NOT valid! Will attempt to get another one!");
                     account.setAccessToken(null);
                     App.settings.saveAccounts();
                 }
