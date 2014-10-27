@@ -13,11 +13,11 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
@@ -217,7 +217,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enablePPNotifiersLabel = new JLabelWithHover("Enable Public/Private Notifiers?", HELP_ICON, "<html>Public/Private tags are notifications showing if a pack is public or private</html>");
+        enablePPNotifiersLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.packtags"), HELP_ICON,
+                Language.INSTANCE.localize("settings.packtagshelp"));
         add(enablePPNotifiersLabel, gbc);
 
         gbc.gridx++;
@@ -271,11 +272,12 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.dateFormatLabel.setToolTipText(App.settings.getLocalizedString("settings.dateformathelp"));
 
         this.advancedBackupLabel.setText(App.settings.getLocalizedString("settings.advancedbackup") + "?");
-        this.advancedBackupLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings.advancedbackuphelp",
-                "<br/>") + "</html>");
+        this.advancedBackupLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings" +
+                ".advancedbackuphelp", "<br/>") + "</html>");
 
-        this.sortPacksAlphabeticallyLabel.setText(App.settings.getLocalizedString("settings.sortpacksalphabetically") + "?");
-        this.sortPacksAlphabeticallyLabel.setToolTipText(App.settings.getLocalizedString("settings" +
+        this.sortPacksAlphabeticallyLabel.setText(App.settings.getLocalizedString("settings.sortpacksalphabetically")
+                + "?");
+        this.sortPacksAlphabeticallyLabel.setToolTipText(App.settings.getLocalizedString("settings" + "" +
                 ".sortpacksalphabeticallyhelp"));
 
         this.keepLauncherOpenLabel.setText(App.settings.getLocalizedString("settings.keeplauncheropen") + "?");
