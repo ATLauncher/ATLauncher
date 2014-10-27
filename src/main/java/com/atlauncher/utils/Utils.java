@@ -16,7 +16,9 @@ import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 import org.tukaani.xz.XZInputStream;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
@@ -54,6 +56,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -62,6 +65,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -1034,6 +1038,34 @@ public class Utils {
             byte[] decordedValue = Base64.decode(encryptedData);
             byte[] decValue = c.doFinal(decordedValue);
             decryptedValue = new String(decValue);
+        } catch (InvalidKeyException e) {
+            return Utils.decryptOld(encryptedData);
+        } catch (BadPaddingException e) {
+            return Utils.decryptOld(encryptedData);
+        } catch (IllegalBlockSizeException e) {
+            return Utils.decryptOld(encryptedData);
+        } catch (Exception e) {
+            App.settings.logStackTrace(e);
+        }
+        return decryptedValue;
+    }
+
+    /**
+     * Decrypt using old method.
+     *
+     * @param encryptedData the encrypted data
+     * @return the string
+     */
+    public static String decryptOld(String encryptedData) {
+        Key key;
+        String decryptedValue = null;
+        try {
+            key = new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
+            Cipher c = Cipher.getInstance("AES");
+            c.init(Cipher.DECRYPT_MODE, key);
+            byte[] decordedValue = Base64.decode(encryptedData);
+            byte[] decValue = c.doFinal(decordedValue);
+            decryptedValue = new String(decValue);
         } catch (Exception e) {
             App.settings.logStackTrace(e);
         }
@@ -1047,7 +1079,7 @@ public class Utils {
      * @throws Exception the exception
      */
     private static Key generateKey() throws Exception {
-        return new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
+        return new SecretKeySpec(getMACAdressHash().getBytes(), 0, 16, "AES");
     }
 
     /**
@@ -1867,5 +1899,26 @@ public class Utils {
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
+    }
+
+    private static String getMACAdressHash() {
+        String returnStr = "";
+        try {
+            InetAddress ip;
+            ip = InetAddress.getLocalHost();
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+            byte[] mac = network.getHardwareAddress();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < mac.length; i++) {
+                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+            }
+            returnStr = sb.toString();
+
+        } catch (Exception e) {
+            App.settings.logStackTrace(e);
+        } finally {
+            returnStr = (returnStr == null ? "NotARandomKeyYes" : returnStr);
+        }
+        return getMD5(returnStr);
     }
 }
