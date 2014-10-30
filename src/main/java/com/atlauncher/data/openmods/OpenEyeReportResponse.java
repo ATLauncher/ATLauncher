@@ -6,7 +6,7 @@
  */
 package com.atlauncher.data.openmods;
 
-import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -73,10 +73,10 @@ public class OpenEyeReportResponse {
      */
     public String getNoteDisplay() {
         if (this.hasNote()) {
-            return App.settings.getLocalizedString("instance.openeyehasnote") + "<br/><br/>" + Utils
-                    .splitMultilinedString(this.getNote(), 100, "<br/>") + "<br/><br/>";
+            return Language.INSTANCE.localize("instance.openeyehasnote") + "<br/><br/>" + Utils.splitMultilinedString
+                    (this.getNote(), 100, "<br/>") + "<br/><br/>";
         } else {
-            return App.settings.getLocalizedString("instance.openeyenonote") + "<br/><br/>";
+            return Language.INSTANCE.localize("instance.openeyenonote") + "<br/><br/>";
         }
     }
 }

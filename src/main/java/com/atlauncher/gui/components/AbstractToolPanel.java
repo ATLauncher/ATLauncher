@@ -7,6 +7,7 @@
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -26,7 +27,7 @@ public abstract class AbstractToolPanel extends JPanel {
     protected final JPanel MIDDLE_PANEL = new JPanel();
     protected final JPanel BOTTOM_PANEL = new JPanel();
 
-    protected final JButton LAUNCH_BUTTON = new JButton(App.settings.getLocalizedString("tools.launch"));
+    protected final JButton LAUNCH_BUTTON = new JButton(Language.INSTANCE.localize("tools.launch"));
 
     public AbstractToolPanel() {
         setLayout(new BorderLayout());

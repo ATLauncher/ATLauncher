@@ -404,7 +404,7 @@ public class Instance implements Cloneable {
         if (this.realPack != null) {
             return this.realPack.getDescription();
         } else {
-            return App.settings.getLocalizedString("pack.nodescription");
+            return Language.INSTANCE.localize("pack.nodescription");
         }
     }
 
@@ -998,20 +998,19 @@ public class Instance implements Cloneable {
     public boolean launch() {
         final Account account = App.settings.getAccount();
         if (account == null) {
-            String[] options = {App.settings.getLocalizedString("common.ok")};
-            JOptionPane.showOptionDialog(App.settings.getParent(), App.settings.getLocalizedString("instance" + "" +
-                            ".noaccount"), App.settings.getLocalizedString("instance.noaccountselected"),
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            String[] options = {Language.INSTANCE.localize("common.ok")};
+            JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance.noaccount"),
+                    Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
             if ((App.settings.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
-                String[] options = {App.settings.getLocalizedString("common.yes"),
-                        App.settings.getLocalizedString("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
-                        .settings.getLocalizedString("instance.insufficientram",
-                                "<b>" + this.memory + "</b> MB<br/><br/>") + "</p></html>",
-                        App.settings.getLocalizedString("instance.insufficientramtitle"), JOptionPane.DEFAULT_OPTION,
+                String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                        "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".insufficientram", "<b>" + this.memory + "</b> MB<br/><br/>") + "</p></html>",
+                        Language.INSTANCE.localize("instance.insufficientramtitle"), JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
@@ -1020,13 +1019,12 @@ public class Instance implements Cloneable {
                 }
             }
             if (App.settings.getPermGen() < this.permgen) {
-                String[] options = {App.settings.getLocalizedString("common.yes"),
-                        App.settings.getLocalizedString("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
-                        .settings.getLocalizedString("instance.insufficientpermgen",
-                                "<b>" + this.permgen + "</b> MB<br/><br/>") + "</p></html>",
-                        App.settings.getLocalizedString("instance.insufficientpermgentitle"),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                        "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".insufficientpermgen", "<b>" + this.permgen + "</b> MB<br/><br/>") + "</p></html>",
+                        Language.INSTANCE.localize("instance.insufficientpermgentitle"), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
                     App.settings.setMinecraftLaunched(false);
@@ -1047,14 +1045,13 @@ public class Instance implements Cloneable {
                 if (!account.isRemembered()) {
                     JPanel panel = new JPanel();
                     panel.setLayout(new BorderLayout());
-                    JLabel passwordLabel = new JLabel(App.settings.getLocalizedString("instance.enterpassword",
+                    JLabel passwordLabel = new JLabel(Language.INSTANCE.localizeWithReplace("instance.enterpassword",
                             account.getMinecraftUsername()));
                     JPasswordField passwordField = new JPasswordField();
                     panel.add(passwordLabel, BorderLayout.NORTH);
                     panel.add(passwordField, BorderLayout.CENTER);
                     int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
-                            App.settings.getLocalizedString("instance.enterpasswordtitle"),
-                            JOptionPane.OK_CANCEL_OPTION);
+                            Language.INSTANCE.localize("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
                     if (ret == JOptionPane.OK_OPTION) {
                         password = new String(passwordField.getPassword());
                     } else {
@@ -1065,9 +1062,9 @@ public class Instance implements Cloneable {
                 }
                 LogManager.info("Logging into Minecraft!");
                 final String pass = password;
-                final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("account.loggingin")
-                        , 0, App.settings.getLocalizedString("account.loggingin"),
-                        "Aborting login for " + account.getMinecraftUsername());
+                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
+                        Language.INSTANCE.localize("account.loggingin"), "Aborting login for " + account
+                        .getMinecraftUsername());
                 dialog.addThread(new Thread() {
                     public void run() {
                         dialog.setReturnValue(Authentication.checkAccount(account.getUsername(), pass));
@@ -1081,10 +1078,10 @@ public class Instance implements Cloneable {
                 sess = new AuthenticationResponse("token:0:0", false);
             } else if (sess.hasError()) {
                 LogManager.error(sess.getErrorMessage());
-                String[] options = {App.settings.getLocalizedString("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App.settings
-                        .getLocalizedString("instance.errorloggingin", "<br/><br/>" + sess.getErrorMessage()) +
-                                "</p></html>", App.settings.getLocalizedString("instance.errorloggingintitle"),
+                String[] options = {Language.INSTANCE.localize("common.ok")};
+                JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
+                        .INSTANCE.localizeWithReplace("instance.errorloggingin", "<br/><br/>" + sess.getErrorMessage
+                                ()) + "</p></html>", Language.INSTANCE.localize("instance.errorloggingintitle"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 App.settings.setMinecraftLaunched(false);
                 return false;
@@ -1250,14 +1247,14 @@ public class Instance implements Cloneable {
                     // OpenEye returned a response to the report, display that to user if needed.
                     LogManager.info("OpenEye: Pending crash report sent! URL: " + response.getURL());
                     if (response.hasNote()) {
-                        String[] options = {App.settings.getLocalizedString("common.opencrashreport"),
-                                App.settings.getLocalizedString("common.ok")};
+                        String[] options = {Language.INSTANCE.localize("common.opencrashreport"),
+                                Language.INSTANCE.localize("common.ok")};
                         int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                "<html><p align=\"center\">" + App.settings.getLocalizedString("instance" + "" +
-                                        ".openeyereport1", "<br/><br/>") + response.getNoteDisplay() + App.settings
-                                        .getLocalizedString("instance.openeyereport2") + "</p></html>",
-                                App.settings.getLocalizedString("instance.aboutyourcrash"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+                                "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                        ".openeyereport1", "<br/><br/>") + response.getNoteDisplay() + Language
+                                        .INSTANCE.localize("instance.openeyereport2") + "</p></html>",
+                                Language.INSTANCE.localize("instance.aboutyourcrash"), JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
                         if (ret == 0) {
                             Utils.openBrowser(response.getURL());
                         }

@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public enum Language {
-    INSTANCE;
+    INSTANCE, Language;
 
     private final Map<String, Properties> langs = new HashMap<String, Properties>();
     private volatile String current;

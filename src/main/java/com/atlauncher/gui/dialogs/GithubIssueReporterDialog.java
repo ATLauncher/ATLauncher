@@ -2,6 +2,7 @@ package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.ToolsPanel;
 import com.atlauncher.reporter.GithubIssueReporter;
 
@@ -19,8 +20,8 @@ import java.awt.event.ActionListener;
 public final class GithubIssueReporterDialog extends JDialog {
     private final JTextField TITLE_FIELD = new JTextField(16);
     private final JTextArea INFO_AREA = new JTextArea(16, 16);
-    private final JButton CANCEL_BUTTON = new JButton(App.settings.getLocalizedString("common.cancel"));
-    private final JButton SUBMIT_BUTTON = new JButton(App.settings.getLocalizedString("common.submit"));
+    private final JButton CANCEL_BUTTON = new JButton(Language.INSTANCE.localize("common.cancel"));
+    private final JButton SUBMIT_BUTTON = new JButton(Language.INSTANCE.localize("common.submit"));
 
     public GithubIssueReporterDialog(JFrame parent) {
         super(parent, "Submit a bug", ModalityType.APPLICATION_MODAL);

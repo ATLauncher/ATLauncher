@@ -9,6 +9,7 @@ package com.atlauncher.gui;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.ReskinListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
@@ -19,6 +20,10 @@ import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.utils.Utils;
 
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -28,16 +33,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 
 public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener {
 
     private static final long serialVersionUID = -3538990021922025818L;
-    private JScrollPane scrollPane;
     public Console console;
+    private JScrollPane scrollPane;
     private ConsoleBottomBar bottomBar;
     private JPopupMenu contextMenu; // Right click menu
 
@@ -120,7 +121,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
 
     public void setupLanguage() {
         LogManager.debug("Setting up language for console");
-        copy.setText(App.settings.getLocalizedString("common.copy"));
+        copy.setText(Language.INSTANCE.localize("common.copy"));
         bottomBar.setupLanguage();
         LogManager.debug("Finished setting up language for console");
     }
@@ -131,7 +132,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
 
     @Override
     public void onRelocalization() {
-        copy.setText(App.settings.getLocalizedString("common.copy"));
+        copy.setText(Language.INSTANCE.localize("common.copy"));
         bottomBar.setupLanguage();
     }
 

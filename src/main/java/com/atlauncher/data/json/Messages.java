@@ -8,6 +8,7 @@ package com.atlauncher.data.json;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.utils.Utils;
 
@@ -30,8 +31,7 @@ public class Messages {
     }
 
     public int showInstallMessage(Pack pack) {
-        String[] options = {App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("common" +
-                ".cancel")};
+        String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common.cancel")};
         JEditorPane ep = new JEditorPane("text/html", "<html>" + this.install + "</html>");
         ep.setEditable(false);
         ep.addHyperlinkListener(new HyperlinkListener() {
@@ -42,7 +42,7 @@ public class Messages {
                 }
             }
         });
-        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, App.settings.getLocalizedString("common" +
+        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize("common" +
                 ".installing") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null,
                 options, options[0]);
     }
@@ -56,8 +56,7 @@ public class Messages {
     }
 
     public int showUpdateMessage(Pack pack) {
-        String[] options = {App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("common" +
-                ".cancel")};
+        String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common.cancel")};
         JEditorPane ep = new JEditorPane("text/html", "<html>" + this.update + "</html>");
         ep.setEditable(false);
         ep.addHyperlinkListener(new HyperlinkListener() {
@@ -68,7 +67,7 @@ public class Messages {
                 }
             }
         });
-        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, App.settings.getLocalizedString("common" +
+        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize("common" +
                 ".reinstalling") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
                 null, options, options[0]);
     }

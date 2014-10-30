@@ -261,11 +261,10 @@ public class Settings {
 
         if (Utils.isWindows() && this.javaPath.contains("x86")) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
-            String[] options = {App.settings.getLocalizedString("common.yes"),
-                    App.settings.getLocalizedString("common.no")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
-                    .settings.getLocalizedString("settings.running32bit", "<br/><br/>") + "</p></html>",
-                    App.settings.getLocalizedString("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION,
+            String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
+                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>") + "</p></html>",
+                    Language.INSTANCE.localize("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
@@ -275,12 +274,12 @@ public class Settings {
 
         if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
             LogManager.warn("You're using an old unsupported version of Java (Java 6 or older)!");
-            String[] options = {App.settings.getLocalizedString("common.download"),
-                    App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("instance" + "" +
+            String[] options = {Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common" +
+                    ".ok"), Language.INSTANCE.localize("instance" + "" +
                     ".dontremindmeagain")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
-                    .settings.getLocalizedString("settings.unsupportedjava", "<br/><br/>") + "</p></html>",
-                    App.settings.getLocalizedString("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION,
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
+                    .INSTANCE.localizeWithReplace("settings.unsupportedjava", "<br/><br/>") + "</p></html>",
+                    Language.INSTANCE.localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261" +
@@ -294,12 +293,12 @@ public class Settings {
 
         if (Utils.isJava8() && !this.hideJava8Warning) {
             LogManager.warn("You're using a possible game breaking version of Java (Java 8)!");
-            String[] options = {App.settings.getLocalizedString("common.download"),
-                    App.settings.getLocalizedString("common.ok"), App.settings.getLocalizedString("instance" + "" +
+            String[] options = {Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common" +
+                    ".ok"), Language.INSTANCE.localize("instance" + "" +
                     ".dontremindmeagain")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
-                    .settings.getLocalizedString("settings.java8warning", "<br/><br/>") + "</p></html>",
-                    App.settings.getLocalizedString("settings.java8warningtitle"), JOptionPane.DEFAULT_OPTION,
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
+                    .INSTANCE.localizeWithReplace("settings.java8warning", "<br/><br/>") + "</p></html>",
+                    Language.INSTANCE.localize("settings.java8warningtitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261" +
@@ -354,11 +353,11 @@ public class Settings {
             }
         }
         if (matches) {
-            String[] options = {App.settings.getLocalizedString("common.ok"),
-                    App.settings.getLocalizedString("account.removepasswords")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
-                    .settings.getLocalizedString("account.securitywarning", "<br/>") + "</p></html>",
-                    App.settings.getLocalizedString("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION,
+            String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
+                    ".removepasswords")};
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
+                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>") + "</p></html>",
+                    Language.INSTANCE.localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 1) {
                 for (Account account : this.accounts) {
@@ -376,8 +375,8 @@ public class Settings {
         LogManager.debug("Checking if using old format of resources");
         File indexesDir = new File(this.resourcesDir, "indexes");
         if (!indexesDir.exists() || !indexesDir.isDirectory()) {
-            final ProgressDialog dialog = new ProgressDialog(getLocalizedString("settings.rearrangingresources"), 0,
-                    getLocalizedString("settings.rearrangingresources"), null);
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
+                    ".rearrangingresources"), 0, Language.INSTANCE.localize("settings.rearrangingresources"), null);
             Thread thread = new Thread() {
                 public void run() {
                     File indexesDir = new File(getResourcesDir(), "indexes");
@@ -2766,10 +2765,16 @@ public class Settings {
         return this.userAgent + " ATLauncher/" + Constants.VERSION;
     }
 
+    /**
+     * @deprecated
+     */
     public String getLocalizedString(String string) {
         return Language.INSTANCE.localize(string);
     }
 
+    /**
+     * @deprecated
+     */
     public String getLocalizedString(String string, String replace) {
         return Language.INSTANCE.localize(string).replace("%s", replace);
     }

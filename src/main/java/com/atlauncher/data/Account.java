@@ -391,8 +391,8 @@ public class Account implements Serializable {
             this.skinUpdating = true;
             final File file = new File(App.settings.getSkinsDir(), this.minecraftUsername + ".png");
             LogManager.info("Downloading skin for " + this.minecraftUsername);
-            final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("account" + "" +
-                    ".downloadingskin"), 0, App.settings.getLocalizedString("account.downloadingminecraftskin",
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
+                    ".downloadingskin"), 0, Language.INSTANCE.localize("account.downloadingminecraftskin",
                     this.minecraftUsername), "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             dialog.addThread(new Thread() {
                 public void run() {
@@ -433,7 +433,7 @@ public class Account implements Serializable {
             });
             dialog.start();
             if (!(Boolean) dialog.getReturnValue()) {
-                String[] options = {App.settings.getLocalizedString("common.ok")};
+                String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
                                 ".skinerror"), Language.INSTANCE.localize("common.error"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
@@ -501,8 +501,8 @@ public class Account implements Serializable {
 
     public boolean isAccessTokenValid() {
         LogManager.info("Checking Access Token!");
-        final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("account.checkingtoken"), 0,
-                App.settings.getLocalizedString("account.checkingtoken"), "Aborting access token check for " + this
+        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.checkingtoken"), 0,
+                Language.INSTANCE.localize("account.checkingtoken"), "Aborting access token check for " + this
                 .getMinecraftUsername());
         dialog.addThread(new Thread() {
             public void run() {
@@ -519,8 +519,8 @@ public class Account implements Serializable {
 
     public AuthenticationResponse refreshToken() {
         LogManager.info("Refreshing Access Token!");
-        final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("account.refreshingtoken"),
-                0, App.settings.getLocalizedString("account.refreshingtoken"), "Aborting token refresh for " + this
+        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.refreshingtoken"),
+                0, Language.INSTANCE.localize("account.refreshingtoken"), "Aborting token refresh for " + this
                 .getMinecraftUsername());
         dialog.addThread(new Thread() {
             public void run() {
