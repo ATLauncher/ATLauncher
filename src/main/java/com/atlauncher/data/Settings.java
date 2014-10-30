@@ -1037,6 +1037,8 @@ public class Settings {
 
             this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty("hideoldjavawarning", "false"));
 
+            this.hideJava8Warning = Boolean.parseBoolean(properties.getProperty("hidejava8warning", "false"));
+
             String lang = properties.getProperty("language", "English");
             if (!isLanguageByName(lang)) {
                 LogManager.warn("Invalid language " + lang + ". Defaulting to English!");
@@ -1233,6 +1235,7 @@ public class Settings {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("hadpassworddialog", "true");
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
+            properties.setProperty("hidejava8warning", this.hideJava8Warning + "");
             properties.setProperty("language", Language.INSTANCE.getCurrent());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
