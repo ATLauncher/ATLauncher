@@ -1052,8 +1052,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod.getName
-                        () : mod.getFile()));
+                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod
+                        .getName() : mod.getFile()));
                 mod.download(this);
                 fireSubProgress(-1); // Hide the subprogress bar
             }
@@ -1107,8 +1107,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (com.atlauncher.data.json.Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod.getName
-                        () : mod.getFile()));
+                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod
+                        .getName() : mod.getFile()));
                 mod.download(this);
                 fireSubProgress(-1); // Hide the subprogress bar
             }
@@ -1952,8 +1952,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common" +
-                        ".cancel")};
+                String[] options = {Language.INSTANCE.localize("common.ok"),
+                        Language.INSTANCE.localize("common.cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>" + this.pack.getUpdateMessage(this.version
                         .getVersion()) + "</html>");
                 ep.setEditable(false);
@@ -1979,8 +1979,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common" +
-                        ".cancel")};
+                String[] options = {Language.INSTANCE.localize("common.ok"),
+                        Language.INSTANCE.localize("common.cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>" + this.pack.getInstallMessage(this.version
                         .getVersion()) + "</html>");
                 ep.setEditable(false);
