@@ -17,19 +17,17 @@ import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
 
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 @SuppressWarnings("serial")
 public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
-
-    private JTabbedPane tabbedPane;
 
     private final GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
     private final JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
@@ -38,9 +36,9 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
     private final List<Tab> tabs = Arrays.asList(new Tab[]{this.generalSettingsTab, this.javaSettingsTab,
             this.networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab});
-
+    private JTabbedPane tabbedPane;
     private JPanel bottomPanel;
-    private JButton saveButton = new JButton(App.settings.getLocalizedString("common.save"));
+    private JButton saveButton = new JButton(Language.INSTANCE.localize("common.save"));
 
     public SettingsTab() {
         RelocalizationManager.addListener(this);
@@ -106,7 +104,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
-        this.saveButton.setText(App.settings.getLocalizedString("common.save"));
+        this.saveButton.setText(Language.INSTANCE.localize("common.save"));
     }
 
 }

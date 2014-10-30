@@ -392,7 +392,7 @@ public class Account implements Serializable {
             final File file = new File(App.settings.getSkinsDir(), this.minecraftUsername + ".png");
             LogManager.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
-                    ".downloadingskin"), 0, Language.INSTANCE.localize("account.downloadingminecraftskin",
+                    ".downloadingskin"), 0, Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin",
                     this.minecraftUsername), "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             dialog.addThread(new Thread() {
                 public void run() {

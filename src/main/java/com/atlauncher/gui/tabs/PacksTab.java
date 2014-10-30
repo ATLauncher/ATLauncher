@@ -16,6 +16,11 @@ import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddPackDialog;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -30,15 +35,8 @@ import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
-public final class PacksTab
-extends JPanel
-implements Tab{
+public final class PacksTab extends JPanel implements Tab {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -53,7 +51,7 @@ implements Tab{
 
     private List<PackCard> cards = new LinkedList<PackCard>();
 
-    public PacksTab(){
+    public PacksTab() {
         super(new BorderLayout());
         this.topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.contentPanel.setLayout(new GridBagLayout());
@@ -68,9 +66,9 @@ implements Tab{
         this.setupTopPanel();
         this.preload();
 
-        TabChangeManager.addListener(new TabChangeListener(){
+        TabChangeManager.addListener(new TabChangeListener() {
             @Override
-            public void on(){
+            public void on() {
                 searchField.setText("");
                 serversBox.setSelected(false);
                 privateBox.setSelected(false);
@@ -78,36 +76,36 @@ implements Tab{
             }
         });
 
-        this.collapseAllButton.addActionListener(new ActionListener(){
+        this.collapseAllButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                for(Component comp : contentPanel.getComponents()){
-                    if(comp instanceof PackCard){
+            public void actionPerformed(ActionEvent e) {
+                for (Component comp : contentPanel.getComponents()) {
+                    if (comp instanceof PackCard) {
                         ((PackCard) comp).setCollapsed(true);
                     }
                 }
             }
         });
-        this.expandAllButton.addActionListener(new ActionListener(){
+        this.expandAllButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                for(Component comp : contentPanel.getComponents()){
-                    if(comp instanceof PackCard){
+            public void actionPerformed(ActionEvent e) {
+                for (Component comp : contentPanel.getComponents()) {
+                    if (comp instanceof PackCard) {
                         ((PackCard) comp).setCollapsed(false);
                     }
                 }
             }
         });
-        this.addButton.addActionListener(new ActionListener(){
+        this.addButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 new AddPackDialog();
                 reload();
             }
         });
-        this.clearButton.addActionListener(new ActionListener(){
+        this.clearButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 searchField.setText("");
                 searchDescBox.setSelected(false);
                 serversBox.setSelected(false);
@@ -116,33 +114,33 @@ implements Tab{
             }
         });
 
-        this.searchField.addKeyListener(new KeyAdapter(){
+        this.searchField.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e){
+            public void keyPressed(KeyEvent e) {
                 reload();
             }
         });
-        this.privateBox.addItemListener(new ItemListener(){
+        this.privateBox.addItemListener(new ItemListener() {
             @Override
-            public void itemStateChanged(ItemEvent e){
+            public void itemStateChanged(ItemEvent e) {
                 reload();
             }
         });
-        this.serversBox.addItemListener(new ItemListener(){
+        this.serversBox.addItemListener(new ItemListener() {
             @Override
-            public void itemStateChanged(ItemEvent e){
+            public void itemStateChanged(ItemEvent e) {
                 reload();
             }
         });
-        this.searchDescBox.addItemListener(new ItemListener(){
+        this.searchDescBox.addItemListener(new ItemListener() {
             @Override
-            public void itemStateChanged(ItemEvent e){
+            public void itemStateChanged(ItemEvent e) {
                 reload();
             }
         });
     }
 
-    private void setupTopPanel(){
+    private void setupTopPanel() {
         this.topPanel.add(this.addButton);
         this.topPanel.add(this.clearButton);
         this.topPanel.add(this.searchField);
@@ -154,20 +152,19 @@ implements Tab{
         this.bottomPanel.add(this.collapseAllButton);
     }
 
-    private void preload(){
+    private void preload() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
 
-        List<Pack> packs = App.settings.sortPacksAlphabetically() ?
-                App.settings.getPacksSortedAlphabetically() :
-                App.settings.getPacksSortedPositionally();
+        List<Pack> packs = App.settings.sortPacksAlphabetically() ? App.settings.getPacksSortedAlphabetically() : App
+                .settings.getPacksSortedPositionally();
 
         int count = 0;
-        for(Pack pack : packs){
-            if(pack.canInstall()){
+        for (Pack pack : packs) {
+            if (pack.canInstall()) {
                 PackCard card = new PackCard(pack);
                 this.cards.add(card);
                 this.contentPanel.add(card, gbc);
@@ -176,12 +173,12 @@ implements Tab{
             }
         }
 
-        if(count == 0){
-            this.contentPanel.add(new NilCard(App.settings.getLocalizedString("pack.nodisplay", "\n\n")), gbc);
+        if (count == 0) {
+            this.contentPanel.add(new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
         }
     }
 
-    private void load(boolean keep){
+    private void load(boolean keep) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -191,38 +188,37 @@ implements Tab{
         Pack pack;
         boolean show;
         int count = 0;
-        for(PackCard card : this.cards){
+        for (PackCard card : this.cards) {
             show = true;
             pack = card.getPack();
-            if(keep){
-                if(!this.searchField.getText().isEmpty()){
-                    if(!Pattern.compile(Pattern.quote(this.searchField.getText()),
-                            Pattern.CASE_INSENSITIVE).matcher(pack
-                            .getName()).find()){
+            if (keep) {
+                if (!this.searchField.getText().isEmpty()) {
+                    if (!Pattern.compile(Pattern.quote(this.searchField.getText()),
+                            Pattern.CASE_INSENSITIVE).matcher(pack.getName()).find()) {
                         show = false;
                     }
                 }
 
-                if(this.searchDescBox.isSelected()){
-                    if(Pattern.compile(Pattern.quote(this.searchField.getText()),
-                            Pattern.CASE_INSENSITIVE).matcher(pack.getDescription()).find()){
+                if (this.searchDescBox.isSelected()) {
+                    if (Pattern.compile(Pattern.quote(this.searchField.getText()),
+                            Pattern.CASE_INSENSITIVE).matcher(pack.getDescription()).find()) {
                         show = true;
                     }
                 }
 
-                if(this.serversBox.isSelected()){
-                    if(!pack.canCreateServer()){
+                if (this.serversBox.isSelected()) {
+                    if (!pack.canCreateServer()) {
                         show = false;
                     }
                 }
 
-                if(privateBox.isSelected()){
-                    if(!pack.isPrivate()){
+                if (privateBox.isSelected()) {
+                    if (!pack.isPrivate()) {
                         show = false;
                     }
                 }
 
-                if(show){
+                if (show) {
                     this.contentPanel.add(card, gbc);
                     gbc.gridy++;
                     count++;
@@ -232,12 +228,12 @@ implements Tab{
 
         ((LauncherFrame) App.settings.getParent()).updateTitle("Packs - " + count);
 
-        if(count == 0){
-            this.contentPanel.add(new NilCard(App.settings.getLocalizedString("pack.nodisplay", "\n\n")), gbc);
+        if (count == 0) {
+            this.contentPanel.add(new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
         }
     }
 
-    public void reload(){
+    public void reload() {
         this.contentPanel.removeAll();
         load(true);
         revalidate();
@@ -245,7 +241,7 @@ implements Tab{
     }
 
     @Override
-    public String getTitle(){
+    public String getTitle() {
         return Language.INSTANCE.localize("tabs.packs");
     }
 }

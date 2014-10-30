@@ -12,6 +12,13 @@ import com.atlauncher.data.Language;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -21,13 +28,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 /**
  * TODO: Rewrite this for better loading
@@ -57,7 +57,7 @@ public class InstancesTab extends JPanel implements Tab {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        clearButton = new JButton(App.settings.getLocalizedString("common.clear"));
+        clearButton = new JButton(Language.INSTANCE.localize("common.clear"));
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchBox.setText("");
@@ -80,7 +80,7 @@ public class InstancesTab extends JPanel implements Tab {
         });
         topPanel.add(searchBox);
 
-        searchButton = new JButton(App.settings.getLocalizedString("common.search"));
+        searchButton = new JButton(Language.INSTANCE.localize("common.search"));
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 reload();
@@ -97,7 +97,7 @@ public class InstancesTab extends JPanel implements Tab {
         });
         topPanel.add(hasUpdate);
 
-        hasUpdateLabel = new JLabel(App.settings.getLocalizedString("instance.hasupdate"));
+        hasUpdateLabel = new JLabel(Language.INSTANCE.localize("instance.hasupdate"));
         topPanel.add(hasUpdateLabel);
 
         add(topPanel, BorderLayout.NORTH);
@@ -146,7 +146,7 @@ public class InstancesTab extends JPanel implements Tab {
             }
         }
         if (count == 0) {
-            panel.add(new NilCard(App.settings.getLocalizedString("instance.nodisplay", "\n\n")), gbc);
+            panel.add(new NilCard(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n")), gbc);
         }
 
         SwingUtilities.invokeLater(new Runnable() {

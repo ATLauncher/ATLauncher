@@ -45,6 +45,16 @@ public class NewsTab extends JPanel implements Tab {
     private final ContextMenu NEWS_MENU = new ContextMenu();
 
     /**
+     * Instantiates a new instance of this class which sets the layout and loads the content.
+     */
+    public NewsTab() {
+        super(new BorderLayout());
+        this.add(new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.reload();
+    }
+
+    /**
      * {@link JEditorPane} which contains all the news for this panel.
      */
     private final JEditorPane NEWS_PANE = new JEditorPane("text/html", "") {
@@ -73,16 +83,6 @@ public class NewsTab extends JPanel implements Tab {
     };
 
     /**
-     * Instantiates a new instance of this class which sets the layout and loads the content.
-     */
-    public NewsTab() {
-        super(new BorderLayout());
-        this.add(new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        this.reload();
-    }
-
-    /**
      * Reloads the panel with updated news.
      */
     public void reload() {
@@ -97,7 +97,7 @@ public class NewsTab extends JPanel implements Tab {
     }
 
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem COPY_ITEM = new JMenuItem(App.settings.getLocalizedString("common.copy"));
+        private final JMenuItem COPY_ITEM = new JMenuItem(Language.INSTANCE.localize("common.copy"));
 
         public ContextMenu() {
             super();
@@ -110,4 +110,6 @@ public class NewsTab extends JPanel implements Tab {
             });
         }
     }
+
+
 }

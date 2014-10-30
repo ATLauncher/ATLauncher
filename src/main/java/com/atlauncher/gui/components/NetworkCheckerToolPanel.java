@@ -36,8 +36,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.networkchecker"));
 
-    private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">" + Utils.splitMultilinedString(App
-            .settings.getLocalizedString("tools.networkchecker.info"), 60, "<br>") + "</p></html>");
+    private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">" + Utils.splitMultilinedString(Language
+            .INSTANCE.localize("tools.networkchecker.info"), 60, "<br>") + "</p></html>");
 
     public NetworkCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
