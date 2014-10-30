@@ -17,18 +17,18 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.utils.Utils;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Class for displaying packs in the Pack Tab
@@ -64,13 +64,6 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         abPanel.add(this.websiteButton);
         abPanel.add(this.modsButton);
 
-        this.modsButton.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                new ViewModsDialog(pack).setVisible(true);
-            }
-        });
-
         this.descArea.setText(pack.getDescription());
         this.descArea.setLineWrap(true);
         this.descArea.setEditable(false);
@@ -85,9 +78,13 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.getContentPane().add(this.splitter);
 
         this.addActionListeners();
+
+        if (this.pack.getVersionCount() == 0) {
+            this.modsButton.setVisible(false);
+        }
     }
 
-    public Pack getPack(){
+    public Pack getPack() {
         return this.pack;
     }
 
@@ -97,14 +94,14 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" +
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" + "" +
                             ".offlinenewinstance"), Language.INSTANCE.localize("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (App.settings.getAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
-                                ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
+                                + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack);
@@ -117,14 +114,14 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" +
+                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" + "" +
                             ".offlinecreateserver"), Language.INSTANCE.localize("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (App.settings.getAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" +
-                                ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
+                                + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack, true);
@@ -142,6 +139,13 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 Utils.openBrowser(pack.getWebsiteURL());
+            }
+        });
+
+        this.modsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ViewModsDialog(pack).setVisible(true);
             }
         });
     }
