@@ -1767,7 +1767,7 @@ public class Settings {
     }
 
     public void setPackVisbility(Pack pack, boolean collapsed) {
-        if (pack != null && account.isReal()) {
+        if (pack != null && account != null && account.isReal()) {
             if (collapsed) {
                 // Closed It
                 if (!account.getCollapsedPacks().contains(pack.getName())) {
