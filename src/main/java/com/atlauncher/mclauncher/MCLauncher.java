@@ -77,6 +77,22 @@ public class MCLauncher {
             cpb.append(new File(instance.getBinDirectory(), jarFile));
         }
 
+        File binFolder = instance.getBinDirectory();
+        File[] libraryFiles = binFolder.listFiles();
+        if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
+            for (File file : libraryFiles) {
+                if (file.isDirectory() || file.getName().equalsIgnoreCase(instance.getMinecraftJar().getName()) ||
+                        instance.getLibrariesNeeded().contains(file.getName())) {
+                    continue;
+                }
+
+                LogManager.info("Added in custom library " + file.getName());
+
+                cpb.append(File.pathSeparator);
+                cpb.append(file);
+            }
+        }
+
         cpb.append(File.pathSeparator);
         cpb.append(instance.getMinecraftJar());
 
