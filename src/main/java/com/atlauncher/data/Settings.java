@@ -73,6 +73,7 @@ import java.net.Proxy.Type;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -222,6 +223,7 @@ public class Settings {
 
     public void loadEverything() {
         setupServers(); // Setup the servers available to use in the Launcher
+        checkCreeperRepoEdges(); // Check the CreeperRepo edges for availability
         loadServerProperty(false); // Get users Server preference
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
@@ -1340,6 +1342,42 @@ public class Settings {
      */
     private void setupServers() {
         this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
+    }
+
+    private void checkCreeperRepoEdges() {
+        LogManager.debug("Checking CreeperRepo edges for availability");
+        // Check CreeperHosts available edges (servers)
+        JSONParser parser = new JSONParser();
+        try {
+            Downloadable download = new Downloadable("http://www.creeperrepo.net/edges.json", false);
+            String response = download.getContents();
+            if (response != null) {
+                Object obj = parser.parse(response);
+                JSONObject jsonObject = (JSONObject) obj;
+                Collection<String> values = jsonObject.values();
+                for (Server server : this.servers) {
+                    if (!server.isMaster() && !server.getName().equalsIgnoreCase("Auto")) {
+                        if (!values.contains(server.getHost())) {
+                            LogManager.warn("Server " + server.getHost() + " is no longer available!");
+                            server.disableServer();
+                        }
+                    }
+                }
+            }
+
+            ArrayList<Server> newServers = new ArrayList<Server>();
+
+            for (Server server : this.servers) {
+                if (!server.isDisabled()) {
+                    newServers.add(server);
+                }
+            }
+
+            this.servers = newServers;
+        } catch (ParseException e) {
+            this.logStackTrace(e);
+        }
+        LogManager.debug("Finished checking CreeperRepo edges for availability");
     }
 
     public boolean disableServerGetNext() {
