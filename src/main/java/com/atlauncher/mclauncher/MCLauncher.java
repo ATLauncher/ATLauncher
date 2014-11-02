@@ -112,6 +112,9 @@ public class MCLauncher {
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
+        // Mojang launcher defaults
+        arguments.add("-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy");
+
         arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
 
         if (App.settings.getMaximumMemory() < instance.getMemory()) {
