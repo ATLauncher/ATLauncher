@@ -43,8 +43,7 @@ public final class LogEvent {
         if (App.settings != null && !LogManager.showDebug) {
             body = body.replace(App.settings.getBaseDir().getAbsolutePath(), "**USERSDIR**");
         }
-        this.body = (!body.endsWith(System.getProperty("line.separator")) ? body + System.getProperty("line" + "" +
-                ".separator") : body);
+        this.body = (!body.endsWith("\n") ? body + "\n" : body);
         this.meta = meta;
     }
 
