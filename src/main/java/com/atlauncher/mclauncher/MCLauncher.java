@@ -113,7 +113,9 @@ public class MCLauncher {
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
         // Mojang launcher defaults
-        arguments.add("-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy");
+        arguments.add("-XX:+UseConcMarkSweepGC");
+        arguments.add("-XX:+CMSIncrementalMode");
+        arguments.add("-XX:-UseAdaptiveSizePolicy");
 
         arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
 
@@ -164,12 +166,16 @@ public class MCLauncher {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {
                             LogManager.error("Duplicate argument " + arg + " found and not added!");
-                        } else {
-                            arguments.add(arg);
+                            continue;
                         }
-                    } else {
-                        arguments.add(arg);
                     }
+
+                    if (arguments.toString().contains(arg)) {
+                        LogManager.error("Duplicate argument " + arg + " found and not added!");
+                        continue;
+                    }
+
+                    arguments.add(arg);
                 }
             }
         }

@@ -109,7 +109,9 @@ public class LegacyMCLauncher {
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
         // Mojang launcher defaults
-        arguments.add("-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy");
+        arguments.add("-XX:+UseConcMarkSweepGC");
+        arguments.add("-XX:+CMSIncrementalMode");
+        arguments.add("-XX:-UseAdaptiveSizePolicy");
 
         arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
 
@@ -153,12 +155,16 @@ public class LegacyMCLauncher {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {
                             LogManager.error("Duplicate argument " + arg + " found and not added!");
-                        } else {
-                            arguments.add(arg);
+                            continue;
                         }
-                    } else {
-                        arguments.add(arg);
                     }
+
+                    if (arguments.toString().contains(arg)) {
+                        LogManager.error("Duplicate argument " + arg + " found and not added!");
+                        continue;
+                    }
+
+                    arguments.add(arg);
                 }
             }
         }
@@ -195,7 +201,7 @@ public class LegacyMCLauncher {
         }
 
         String argsString = arguments.toString();
-        
+
         if (!LogManager.showDebug) {
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
             argsString = argsString.replace(sess.getAccessToken(), "REDACTED");
