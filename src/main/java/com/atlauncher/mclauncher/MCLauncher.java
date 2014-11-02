@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -217,20 +218,21 @@ public class MCLauncher {
         if (instance.hasExtraArguments()) {
             String args = instance.getExtraArguments();
             if (args.contains(" ")) {
-                for (String arg : args.split(" ")) {
-                    arguments.add(arg);
-                }
+                Collections.addAll(arguments, args.split(" "));
             } else {
                 arguments.add(args);
             }
         }
 
         String argsString = arguments.toString();
-        argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
-        argsString = argsString.replace(account.getUUID(), "REDACTED");
-        argsString = argsString.replace(account.getAccessToken(), "REDACTED");
-        argsString = argsString.replace(account.getSession(), "REDACTED");
-        argsString = argsString.replace(props, "REDACTED");
+
+        if (!LogManager.showDebug) {
+            argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
+            argsString = argsString.replace(account.getUUID(), "REDACTED");
+            argsString = argsString.replace(account.getAccessToken(), "REDACTED");
+            argsString = argsString.replace(account.getSession(), "REDACTED");
+            argsString = argsString.replace(props, "REDACTED");
+        }
 
         LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):" +
                 " " + argsString);

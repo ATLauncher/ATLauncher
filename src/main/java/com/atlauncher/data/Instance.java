@@ -1137,16 +1137,18 @@ public class Instance implements Cloneable {
                         BufferedReader br = new BufferedReader(isr);
                         String line;
                         while ((line = br.readLine()) != null) {
-                            line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
-                            line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
-                            if (account.hasAccessToken()) {
-                                line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
-                            }
-                            if (account.hasClientToken()) {
-                                line = line.replace(account.getClientToken(), "**CLIENTTOKEN**");
-                            }
-                            if (account.hasUUID()) {
-                                line = line.replace(account.getUUID(), "**UUID**");
+                            if (!LogManager.showDebug) {
+                                line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
+                                line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
+                                if (account.hasAccessToken()) {
+                                    line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
+                                }
+                                if (account.hasClientToken()) {
+                                    line = line.replace(account.getClientToken(), "**CLIENTTOKEN**");
+                                }
+                                if (account.hasUUID()) {
+                                    line = line.replace(account.getUUID(), "**UUID**");
+                                }
                             }
                             LogManager.minecraft(line);
                         }

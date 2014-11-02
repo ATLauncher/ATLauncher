@@ -192,8 +192,11 @@ public class LegacyMCLauncher {
         }
 
         String argsString = arguments.toString();
-        argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
-        argsString = argsString.replace(sess.getAccessToken(), "REDACTED");
+        
+        if (!LogManager.showDebug) {
+            argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
+            argsString = argsString.replace(sess.getAccessToken(), "REDACTED");
+        }
 
         LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):" +
                 " " + argsString);
