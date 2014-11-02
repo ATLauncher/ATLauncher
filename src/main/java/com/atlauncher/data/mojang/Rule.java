@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 enum Action {
-    ALLOW, DISALLOW;
+    ALLOW, DISALLOW
 }
 
 public class Rule {

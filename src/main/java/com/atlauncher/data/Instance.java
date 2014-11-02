@@ -435,7 +435,7 @@ public class Instance implements Cloneable {
      * @return true if Leaderboard are enabled and statistics can be sent
      */
     public boolean isLeaderboardsEnabled() {
-        return (this.realPack == null ? false : this.realPack.isLeaderboardsEnabled());
+        return (this.realPack != null && this.realPack.isLeaderboardsEnabled());
     }
 
     /**
@@ -445,7 +445,7 @@ public class Instance implements Cloneable {
      * @return true if Logging is enabled
      */
     public boolean isLoggingEnabled() {
-        return (this.realPack == null ? false : this.realPack.isLoggingEnabled());
+        return (this.realPack != null && this.realPack.isLoggingEnabled());
     }
 
     /**
@@ -701,7 +701,7 @@ public class Instance implements Cloneable {
      * @see com.atlauncher.data.Pack#canInstall
      */
     public boolean canInstall() {
-        return (this.realPack == null ? false : this.realPack.canInstall());
+        return (this.realPack != null && this.realPack.canInstall());
     }
 
     /**

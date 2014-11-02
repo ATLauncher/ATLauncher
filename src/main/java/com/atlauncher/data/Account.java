@@ -439,8 +439,6 @@ public class Account implements Serializable {
                     }
                     dialog.close();
                 }
-
-                ;
             });
             dialog.start();
             if (!(Boolean) dialog.getReturnValue()) {

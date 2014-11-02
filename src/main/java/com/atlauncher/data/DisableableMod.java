@@ -69,11 +69,7 @@ public class DisableableMod implements Serializable {
     }
 
     public boolean hasColour() {
-        if (this.colour == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return this.colour != null;
     }
 
     public Color getColour() {

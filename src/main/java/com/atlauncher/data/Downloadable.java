@@ -90,13 +90,7 @@ public class Downloadable {
     }
 
     public boolean isMD5() {
-        if (hash == null) {
-            return true;
-        }
-        if (hash.length() == 40) {
-            return false;
-        }
-        return true;
+        return hash == null || hash.length() != 40;
     }
 
     public String getHashFromURL() throws IOException {

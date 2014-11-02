@@ -172,19 +172,11 @@ public class Pack {
     }
 
     public boolean hasVersions() {
-        if (this.versions.size() == 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return this.versions.size() != 0;
     }
 
     public boolean hasDevVersions() {
-        if (this.devVersions.size() == 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return this.devVersions.size() != 0;
     }
 
     public boolean canInstall() {
@@ -242,10 +234,7 @@ public class Pack {
         if (!getLatestVersion().canUpdate()) {
             return true;
         }
-        if (!getLatestVersion().isRecommended()) {
-            return true;
-        }
-        return false;
+        return !getLatestVersion().isRecommended();
     }
 
     public String getXML(String version) {

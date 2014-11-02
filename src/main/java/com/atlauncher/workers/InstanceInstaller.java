@@ -728,8 +728,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                     String after = element.getAttribute("after");
                     String saveAs = element.getAttribute("saveas");
-                    Boolean client = (element.getAttribute("client").equalsIgnoreCase("yes") ? true : false);
-                    Boolean server = (element.getAttribute("server").equalsIgnoreCase("yes") ? true : false);
+                    Boolean client = element.getAttribute("client").equalsIgnoreCase("yes");
+                    Boolean server = element.getAttribute("server").equalsIgnoreCase("yes");
                     Action thing = null;
                     if (element.hasAttribute("type")) {
                         thing = new Action(action, type, after, saveAs, client, server);

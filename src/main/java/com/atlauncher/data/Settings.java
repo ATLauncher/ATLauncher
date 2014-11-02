@@ -2493,11 +2493,7 @@ public class Settings {
     }
 
     public void setJavaPath(String javaPath) {
-        if (javaPath.equalsIgnoreCase(Utils.getJavaHome())) {
-            this.usingCustomJavaPath = false;
-        } else {
-            this.usingCustomJavaPath = true;
-        }
+        this.usingCustomJavaPath = !javaPath.equalsIgnoreCase(Utils.getJavaHome());
         this.javaPath = javaPath;
     }
 

@@ -40,9 +40,6 @@ public class AssetObject {
         if (file.length() != this.size) {
             return true;
         }
-        if (!this.hash.equalsIgnoreCase(Utils.getSHA1(file))) {
-            return true;
-        }
-        return false;
+        return !this.hash.equalsIgnoreCase(Utils.getSHA1(file));
     }
 }

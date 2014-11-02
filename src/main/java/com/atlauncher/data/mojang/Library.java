@@ -46,10 +46,7 @@ public class Library {
     }
 
     public boolean shouldExtract() {
-        if (this.extract == null) {
-            return false;
-        }
-        return true;
+        return this.extract != null;
     }
 
     public ExtractRule getExtractRule() {

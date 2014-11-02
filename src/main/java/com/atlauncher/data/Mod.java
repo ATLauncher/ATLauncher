@@ -169,18 +169,12 @@ public class Mod {
     }
 
     public FilenameFilter getFileNameFilter() {
-        FilenameFilter filter = new FilenameFilter() {
-
+        return new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                if (name.matches(file)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return name.matches(file);
             }
         };
-        return filter;
     }
 
     public boolean isRecommeneded() {
@@ -216,11 +210,7 @@ public class Mod {
     }
 
     public boolean hasColour() {
-        if (this.colour == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return this.colour != null;
     }
 
     public String getLinked() {
@@ -631,11 +621,7 @@ public class Mod {
                         @Override
                         public boolean accept(File dir, String name) {
                             File thisFile = new File(dir, name);
-                            if (thisFile.isDirectory()) {
-                                return true;
-                            } else {
-                                return false;
-                            }
+                            return thisFile.isDirectory();
                         }
                     })) {
                         Utils.copyDirectory(new File(thisFolder, dir), installer.getModsDirectory());

@@ -93,7 +93,6 @@ public class RenameInstanceDialog extends JDialog {
                             .INSTANCE.localize("common.error") + "<br/><br/>" + Language.INSTANCE.localizeWithReplace
                             ("instance.invalidname", instanceName.getText()) + "</p></html>",
                             Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
-                    return;
                 } else {
                     if (instance.rename(instanceName.getText())) {
                         App.settings.saveInstances();

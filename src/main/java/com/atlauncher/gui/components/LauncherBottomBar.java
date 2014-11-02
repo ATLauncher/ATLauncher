@@ -139,8 +139,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                         }
                         dialog.close();
                     }
-
-                    ;
                 });
                 dialog.start();
             }

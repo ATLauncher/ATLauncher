@@ -146,11 +146,8 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
     }
 
     public boolean isValidPort() {
-        if (serverPort.getText().isEmpty() || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]",
-                "")) < 1 || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) > 65535) {
-            return false;
-        }
-        return true;
+        return !(serverPort.getText().isEmpty() || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]",
+                "")) < 1 || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) > 65535);
     }
 
     @Override

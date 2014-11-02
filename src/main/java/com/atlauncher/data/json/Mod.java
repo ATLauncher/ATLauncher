@@ -303,18 +303,12 @@ public class Mod {
     }
 
     public FilenameFilter getFileNameFilter() {
-        FilenameFilter filter = new FilenameFilter() {
-
+        return new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                if (name.matches(file)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return name.matches(file);
             }
         };
-        return filter;
     }
 
     public void download(InstanceInstaller installer) {
@@ -672,11 +666,7 @@ public class Mod {
                         @Override
                         public boolean accept(File dir, String name) {
                             File thisFile = new File(dir, name);
-                            if (thisFile.isDirectory()) {
-                                return true;
-                            } else {
-                                return false;
-                            }
+                            return thisFile.isDirectory();
                         }
                     })) {
                         Utils.copyDirectory(new File(thisFolder, dir), installer.getModsDirectory());

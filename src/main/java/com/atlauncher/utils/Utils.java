@@ -924,11 +924,14 @@ public class Utils {
      */
     public static void deleteContents(File file) {
         if (file.isDirectory()) {
-            for (File c : file.listFiles()) {
+            File[] files = file.listFiles();
+            if (files == null) {
+                // No contents in this folder so there are no files to delete
+                return;
+            }
+            for (File c : files) {
                 delete(c);
             }
-        } else {
-            return;
         }
     }
 
@@ -1442,10 +1445,7 @@ public class Utils {
             public boolean accept(File dir, String name) {
                 File file = new File(dir, name);
                 Pattern pattern = Pattern.compile("^pending-crash-[0-9\\-_\\.]+\\.json$");
-                if (file.isFile() && pattern.matcher(name).matches()) {
-                    return true;
-                }
-                return false;
+                return file.isFile() && pattern.matcher(name).matches();
             }
         };
     }
@@ -1618,10 +1618,7 @@ public class Utils {
             @Override
             public boolean accept(File dir, String name) {
                 File file = new File(dir, name);
-                if (file.exists() && file.isFile() && name.endsWith(".json")) {
-                    return true;
-                }
-                return false;
+                return file.exists() && file.isFile() && name.endsWith(".json");
             }
         };
     }
