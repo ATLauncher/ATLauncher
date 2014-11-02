@@ -130,9 +130,9 @@ public class EditModsDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 FileChooserDialog fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"),
                         Language.INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"),
-                        Language.INSTANCE.localize("instance.typeofmod"), Language.INSTANCE.localize("instance" +
-                        ".selectmodtype"), new String[]{"Mods Folder", "Jar Mod", "CoreMods Mod", "Texture Pack",
-                        "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
+                        Language.INSTANCE.localize("instance.typeofmod"), Language.INSTANCE.localize("instance" + "" +
+                        ".selectmodtype"), new String[]{"Mods Folder", "Inside Minecraft.jar", "CoreMods Mod",
+                        "Texture Pack", "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
                 ArrayList<File> files = fcd.getChosenFiles();
                 if (files != null && files.size() >= 1) {
                     boolean reload = false;
@@ -141,7 +141,7 @@ public class EditModsDialog extends JDialog {
                         com.atlauncher.data.Type type = null;
                         if (typeTemp.equalsIgnoreCase("Mods Folder")) {
                             type = com.atlauncher.data.Type.mods;
-                        } else if (typeTemp.equalsIgnoreCase("Jar Mod")) {
+                        } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
                             type = com.atlauncher.data.Type.jar;
                         } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
                             type = com.atlauncher.data.Type.coremods;
