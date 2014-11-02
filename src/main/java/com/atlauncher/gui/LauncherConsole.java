@@ -26,7 +26,6 @@ import com.atlauncher.evnt.listener.ReskinListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.ReskinManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.utils.Utils;
@@ -45,7 +44,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener {
+public class LauncherConsole extends JFrame implements RelocalizationListener {
 
     private static final long serialVersionUID = -3538990021922025818L;
     public Console console;
@@ -76,7 +75,6 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
         RelocalizationManager.addListener(this);
-        ReskinManager.addListener(this);
     }
 
     @Override
@@ -145,13 +143,5 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
     public void onRelocalization() {
         copy.setText(Language.INSTANCE.localize("common.copy"));
         bottomBar.setupLanguage();
-    }
-
-    @Override
-    public void onReskin() {
-        console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
-        console.setForeground(App.THEME.getConsoleTextColor());
-        console.setSelectionColor(App.THEME.getSelectionColor());
-        console.setBackground(App.THEME.getBaseColor());
     }
 }

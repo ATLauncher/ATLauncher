@@ -278,10 +278,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (this.jsonVersion != null) {
             return this.jsonVersion.hasActions();
         } else {
-            if (this.actions == null) {
-                return false;
-            }
-            return this.actions.size() != 0;
+            return this.actions != null && this.actions.size() != 0;
         }
     }
 
@@ -322,10 +319,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public boolean wasModInstalled(String mod) {
-        if (instance != null) {
-            return instance.wasModInstalled(mod);
-        }
-        return false;
+        return instance != null && instance.wasModInstalled(mod);
     }
 
     public boolean isReinstall() {

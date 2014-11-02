@@ -21,7 +21,6 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Mod;
-import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;

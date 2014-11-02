@@ -165,8 +165,8 @@ public class AccountsTab extends JPanel implements Tab {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (rememberField.isSelected()) {
-                    String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common" +
-                            ".no")};
+                    String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common"
+                            + ".no")};
                     int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
                             "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("account" + "" +
                                     ".rememberpasswordwarning", "<br/><br/>") + "</p></html>",
@@ -264,11 +264,11 @@ public class AccountsTab extends JPanel implements Tab {
                     } else {
                         LogManager.error((response == null ? "Unknown Error Logging In" : response.getErrorMessage()));
                         String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App
-                                .settings.getLocalizedString("account.incorrect") + "<br/><br/>" + (response == null
-                                ? "Unknown Error" : response.getErrorMessage()) + "</p></html>",
-                                Language.INSTANCE.localize("account.notadded"), JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        JOptionPane.showOptionDialog(App.settings.getParent(),
+                                "<html><p align=\"center\">" + Language.INSTANCE.localize("account.incorrect") +
+                                        "<br/><br/>" + (response == null ? "Unknown Error" : response.getErrorMessage
+                                        ()) + "</p></html>", Language.INSTANCE.localize("account.notadded"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     }
                 }
             }
