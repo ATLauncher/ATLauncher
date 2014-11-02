@@ -38,11 +38,12 @@ public class MCLauncher {
 
     public static Process launch(Account account, Instance instance, AuthenticationResponse response) throws
             IOException {
-        StringBuilder cpb = new StringBuilder("");
+        StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
 
         File jarMods = instance.getJarModsDirectory();
-        if (jarMods.exists() && (instance.hasJarMods() || jarMods.listFiles().length != 0)) {
+        File[] jarModFiles = jarMods.listFiles();
+        if (jarMods.exists() && jarModFiles != null && (instance.hasJarMods() || jarModFiles.length != 0)) {
             if (instance.hasJarMods()) {
                 ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance.getJarOrder().split(",")));
                 if (jarmods.size() > 1) {
@@ -55,7 +56,7 @@ public class MCLauncher {
                         cpb.append(thisFile);
                     }
                 }
-                for (File file : jarMods.listFiles()) {
+                for (File file : jarModFiles) {
                     if (jarmods.contains(file.getName())) {
                         continue;
                     }
@@ -64,7 +65,7 @@ public class MCLauncher {
                     cpb.append(file);
                 }
             } else {
-                for (File file : jarMods.listFiles()) {
+                for (File file : jarModFiles) {
                     hasCustomJarMods = true;
                     cpb.append(File.pathSeparator);
                     cpb.append(file);
