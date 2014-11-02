@@ -1539,7 +1539,7 @@ public class Utils {
 
             while (line != null) {
                 sb.append(line);
-                sb.append(System.lineSeparator());
+                sb.append(System.getProperty("line.separator"));
                 line = br.readLine();
             }
             contents = sb.toString();
