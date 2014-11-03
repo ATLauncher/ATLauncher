@@ -108,7 +108,7 @@ Revision should be incremented when there are no new features and only contains 
 
 ### Need Help/Have Questions?
 
-If you have questions or need any help please don't hesitate to email sourcecode@atlauncher.com
+If you have questions please don't hesitate to [contact us](http://www.atlauncher.com/contactus/)
 
 ### License
 
