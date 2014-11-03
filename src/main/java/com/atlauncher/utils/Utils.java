@@ -1918,16 +1918,16 @@ public class Utils {
             NetworkInterface network = NetworkInterface.getByInetAddress(ip);
 
             // If network is null, user may be using Linux or something it doesn't support so try alternative way
-            if(network == null) {
+            if (network == null) {
                 Enumeration e = NetworkInterface.getNetworkInterfaces();
 
-                while(e.hasMoreElements()) {
+                while (e.hasMoreElements()) {
 
                     NetworkInterface n = (NetworkInterface) e.nextElement();
                     Enumeration ee = n.getInetAddresses();
-                    while(ee.hasMoreElements()) {
+                    while (ee.hasMoreElements()) {
                         InetAddress i = (InetAddress) ee.nextElement();
-                        if(!i.isLoopbackAddress() && !i.isLinkLocalAddress() && i.isSiteLocalAddress()) {
+                        if (!i.isLoopbackAddress() && !i.isLinkLocalAddress() && i.isSiteLocalAddress()) {
                             ip = i;
                         }
                     }
