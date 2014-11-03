@@ -4,9 +4,11 @@
 
 # Except These
 !/src/
-!/macapp/
+!/gradle/
 !/.gitignore
 !/LICENSE
 !/README.md
-!/pom.xml
 !/IntelliJ-Coding-Style.xml
+!/gradlew*
+!/build.gradle
+!/build.properties

@@ -1,0 +1,119 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            name = "Forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "Sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.0.3'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT' // Contains less derpy launch4j plugin
+        classpath 'edu.sc.seis.gradle:macappbundle:2.0.0'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'launch4j'
+apply plugin: 'macAppBundle'
+
+ext.configFile = file 'build.properties'
+
+configFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
+}
+
+mainClassName = config.mainClass
+version = "${config.version.reserved}.${config.version.major}.${config.version.minor}.${config.version.revision}"
+group = 'com.atlauncher'
+archivesBaseName = 'ATLauncher'
+sourceCompatibility = '1.6' // tergetCompatibility set by this automatically
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    compile 'org.tukaani:xz:1.5'
+
+    testCompile 'junit:junit:4.11'
+}
+
+jar {
+    manifest {
+        attributes "Implementation-Version": version
+        attributes "Build-Jdk": org.gradle.internal.jvm.Jvm.current()
+        //attributes "Class-Path": configurations.compile.collect { it.getName() }.join(' ')
+        attributes "Built-By": System.getProperty("user.name")
+        attributes "Implementation-Vender": "RyanTheAllmighty"
+        attributes "Created-By": "Gradle " + project.getGradle().getGradleVersion()
+    }
+}
+
+shadowJar  {
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    dependencies {
+        exclude(dependency('junit:junit'))
+        exclude(dependency('org.hamcrest:hamcrest-core'))
+    }
+    classifier = ''
+}
+
+task copyMainJar(type: Copy) {
+    from("${buildDir}/libs/")
+    destinationDir = file("${buildDir}/macApp/ATLauncher.app/Contents/Java")
+    rename { String fileName ->
+        fileName.replace("-${version}", '')
+    }
+    rename(/(.+)-${version}(.+)/, '$1$2')
+}
+
+task copyToOutput(type: Copy) {
+    from("${buildDir}/libs/")
+    destinationDir = file("${buildDir}/distributions")
+}
+
+assemble.dependsOn.remove(createDmg)
+build.dependsOn.remove(createDmg)
+createApp.dependsOn.remove(copyToResourcesJava)
+build.dependsOn(createAppZip)
+build.dependsOn(tasks.launch4j)
+createApp.dependsOn(copyMainJar)
+copyMainJar.dependsOn(shadowJar)
+build.finalizedBy(copyToOutput)
+
+afterEvaluate {
+    launch4j {
+        icon = file("src/main/resources/assets/image/Icon.ico").getCanonicalPath()
+        jreMinVersion = '1.6.0'
+        jar = project.tasks.jar.getArchivePath().getPath()
+        outfile = project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe")
+        mainClassName = config.mainClass
+    }
+}
+
+artifacts {
+    archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe"))
+    archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions"))
+}
+
+macAppBundle {
+    mainClassName = config.mainClass
+    appName = "ATLauncher"
+    icon = "src/main/resources/assets/image/Icon.icns"
+}
