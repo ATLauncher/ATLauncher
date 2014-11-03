@@ -42,10 +42,12 @@ public class MinecraftVersion {
 
     public void loadVersion() {
         File versionFile = new File(App.settings.getVersionsDir(), this.version + ".json");
-        Downloadable download = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version +
-                "/" + this.version + ".json"), versionFile, null, null, false);
-        if (download.needToDownload()) {
-            download.download(false);
+        if (!App.skipMinecraftVersionDownloads) {
+            Downloadable download = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version +
+                    "/" + this.version + ".json"), versionFile, null, null, false);
+            if (download.needToDownload()) {
+                download.download(false);
+            }
         }
         try {
             mojangVersion = Settings.altGson.fromJson(new FileReader(versionFile), MojangVersion.class);

@@ -62,6 +62,7 @@ public class App {
     public static boolean wasUpdated = false;
     public static boolean experimentalJson = false;
     public static boolean useGzipForDownloads = true;
+    public static boolean skipMinecraftVersionDownloads = false;
 
     public static Settings settings;
 
@@ -108,6 +109,10 @@ public class App {
                     useGzipForDownloads = false;
                     LogManager.debug("GZip has been turned off for downloads!  Don't ask for support with this " +
                             "disabled!", true);
+                } else if (parts[0].equalsIgnoreCase("--skip-minecraft-version-downloads")) {
+                    skipMinecraftVersionDownloads = true;
+                    LogManager.debug("Skipping Minecraft version downloads! This may cause issues, only use it as " +
+                            "directed by ATLauncher staff!");
                 }
             }
         }
