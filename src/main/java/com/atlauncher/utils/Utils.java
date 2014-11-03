@@ -1914,8 +1914,29 @@ public class Utils {
         try {
             InetAddress ip;
             ip = InetAddress.getLocalHost();
+
             NetworkInterface network = NetworkInterface.getByInetAddress(ip);
 
+            // If network is null, user may be using Linux or something it doesn't support so try alternative way
+            if(network == null) {
+                Enumeration e = NetworkInterface.getNetworkInterfaces();
+
+                while(e.hasMoreElements()) {
+
+                    NetworkInterface n = (NetworkInterface) e.nextElement();
+                    Enumeration ee = n.getInetAddresses();
+                    while(ee.hasMoreElements()) {
+                        InetAddress i = (InetAddress) ee.nextElement();
+                        if(!i.isLoopbackAddress() && !i.isLinkLocalAddress() && i.isSiteLocalAddress()) {
+                            ip = i;
+                        }
+                    }
+                }
+
+                network = NetworkInterface.getByInetAddress(ip);
+            }
+
+            // If network is still null, well you're SOL
             if (network != null) {
                 byte[] mac = network.getHardwareAddress();
                 StringBuilder sb = new StringBuilder();
@@ -1929,6 +1950,7 @@ public class Utils {
         } finally {
             returnStr = (returnStr == null ? "NotARandomKeyYes" : returnStr);
         }
+
         return getMD5(returnStr);
     }
 }
