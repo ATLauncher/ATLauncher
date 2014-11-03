@@ -47,7 +47,7 @@ public class SplashScreen extends JWindow {
                 }
             }
         });
-        this.setAlwaysOnTop(true);
+        this.setAlwaysOnTop(false);
     }
 
     @Override
