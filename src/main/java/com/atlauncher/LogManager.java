@@ -31,6 +31,11 @@ public final class LogManager {
 
     public static boolean showDebug = false;
 
+    /**
+     * The level of debug logs to show. 1 being lowest, 2 being meh, 3 being EXTREEEEEEEME
+     */
+    public static int debugLevel = 0;
+
     private LogManager() {
     }
 
@@ -52,6 +57,12 @@ public final class LogManager {
 
     public static void debug(String message, boolean force) {
         if (showDebug || force) {
+            queue.offer(new LogEvent(LogEvent.LogType.DEBUG, message));
+        }
+    }
+
+    public static void debug(String message, int level) {
+        if (showDebug || debugLevel >= level) {
             queue.offer(new LogEvent(LogEvent.LogType.DEBUG, message));
         }
     }

@@ -195,6 +195,7 @@ public class Downloadable {
             }
         }
         if (this.connection == null) {
+            LogManager.debug("Opening connection to " + this.url, 3);
             try {
                 if (App.settings.getEnableProxy()) {
                     this.connection = (HttpURLConnection) new URL(this.url).openConnection(App.settings.getProxy());
@@ -217,7 +218,9 @@ public class Downloadable {
                             (this.connection.getResponseMessage() != null ? " with message of " + this.connection
                                     .getResponseMessage() : ""));
                 }
+                LogManager.debug("Connection opened to " + this.url, 3);
             } catch (IOException e) {
+                LogManager.debug("Exception when opening connection to " + this.url, 3);
                 App.settings.logStackTrace(e);
                 if (this.isATLauncherDownload) {
                     if (App.settings.getNextServer()) {

@@ -88,8 +88,22 @@ public class App {
                             true);
                 } else if (parts[0].equalsIgnoreCase("--debug")) {
                     LogManager.showDebug = true;
+                    LogManager.debugLevel = 1;
                     LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
                             + "user data!");
+                } else if (parts[0].equalsIgnoreCase("--debug-level") && parts.length == 2) {
+                    int debugLevel = 0;
+
+                    try {
+                        debugLevel = Integer.parseInt(parts[1]);
+                    } catch (NumberFormatException e) {
+                        continue;
+                    }
+
+                    if (debugLevel >= 1 && debugLevel <= 3) {
+                        LogManager.debugLevel = debugLevel;
+                        LogManager.debug("Debug level has been set to " + debugLevel + "!");
+                    }
                 } else if (parts[0].equalsIgnoreCase("--usegzip") && parts[1].equalsIgnoreCase("false")) {
                     useGzipForDownloads = false;
                     LogManager.debug("GZip has been turned off for downloads!  Don't ask for support with this " +
@@ -99,32 +113,31 @@ public class App {
         }
 
         File config = new File(Utils.getCoreGracefully(), "Configs");
-        if (!config.exists()){
+        if (!config.exists()) {
             int files = config.getParentFile().list().length;
-            if(files > 1){
-                String[] options = {
-                        "Yes It's Fine",
-                        "Whoops. I'll Change That Now"
-                };
+            if (files > 1) {
+                String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, "<html><p align=\"center\">I've detected that you may " +
-                                "not have installed this " + "in the right location.<br/><br/>The exe or jar file" + "should " +
-                                "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure that's " +
+                                "not have installed this " + "in the right location.<br/><br/>The exe or jar file" +
+                                "should " +
+                                "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure" +
+                                " that's " +
                                 "not have installed this " + "in the right location.<br/><br/>The exe or jar file" +
                                 "should " +
                                 "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure" +
                                 " that's " +
                                 "what you've" + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                if(ret != 0){
+                if (ret != 0) {
                     System.exit(0);
                 }
             }
         }
         settings = new Settings(); // Setup the Settings and wait for it to finish
         final SplashScreen ss = new SplashScreen();
-        SwingUtilities.invokeLater(new Runnable(){
+        SwingUtilities.invokeLater(new Runnable() {
             @Override
-            public void run(){
+            public void run() {
                 ss.setVisible(true);
             }
         });
