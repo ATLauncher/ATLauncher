@@ -23,6 +23,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 public class PackVersion {
     private String version;
     private String minecraft;
+    private String hash;
     private MinecraftVersion minecraftVersion;
     private boolean canUpdate = true;
     private boolean isRecommended = true;
@@ -53,6 +54,13 @@ public class PackVersion {
         return this.minecraftVersion;
     }
 
+    public String getHash() {
+        if (this.hash == null || !this.isDev) {
+            return null;
+        }
+        return this.hash;
+    }
+
     public boolean canUpdate() {
         return this.canUpdate;
     }
@@ -75,6 +83,13 @@ public class PackVersion {
 
     public boolean versionMatches(String version) {
         return this.version.equalsIgnoreCase(version);
+    }
+
+    public boolean hashMatches(String hash) {
+        if (this.hash == null || !this.isDev) {
+            return false;
+        }
+        return this.hash.equalsIgnoreCase(hash);
     }
 
 }

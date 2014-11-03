@@ -220,6 +220,20 @@ public class Pack {
         return this.devVersions.size();
     }
 
+    public PackVersion getDevVersionByName(String name) {
+        if (this.devVersions.size() == 0) {
+            return null;
+        }
+
+        for (PackVersion devVersion : this.devVersions) {
+            if (devVersion.versionMatches(name)) {
+                return devVersion;
+            }
+        }
+
+        return null;
+    }
+
     public PackVersion getLatestVersion() {
         if (this.versions.size() == 0) {
             return null;

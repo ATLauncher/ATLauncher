@@ -74,6 +74,11 @@ public class Instance implements Cloneable {
     private String version;
 
     /**
+     * The hash of this instance if it's a dev version.
+     */
+    private String hash;
+
+    /**
      * The version of Minecraft that this Instance uses.
      */
     private String minecraftVersion;
@@ -243,8 +248,9 @@ public class Instance implements Cloneable {
                     String minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder,
                     String librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
                     String assets, boolean isDev, boolean newLaunchMethod) {
-        this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen, mods, jarOrder,
-                librariesNeeded, extraArguments, minecraftArguments, mainClass, assets, isDev, true, newLaunchMethod);
+        this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen, mods,
+                jarOrder, librariesNeeded, extraArguments, minecraftArguments, mainClass, assets, isDev, true,
+                newLaunchMethod);
     }
 
     /**
@@ -767,6 +773,14 @@ public class Instance implements Cloneable {
      */
     public void setNotDevVersion() {
         this.isDev = false;
+        this.hash = null;
+    }
+
+    /**
+     * Sets this Instances hash for dev versions.
+     */
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     /**
@@ -955,6 +969,12 @@ public class Instance implements Cloneable {
                 // disallow updates.
                 if (!this.realPack.getLatestVersion().getVersion().equalsIgnoreCase(this.version) && !this.realPack
                         .isLatestVersionNoUpdate()) {
+                    return true;
+                }
+            }
+            if (isDev() && (this.hash != null)) {
+                PackVersion devVersion = this.realPack.getDevVersionByName(this.version);
+                if (devVersion != null && !devVersion.hashMatches(this.hash)) {
                     return true;
                 }
             }

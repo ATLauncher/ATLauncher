@@ -317,6 +317,9 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setAssets(version.getMinecraftVersion().getMojangVersion().getAssets());
                                     if (version.isDev()) {
                                         instance.setDevVersion();
+                                        if (version.getHash() != null) {
+                                            instance.setHash(version.getHash());
+                                        }
                                     } else {
                                         instance.setNotDevVersion();
                                     }
@@ -326,14 +329,21 @@ public class InstanceInstallerDialog extends JDialog {
                                 } else if (isServer) {
 
                                 } else {
-                                    App.settings.getInstances().add(new Instance(instanceNameField.getText(),
-                                            pack.getName(), pack, installForMe.isSelected(), version.getVersion(),
+                                    Instance newInstance = new Instance(instanceNameField.getText(), pack.getName(),
+                                            pack, installForMe.isSelected(), version.getVersion(),
                                             version.getMinecraftVersion().getVersion(), this.getMemory(),
                                             this.getPermGen(), this.getModsInstalled(), this.getJarOrder(),
                                             this.getLibrariesNeeded(), this.getExtraArguments(),
                                             this.getMinecraftArguments(), this.getMainClass(),
                                             version.getMinecraftVersion().getMojangVersion().getAssets(),
-                                            version.isDev(), !version.getMinecraftVersion().isLegacy()));
+                                            version.isDev(), !version.getMinecraftVersion().isLegacy());
+
+                                    if (version.isDev() && (version.getHash() != null)) {
+                                        newInstance.setHash(version.getHash());
+                                    }
+
+                                    App.settings.getInstances().add(newInstance);
+
                                 }
                                 App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();
