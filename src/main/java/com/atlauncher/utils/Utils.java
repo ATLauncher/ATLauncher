@@ -1922,7 +1922,6 @@ public class Utils {
                 Enumeration e = NetworkInterface.getNetworkInterfaces();
 
                 while (e.hasMoreElements()) {
-
                     NetworkInterface n = (NetworkInterface) e.nextElement();
                     Enumeration ee = n.getInetAddresses();
                     while (ee.hasMoreElements()) {
@@ -1939,11 +1938,13 @@ public class Utils {
             // If network is still null, well you're SOL
             if (network != null) {
                 byte[] mac = network.getHardwareAddress();
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < mac.length; i++) {
-                    sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+                if (mac != null && mac.length > 0) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < mac.length; i++) {
+                        sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+                    }
+                    returnStr = sb.toString();
                 }
-                returnStr = sb.toString();
             }
         } catch (Exception e) {
             App.settings.logStackTrace(e);
