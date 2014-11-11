@@ -20,6 +20,7 @@ package com.atlauncher.data.mojang.auth;
 public class RefreshRequest {
     private String accessToken;
     private String clientToken;
+    private boolean requestUser = true;
 
     public RefreshRequest(String accessToken, String clientToken) {
         this.accessToken = accessToken;

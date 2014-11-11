@@ -193,10 +193,10 @@ public class Instance implements Cloneable {
      * @param isPlayable         if this instance is playable
      * @param newLaunchMethod    if this instance is using the new launch method for Minecraft
      */
-    public Instance(String name, String pack, Pack realPack, boolean installJustForMe, String version,
-                    String minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder,
-                    String librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
-                    String assets, boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
+    public Instance(String name, String pack, Pack realPack, boolean installJustForMe, String version, String
+            minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder, String
+            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass, String assets,
+                    boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -244,13 +244,12 @@ public class Instance implements Cloneable {
      * @param isDev              if this Instance is using a dev version of the pack
      * @param newLaunchMethod    if this instance is using the new launch method for Minecraft
      */
-    public Instance(String name, String pack, Pack realPack, boolean installJustForMe, String version,
-                    String minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder,
-                    String librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
-                    String assets, boolean isDev, boolean newLaunchMethod) {
-        this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen, mods,
-                jarOrder, librariesNeeded, extraArguments, minecraftArguments, mainClass, assets, isDev, true,
-                newLaunchMethod);
+    public Instance(String name, String pack, Pack realPack, boolean installJustForMe, String version, String
+            minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder, String
+            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass, String assets,
+                    boolean isDev, boolean newLaunchMethod) {
+        this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen, mods, jarOrder,
+                librariesNeeded, extraArguments, minecraftArguments, mainClass, assets, isDev, true, newLaunchMethod);
     }
 
     /**
@@ -1031,18 +1030,18 @@ public class Instance implements Cloneable {
         if (account == null) {
             String[] options = {Language.INSTANCE.localize("common.ok")};
             JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance.noaccount"),
-                    Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                            .ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
             if ((App.settings.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
                 String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                        "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".insufficientram", "<b>" + this.memory + "</b> MB<br/><br/>") + "</p></html>",
-                        Language.INSTANCE.localize("instance.insufficientramtitle"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" +
+                        Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".insufficientram", "<b>" + this.memory + "</b> MB<br/><br/>") +
+                        "</p></html>", Language.INSTANCE.localize("instance.insufficientramtitle"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
                     App.settings.setMinecraftLaunched(false);
@@ -1051,11 +1050,11 @@ public class Instance implements Cloneable {
             }
             if (App.settings.getPermGen() < this.permgen) {
                 String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                        "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".insufficientpermgen", "<b>" + this.permgen + "</b> MB<br/><br/>") + "</p></html>",
-                        Language.INSTANCE.localize("instance.insufficientpermgentitle"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" +
+                        Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".insufficientpermgen", "<b>" + this.permgen + "</b> MB<br/><br/>") +
+                        "</p></html>", Language.INSTANCE.localize("instance.insufficientpermgentitle"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
                     App.settings.setMinecraftLaunched(false);
@@ -1081,8 +1080,8 @@ public class Instance implements Cloneable {
                     JPasswordField passwordField = new JPasswordField();
                     panel.add(passwordLabel, BorderLayout.NORTH);
                     panel.add(passwordField, BorderLayout.CENTER);
-                    int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
-                            Language.INSTANCE.localize("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
+                    int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel, Language.INSTANCE
+                            .localize("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
                     if (ret == JOptionPane.OK_OPTION) {
                         password = new String(passwordField.getPassword());
                     } else {
@@ -1098,7 +1097,8 @@ public class Instance implements Cloneable {
                         .getMinecraftUsername());
                 dialog.addThread(new Thread() {
                     public void run() {
-                        dialog.setReturnValue(Authentication.checkAccount(account.getUsername(), pass));
+                        dialog.setReturnValue(Authentication.checkAccount(account.getUsername(), pass, (account
+                                .hasAccessToken() ? account.getClientToken() : null)));
                         dialog.close();
                     }
                 });
@@ -1280,14 +1280,14 @@ public class Instance implements Cloneable {
                     // OpenEye returned a response to the report, display that to user if needed.
                     LogManager.info("OpenEye: Pending crash report sent! URL: " + response.getURL());
                     if (response.hasNote()) {
-                        String[] options = {Language.INSTANCE.localize("common.opencrashreport"),
-                                Language.INSTANCE.localize("common.ok")};
-                        int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".openeyereport1", "<br/><br/>") + response.getNoteDisplay() + Language
-                                        .INSTANCE.localize("instance.openeyereport2") + "</p></html>",
-                                Language.INSTANCE.localize("instance.aboutyourcrash"), JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+                        String[] options = {Language.INSTANCE.localize("common.opencrashreport"), Language.INSTANCE
+                                .localize("common.ok")};
+                        int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">"
+                                + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".openeyereport1", "<br/><br/>") + response.getNoteDisplay() + Language.INSTANCE
+                                .localize("instance.openeyereport2") + "</p></html>", Language.INSTANCE.localize
+                                ("instance.aboutyourcrash"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                .INFORMATION_MESSAGE, null, options, options[1]);
                         if (ret == 0) {
                             Utils.openBrowser(response.getURL());
                         }

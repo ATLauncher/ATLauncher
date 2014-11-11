@@ -42,10 +42,18 @@ import java.util.UUID;
 
 public class Authentication {
     public static AuthenticationResponse checkAccount(String username, String password) {
-        String uuid = UUID.randomUUID() + "";
+        return checkAccount(username, password, null);
+    }
+
+    public static AuthenticationResponse checkAccount(String username, String password, String clientToken) {
         try {
             URL url = new URL("https://authserver.mojang.com/authenticate");
-            String request = Gsons.DEFAULT.toJson(new AuthenticationRequest(username, password, uuid));
+            String request;
+            if (clientToken == null) {
+                request = Gsons.DEFAULT.toJson(new AuthenticationRequest(username, password));
+            } else {
+                request = Gsons.DEFAULT.toJson(new AuthenticationRequest(username, password, clientToken));
+            }
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(15000);
             connection.setReadTimeout(15000);
@@ -62,14 +70,14 @@ public class Authentication {
             writer.close();
 
             InputStream in;
-            try{
+            try {
                 in = connection.getInputStream();
-            } catch(Exception e){
+            } catch (Exception e) {
                 in = connection.getErrorStream();
             }
 
             return Gsons.DEFAULT.fromJson(new InputStreamReader(in), AuthenticationResponse.class);
-        } catch(Exception e){
+        } catch (Exception e) {
             LogManager.error(e.getLocalizedMessage());
             return null;
         }
