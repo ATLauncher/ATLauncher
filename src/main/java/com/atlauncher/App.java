@@ -112,7 +112,7 @@ public class App {
                 } else if (parts[0].equalsIgnoreCase("--skip-minecraft-version-downloads")) {
                     skipMinecraftVersionDownloads = true;
                     LogManager.debug("Skipping Minecraft version downloads! This may cause issues, only use it as " +
-                            "directed by ATLauncher staff!");
+                            "directed by ATLauncher staff!", true);
                 }
             }
         }
