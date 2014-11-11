@@ -1056,7 +1056,7 @@ public class Instance implements Cloneable {
                         "</p></html>", Language.INSTANCE.localize("instance.insufficientpermgentitle"), JOptionPane
                         .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
-                    LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
+                    LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
                     App.settings.setMinecraftLaunched(false);
                     return false;
                 }
