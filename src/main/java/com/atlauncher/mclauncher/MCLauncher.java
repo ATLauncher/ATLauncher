@@ -113,10 +113,12 @@ public class MCLauncher {
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
-        // Mojang launcher defaults
-        arguments.add("-XX:+UseConcMarkSweepGC");
-        arguments.add("-XX:+CMSIncrementalMode");
-        arguments.add("-XX:-UseAdaptiveSizePolicy");
+        if (App.settings.getJavaParameters().isEmpty()) {
+            // Mojang launcher defaults if user has no custom java arguments
+            arguments.add("-XX:+UseConcMarkSweepGC");
+            arguments.add("-XX:+CMSIncrementalMode");
+            arguments.add("-XX:-UseAdaptiveSizePolicy");
+        }
 
         arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
 
