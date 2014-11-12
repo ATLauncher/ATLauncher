@@ -63,6 +63,7 @@ public class App {
     public static boolean experimentalJson = false;
     public static boolean useGzipForDownloads = true;
     public static boolean skipMinecraftVersionDownloads = false;
+    public static boolean skipTrayIntegration = false;
 
     public static Settings settings;
 
@@ -113,6 +114,9 @@ public class App {
                     skipMinecraftVersionDownloads = true;
                     LogManager.debug("Skipping Minecraft version downloads! This may cause issues, only use it as " +
                             "directed by ATLauncher staff!", true);
+                } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
+                    skipTrayIntegration = true;
+                    LogManager.debug("Skipping tray integration!", true);
                 }
             }
         }
@@ -149,7 +153,7 @@ public class App {
         loadTheme();
         settings.loadConsole(); // Load console AFTER L&F
 
-        if (settings.enableTrayIcon()) {
+        if (settings.enableTrayIcon() && !skipTrayIntegration) {
             try {
                 trySystemTrayIntegration(); // Try to enable the tray icon
             } catch (Exception e) {
