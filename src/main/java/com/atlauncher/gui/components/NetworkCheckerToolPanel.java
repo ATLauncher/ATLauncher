@@ -75,12 +75,12 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 JOptionPane.ERROR_MESSAGE, null, options, options[0]);
         if (ret == 0) {
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"),
-                    App.settings.getServers().size() + 1, Language.INSTANCE.localize("tools.networkchecker" + "" +
+                    App.settings.getServers().size(), Language.INSTANCE.localize("tools.networkchecker" + "" +
                     ".running"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread() {
                 @Override
                 public void run() {
-                    dialog.setTotalTasksToDo((App.settings.getServers().size() * 4) + 1);
+                    dialog.setTotalTasksToDo(App.settings.getServers().size() * 5);
                     StringBuilder results = new StringBuilder();
 
                     // Ping Test
@@ -88,11 +88,10 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         results.append("Ping results to " + server.getHost() + " was " + Utils.pingAddress(server
                                 .getHost()) + "\n\n----------------\n\n");
                         dialog.doneTask();
-                    }
 
-                    // Traceroute Test
-                    results.append("Tracert to www.creeperrepo.net was " + Utils.traceRoute("www.creeperrepo.net"));
-                    dialog.doneTask();
+                        results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute("www.creeperrepo.net"));
+                        dialog.doneTask();
+                    }
 
                     // Response Code Test
                     for (Server server : App.settings.getServers()) {
@@ -135,14 +134,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                     String result = Utils.uploadPaste("ATLauncher Network Test Log", results.toString());
                     if (result.contains(Constants.PASTE_CHECK_URL)) {
-                        try {
-                            Map<String, String> data = new HashMap<String, String>();
-                            data.put("log", result);
-                            Utils.sendAPICall("networktest/", data);
-                        } catch (IOException e1) {
-                            App.settings.logStackTrace("Network Test failed to submit to ATLauncher!", e1);
-                            dialog.setReturnValue(false);
-                        }
+                        LogManager.info("Network Test has finished running, you can view the results at " + result);
                     } else {
                         LogManager.error("Network Test failed to submit to ATLauncher!");
                         dialog.setReturnValue(false);

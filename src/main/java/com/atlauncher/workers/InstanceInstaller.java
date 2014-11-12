@@ -1147,6 +1147,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         if (library.shouldExtract()) {
                             Utils.unzip(library.getFile(), getNativesDirectory(), library.getExtractRule());
                         } else {
+                            File dirToInstall = getBinDirectory();
                             Utils.copyFile(library.getFile(), getBinDirectory());
                         }
                     } else {
