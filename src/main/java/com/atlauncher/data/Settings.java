@@ -1096,11 +1096,10 @@ public class Settings {
                         .getMaximumRam() + "MB is available to use!");
                 this.initialMemory = 256; // User tried to allocate too much ram, set it back to
                 // 256MB
-            } else if (this.initialMemory > this.maximumMemory) {
+            } else if (this.initialMemory >= this.maximumMemory) {
                 LogManager.warn("Tried to allocate " + this.initialMemory + "MB of Initial Ram but maximum ram is " +
                         this.maximumMemory + "MB which is less!");
-                this.initialMemory = 256; // User tried to allocate too much ram, set it back to
-                // 256MB
+                this.initialMemory = 256; // User tried to allocate too much ram, set it back to 256MB
             }
 
             // Default PermGen to 256 for 64 bit systems and 128 for 32 bit systems
