@@ -66,7 +66,7 @@ implements RelocalizationListener{
         LogManager.info("*(Not Actually)");
 
         App.settings.setParentFrame(this);
-        setSize(new Dimension(1000, 575));
+        setSize(new Dimension(1000, 615));
         setTitle("ATLauncher " + Constants.VERSION);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
