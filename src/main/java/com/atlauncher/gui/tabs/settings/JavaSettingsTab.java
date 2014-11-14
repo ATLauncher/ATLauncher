@@ -113,7 +113,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     int selectedRam = Integer.parseInt(((String) initialMemory.getSelectedItem()).replace(" MB", ""));
                     int maxRam = Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", ""));
-                    if(selectedRam >= maxRam) {
+                    if(selectedRam > maxRam) {
                         JOptionPane.showMessageDialog(App.settings.getParent(),
                                 "<html>" + Language.INSTANCE.localizeWithReplace("settings.initialmemorytoohigh",
                                         "<br/><br/>") + "</html>", Language.INSTANCE.localize("settings.help"),
