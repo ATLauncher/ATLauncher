@@ -68,7 +68,7 @@ public class NewsTab extends JPanel implements Tab {
     /**
      * {@link JEditorPane} which contains all the news for this panel.
      */
-    private final JEditorPane NEWS_PANE = new JEditorPane("text/html", "") {
+    private final JEditorPane NEWS_PANE = new JEditorPane("text/html;charset=UTF-8", "") {
         {
             this.setEditable(false);
             this.setEditorKit(NEWS_KIT);
