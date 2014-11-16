@@ -1442,9 +1442,10 @@ public class Settings {
             File fileDir = new File(getJSONDir(), "news.json");
             BufferedReader in = new BufferedReader(
                 new InputStreamReader(
-                new FileInputStream(fileDir), "UTF8"));
+                new FileInputStream(fileDir), "UTF-8"));
             
             this.news = gson.fromJson(in, type);
+            in.close();
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
