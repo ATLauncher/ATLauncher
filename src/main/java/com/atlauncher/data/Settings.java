@@ -1454,6 +1454,8 @@ public class Settings {
             logStackTrace(e);
         } catch (UnsupportedEncodingException e) {
             logStackTrace(e);
+        } catch (IOException e) {
+            logStackTrace(e);
         }
         LogManager.debug("Finished loading news");
     }
