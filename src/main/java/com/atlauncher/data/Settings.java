@@ -54,6 +54,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.EOFException;
 import java.io.File;
@@ -64,6 +65,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -1437,12 +1439,20 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
-            this.news = gson.fromJson(new FileReader(new File(getJSONDir(), "news.json")), type);
+            File fileDir = new File(getJSONDir(), "news.json");
+            BufferedReader in = new BufferedReader(
+                new InputStreamReader(
+                new FileInputStream(fileDir), "UTF-8"));
+            
+            this.news = gson.fromJson(in, type);
+            in.close();
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
             logStackTrace(e);
         } catch (FileNotFoundException e) {
+            logStackTrace(e);
+        } catch (UnsupportedEncodingException e) {
             logStackTrace(e);
         }
         LogManager.debug("Finished loading news");
