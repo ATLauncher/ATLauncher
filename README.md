@@ -16,12 +16,6 @@ ATLauncher is a Launcher for Minecraft which integrates multiple different ModPa
 [ATLauncher Twitter](http://twitter.com/ATLauncher)
 
 
-### Things to Note
-
-Please note that I (RyanTheAllmighty) have created this alone up until now and being a 1st year Computer Science student, my coding may not be the best, most accurate or efficient, so please keep that in mind.
-
-Other than that, I am releasing this as an Open Source project in hopes that others may contribute to better our Launcher and because I think Open Source is a good thing.
-
 ### Coding Standards
 
 + Please keep all line lengths to 120 characters and use 4 spaces rather than tab characters
@@ -30,6 +24,8 @@ Other than that, I am releasing this as an Open Source project in hopes that oth
 + Please don't use star imports
 + Please mark all classes that are to be de/serialized with Gson with the @Json annotation for other developers
 + Please use the IntelliJ-Coding-Style.xml for the project (if using IntelliJ) in order to keep all formatting consistent
++ Please update the CHANGELOG.md file when fixing/adding something so it's easier to keep track of than git commits. Feel free to add in a 'by MyUsername' to the end of the changes you've made.
++ Please don't do large commits. My preference is a single commit for a single fix/addition rather than bundled up commits.
 
 ### Building
 
