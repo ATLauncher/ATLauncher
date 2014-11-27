@@ -1,9 +1,21 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.atlauncher.data;
 
 import com.atlauncher.App;
@@ -18,7 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public enum Language {
-    INSTANCE;
+    INSTANCE, Language;
 
     private final Map<String, Properties> langs = new HashMap<String, Properties>();
     private volatile String current;
@@ -27,9 +39,27 @@ public enum Language {
         try {
             this.load("English");
         } catch (Exception ex) {
-            App.settings.logStackTrace(ex);
             ex.printStackTrace(System.err);
         }
+    }
+
+    public static String[] available() {
+        File[] files = App.settings.getLanguagesDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".lang");
+            }
+        });
+        String[] langs = new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            langs[i] = files[i].getName().substring(0, 1).toUpperCase() + files[i].getName().substring(1,
+                    files[i].getName().lastIndexOf("."));
+        }
+        return langs;
+    }
+
+    public static synchronized String current() {
+        return INSTANCE.current;
     }
 
     public synchronized void load(String lang) throws IOException {
@@ -37,11 +67,11 @@ public enum Language {
             Properties props = new Properties();
             File langFile = new File(App.settings.getLanguagesDir(), lang.toLowerCase() + ".lang");
             if (!langFile.exists()) {
-                LogManager.error("Language file " + langFile.getName() + " doesn't exist! Ignore this if it's the " +
-                        "first time starting up ATLauncher!");
-                return; // Silently exit if the file doesn't exist
+                LogManager.error("Language file " + langFile.getName() + " doesn't exist! Defaulting it inbuilt one!");
+                props.load(App.class.getResourceAsStream("/assets/lang/english.lang"));
+            } else {
+                props.load(new FileInputStream(langFile));
             }
-            props.load(new FileInputStream(langFile));
             this.langs.put(lang, props);
             LogManager.info("Loading Language: " + lang);
         }
@@ -54,12 +84,7 @@ public enum Language {
             this.langs.remove(lang);
         }
 
-        Properties props = new Properties();
-        props.load(new FileInputStream(new File(App.settings.getLanguagesDir(), lang.toLowerCase() + ".lang")));
-        this.langs.put(lang, props);
-        LogManager.info("Loading Language: " + lang);
-
-        this.current = lang;
+        this.load(lang);
     }
 
     public synchronized String localize(String lang, String tag) {
@@ -83,26 +108,11 @@ public enum Language {
         return this.localize(this.current, tag);
     }
 
+    public synchronized String localizeWithReplace(String tag, String replaceWith) {
+        return this.localize(this.current, tag).replace("%s", replaceWith);
+    }
+
     public synchronized String getCurrent() {
         return this.current;
-    }
-
-    public static String[] available() {
-        File[] files = App.settings.getLanguagesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".lang");
-            }
-        });
-        String[] langs = new String[files.length];
-        for (int i = 0; i < files.length; i++) {
-            langs[i] = files[i].getName().substring(0, 1).toUpperCase() + files[i].getName().substring(1,
-                    files[i].getName().lastIndexOf("."));
-        }
-        return langs;
-    }
-
-    public static synchronized String current() {
-        return INSTANCE.current;
     }
 }

@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.data;
 
@@ -79,13 +90,7 @@ public class Downloadable {
     }
 
     public boolean isMD5() {
-        if (hash == null) {
-            return true;
-        }
-        if (hash.length() == 40) {
-            return false;
-        }
-        return true;
+        return hash == null || hash.length() != 40;
     }
 
     public String getHashFromURL() throws IOException {
@@ -190,6 +195,7 @@ public class Downloadable {
             }
         }
         if (this.connection == null) {
+            LogManager.debug("Opening connection to " + this.url, 3);
             try {
                 if (App.settings.getEnableProxy()) {
                     this.connection = (HttpURLConnection) new URL(this.url).openConnection(App.settings.getProxy());
@@ -198,18 +204,23 @@ public class Downloadable {
                 }
                 this.connection.setUseCaches(false);
                 this.connection.setDefaultUseCaches(false);
-                this.connection.setRequestProperty("Accept-Encoding", "gzip");
+                if (App.useGzipForDownloads) {
+                    this.connection.setRequestProperty("Accept-Encoding", "gzip");
+                }
                 this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
                 this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
                 this.connection.setRequestProperty("Expires", "0");
                 this.connection.setRequestProperty("Pragma", "no-cache");
                 this.connection.connect();
+
                 if (this.connection.getResponseCode() / 100 != 2) {
                     throw new IOException(this.url + " returned response code " + this.connection.getResponseCode() +
                             (this.connection.getResponseMessage() != null ? " with message of " + this.connection
                                     .getResponseMessage() : ""));
                 }
+                LogManager.debug("Connection opened to " + this.url, 3);
             } catch (IOException e) {
+                LogManager.debug("Exception when opening connection to " + this.url, 3);
                 App.settings.logStackTrace(e);
                 if (this.isATLauncherDownload) {
                     if (App.settings.getNextServer()) {
@@ -238,7 +249,7 @@ public class Downloadable {
         InputStream in = null;
         FileOutputStream writer = null;
         try {
-            if (isGziped()) {
+            if (isGziped() && App.useGzipForDownloads) {
                 in = new GZIPInputStream(getConnection().getInputStream());
             } else {
                 in = getConnection().getInputStream();
@@ -291,7 +302,7 @@ public class Downloadable {
         StringBuilder response = null;
         try {
             InputStream in = null;
-            if (isGziped()) {
+            if (isGziped() && App.useGzipForDownloads) {
                 in = new GZIPInputStream(getConnection().getInputStream());
             } else {
                 in = getConnection().getInputStream();

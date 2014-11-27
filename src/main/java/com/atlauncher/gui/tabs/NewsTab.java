@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui.tabs;
 
@@ -45,9 +56,19 @@ public class NewsTab extends JPanel implements Tab {
     private final ContextMenu NEWS_MENU = new ContextMenu();
 
     /**
+     * Instantiates a new instance of this class which sets the layout and loads the content.
+     */
+    public NewsTab() {
+        super(new BorderLayout());
+        this.add(new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.reload();
+    }
+
+    /**
      * {@link JEditorPane} which contains all the news for this panel.
      */
-    private final JEditorPane NEWS_PANE = new JEditorPane("text/html", "") {
+    private final JEditorPane NEWS_PANE = new JEditorPane("text/html;charset=UTF-8", "") {
         {
             this.setEditable(false);
             this.setEditorKit(NEWS_KIT);
@@ -73,16 +94,6 @@ public class NewsTab extends JPanel implements Tab {
     };
 
     /**
-     * Instantiates a new instance of this class which sets the layout and loads the content.
-     */
-    public NewsTab() {
-        super(new BorderLayout());
-        this.add(new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        this.reload();
-    }
-
-    /**
      * Reloads the panel with updated news.
      */
     public void reload() {
@@ -97,7 +108,7 @@ public class NewsTab extends JPanel implements Tab {
     }
 
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem COPY_ITEM = new JMenuItem(App.settings.getLocalizedString("common.copy"));
+        private final JMenuItem COPY_ITEM = new JMenuItem(Language.INSTANCE.localize("common.copy"));
 
         public ContextMenu() {
             super();
@@ -110,4 +121,6 @@ public class NewsTab extends JPanel implements Tab {
             });
         }
     }
+
+
 }

@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui;
 
@@ -11,6 +22,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.tabs.AccountsTab;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -21,18 +33,21 @@ import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 @SuppressWarnings("serial")
-public class LauncherFrame extends JFrame implements RelocalizationListener {
-
+public final class LauncherFrame
+extends JFrame
+implements RelocalizationListener{
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;
@@ -49,14 +64,15 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
         LogManager.info("Launcher opening");
         LogManager.info("Made By Bob*");
         LogManager.info("*(Not Actually)");
+
         App.settings.setParentFrame(this);
-        setSize(new Dimension(1000, 575));
+        setSize(new Dimension(1000, 615));
         setTitle("ATLauncher " + Constants.VERSION);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
+        this.setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setLayout(new BorderLayout());
 
         LogManager.info("Setting up Bottom Bar");
         setupBottomBar(); // Setup the Bottom Bar
@@ -66,8 +82,8 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
         setupTabs(); // Setup the JTabbedPane
         LogManager.info("Finished Setting up Tabs");
 
-        add(tabbedPane, BorderLayout.CENTER);
-        add(bottomBar, BorderLayout.SOUTH);
+        this.add(tabbedPane, BorderLayout.CENTER);
+        this.add(bottomBar, BorderLayout.SOUTH);
 
         if (show) {
             LogManager.info("Showing Launcher");
@@ -76,12 +92,16 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
 
         RelocalizationManager.addListener(this);
 
-        App.TASKPOOL.execute(new Runnable() {
-            public void run() {
+        App.TASKPOOL.execute(new Runnable(){
+            public void run(){
                 App.settings.checkMojangStatus(); // Check Minecraft status
                 bottomBar.updateStatus(App.settings.getMojangStatus());
             }
         });
+    }
+
+    public void updateTitle(String str){
+        setTitle("ATLauncher " + Constants.VERSION + " - " + str);
     }
 
     /**
@@ -105,12 +125,21 @@ public class LauncherFrame extends JFrame implements RelocalizationListener {
 
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(34.0F));
         for (Tab tab : this.tabs) {
-            if (tab == null) {
-                throw new NullPointerException("Tab == null");
-            }
-
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
+        tabbedPane.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent e){
+                String tabName = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
+                if(tabbedPane.getSelectedIndex() == 1){
+                    updateTitle("Packs - " + App.settings.getPackInstallableCount());
+                } else{
+                    updateTitle(tabName);
+                }
+
+                TabChangeManager.post();
+            }
+        });
         tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
     }

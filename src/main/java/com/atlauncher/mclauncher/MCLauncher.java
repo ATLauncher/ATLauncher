@@ -1,12 +1,24 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.mclauncher;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
@@ -20,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,11 +40,12 @@ public class MCLauncher {
 
     public static Process launch(Account account, Instance instance, AuthenticationResponse response) throws
             IOException {
-        StringBuilder cpb = new StringBuilder("");
+        StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
 
         File jarMods = instance.getJarModsDirectory();
-        if (jarMods.exists() && (instance.hasJarMods() || jarMods.listFiles().length != 0)) {
+        File[] jarModFiles = jarMods.listFiles();
+        if (jarMods.exists() && jarModFiles != null && (instance.hasJarMods() || jarModFiles.length != 0)) {
             if (instance.hasJarMods()) {
                 ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance.getJarOrder().split(",")));
                 if (jarmods.size() > 1) {
@@ -44,7 +58,7 @@ public class MCLauncher {
                         cpb.append(thisFile);
                     }
                 }
-                for (File file : jarMods.listFiles()) {
+                for (File file : jarModFiles) {
                     if (jarmods.contains(file.getName())) {
                         continue;
                     }
@@ -53,7 +67,7 @@ public class MCLauncher {
                     cpb.append(file);
                 }
             } else {
-                for (File file : jarMods.listFiles()) {
+                for (File file : jarModFiles) {
                     hasCustomJarMods = true;
                     cpb.append(File.pathSeparator);
                     cpb.append(file);
@@ -64,6 +78,22 @@ public class MCLauncher {
         for (String jarFile : instance.getLibrariesNeeded().split(",")) {
             cpb.append(File.pathSeparator);
             cpb.append(new File(instance.getBinDirectory(), jarFile));
+        }
+
+        File binFolder = instance.getBinDirectory();
+        File[] libraryFiles = binFolder.listFiles();
+        if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
+            for (File file : libraryFiles) {
+                if (file.isDirectory() || file.getName().equalsIgnoreCase(instance.getMinecraftJar().getName()) ||
+                        instance.getLibrariesNeeded().contains(file.getName())) {
+                    continue;
+                }
+
+                LogManager.info("Added in custom library " + file.getName());
+
+                cpb.append(File.pathSeparator);
+                cpb.append(file);
+            }
         }
 
         cpb.append(File.pathSeparator);
@@ -82,6 +112,13 @@ public class MCLauncher {
         }
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
+
+        if (App.settings.getJavaParameters().isEmpty()) {
+            // Mojang launcher defaults if user has no custom java arguments
+            arguments.add("-XX:+UseConcMarkSweepGC");
+            arguments.add("-XX:+CMSIncrementalMode");
+            arguments.add("-XX:-UseAdaptiveSizePolicy");
+        }
 
         arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
 
@@ -132,12 +169,16 @@ public class MCLauncher {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {
                             LogManager.error("Duplicate argument " + arg + " found and not added!");
-                        } else {
-                            arguments.add(arg);
+                            continue;
                         }
-                    } else {
-                        arguments.add(arg);
                     }
+
+                    if (arguments.toString().contains(arg)) {
+                        LogManager.error("Duplicate argument " + arg + " found and not added!");
+                        continue;
+                    }
+
+                    arguments.add(arg);
                 }
             }
         }
@@ -189,26 +230,28 @@ public class MCLauncher {
         if (instance.hasExtraArguments()) {
             String args = instance.getExtraArguments();
             if (args.contains(" ")) {
-                for (String arg : args.split(" ")) {
-                    arguments.add(arg);
-                }
+                Collections.addAll(arguments, args.split(" "));
             } else {
                 arguments.add(args);
             }
         }
 
         String argsString = arguments.toString();
-        argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
-        argsString = argsString.replace(account.getUUID(), "REDACTED");
-        argsString = argsString.replace(account.getAccessToken(), "REDACTED");
-        argsString = argsString.replace(account.getSession(), "REDACTED");
-        argsString = argsString.replace(props, "REDACTED");
+
+        if (!LogManager.showDebug) {
+            argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
+            argsString = argsString.replace(account.getUUID(), "REDACTED");
+            argsString = argsString.replace(account.getAccessToken(), "REDACTED");
+            argsString = argsString.replace(account.getSession(), "REDACTED");
+            argsString = argsString.replace(props, "REDACTED");
+        }
 
         LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):" +
                 " " + argsString);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
+        processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
         return processBuilder.start();
     }
 }

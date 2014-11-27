@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher;
 
@@ -37,14 +48,12 @@ import java.util.concurrent.Executors;
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
 public class App {
-    // Using this will help spread the workload across multiple threads allowing you to do many
-    // tasks at once. Approach with caution though. Dedicated 2 threads to the TASKPOOL shouldn't
-    // have any problems with that little
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
     public static final Toaster TOASTER = Toaster.instance();
 
@@ -52,6 +61,9 @@ public class App {
 
     public static boolean wasUpdated = false;
     public static boolean experimentalJson = false;
+    public static boolean useGzipForDownloads = true;
+    public static boolean skipMinecraftVersionDownloads = false;
+    public static boolean skipTrayIntegration = false;
 
     public static Settings settings;
 
@@ -74,6 +86,37 @@ public class App {
                     wasUpdated = true;
                 } else if (parts[0].equalsIgnoreCase("--json") && parts[1].equalsIgnoreCase("experimental")) {
                     experimentalJson = true;
+                    LogManager.debug("Experimental JSON support enabled! Don't ask for support with this enabled!",
+                            true);
+                } else if (parts[0].equalsIgnoreCase("--debug")) {
+                    LogManager.showDebug = true;
+                    LogManager.debugLevel = 1;
+                    LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
+                            + "user data!");
+                } else if (parts[0].equalsIgnoreCase("--debug-level") && parts.length == 2) {
+                    int debugLevel = 0;
+
+                    try {
+                        debugLevel = Integer.parseInt(parts[1]);
+                    } catch (NumberFormatException e) {
+                        continue;
+                    }
+
+                    if (debugLevel >= 1 && debugLevel <= 3) {
+                        LogManager.debugLevel = debugLevel;
+                        LogManager.debug("Debug level has been set to " + debugLevel + "!");
+                    }
+                } else if (parts[0].equalsIgnoreCase("--usegzip") && parts[1].equalsIgnoreCase("false")) {
+                    useGzipForDownloads = false;
+                    LogManager.debug("GZip has been turned off for downloads!  Don't ask for support with this " +
+                            "disabled!", true);
+                } else if (parts[0].equalsIgnoreCase("--skip-minecraft-version-downloads")) {
+                    skipMinecraftVersionDownloads = true;
+                    LogManager.debug("Skipping Minecraft version downloads! This may cause issues, only use it as " +
+                            "directed by ATLauncher staff!", true);
+                } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
+                    skipTrayIntegration = true;
+                    LogManager.debug("Skipping tray integration!", true);
                 }
             }
         }
@@ -84,22 +127,33 @@ public class App {
             if (files > 1) {
                 String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, "<html><p align=\"center\">I've detected that you may " +
-                        "not have installed this " + "in the right location.<br/><br/>The exe or jar file" + "should " +
-                        "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure that's " +
-                        "what you've" + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
+                                "not have installed this " + "in the right location.<br/><br/>The exe or jar file" +
+                                "should " +
+                                "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure" +
+                                " that's " +
+                                "not have installed this " + "in the right location.<br/><br/>The exe or jar file" +
+                                "should " +
+                                "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure" +
+                                " that's " +
+                                "what you've" + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     System.exit(0);
                 }
             }
         }
-
         settings = new Settings(); // Setup the Settings and wait for it to finish
-
+        final SplashScreen ss = new SplashScreen();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ss.setVisible(true);
+            }
+        });
         loadTheme();
         settings.loadConsole(); // Load console AFTER L&F
 
-        if (settings.enableTrayIcon()) {
+        if (settings.enableTrayIcon() && !skipTrayIntegration) {
             try {
                 trySystemTrayIntegration(); // Try to enable the tray icon
             } catch (Exception e) {
@@ -125,10 +179,6 @@ public class App {
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
 
-        if (experimentalJson) {
-            LogManager.debug("Experimental JSON support enabled! Don't ask for support with this enabled!");
-        }
-
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "ATLauncher " + Constants.VERSION);
@@ -150,9 +200,7 @@ public class App {
         }
 
         LogManager.info("Showing splash screen and loading everything");
-        SplashScreen ss = new SplashScreen(); // Show Splash Screen
         settings.loadEverything(); // Loads everything that needs to be loaded
-        ss.close(); // Close the Splash Screen
         LogManager.info("Launcher finished loading everything");
 
         if (settings.isFirstTimeRun()) {
@@ -174,6 +222,7 @@ public class App {
 
         TRAY_MENU.localize();
         integrate();
+        ss.close();
         new LauncherFrame(open); // Open the Launcher
     }
 

@@ -1,12 +1,24 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
@@ -24,10 +36,10 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
      */
     private static final long serialVersionUID = 1964636496849129267L;
 
-    private final JLabel TITLE_LABEL = new JLabel(App.settings.getLocalizedString("tools.serverchecker"));
+    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.serverchecker"));
 
-    private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">" + Utils.splitMultilinedString(App
-            .settings.getLocalizedString("tools.serverchecker.info"), 60, "<br>") + "</p></html>");
+    private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">" + Utils.splitMultilinedString(Language
+            .INSTANCE.localize("tools.serverchecker.info"), 60, "<br>") + "</p></html>");
 
     public ServerCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);

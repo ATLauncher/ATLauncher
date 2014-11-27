@@ -108,16 +108,8 @@ Revision should be incremented when there are no new features and only contains 
 
 ### Need Help/Have Questions?
 
-If you have questions or need any help please don't hesitate to email sourcecode@atlauncher.com
+If you have questions please don't hesitate to [contact us](http://www.atlauncher.com/contactus/)
 
 ### License
 
-We have released this code under a Creative Commons license. In order to use this work, you must share the work under the same license as well as give proper attribution. In order to attribute us correctly you must provide a link to this original repository as well as give attribution to our website at http://www.atlauncher.com
-
-If you do use our code as a base, we require that you don't use our data from our servers and instead plug in your own data. Our servers are tuned to only accept data from our Launcher and block all other traffic. So it's imperative that you use your own data in your forked code.
-
-You must also establish yourself as not being a part of our Launcher, and should rebrand. The one and only official ATLauncher is on [our website](http://www.atlauncher.com)
-
-![CC SA](http://i.creativecommons.org/l/by-sa/3.0/88x31.png)
-
-This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+This work is licensed under the GNU General Public License v3.0. To view a copy of this license, visit http://www.gnu.org/licenses/gpl-3.0.txt.

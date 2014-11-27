@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.workers;
 
@@ -14,6 +25,7 @@ import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
@@ -266,10 +278,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (this.jsonVersion != null) {
             return this.jsonVersion.hasActions();
         } else {
-            if (this.actions == null) {
-                return false;
-            }
-            return this.actions.size() != 0;
+            return this.actions != null && this.actions.size() != 0;
         }
     }
 
@@ -310,10 +319,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public boolean wasModInstalled(String mod) {
-        if (instance != null) {
-            return instance.wasModInstalled(mod);
-        }
-        return false;
+        return instance != null && instance.wasModInstalled(mod);
     }
 
     public boolean isReinstall() {
@@ -716,8 +722,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                     String after = element.getAttribute("after");
                     String saveAs = element.getAttribute("saveas");
-                    Boolean client = (element.getAttribute("client").equalsIgnoreCase("yes") ? true : false);
-                    Boolean server = (element.getAttribute("server").equalsIgnoreCase("yes") ? true : false);
+                    Boolean client = element.getAttribute("client").equalsIgnoreCase("yes");
+                    Boolean server = element.getAttribute("server").equalsIgnoreCase("yes");
                     Action thing = null;
                     if (element.hasAttribute("type")) {
                         thing = new Action(action, type, after, saveAs, client, server);
@@ -766,7 +772,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (this.jsonVersion != null) {
             for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
                 if (!isCancelled()) {
-                    fireTask(App.settings.getLocalizedString("common.installing") + " " + mod.getName());
+                    fireTask(Language.INSTANCE.localize("common.installing") + " " + mod.getName());
                     addPercent(this.selectedJsonMods.size() / 40);
                     mod.install(this);
                 }
@@ -774,7 +780,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else {
             for (Mod mod : this.selectedMods) {
                 if (!isCancelled()) {
-                    fireTask(App.settings.getLocalizedString("common.installing") + " " + mod.getName());
+                    fireTask(Language.INSTANCE.localize("common.installing") + " " + mod.getName());
                     addPercent(this.selectedMods.size() / 40);
                     mod.install(this);
                 }
@@ -923,7 +929,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void downloadResources() {
-        fireTask(App.settings.getLocalizedString("instance.downloadingresources"));
+        fireTask(Language.INSTANCE.localize("instance.downloadingresources"));
         fireSubProgressUnknown();
         ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
         ArrayList<Downloadable> downloads = getResources();
@@ -943,7 +949,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 @Override
                 public void run() {
                     if (download.needToDownload()) {
-                        fireTask(App.settings.getLocalizedString("common.downloading") + " " + download.getFilename());
+                        fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
                         download.download(true);
                     } else {
                         download.copyFile();
@@ -958,7 +964,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void downloadLibraries() {
-        fireTask(App.settings.getLocalizedString("instance.downloadinglibraries"));
+        fireTask(Language.INSTANCE.localize("instance.downloadinglibraries"));
         fireSubProgressUnknown();
         ExecutorService executor;
         ArrayList<Downloadable> downloads = getLibraries();
@@ -992,7 +998,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 @Override
                 public void run() {
                     if (download.needToDownload()) {
-                        fireTask(App.settings.getLocalizedString("common.downloading") + " " + download.getFilename());
+                        fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
                         download.download(true);
                     }
                 }
@@ -1051,7 +1057,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(App.settings.getLocalizedString("common.downloading") + " " + (mod.isFilePattern() ? mod
+                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod
                         .getName() : mod.getFile()));
                 mod.download(this);
                 fireSubProgress(-1); // Hide the subprogress bar
@@ -1106,7 +1112,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (com.atlauncher.data.json.Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(App.settings.getLocalizedString("common.downloading") + " " + (mod.isFilePattern() ? mod
+                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod
                         .getName() : mod.getFile()));
                 mod.download(this);
                 fireSubProgress(-1); // Hide the subprogress bar
@@ -1116,7 +1122,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void organiseLibraries() {
         List<String> libraryNamesAdded = new ArrayList<String>();
-        fireTask(App.settings.getLocalizedString("instance.organisinglibraries"));
+        fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
         fireSubProgressUnknown();
         if (!isServer) {
             for (String libraryFile : forgeLibraries) {
@@ -1141,6 +1147,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         if (library.shouldExtract()) {
                             Utils.unzip(library.getFile(), getNativesDirectory(), library.getExtractRule());
                         } else {
+                            File dirToInstall = getBinDirectory();
                             Utils.copyFile(library.getFile(), getBinDirectory());
                         }
                     } else {
@@ -1478,7 +1485,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public void configurePack() {
         // Download the configs zip file
-        fireTask(App.settings.getLocalizedString("instance.downloadingconfigs"));
+        fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
         File configs = new File(App.settings.getTempDir(), "Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
         Downloadable configsDownload = new Downloadable(path, configs, null, this, true);
@@ -1488,7 +1495,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // Extract the configs zip file
         fireSubProgressUnknown();
-        fireTask(App.settings.getLocalizedString("instance.extractingconfigs"));
+        fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
         Utils.unzip(configs, getRootDirectory());
         Utils.delete(configs);
     }
@@ -1867,7 +1874,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         addPercent(5);
         if (this.isServer && this.hasJarMods()) {
-            fireTask(App.settings.getLocalizedString("server.extractingjar"));
+            fireTask(Language.INSTANCE.localize("server.extractingjar"));
             fireSubProgressUnknown();
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
@@ -1877,7 +1884,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         addPercent(5);
         if (selectedJsonMods.size() != 0) {
             addPercent(40);
-            fireTask(App.settings.getLocalizedString("instance.downloadingmods"));
+            fireTask(Language.INSTANCE.localize("instance.downloadingmods"));
             downloadJsonMods(selectedJsonMods);
             if (isCancelled()) {
                 return false;
@@ -1894,12 +1901,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             doCaseConversions(getModsDirectory());
         }
         if (isServer && hasJarMods()) {
-            fireTask(App.settings.getLocalizedString("server.zippingjar"));
+            fireTask(Language.INSTANCE.localize("server.zippingjar"));
             fireSubProgressUnknown();
             Utils.zip(getTempJarDirectory(), getMinecraftJar());
         }
         if (extractedTexturePack) {
-            fireTask(App.settings.getLocalizedString("instance.zippingtexturepackfiles"));
+            fireTask(Language.INSTANCE.localize("instance.zippingtexturepackfiles"));
             fireSubProgressUnknown();
             if (!getTexturePacksDirectory().exists()) {
                 getTexturePacksDirectory().mkdir();
@@ -1907,7 +1914,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.zip(getTempTexturePackDirectory(), new File(getTexturePacksDirectory(), "TexturePack.zip"));
         }
         if (extractedResourcePack) {
-            fireTask(App.settings.getLocalizedString("instance.zippingresourcepackfiles"));
+            fireTask(Language.INSTANCE.localize("instance.zippingresourcepackfiles"));
             fireSubProgressUnknown();
             if (!getResourcePacksDirectory().exists()) {
                 getResourcePacksDirectory().mkdir();
@@ -1951,8 +1958,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = {App.settings.getLocalizedString("common.ok"),
-                        App.settings.getLocalizedString("common.cancel")};
+                String[] options = {Language.INSTANCE.localize("common.ok"),
+                        Language.INSTANCE.localize("common.cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>" + this.pack.getUpdateMessage(this.version
                         .getVersion()) + "</html>");
                 ep.setEditable(false);
@@ -1965,7 +1972,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                 });
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), ep,
-                        App.settings.getLocalizedString("common.reinstalling") + " " + this.pack.getName(),
+                        Language.INSTANCE.localize("common.reinstalling") + " " + this.pack.getName(),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.error("Instance Install Cancelled After Viewing Message!");
@@ -1978,8 +1985,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = {App.settings.getLocalizedString("common.ok"),
-                        App.settings.getLocalizedString("common.cancel")};
+                String[] options = {Language.INSTANCE.localize("common.ok"),
+                        Language.INSTANCE.localize("common.cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>" + this.pack.getInstallMessage(this.version
                         .getVersion()) + "</html>");
                 ep.setEditable(false);
@@ -1992,7 +1999,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                 });
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), ep,
-                        App.settings.getLocalizedString("common.installing") + " " + this.pack.getName(),
+                        Language.INSTANCE.localize("common.installing") + " " + this.pack.getName(),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.error("Instance Install Cancelled After Viewing Message!");
@@ -2069,7 +2076,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         addPercent(5);
         if (isServer && hasJarMods()) {
-            fireTask(App.settings.getLocalizedString("server.extractingjar"));
+            fireTask(Language.INSTANCE.localize("server.extractingjar"));
             fireSubProgressUnknown();
             Utils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
@@ -2079,7 +2086,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         addPercent(5);
         if (selectedMods.size() != 0) {
             addPercent(40);
-            fireTask(App.settings.getLocalizedString("instance.downloadingmods"));
+            fireTask(Language.INSTANCE.localize("instance.downloadingmods"));
             downloadMods(selectedMods);
             if (isCancelled()) {
                 return false;
@@ -2094,12 +2101,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         doCaseConversions(getModsDirectory());
         if (isServer && hasJarMods()) {
-            fireTask(App.settings.getLocalizedString("server.zippingjar"));
+            fireTask(Language.INSTANCE.localize("server.zippingjar"));
             fireSubProgressUnknown();
             Utils.zip(getTempJarDirectory(), getMinecraftJar());
         }
         if (extractedTexturePack) {
-            fireTask(App.settings.getLocalizedString("instance.zippingtexturepackfiles"));
+            fireTask(Language.INSTANCE.localize("instance.zippingtexturepackfiles"));
             fireSubProgressUnknown();
             if (!getTexturePacksDirectory().exists()) {
                 getTexturePacksDirectory().mkdir();
@@ -2107,7 +2114,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.zip(getTempTexturePackDirectory(), new File(getTexturePacksDirectory(), "TexturePack.zip"));
         }
         if (extractedResourcePack) {
-            fireTask(App.settings.getLocalizedString("instance.zippingresourcepackfiles"));
+            fireTask(Language.INSTANCE.localize("instance.zippingresourcepackfiles"));
             fireSubProgressUnknown();
             if (!getResourcePacksDirectory().exists()) {
                 getResourcePacksDirectory().mkdir();
@@ -2143,14 +2150,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     @Override
     protected Boolean doInBackground() throws Exception {
         LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
-        if (this.version.hasJson() && App.experimentalJson) {
-            LogManager.debug("Version " + version.getVersion() + " has JSON, using it!");
+        if (App.experimentalJson) {
+            LogManager.debug("Experimental JSON is enabled, using the JSON file!");
             try {
                 this.jsonVersion = Settings.gson.fromJson(this.pack.getJSON(version.getVersion()), Version.class);
                 return installUsingJSON();
             } catch (JsonSyntaxException e) {
                 App.settings.logStackTrace("Couldn't read JSON of pack! Report this to the pack's developer/s and " +
-                        "NOT" + " ATLauncher!", e);
+                        "NOT ATLauncher!", e);
             } catch (JsonParseException e) {
                 App.settings.logStackTrace("Couldn't parse JSON of pack! Report this to the pack's developer/s and "
                         + "NOT ATLauncher!", e);

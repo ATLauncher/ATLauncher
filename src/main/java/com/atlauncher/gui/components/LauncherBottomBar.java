@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui.components;
 
@@ -45,16 +56,14 @@ import java.awt.event.ItemListener;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
+    private final JButton submitError = new JButton("Submit Bug");
     private JPanel leftSide;
     private JPanel middle;
-
     private Account fillerAccount;
     private boolean dontSave = false;
-
     private JButton toggleConsole;
     private JButton openFolder;
     private JButton updateData;
-    private final JButton submitError = new JButton("Submit Bug");
     private JComboBox<Account> username;
 
     private JLabel statusIcon;
@@ -120,8 +129,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         });
         updateData.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("common" +
-                        ".checkingforupdates"), 0, App.settings.getLocalizedString("common.checkingforupdates"),
+                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common" + "" +
+                        ".checkingforupdates"), 0, Language.INSTANCE.localize("common.checkingforupdates"),
                         "Aborting Update Check!");
                 dialog.addThread(new Thread() {
                     public void run() {
@@ -130,8 +139,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                         }
                         dialog.close();
                     }
-
-                    ;
                 });
                 dialog.start();
             }
@@ -206,19 +213,19 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     public void updateStatus(Status status) {
         switch (status) {
             case UNKNOWN:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.checking"));
+                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.checking"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusWhite.png"));
                 break;
             case ONLINE:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.online"));
+                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.online"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusGreen.png"));
                 break;
             case OFFLINE:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.offline"));
+                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.offline"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusRed.png"));
                 break;
             case PARTIAL:
-                statusIcon.setToolTipText(App.settings.getLocalizedString("status.minecraft.partial"));
+                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.partial"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusYellow.png"));
                 break;
             default:

@@ -1,15 +1,27 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.listener.ReskinListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -31,11 +43,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener, ReskinListener {
+public class LauncherConsole extends JFrame implements RelocalizationListener {
 
     private static final long serialVersionUID = -3538990021922025818L;
-    private JScrollPane scrollPane;
     public Console console;
+    private JScrollPane scrollPane;
     private ConsoleBottomBar bottomBar;
     private JPopupMenu contextMenu; // Right click menu
 
@@ -116,8 +128,10 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
     }
 
     public void setupLanguage() {
-        copy.setText(App.settings.getLocalizedString("common.copy"));
+        LogManager.debug("Setting up language for console");
+        copy.setText(Language.INSTANCE.localize("common.copy"));
         bottomBar.setupLanguage();
+        LogManager.debug("Finished setting up language for console");
     }
 
     public void clearConsole() {
@@ -126,15 +140,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener, R
 
     @Override
     public void onRelocalization() {
-        copy.setText(App.settings.getLocalizedString("common.copy"));
+        copy.setText(Language.INSTANCE.localize("common.copy"));
         bottomBar.setupLanguage();
-    }
-
-    @Override
-    public void onReskin() {
-        console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
-        console.setForeground(App.THEME.getConsoleTextColor());
-        console.setSelectionColor(App.THEME.getSelectionColor());
-        console.setBackground(App.THEME.getBaseColor());
     }
 }

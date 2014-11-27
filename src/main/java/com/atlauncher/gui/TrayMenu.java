@@ -1,12 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * ATLauncher is licensed under CC BY-NC-ND 3.0 which allows others you to
- * share this software with others as long as you credit us by linking to our
- * website at http://www.atlauncher.com. You also cannot modify the application
- * in any way or make commercial use of this software.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui;
 
@@ -65,9 +72,9 @@ public final class TrayMenu extends JPopupMenu implements RelocalizationListener
                     public void run() {
                         if (App.settings.isMinecraftLaunched()) {
                             int ret = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                                    "<html><p align=\"center\">" + App.settings.getLocalizedString("console" +
+                                    "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("console" +
                                             ".killsure", "<br/><br/>") + "</p></html>",
-                                    App.settings.getLocalizedString("console.kill"), JOptionPane.YES_OPTION);
+                                    Language.INSTANCE.localize("console.kill"), JOptionPane.YES_NO_OPTION);
 
                             if (ret == JOptionPane.YES_OPTION) {
                                 App.settings.killMinecraft();

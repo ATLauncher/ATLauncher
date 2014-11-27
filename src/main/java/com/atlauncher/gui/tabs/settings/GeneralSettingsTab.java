@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui.tabs.settings;
 
@@ -13,11 +24,11 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
@@ -39,8 +50,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JCheckBox enableConsole;
     private JLabelWithHover enableTrayIconLabel;
     private JCheckBox enableTrayIcon;
-    private JLabelWithHover enablePPNotifiersLabel;
-    private JCheckBox enablePPNotifiers;
+    private JLabelWithHover enablePackTagsLabel;
+    private JCheckBox enablePackTags;
 
     public GeneralSettingsTab() {
         RelocalizationManager.addListener(this);
@@ -50,8 +61,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        languageLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.language") + ":", HELP_ICON,
-                App.settings.getLocalizedString("settings.languagehelp"));
+        languageLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.language") + ":", HELP_ICON,
+                Language.INSTANCE.localize("settings.languagehelp"));
 
         add(languageLabel, gbc);
 
@@ -69,11 +80,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        themeLabelRestart = new JLabelWithHover(ERROR_ICON, App.settings.getLocalizedString("settings" + "" +
+        themeLabelRestart = new JLabelWithHover(ERROR_ICON, Language.INSTANCE.localize("settings" + "" +
                 ".requiresrestart"), RESTART_BORDER);
 
-        themeLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.theme") + ":", HELP_ICON,
-                App.settings.getLocalizedString("settings.themehelp"));
+        themeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.theme") + ":", HELP_ICON,
+                Language.INSTANCE.localize("settings.themehelp"));
 
         themeLabelPanel = new JPanel();
         themeLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -100,8 +111,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        dateFormatLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.dateformat") + ":",
-                HELP_ICON, App.settings.getLocalizedString("settings.dateformathelp"));
+        dateFormatLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.dateformat") + ":", HELP_ICON,
+                Language.INSTANCE.localize("settings.dateformathelp"));
 
         add(dateFormatLabel, gbc);
 
@@ -122,8 +133,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        advancedBackupLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.advancedbackup") + "?",
-                HELP_ICON, "<html>" + App.settings.getLocalizedString("settings.advancedbackuphelp",
+        advancedBackupLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.advancedbackup") + "?",
+                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.advancedbackuphelp",
                 "<br/>") + "</html>");
         add(advancedBackupLabel, gbc);
 
@@ -142,8 +153,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        sortPacksAlphabeticallyLabel = new JLabelWithHover(App.settings.getLocalizedString("settings" + "" +
-                ".sortpacksalphabetically") + "?", HELP_ICON, App.settings.getLocalizedString("settings" + "" +
+        sortPacksAlphabeticallyLabel = new JLabelWithHover(Language.INSTANCE.localize("settings" + "" +
+                ".sortpacksalphabetically") + "?", HELP_ICON, Language.INSTANCE.localize("settings" + "" +
                 ".sortpacksalphabeticallyhelp"));
         add(sortPacksAlphabeticallyLabel, gbc);
 
@@ -162,8 +173,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        keepLauncherOpenLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.keeplauncheropen") +
-                "?", HELP_ICON, App.settings.getLocalizedString("settings.keeplauncheropenhelp"));
+        keepLauncherOpenLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.keeplauncheropen") + "?",
+                HELP_ICON, Language.INSTANCE.localize("settings.keeplauncheropenhelp"));
         add(keepLauncherOpenLabel, gbc);
 
         gbc.gridx++;
@@ -181,8 +192,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableConsoleLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.console") + "?",
-                HELP_ICON, App.settings.getLocalizedString("settings.consolehelp"));
+        enableConsoleLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.console") + "?", HELP_ICON,
+                Language.INSTANCE.localize("settings.consolehelp"));
         add(enableConsoleLabel, gbc);
 
         gbc.gridx++;
@@ -200,8 +211,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableTrayIconLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.traymenu") + "?",
-                HELP_ICON, "<html>" + App.settings.getLocalizedString("settings.traymenuhelp", "<br/>") + "</html>");
+        enableTrayIconLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.traymenu") + "?", HELP_ICON,
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.traymenuhelp", "<br/>") + "</html>");
         add(enableTrayIconLabel, gbc);
 
         gbc.gridx++;
@@ -217,15 +228,16 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enablePPNotifiersLabel = new JLabelWithHover("Enable Public/Private Notifiers?", HELP_ICON, "<html>Public/Private tags are notifications showing if a pack is public or private</html>");
-        add(enablePPNotifiersLabel, gbc);
+        enablePackTagsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.packtags"), HELP_ICON,
+                Language.INSTANCE.localize("settings.packtagshelp"));
+        add(enablePackTagsLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enablePPNotifiers = new JCheckBox();
-        enablePPNotifiers.setSelected(App.settings.enabledPPNotifiers());
-        add(enablePPNotifiers, gbc);
+        enablePackTags = new JCheckBox();
+        enablePackTags.setSelected(App.settings.enabledPackTags());
+        add(enablePackTags, gbc);
     }
 
     public boolean needToReloadTheme() {
@@ -249,7 +261,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
         App.settings.setEnableConsole(enableConsole.isSelected());
         App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
-        App.settings.setPPNotifiers(enablePPNotifiers.isSelected());
+        App.settings.setPackTags(enablePackTags.isSelected());
     }
 
     @Override
@@ -259,33 +271,33 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
 
     @Override
     public void onRelocalization() {
-        this.languageLabel.setText(App.settings.getLocalizedString("settings.language") + ":");
-        this.languageLabel.setToolTipText(App.settings.getLocalizedString("settings.languagehelp"));
+        this.languageLabel.setText(Language.INSTANCE.localize("settings.language") + ":");
+        this.languageLabel.setToolTipText(Language.INSTANCE.localize("settings.languagehelp"));
 
-        this.themeLabelRestart.setToolTipText(App.settings.getLocalizedString("settings.requiresrestart"));
+        this.themeLabelRestart.setToolTipText(Language.INSTANCE.localize("settings.requiresrestart"));
 
-        this.themeLabel.setText(App.settings.getLocalizedString("settings.theme") + ":");
-        this.themeLabel.setToolTipText(App.settings.getLocalizedString("settings.themehelp"));
+        this.themeLabel.setText(Language.INSTANCE.localize("settings.theme") + ":");
+        this.themeLabel.setToolTipText(Language.INSTANCE.localize("settings.themehelp"));
 
-        this.dateFormatLabel.setText(App.settings.getLocalizedString("settings.dateformat") + ":");
-        this.dateFormatLabel.setToolTipText(App.settings.getLocalizedString("settings.dateformathelp"));
+        this.dateFormatLabel.setText(Language.INSTANCE.localize("settings.dateformat") + ":");
+        this.dateFormatLabel.setToolTipText(Language.INSTANCE.localize("settings.dateformathelp"));
 
-        this.advancedBackupLabel.setText(App.settings.getLocalizedString("settings.advancedbackup") + "?");
-        this.advancedBackupLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings.advancedbackuphelp",
-                "<br/>") + "</html>");
+        this.advancedBackupLabel.setText(Language.INSTANCE.localize("settings.advancedbackup") + "?");
+        this.advancedBackupLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
+                ".advancedbackuphelp", "<br/>") + "</html>");
 
-        this.sortPacksAlphabeticallyLabel.setText(App.settings.getLocalizedString("settings.sortpacksalphabetically") + "?");
-        this.sortPacksAlphabeticallyLabel.setToolTipText(App.settings.getLocalizedString("settings" +
+        this.sortPacksAlphabeticallyLabel.setText(Language.INSTANCE.localize("settings.sortpacksalphabetically") + "?");
+        this.sortPacksAlphabeticallyLabel.setToolTipText(Language.INSTANCE.localize("settings" + "" +
                 ".sortpacksalphabeticallyhelp"));
 
-        this.keepLauncherOpenLabel.setText(App.settings.getLocalizedString("settings.keeplauncheropen") + "?");
-        this.keepLauncherOpenLabel.setToolTipText(App.settings.getLocalizedString("settings.keeplauncheropenhelp"));
+        this.keepLauncherOpenLabel.setText(Language.INSTANCE.localize("settings.keeplauncheropen") + "?");
+        this.keepLauncherOpenLabel.setToolTipText(Language.INSTANCE.localize("settings.keeplauncheropenhelp"));
 
-        this.enableConsoleLabel.setText(App.settings.getLocalizedString("settings.console") + "?");
-        this.enableConsoleLabel.setToolTipText(App.settings.getLocalizedString("settings.consolehelp"));
+        this.enableConsoleLabel.setText(Language.INSTANCE.localize("settings.console") + "?");
+        this.enableConsoleLabel.setToolTipText(Language.INSTANCE.localize("settings.consolehelp"));
 
-        this.enableTrayIconLabel.setText(App.settings.getLocalizedString("settings.traymenu") + "?");
-        this.enableTrayIconLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings.traymenuhelp",
-                "<br/>") + "</html>");
+        this.enableTrayIconLabel.setText(Language.INSTANCE.localize("settings.traymenu") + "?");
+        this.enableTrayIconLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
+                ".traymenuhelp", "<br/>") + "</html>");
     }
 }

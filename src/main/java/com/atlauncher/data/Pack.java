@@ -1,12 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * ATLauncher is licensed under CC BY-NC-ND 3.0 which allows others you to
- * share this software with others as long as you credit us by linking to our
- * website at http://www.atlauncher.com. You also cannot modify the application
- * in any way or make commercial use of this software.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.data;
 
@@ -165,19 +172,11 @@ public class Pack {
     }
 
     public boolean hasVersions() {
-        if (this.versions.size() == 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return this.versions.size() != 0;
     }
 
     public boolean hasDevVersions() {
-        if (this.devVersions.size() == 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return this.devVersions.size() != 0;
     }
 
     public boolean canInstall() {
@@ -221,6 +220,20 @@ public class Pack {
         return this.devVersions.size();
     }
 
+    public PackVersion getDevVersionByName(String name) {
+        if (this.devVersions.size() == 0) {
+            return null;
+        }
+
+        for (PackVersion devVersion : this.devVersions) {
+            if (devVersion.versionMatches(name)) {
+                return devVersion;
+            }
+        }
+
+        return null;
+    }
+
     public PackVersion getLatestVersion() {
         if (this.versions.size() == 0) {
             return null;
@@ -235,10 +248,7 @@ public class Pack {
         if (!getLatestVersion().canUpdate()) {
             return true;
         }
-        if (!getLatestVersion().isRecommended()) {
-            return true;
-        }
-        return false;
+        return !getLatestVersion().isRecommended();
     }
 
     public String getXML(String version) {
@@ -664,7 +674,7 @@ public class Pack {
 
     public ArrayList<Mod> getMods(String versionToInstall, boolean isServer) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
-        String xml = getXML(versionToInstall);
+        String xml = getXML(versionToInstall, false);
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -906,6 +916,34 @@ public class Pack {
 
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return "Install Not Added!";
+    }
+
+    public String addServerInstall(String version) {
+        Map<String, Object> request = new HashMap<String, Object>();
+
+        request.put("username", App.settings.getAccount().getMinecraftUsername());
+        request.put("version", version);
+
+        try {
+            return Utils.sendAPICall("pack/" + getSafeName() + "/serverinstalled/", request);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+        return "Install Not Added!";
+    }
+
+    public String addUpdate(String version) {
+        Map<String, Object> request = new HashMap<String, Object>();
+
+        request.put("username", App.settings.getAccount().getMinecraftUsername());
+        request.put("version", version);
+
+        try {
+            return Utils.sendAPICall("pack/" + getSafeName() + "/updated/", request);
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         }

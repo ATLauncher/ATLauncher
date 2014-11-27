@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.data.json;
 
@@ -10,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -291,18 +303,12 @@ public class Mod {
     }
 
     public FilenameFilter getFileNameFilter() {
-        FilenameFilter filter = new FilenameFilter() {
-
+        return new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                if (name.matches(file)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return name.matches(file);
             }
         };
-        return filter;
     }
 
     public void download(InstanceInstaller installer) {
@@ -368,18 +374,18 @@ public class Mod {
                         if (retValue == 1) {
                             Utils.openBrowser(this.getUrl());
                         }
-                        String[] options = new String[]{App.settings.getLocalizedString("common.openfolder"),
-                                App.settings.getLocalizedString("instance.ivedownloaded")};
+                        String[] options = new String[]{Language.INSTANCE.localize("common.openfolder"),
+                                Language.INSTANCE.localize("instance.ivedownloaded")};
                         retValue = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                "<html><p align=\"center\">" + App.settings.getLocalizedString("instance" +
+                                "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
                                         ".browseropened", (serverFile == null ? (isFilePattern() ? getName() :
                                         getFile()) : (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>"
-                                        + App.settings.getLocalizedString("instance.pleasesave") + "<br/><br/>" +
+                                        + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
                                         (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
                                                 .getAbsolutePath() : (isFilePattern() ? App.settings.getDownloadsDir
                                                 ().getAbsolutePath() : App.settings.getDownloadsDir().getAbsolutePath
                                                 () + " or<br/>" + App.settings.getUsersDownloadsDir())) +
-                                        "</p></html>", App.settings.getLocalizedString("common.downloading") + " " +
+                                        "</p></html>", Language.INSTANCE.localize("common.downloading") + " " +
                                         (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
                                                 (isFilePattern() ? getName() : getServerFile())),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
@@ -511,14 +517,14 @@ public class Mod {
 
             while (!fileLocation.exists()) {
                 Utils.openBrowser(this.serverUrl);
-                String[] options = new String[]{App.settings.getLocalizedString("instance.ivedownloaded")};
+                String[] options = new String[]{Language.INSTANCE.localize("instance.ivedownloaded")};
                 int retValue = JOptionPane.showOptionDialog(App.settings.getParent(),
-                        "<html><p align=\"center\">" + App.settings.getLocalizedString("instance.browseropened",
-                                (serverFile == null ? getFile() : getServerFile())) + "<br/><br/>" + App.settings
-                                .getLocalizedString("instance.pleasesave") + "<br/><br/>" + (App.settings
+                        "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".browseropened", (serverFile == null ? getFile() : getServerFile())) + "<br/><br/>"
+                                + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" + (App.settings
                                 .isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath() : App
                                 .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
-                                .getUsersDownloadsDir()) + "</p></html>", App.settings.getLocalizedString("common" +
+                                .getUsersDownloadsDir()) + "</p></html>", Language.INSTANCE.localize("common" + "" +
                                 ".downloading") + " " + (serverFile == null ? getFile() : getServerFile()),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 if (retValue == JOptionPane.CLOSED_OPTION) {
@@ -660,11 +666,7 @@ public class Mod {
                         @Override
                         public boolean accept(File dir, String name) {
                             File thisFile = new File(dir, name);
-                            if (thisFile.isDirectory()) {
-                                return true;
-                            } else {
-                                return false;
-                            }
+                            return thisFile.isDirectory();
                         }
                     })) {
                         Utils.copyDirectory(new File(thisFolder, dir), installer.getModsDirectory());

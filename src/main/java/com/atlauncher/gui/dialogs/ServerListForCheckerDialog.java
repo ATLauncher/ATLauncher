@@ -1,12 +1,23 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui.dialogs;
 
-import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.gui.tabs.ServersForCheckerTab;
 import com.atlauncher.utils.Utils;
 
@@ -34,17 +45,17 @@ public class ServerListForCheckerDialog extends JDialog implements ActionListene
     private static final long serialVersionUID = -1462218261978353036L;
 
     private final JTabbedPane TABBED_PANE = new JTabbedPane(JTabbedPane.TOP);
-    private final JButton ADD_BUTTON = new JButton(App.settings.getLocalizedString("common.add"));
-    private final JButton CLOSE_BUTTON = new JButton(App.settings.getLocalizedString("common.close"));
-    private final JButton DELETE_BUTTON = new JButton(App.settings.getLocalizedString("common.delete"));
-    private final JButton EDIT_BUTTON = new JButton(App.settings.getLocalizedString("common.edit"));
+    private final JButton ADD_BUTTON = new JButton(Language.INSTANCE.localize("common.add"));
+    private final JButton CLOSE_BUTTON = new JButton(Language.INSTANCE.localize("common.close"));
+    private final JButton DELETE_BUTTON = new JButton(Language.INSTANCE.localize("common.delete"));
+    private final JButton EDIT_BUTTON = new JButton(Language.INSTANCE.localize("common.edit"));
 
     private final ServersForCheckerTab SERVERS_TAB = new ServersForCheckerTab();
 
     private final JPanel BOTTOM_PANEL = new JPanel();
 
     public ServerListForCheckerDialog() {
-        super(null, App.settings.getLocalizedString("tools.serverchecker"), ModalityType.APPLICATION_MODAL);
+        super(null, Language.INSTANCE.localize("tools.serverchecker"), ModalityType.APPLICATION_MODAL);
         setSize(400, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -53,7 +64,7 @@ public class ServerListForCheckerDialog extends JDialog implements ActionListene
         setResizable(false);
         TABBED_PANE.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
-        TABBED_PANE.addTab(App.settings.getLocalizedString("tools.serverchecker.servers"), SERVERS_TAB);
+        TABBED_PANE.addTab(Language.INSTANCE.localize("tools.serverchecker.servers"), SERVERS_TAB);
 
         SERVERS_TAB.addListSelectionListener(this);
 

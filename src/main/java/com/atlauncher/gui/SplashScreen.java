@@ -1,11 +1,23 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui;
 
+import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
 import java.awt.Graphics;
@@ -14,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JWindow;
@@ -25,7 +38,6 @@ public class SplashScreen extends JWindow {
     public SplashScreen() {
         this.setLayout(null);
         this.setSize(img.getWidth(), img.getHeight());
-        this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.addMouseListener(new MouseAdapter() {
             @Override
@@ -35,6 +47,7 @@ public class SplashScreen extends JWindow {
                 }
             }
         });
+        this.setAlwaysOnTop(false);
     }
 
     @Override
@@ -51,7 +64,7 @@ public class SplashScreen extends JWindow {
     }
 
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem FORCE_QUIT = new JMenuItem("Force Quit");
+        private final JMenuItem FORCE_QUIT = new JMenuItem(Language.INSTANCE.localize("common.forcequit"));
 
         public ContextMenu() {
             super();

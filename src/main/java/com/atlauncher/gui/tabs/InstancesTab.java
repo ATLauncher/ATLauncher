@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui.tabs;
 
@@ -12,6 +23,13 @@ import com.atlauncher.data.Language;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -21,13 +39,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 /**
  * TODO: Rewrite this for better loading
@@ -57,7 +68,7 @@ public class InstancesTab extends JPanel implements Tab {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        clearButton = new JButton(App.settings.getLocalizedString("common.clear"));
+        clearButton = new JButton(Language.INSTANCE.localize("common.clear"));
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchBox.setText("");
@@ -80,7 +91,7 @@ public class InstancesTab extends JPanel implements Tab {
         });
         topPanel.add(searchBox);
 
-        searchButton = new JButton(App.settings.getLocalizedString("common.search"));
+        searchButton = new JButton(Language.INSTANCE.localize("common.search"));
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 reload();
@@ -97,7 +108,7 @@ public class InstancesTab extends JPanel implements Tab {
         });
         topPanel.add(hasUpdate);
 
-        hasUpdateLabel = new JLabel(App.settings.getLocalizedString("instance.hasupdate"));
+        hasUpdateLabel = new JLabel(Language.INSTANCE.localize("instance.hasupdate"));
         topPanel.add(hasUpdateLabel);
 
         add(topPanel, BorderLayout.NORTH);
@@ -146,7 +157,7 @@ public class InstancesTab extends JPanel implements Tab {
             }
         }
         if (count == 0) {
-            panel.add(new NilCard(App.settings.getLocalizedString("instance.nodisplay", "\n\n")), gbc);
+            panel.add(new NilCard(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n")), gbc);
         }
 
         SwingUtilities.invokeLater(new Runnable() {

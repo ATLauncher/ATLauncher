@@ -1,12 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * ATLauncher is licensed under CC BY-NC-ND 3.0 which allows others you to
- * share this software with others as long as you credit us by linking to our
- * website at http://www.atlauncher.com. You also cannot modify the application
- * in any way or make commercial use of this software.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Link to license: http://creativecommons.org/licenses/by-nc-nd/3.0/
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.data;
 
@@ -16,10 +23,10 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 public class PackVersion {
     private String version;
     private String minecraft;
+    private String hash;
     private MinecraftVersion minecraftVersion;
     private boolean canUpdate = true;
     private boolean isRecommended = true;
-    private boolean hasJson = false;
     private boolean isDev;
 
     public String getVersion() {
@@ -46,6 +53,13 @@ public class PackVersion {
         return this.minecraftVersion;
     }
 
+    public String getHash() {
+        if (this.hash == null || !this.isDev) {
+            return null;
+        }
+        return this.hash;
+    }
+
     public boolean canUpdate() {
         return this.canUpdate;
     }
@@ -58,16 +72,19 @@ public class PackVersion {
         return this.isDev;
     }
 
-    public boolean hasJson() {
-        return this.hasJson;
-    }
-
     public String toString() {
         return this.version + " (Minecraft " + this.getMinecraftVersion().getVersion() + ")";
     }
 
     public boolean versionMatches(String version) {
         return this.version.equalsIgnoreCase(version);
+    }
+
+    public boolean hashMatches(String hash) {
+        if (this.hash == null || !this.isDev) {
+            return false;
+        }
+        return this.hash.equalsIgnoreCase(hash);
     }
 
 }

@@ -6,7 +6,7 @@
 	<groupId>com.atlauncher</groupId>
 	<artifactId>atlauncher</artifactId>
 	<name>ATLauncher</name>
-	<version>3.2.1.8</version>
+	<version>3.2.2.1</version>
 	<organization>
 		<name>ATLauncher</name>
 		<url>http://www.github.com/ATLauncher/</url>
@@ -74,6 +74,7 @@
 							<mainClass>${mainclass}</mainClass>
 						</manifest>
 						<manifestEntries>
+                            <SplashScreen-Image>/assets/image/SplashScreen.png</SplashScreen-Image>
 							<Implementation-Vender>RyanTheAllmighty</Implementation-Vender>
 							<Implementation-Version>${project.version}</Implementation-Version>
 							<Built-By>${user.name}</Built-By>

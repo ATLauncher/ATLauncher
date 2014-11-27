@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.data;
 
@@ -391,8 +402,8 @@ public class Account implements Serializable {
             this.skinUpdating = true;
             final File file = new File(App.settings.getSkinsDir(), this.minecraftUsername + ".png");
             LogManager.info("Downloading skin for " + this.minecraftUsername);
-            final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("account" + "" +
-                    ".downloadingskin"), 0, App.settings.getLocalizedString("account.downloadingminecraftskin",
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
+                    ".downloadingskin"), 0, Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin",
                     this.minecraftUsername), "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             dialog.addThread(new Thread() {
                 public void run() {
@@ -428,12 +439,10 @@ public class Account implements Serializable {
                     }
                     dialog.close();
                 }
-
-                ;
             });
             dialog.start();
             if (!(Boolean) dialog.getReturnValue()) {
-                String[] options = {App.settings.getLocalizedString("common.ok")};
+                String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
                                 ".skinerror"), Language.INSTANCE.localize("common.error"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
@@ -501,8 +510,8 @@ public class Account implements Serializable {
 
     public boolean isAccessTokenValid() {
         LogManager.info("Checking Access Token!");
-        final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("account.checkingtoken"), 0,
-                App.settings.getLocalizedString("account.checkingtoken"), "Aborting access token check for " + this
+        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.checkingtoken"), 0,
+                Language.INSTANCE.localize("account.checkingtoken"), "Aborting access token check for " + this
                 .getMinecraftUsername());
         dialog.addThread(new Thread() {
             public void run() {
@@ -519,8 +528,8 @@ public class Account implements Serializable {
 
     public AuthenticationResponse refreshToken() {
         LogManager.info("Refreshing Access Token!");
-        final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("account.refreshingtoken"),
-                0, App.settings.getLocalizedString("account.refreshingtoken"), "Aborting token refresh for " + this
+        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.refreshingtoken"),
+                0, Language.INSTANCE.localize("account.refreshingtoken"), "Aborting token refresh for " + this
                 .getMinecraftUsername());
         dialog.addThread(new Thread() {
             public void run() {

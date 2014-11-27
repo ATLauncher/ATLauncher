@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.utils;
 
@@ -16,12 +27,13 @@ import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 import org.tukaani.xz.XZInputStream;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.ImageIcon;
-import javax.swing.text.html.StyleSheet;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -55,6 +67,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -63,6 +76,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -141,9 +155,7 @@ public class Utils {
             return null;
         }
 
-        ImageIcon icon = new ImageIcon(file.getAbsolutePath());
-
-        return icon;
+        return new ImageIcon(file.getAbsolutePath());
     }
 
     /**
@@ -912,11 +924,14 @@ public class Utils {
      */
     public static void deleteContents(File file) {
         if (file.isDirectory()) {
-            for (File c : file.listFiles()) {
+            File[] files = file.listFiles();
+            if (files == null) {
+                // No contents in this folder so there are no files to delete
+                return;
+            }
+            for (File c : files) {
                 delete(c);
             }
-        } else {
-            return;
         }
     }
 
@@ -1037,6 +1052,34 @@ public class Utils {
             byte[] decordedValue = Base64.decode(encryptedData);
             byte[] decValue = c.doFinal(decordedValue);
             decryptedValue = new String(decValue);
+        } catch (InvalidKeyException e) {
+            return Utils.decryptOld(encryptedData);
+        } catch (BadPaddingException e) {
+            return Utils.decryptOld(encryptedData);
+        } catch (IllegalBlockSizeException e) {
+            return Utils.decryptOld(encryptedData);
+        } catch (Exception e) {
+            App.settings.logStackTrace(e);
+        }
+        return decryptedValue;
+    }
+
+    /**
+     * Decrypt using old method.
+     *
+     * @param encryptedData the encrypted data
+     * @return the string
+     */
+    public static String decryptOld(String encryptedData) {
+        Key key;
+        String decryptedValue = null;
+        try {
+            key = new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
+            Cipher c = Cipher.getInstance("AES");
+            c.init(Cipher.DECRYPT_MODE, key);
+            byte[] decordedValue = Base64.decode(encryptedData);
+            byte[] decValue = c.doFinal(decordedValue);
+            decryptedValue = new String(decValue);
         } catch (Exception e) {
             App.settings.logStackTrace(e);
         }
@@ -1050,7 +1093,7 @@ public class Utils {
      * @throws Exception the exception
      */
     private static Key generateKey() throws Exception {
-        return new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
+        return new SecretKeySpec(getMACAdressHash().getBytes(), 0, 16, "AES");
     }
 
     /**
@@ -1391,28 +1434,6 @@ public class Utils {
     }
 
     /**
-     * Creates the style sheet.
-     *
-     * @param name the name
-     * @return the style sheet
-     */
-    public static StyleSheet createStyleSheet(String name) {
-        try {
-            StyleSheet sheet = new StyleSheet();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(App.class.getResourceAsStream
-                    ("/assets/css/" + name + ".css")));
-            sheet.loadRules(reader, null);
-            reader.close();
-
-            return sheet;
-        } catch (Exception e) {
-            App.settings.logStackTrace(e);
-            return new StyleSheet(); // If fails just return blank StyleSheet
-        }
-    }
-
-    /**
      * Gets the open eye pending reports file filter.
      *
      * @return the open eye pending reports file filter
@@ -1424,10 +1445,7 @@ public class Utils {
             public boolean accept(File dir, String name) {
                 File file = new File(dir, name);
                 Pattern pattern = Pattern.compile("^pending-crash-[0-9\\-_\\.]+\\.json$");
-                if (file.isFile() && pattern.matcher(name).matches()) {
-                    return true;
-                }
-                return false;
+                return file.isFile() && pattern.matcher(name).matches();
             }
         };
     }
@@ -1521,7 +1539,7 @@ public class Utils {
 
             while (line != null) {
                 sb.append(line);
-                sb.append(System.lineSeparator());
+                sb.append(System.getProperty("line.separator"));
                 line = br.readLine();
             }
             contents = sb.toString();
@@ -1579,7 +1597,9 @@ public class Utils {
             connection = (HttpURLConnection) url.openConnection(proxy);
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);
-            connection.setRequestProperty("Accept-Encoding", "gzip");
+            if (App.useGzipForDownloads) {
+                connection.setRequestProperty("Accept-Encoding", "gzip");
+            }
             connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
             connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
             connection.setRequestProperty("Expires", "0");
@@ -1598,10 +1618,7 @@ public class Utils {
             @Override
             public boolean accept(File dir, String name) {
                 File file = new File(dir, name);
-                if (file.exists() && file.isFile() && name.endsWith(".json")) {
-                    return true;
-                }
-                return false;
+                return file.exists() && file.isFile() && name.endsWith(".json");
             }
         };
     }
@@ -1890,5 +1907,51 @@ public class Utils {
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
+    }
+
+    private static String getMACAdressHash() {
+        String returnStr = null;
+        try {
+            InetAddress ip;
+            ip = InetAddress.getLocalHost();
+
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+
+            // If network is null, user may be using Linux or something it doesn't support so try alternative way
+            if (network == null) {
+                Enumeration e = NetworkInterface.getNetworkInterfaces();
+
+                while (e.hasMoreElements()) {
+                    NetworkInterface n = (NetworkInterface) e.nextElement();
+                    Enumeration ee = n.getInetAddresses();
+                    while (ee.hasMoreElements()) {
+                        InetAddress i = (InetAddress) ee.nextElement();
+                        if (!i.isLoopbackAddress() && !i.isLinkLocalAddress() && i.isSiteLocalAddress()) {
+                            ip = i;
+                        }
+                    }
+                }
+
+                network = NetworkInterface.getByInetAddress(ip);
+            }
+
+            // If network is still null, well you're SOL
+            if (network != null) {
+                byte[] mac = network.getHardwareAddress();
+                if (mac != null && mac.length > 0) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < mac.length; i++) {
+                        sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+                    }
+                    returnStr = sb.toString();
+                }
+            }
+        } catch (Exception e) {
+            App.settings.logStackTrace(e);
+        } finally {
+            returnStr = (returnStr == null ? "NotARandomKeyYes" : returnStr);
+        }
+
+        return getMD5(returnStr);
     }
 }

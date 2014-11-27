@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui.components;
 
@@ -10,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
@@ -33,10 +45,10 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
      */
     private static final long serialVersionUID = 4811953376698111667L;
 
-    private final JLabel TITLE_LABEL = new JLabel(App.settings.getLocalizedString("tools.networkchecker"));
+    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.networkchecker"));
 
-    private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">" + Utils.splitMultilinedString(App
-            .settings.getLocalizedString("tools.networkchecker.info"), 60, "<br>") + "</p></html>");
+    private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">" + Utils.splitMultilinedString(Language
+            .INSTANCE.localize("tools.networkchecker.info"), 60, "<br>") + "</p></html>");
 
     public NetworkCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -55,21 +67,20 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String[] options = {App.settings.getLocalizedString("common.yes"), App.settings.getLocalizedString("common" +
-                ".no")};
+        String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common" + ".no")};
         int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Utils
-                .splitMultilinedString(App.settings.getLocalizedString("tools.networkcheckerpopup",
+                .splitMultilinedString(Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup",
                         App.settings.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>") + "</p></html>",
-                App.settings.getLocalizedString("tools.networkchecker"), JOptionPane.DEFAULT_OPTION,
+                Language.INSTANCE.localize("tools.networkchecker"), JOptionPane.DEFAULT_OPTION,
                 JOptionPane.ERROR_MESSAGE, null, options, options[0]);
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(App.settings.getLocalizedString("tools.networkchecker"),
-                    App.settings.getServers().size() + 1, App.settings.getLocalizedString("tools.networkchecker" +
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"),
+                    App.settings.getServers().size(), Language.INSTANCE.localize("tools.networkchecker" + "" +
                     ".running"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread() {
                 @Override
                 public void run() {
-                    dialog.setTotalTasksToDo((App.settings.getServers().size() * 4) + 1);
+                    dialog.setTotalTasksToDo(App.settings.getServers().size() * 5);
                     StringBuilder results = new StringBuilder();
 
                     // Ping Test
@@ -77,11 +88,10 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         results.append("Ping results to " + server.getHost() + " was " + Utils.pingAddress(server
                                 .getHost()) + "\n\n----------------\n\n");
                         dialog.doneTask();
-                    }
 
-                    // Traceroute Test
-                    results.append("Tracert to www.creeperrepo.net was " + Utils.traceRoute("www.creeperrepo.net"));
-                    dialog.doneTask();
+                        results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute("www.creeperrepo.net"));
+                        dialog.doneTask();
+                    }
 
                     // Response Code Test
                     for (Server server : App.settings.getServers()) {
@@ -117,21 +127,14 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s",
                                 bps) : String.format("%.2f KB/s", kbps)) : String.format("%.2f MB/s", mbps));
                         results.append(String.format("Download speed to %s was %s, " +
-                                "taking %.2f seconds to download 20MB\n\n----------------\n\n", server.getHost(),
-                                speed, (timeTaken / 1000.0)));
+                                        "" + "taking %.2f seconds to download 20MB\n\n----------------\n\n",
+                                server.getHost(), speed, (timeTaken / 1000.0)));
                         dialog.doneTask();
                     }
 
                     String result = Utils.uploadPaste("ATLauncher Network Test Log", results.toString());
                     if (result.contains(Constants.PASTE_CHECK_URL)) {
-                        try {
-                            Map<String, String> data = new HashMap<String, String>();
-                            data.put("log", result);
-                            Utils.sendAPICall("networktest/", data);
-                        } catch (IOException e1) {
-                            App.settings.logStackTrace("Network Test failed to submit to ATLauncher!", e1);
-                            dialog.setReturnValue(false);
-                        }
+                        LogManager.info("Network Test has finished running, you can view the results at " + result);
                     } else {
                         LogManager.error("Network Test failed to submit to ATLauncher!");
                         dialog.setReturnValue(false);
@@ -147,11 +150,11 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 LogManager.error("Network Test failed to run!");
             } else {
                 LogManager.info("Network Test ran and submitted to ATLauncher!");
-                String[] options2 = {App.settings.getLocalizedString("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + App.settings
-                        .getLocalizedString("tools.networkheckercomplete", "<br/><br/>") + "</p></html>",
-                        App.settings.getLocalizedString("tools.networkchecker"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE, null, options2, options2[0]);
+                String[] options2 = {Language.INSTANCE.localize("common.ok")};
+                JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
+                        .INSTANCE.localizeWithReplace("tools.networkheckercomplete", "<br/><br/>") +
+                                "</p></html>", Language.INSTANCE.localize("tools.networkchecker"),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options2, options2[0]);
             }
         }
     }

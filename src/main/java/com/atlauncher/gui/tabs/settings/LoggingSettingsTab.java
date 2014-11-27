@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui.tabs.settings;
 
@@ -40,8 +51,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        forgeLoggingLevelLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.forgelogginglevel") +
-                ":", HELP_ICON, "<html>" + App.settings.getLocalizedString("settings.forgelogginglevelhelp",
+        forgeLoggingLevelLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.forgelogginglevel") + ":",
+                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.forgelogginglevelhelp",
                 "<br/><br/>") + "</html>");
         add(forgeLoggingLevelLabel, gbc);
 
@@ -65,8 +76,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLeaderboardsLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.leaderboards") + "?",
-                HELP_ICON, App.settings.getLocalizedString("settings.leaderboardshelp"));
+        enableLeaderboardsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.leaderboards") + "?",
+                HELP_ICON, Language.INSTANCE.localize("settings.leaderboardshelp"));
         add(enableLeaderboardsLabel, gbc);
 
         gbc.gridx++;
@@ -87,8 +98,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLoggingLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.logging") + "?",
-                HELP_ICON, "<html>" + App.settings.getLocalizedString("settings.logginghelp", "<br/>" + "</html>"));
+        enableLoggingLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.logging") + "?", HELP_ICON,
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.logginghelp", "<br/>" + "</html>"));
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
@@ -121,8 +132,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableOpenEyeReportingLabel = new JLabelWithHover(App.settings.getLocalizedString("settings.openeye") + "?",
-                HELP_ICON, "<html>" + Utils.splitMultilinedString(App.settings.getLocalizedString("settings" + "" +
+        enableOpenEyeReportingLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.openeye") + "?",
+                HELP_ICON, "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings" + "" +
                 ".openeyehelp"), 80, "<br/>") + "</html>");
         add(enableOpenEyeReportingLabel, gbc);
 
@@ -153,19 +164,19 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
 
     @Override
     public void onRelocalization() {
-        this.forgeLoggingLevelLabel.setText(App.settings.getLocalizedString("settings" + ".forgelogginglevel") + ":");
-        this.forgeLoggingLevelLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings" + "" +
+        this.forgeLoggingLevelLabel.setText(Language.INSTANCE.localize("settings" + ".forgelogginglevel") + ":");
+        this.forgeLoggingLevelLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
                 ".forgelogginglevelhelp", "<br/><br/>") + "</html>");
 
-        this.enableLeaderboardsLabel.setText(App.settings.getLocalizedString("settings.leaderboards") + "?");
-        this.enableLeaderboardsLabel.setToolTipText(App.settings.getLocalizedString("settings.leaderboardshelp"));
+        this.enableLeaderboardsLabel.setText(Language.INSTANCE.localize("settings.leaderboards") + "?");
+        this.enableLeaderboardsLabel.setToolTipText(Language.INSTANCE.localize("settings.leaderboardshelp"));
 
-        this.enableLoggingLabel.setText(App.settings.getLocalizedString("settings.logging") + "?");
-        this.enableLoggingLabel.setToolTipText("<html>" + App.settings.getLocalizedString("settings.logginghelp",
-                "<br/>" + "</html>"));
+        this.enableLoggingLabel.setText(Language.INSTANCE.localize("settings.logging") + "?");
+        this.enableLoggingLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
+                ".logginghelp", "<br/>" + "</html>"));
 
-        this.enableOpenEyeReportingLabel.setText(App.settings.getLocalizedString("settings.openeye") + "?");
-        this.enableOpenEyeReportingLabel.setToolTipText("<html>" + Utils.splitMultilinedString(App.settings
-                .getLocalizedString("settings.openeyehelp"), 80, "<br/>") + "</html>");
+        this.enableOpenEyeReportingLabel.setText(Language.INSTANCE.localize("settings.openeye") + "?");
+        this.enableOpenEyeReportingLabel.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE
+                .localize("settings.openeyehelp"), 80, "<br/>") + "</html>");
     }
 }

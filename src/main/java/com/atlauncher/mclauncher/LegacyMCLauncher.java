@@ -1,8 +1,19 @@
-/**
- * Copyright 2013-2014 by ATLauncher and Contributors
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
  *
- * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.mclauncher;
 
@@ -97,6 +108,13 @@ public class LegacyMCLauncher {
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
+        if (App.settings.getJavaParameters().isEmpty()) {
+            // Mojang launcher defaults if user has no custom java arguments
+            arguments.add("-XX:+UseConcMarkSweepGC");
+            arguments.add("-XX:+CMSIncrementalMode");
+            arguments.add("-XX:-UseAdaptiveSizePolicy");
+        }
+
         arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
 
         if (App.settings.getMaximumMemory() < instance.getMemory()) {
@@ -139,12 +157,16 @@ public class LegacyMCLauncher {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {
                             LogManager.error("Duplicate argument " + arg + " found and not added!");
-                        } else {
-                            arguments.add(arg);
+                            continue;
                         }
-                    } else {
-                        arguments.add(arg);
                     }
+
+                    if (arguments.toString().contains(arg)) {
+                        LogManager.error("Duplicate argument " + arg + " found and not added!");
+                        continue;
+                    }
+
+                    arguments.add(arg);
                 }
             }
         }
@@ -181,14 +203,18 @@ public class LegacyMCLauncher {
         }
 
         String argsString = arguments.toString();
-        argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
-        argsString = argsString.replace(sess.getAccessToken(), "REDACTED");
+
+        if (!LogManager.showDebug) {
+            argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
+            argsString = argsString.replace(sess.getAccessToken(), "REDACTED");
+        }
 
         LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):" +
                 " " + argsString);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
+        processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
         return processBuilder.start();
     }
 

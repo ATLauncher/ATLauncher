@@ -103,10 +103,10 @@ public final class ServerListPing16 {
 
         });
         dataOutputStream.write("MC|PingHost".getBytes("UTF-16BE"));
-        dataOutputStream.writeShort((address.getHostString().length() * 2) + 7);
+        dataOutputStream.writeShort((address.getAddress().getHostAddress().length() * 2) + 7);
         dataOutputStream.write(74);
-        dataOutputStream.writeShort(address.getHostString().length());
-        dataOutputStream.write(address.getHostString().getBytes("UTF-16BE"));
+        dataOutputStream.writeShort(address.getAddress().getHostAddress().length());
+        dataOutputStream.write(address.getAddress().getHostAddress().getBytes("UTF-16BE"));
         dataOutputStream.writeInt(address.getPort());
 
         int packetId = inputStream.read();
