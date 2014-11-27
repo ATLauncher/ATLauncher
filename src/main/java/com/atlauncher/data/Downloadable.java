@@ -384,6 +384,9 @@ public class Downloadable {
                 if (this.file.exists()) {
                     Utils.delete(this.file); // Delete file since it doesn't match MD5
                 }
+                if(downloadAsLibrary) {
+                    this.instanceInstaller.addTotalDownloadedBytes(this.size);
+                }
                 downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
             }
             if (!done) {

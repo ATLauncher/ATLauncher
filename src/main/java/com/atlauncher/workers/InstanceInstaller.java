@@ -2370,6 +2370,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public void addDownloadedBytes(int bytes) {
         this.downloadedBytes += bytes;
+        this.updateProgressBar();
+    }
+
+    public void addTotalDownloadedBytes(int bytes) {
+        this.totalBytes += bytes;
+        this.updateProgressBar();
+    }
+
+    private void updateProgressBar() {
         float progress;
         if (this.totalBytes > 0) {
             progress = ((float) this.downloadedBytes / (float) this.totalBytes) * 100;
