@@ -93,6 +93,10 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         if (this.pack.getVersionCount() == 0) {
             this.modsButton.setVisible(false);
         }
+
+        if(!this.pack.canCreateServer()) {
+            this.createServerButton.setVisible(false);
+        }
     }
 
     public Pack getPack() {
