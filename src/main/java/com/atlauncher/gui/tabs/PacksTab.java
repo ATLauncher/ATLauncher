@@ -78,6 +78,9 @@ implements Tab{
         this.searchField.addKeyListener(new KeyAdapter(){
             @Override
             public void keyPressed(KeyEvent e){
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+                    searchField.setText("");
+                }
                 reload();
             }
         });

@@ -11,9 +11,6 @@ import java.util.concurrent.BlockingQueue;
 public final class LogManager {
     private static final BlockingQueue<LogEvent> queue = new ArrayBlockingQueue<LogEvent>(128);
 
-    private LogManager() {
-    }
-
     public static void start() {
         new LoggingThread(queue).start();
     }
