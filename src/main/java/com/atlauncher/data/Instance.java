@@ -1145,6 +1145,10 @@ public class Instance implements Cloneable {
                                 }
                             }
                         }
+
+                        LogManager.info("Launching pack " + getPackName() + " " + getVersion() + " for " +
+                                "Minecraft " + getMinecraftVersion());
+
                         Process process = null;
                         if (isNewLaunchMethod()) {
                             process = MCLauncher.launch(account, Instance.this, session);
