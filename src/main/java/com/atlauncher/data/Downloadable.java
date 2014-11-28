@@ -47,8 +47,8 @@ public class Downloadable {
     private boolean actuallyCopy;
     private int attempts = 0;
 
-    public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller,
-                        boolean isATLauncherDownload, File copyTo, boolean actuallyCopy) {
+    public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller, boolean
+            isATLauncherDownload, File copyTo, boolean actuallyCopy) {
         if (isATLauncherDownload) {
             this.url = App.settings.getFileURL(url);
         } else {
@@ -64,13 +64,13 @@ public class Downloadable {
         this.actuallyCopy = actuallyCopy;
     }
 
-    public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller,
-                        boolean isATLauncherDownload) {
+    public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller, boolean
+            isATLauncherDownload) {
         this(url, file, hash, size, instanceInstaller, isATLauncherDownload, null, false);
     }
 
-    public Downloadable(String url, File file, String hash, InstanceInstaller instanceInstaller,
-                        boolean isATLauncherDownload) {
+    public Downloadable(String url, File file, String hash, InstanceInstaller instanceInstaller, boolean
+            isATLauncherDownload) {
         this(url, file, hash, -1, instanceInstaller, isATLauncherDownload, null, false);
     }
 
@@ -384,7 +384,7 @@ public class Downloadable {
                 if (this.file.exists()) {
                     Utils.delete(this.file); // Delete file since it doesn't match MD5
                 }
-                if(attempts != 1 && downloadAsLibrary) {
+                if (attempts != 1 && downloadAsLibrary) {
                     this.instanceInstaller.addTotalDownloadedBytes(this.size);
                 }
                 downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
@@ -396,6 +396,9 @@ public class Downloadable {
                                 "Expected hash of " + getHash() + " but got " + fileHash + " instead. Trying another " +
                                 "server!");
                         this.url = App.settings.getFileURL(this.beforeURL);
+                        if (downloadAsLibrary) {
+                            this.instanceInstaller.addTotalDownloadedBytes(this.size);
+                        }
                         download(downloadAsLibrary); // Redownload the file
                     } else {
                         Utils.copyFile(this.file, App.settings.getFailedDownloadsDir());
