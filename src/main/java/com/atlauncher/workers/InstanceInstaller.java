@@ -125,8 +125,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private List<Action> actions;
     private List<String> forgeLibraries = new ArrayList<String>();
 
-    public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall,
-                             boolean isServer) {
+    public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean
+            isServer) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
@@ -612,11 +612,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     size = fileSizes.get(mod.getURL());
                 }
                 if (mod.hasMD5()) {
-                    downloadable = new Downloadable(mod.getURL(), new File(App.settings.getDownloadsDir(),
-                            mod.getFile()), mod.getMD5(), size, this, true);
+                    downloadable = new Downloadable(mod.getURL(), new File(App.settings.getDownloadsDir(), mod
+                            .getFile()), mod.getMD5(), size, this, true);
                 } else {
-                    downloadable = new Downloadable(mod.getURL(), new File(App.settings.getDownloadsDir(),
-                            mod.getFile()), null, size, this, true);
+                    downloadable = new Downloadable(mod.getURL(), new File(App.settings.getDownloadsDir(), mod
+                            .getFile()), null, size, this, true);
                 }
                 mods.add(downloadable);
             }
@@ -688,11 +688,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     size = fileSizes.get(mod.getUrl());
                 }
                 if (mod.hasMD5()) {
-                    downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(),
-                            mod.getFile()), mod.getMD5(), size, this, true);
+                    downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(), mod
+                            .getFile()), mod.getMD5(), size, this, true);
                 } else {
-                    downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(),
-                            mod.getFile()), null, size, this, true);
+                    downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(), mod
+                            .getFile()), null, size, this, true);
                 }
                 mods.add(downloadable);
             }
@@ -1057,8 +1057,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod
-                        .getName() : mod.getFile()));
+                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod.getName
+                        () : mod.getFile()));
                 mod.download(this);
                 fireSubProgress(-1); // Hide the subprogress bar
             }
@@ -1112,8 +1112,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (com.atlauncher.data.json.Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod
-                        .getName() : mod.getFile()));
+                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod.getName
+                        () : mod.getFile()));
                 mod.download(this);
                 fireSubProgress(-1); // Hide the subprogress bar
             }
@@ -1139,8 +1139,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             for (Library library : this.version.getMinecraftVersion().getMojangVersion().getLibraries()) {
                 if (library.shouldInstall()) {
-                    if (libraryNamesAdded.contains(library.getFile().getName().substring(0,
-                            library.getFile().getName().lastIndexOf("-")))) {
+                    if (libraryNamesAdded.contains(library.getFile().getName().substring(0, library.getFile().getName
+                            ().lastIndexOf("-")))) {
                         continue;
                     }
                     if (library.getFile().exists()) {
@@ -1202,9 +1202,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (file.isFile() && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file
                         .getName().endsWith("litemod"))) {
                     if (this.jsonVersion.getCaseAllFiles() == CaseType.upper) {
-                        file.renameTo(new File(file.getParentFile(), file.getName().substring(0,
-                                file.getName().lastIndexOf(".")).toUpperCase() + file.getName().substring(file
-                                .getName().lastIndexOf("."), file.getName().length())));
+                        file.renameTo(new File(file.getParentFile(), file.getName().substring(0, file.getName()
+                                .lastIndexOf(".")).toUpperCase() + file.getName().substring(file.getName()
+                                .lastIndexOf("."), file.getName().length())));
                     } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                         file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
                     }
@@ -1216,9 +1216,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         .getName().endsWith("litemod"))) {
                     if (this.caseAllFiles != null) {
                         if (this.caseAllFiles.equalsIgnoreCase("upper")) {
-                            file.renameTo(new File(file.getParentFile(), file.getName().substring(0,
-                                    file.getName().lastIndexOf(".")).toUpperCase() + file.getName().substring(file
-                                    .getName().lastIndexOf("."), file.getName().length())));
+                            file.renameTo(new File(file.getParentFile(), file.getName().substring(0, file.getName()
+                                    .lastIndexOf(".")).toUpperCase() + file.getName().substring(file.getName()
+                                    .lastIndexOf("."), file.getName().length())));
                         } else if (this.caseAllFiles.equalsIgnoreCase("lower")) {
                             file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
                         }
@@ -1254,8 +1254,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 File file = new File(objectsFolder, filename);
                 File virtualFile = new File(virtualRoot, entry.getKey());
                 if (object.needToDownload(file)) {
-                    downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), file,
-                            object.getHash(), (int) object.getSize(), this, false, virtualFile, index.isVirtual()));
+                    downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), file, object
+                            .getHash(), (int) object.getSize(), this, false, virtualFile, index.isVirtual()));
                 } else {
                     if (index.isVirtual()) {
                         virtualFile.mkdirs();
@@ -1296,6 +1296,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         Download download = Download.direct;
                         if (element.hasAttribute("download")) {
                             download = Download.valueOf(element.getAttribute("download"));
+                        } else {
+                            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                                download = Download.server;
+                            }
                         }
                         String md5 = "-";
                         if (element.hasAttribute("md5")) {
@@ -1335,15 +1339,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             if (!element.hasAttribute("server")) {
                                 continue;
                             }
-                            serverLibraries.add(new File(new File(getLibrariesDirectory(),
-                                    element.getAttribute("server").substring(0,
-                                            element.getAttribute("server").lastIndexOf('/'))),
+                            serverLibraries.add(new File(new File(getLibrariesDirectory(), element.getAttribute
+                                    ("server").substring(0, element.getAttribute("server").lastIndexOf('/'))),
                                     element.getAttribute("server").substring(element.getAttribute("server")
                                             .lastIndexOf('/'), element.getAttribute("server").length())));
                         }
                         downloadTo = new File(App.settings.getLibrariesDir(), file);
                         if (download == Download.server) {
-                            libraries.add(new Downloadable(App.settings.getFileURL(url), downloadTo, md5, this, false));
+                            libraries.add(new Downloadable(url, downloadTo, md5, this, true));
                         } else {
                             libraries.add(new Downloadable(url, downloadTo, md5, this, false));
                         }
@@ -1382,6 +1385,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         continue;
                     }
                 }
+
+                if (!library.getUrl().startsWith("http://") && !library.getUrl().startsWith("https://")) {
+                    library.setDownloadType(DownloadType.server);
+                }
+
                 if (librariesNeeded == null) {
                     this.librariesNeeded = library.getFile();
                 } else {
@@ -1397,8 +1405,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
                 downloadTo = new File(App.settings.getLibrariesDir(), library.getFile());
                 if (library.getDownloadType() == DownloadType.server) {
-                    libraries.add(new Downloadable(App.settings.getFileURL(library.getUrl()), downloadTo,
-                            library.getMD5(), this, false));
+                    libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), this, true));
                 } else if (library.getDownloadType() == DownloadType.direct) {
                     libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), this, false));
                 } else {
@@ -1418,8 +1425,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (!this.isServer) {
             for (Library library : this.version.getMinecraftVersion().getMojangVersion().getLibraries()) {
                 if (library.shouldInstall()) {
-                    if (libraryNamesAdded.contains(library.getFile().getName().substring(0,
-                            library.getFile().getName().lastIndexOf("-")))) {
+                    if (libraryNamesAdded.contains(library.getFile().getName().substring(0, library.getFile().getName
+                            ().lastIndexOf("-")))) {
                         LogManager.debug("Not adding library " + library.getName() + " as it's been overwritten " +
                                 "already by the packs libraries!");
                         continue;
@@ -1834,9 +1841,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
-            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
-                    Type.valueOf(Type.class, mod.getType().toString()), this.jsonVersion.getColour(mod.getColour()),
-                    mod.getDescription(), false, false));
+            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, Type
+                    .valueOf(Type.class, mod.getType().toString()), this.jsonVersion.getColour(mod.getColour()), mod
+                    .getDescription(), false, false));
         }
 
         if (this.isReinstall && instance.hasCustomMods() && instance.getMinecraftVersion().equalsIgnoreCase(version
@@ -1958,8 +1965,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = {Language.INSTANCE.localize("common.ok"),
-                        Language.INSTANCE.localize("common.cancel")};
+                String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common" +
+                        ".cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>" + this.pack.getUpdateMessage(this.version
                         .getVersion()) + "</html>");
                 ep.setEditable(false);
@@ -1971,9 +1978,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         }
                     }
                 });
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), ep,
-                        Language.INSTANCE.localize("common.reinstalling") + " " + this.pack.getName(),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize
+                        ("common.reinstalling") + " " + this.pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
+                        .WARNING_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.error("Instance Install Cancelled After Viewing Message!");
                     cancel(true);
@@ -1985,8 +1992,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = {Language.INSTANCE.localize("common.ok"),
-                        Language.INSTANCE.localize("common.cancel")};
+                String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common" +
+                        ".cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>" + this.pack.getInstallMessage(this.version
                         .getVersion()) + "</html>");
                 ep.setEditable(false);
@@ -1998,9 +2005,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         }
                     }
                 });
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), ep,
-                        Language.INSTANCE.localize("common.installing") + " " + this.pack.getName(),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize
+                        ("common.installing") + " " + this.pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
+                        .WARNING_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.error("Instance Install Cancelled After Viewing Message!");
                     cancel(true);
@@ -2038,8 +2045,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             ("" + "."));
                 }
             }
-            modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
-                    mod.getType(), mod.getColour(), mod.getDescription(), false, false));
+            modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, mod.getType
+                    (), mod.getColour(), mod.getDescription(), false, false));
         }
         if (isReinstall && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion()
         ) && instance.hasCustomMods()) {
@@ -2139,10 +2146,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         restoreSelectFiles();
         if (isServer) {
-            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"),
-                    new File(getRootDirectory(), "LaunchServer.bat"), "%%SERVERJAR%%", getServerJar());
-            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.sh"),
-                    new File(getRootDirectory(), "LaunchServer.sh"), "%%SERVERJAR%%", getServerJar());
+            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"), new File(getRootDirectory
+                    (), "LaunchServer.bat"), "%%SERVERJAR%%", getServerJar());
+            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.sh"), new File(getRootDirectory
+                    (), "LaunchServer.sh"), "%%SERVERJAR%%", getServerJar());
         }
         return true;
     }

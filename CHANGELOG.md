@@ -7,3 +7,4 @@ Changelog
 - Log which pack/version is being launched when a user launches an instance
 - When a download fails and a progress bar is shown, add those bytes done to the total so not to overflow the progress
 - Fix NPE when a user has no skin on their account
+- Let downloads use non user selectable servers and set libraries to download from multiple servers if it fails

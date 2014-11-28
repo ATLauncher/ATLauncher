@@ -49,6 +49,10 @@ public class Library {
         return this.download;
     }
 
+    public void setDownloadType(DownloadType type) {
+        this.download = type;
+    }
+
     public String getDepends() {
         return this.depends;
     }

@@ -1422,7 +1422,7 @@ public class Settings {
     public boolean getNextServer() {
         this.triedServers.add(this.server);
         for (Server server : this.servers) {
-            if (!this.triedServers.contains(server) && !server.isDisabled() && server.isUserSelectable()) {
+            if (!this.triedServers.contains(server) && !server.isDisabled()) {
                 LogManager.warn("Server " + this.server.getName() + " Not Available! Switching To " + server.getName());
                 this.server = server; // Setup next available server
                 return true;
