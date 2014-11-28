@@ -29,6 +29,10 @@ public class MinecraftProfileResponse {
     private String name;
     private List<UserPropertyRaw> properties;
 
+    public boolean hasProperties() {
+        return this.properties != null;
+    }
+
     public UserProperty getUserProperty(String name) {
         for (UserPropertyRaw property : this.properties) {
             if (property.getName().equals(name)) {

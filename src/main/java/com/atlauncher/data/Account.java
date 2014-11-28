@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
+import com.atlauncher.data.mojang.api.ProfileTexture;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -444,8 +445,8 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                                ".skinerror"), Language.INSTANCE.localize("common.error"),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
@@ -493,7 +494,17 @@ public class Account implements Serializable {
 
         MinecraftProfileResponse profile = Gsons.DEFAULT.fromJson(response.toString(), MinecraftProfileResponse.class);
 
-        return profile.getUserProperty("textures").getTexture("SKIN").getUrl();
+        if (!profile.hasProperties()) {
+            return null;
+        }
+
+        ProfileTexture texture = profile.getUserProperty("textures").getTexture("SKIN");
+
+        if (texture == null) {
+            return null;
+        }
+
+        return texture.getUrl();
     }
 
     public String getAccessToken() {
@@ -528,8 +539,8 @@ public class Account implements Serializable {
 
     public AuthenticationResponse refreshToken() {
         LogManager.info("Refreshing Access Token!");
-        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.refreshingtoken"),
-                0, Language.INSTANCE.localize("account.refreshingtoken"), "Aborting token refresh for " + this
+        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.refreshingtoken"), 0,
+                Language.INSTANCE.localize("account.refreshingtoken"), "Aborting token refresh for " + this
                 .getMinecraftUsername());
         dialog.addThread(new Thread() {
             public void run() {
