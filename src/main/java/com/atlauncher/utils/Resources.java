@@ -18,6 +18,7 @@
 
 package com.atlauncher.utils;
 
+import com.atlauncher.LogManager;
 import com.atlauncher.exceptions.ChunkyException;
 
 import javax.swing.text.html.StyleSheet;
@@ -89,7 +90,8 @@ public final class Resources {
                 } else {
                     URL url = System.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
-                        throw new NullPointerException("Cannot find font " + name);
+                        LogManager.error("Cannot find font " + name);
+                        return new Font("Sans-Serif", Font.PLAIN, 0);
                     } else {
                         Font f = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
                         resources.put(name, f);
