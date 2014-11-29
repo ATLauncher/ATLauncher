@@ -1417,6 +1417,7 @@ public class Settings {
 
     public void clearTriedServers() {
         this.triedServers = new ArrayList<Server>(); // Clear the list
+        loadServerProperty(true);
     }
 
     public boolean getNextServer() {
