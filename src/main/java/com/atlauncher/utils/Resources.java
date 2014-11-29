@@ -18,17 +18,25 @@
 
 package com.atlauncher.utils;
 
+import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.Settings;
 import com.atlauncher.exceptions.ChunkyException;
+import com.atlauncher.gui.theme.Theme;
 
 import javax.swing.text.html.StyleSheet;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public final class Resources {
     private static final Map<String, Object> resources = new HashMap<String, Object>();
@@ -90,6 +98,35 @@ public final class Resources {
                 } else {
                     URL url = System.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
+                        File themeFile = App.settings.getThemeFile();
+
+                        if(themeFile != null) {
+                            InputStream stream = null;
+
+                            ZipFile zipFile = new ZipFile(themeFile);
+                            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+                            while (entries.hasMoreElements()) {
+                                ZipEntry entry = entries.nextElement();
+                                if (entry.getName().equals("font/" + name + ".ttf")) {
+                                    stream = zipFile.getInputStream(entry);
+                                    break;
+                                }
+                            }
+
+                            if (stream != null) {
+                                Font f = Font.createFont(Font.TRUETYPE_FONT, stream);
+                                resources.put(name, f);
+
+                                stream.close();
+                                zipFile.close();
+
+                                return f;
+                            }
+
+                            zipFile.close();
+                        }
+
                         LogManager.error("Cannot find font " + name);
                         return new Font("Sans-Serif", Font.PLAIN, 0);
                     } else {
@@ -100,7 +137,8 @@ public final class Resources {
                 }
             }
         } catch (Exception ex) {
-            throw new ChunkyException(ex);
+            App.settings.logStackTrace("Cannot find font " + name, ex);
+            return new Font("Sans-Serif", Font.PLAIN, 0);
         }
     }
 }

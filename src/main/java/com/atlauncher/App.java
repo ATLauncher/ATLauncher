@@ -250,10 +250,10 @@ public class App {
 
                 if (stream != null) {
                     THEME = Settings.themeGson.fromJson(new InputStreamReader(stream), Theme.class);
-
                     stream.close();
-                    zipFile.close();
                 }
+
+                zipFile.close();
             } catch (Exception ex) {
                 THEME = Theme.DEFAULT_THEME;
             }
