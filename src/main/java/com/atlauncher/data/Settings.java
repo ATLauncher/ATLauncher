@@ -658,11 +658,11 @@ public class Settings {
             } else {
                 String[] options = {"Ok"};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
-                        "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
-                        "page" +
-                        ".<br/><br/>Download " + "the update and replace the old ATLauncher file" +
-                        ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                        null, options, options[0]);
+                                "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
+                                "page" +
+                                ".<br/><br/>Download " + "the update and replace the old ATLauncher file" +
+                                ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane
+                        .ERROR_MESSAGE, null, options, options[0]);
                 if (ret == 0) {
                     Utils.openBrowser("http://www.atlauncher.com/downloads/");
                     System.exit(0);
@@ -1416,8 +1416,10 @@ public class Settings {
     }
 
     public void clearTriedServers() {
-        this.triedServers = new ArrayList<Server>(); // Clear the list
-        loadServerProperty(true);
+        if (this.triedServers.size() != 0) {
+            this.triedServers = new ArrayList<Server>(); // Clear the list
+            this.server = this.originalServer;
+        }
     }
 
     public boolean getNextServer() {
@@ -1441,10 +1443,8 @@ public class Settings {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
             File fileDir = new File(getJSONDir(), "news.json");
-            BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                new FileInputStream(fileDir), "UTF-8"));
-            
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "UTF-8"));
+
             this.news = gson.fromJson(in, type);
             in.close();
         } catch (JsonSyntaxException e) {
