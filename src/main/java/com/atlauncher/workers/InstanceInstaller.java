@@ -18,12 +18,15 @@
 package com.atlauncher.workers;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Action;
 import com.atlauncher.data.DecompType;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Download;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Mod;
@@ -33,6 +36,7 @@ import com.atlauncher.data.Settings;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.DownloadType;
+import com.atlauncher.data.json.ModInfo;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.mojang.AssetIndex;
@@ -51,6 +55,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -551,55 +556,33 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private ArrayList<Downloadable> getDownloadableMods() {
         ArrayList<Downloadable> mods = new ArrayList<Downloadable>();
-
-        String files = "";
+        List<String> files = new ArrayList<String>();
+        Map<String, ModInfo> fileSizes = new HashMap<String, ModInfo>();
 
         for (Mod mod : this.selectedMods) {
             if (mod.isServerDownload()) {
-                files = files + mod.getURL() + "|||";
+                files.add(mod.getURL());
             }
         }
 
-        HashMap<String, Integer> fileSizes = null;
 
         if (!files.isEmpty()) {
-            String base64Files = Base64.encodeBytes(files.getBytes());
-
-            fileSizes = new HashMap<String, Integer>();
-            String returnValue = null;
+            APIResponse response = null;
             try {
-                returnValue = Utils.sendPostData(App.settings.getMasterFileURL("getfilesizes.php"), base64Files,
-                        "files");
+                response = Gsons.DEFAULT.fromJson(Utils.sendAPICall("file-info", files), APIResponse.class);
             } catch (IOException e1) {
                 App.settings.logStackTrace(e1);
             }
-            if (returnValue == null) {
-                LogManager.warn("Couldn't get filesizes of files. Continuing regardless!");
-            }
-
-            if (returnValue != null) {
+            if (response == null) {
+                LogManager.warn("Couldn't get info of files. Continuing regardless!");
+            } else {
                 try {
-                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    InputSource is = new InputSource(new StringReader(returnValue));
-                    Document document = builder.parse(is);
-                    document.getDocumentElement().normalize();
-                    NodeList nodeList = document.getElementsByTagName("file");
-                    for (int i = 0; i < nodeList.getLength(); i++) {
-                        Node node = nodeList.item(i);
-                        if (node.getNodeType() == Node.ELEMENT_NODE) {
-                            Element element = (Element) node;
-                            String url = element.getAttribute("url");
-                            int size = Integer.parseInt(element.getAttribute("size"));
-                            fileSizes.put(url, size);
-                        }
-                    }
-                } catch (SAXException e) {
-                    App.settings.logStackTrace(e);
-                } catch (ParserConfigurationException e) {
-                    App.settings.logStackTrace(e);
-                } catch (IOException e) {
-                    App.settings.logStackTrace(e);
+                    java.lang.reflect.Type type = new TypeToken<Map<String, ModInfo>>() {
+                    }.getType();
+                    fileSizes = Gsons.DEFAULT.fromJson(response.getDataAsString(), type);
+                } catch (Exception e) {
+                    App.settings.logStackTrace("Failed to get response from the API, this won't affect the install "
+                            + "process!", e);
                 }
             }
         }
@@ -608,16 +591,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (mod.isServerDownload()) {
                 Downloadable downloadable;
                 int size = -1;
-                if (fileSizes.containsKey(mod.getURL())) {
-                    size = fileSizes.get(mod.getURL());
-                }
+                String md5 = null;
+
                 if (mod.hasMD5()) {
-                    downloadable = new Downloadable(mod.getURL(), new File(App.settings.getDownloadsDir(), mod
-                            .getFile()), mod.getMD5(), size, this, true);
-                } else {
-                    downloadable = new Downloadable(mod.getURL(), new File(App.settings.getDownloadsDir(), mod
-                            .getFile()), null, size, this, true);
+                    md5 = mod.getMD5();
                 }
+
+                if (fileSizes.containsKey(mod.getURL())) {
+                    size = fileSizes.get(mod.getURL()).getFilesize();
+                    md5 = fileSizes.get(mod.getURL()).getMd5();
+                }
+
+                downloadable = new Downloadable(mod.getURL(), new File(App.settings.getDownloadsDir(), mod.getFile())
+                        , md5, size, this, true);
+
                 mods.add(downloadable);
             }
         }
@@ -627,55 +614,32 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private List<Downloadable> getDownloadableJsonMods() {
         List<Downloadable> mods = new ArrayList<Downloadable>();
-
-        String files = "";
+        List<String> files = new ArrayList<String>();
+        Map<String, ModInfo> fileSizes = new HashMap<String, ModInfo>();
 
         for (com.atlauncher.data.json.Mod mod : this.selectedJsonMods) {
             if (mod.getDownload() == DownloadType.server) {
-                files = files + mod.getUrl() + "|||";
+                files.add(mod.getUrl());
             }
         }
 
-        Map<String, Integer> fileSizes = null;
-
         if (!files.isEmpty()) {
-            String base64Files = Base64.encodeBytes(files.getBytes());
-
-            fileSizes = new HashMap<String, Integer>();
-            String returnValue = null;
+            APIResponse response = null;
             try {
-                returnValue = Utils.sendPostData(App.settings.getMasterFileURL("getfilesizes.php"), base64Files,
-                        "files");
+                response = Gsons.DEFAULT.fromJson(Utils.sendAPICall("file-info", files), APIResponse.class);
             } catch (IOException e1) {
                 App.settings.logStackTrace(e1);
             }
-            if (returnValue == null) {
-                LogManager.warn("Couldn't get filesizes of files. Continuing regardless!");
-            }
-
-            if (returnValue != null) {
+            if (response == null) {
+                LogManager.warn("Couldn't get info of files. Continuing regardless!");
+            } else {
                 try {
-                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    InputSource is = new InputSource(new StringReader(returnValue));
-                    Document document = builder.parse(is);
-                    document.getDocumentElement().normalize();
-                    NodeList nodeList = document.getElementsByTagName("file");
-                    for (int i = 0; i < nodeList.getLength(); i++) {
-                        Node node = nodeList.item(i);
-                        if (node.getNodeType() == Node.ELEMENT_NODE) {
-                            Element element = (Element) node;
-                            String url = element.getAttribute("url");
-                            int size = Integer.parseInt(element.getAttribute("size"));
-                            fileSizes.put(url, size);
-                        }
-                    }
-                } catch (SAXException e) {
-                    App.settings.logStackTrace(e);
-                } catch (ParserConfigurationException e) {
-                    App.settings.logStackTrace(e);
-                } catch (IOException e) {
-                    App.settings.logStackTrace(e);
+                    java.lang.reflect.Type type = new TypeToken<Map<String, ModInfo>>() {
+                    }.getType();
+                    fileSizes = Gsons.DEFAULT.fromJson(response.getDataAsString(), type);
+                } catch (Exception e) {
+                    App.settings.logStackTrace("Failed to get response from the API, this won't affect the install "
+                            + "process!", e);
                 }
             }
         }
@@ -684,16 +648,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (mod.getDownload() == DownloadType.server) {
                 Downloadable downloadable;
                 int size = -1;
-                if (fileSizes.containsKey(mod.getUrl())) {
-                    size = fileSizes.get(mod.getUrl());
-                }
+                String md5 = null;
+
                 if (mod.hasMD5()) {
-                    downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(), mod
-                            .getFile()), mod.getMD5(), size, this, true);
-                } else {
-                    downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(), mod
-                            .getFile()), null, size, this, true);
+                    md5 = mod.getMD5();
                 }
+
+                if (fileSizes.containsKey(mod.getUrl())) {
+                    size = fileSizes.get(mod.getUrl()).getFilesize();
+                    md5 = fileSizes.get(mod.getUrl()).getMd5();
+                }
+
+                downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(), mod.getFile())
+                        , md5, size, this, true);
+
                 mods.add(downloadable);
             }
         }
@@ -1965,7 +1933,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common" +
+                String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common" + "" +
                         ".cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>" + this.pack.getUpdateMessage(this.version
                         .getVersion()) + "</html>");
@@ -1992,7 +1960,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (this.isCancelled()) {
                     return false;
                 }
-                String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common" +
+                String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common" + "" +
                         ".cancel")};
                 JEditorPane ep = new JEditorPane("text/html", "<html>" + this.pack.getInstallMessage(this.version
                         .getVersion()) + "</html>");

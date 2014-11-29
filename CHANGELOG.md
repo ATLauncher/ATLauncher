@@ -9,3 +9,4 @@ Changelog
 - Fix NPE when a user has no skin on their account
 - Let downloads use non user selectable servers and set libraries to download from multiple servers if it fails
 - When clearing tried servers, set the users download server back to original
+- Change the way filesizes for mod downloads are retrieved
