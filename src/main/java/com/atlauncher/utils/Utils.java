@@ -1618,7 +1618,7 @@ public class Utils {
             @Override
             public boolean accept(File dir, String name) {
                 File file = new File(dir, name);
-                return file.exists() && file.isFile() && name.endsWith(".json");
+                return file.exists() && file.isFile() && name.endsWith(".zip");
             }
         };
     }

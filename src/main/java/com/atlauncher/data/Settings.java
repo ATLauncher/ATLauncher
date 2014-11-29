@@ -2799,7 +2799,7 @@ public class Settings {
     }
 
     public File getThemeFile() {
-        File theme = new File(this.themesDir, this.theme + ".json");
+        File theme = new File(this.themesDir, this.theme + ".zip");
         if (theme.exists()) {
             return theme;
         } else {

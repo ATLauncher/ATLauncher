@@ -40,11 +40,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
@@ -230,7 +235,25 @@ public class App {
         File themeFile = settings.getThemeFile();
         if (themeFile != null) {
             try {
-                THEME = Settings.themeGson.fromJson(new FileReader(themeFile), Theme.class);
+                InputStream stream = null;
+
+                ZipFile zipFile = new ZipFile(themeFile);
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+                while (entries.hasMoreElements()) {
+                    ZipEntry entry = entries.nextElement();
+                    if (entry.getName().equals("theme.json")) {
+                        stream = zipFile.getInputStream(entry);
+                        break;
+                    }
+                }
+
+                if (stream != null) {
+                    THEME = Settings.themeGson.fromJson(new InputStreamReader(stream), Theme.class);
+
+                    stream.close();
+                    zipFile.close();
+                }
             } catch (Exception ex) {
                 THEME = Theme.DEFAULT_THEME;
             }

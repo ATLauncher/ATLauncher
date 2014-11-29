@@ -98,7 +98,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<String>();
         for (String themee : App.settings.getThemesDir().list(Utils.getThemesFileFilter())) {
-            theme.addItem(themee.replace(".json", ""));
+            theme.addItem(themee.replace(".zip", ""));
         }
         theme.setSelectedItem(App.settings.getTheme());
 
