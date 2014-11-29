@@ -68,6 +68,38 @@ public final class Resources {
                 }
             } else {
                 StyleSheet sheet = new StyleSheet();
+
+                File themeFile = App.settings.getThemeFile();
+
+                if(themeFile != null) {
+                    InputStream stream = null;
+
+                    ZipFile zipFile = new ZipFile(themeFile);
+                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+                    while (entries.hasMoreElements()) {
+                        ZipEntry entry = entries.nextElement();
+                        if (entry.getName().equals("css/" + name + ".css")) {
+                            stream = zipFile.getInputStream(entry);
+                            break;
+                        }
+                    }
+
+                    if (stream != null) {
+                        Reader reader = new InputStreamReader(stream);
+                        sheet.loadRules(reader, null);
+                        reader.close();
+
+                        stream.close();
+                        zipFile.close();
+
+                        resources.put(name, sheet);
+                        return sheet;
+                    }
+
+                    zipFile.close();
+                }
+
                 Reader reader = new InputStreamReader(System.class.getResourceAsStream("/assets/css/" + name + ".css"));
                 sheet.loadRules(reader, null);
                 reader.close();
@@ -121,6 +153,7 @@ public final class Resources {
                                 stream.close();
                                 zipFile.close();
 
+                                resources.put(name, f);
                                 return f;
                             }
 
