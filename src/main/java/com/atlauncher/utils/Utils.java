@@ -120,14 +120,47 @@ public class Utils {
      * @return the icon image
      */
     public static ImageIcon getIconImage(String path) {
-        URL url = System.class.getResource(path);
+        try {
+            File themeFile = App.settings.getThemeFile();
 
-        if (url == null) {
-            LogManager.error("Unable to load resource " + path);
+            if(themeFile != null) {
+                InputStream stream = null;
+
+                ZipFile zipFile = new ZipFile(themeFile);
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+                while (entries.hasMoreElements()) {
+                    ZipEntry entry = entries.nextElement();
+                    if (entry.getName().equals("image/" + path.substring(path.lastIndexOf('/') + 1))) {
+                        stream = zipFile.getInputStream(entry);
+                        break;
+                    }
+                }
+
+                if (stream != null) {
+                    BufferedImage image = ImageIO.read(stream);
+
+                    stream.close();
+                    zipFile.close();
+
+                    return new ImageIcon(image);
+                }
+
+                zipFile.close();
+            }
+
+            URL url = System.class.getResource(path);
+
+            if (url == null) {
+                LogManager.error("Unable to load resource " + path);
+                return null;
+            }
+
+            return new ImageIcon(url);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
             return null;
         }
-
-        return new ImageIcon(url);
     }
 
     public static File getCoreGracefully() {
