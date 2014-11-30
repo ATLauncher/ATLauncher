@@ -73,8 +73,10 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -130,6 +132,7 @@ public class Settings {
     private int proxyPort; // The proxies port
     private String proxyType; // The type of proxy (socks, http)
     private int concurrentConnections; // Number of concurrent connections to open when downloading
+    private int daysOfLogsToKeep; // Number of days of logs to keep
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private Proxy proxy = null; // The proxy object if any
@@ -252,6 +255,8 @@ public class Settings {
         loadProperties(); // Load the users Properties
 
         console.setupLanguage(); // Setup language on the console
+
+        clearOldLogs(); // Clear all the old logs out
 
         checkResources(); // Check for new format of resources
 
@@ -385,6 +390,34 @@ public class Settings {
         }
         this.saveProperties();
     }
+
+    public void clearOldLogs() {
+        LogManager.debug("Clearing out old logs");
+
+        Date toDeleteAfter = new Date();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(toDeleteAfter);
+        calendar.add(Calendar.DATE, -(getDaysOfLogsToKeep()));
+        toDeleteAfter = calendar.getTime();
+
+        for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
+            try {
+                Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace
+                        ("ATLauncher-Log_", "").replace(".log", ""));
+
+                if (date.before(toDeleteAfter)) {
+                    Utils.delete(file);
+                    LogManager.debug("Deleting log file " + file.getName());
+                }
+            } catch (java.text.ParseException e) {
+                LogManager.error("Invalid log file " + file.getName());
+            }
+        }
+
+        LogManager.debug("Finished clearing out old logs");
+    }
+
 
     public void checkResources() {
         LogManager.debug("Checking if using old format of resources");
@@ -658,11 +691,11 @@ public class Settings {
             } else {
                 String[] options = {"Ok"};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
-                                "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
-                                "page" +
-                                ".<br/><br/>Download " + "the update and replace the old ATLauncher file" +
-                                ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane
-                        .ERROR_MESSAGE, null, options, options[0]);
+                        "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
+                        "page" +
+                        ".<br/><br/>Download " + "the update and replace the old ATLauncher file" +
+                        ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                        null, options, options[0]);
                 if (ret == 0) {
                     Utils.openBrowser("http://www.atlauncher.com/downloads/");
                     System.exit(0);
@@ -869,14 +902,14 @@ public class Settings {
     public File getFailedDownloadsDir() {
         return this.failedDownloadsDir;
     }
-    
+
     /**
      * Returns the logs directory
-     * 
+     *
      * @return File object for the logs directory
      */
     public File getLogsDir() {
-    	return this.logsDir;
+        return this.logsDir;
     }
 
     /**
@@ -1005,6 +1038,11 @@ public class Settings {
             this.concurrentConnections = Integer.parseInt(properties.getProperty("concurrentconnections", "8"));
             if (this.concurrentConnections < 1) {
                 this.concurrentConnections = 8;
+            }
+
+            this.daysOfLogsToKeep = Integer.parseInt(properties.getProperty("daysoflogstokeep", "7"));
+            if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
+                this.daysOfLogsToKeep = 7;
             }
         } catch (FileNotFoundException e) {
             logStackTrace(e);
@@ -1190,6 +1228,14 @@ public class Settings {
                 this.concurrentConnections = 8;
             }
 
+            this.daysOfLogsToKeep = Integer.parseInt(properties.getProperty("daysoflogstokeep", "7"));
+            if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
+                // Days of logs to keep should be 1 or more but less than 30
+                LogManager.warn("Tried to set the number of days worth of logs to keep to " + this.daysOfLogsToKeep +
+                        " which is not valid! Must be between 1 and 30 inclusive. Setting back to default of 7!");
+                this.daysOfLogsToKeep = 7;
+            }
+
             this.theme = properties.getProperty("theme", "ATLauncher");
 
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
@@ -1261,6 +1307,7 @@ public class Settings {
             properties.setProperty("proxytype", this.proxyType);
             properties.setProperty("servercheckerwait", this.serverCheckerWait + "");
             properties.setProperty("concurrentconnections", this.concurrentConnections + "");
+            properties.setProperty("daysoflogstokeep", this.daysOfLogsToKeep + "");
             properties.setProperty("theme", this.theme);
             properties.setProperty("dateformat", this.dateFormat);
             if (account != null) {
@@ -2771,6 +2818,14 @@ public class Settings {
 
     public void setConcurrentConnections(int concurrentConnections) {
         this.concurrentConnections = concurrentConnections;
+    }
+
+    public int getDaysOfLogsToKeep() {
+        return this.daysOfLogsToKeep;
+    }
+
+    public void setDaysOfLogsToKeep(int daysOfLogsToKeep) {
+        this.daysOfLogsToKeep = daysOfLogsToKeep;
     }
 
     public String getTheme() {

@@ -26,6 +26,9 @@ import com.atlauncher.utils.Utils;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +37,10 @@ import java.awt.event.ActionListener;
 public class LoggingSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private JLabelWithHover forgeLoggingLevelLabel;
     private JComboBox<String> forgeLoggingLevel;
+
+    private JLabelWithHover daysOfLogsToKeepLabel;
+    private SpinnerModel daysOfLogsToKeepModel;
+    private JSpinner daysOfLogsToKeep;
 
     private JLabelWithHover enableLeaderboardsLabel;
     private JCheckBox enableLeaderboards;
@@ -69,6 +76,25 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         forgeLoggingLevel.addItem("FINEST");
         forgeLoggingLevel.setSelectedItem(App.settings.getForgeLoggingLevel());
         add(forgeLoggingLevel, gbc);
+
+        // Days of logs to keep
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        daysOfLogsToKeepLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.daysoflogstokeep") + ":",
+                HELP_ICON, Language.INSTANCE.localize("settings.daysoflogstokeephelp"));
+        add(daysOfLogsToKeepLabel, gbc);
+
+        daysOfLogsToKeepModel = new SpinnerNumberModel(App.settings.getDaysOfLogsToKeep(), 1, 30, 1);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        daysOfLogsToKeep = new JSpinner(daysOfLogsToKeepModel);
+        daysOfLogsToKeep.setValue(App.settings.getDaysOfLogsToKeep());
+        add(daysOfLogsToKeep, gbc);
 
         // Enable Leaderboards
 
@@ -152,6 +178,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
 
     public void save() {
         App.settings.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
+        App.settings.setDaysOfLogsToKeep((Integer) daysOfLogsToKeep.getValue());
         App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
         App.settings.setEnableLogs(enableLogs.isSelected());
         App.settings.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());
@@ -167,6 +194,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.forgeLoggingLevelLabel.setText(Language.INSTANCE.localize("settings" + ".forgelogginglevel") + ":");
         this.forgeLoggingLevelLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
                 ".forgelogginglevelhelp", "<br/><br/>") + "</html>");
+
+        this.daysOfLogsToKeepLabel.setText(Language.INSTANCE.localize("settings.daysoflogstokeep") + "?");
+        this.daysOfLogsToKeepLabel.setToolTipText(Language.INSTANCE.localize("settings.daysoflogstokeephelp"));
 
         this.enableLeaderboardsLabel.setText(Language.INSTANCE.localize("settings.leaderboards") + "?");
         this.enableLeaderboardsLabel.setToolTipText(Language.INSTANCE.localize("settings.leaderboardshelp"));

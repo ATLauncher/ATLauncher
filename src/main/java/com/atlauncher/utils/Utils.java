@@ -1303,6 +1303,21 @@ public class Utils {
     }
 
     /**
+     * Gets the logs file filter.
+     *
+     * @return the logs file filter
+     */
+    public static FilenameFilter getLogsFileFilter() {
+        return new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                File file = new File(dir, name);
+                return file.isFile() && name.startsWith("ATLauncher-Log_") && name.endsWith(".log");
+            }
+        };
+    }
+
+    /**
      * Gets the instance file filter.
      *
      * @return the instance file filter
