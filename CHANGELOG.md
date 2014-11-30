@@ -12,3 +12,4 @@ Changelog
 - Change the way filesizes for mod downloads are retrieved
 - Fix issue with themes with invalid font's causing halts
 - Change themes to use zip files for more control. Existing themes will no longer work
+- New logging system, logs are now stored in baseDir/Logs/
