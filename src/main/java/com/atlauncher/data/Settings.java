@@ -158,7 +158,7 @@ public class Settings {
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
             commonConfigsDir, resourcesDir, librariesDir, languagesDir, downloadsDir, usersDownloadsFolder,
             instancesDir, serversDir, tempDir, failedDownloadsDir, instancesDataFile, checkingServersFile,
-            userDataFile, propertiesFile;
+            userDataFile, propertiesFile, logsDir;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -188,7 +188,6 @@ public class Settings {
         setupFiles(); // Setup all the file and directory variables
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
-        rotateLogFiles(); // Rotates the log files
         loadStartingProperties(); // Get users Console preference and Java Path
     }
 
@@ -200,6 +199,7 @@ public class Settings {
     public void setupFiles() {
         baseDir = Utils.getCoreGracefully();
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
+        logsDir = new File(baseDir, "Logs");
         backupsDir = new File(baseDir, "Backups");
         configsDir = new File(baseDir, "Configs");
         themesDir = new File(configsDir, "Themes");
@@ -678,7 +678,7 @@ public class Settings {
     private void checkFolders() {
         File[] files = {backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
                 resourcesDir, librariesDir, languagesDir, downloadsDir, instancesDir, serversDir, tempDir,
-                failedDownloadsDir};
+                failedDownloadsDir, logsDir};
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -869,38 +869,21 @@ public class Settings {
     public File getFailedDownloadsDir() {
         return this.failedDownloadsDir;
     }
+    
+    /**
+     * Returns the logs directory
+     * 
+     * @return File object for the logs directory
+     */
+    public File getLogsDir() {
+    	return this.logsDir;
+    }
 
     /**
      * Deletes all files in the Temp directory
      */
     public void clearTempDir() {
         Utils.deleteContents(getTempDir());
-    }
-
-    public void rotateLogFiles() {
-        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
-        if (logFile3.exists()) {
-            Utils.delete(logFile3);
-        }
-        if (logFile2.exists()) {
-            logFile2.renameTo(logFile3);
-        }
-        if (logFile1.exists()) {
-            logFile1.renameTo(logFile2);
-        }
-        try {
-            logFile1.createNewFile();
-        } catch (IOException e) {
-            String[] options = {"OK"};
-            JOptionPane.showOptionDialog(null, "<html><p align=\"center\">Cannot create the log file.<br/><br/>Make " +
-                            "sure" + " you are running the Launcher from somewhere with<br/>write" + " permissions " +
-                            "for your " +
-                            "user account such as your Home/Users folder" + " or desktop.</p></html>", "Warning",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-            System.exit(0);
-        }
     }
 
     /**
