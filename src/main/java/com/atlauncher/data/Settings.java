@@ -746,19 +746,19 @@ public class Settings {
                 .GUAVA_MD5, null, false);
 
         if (authLibDownload.needToDownload()) {
-            LogManager.info("Downloading AuthLib");
+            LogManager.info("Downloading " + authLibFile.getName());
             authLibDownload.download(false);
         }
         if (log4jApiDownload.needToDownload()) {
-            LogManager.info("Downloading Log4J API");
+            LogManager.info("Downloading " + log4jApiFile.getName());
             log4jApiDownload.download(false);
         }
         if (log4jCoreDownload.needToDownload()) {
-            LogManager.info("Downloading Log4J Core");
+            LogManager.info("Downloading " + log4jCoreFile.getName());
             log4jCoreDownload.download(false);
         }
         if (guavaDownload.needToDownload()) {
-            LogManager.info("Downloading Guava");
+            LogManager.info("Downloading " + guavaFile.getName());
             guavaDownload.download(false);
         }
 
