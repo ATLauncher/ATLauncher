@@ -24,6 +24,7 @@ import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
+import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
@@ -159,9 +160,9 @@ public class Settings {
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
-            commonConfigsDir, resourcesDir, librariesDir, languagesDir, downloadsDir, usersDownloadsFolder,
-            instancesDir, serversDir, tempDir, failedDownloadsDir, instancesDataFile, checkingServersFile,
-            userDataFile, propertiesFile, logsDir;
+            commonConfigsDir, resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir,
+            usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir, instancesDataFile,
+            checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -214,6 +215,7 @@ public class Settings {
         commonConfigsDir = new File(configsDir, "Common");
         resourcesDir = new File(configsDir, "Resources");
         librariesDir = new File(configsDir, "Libraries");
+        launcherLibrariesdir = new File(librariesDir, "Launcher");
         languagesDir = new File(configsDir, "Languages");
         downloadsDir = new File(baseDir, "Downloads");
         instancesDir = new File(baseDir, "Instances");
@@ -235,6 +237,8 @@ public class Settings {
         }
 
         checkForLauncherUpdate();
+
+        checkForAuthLib();
 
         loadNews(); // Load the news
 
@@ -708,8 +712,7 @@ public class Settings {
                 String[] options = {"Ok"};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
                                 "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
-                                "page" +
-                                ".<br/><br/>Download " + "the update and replace the old ATLauncher file" +
+                                "page.<br/><br/>Download " + "the update and replace the old ATLauncher file" +
                                 ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane
                         .ERROR_MESSAGE, null, options, options[0]);
                 if (ret == 0) {
@@ -721,13 +724,71 @@ public class Settings {
         LogManager.debug("Finished checking for launcher update");
     }
 
+    private void checkForAuthLib() {
+        LogManager.debug("Checking for authlib");
+
+        File authLibFile = new File(launcherLibrariesdir, "authlib-" + Constants.AUTHLIB_VERSION + ".jar");
+        File log4jApiFile = new File(launcherLibrariesdir, "log4j-api-" + Constants.LOG4J_API_VERSION + ".jar");
+        File log4jCoreFile = new File(launcherLibrariesdir, "log4j-core-" + Constants.LOG4J_CORE_VERSION + ".jar");
+        File guavaFile = new File(launcherLibrariesdir, "guava-" + Constants.GUAVA_VERSION + ".jar");
+
+        Downloadable authLibDownload = new Downloadable(MojangConstants.LIBRARIES_BASE.getURL("com/mojang/authlib/" +
+                Constants.AUTHLIB_VERSION + "/authlib-" + Constants.AUTHLIB_VERSION + ".jar"), authLibFile, Constants
+                .AUTHLIB_MD5, null, false);
+        Downloadable log4jApiDownload = new Downloadable(MojangConstants.LIBRARIES_BASE.getURL
+                ("org/apache/logging/log4j/log4j-api/" + Constants.LOG4J_API_VERSION + "/log4j-api-" + Constants
+                        .LOG4J_API_VERSION + ".jar"), log4jApiFile, Constants .LOG4J_API_MD5, null, false);
+        Downloadable log4jCoreDownload = new Downloadable(MojangConstants.LIBRARIES_BASE.getURL
+                ("org/apache/logging/log4j/log4j-core/" + Constants.LOG4J_CORE_VERSION + "/log4j-core-" + Constants
+                        .LOG4J_CORE_VERSION + ".jar"), log4jCoreFile, Constants.LOG4J_CORE_MD5, null, false);
+        Downloadable guavaDownload = new Downloadable(MojangConstants.LIBRARIES_BASE.getURL("com/google/guava/guava/" +
+                Constants.GUAVA_VERSION + "/guava-" + Constants.GUAVA_VERSION + ".jar"), guavaFile, Constants
+                .GUAVA_MD5, null, false);
+
+        if (authLibDownload.needToDownload()) {
+            LogManager.info("Downloading AuthLib");
+            authLibDownload.download(false);
+        }
+        if (log4jApiDownload.needToDownload()) {
+            LogManager.info("Downloading Log4J API");
+            log4jApiDownload.download(false);
+        }
+        if (log4jCoreDownload.needToDownload()) {
+            LogManager.info("Downloading Log4J Core");
+            log4jCoreDownload.download(false);
+        }
+        if (guavaDownload.needToDownload()) {
+            LogManager.info("Downloading Guava");
+            guavaDownload.download(false);
+        }
+
+        if (!Utils.addToClasspath(authLibFile)) {
+            LogManager.error("Couldn't add " + authLibFile.getName() + " to the classpath!");
+        }
+        if (!Utils.addToClasspath(log4jApiFile)) {
+            LogManager.error("Couldn't add " + log4jApiFile.getName() + " to the classpath!");
+        }
+        if (!Utils.addToClasspath(log4jCoreFile)) {
+            LogManager.error("Couldn't add " + log4jCoreFile.getName() + " to the classpath!");
+        }
+        if (!Utils.addToClasspath(guavaFile)) {
+            LogManager.error("Couldn't add " + guavaFile.getName() + " to the classpath!");
+        }
+
+        if (!Utils.checkAuthLibLoaded()) {
+            LogManager.error("AuthLib was not loaded into the classpath!");
+        }
+
+        LogManager.debug("Finished checking for authlib");
+    }
+
     /**
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
         File[] files = {backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
-                resourcesDir, librariesDir, languagesDir, downloadsDir, instancesDir, serversDir, tempDir,
-                failedDownloadsDir, logsDir};
+                resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir, instancesDir,
+                serversDir, tempDir, failedDownloadsDir, logsDir};
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -859,6 +920,15 @@ public class Settings {
      */
     public File getLibrariesDir() {
         return this.librariesDir;
+    }
+
+    /**
+     * Returns the launchers libraries directory
+     *
+     * @return File object for the libraries directory
+     */
+    public File getLauncherLibrariesDir() {
+        return this.launcherLibrariesdir;
     }
 
     /**

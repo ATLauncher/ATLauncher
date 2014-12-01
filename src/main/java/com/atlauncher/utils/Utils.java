@@ -73,6 +73,7 @@ import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
@@ -2030,5 +2031,57 @@ public class Utils {
         }
 
         return getMD5(returnStr);
+    }
+
+    /**
+     * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
+     */
+    public static boolean addToClasspath (File file) {
+        try {
+            if (file.exists()) {
+                addURL(file.toURI().toURL());
+            } else {
+                LogManager.error("Error loading AuthLib");
+            }
+        } catch (Throwable t) {
+            if(t.getMessage() != null) {
+                LogManager.error(t.getMessage());
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean checkAuthLibLoaded() {
+        try {
+            App.settings.getClass().forName("com.mojang.authlib.exceptions.AuthenticationException");
+            App.settings.getClass().forName("com.mojang.authlib.Agent");
+            App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
+            App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
+        } catch (ClassNotFoundException e) {
+            App.settings.logStackTrace(e);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
+     */
+    public static void addURL (URL u) throws IOException {
+        URLClassLoader sysloader = (URLClassLoader) App.settings.getClass().getClassLoader();
+        Class sysclass = URLClassLoader.class;
+        try {
+            Method method = sysclass.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            method.invoke(sysloader, u);
+        } catch (Throwable t) {
+            if(t.getMessage() != null) {
+                LogManager.error(t.getMessage());
+            }
+            throw new IOException("Error, could not add URL to system classloader");
+        }
     }
 }
