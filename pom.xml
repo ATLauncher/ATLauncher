@@ -64,7 +64,7 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.mojang.authlib</groupId>
+			<groupId>com.mojang</groupId>
 			<artifactId>authlib</artifactId>
 			<version>1.5.17</version>
 			<scope>provided</scope>
