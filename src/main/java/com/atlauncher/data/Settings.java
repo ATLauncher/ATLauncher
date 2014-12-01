@@ -238,7 +238,11 @@ public class Settings {
 
         checkForLauncherUpdate();
 
-        checkForAuthLib();
+        downloadExternalLibraries();
+
+        if (!Utils.checkAuthLibLoaded()) {
+            LogManager.error("AuthLib was not loaded into the classpath!");
+        }
 
         loadNews(); // Load the news
 
@@ -724,8 +728,8 @@ public class Settings {
         LogManager.debug("Finished checking for launcher update");
     }
 
-    private void checkForAuthLib() {
-        LogManager.debug("Checking for authlib");
+    private void downloadExternalLibraries() {
+        LogManager.debug("Checking external libraries");
 
         File authLibFile = new File(launcherLibrariesdir, "authlib-" + Constants.AUTHLIB_VERSION + ".jar");
         File log4jApiFile = new File(launcherLibrariesdir, "log4j-api-" + Constants.LOG4J_API_VERSION + ".jar");
@@ -775,11 +779,7 @@ public class Settings {
             LogManager.error("Couldn't add " + guavaFile.getName() + " to the classpath!");
         }
 
-        if (!Utils.checkAuthLibLoaded()) {
-            LogManager.error("AuthLib was not loaded into the classpath!");
-        }
-
-        LogManager.debug("Finished checking for authlib");
+        LogManager.debug("Finished external libraries");
     }
 
     /**
