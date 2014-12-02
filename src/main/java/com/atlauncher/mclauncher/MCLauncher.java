@@ -23,8 +23,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
-import com.atlauncher.data.mojang.auth.AuthenticationResponse;
-import com.atlauncher.data.mojang.auth.UserType;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.mojang.util.UUIDTypeAdapter;

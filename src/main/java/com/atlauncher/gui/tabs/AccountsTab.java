@@ -23,7 +23,7 @@ import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.utils.AuthenticationNew;
+import com.atlauncher.utils.Authentication;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -293,7 +293,7 @@ public class AccountsTab extends JPanel implements Tab {
                     + usernameField.getText());
             dialog.addThread(new Thread() {
                 public void run() {
-                    LoginResponse resp = AuthenticationNew.checkAccount(usernameField.getText(), new String
+                    LoginResponse resp = Authentication.checkAccount(usernameField.getText(), new String
                             (passwordField.getPassword()));
                     dialog.setReturnValue(resp);
                     dialog.close();

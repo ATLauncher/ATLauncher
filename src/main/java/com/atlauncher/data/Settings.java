@@ -26,7 +26,6 @@ import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
-import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
@@ -35,7 +34,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
-import com.atlauncher.utils.AuthenticationNew;
+import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
@@ -483,7 +482,7 @@ public class Settings {
         LogManager.info("Checking account UUID's!");
         for (Account account : this.accounts) {
             if (account.getUUID() == null) {
-                account.setUUID(AuthenticationNew.getUUID(account.getMinecraftUsername()));
+                account.setUUID(Authentication.getUUID(account.getMinecraftUsername()));
                 this.saveAccounts();
             }
         }

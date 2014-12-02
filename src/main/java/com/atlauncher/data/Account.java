@@ -22,11 +22,10 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
 import com.atlauncher.data.mojang.api.ProfileTexture;
-import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
-import com.atlauncher.utils.AuthenticationNew;
+import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Utils;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import com.mojang.util.UUIDTypeAdapter;
@@ -583,45 +582,12 @@ public class Account implements Serializable {
         App.settings.saveAccounts();
     }
 
-    public boolean isAccessTokenValid() {
-        LogManager.info("Checking Access Token!");
-        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.checkingtoken"), 0,
-                Language.INSTANCE.localize("account.checkingtoken"), "Aborting access token check for " + this
-                .getMinecraftUsername());
-        dialog.addThread(new Thread() {
-            public void run() {
-                dialog.setReturnValue(AuthenticationNew.checkAccessToken(accessToken));
-                dialog.close();
-            }
-        });
-        dialog.start();
-        if ((Boolean) dialog.getReturnValue() == null) {
-            return false;
-        }
-        return (Boolean) dialog.getReturnValue();
-    }
-
-    public LoginResponse refreshToken() {
-        LogManager.info("Refreshing Access Token!");
-        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.refreshingtoken"), 0,
-                Language.INSTANCE.localize("account.refreshingtoken"), "Aborting token refresh for " + this
-                .getMinecraftUsername());
-        dialog.addThread(new Thread() {
-            public void run() {
-                dialog.setReturnValue(AuthenticationNew.refreshAccessToken(Account.this));
-                dialog.close();
-            }
-        });
-        dialog.start();
-        return AuthenticationNew.login(this);
-    }
-
     public LoginResponse login() {
         LoginResponse response = null;
 
         if (this.hasAccessToken() && this.hasStore()) {
             LogManager.info("Trying to login with access token!");
-            response = AuthenticationNew.login(this);
+            response = Authentication.login(this);
         }
 
         if (response == null || response.hasError()) {
@@ -651,7 +617,7 @@ public class Account implements Serializable {
                 }
             }
 
-            response = AuthenticationNew.login(Account.this, true);
+            response = Authentication.login(Account.this, true);
         }
 
         if (response.hasError() && !response.isOffline()) {
