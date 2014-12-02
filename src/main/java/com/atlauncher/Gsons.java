@@ -22,10 +22,8 @@ import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
-import com.atlauncher.data.mojang.PropertyMapSerializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.authlib.properties.PropertyMap;
 
 import java.awt.Color;
 import java.io.File;
