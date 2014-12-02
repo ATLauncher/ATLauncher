@@ -559,7 +559,7 @@ public class Account implements Serializable {
                 return response.getAuth().getAuthenticatedToken();
             }
         }
-        return "-";
+        return "token:0:0";
     }
 
     public boolean hasStore() {

@@ -1113,9 +1113,6 @@ public class Instance implements Cloneable {
                                 if (account.hasAccessToken()) {
                                     line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
                                 }
-                                if (account.hasClientToken()) {
-                                    line = line.replace(account.getClientToken(), "**CLIENTTOKEN**");
-                                }
                                 if (account.hasUUID()) {
                                     line = line.replace(account.getUUID(), "**UUID**");
                                 }
