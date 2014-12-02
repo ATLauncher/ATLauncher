@@ -18,7 +18,6 @@
 package com.atlauncher.mclauncher;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
@@ -34,9 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class MCLauncher {
