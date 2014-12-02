@@ -760,6 +760,7 @@ public class Settings {
             File file = library.getFile();
 
             if(download.needToDownload()) {
+                LogManager.info("Downloading library " + file.getName() + "!");
                 download.download(false);
             }
 
@@ -2951,6 +2952,30 @@ public class Settings {
                         "disabled!");
                 this.enableProxy = false;
                 return null;
+            }
+            this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
+        }
+        return this.proxy;
+    }
+
+    public Proxy getProxyForAuth() {
+        if (!this.enableProxy) {
+            return Proxy.NO_PROXY;
+        }
+        if (this.proxy == null) {
+            Type type;
+            if (this.proxyType.equals("HTTP")) {
+                type = Proxy.Type.HTTP;
+            } else if (this.proxyType.equals("SOCKS")) {
+                type = Proxy.Type.SOCKS;
+            } else if (this.proxyType.equals("DIRECT")) {
+                type = Proxy.Type.DIRECT;
+            } else {
+                // Oh noes, problem!
+                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support " +
+                        "disabled!");
+                this.enableProxy = false;
+                return Proxy.NO_PROXY;
             }
             this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
         }

@@ -21,9 +21,12 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
+import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Authentication;
+import com.atlauncher.utils.AuthenticationNew;
+import com.mojang.authlib.UserAuthentication;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -213,19 +216,18 @@ public class AccountsTab extends JPanel implements Tab {
                             "Aborting login for " + usernameField.getText());
                     dialog.addThread(new Thread() {
                         public void run() {
-                            AuthenticationResponse resp = Authentication.checkAccount(usernameField.getText(),
-                                    new String(passwordField.getPassword()));
+                            LoginResponse resp = AuthenticationNew.checkAccount(usernameField.getText(), new
+                                    String(passwordField.getPassword()));
                             dialog.setReturnValue(resp);
                             dialog.close();
                         }
                     });
                     dialog.start();
-                    AuthenticationResponse response = (AuthenticationResponse) dialog.getReturnValue();
-                    if (response != null && !response.hasError()) {
-
+                    LoginResponse response = (LoginResponse) dialog.getReturnValue();
+                    if (response != null && response.hasAuth() && response.isValidAuth()) {
                         if (accountsComboBox.getSelectedIndex() == 0) {
-                            account = new Account(username, password, response.getSelectedProfile().getName(),
-                                    response.getSelectedProfile().getId(), remember);
+                            account = new Account(username, password, response.getAuth().getSelectedProfile().getName(),
+                                    response.getAuth().getSelectedProfile().getId().toString(), remember);
                             App.settings.addAccount(account);
                             LogManager.info("Added Account " + account);
                             String[] options = {Language.INSTANCE.localize("common.yes"),
@@ -240,8 +242,8 @@ public class AccountsTab extends JPanel implements Tab {
                         } else {
                             account = (Account) accountsComboBox.getSelectedItem();
                             account.setUsername(username);
-                            account.setMinecraftUsername(response.getSelectedProfile().getName());
-                            account.setUUID(response.getSelectedProfile().getId());
+                            account.setMinecraftUsername(response.getAuth().getSelectedProfile().getName());
+                            account.setUUID(response.getAuth().getSelectedProfile().getId().toString());
                             if (remember) {
                                 account.setPassword(password);
                             }
@@ -262,13 +264,13 @@ public class AccountsTab extends JPanel implements Tab {
                         }
                         accountsComboBox.setSelectedItem(account);
                     } else {
-                        LogManager.error((response == null ? "Unknown Error Logging In" : response.getErrorMessage()));
+                        LogManager.error(response.getErrorMessage());
                         String[] options = {Language.INSTANCE.localize("common.ok")};
                         JOptionPane.showOptionDialog(App.settings.getParent(),
                                 "<html><p align=\"center\">" + Language.INSTANCE.localize("account.incorrect") +
-                                        "<br/><br/>" + (response == null ? "Unknown Error" : response.getErrorMessage
-                                        ()) + "</p></html>", Language.INSTANCE.localize("account.notadded"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                        "<br/><br/>" + response.getErrorMessage() + "</p></html>",
+                                Language.INSTANCE.localize("account.notadded"), JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     }
                 }
             }
