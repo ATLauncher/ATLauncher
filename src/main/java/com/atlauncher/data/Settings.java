@@ -754,18 +754,32 @@ public class Settings {
             }
         }
 
-        for(LauncherLibrary library : this.launcherLibraries) {
-            Downloadable download = library.getDownloadable();
-            File file = library.getFile();
+        ExecutorService executor = Executors.newFixedThreadPool(getConcurrentConnections());
 
-            if(download.needToDownload()) {
-                LogManager.info("Downloading library " + file.getName() + "!");
-                download.download(false);
-            }
+        for (final LauncherLibrary library : this.launcherLibraries) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    Downloadable download = library.getDownloadable();
+
+                    if(download.needToDownload()) {
+                        LogManager.info("Downloading library " + library.getFilename() + "!");
+                        download.download(false);
+                    }
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        for (LauncherLibrary library : this.launcherLibraries) {
+            File file = library.getFile();
 
             if (library.shouldAutoLoad() && !Utils.addToClasspath(file)) {
                 LogManager.error("Couldn't add " + file + " to the classpath!");
-                if(library.shouldExitOnFail()) {
+                if (library.shouldExitOnFail()) {
                     LogManager.error("Library is necessary so launcher will exit!");
                     System.exit(1);
                 }
