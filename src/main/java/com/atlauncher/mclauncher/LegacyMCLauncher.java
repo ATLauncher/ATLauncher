@@ -22,6 +22,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.utils.Utils;
 
@@ -47,7 +48,7 @@ import java.util.zip.ZipFile;
 
 public class LegacyMCLauncher {
 
-    public static Process launch(Account account, Instance instance, AuthenticationResponse sess) throws IOException {
+    public static Process launch(Account account, Instance instance, LoginResponse sess) throws IOException {
         String lwjgl = "lwjgl.jar";
         String lwjgl_util = "lwjgl_util.jar";
         String jinput = "jinput.jar";
@@ -192,7 +193,7 @@ public class LegacyMCLauncher {
         // Start or passed in arguments
         arguments.add(instance.getRootDirectory().getAbsolutePath()); // Path
         arguments.add(account.getMinecraftUsername()); // Username
-        arguments.add(sess.getAccessToken()); // Session
+        arguments.add(sess.getAuth().getAuthenticatedToken()); // Session
         arguments.add(instance.getName()); // Instance Name
         arguments.add(App.settings.getWindowWidth() + ""); // Window Width
         arguments.add(App.settings.getWindowHeight() + ""); // Window Height
@@ -206,7 +207,7 @@ public class LegacyMCLauncher {
 
         if (!LogManager.showDebug) {
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
-            argsString = argsString.replace(sess.getAccessToken(), "REDACTED");
+            argsString = argsString.replace(sess.getAuth().getAuthenticatedToken(), "REDACTED");
         }
 
         LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):" +

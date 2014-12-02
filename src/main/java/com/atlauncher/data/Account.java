@@ -27,11 +27,16 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.utils.Authentication;
+import com.atlauncher.utils.AuthenticationNew;
 import com.atlauncher.utils.Utils;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -46,6 +51,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -116,6 +122,11 @@ public class Account implements Serializable {
      * If the skin is currently being updated.
      */
     private boolean skinUpdating = false;
+
+    /**
+     * This is the store for this username as returned by Mojang.
+     */
+    private Map<String, Object> store;
 
     /**
      * Constructor for a real user Account.
@@ -445,8 +456,8 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
@@ -519,39 +530,6 @@ public class Account implements Serializable {
         return this.accessToken != null;
     }
 
-    public boolean isAccessTokenValid() {
-        LogManager.info("Checking Access Token!");
-        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.checkingtoken"), 0,
-                Language.INSTANCE.localize("account.checkingtoken"), "Aborting access token check for " + this
-                .getMinecraftUsername());
-        dialog.addThread(new Thread() {
-            public void run() {
-                dialog.setReturnValue(Authentication.checkAccessToken(accessToken));
-                dialog.close();
-            }
-        });
-        dialog.start();
-        if ((Boolean) dialog.getReturnValue() == null) {
-            return false;
-        }
-        return (Boolean) dialog.getReturnValue();
-    }
-
-    public AuthenticationResponse refreshToken() {
-        LogManager.info("Refreshing Access Token!");
-        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.refreshingtoken"), 0,
-                Language.INSTANCE.localize("account.refreshingtoken"), "Aborting token refresh for " + this
-                .getMinecraftUsername());
-        dialog.addThread(new Thread() {
-            public void run() {
-                dialog.setReturnValue(Authentication.refreshAccessToken(Account.this));
-                dialog.close();
-            }
-        });
-        dialog.start();
-        return (AuthenticationResponse) dialog.getReturnValue();
-    }
-
     public String getClientToken() {
         return (this.clientToken == null ? "0" : this.clientToken);
     }
@@ -571,5 +549,125 @@ public class Account implements Serializable {
 
     public String getSession() {
         return "token:" + this.getAccessToken() + ":" + this.getUUID();
+    }
+
+    public boolean hasStore() {
+        return this.store != null;
+    }
+
+    public Map<String, Object> getStore() {
+        System.out.println(Gsons.DEFAULT.toJson(this.store));
+        return this.store;
+    }
+
+    public void saveStore(Map<String, Object> store) {
+        this.store = store;
+        App.settings.saveAccounts();
+    }
+
+    public boolean isAccessTokenValid() {
+        LogManager.info("Checking Access Token!");
+        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.checkingtoken"), 0,
+                Language.INSTANCE.localize("account.checkingtoken"), "Aborting access token check for " + this
+                .getMinecraftUsername());
+        dialog.addThread(new Thread() {
+            public void run() {
+                dialog.setReturnValue(AuthenticationNew.checkAccessToken(accessToken));
+                dialog.close();
+            }
+        });
+        dialog.start();
+        if ((Boolean) dialog.getReturnValue() == null) {
+            return false;
+        }
+        return (Boolean) dialog.getReturnValue();
+    }
+
+    public LoginResponse refreshToken() {
+        LogManager.info("Refreshing Access Token!");
+        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.refreshingtoken"), 0,
+                Language.INSTANCE.localize("account.refreshingtoken"), "Aborting token refresh for " + this
+                .getMinecraftUsername());
+        dialog.addThread(new Thread() {
+            public void run() {
+                dialog.setReturnValue(AuthenticationNew.refreshAccessToken(Account.this));
+                dialog.close();
+            }
+        });
+        dialog.start();
+        return AuthenticationNew.login(this);
+    }
+
+    public LoginResponse login() {
+        LoginResponse response = null;
+
+        if (this.hasAccessToken() && this.hasStore()) {
+            LogManager.info("Trying to login with access token!");
+            response = AuthenticationNew.login(this);
+        }
+
+        if (response == null || response.hasError()) {
+            if (this.hasAccessToken()) {
+                LogManager.error("Access token checked and is NOT valid! Will attempt to get another one!");
+                this.setAccessToken(null);
+                App.settings.saveAccounts();
+            }
+            String password = this.getPassword();
+            if (!this.isRemembered()) {
+                JPanel panel = new JPanel();
+                panel.setLayout(new BorderLayout());
+                JLabel passwordLabel = new JLabel(Language.INSTANCE.localizeWithReplace("instance.enterpassword",
+                        this.getMinecraftUsername()));
+
+                JPasswordField passwordField = new JPasswordField();
+                panel.add(passwordLabel, BorderLayout.NORTH);
+                panel.add(passwordField, BorderLayout.CENTER);
+                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel, Language.INSTANCE.localize
+                        ("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
+                if (ret == JOptionPane.OK_OPTION) {
+                    password = new String(passwordField.getPassword());
+                } else {
+                    LogManager.error("Aborting login for " + this.getMinecraftUsername());
+                    App.settings.setMinecraftLaunched(false);
+                    return null;
+                }
+            }
+            LogManager.info("Logging into Minecraft!");
+            final String pass = password;
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
+                    Language.INSTANCE.localize("account.loggingin"), "Aborting login for " + this
+                    .getMinecraftUsername());
+            dialog.addThread(new Thread() {
+                public void run() {
+                    dialog.setReturnValue(AuthenticationNew.login(Account.this));
+                    dialog.close();
+                }
+            });
+            dialog.start();
+            response = (LoginResponse) dialog.getReturnValue();
+        }
+
+        if (response.hasError()) {
+            LogManager.error(response.getErrorMessage());
+            String[] options = {Language.INSTANCE.localize("common.ok")};
+            JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language.INSTANCE
+                    .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage()) +
+                    "</p></html>", Language.INSTANCE.localize("instance.errorloggingintitle"), JOptionPane
+                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            App.settings.setMinecraftLaunched(false);
+            return null;
+        }
+
+        if(!response.getAuth().canPlayOnline()) {
+            return null;
+        }
+
+        this.setAccessToken(response.getAuth().getAuthenticatedToken());
+        this.setClientToken(response.getAuth().getAuthenticationService().getClientToken());
+        this.setUUID(response.getAuth().getSelectedProfile().getId().toString());
+        response.save();
+        App.settings.saveAccounts();
+
+        return response;
     }
 }

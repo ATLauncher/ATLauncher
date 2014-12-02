@@ -17,17 +17,23 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
+
+import java.util.Map;
 
 public class LoginResponse {
     private boolean hasError;
     private String errorMessage;
     private YggdrasilUserAuthentication auth;
+    private String username;
 
-    public LoginResponse() {
+    public LoginResponse(String username) {
         this.hasError = false;
         this.auth = null;
+        this.username = username;
     }
 
     public void setErrorMessage(String errorMessage) {
@@ -55,6 +61,10 @@ public class LoginResponse {
         return this.auth;
     }
 
+    public String getUsername() {
+        return this.username;
+    }
+
     public boolean isValidAuth() {
         if (!this.hasAuth()) {
             return false;
@@ -72,5 +82,13 @@ public class LoginResponse {
         }
 
         return !this.hasError;
+    }
+
+    public void save() {
+        Account account = App.settings.getAccountByName(this.username);
+
+        if(account!= null) {
+            account.saveStore(this.auth.saveForStorage());
+        }
     }
 }

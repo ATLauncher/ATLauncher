@@ -2420,7 +2420,7 @@ public class Settings {
      * @param username Username of the Account to find
      * @return Account if the Account is found from the username
      */
-    private Account getAccountByName(String username) {
+    public Account getAccountByName(String username) {
         for (Account account : accounts) {
             if (account.getUsername().equalsIgnoreCase(username)) {
                 return account;
