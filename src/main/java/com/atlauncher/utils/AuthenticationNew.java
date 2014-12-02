@@ -56,11 +56,11 @@ public class AuthenticationNew {
         auth.setUsername(username);
         auth.setPassword(password);
 
-        if(auth.canLogIn()) {
+        if (auth.canLogIn()) {
             try {
                 auth.logIn();
                 response.setAuth(auth);
-            } catch(AuthenticationException e) {
+            } catch (AuthenticationException e) {
                 response.setErrorMessage(e.getMessage());
                 e.printStackTrace();
             }
@@ -184,25 +184,27 @@ public class AuthenticationNew {
                 .settings.getProxyForAuth(), "1").createUserAuthentication(Agent.MINECRAFT);
         LoginResponse response = new LoginResponse(account.getUsername());
 
-        auth.loadFromStorage(account.getStore());
+        if (account.hasStore()) {
+            auth.loadFromStorage(account.getStore());
+        }
 
-        if(logout) {
+        if (logout) {
             auth.logOut();
 
             auth.setUsername(account.getUsername());
             auth.setPassword(account.getPassword());
         }
 
-        if(auth.canLogIn()) {
+        if (auth.canLogIn()) {
             try {
                 auth.logIn();
                 response.setAuth(auth);
                 response.save();
-            } catch(AuthenticationUnavailableException e) {
+            } catch (AuthenticationUnavailableException e) {
                 response.setErrorMessage(e.getMessage());
                 response.setOffline();
                 e.printStackTrace();
-            } catch(AuthenticationException e) {
+            } catch (AuthenticationException e) {
                 response.setErrorMessage(e.getMessage());
                 e.printStackTrace();
             }
