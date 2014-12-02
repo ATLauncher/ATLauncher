@@ -652,18 +652,7 @@ public class Account implements Serializable {
                 }
             }
 
-            LogManager.info("Logging into Minecraft!");
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
-                    Language.INSTANCE.localize("account.loggingin"), "Aborting login for " + this
-                    .getMinecraftUsername());
-            dialog.addThread(new Thread() {
-                public void run() {
-                    dialog.setReturnValue(AuthenticationNew.login(Account.this, true));
-                    dialog.close();
-                }
-            });
-            dialog.start();
-            response = (LoginResponse) dialog.getReturnValue();
+            response = AuthenticationNew.login(Account.this, true);
         }
 
         if (response.hasError() && !response.isOffline()) {

@@ -1063,13 +1063,24 @@ public class Instance implements Cloneable {
                 }
             }
 
-            LoginResponse response = account.login();
 
-            if (response == null) {
+            LogManager.info("Logging into Minecraft!");
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
+                    Language.INSTANCE.localize("account.loggingin"), "Aborted login to Minecraft!");
+            dialog.addThread(new Thread() {
+                public void run() {
+                    dialog.setReturnValue(account.login());
+                    dialog.close();
+                }
+            });
+            dialog.start();
+
+            final LoginResponse session = (LoginResponse) dialog.getReturnValue();
+
+            if(session == null) {
                 return false;
             }
 
-            final LoginResponse session = response;
             Thread launcher = new Thread() {
                 public void run() {
                     try {
