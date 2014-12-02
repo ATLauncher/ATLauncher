@@ -28,10 +28,8 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
-import com.mojang.authlib.exceptions.InvalidCredentialsException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
-import com.mojang.authlib.yggdrasil.response.RefreshResponse;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

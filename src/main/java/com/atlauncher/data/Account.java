@@ -576,7 +576,6 @@ public class Account implements Serializable {
     }
 
     public Map<String, Object> getStore() {
-        System.out.println(Gsons.DEFAULT.toJson(this.store));
         return this.store;
     }
 

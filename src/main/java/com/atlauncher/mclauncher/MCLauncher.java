@@ -195,8 +195,6 @@ public class MCLauncher {
             props = new Gson().toJson(response.getAuth().getUserProperties());
         }
 
-        System.out.println(account.getSession(response));
-
         if (instance.hasMinecraftArguments()) {
             String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
             for (String argument : minecraftArguments) {
