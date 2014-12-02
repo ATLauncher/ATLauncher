@@ -27,6 +27,7 @@ import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.data.mojang.auth.UserType;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
+import com.mojang.util.UUIDTypeAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -194,6 +195,8 @@ public class MCLauncher {
             props = new Gson().toJson(response.getAuth().getUserProperties());
         }
 
+        System.out.println(account.getSession(response));
+
         if (instance.hasMinecraftArguments()) {
             String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
             for (String argument : minecraftArguments) {
@@ -205,11 +208,10 @@ public class MCLauncher {
                 argument = argument.replace("${game_assets}", instance.getAssetsDir().getAbsolutePath());
                 argument = argument.replace("${assets_root}", App.settings.getResourcesDir().getAbsolutePath());
                 argument = argument.replace("${assets_index_name}", instance.getAssets());
-                argument = argument.replace("${auth_uuid}", account.getUUID());
+                argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
                 argument = argument.replace("${auth_access_token}", account.getAccessToken());
                 argument = argument.replace("${auth_session}", account.getSession(response));
-                argument = argument.replace("${user_type}", response.isOffline() ? com.mojang.authlib.UserType
-                        .MOJANG.getName() : response.getAuth().getUserType().getName());
+                argument = argument.replace("${user_type}", response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName() : response.getAuth().getUserType().getName());
                 arguments.add(argument);
             }
         } else {
@@ -218,7 +220,7 @@ public class MCLauncher {
 
             // This is for 1.7
             arguments.add("--accessToken=" + account.getAccessToken());
-            arguments.add("--uuid=" + account.getUUID());
+            arguments.add("--uuid=" + UUIDTypeAdapter.fromUUID(account.getRealUUID()));
             // End of stuff for 1.7
 
             arguments.add("--version=" + instance.getMinecraftVersion());

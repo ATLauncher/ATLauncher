@@ -313,6 +313,15 @@ public class Account implements Serializable {
     }
 
     /**
+     * Gets the real UUID of this account.
+     *
+     * @return The real UUID for this Account
+     */
+    public UUID getRealUUID() {
+        return (this.uuid == null ? UUID.randomUUID() : UUIDTypeAdapter.fromString(this.uuid));
+    }
+
+    /**
      * Sets the uuid for this Account.
      *
      * @param uuid The new UUID for this Account
