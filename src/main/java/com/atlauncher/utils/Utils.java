@@ -2037,6 +2037,7 @@ public class Utils {
      * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
      */
     public static boolean addToClasspath (File file) {
+        LogManager.info("Loading external library " + file.getName() + " to classpath");
         try {
             if (file.exists()) {
                 addURL(file.toURI().toURL());
@@ -2070,7 +2071,7 @@ public class Utils {
     /**
      * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
      */
-    public static void addURL (URL u) throws IOException {
+    public static void addURL(URL u) throws IOException {
         URLClassLoader sysloader = (URLClassLoader) App.settings.getClass().getClassLoader();
         Class sysclass = URLClassLoader.class;
         try {

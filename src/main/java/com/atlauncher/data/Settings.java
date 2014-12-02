@@ -18,9 +18,11 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.adapter.ColorTypeAdapter;
+import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
@@ -158,6 +160,7 @@ public class Settings {
     private List<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
     private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
+    private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
             commonConfigsDir, resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir,
@@ -715,10 +718,10 @@ public class Settings {
             } else {
                 String[] options = {"Ok"};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
-                                "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
-                                "page.<br/><br/>Download " + "the update and replace the old ATLauncher file" +
-                                ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane
-                        .ERROR_MESSAGE, null, options, options[0]);
+                        "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
+                        "page.<br/><br/>Download " + "the update and replace the old ATLauncher file" +
+                        ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                        null, options, options[0]);
                 if (ret == 0) {
                     Utils.openBrowser("http://www.atlauncher.com/downloads/");
                     System.exit(0);
@@ -729,57 +732,47 @@ public class Settings {
     }
 
     private void downloadExternalLibraries() {
-        LogManager.debug("Checking external libraries");
+        LogManager.debug("Downloading external libraries");
 
-        File authLibFile = new File(launcherLibrariesdir, "authlib-" + Constants.AUTHLIB_VERSION + ".jar");
-        File log4jApiFile = new File(launcherLibrariesdir, "log4j-api-" + Constants.LOG4J_API_VERSION + ".jar");
-        File log4jCoreFile = new File(launcherLibrariesdir, "log4j-core-" + Constants.LOG4J_CORE_VERSION + ".jar");
-        File guavaFile = new File(launcherLibrariesdir, "guava-" + Constants.GUAVA_VERSION + ".jar");
+        FileReader fr = null;
 
-        Downloadable authLibDownload = new Downloadable(MojangConstants.LIBRARIES_BASE.getURL("com/mojang/authlib/" +
-                Constants.AUTHLIB_VERSION + "/authlib-" + Constants.AUTHLIB_VERSION + ".jar"), authLibFile, Constants
-                .AUTHLIB_MD5, null, false);
-        Downloadable log4jApiDownload = new Downloadable(MojangConstants.LIBRARIES_BASE.getURL
-                ("org/apache/logging/log4j/log4j-api/" + Constants.LOG4J_API_VERSION + "/log4j-api-" + Constants
-                        .LOG4J_API_VERSION + ".jar"), log4jApiFile, Constants .LOG4J_API_MD5, null, false);
-        Downloadable log4jCoreDownload = new Downloadable(MojangConstants.LIBRARIES_BASE.getURL
-                ("org/apache/logging/log4j/log4j-core/" + Constants.LOG4J_CORE_VERSION + "/log4j-core-" + Constants
-                        .LOG4J_CORE_VERSION + ".jar"), log4jCoreFile, Constants.LOG4J_CORE_MD5, null, false);
-        Downloadable guavaDownload = new Downloadable(MojangConstants.LIBRARIES_BASE.getURL("com/google/guava/guava/" +
-                Constants.GUAVA_VERSION + "/guava-" + Constants.GUAVA_VERSION + ".jar"), guavaFile, Constants
-                .GUAVA_MD5, null, false);
+        try {
+            fr = new FileReader(new File(this.jsonDir, "libraries.json"));
 
-        if (authLibDownload.needToDownload()) {
-            LogManager.info("Downloading " + authLibFile.getName());
-            authLibDownload.download(false);
-        }
-        if (log4jApiDownload.needToDownload()) {
-            LogManager.info("Downloading " + log4jApiFile.getName());
-            log4jApiDownload.download(false);
-        }
-        if (log4jCoreDownload.needToDownload()) {
-            LogManager.info("Downloading " + log4jCoreFile.getName());
-            log4jCoreDownload.download(false);
-        }
-        if (guavaDownload.needToDownload()) {
-            LogManager.info("Downloading " + guavaFile.getName());
-            guavaDownload.download(false);
+            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
+            }.getType();
+
+            this.launcherLibraries = Gsons.DEFAULT.fromJson(fr, type);
+        } catch (Exception e) {
+            logStackTrace(e);
+        } finally {
+            if (fr != null) {
+                try {
+                    fr.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-        if (!Utils.addToClasspath(authLibFile)) {
-            LogManager.error("Couldn't add " + authLibFile.getName() + " to the classpath!");
-        }
-        if (!Utils.addToClasspath(log4jApiFile)) {
-            LogManager.error("Couldn't add " + log4jApiFile.getName() + " to the classpath!");
-        }
-        if (!Utils.addToClasspath(log4jCoreFile)) {
-            LogManager.error("Couldn't add " + log4jCoreFile.getName() + " to the classpath!");
-        }
-        if (!Utils.addToClasspath(guavaFile)) {
-            LogManager.error("Couldn't add " + guavaFile.getName() + " to the classpath!");
+        for(LauncherLibrary library : this.launcherLibraries) {
+            Downloadable download = library.getDownloadable();
+            File file = library.getFile();
+
+            if(download.needToDownload()) {
+                download.download(false);
+            }
+
+            if (library.shouldAutoLoad() && !Utils.addToClasspath(file)) {
+                LogManager.error("Couldn't add " + file + " to the classpath!");
+                if(library.shouldExitOnFail()) {
+                    LogManager.error("Library is necessary so launcher will exit!");
+                    System.exit(1);
+                }
+            }
         }
 
-        LogManager.debug("Finished external libraries");
+        LogManager.debug("Finished downloading external libraries");
     }
 
     /**
