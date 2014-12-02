@@ -14,3 +14,4 @@ Changelog
 - Change themes to use zip files for more control. Existing themes will no longer work
 - New logging system, logs are now stored in baseDir/Logs/ with an option to only keep X days worth (defaults to 7)
 - Enter button now edits/adds an account in the Account tab
+- Add in build versioning for beta testing

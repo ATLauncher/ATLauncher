@@ -25,12 +25,14 @@ public class LauncherVersion {
     private int major;
     private int minor;
     private int revision;
+    private int build = 0;
 
-    public LauncherVersion(int reserved, int major, int minor, int revision) {
+    public LauncherVersion(int reserved, int major, int minor, int revision, int build) {
         this.reserved = reserved;
         this.major = major;
         this.minor = minor;
         this.revision = revision;
+        this.build = build;
     }
 
     public int getReserved() {
@@ -47,6 +49,10 @@ public class LauncherVersion {
 
     public int getRevision() {
         return this.revision;
+    }
+
+    public int getBuild() {
+        return this.build;
     }
 
     public boolean needsUpdate(LauncherVersion toThis) {
@@ -70,7 +76,9 @@ public class LauncherVersion {
                     } else if (this.revision < toThis.getRevision()) {
                         return true;
                     } else {
-                        return false; // Same version so doesn't need to update
+                        return (toThis.getBuild() == 0 ? this.build != 0 : this.build < toThis.getBuild()); // Only
+                        // update if the build is lower unless the version to update to is a 0 build which means it's
+                        // official and should be updated to
                     }
                 }
             }
@@ -79,6 +87,11 @@ public class LauncherVersion {
 
     @Override
     public String toString() {
-        return String.format("%d.%d.%d.%d", this.reserved, this.major, this.minor, this.revision);
+        if (this.build == 0) {
+            return String.format("%d.%d.%d.%d", this.reserved, this.major, this.minor, this.revision);
+        } else {
+            return String.format("%d.%d.%d.%d Beta %d", this.reserved, this.major, this.minor, this.revision, this
+                    .build);
+        }
     }
 }

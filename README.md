@@ -59,7 +59,7 @@ To get started with the code and plug in your own data, you need to create a src
 
     public class Constants {
 
-    public static final LauncherVersion VERSION = new LauncherVersion(1, 0, 0, 0);
+    public static final LauncherVersion VERSION = new LauncherVersion(1, 0, 0, 0, 1);
     public static final String API_BASE_URL = "";
     public static final String PASTE_CHECK_URL = "";
     public static final String PASTE_API_URL = "";
@@ -92,15 +92,17 @@ To make the data the Launcher needs you will need to figure out your own server 
 
 Starting with version 3.2.1.0 a new versioning system was put into place. It works off the following:
 
-Reserved.Major.Minor.Revision
+Reserved.Major.Minor.Revision.Build
 
-So for 3.2.1.0 the major number is 2 and minor number is 1 and revision number is 0. Reserved is used as a base, only incremented on complete rewrites.
+So for 3.2.1.0.0 the major number is 2 and minor number is 1 and revision number is 0. Reserved is used as a base, only incremented on complete rewrites. The build number is optional and should be 0 on releases.
 
 Major should be incremented when large changes/features are made.
 
 Minor should be incremented when small changes/features are made.
 
 Revision should be incremented when there are no new features and only contains bug fixes for the previous minor.
+
+Build is used for beta releases allowing you to have higher version numbers but force users to update when the real release comes.
 
 ### Need Help/Have Questions?
 
