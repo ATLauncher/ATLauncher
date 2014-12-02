@@ -202,13 +202,13 @@ public class MCLauncher {
                 argument = argument.replace("${assets_index_name}", instance.getAssets());
                 argument = argument.replace("${auth_uuid}", account.getUUID());
                 argument = argument.replace("${auth_access_token}", account.getAccessToken());
-                argument = argument.replace("${auth_session}", account.getSession());
+                argument = argument.replace("${auth_session}", account.getSession(response));
                 argument = argument.replace("${user_type}", response.getAuth().getUserType().getName());
                 arguments.add(argument);
             }
         } else {
             arguments.add("--username=" + account.getMinecraftUsername());
-            arguments.add("--session=" + account.getSession());
+            arguments.add("--session=" + account.getSession(response));
 
             // This is for 1.7
             arguments.add("--accessToken=" + account.getAccessToken());
@@ -241,7 +241,7 @@ public class MCLauncher {
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
             argsString = argsString.replace(account.getUUID(), "REDACTED");
             argsString = argsString.replace(account.getAccessToken(), "REDACTED");
-            argsString = argsString.replace(account.getSession(), "REDACTED");
+            argsString = argsString.replace(account.getSession(response), "REDACTED");
             argsString = argsString.replace(props, "REDACTED");
         }
 

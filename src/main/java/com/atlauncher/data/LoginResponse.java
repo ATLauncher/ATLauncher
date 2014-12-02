@@ -18,11 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
-import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
-
-import java.util.Map;
 
 public class LoginResponse {
     private boolean hasError;
@@ -87,7 +83,7 @@ public class LoginResponse {
     public void save() {
         Account account = App.settings.getAccountByName(this.username);
 
-        if(account!= null) {
+        if (account != null) {
             account.saveStore(this.auth.saveForStorage());
         }
     }

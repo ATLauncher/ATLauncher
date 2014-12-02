@@ -334,7 +334,6 @@ public class AccountsTab extends JPanel implements Tab {
                             ("account.editeddone"), Language.INSTANCE.localize("account.edited"), JOptionPane
                             .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 }
-                account.setClientToken(response.getAuth().getAuthenticationService().getClientToken());
                 response.save();
                 App.settings.reloadAccounts();
                 accountsComboBox.removeAllItems();

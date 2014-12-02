@@ -43,7 +43,7 @@ import java.util.UUID;
 
 public class AuthenticationNew {
     public static LoginResponse checkAccount(String username, String password) {
-        return checkAccount(username, password, "42");
+        return checkAccount(username, password, "1");
     }
 
     public static LoginResponse checkAccount(String username, String password, String clientToken) {
@@ -176,7 +176,7 @@ public class AuthenticationNew {
 
     public static LoginResponse login(Account account) {
         YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(App
-                .settings.getProxyForAuth(), account.getClientToken()).createUserAuthentication(Agent.MINECRAFT);
+                .settings.getProxyForAuth(), "1").createUserAuthentication(Agent.MINECRAFT);
         LoginResponse response = new LoginResponse(account.getUsername());
 
         auth.loadFromStorage(account.getStore());

@@ -29,6 +29,8 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.AuthenticationNew;
 import com.atlauncher.utils.Utils;
+import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
+import com.mojang.util.UUIDTypeAdapter;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -456,8 +458,8 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                                ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
-                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
@@ -547,8 +549,16 @@ public class Account implements Serializable {
         return this.minecraftUsername;
     }
 
-    public String getSession() {
-        return "token:" + this.getAccessToken() + ":" + this.getUUID();
+    public String getSession(LoginResponse response) {
+        if (response != null && response.getAuth().isLoggedIn() && response.getAuth().canPlayOnline()) {
+            if (response.getAuth() instanceof YggdrasilUserAuthentication) {
+                return String.format("token:%s:%s", response.getAuth().getAuthenticatedToken(), UUIDTypeAdapter
+                        .fromUUID(response.getAuth().getSelectedProfile().getId()));
+            } else {
+                return response.getAuth().getAuthenticatedToken();
+            }
+        }
+        return "-";
     }
 
     public boolean hasStore() {
@@ -658,7 +668,7 @@ public class Account implements Serializable {
             return null;
         }
 
-        if(!response.getAuth().canPlayOnline()) {
+        if (!response.getAuth().canPlayOnline()) {
             return null;
         }
 
