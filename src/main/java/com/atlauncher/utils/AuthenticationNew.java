@@ -175,11 +175,22 @@ public class AuthenticationNew {
     }
 
     public static LoginResponse login(Account account) {
+        return login(account, false);
+    }
+
+    public static LoginResponse login(Account account, boolean logout) {
         YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(App
                 .settings.getProxyForAuth(), "1").createUserAuthentication(Agent.MINECRAFT);
         LoginResponse response = new LoginResponse(account.getUsername());
 
         auth.loadFromStorage(account.getStore());
+
+        if(logout) {
+            auth.logOut();
+
+            auth.setUsername(account.getUsername());
+            auth.setPassword(account.getPassword());
+        }
 
         if(auth.canLogIn()) {
             try {

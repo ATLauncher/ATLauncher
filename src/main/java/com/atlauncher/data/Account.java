@@ -622,7 +622,7 @@ public class Account implements Serializable {
                 this.setAccessToken(null);
                 App.settings.saveAccounts();
             }
-            String password = this.getPassword();
+
             if (!this.isRemembered()) {
                 JPanel panel = new JPanel();
                 panel.setLayout(new BorderLayout());
@@ -635,21 +635,21 @@ public class Account implements Serializable {
                 int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel, Language.INSTANCE.localize
                         ("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
                 if (ret == JOptionPane.OK_OPTION) {
-                    password = new String(passwordField.getPassword());
+                    this.setPassword(new String(passwordField.getPassword()));
                 } else {
                     LogManager.error("Aborting login for " + this.getMinecraftUsername());
                     App.settings.setMinecraftLaunched(false);
                     return null;
                 }
             }
+
             LogManager.info("Logging into Minecraft!");
-            final String pass = password;
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
                     Language.INSTANCE.localize("account.loggingin"), "Aborting login for " + this
                     .getMinecraftUsername());
             dialog.addThread(new Thread() {
                 public void run() {
-                    dialog.setReturnValue(AuthenticationNew.login(Account.this));
+                    dialog.setReturnValue(AuthenticationNew.login(Account.this, true));
                     dialog.close();
                 }
             });
