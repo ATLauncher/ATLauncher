@@ -33,12 +33,13 @@ import java.util.concurrent.BlockingQueue;
 public final class LoggingThread extends Thread {
     private final LogEventWriter writer;
     private final BlockingQueue<LogEvent> queue;
+    private static final String date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+    public static final String filename = "ATLauncher-Log_" + date + ".log";
 
     public LoggingThread(BlockingQueue<LogEvent> queue) {
         this.queue = queue;
         this.setName("ATL-Logging-Thread");
-        String date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
-        File log = new File(App.settings.getLogsDir(), "ATLauncher-Log_" + date + ".log");
+        File log = new File(App.settings.getLogsDir(), filename);
         if(!log.exists()) {
 	        try {
 	        	log.createNewFile();

@@ -34,6 +34,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
@@ -444,6 +445,31 @@ public class Settings {
         LogManager.debug("Finished clearing out old logs");
     }
 
+    public void clearAllLogs() {
+        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
+        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
+        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
+
+        if (logFile3.exists()) {
+            Utils.delete(logFile3);
+        }
+
+        if (logFile2.exists()) {
+            Utils.delete(logFile2);
+        }
+
+        if (logFile1.exists()) {
+            Utils.delete(logFile1);
+        }
+
+        for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
+            if(file.getName().equals(LoggingThread.filename)) {
+                continue; // Skip current log
+            }
+
+            Utils.delete(file);
+        }
+    }
 
     public void checkResources() {
         LogManager.debug("Checking if using old format of resources");
