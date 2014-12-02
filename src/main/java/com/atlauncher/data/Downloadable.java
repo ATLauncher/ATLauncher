@@ -31,6 +31,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public class Downloadable {
@@ -46,11 +48,21 @@ public class Downloadable {
     private File copyTo;
     private boolean actuallyCopy;
     private int attempts = 0;
+    private List<Server> servers;
+    private Server server;
 
     public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller, boolean
             isATLauncherDownload, File copyTo, boolean actuallyCopy) {
         if (isATLauncherDownload) {
-            this.url = App.settings.getFileURL(url);
+            this.servers = new ArrayList<Server>(App.settings.getServers());
+            this.server = this.servers.get(0);
+            for(Server server : this.servers) {
+                if(server.getName().equals(App.settings.getServer().getName())) {
+                    this.server = server;
+                    break;
+                }
+            }
+            this.url = this.server.getFileURL(url);
         } else {
             this.url = url;
         }
@@ -223,8 +235,8 @@ public class Downloadable {
                 LogManager.debug("Exception when opening connection to " + this.url, 3);
                 App.settings.logStackTrace(e);
                 if (this.isATLauncherDownload) {
-                    if (App.settings.getNextServer()) {
-                        this.url = App.settings.getFileURL(this.beforeURL);
+                    if (getNextServer()) {
+                        this.url = server.getFileURL(this.beforeURL);
                         this.connection = null;
                         return getConnection();
                     } else {
@@ -391,11 +403,11 @@ public class Downloadable {
             }
             if (!done) {
                 if (this.isATLauncherDownload) {
-                    if (App.settings.getNextServer()) {
+                    if (getNextServer()) {
                         LogManager.warn("Error downloading " + this.file.getName() + " from " + this.url + ". " +
                                 "Expected hash of " + getHash() + " but got " + fileHash + " instead. Trying another " +
                                 "server!");
-                        this.url = App.settings.getFileURL(this.beforeURL);
+                        this.url = server.getFileURL(this.beforeURL);
                         if (downloadAsLibrary) {
                             this.instanceInstaller.addTotalDownloadedBytes(this.size);
                         }
@@ -447,6 +459,18 @@ public class Downloadable {
         if (this.connection != null) {
             this.connection.disconnect();
         }
+    }
+
+    public boolean getNextServer() {
+        for (Server server : this.servers) {
+            if (this.server != server) {
+                LogManager.warn("Server " + this.server.getName() + " Not Available! Switching To " + server.getName());
+                this.servers.remove(this.server);
+                this.server = server; // Setup next available server
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getResponseCode() {
