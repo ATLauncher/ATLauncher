@@ -18,24 +18,32 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.mojang.api.ProfileResponse;
 import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.data.mojang.auth.RefreshRequest;
 import com.atlauncher.data.mojang.auth.ValidateRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.authlib.Agent;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import com.mojang.authlib.yggdrasil.YggdrasilGameProfileRepository;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
+import com.mojang.authlib.yggdrasil.response.ProfileSearchResultsResponse;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.UUID;
@@ -209,5 +217,14 @@ public class AuthenticationNew {
         }
 
         return response;
+    }
+
+    public static String getUUID(String username) {
+        Downloadable downloadable = new Downloadable("https://api.mojang.com/users/profiles/minecraft/" + username,
+                false);
+
+        ProfileResponse profile = Gsons.DEFAULT.fromJson(downloadable.getContents(), ProfileResponse.class);
+
+        return profile.getId();
     }
 }

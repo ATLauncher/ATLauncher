@@ -22,11 +22,8 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.LoginResponse;
-import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.AuthenticationNew;
-import com.mojang.authlib.UserAuthentication;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;

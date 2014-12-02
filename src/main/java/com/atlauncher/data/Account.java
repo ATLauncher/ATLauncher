@@ -26,7 +26,6 @@ import com.atlauncher.data.mojang.auth.AuthenticationResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
-import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.AuthenticationNew;
 import com.atlauncher.utils.Utils;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
@@ -627,7 +626,7 @@ public class Account implements Serializable {
 
         if (response == null || response.hasError()) {
             if (this.hasAccessToken()) {
-                LogManager.error("Access token checked and is NOT valid! Will attempt to get another one!");
+                LogManager.error("Access token is NOT valid! Will attempt to get another one!");
                 this.setAccessToken(null);
                 App.settings.saveAccounts();
             }

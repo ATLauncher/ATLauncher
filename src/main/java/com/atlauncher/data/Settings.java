@@ -35,7 +35,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
-import com.atlauncher.utils.Authentication;
+import com.atlauncher.utils.AuthenticationNew;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
@@ -483,7 +483,7 @@ public class Settings {
         LogManager.info("Checking account UUID's!");
         for (Account account : this.accounts) {
             if (account.getUUID() == null) {
-                account.setUUID(Authentication.getUUID(account.getMinecraftUsername()));
+                account.setUUID(AuthenticationNew.getUUID(account.getMinecraftUsername()));
                 this.saveAccounts();
             }
         }
