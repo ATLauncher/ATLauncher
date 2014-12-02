@@ -16,3 +16,4 @@ Changelog
 - Add in Log Clearer tool to remove all logs
 - Enter button now edits/adds an account in the Account tab
 - Add in build versioning for beta testing
+- Switch to Mojang's official AuthLib for authentication

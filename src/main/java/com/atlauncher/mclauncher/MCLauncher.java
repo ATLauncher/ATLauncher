@@ -23,8 +23,11 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.mojang.PropertyMapSerializer;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 
 import java.io.File;
@@ -38,8 +41,7 @@ import java.util.List;
 
 public class MCLauncher {
 
-    public static Process launch(Account account, Instance instance, LoginResponse response) throws
-            IOException {
+    public static Process launch(Account account, Instance instance, LoginResponse response) throws IOException {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
 
@@ -189,8 +191,10 @@ public class MCLauncher {
         arguments.add(instance.getMainClass());
 
         String props = "";
-        if(!response.isOffline()) {
-            props = new Gson().toJson(response.getAuth().getUserProperties());
+
+        if (!response.isOffline()) {
+            Gson gson = new GsonBuilder().registerTypeAdapter(PropertyMap.class, new PropertyMapSerializer()).create();
+            props = gson.toJson(response.getAuth().getUserProperties());
         }
 
         if (instance.hasMinecraftArguments()) {
@@ -207,7 +211,8 @@ public class MCLauncher {
                 argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
                 argument = argument.replace("${auth_access_token}", account.getAccessToken());
                 argument = argument.replace("${auth_session}", account.getSession(response));
-                argument = argument.replace("${user_type}", response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName() : response.getAuth().getUserType().getName());
+                argument = argument.replace("${user_type}", response.isOffline() ? com.mojang.authlib.UserType.MOJANG
+                        .getName() : response.getAuth().getUserType().getName());
                 arguments.add(argument);
             }
         } else {
