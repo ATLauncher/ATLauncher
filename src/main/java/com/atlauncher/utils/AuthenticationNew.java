@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.exceptions.AuthenticationException;
+import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.exceptions.InvalidCredentialsException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
@@ -197,6 +198,10 @@ public class AuthenticationNew {
                 auth.logIn();
                 response.setAuth(auth);
                 response.save();
+            } catch(AuthenticationUnavailableException e) {
+                response.setErrorMessage(e.getMessage());
+                response.setOffline();
+                e.printStackTrace();
             } catch(AuthenticationException e) {
                 response.setErrorMessage(e.getMessage());
                 e.printStackTrace();

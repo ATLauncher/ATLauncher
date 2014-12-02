@@ -188,7 +188,12 @@ public class MCLauncher {
         arguments.add("-cp");
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
         arguments.add(instance.getMainClass());
-        String props = new Gson().toJson(response.getAuth().getUserProperties());
+
+        String props = "";
+        if(!response.isOffline()) {
+            props = new Gson().toJson(response.getAuth().getUserProperties());
+        }
+
         if (instance.hasMinecraftArguments()) {
             String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
             for (String argument : minecraftArguments) {
@@ -203,7 +208,8 @@ public class MCLauncher {
                 argument = argument.replace("${auth_uuid}", account.getUUID());
                 argument = argument.replace("${auth_access_token}", account.getAccessToken());
                 argument = argument.replace("${auth_session}", account.getSession(response));
-                argument = argument.replace("${user_type}", response.getAuth().getUserType().getName());
+                argument = argument.replace("${user_type}", response.isOffline() ? com.mojang.authlib.UserType
+                        .MOJANG.getName() : response.getAuth().getUserType().getName());
                 arguments.add(argument);
             }
         } else {

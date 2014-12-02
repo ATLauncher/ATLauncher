@@ -21,15 +21,25 @@ import com.atlauncher.App;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
 public class LoginResponse {
+    private boolean offline;
     private boolean hasError;
     private String errorMessage;
     private YggdrasilUserAuthentication auth;
     private String username;
 
     public LoginResponse(String username) {
+        this.offline = false;
         this.hasError = false;
         this.auth = null;
         this.username = username;
+    }
+
+    public void setOffline() {
+        this.offline = true;
+    }
+
+    public boolean isOffline() {
+        return this.offline;
     }
 
     public void setErrorMessage(String errorMessage) {

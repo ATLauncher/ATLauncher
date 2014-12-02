@@ -458,8 +458,8 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
@@ -550,7 +550,8 @@ public class Account implements Serializable {
     }
 
     public String getSession(LoginResponse response) {
-        if (response != null && response.getAuth().isLoggedIn() && response.getAuth().canPlayOnline()) {
+        if (!response.isOffline() && response != null && response.getAuth().isLoggedIn() && response.getAuth()
+                .canPlayOnline()) {
             if (response.getAuth() instanceof YggdrasilUserAuthentication) {
                 return String.format("token:%s:%s", response.getAuth().getAuthenticatedToken(), UUIDTypeAdapter
                         .fromUUID(response.getAuth().getSelectedProfile().getId()));
@@ -657,7 +658,7 @@ public class Account implements Serializable {
             response = (LoginResponse) dialog.getReturnValue();
         }
 
-        if (response.hasError()) {
+        if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());
             String[] options = {Language.INSTANCE.localize("common.ok")};
             JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language.INSTANCE
@@ -668,15 +669,16 @@ public class Account implements Serializable {
             return null;
         }
 
-        if (!response.getAuth().canPlayOnline()) {
+        if (!response.isOffline() && !response.getAuth().canPlayOnline()) {
             return null;
         }
 
-        this.setAccessToken(response.getAuth().getAuthenticatedToken());
-        this.setClientToken(response.getAuth().getAuthenticationService().getClientToken());
-        this.setUUID(response.getAuth().getSelectedProfile().getId().toString());
-        response.save();
-        App.settings.saveAccounts();
+        if (!response.isOffline()) {
+            this.setAccessToken(response.getAuth().getAuthenticatedToken());
+            this.setUUID(response.getAuth().getSelectedProfile().getId().toString());
+            response.save();
+            App.settings.saveAccounts();
+        }
 
         return response;
     }
