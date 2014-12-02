@@ -13,3 +13,4 @@ Changelog
 - Fix issue with themes with invalid font's causing halts
 - Change themes to use zip files for more control. Existing themes will no longer work
 - New logging system, logs are now stored in baseDir/Logs/ with an option to only keep X days worth (defaults to 7)
+- Enter button now edits/adds an account in the Account tab
