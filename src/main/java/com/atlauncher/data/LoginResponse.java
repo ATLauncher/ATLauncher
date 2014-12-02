@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
 public class LoginResponse {
@@ -55,14 +56,21 @@ public class LoginResponse {
     }
 
     public boolean isValidAuth() {
-        if(!this.hasAuth()) {
+        if (!this.hasAuth()) {
             return false;
         }
 
-        if(!auth.isLoggedIn() || auth.getAuthenticatedToken() == null || auth.getSelectedProfile() == null) {
-            this.setErrorMessage("Error with response received from Mojang!");
+        if (!this.auth.isLoggedIn()) {
+            this.setErrorMessage("Response from Mojang wasn't valid!");
+        } else if (this.auth.getAuthenticatedToken() == null) {
+            this.setErrorMessage("No authentication token returned from Mojang!");
+        } else if (auth.getSelectedProfile() == null && (this.auth.getAvailableProfiles() == null || this.auth
+                .getAvailableProfiles().length == 0)) {
+            this.setErrorMessage("There are no paid copies of Minecraft associated with this account!");
+        } else if (this.auth.getSelectedProfile() == null) {
+            this.setErrorMessage("No profile selected!");
         }
 
-        return this.auth.isLoggedIn() && this.auth.getSelectedProfile() != null;
+        return !this.hasError;
     }
 }
