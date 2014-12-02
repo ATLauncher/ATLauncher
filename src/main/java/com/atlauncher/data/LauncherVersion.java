@@ -90,7 +90,7 @@ public class LauncherVersion {
         if (this.build == 0) {
             return String.format("%d.%d.%d.%d", this.reserved, this.major, this.minor, this.revision);
         } else {
-            return String.format("%d.%d.%d.%d Beta %d", this.reserved, this.major, this.minor, this.revision, this
+            return String.format("%d.%d.%d.%d Build %d", this.reserved, this.major, this.minor, this.revision, this
                     .build);
         }
     }
