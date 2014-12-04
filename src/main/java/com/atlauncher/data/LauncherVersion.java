@@ -94,4 +94,8 @@ public class LauncherVersion {
                     .build);
         }
     }
+
+    public boolean isBeta() {
+        return this.build != 0;
+    }
 }

@@ -574,6 +574,12 @@ public class Settings {
         return Constants.VERSION.needsUpdate(this.latestLauncherVersion);
     }
 
+    public boolean launcherHasBetaUpdate() {
+        Downloadable downloadable = new Downloadable("https://api.atlauncher.com/v1/build/atlauncher/build/", false);
+        APIResponse response = Gsons.DEFAULT.fromJson(downloadable.getContents(), APIResponse.class);
+        return response.getDataAsInt() > Constants.VERSION.getBuild();
+    }
+
     public void downloadUpdate() {
         try {
             File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
@@ -589,6 +595,29 @@ public class Settings {
             File newFile = new File(getTempDir(), saveAs);
             LogManager.info("Downloading Launcher Update");
             Downloadable update = new Downloadable("ATLauncher." + toget, newFile, null, null, true);
+            update.download(false);
+            runUpdate(path, newFile.getAbsolutePath());
+        } catch (IOException e) {
+            this.logStackTrace(e);
+        }
+    }
+
+    public void downloadBetaUpdate() {
+        try {
+            File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            String path = thisFile.getCanonicalPath();
+            path = URLDecoder.decode(path, "UTF-8");
+            String toget;
+            String saveAs = thisFile.getName();
+            if (path.contains(".exe")) {
+                toget = "exe";
+            } else {
+                toget = "jar";
+            }
+            File newFile = new File(getTempDir(), saveAs);
+            LogManager.info("Downloading Launcher Update");
+            Downloadable update = new Downloadable("https://api.atlauncher.com/v1/build/atlauncher/download/" +
+                    toget, newFile, null, null, false);
             update.download(false);
             runUpdate(path, newFile.getAbsolutePath());
         } catch (IOException e) {
@@ -737,7 +766,7 @@ public class Settings {
 
     private void checkForLauncherUpdate() {
         LogManager.debug("Checking for launcher update");
-        if (launcherHasUpdate()) {
+        if (!Constants.VERSION.isBeta() && launcherHasUpdate()) {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
             } else {
@@ -752,6 +781,8 @@ public class Settings {
                     System.exit(0);
                 }
             }
+        } else if (Constants.VERSION.isBeta() && launcherHasBetaUpdate()) {
+            downloadBetaUpdate();
         }
         LogManager.debug("Finished checking for launcher update");
     }
