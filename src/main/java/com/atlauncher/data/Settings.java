@@ -576,8 +576,8 @@ public class Settings {
 
     public boolean launcherHasBetaUpdate() {
         Downloadable downloadable = new Downloadable("https://api.atlauncher.com/v1/build/atlauncher/build/", false);
-        APIResponse response = Gsons.DEFAULT.fromJson(downloadable.getContents(), APIResponse.class);
-        return response.getDataAsInt() > Constants.VERSION.getBuild();
+        APIResponseInt response = Gsons.DEFAULT.fromJson(downloadable.getContents(), APIResponseInt.class);
+        return response.getData() > Constants.VERSION.getBuild();
     }
 
     public void downloadUpdate() {
