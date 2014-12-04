@@ -244,14 +244,13 @@ public class Base64 {
      */
     /* Host platform me be something funny like EBCDIC, so we hardcode these values. */
     private final static byte[] _STANDARD_ALPHABET = {(byte) 'A', (byte) 'B', (byte) 'C', (byte) 'D', (byte) 'E',
-            (byte) 'F', (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K', (byte) 'L', (byte) 'M',
-            (byte) 'N', (byte) 'O', (byte) 'P', (byte) 'Q', (byte) 'R', (byte) 'S', (byte) 'T', (byte) 'U',
-            (byte) 'V', (byte) 'W', (byte) 'X', (byte) 'Y', (byte) 'Z', (byte) 'a', (byte) 'b', (byte) 'c',
-            (byte) 'd', (byte) 'e', (byte) 'f', (byte) 'g', (byte) 'h', (byte) 'i', (byte) 'j', (byte) 'k',
-            (byte) 'l', (byte) 'm', (byte) 'n', (byte) 'o', (byte) 'p', (byte) 'q', (byte) 'r', (byte) 's',
-            (byte) 't', (byte) 'u', (byte) 'v', (byte) 'w', (byte) 'x', (byte) 'y', (byte) 'z', (byte) '0',
-            (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8',
-            (byte) '9', (byte) '+', (byte) '/'};
+            (byte) 'F', (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K', (byte) 'L', (byte) 'M', (byte)
+            'N', (byte) 'O', (byte) 'P', (byte) 'Q', (byte) 'R', (byte) 'S', (byte) 'T', (byte) 'U', (byte) 'V',
+            (byte) 'W', (byte) 'X', (byte) 'Y', (byte) 'Z', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte)
+            'e', (byte) 'f', (byte) 'g', (byte) 'h', (byte) 'i', (byte) 'j', (byte) 'k', (byte) 'l', (byte) 'm',
+            (byte) 'n', (byte) 'o', (byte) 'p', (byte) 'q', (byte) 'r', (byte) 's', (byte) 't', (byte) 'u', (byte)
+            'v', (byte) 'w', (byte) 'x', (byte) 'y', (byte) 'z', (byte) '0', (byte) '1', (byte) '2', (byte) '3',
+            (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) '+', (byte) '/'};
 
     /**
      * Translates a Base64 value to either its 6-bit reconstruction value or a negative number indicating some other
@@ -330,14 +329,13 @@ public class Base64 {
      * bytes become "hyphen" and "underscore" instead of "plus" and "slash."
      */
     private final static byte[] _URL_SAFE_ALPHABET = {(byte) 'A', (byte) 'B', (byte) 'C', (byte) 'D', (byte) 'E',
-            (byte) 'F', (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K', (byte) 'L', (byte) 'M',
-            (byte) 'N', (byte) 'O', (byte) 'P', (byte) 'Q', (byte) 'R', (byte) 'S', (byte) 'T', (byte) 'U',
-            (byte) 'V', (byte) 'W', (byte) 'X', (byte) 'Y', (byte) 'Z', (byte) 'a', (byte) 'b', (byte) 'c',
-            (byte) 'd', (byte) 'e', (byte) 'f', (byte) 'g', (byte) 'h', (byte) 'i', (byte) 'j', (byte) 'k',
-            (byte) 'l', (byte) 'm', (byte) 'n', (byte) 'o', (byte) 'p', (byte) 'q', (byte) 'r', (byte) 's',
-            (byte) 't', (byte) 'u', (byte) 'v', (byte) 'w', (byte) 'x', (byte) 'y', (byte) 'z', (byte) '0',
-            (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8',
-            (byte) '9', (byte) '-', (byte) '_'};
+            (byte) 'F', (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K', (byte) 'L', (byte) 'M', (byte)
+            'N', (byte) 'O', (byte) 'P', (byte) 'Q', (byte) 'R', (byte) 'S', (byte) 'T', (byte) 'U', (byte) 'V',
+            (byte) 'W', (byte) 'X', (byte) 'Y', (byte) 'Z', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte)
+            'e', (byte) 'f', (byte) 'g', (byte) 'h', (byte) 'i', (byte) 'j', (byte) 'k', (byte) 'l', (byte) 'm',
+            (byte) 'n', (byte) 'o', (byte) 'p', (byte) 'q', (byte) 'r', (byte) 's', (byte) 't', (byte) 'u', (byte)
+            'v', (byte) 'w', (byte) 'x', (byte) 'y', (byte) 'z', (byte) '0', (byte) '1', (byte) '2', (byte) '3',
+            (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) '-', (byte) '_'};
 
     /**
      * Used in decoding URL- and Filename-safe dialects of Base64.
@@ -422,14 +420,13 @@ public class Base64 {
      * href="http://www.faqs.org/qa/rfcc-1940.html">http://www.faqs.org/qa/rfcc-1940.html</a>.
      */
     private final static byte[] _ORDERED_ALPHABET = {(byte) '-', (byte) '0', (byte) '1', (byte) '2', (byte) '3',
-            (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'A', (byte) 'B',
-            (byte) 'C', (byte) 'D', (byte) 'E', (byte) 'F', (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J',
-            (byte) 'K', (byte) 'L', (byte) 'M', (byte) 'N', (byte) 'O', (byte) 'P', (byte) 'Q', (byte) 'R',
-            (byte) 'S', (byte) 'T', (byte) 'U', (byte) 'V', (byte) 'W', (byte) 'X', (byte) 'Y', (byte) 'Z',
-            (byte) '_', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f', (byte) 'g',
-            (byte) 'h', (byte) 'i', (byte) 'j', (byte) 'k', (byte) 'l', (byte) 'm', (byte) 'n', (byte) 'o',
-            (byte) 'p', (byte) 'q', (byte) 'r', (byte) 's', (byte) 't', (byte) 'u', (byte) 'v', (byte) 'w',
-            (byte) 'x', (byte) 'y', (byte) 'z'};
+            (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'A', (byte) 'B', (byte)
+            'C', (byte) 'D', (byte) 'E', (byte) 'F', (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K',
+            (byte) 'L', (byte) 'M', (byte) 'N', (byte) 'O', (byte) 'P', (byte) 'Q', (byte) 'R', (byte) 'S', (byte)
+            'T', (byte) 'U', (byte) 'V', (byte) 'W', (byte) 'X', (byte) 'Y', (byte) 'Z', (byte) '_', (byte) 'a',
+            (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f', (byte) 'g', (byte) 'h', (byte) 'i', (byte)
+            'j', (byte) 'k', (byte) 'l', (byte) 'm', (byte) 'n', (byte) 'o', (byte) 'p', (byte) 'q', (byte) 'r',
+            (byte) 's', (byte) 't', (byte) 'u', (byte) 'v', (byte) 'w', (byte) 'x', (byte) 'y', (byte) 'z'};
 
     /**
      * Used in decoding the "ordered" dialect of Base64.
@@ -581,8 +578,8 @@ public class Base64 {
      * @return the <var>destination</var> array
      * @since 1.3
      */
-    private static byte[] encode3to4(byte[] source, int srcOffset, int numSigBytes, byte[] destination,
-                                     int destOffset, int options) {
+    private static byte[] encode3to4(byte[] source, int srcOffset, int numSigBytes, byte[] destination, int
+            destOffset, int options) {
 
         byte[] ALPHABET = getAlphabet(options);
 
@@ -939,8 +936,8 @@ public class Base64 {
         } // end if: len < 0
 
         if (off + len > source.length) {
-            throw new IllegalArgumentException(String.format("Cannot have offset of %d and length of %d with array of" +
-                    " length %d", off, len, source.length));
+            throw new IllegalArgumentException(String.format("Cannot have offset of %d and length of %d with array " +
+                    "of" + " length %d", off, len, source.length));
         } // end if: off < 0
 
         // Compress?
@@ -1069,12 +1066,12 @@ public class Base64 {
             throw new NullPointerException("Destination array was null.");
         } // end if
         if (srcOffset < 0 || srcOffset + 3 >= source.length) {
-            throw new IllegalArgumentException(String.format("Source array with length %d cannot have offset of %d " +
-                    "and still process four bytes.", source.length, srcOffset));
+            throw new IllegalArgumentException(String.format("Source array with length %d cannot have offset of %d "
+                    + "and still process four bytes.", source.length, srcOffset));
         } // end if
         if (destOffset < 0 || destOffset + 2 >= destination.length) {
             throw new IllegalArgumentException(String.format("Destination array with length %d cannot have offset of " +
-                    "%d and still store three bytes.", destination.length, destOffset));
+                    "" + "%d and still store three bytes.", destination.length, destOffset));
         } // end if
 
         byte[] DECODABET = getDecodabet(options);
@@ -1166,8 +1163,8 @@ public class Base64 {
             throw new NullPointerException("Cannot decode null source array.");
         } // end if
         if (off < 0 || off + len > source.length) {
-            throw new IllegalArgumentException(String.format("Source array with length %d cannot have offset of %d " +
-                    "and process %d bytes.", source.length, off, len));
+            throw new IllegalArgumentException(String.format("Source array with length %d cannot have offset of %d "
+                    + "and process %d bytes.", source.length, off, len));
         } // end if
 
         if (len == 0) {
@@ -1212,7 +1209,7 @@ public class Base64 {
             else {
                 // There's a bad input character in the Base64 stream.
                 throw new java.io.IOException(String.format("Bad Base64 input character decimal %d in array position " +
-                        "%d", ((int) source[i]) & 0xFF, i));
+                        "" + "%d", ((int) source[i]) & 0xFF, i));
             } // end else:
         } // each input character
 
@@ -1323,8 +1320,8 @@ public class Base64 {
      * @throws ClassNotFoundException if the decoded object is of a class that cannot be found by the JVM
      * @since 1.5
      */
-    public static Object decodeToObject(String encodedObject) throws java.io.IOException,
-            java.lang.ClassNotFoundException {
+    public static Object decodeToObject(String encodedObject) throws java.io.IOException, java.lang
+            .ClassNotFoundException {
         return decodeToObject(encodedObject, NO_OPTIONS, null);
     }
 
@@ -1490,8 +1487,8 @@ public class Base64 {
             buffer = new byte[(int) file.length()];
 
             // Open a stream
-            bis = new Base64.InputStream(new java.io.BufferedInputStream(new java.io.FileInputStream(file)),
-                    Base64.DECODE);
+            bis = new Base64.InputStream(new java.io.BufferedInputStream(new java.io.FileInputStream(file)), Base64
+                    .DECODE);
 
             // Read until done
             while ((numBytes = bis.read(buffer, length, 4096)) >= 0) {
@@ -1545,8 +1542,8 @@ public class Base64 {
             int numBytes = 0;
 
             // Open a stream
-            bis = new Base64.InputStream(new java.io.BufferedInputStream(new java.io.FileInputStream(file)),
-                    Base64.ENCODE);
+            bis = new Base64.InputStream(new java.io.BufferedInputStream(new java.io.FileInputStream(file)), Base64
+                    .ENCODE);
 
             // Read until done
             while ((numBytes = bis.read(buffer, length, 4096)) >= 0) {

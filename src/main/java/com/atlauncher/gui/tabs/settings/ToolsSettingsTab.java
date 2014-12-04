@@ -47,8 +47,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableServerCheckerLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.serverchecker") + "?",
-                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.servercheckerhelp",
-                "<br/>" + "</html>"));
+                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.servercheckerhelp", "<br/>" +
+                "</html>"));
         add(enableServerCheckerLabel, gbc);
 
         gbc.gridx++;
@@ -93,11 +93,11 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
     }
 
     public boolean isValidServerCheckerWait() {
-        if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]",
-                "")) < 1 || Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
+        if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1 || Integer.parseInt
+                (serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
             JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("settings" + "" +
-                            ".servercheckerwaitinvalid"), Language.INSTANCE.localize("settings.help"),
-                    JOptionPane.PLAIN_MESSAGE);
+                            ".servercheckerwaitinvalid"), Language.INSTANCE.localize("settings.help"), JOptionPane
+                    .PLAIN_MESSAGE);
             return false;
         }
         return true;

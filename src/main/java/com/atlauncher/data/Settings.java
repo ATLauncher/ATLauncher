@@ -463,7 +463,7 @@ public class Settings {
         }
 
         for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
-            if(file.getName().equals(LoggingThread.filename)) {
+            if (file.getName().equals(LoggingThread.filename)) {
                 continue; // Skip current log
             }
 
@@ -743,10 +743,10 @@ public class Settings {
             } else {
                 String[] options = {"Ok"};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
-                        "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
-                        "page.<br/><br/>Download " + "the update and replace the old ATLauncher file" +
-                        ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                        null, options, options[0]);
+                                "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
+                                "page.<br/><br/>Download " + "the update and replace the old ATLauncher file" +
+                                ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane
+                        .ERROR_MESSAGE, null, options, options[0]);
                 if (ret == 0) {
                     Utils.openBrowser("http://www.atlauncher.com/downloads/");
                     System.exit(0);
@@ -789,7 +789,7 @@ public class Settings {
                 public void run() {
                     Downloadable download = library.getDownloadable();
 
-                    if(download.needToDownload()) {
+                    if (download.needToDownload()) {
                         LogManager.info("Downloading library " + library.getFilename() + "!");
                         download.download(false);
                     }

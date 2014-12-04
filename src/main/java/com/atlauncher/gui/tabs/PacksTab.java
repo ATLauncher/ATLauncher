@@ -126,7 +126,7 @@ public final class PacksTab extends JPanel implements Tab {
         });
 
         this.searchField.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e){
+            public void keyPressed(KeyEvent e) {
                 reload();
             }
         });
@@ -203,15 +203,15 @@ public final class PacksTab extends JPanel implements Tab {
             pack = card.getPack();
             if (keep) {
                 if (!this.searchField.getText().isEmpty()) {
-                    if (!Pattern.compile(Pattern.quote(this.searchField.getText()),
-                            Pattern.CASE_INSENSITIVE).matcher(pack.getName()).find()) {
+                    if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE).matcher
+                            (pack.getName()).find()) {
                         show = false;
                     }
                 }
 
                 if (this.searchDescBox.isSelected()) {
-                    if (Pattern.compile(Pattern.quote(this.searchField.getText()),
-                            Pattern.CASE_INSENSITIVE).matcher(pack.getDescription()).find()) {
+                    if (Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE).matcher
+                            (pack.getDescription()).find()) {
                         show = true;
                     }
                 }

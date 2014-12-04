@@ -200,12 +200,12 @@ public class InstanceInstallerDialog extends JDialog {
                 if (!isReinstall && !isServer && App.settings.isInstance(instanceNameField.getText())) {
                     instance = App.settings.getInstanceByName(instanceNameField.getText());
                     if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
-                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                                "<html><p align=\"center\">" + Language.INSTANCE.localize("common.error") +
+                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><p " +
+                                "align=\"center\">" + Language.INSTANCE.localize("common.error") +
                                         "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
                                         ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>") +
-                                        "</p></html>", Language.INSTANCE.localize("common.error"),
-                                JOptionPane.ERROR_MESSAGE);
+                                        "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane
+                                .ERROR_MESSAGE);
                         if (ret != JOptionPane.YES_OPTION) {
                             return;
                         }
@@ -214,21 +214,21 @@ public class InstanceInstallerDialog extends JDialog {
                             return;
                         }
                     } else {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                "<html><p align=\"center\">" + Language.INSTANCE.localize("common.error") +
+                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" +
+                                Language.INSTANCE.localize("common.error") +
                                         "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
                                         ".alreadyinstance", instanceNameField.getText() + "<br/><br/>") +
-                                        "</p></html>", Language.INSTANCE.localize("common.error"),
-                                JOptionPane.ERROR_MESSAGE);
+                                        "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane
+                                .ERROR_MESSAGE);
                         return;
                     }
-                } else if (!isReinstall && !isServer && instanceNameField.getText().replaceAll("[^A-Za-z0-9]",
-                        "").length() == 0) {
+                } else if (!isReinstall && !isServer && instanceNameField.getText().replaceAll("[^A-Za-z0-9]", "")
+                        .length() == 0) {
                     JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
                             .INSTANCE.localize("common.error") + "<br/><br/>" + Language.INSTANCE.localizeWithReplace
                             ("instance.invalidname", instanceNameField.getText()) +
-                                    "</p></html>", Language.INSTANCE.localize("common.error"),
-                            JOptionPane.ERROR_MESSAGE);
+                                    "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane
+                            .ERROR_MESSAGE);
                     return;
                 }
                 final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
@@ -242,8 +242,8 @@ public class InstanceInstallerDialog extends JDialog {
 
                 JPanel topPanel = new JPanel();
                 topPanel.setLayout(new BorderLayout());
-                final JLabel doing = new JLabel(Language.INSTANCE.localizeWithReplace("instance.startingprocess",
-                        ((isReinstall) ? Language.INSTANCE.localize("common.reinstall") : Language.INSTANCE.localize
+                final JLabel doing = new JLabel(Language.INSTANCE.localizeWithReplace("instance.startingprocess", (
+                        (isReinstall) ? Language.INSTANCE.localize("common.reinstall") : Language.INSTANCE.localize
                                 ("common.install"))));
                 doing.setHorizontalAlignment(JLabel.CENTER);
                 doing.setVerticalAlignment(JLabel.TOP);
@@ -330,13 +330,12 @@ public class InstanceInstallerDialog extends JDialog {
 
                                 } else {
                                     Instance newInstance = new Instance(instanceNameField.getText(), pack.getName(),
-                                            pack, installForMe.isSelected(), version.getVersion(),
-                                            version.getMinecraftVersion().getVersion(), this.getMemory(),
-                                            this.getPermGen(), this.getModsInstalled(), this.getJarOrder(),
-                                            this.getLibrariesNeeded(), this.getExtraArguments(),
-                                            this.getMinecraftArguments(), this.getMainClass(),
-                                            version.getMinecraftVersion().getMojangVersion().getAssets(),
-                                            version.isDev(), !version.getMinecraftVersion().isLegacy());
+                                            pack, installForMe.isSelected(), version.getVersion(), version
+                                            .getMinecraftVersion().getVersion(), this.getMemory(), this.getPermGen(),
+                                            this.getModsInstalled(), this.getJarOrder(), this.getLibrariesNeeded(),
+                                            this.getExtraArguments(), this.getMinecraftArguments(), this.getMainClass
+                                            (), version.getMinecraftVersion().getMojangVersion().getAssets(), version
+                                            .isDev(), !version.getMinecraftVersion().isLegacy());
 
                                     if (version.isDev() && (version.getHash() != null)) {
                                         newInstance.setHash(version.getHash());

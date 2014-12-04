@@ -41,8 +41,8 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
      * label, set up to display the text and image.
      */
     @SuppressWarnings("rawtypes")
-    public Component getListCellRendererComponent(JList list, Account account, int index, boolean isSelected,
-                                                  boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList list, Account account, int index, boolean isSelected, boolean
+            cellHasFocus) {
         if (account == null) {
             return this;
         }

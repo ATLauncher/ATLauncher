@@ -41,8 +41,8 @@ public final class GithubIssueReporter {
             request.put("issue", new GithubIssue(title, body));
 
             try {
-                APIResponse response = Settings.gson.fromJson(Utils.sendAPICall("githubissue/", request),
-                        APIResponse.class);
+                APIResponse response = Settings.gson.fromJson(Utils.sendAPICall("githubissue/", request), APIResponse
+                        .class);
                 if (!response.wasError() && response.getDataAsInt() != 0) {
                     LogManager.info("Exception reported to GitHub. Track/comment on the issue at " + response
                             .getDataAsString());

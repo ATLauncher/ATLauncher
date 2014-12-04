@@ -374,21 +374,21 @@ public class Mod {
                         if (retValue == 1) {
                             Utils.openBrowser(this.getUrl());
                         }
-                        String[] options = new String[]{Language.INSTANCE.localize("common.openfolder"),
-                                Language.INSTANCE.localize("instance.ivedownloaded")};
-                        retValue = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".browseropened", (serverFile == null ? (isFilePattern() ? getName() :
-                                        getFile()) : (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>"
-                                        + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
-                                                .getAbsolutePath() : (isFilePattern() ? App.settings.getDownloadsDir
-                                                ().getAbsolutePath() : App.settings.getDownloadsDir().getAbsolutePath
-                                                () + " or<br/>" + App.settings.getUsersDownloadsDir())) +
-                                        "</p></html>", Language.INSTANCE.localize("common.downloading") + " " +
-                                        (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
-                                                (isFilePattern() ? getName() : getServerFile())),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                        String[] options = new String[]{Language.INSTANCE.localize("common.openfolder"), Language
+                                .INSTANCE.localize("instance.ivedownloaded")};
+                        retValue = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p " +
+                                "align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
+                                (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>" +
+                                Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                        : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
+                                        .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
+                                        .getUsersDownloadsDir())) +
+                                "</p></html>", Language.INSTANCE.localize("common.downloading") + " " +
+                                (serverFile == null ? (isFilePattern() ? getName() : getFile()) : (isFilePattern() ?
+                                        getName() : getServerFile())), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                .INFORMATION_MESSAGE, null, options, options[0]);
                         if (retValue == JOptionPane.CLOSED_OPTION) {
                             installer.cancel(true);
                             return;
@@ -518,13 +518,14 @@ public class Mod {
             while (!fileLocation.exists()) {
                 Utils.openBrowser(this.serverUrl);
                 String[] options = new String[]{Language.INSTANCE.localize("instance.ivedownloaded")};
-                int retValue = JOptionPane.showOptionDialog(App.settings.getParent(),
-                        "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".browseropened", (serverFile == null ? getFile() : getServerFile())) + "<br/><br/>"
-                                + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" + (App.settings
-                                .isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath() : App
-                                .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
-                                .getUsersDownloadsDir()) + "</p></html>", Language.INSTANCE.localize("common" + "" +
+                int retValue = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" +
+                                Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                        ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
+                        "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" + (App
+                        .settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath() : App
+                        .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
+                        .getUsersDownloadsDir()) +
+                                "</p></html>", Language.INSTANCE.localize("common" + "" +
                                 ".downloading") + " " + (serverFile == null ? getFile() : getServerFile()),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 if (retValue == JOptionPane.CLOSED_OPTION) {

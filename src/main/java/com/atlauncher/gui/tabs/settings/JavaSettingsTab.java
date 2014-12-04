@@ -113,11 +113,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     int selectedRam = Integer.parseInt(((String) initialMemory.getSelectedItem()).replace(" MB", ""));
                     int maxRam = Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", ""));
-                    if(selectedRam > maxRam) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                "<html>" + Language.INSTANCE.localizeWithReplace("settings.initialmemorytoohigh",
-                                        "<br/><br/>") + "</html>", Language.INSTANCE.localize("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
+                    if (selectedRam > maxRam) {
+                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + Language.INSTANCE
+                                .localizeWithReplace("settings.initialmemorytoohigh", "<br/><br/>") + "</html>",
+                                Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
                         initialMemory.setSelectedItem("256 MB");
                     }
                 }
@@ -162,10 +161,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     int selectedRam = Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", ""));
                     if (selectedRam > 4096) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                "<html>" + Language.INSTANCE.localizeWithReplace("settings.toomuchramallocated",
-                                        "<br/><br/>") + "</html>", Language.INSTANCE.localize("settings.help"),
-                                JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + Language.INSTANCE
+                                .localizeWithReplace("settings.toomuchramallocated", "<br/><br/>") + "</html>",
+                                Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
                     }
                 }
             }
@@ -177,8 +175,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        permGenLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.permgen") + ":", HELP_ICON,
-                Language.INSTANCE.localize("settings.permgenhelp"));
+        permGenLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.permgen") + ":", HELP_ICON, Language
+                .INSTANCE.localize("settings.permgenhelp"));
         add(permGenLabel, gbc);
 
         gbc.gridx++;
@@ -349,8 +347,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx") || javaParameters
                 .getText().contains("-XX:PermSize") || javaParameters.getText().contains("-XX:MetaspaceSize")) {
             JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + Language.INSTANCE.localizeWithReplace
-                    ("settings.javaparametersincorrect", "<br/><br/>") + "</html>",
-                    Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
+                    ("settings.javaparametersincorrect", "<br/><br/>") + "</html>", Language.INSTANCE.localize
+                    ("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
         return true;

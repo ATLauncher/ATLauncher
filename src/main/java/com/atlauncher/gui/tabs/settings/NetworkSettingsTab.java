@@ -207,8 +207,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         if (!enableProxy.isSelected()) {
             return true;
         }
-        if (proxyPort.getText().isEmpty() || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]",
-                "")) < 1 || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) > 65535) {
+        if (proxyPort.getText().isEmpty() || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) < 1 ||
+                Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) > 65535) {
             JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("settings" + "" +
                     ".proxyportinvalid"), Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
@@ -237,8 +237,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
         final Type theType = type;
         final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
-                ".checkingproxytitle"), 0, Language.INSTANCE.localize("settings.checkingproxy"),
-                "Cancelled Proxy Test!");
+                ".checkingproxytitle"), 0, Language.INSTANCE.localize("settings.checkingproxy"), "Cancelled Proxy " +
+                "Test!");
         dialog.addThread(new Thread() {
             @Override
             public void run() {
@@ -255,8 +255,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
         if (!(Boolean) dialog.getReturnValue()) {
             JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("settings" + "" +
-                            ".proxycannotconnect"), Language.INSTANCE.localize("settings.help"),
-                    JOptionPane.PLAIN_MESSAGE);
+                            ".proxycannotconnect"), Language.INSTANCE.localize("settings.help"), JOptionPane
+                    .PLAIN_MESSAGE);
             return false;
         }
 

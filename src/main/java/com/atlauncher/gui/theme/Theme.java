@@ -22,18 +22,18 @@ import com.atlauncher.LogManager;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
 
-import java.awt.Color;
-import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
+import java.awt.Color;
+import java.awt.Font;
 
 public final class Theme {
-    public static final Theme DEFAULT_THEME = new Theme("ATLauncher", "RyanTheAllmighty", true, new Color(40, 45,
-            50), new Color(255, 255, 255), new Color(0, 0, 0), new Color(0, 136, 204), new Color(100, 100, 200),
-            new Color(80, 170, 107), new Color(50, 55, 60), new Color(50, 55, 60), new Color(30, 35, 40),
-            new Color(255, 255, 255), new Color(255, 0, 0), new Color(255, 255, 255), new Color(137, 194, 54),
-            new Color(255, 255, 76), new Color(238, 34, 34), new Color(255, 0, 255), "SansSerif", "SansSerif",
-            "Oswald-Regular", "SansSerif");
+    public static final Theme DEFAULT_THEME = new Theme("ATLauncher", "RyanTheAllmighty", true, new Color(40, 45, 50)
+            , new Color(255, 255, 255), new Color(0, 0, 0), new Color(0, 136, 204), new Color(100, 100, 200), new
+            Color(80, 170, 107), new Color(50, 55, 60), new Color(50, 55, 60), new Color(30, 35, 40), new Color(255,
+            255, 255), new Color(255, 0, 0), new Color(255, 255, 255), new Color(137, 194, 54), new Color(255, 255,
+            76), new Color(238, 34, 34), new Color(255, 0, 255), "SansSerif", "SansSerif", "Oswald-Regular",
+            "SansSerif");
 
     // Meta
     private final String name;
@@ -63,12 +63,12 @@ public final class Theme {
     // Fonts
     private final String defaultFont, consoleFont, tabFont, buttonFont;
 
-    private Theme(String name, String author, boolean tabsOnRight, Color baseColor, Color textColor,
-                  Color buttonColor, Color selectionColor, Color dropdownSelectionColor, Color hoverBorderColor,
-                  Color modSelectionBGColor, Color modInfoColor, Color tabBackgroundColor, Color normalInstanceColor,
-                  Color corruptedInstanceColor, Color consoleTextColor, Color logInfoTextColor, Color logWarnColor,
-                  Color logErrorColor, Color logDebugColor, String defaultFont, String consoleFont, String tabFont,
-                  String buttonFont) {
+    private Theme(String name, String author, boolean tabsOnRight, Color baseColor, Color textColor, Color
+            buttonColor, Color selectionColor, Color dropdownSelectionColor, Color hoverBorderColor, Color
+            modSelectionBGColor, Color modInfoColor, Color tabBackgroundColor, Color normalInstanceColor, Color
+            corruptedInstanceColor, Color consoleTextColor, Color logInfoTextColor, Color logWarnColor, Color
+            logErrorColor, Color logDebugColor, String defaultFont, String consoleFont, String tabFont, String
+            buttonFont) {
 
         this.name = name;
         this.author = author;

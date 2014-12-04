@@ -60,8 +60,8 @@ public class NewsTab extends JPanel implements Tab {
      */
     public NewsTab() {
         super(new BorderLayout());
-        this.add(new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.add(new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
+                .HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         this.reload();
     }
 

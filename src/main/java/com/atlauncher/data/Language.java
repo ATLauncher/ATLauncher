@@ -52,8 +52,8 @@ public enum Language {
         });
         String[] langs = new String[files.length];
         for (int i = 0; i < files.length; i++) {
-            langs[i] = files[i].getName().substring(0, 1).toUpperCase() + files[i].getName().substring(1,
-                    files[i].getName().lastIndexOf("."));
+            langs[i] = files[i].getName().substring(0, 1).toUpperCase() + files[i].getName().substring(1, files[i]
+                    .getName().lastIndexOf("."));
         }
         return langs;
     }

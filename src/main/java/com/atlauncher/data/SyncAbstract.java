@@ -76,9 +76,8 @@ public abstract class SyncAbstract {
 
     /**
      * If the sync addon has settings then you should return an instance of {@link com.atlauncher.gui.components
-     * .CollapsiblePanel
-     * CollapsiblePanel}. It is recommended you extend that class. Look at {@link com.atlauncher.data.DropboxSync
-     * DropboxSync} for example.
+     * .CollapsiblePanel CollapsiblePanel}. It is recommended you extend that class. Look at {@link
+     * com.atlauncher.data.DropboxSync DropboxSync} for example.
      *
      * @return The settings panel
      */

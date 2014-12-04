@@ -32,8 +32,8 @@ public abstract class AbstractToolPanel extends JPanel {
      */
     private static final long serialVersionUID = -7755529465856056647L;
 
-    protected final Font BOLD_FONT = new Font(App.THEME.getDefaultFont().getFontName(), Font.BOLD,
-            App.THEME.getDefaultFont().getSize()).deriveFont(Utils.getBaseFontSize());
+    protected final Font BOLD_FONT = new Font(App.THEME.getDefaultFont().getFontName(), Font.BOLD, App.THEME
+            .getDefaultFont().getSize()).deriveFont(Utils.getBaseFontSize());
     protected final JPanel TOP_PANEL = new JPanel();
     protected final JPanel MIDDLE_PANEL = new JPanel();
     protected final JPanel BOTTOM_PANEL = new JPanel();

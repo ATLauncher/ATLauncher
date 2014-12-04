@@ -100,10 +100,9 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
         });
         killMinecraftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                        "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("console.killsure",
-                                "<br/><br/>") + "</p></html>", Language.INSTANCE.localize("console.kill"),
-                        JOptionPane.YES_NO_OPTION);
+                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><p align=\"center\">" +
+                        Language.INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>") + "</p></html>",
+                        Language.INSTANCE.localize("console.kill"), JOptionPane.YES_NO_OPTION);
                 if (ret == JOptionPane.YES_OPTION) {
                     App.settings.killMinecraft();
                     killMinecraftButton.setVisible(false);

@@ -40,12 +40,12 @@ public final class LoggingThread extends Thread {
         this.queue = queue;
         this.setName("ATL-Logging-Thread");
         File log = new File(App.settings.getLogsDir(), filename);
-        if(!log.exists()) {
-	        try {
-	        	log.createNewFile();
-	        } catch (IOException e) {
-	        	e.printStackTrace();
-	        }
+        if (!log.exists()) {
+            try {
+                log.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         try {
             this.writer = new LogEventWriter(new FileWriter(log));

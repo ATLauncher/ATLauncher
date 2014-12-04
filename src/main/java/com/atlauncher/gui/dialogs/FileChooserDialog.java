@@ -21,6 +21,15 @@ import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -31,15 +40,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
 
 public class FileChooserDialog extends JDialog {
     private JPanel top;
@@ -58,8 +58,8 @@ public class FileChooserDialog extends JDialog {
     private JButton bottomButton;
     private JButton selectButton;
 
-    public FileChooserDialog(String title, String labelName, String bottomText, String selectorText,
-                             String selectorSelectText, String[] subOptions, String[] options) {
+    public FileChooserDialog(String title, String labelName, String bottomText, String selectorText, String
+            selectorSelectText, String[] subOptions, String[] options) {
         super(App.settings.getParent(), title, ModalityType.APPLICATION_MODAL);
         this.fileOptions = options;
         setSize(400, 175);

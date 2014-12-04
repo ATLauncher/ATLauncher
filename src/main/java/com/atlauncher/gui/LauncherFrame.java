@@ -33,21 +33,19 @@ import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.utils.Utils;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.Arrays;
-import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("serial")
-public final class LauncherFrame
-extends JFrame
-implements RelocalizationListener{
+public final class LauncherFrame extends JFrame implements RelocalizationListener {
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;
@@ -92,15 +90,15 @@ implements RelocalizationListener{
 
         RelocalizationManager.addListener(this);
 
-        App.TASKPOOL.execute(new Runnable(){
-            public void run(){
+        App.TASKPOOL.execute(new Runnable() {
+            public void run() {
                 App.settings.checkMojangStatus(); // Check Minecraft status
                 bottomBar.updateStatus(App.settings.getMojangStatus());
             }
         });
     }
 
-    public void updateTitle(String str){
+    public void updateTitle(String str) {
         setTitle("ATLauncher " + Constants.VERSION + " - " + str);
     }
 
@@ -127,13 +125,13 @@ implements RelocalizationListener{
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
-        tabbedPane.addChangeListener(new ChangeListener(){
+        tabbedPane.addChangeListener(new ChangeListener() {
             @Override
-            public void stateChanged(ChangeEvent e){
+            public void stateChanged(ChangeEvent e) {
                 String tabName = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-                if(tabbedPane.getSelectedIndex() == 1){
+                if (tabbedPane.getSelectedIndex() == 1) {
                     updateTitle("Packs - " + App.settings.getPackInstallableCount());
-                } else{
+                } else {
                     updateTitle(tabName);
                 }
 

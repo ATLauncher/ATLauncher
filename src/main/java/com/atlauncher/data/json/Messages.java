@@ -53,9 +53,9 @@ public class Messages {
                 }
             }
         });
-        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize("common" +
-                ".installing") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null,
-                options, options[0]);
+        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize("common" + "" +
+                        ".installing") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
+                .WARNING_MESSAGE, null, options, options[0]);
     }
 
     public String getUpdateMessage() {
@@ -78,8 +78,8 @@ public class Messages {
                 }
             }
         });
-        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize("common" +
-                ".reinstalling") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-                null, options, options[0]);
+        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize("common" + "" +
+                        ".reinstalling") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
+                .WARNING_MESSAGE, null, options, options[0]);
     }
 }

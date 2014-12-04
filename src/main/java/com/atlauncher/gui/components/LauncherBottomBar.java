@@ -130,8 +130,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         updateData.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common" + "" +
-                        ".checkingforupdates"), 0, Language.INSTANCE.localize("common.checkingforupdates"),
-                        "Aborting Update Check!");
+                        ".checkingforupdates"), 0, Language.INSTANCE.localize("common.checkingforupdates"), "Aborting" +
+                        " Update Check!");
                 dialog.addThread(new Thread() {
                     public void run() {
                         if (App.settings.hasUpdatedFiles()) {

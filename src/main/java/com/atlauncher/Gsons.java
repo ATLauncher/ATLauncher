@@ -30,18 +30,12 @@ import java.io.File;
 import java.util.Date;
 
 public final class Gsons {
-    public static final Gson DEFAULT = new GsonBuilder()
-            .setPrettyPrinting()
-            .create();
+    public static final Gson DEFAULT = new GsonBuilder().setPrettyPrinting().create();
 
-    public static final Gson THEMES = new GsonBuilder()
-            .setPrettyPrinting()
-            .registerTypeAdapter(Color.class, new ColorTypeAdapter())
-            .create();
+    public static final Gson THEMES = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new
+            ColorTypeAdapter()).create();
 
-    public static final Gson DEFAULT_ALT = new GsonBuilder()
-            .registerTypeAdapterFactory(new EnumTypeAdapterFactory())
-            .registerTypeAdapter(Date.class, new DateTypeAdapter())
-            .registerTypeAdapter(File.class, new FileTypeAdapter())
-            .create();
+    public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
+            .registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File.class, new
+                    FileTypeAdapter()).create();
 }

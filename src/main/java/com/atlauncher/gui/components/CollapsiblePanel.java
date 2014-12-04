@@ -294,8 +294,8 @@ public class CollapsiblePanel extends JPanel {
         }
 
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Rectangle borderR = new Rectangle(x + EDGE_SPACING, y + EDGE_SPACING, width - (EDGE_SPACING * 2),
-                    height - (EDGE_SPACING * 2));
+            Rectangle borderR = new Rectangle(x + EDGE_SPACING, y + EDGE_SPACING, width - (EDGE_SPACING * 2), height
+                    - (EDGE_SPACING * 2));
             Insets borderInsets;
             if (border != null) {
                 borderInsets = border.getBorderInsets(c);

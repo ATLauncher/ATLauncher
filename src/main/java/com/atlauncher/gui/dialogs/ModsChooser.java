@@ -52,8 +52,8 @@ public class ModsChooser extends JDialog {
     private boolean wasClosed = false;
 
     public ModsChooser(InstanceInstaller installerr) {
-        super(App.settings.getParent(), Language.INSTANCE.localize("instance.selectmods"),
-                ModalityType.APPLICATION_MODAL);
+        super(App.settings.getParent(), Language.INSTANCE.localize("instance.selectmods"), ModalityType
+                .APPLICATION_MODAL);
         this.installer = installerr;
         setSize(550, 450);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -106,8 +106,8 @@ public class ModsChooser extends JDialog {
         checkBoxPanel1.setLayout(null);
         checkBoxPanel1.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
+                .HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
         scroller1.setPreferredSize(new Dimension(275, 350));
         modsInPack.setRightComponent(scroller1);
@@ -116,8 +116,8 @@ public class ModsChooser extends JDialog {
         checkBoxPanel2.setLayout(null);
         checkBoxPanel2.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
+                .HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
         scroller2.setPreferredSize(new Dimension(275, 350));
         modsInPack.setLeftComponent(scroller2);
@@ -222,8 +222,8 @@ public class ModsChooser extends JDialog {
                     checkBox = new ModsJCheckBox(mod);
                     checkBox.setEnabled(true);
                     if (mod.getLinked().isEmpty()) {
-                        checkBox.setBounds((mod.hasCategory() ? 20 : 0), (count1 * 20),
-                                checkBox.getPreferredSize().width, 20);
+                        checkBox.setBounds((mod.hasCategory() ? 20 : 0), (count1 * 20), checkBox.getPreferredSize()
+                                .width, 20);
                     } else {
                         Mod linkedMod = installer.getModByName(mod.getLinked());
                         if (linkedMod == null) {
@@ -234,11 +234,11 @@ public class ModsChooser extends JDialog {
                         }
                         if ((installer.isServer() ? linkedMod.isServerOptional() : linkedMod.isOptional())) {
                             checkBox.setEnabled(false);
-                            checkBox.setBounds((mod.hasCategory() ? 40 : 20), (count1 * 20),
-                                    checkBox.getPreferredSize().width, 20);
+                            checkBox.setBounds((mod.hasCategory() ? 40 : 20), (count1 * 20), checkBox
+                                    .getPreferredSize().width, 20);
                         } else {
-                            checkBox.setBounds((mod.hasCategory() ? 20 : 0), (count1 * 20),
-                                    checkBox.getPreferredSize().width, 20);
+                            checkBox.setBounds((mod.hasCategory() ? 20 : 0), (count1 * 20), checkBox.getPreferredSize
+                                    ().width, 20);
                         }
                         if (mod.isSelected()) {
                             checkBox.setEnabled(true);
@@ -283,13 +283,13 @@ public class ModsChooser extends JDialog {
                                         .getVersion(), mod.getWarning());
 
                                 if (message != null) {
-                                    String[] options = {Language.INSTANCE.localize("common.yes"),
-                                            Language.INSTANCE.localize("common.no")};
-                                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                            "<html>" + message + "<br/>" +
+                                    String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE
+                                            .localize("common.no")};
+                                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html>" +
+                                            message + "<br/>" +
                                                     Language.INSTANCE.localize("instance.warningsure") + "</html>",
-                                            Language.INSTANCE.localize("instance.warning"),
-                                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options,
+                                            Language.INSTANCE.localize("instance.warning"), JOptionPane
+                                                    .DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options,
                                             options[1]);
                                     if (ret != 0) {
                                         finalCheckBox.setSelected(false);

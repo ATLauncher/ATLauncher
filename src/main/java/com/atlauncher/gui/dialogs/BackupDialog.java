@@ -282,8 +282,8 @@ public class BackupDialog extends JDialog implements ActionListener {
             String backupToDelete = (String) backupList.getSelectedValue();
             if (JOptionPane.showOptionDialog(this, Language.INSTANCE.localizeWithReplace("backup.message" + "" +
                             ".deleteconfirm", backupToDelete), Language.INSTANCE.localize("backup.message" +
-                    ".deleteconfirm" + ".title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
-                    null, null) == JOptionPane.OK_OPTION) {
+                            ".deleteconfirm" + ".title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE,
+                    null, null, null) == JOptionPane.OK_OPTION) {
                 selectedSync.deleteBackup(backupToDelete, instance);
                 // Update the backup list
                 List<String> list = selectedSync.getBackupsForInstance(instance);

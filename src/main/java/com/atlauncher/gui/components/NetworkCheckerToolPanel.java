@@ -35,9 +35,6 @@ import javax.swing.border.BevelBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
     /**
@@ -69,13 +66,13 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     public void actionPerformed(ActionEvent e) {
         String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common" + ".no")};
         int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Utils
-                .splitMultilinedString(Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup",
-                        App.settings.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>") + "</p></html>",
-                Language.INSTANCE.localize("tools.networkchecker"), JOptionPane.DEFAULT_OPTION,
-                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                .splitMultilinedString(Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup", App
+                        .settings.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>") + "</p></html>", Language
+                .INSTANCE.localize("tools.networkchecker"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                null, options, options[0]);
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"),
-                    App.settings.getServers().size(), Language.INSTANCE.localize("tools.networkchecker" + "" +
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"), App
+                    .settings.getServers().size(), Language.INSTANCE.localize("tools.networkchecker" + "" +
                     ".running"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread() {
                 @Override
@@ -89,23 +86,24 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                                 .getHost()) + "\n\n----------------\n\n");
                         dialog.doneTask();
 
-                        results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute("www.creeperrepo.net"));
+                        results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute("www.creeperrepo" +
+                                ".net"));
                         dialog.doneTask();
                     }
 
                     // Response Code Test
                     for (Server server : App.settings.getServers()) {
                         Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"), false);
-                        results.append(String.format("Response code to %s was %d\n\n----------------\n\n",
-                                server.getHost(), download.getResponseCode()));
+                        results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server
+                                .getHost(), download.getResponseCode()));
                         dialog.doneTask();
                     }
 
                     // Ping Pong Test
                     for (Server server : App.settings.getServers()) {
                         Downloadable download = new Downloadable(server.getFileURL("ping"), false);
-                        results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n",
-                                server.getHost(), download.getContents()));
+                        results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n", server
+                                .getHost(), download.getContents()));
                         dialog.doneTask();
                     }
 
@@ -124,11 +122,11 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         float bps = file.length() / (timeTaken / 1000);
                         float kbps = bps / 1024;
                         float mbps = kbps / 1024;
-                        String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s",
-                                bps) : String.format("%.2f KB/s", kbps)) : String.format("%.2f MB/s", mbps));
+                        String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f " +
+                                "KB/s", kbps)) : String.format("%.2f MB/s", mbps));
                         results.append(String.format("Download speed to %s was %s, " +
-                                        "" + "taking %.2f seconds to download 20MB\n\n----------------\n\n",
-                                server.getHost(), speed, (timeTaken / 1000.0)));
+                                        "" + "taking %.2f seconds to download 20MB\n\n----------------\n\n", server
+                                .getHost(), speed, (timeTaken / 1000.0)));
                         dialog.doneTask();
                     }
 
@@ -153,8 +151,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 String[] options2 = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
                         .INSTANCE.localizeWithReplace("tools.networkheckercomplete", "<br/><br/>") +
-                                "</p></html>", Language.INSTANCE.localize("tools.networkchecker"),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options2, options2[0]);
+                                "</p></html>", Language.INSTANCE.localize("tools.networkchecker"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options2, options2[0]);
             }
         }
     }

@@ -56,8 +56,8 @@ public class Downloadable {
         if (isATLauncherDownload) {
             this.servers = new ArrayList<Server>(App.settings.getServers());
             this.server = this.servers.get(0);
-            for(Server server : this.servers) {
-                if(server.getName().equals(App.settings.getServer().getName())) {
+            for (Server server : this.servers) {
+                if (server.getName().equals(App.settings.getServer().getName())) {
                     this.server = server;
                     break;
                 }

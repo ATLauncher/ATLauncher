@@ -81,8 +81,8 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.descArea.setHighlighter(null);
         this.descArea.setWrapStyleWord(true);
 
-        this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
+                .HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         this.actionsPanel.add(abPanel, BorderLayout.SOUTH);
         this.actionsPanel.setPreferredSize(new Dimension(this.actionsPanel.getPreferredSize().width, 180));
 
@@ -94,7 +94,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             this.modsButton.setVisible(false);
         }
 
-        if(!this.pack.canCreateServer()) {
+        if (!this.pack.canCreateServer()) {
             this.createServerButton.setVisible(false);
         }
     }
@@ -110,8 +110,8 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                 if (App.settings.isInOfflineMode()) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" + "" +
-                            ".offlinenewinstance"), Language.INSTANCE.localize("common.offline"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                    ".offlinenewinstance"), Language.INSTANCE.localize("common.offline"), JOptionPane
+                            .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (App.settings.getAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
@@ -130,7 +130,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                 if (App.settings.isInOfflineMode()) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" + "" +
-                            ".offlinecreateserver"), Language.INSTANCE.localize("common.offline"),
+                                    ".offlinecreateserver"), Language.INSTANCE.localize("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (App.settings.getAccount() == null) {

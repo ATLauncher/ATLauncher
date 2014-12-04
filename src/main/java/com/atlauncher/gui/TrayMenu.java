@@ -71,10 +71,10 @@ public final class TrayMenu extends JPopupMenu implements RelocalizationListener
                     @Override
                     public void run() {
                         if (App.settings.isMinecraftLaunched()) {
-                            int ret = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                                    "<html><p align=\"center\">" + Language.INSTANCE.localizeWithReplace("console" +
-                                            ".killsure", "<br/><br/>") + "</p></html>",
-                                    Language.INSTANCE.localize("console.kill"), JOptionPane.YES_NO_OPTION);
+                            int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><p " +
+                                    "align=\"center\">" + Language.INSTANCE.localizeWithReplace("console" + "" +
+                                    ".killsure", "<br/><br/>") + "</p></html>", Language.INSTANCE.localize("console" +
+                                    ".kill"), JOptionPane.YES_NO_OPTION);
 
                             if (ret == JOptionPane.YES_OPTION) {
                                 App.settings.killMinecraft();

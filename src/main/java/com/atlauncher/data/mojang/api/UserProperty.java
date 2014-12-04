@@ -31,7 +31,7 @@ public class UserProperty {
     private Map<String, ProfileTexture> textures;
 
     public ProfileTexture getTexture(String name) {
-        if(!textures.containsKey(name)) {
+        if (!textures.containsKey(name)) {
             LogManager.error("No texture " + name + " for account " + this.profileName);
             return null;
         }

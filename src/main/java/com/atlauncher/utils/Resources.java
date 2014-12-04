@@ -20,9 +20,7 @@ package com.atlauncher.utils;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
-import com.atlauncher.data.Settings;
 import com.atlauncher.exceptions.ChunkyException;
-import com.atlauncher.gui.theme.Theme;
 
 import javax.swing.text.html.StyleSheet;
 import java.awt.Font;
@@ -71,7 +69,7 @@ public final class Resources {
 
                 File themeFile = App.settings.getThemeFile();
 
-                if(themeFile != null) {
+                if (themeFile != null) {
                     InputStream stream = null;
 
                     ZipFile zipFile = new ZipFile(themeFile);
@@ -132,7 +130,7 @@ public final class Resources {
                     if (url == null) {
                         File themeFile = App.settings.getThemeFile();
 
-                        if(themeFile != null) {
+                        if (themeFile != null) {
                             InputStream stream = null;
 
                             ZipFile zipFile = new ZipFile(themeFile);

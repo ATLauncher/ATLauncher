@@ -58,8 +58,8 @@ public final class GithubIssueReporterDialog extends JDialog {
                     @Override
                     public void run() {
                         try {
-                            GithubIssueReporter.submit(TITLE_FIELD.getText() + " - " + Constants.VERSION,
-                                    INFO_AREA.getText());
+                            GithubIssueReporter.submit(TITLE_FIELD.getText() + " - " + Constants.VERSION, INFO_AREA
+                                    .getText());
                         } catch (Exception e1) {
                             e1.printStackTrace(System.err);
                         }
@@ -76,8 +76,8 @@ public final class GithubIssueReporterDialog extends JDialog {
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.add(this.TITLE_FIELD, BorderLayout.NORTH);
-        this.add(new JScrollPane(this.INFO_AREA, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.add(new JScrollPane(this.INFO_AREA, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
+                .HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         this.add(new ToolsPanel().add(this.CANCEL_BUTTON).add(this.SUBMIT_BUTTON), BorderLayout.SOUTH);
         this.pack();
     }

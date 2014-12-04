@@ -117,8 +117,8 @@ public class DropboxSync extends SyncAbstract {
             Utils.zip(worldData, backup);
             if (App.settings.getNotifyBackup()) {
                 JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("backup" + "" +
-                                ".complete"), Language.INSTANCE.localize("backup.complete"),
-                        JOptionPane.INFORMATION_MESSAGE);
+                                ".complete"), Language.INSTANCE.localize("backup.complete"), JOptionPane
+                        .INFORMATION_MESSAGE);
             }
         }
     }
@@ -150,9 +150,9 @@ public class DropboxSync extends SyncAbstract {
 
         if (target.exists()) {
             if (JOptionPane.showConfirmDialog(App.settings.getParent(), Language.INSTANCE.localizeWithReplace
-                    ("backup" + ".message.backupoverwrite", backupName.replace(".zip", "")),
-                    Language.INSTANCE.localize("backup.message.backupoverwrite.title"), JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
+                    ("backup" + ".message.backupoverwrite", backupName.replace(".zip", "")), Language.INSTANCE
+                    .localize("backup.message.backupoverwrite.title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane
+                    .WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
                 Utils.unzip(new File(dropboxLocation, backupFolder + File.separator + instance.getName() + File
                         .separator + backupName), target);
             }

@@ -45,7 +45,7 @@ public class DownloadableFile {
         if (this.folder.equalsIgnoreCase("Skins")) {
             file = new File(App.settings.getSkinsDir(), this.name);
         }
-        return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name, file, this.sha1,
-                this.size, null, true);
+        return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name, file, this.sha1, this
+                .size, null, true);
     }
 }

@@ -83,8 +83,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         themeLabelRestart = new JLabelWithHover(ERROR_ICON, Language.INSTANCE.localize("settings" + "" +
                 ".requiresrestart"), RESTART_BORDER);
 
-        themeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.theme") + ":", HELP_ICON,
-                Language.INSTANCE.localize("settings.themehelp"));
+        themeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.theme") + ":", HELP_ICON, Language
+                .INSTANCE.localize("settings.themehelp"));
 
         themeLabelPanel = new JPanel();
         themeLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -134,8 +134,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         advancedBackupLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.advancedbackup") + "?",
-                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.advancedbackuphelp",
-                "<br/>") + "</html>");
+                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.advancedbackuphelp", "<br/>") +
+                "</html>");
         add(advancedBackupLabel, gbc);
 
         gbc.gridx++;

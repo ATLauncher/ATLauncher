@@ -19,8 +19,6 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.manager.SettingsManager;
-import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;

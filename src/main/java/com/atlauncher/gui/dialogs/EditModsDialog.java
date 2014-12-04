@@ -54,8 +54,8 @@ public class EditModsDialog extends JDialog {
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
     public EditModsDialog(final Instance instance) {
-        super(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("instance.editingmods",
-                instance.getName()), ModalityType.APPLICATION_MODAL);
+        super(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("instance.editingmods", instance
+                .getName()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
         setSize(550, 450);
         setLocationRelativeTo(App.settings.getParent());
@@ -106,8 +106,8 @@ public class EditModsDialog extends JDialog {
         disabledModsPanel.setLayout(null);
         disabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        scroller1 = new JScrollPane(disabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller1 = new JScrollPane(disabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
+                .HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
         scroller1.setPreferredSize(new Dimension(275, 350));
         modsInPack.setRightComponent(scroller1);
@@ -116,8 +116,8 @@ public class EditModsDialog extends JDialog {
         enabledModsPanel.setLayout(null);
         enabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        scroller2 = new JScrollPane(enabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller2 = new JScrollPane(enabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
+                .HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
         scroller2.setPreferredSize(new Dimension(275, 350));
         modsInPack.setLeftComponent(scroller2);
@@ -128,9 +128,9 @@ public class EditModsDialog extends JDialog {
         addButton = new JButton(Language.INSTANCE.localize("instance.addmod"));
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                FileChooserDialog fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"),
-                        Language.INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"),
-                        Language.INSTANCE.localize("instance.typeofmod"), Language.INSTANCE.localize("instance" + "" +
+                FileChooserDialog fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
+                        .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
+                        .localize("instance.typeofmod"), Language.INSTANCE.localize("instance" + "" +
                         ".selectmodtype"), new String[]{"Mods Folder", "Inside Minecraft.jar", "CoreMods Mod",
                         "Texture Pack", "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
                 ArrayList<File> files = fcd.getChosenFiles();

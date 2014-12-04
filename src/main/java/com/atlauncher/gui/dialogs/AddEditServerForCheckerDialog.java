@@ -146,8 +146,8 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
     }
 
     public boolean isValidPort() {
-        return !(serverPort.getText().isEmpty() || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]",
-                "")) < 1 || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) > 65535);
+        return !(serverPort.getText().isEmpty() || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) <
+                1 || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) > 65535);
     }
 
     @Override
@@ -159,8 +159,8 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                         JOptionPane.ERROR_MESSAGE);
             } else if (!isValidPort()) {
                 JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("settings" + "" +
-                                ".proxyportinvalid"), Language.INSTANCE.localize("common.error"),
-                        JOptionPane.ERROR_MESSAGE);
+                                ".proxyportinvalid"), Language.INSTANCE.localize("common.error"), JOptionPane
+                        .ERROR_MESSAGE);
             } else {
                 String name = serverName.getText();
                 final String host = serverHost.getText();

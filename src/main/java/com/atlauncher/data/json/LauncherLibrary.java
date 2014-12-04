@@ -19,9 +19,7 @@ package com.atlauncher.data.json;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Json;
-import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.mojang.MojangConstants;
 
 import java.io.File;
 

@@ -25,14 +25,6 @@ import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -41,6 +33,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsonModsChooser extends JDialog {
     private static final long serialVersionUID = -5309108183485463434L;
@@ -52,8 +52,8 @@ public class JsonModsChooser extends JDialog {
     private boolean wasClosed = false;
 
     public JsonModsChooser(InstanceInstaller installerr) {
-        super(App.settings.getParent(), Language.INSTANCE.localize("instance.selectmods"),
-                ModalityType.APPLICATION_MODAL);
+        super(App.settings.getParent(), Language.INSTANCE.localize("instance.selectmods"), ModalityType
+                .APPLICATION_MODAL);
         this.installer = installerr;
         setSize(550, 450);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -106,8 +106,8 @@ public class JsonModsChooser extends JDialog {
         checkBoxPanel1.setLayout(null);
         checkBoxPanel1.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
+                .HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
         scroller1.setPreferredSize(new Dimension(275, 350));
         modsInPack.setRightComponent(scroller1);
@@ -116,8 +116,8 @@ public class JsonModsChooser extends JDialog {
         checkBoxPanel2.setLayout(null);
         checkBoxPanel2.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
+                .HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
         scroller2.setPreferredSize(new Dimension(275, 350));
         modsInPack.setLeftComponent(scroller2);
@@ -268,13 +268,13 @@ public class JsonModsChooser extends JDialog {
                                 String message = installer.getJsonVersion().getWarningMessage(mod.getWarning());
 
                                 if (message != null) {
-                                    String[] options = {Language.INSTANCE.localize("common.yes"),
-                                            Language.INSTANCE.localize("common.no")};
-                                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                            "<html>" + message + "<br/>" +
+                                    String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE
+                                            .localize("common.no")};
+                                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html>" +
+                                            message + "<br/>" +
                                                     Language.INSTANCE.localize("instance.warningsure") + "</html>",
-                                            Language.INSTANCE.localize("instance.warning"),
-                                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options,
+                                            Language.INSTANCE.localize("instance.warning"), JOptionPane
+                                                    .DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options,
                                             options[1]);
                                     if (ret != 0) {
                                         finalCheckBox.setSelected(false);

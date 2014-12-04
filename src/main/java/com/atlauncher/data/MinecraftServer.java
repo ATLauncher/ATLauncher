@@ -93,8 +93,8 @@ public class MinecraftServer {
                 App.TOASTER.popError(String.format("Server %s is now offline!", this.name));
             } else if (playersOnline >= 0 && this.playersOnline == -1) {
                 // The server WAS offline and now it isn't
-                App.TOASTER.pop(String.format("Server %s is now online with %d players", this.name,
-                        this.playersOnline));
+                App.TOASTER.pop(String.format("Server %s is now online with %d players", this.name, this
+                        .playersOnline));
             }
         }
 

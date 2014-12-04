@@ -21,6 +21,7 @@ package com.atlauncher.gui.card;
 import com.atlauncher.data.Mod;
 import com.atlauncher.utils.Utils;
 
+import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -28,13 +29,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JPanel;
 
 public final class ModCard extends JPanel {
     public final Mod mod;
 
-    public ModCard(final Mod mod){
-        this.setPreferredSize(new Dimension(this.getPreferredSize().width, (int) (this.getPreferredSize().height * 1.5)));
+    public ModCard(final Mod mod) {
+        this.setPreferredSize(new Dimension(this.getPreferredSize().width, (int) (this.getPreferredSize().height * 1
+        .5)));
         this.mod = mod;
         if (this.mod.hasWebsite()) {
             this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -44,9 +45,9 @@ public final class ModCard extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (ModCard.this.mod.hasWebsite()) {
-                    try{
+                    try {
                         Utils.openBrowser(mod.getWebsite());
-                    } catch(Exception e1){
+                    } catch (Exception e1) {
                         e1.printStackTrace(System.err);
                     }
                 }

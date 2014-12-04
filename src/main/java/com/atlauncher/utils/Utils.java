@@ -61,7 +61,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
-import java.io.Reader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
@@ -124,7 +123,7 @@ public class Utils {
         try {
             File themeFile = App.settings.getThemeFile();
 
-            if(themeFile != null) {
+            if (themeFile != null) {
                 InputStream stream = null;
 
                 ZipFile zipFile = new ZipFile(themeFile);
@@ -221,7 +220,7 @@ public class Utils {
 
             File themeFile = App.settings.getThemeFile();
 
-            if(themeFile != null) {
+            if (themeFile != null) {
                 InputStream stream = null;
 
                 ZipFile zipFile = new ZipFile(themeFile);
@@ -972,8 +971,8 @@ public class Utils {
                 spreadOutResourceFiles(file);
             } else {
                 String hash = getSHA1(file);
-                File saveTo = new File(App.settings.getObjectsAssetsDir(), hash.substring(0,
-                        2) + File.separator + hash);
+                File saveTo = new File(App.settings.getObjectsAssetsDir(), hash.substring(0, 2) + File.separator +
+                        hash);
                 saveTo.mkdirs();
                 copyFile(file, saveTo, true);
             }
@@ -1168,8 +1167,8 @@ public class Utils {
      * @param withThis        the with this
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static void replaceText(File originalFile, File destinationFile, String replaceThis,
-                                   String withThis) throws IOException {
+    public static void replaceText(File originalFile, File destinationFile, String replaceThis, String withThis)
+            throws IOException {
 
         FileInputStream fs = new FileInputStream(originalFile);
         BufferedReader br = new BufferedReader(new InputStreamReader(fs));
@@ -2036,7 +2035,7 @@ public class Utils {
     /**
      * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
      */
-    public static boolean addToClasspath (File file) {
+    public static boolean addToClasspath(File file) {
         LogManager.info("Loading external library " + file.getName() + " to classpath");
         try {
             if (file.exists()) {
@@ -2045,7 +2044,7 @@ public class Utils {
                 LogManager.error("Error loading AuthLib");
             }
         } catch (Throwable t) {
-            if(t.getMessage() != null) {
+            if (t.getMessage() != null) {
                 LogManager.error(t.getMessage());
             }
             return false;
@@ -2079,7 +2078,7 @@ public class Utils {
             method.setAccessible(true);
             method.invoke(sysloader, u);
         } catch (Throwable t) {
-            if(t.getMessage() != null) {
+            if (t.getMessage() != null) {
                 LogManager.error(t.getMessage());
             }
             throw new IOException("Error, could not add URL to system classloader");

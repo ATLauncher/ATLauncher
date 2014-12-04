@@ -146,8 +146,8 @@ public class LegacyMCLauncher {
 
         if (Utils.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
-            arguments.add("-Xdock:icon=" + new File(App.settings.getImagesDir(),
-                    "OldMinecraftIcon.png").getAbsolutePath());
+            arguments.add("-Xdock:icon=" + new File(App.settings.getImagesDir(), "OldMinecraftIcon.png")
+                    .getAbsolutePath());
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
