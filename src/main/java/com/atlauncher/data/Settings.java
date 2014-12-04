@@ -766,7 +766,7 @@ public class Settings {
 
     private void checkForLauncherUpdate() {
         LogManager.debug("Checking for launcher update");
-        if (!Constants.VERSION.isBeta() && launcherHasUpdate()) {
+        if (launcherHasUpdate()) {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
             } else {
