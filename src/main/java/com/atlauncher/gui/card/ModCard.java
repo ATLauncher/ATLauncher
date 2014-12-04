@@ -34,8 +34,8 @@ public final class ModCard extends JPanel {
     public final Mod mod;
 
     public ModCard(final Mod mod) {
-        this.setPreferredSize(new Dimension(this.getPreferredSize().width, (int) (this.getPreferredSize().height * 1
-        .5)));
+        Dimension dim = new Dimension(this.getPreferredSize().width, (int) (this.getPreferredSize().height * 1.5));
+        this.setPreferredSize(dim);
         this.mod = mod;
         if (this.mod.hasWebsite()) {
             this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
