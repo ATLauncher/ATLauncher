@@ -311,6 +311,15 @@ public class Account implements Serializable {
     }
 
     /**
+     * Gets the UUID of this account with no dashes.
+     *
+     * @return The UUID for this Account with no dashes
+     */
+    public String getUUIDNoDashes() {
+        return (this.uuid == null ? "0" : this.uuid.replace("-", ""));
+    }
+
+    /**
      * Gets the real UUID of this account.
      *
      * @return The real UUID for this Account
@@ -431,6 +440,7 @@ public class Account implements Serializable {
                     dialog.setReturnValue(false);
                     String skinURL = getSkinURL();
                     if (skinURL == null) {
+                        LogManager.error("Couldn't download skin because the url found was NULL");
                         if (!file.exists()) {
                             // Only copy over the default skin if there is no skin for the user
                             Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
@@ -475,7 +485,7 @@ public class Account implements Serializable {
     public String getSkinURL() {
         StringBuilder response = null;
         try {
-            URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + this.getUUID());
+            URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + this.getUUIDNoDashes());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setConnectTimeout(15000);
