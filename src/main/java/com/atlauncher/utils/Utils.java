@@ -1509,6 +1509,45 @@ public class Utils {
             return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.8");
         }
     }
+    
+     /**
+     * Checks if is java9.
+     *
+     * @return true, if is java9
+     */
+    public static boolean isJava9() {
+        if (App.settings.isUsingCustomJavaPath()) {
+            File folder = new File(App.settings.getJavaPath(), "bin/");
+            List<String> arguments = new ArrayList<String>();
+            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add("-version");
+            ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+            processBuilder.directory(folder);
+            processBuilder.redirectErrorStream(true);
+            BufferedReader br = null;
+            try {
+                Process process = processBuilder.start();
+                InputStream is = process.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                br = new BufferedReader(isr);
+                String line = br.readLine(); // Read first line only
+                return line.contains("\"1.9");
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Cannot close input stream reader", e);
+                    }
+                }
+            }
+            return false; // Can't determine version, so fall back to not being Java 8
+        } else {
+            return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.9");
+        }
+    }
 
     /**
      * Gets the open eye pending reports file filter.
