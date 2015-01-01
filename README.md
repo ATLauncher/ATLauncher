@@ -78,8 +78,12 @@ This is a link to your server side API for processing of leaderboard times and p
 #### PASTE_CHECK_URL
 This is a link to the url where an instance of [stikked](https://github.com/claudehohl/Stikked) is running (For instance http://www.mypaste.com) this is how the launcher knows if the paste was successful by checking the response from the API for the url of the software.
 
+*Please note that the domain given above IS NOT REAL. You must install [stikked](https://github.com/claudehohl/Stikked) on your own domain and reference it, the domain is only there as an example of what a valid value is.*
+
 #### PASTE_API_URL
 This is a link to the create api command for the instance of [stikked](https://github.com/claudehohl/Stikked) is running (For instance http://www.mypaste.com/api/create/)
+
+*Please note that the domain given above IS NOT REAL. You must install [stikked](https://github.com/claudehohl/Stikked) on your own domain and reference it, the domain is only there as an example of what a valid value is.*
 
 #### SERVERS
 This is an array of Server type elements the launcher uses as a base to download files.
