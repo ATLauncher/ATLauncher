@@ -936,10 +936,43 @@ public class Utils {
                 delete(c);
             }
         }
+
+        if (isSymlink(file)) {
+            LogManager.error("Not deleting the " + (file.isFile() ? "file" : "folder") + file.getAbsolutePath() +
+                    "as it's a symlink");
+            return;
+        }
+
         if (!file.delete()) {
             LogManager.error((file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath() + " couldn't be " +
                     "deleted");
         }
+    }
+
+    public static boolean isSymlink(File file) {
+        try {
+            if (file == null) {
+                throw new NullPointerException("File must not be null");
+            }
+
+            File canon;
+
+            if (file.getParent() == null) {
+                canon = file;
+            } else {
+                File canonDir = null;
+
+                canonDir = file.getParentFile().getCanonicalFile();
+
+                canon = new File(canonDir, file.getName());
+            }
+
+            return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     /**
