@@ -17,3 +17,4 @@ Changelog
 - Enter button now edits/adds an account in the Account tab
 - Add in build versioning for beta testing
 - Switch to Mojang's official AuthLib for authentication
+- Don't delete symlinks
