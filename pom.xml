@@ -131,7 +131,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>ATLauncher-${project.version}</finalName>
+                            <finalName>${project.name}-${project.version}</finalName>
                         </configuration>
                     </execution>
                 </executions>
@@ -145,8 +145,8 @@
                         <configuration>
                             <headerType>gui</headerType>
                             <stayAlive>false</stayAlive>
-                            <jar>${project.build.directory}/ATLauncher-${project.version}.jar</jar>
-                            <outfile>${project.build.directory}/ATLauncher-${project.version}.exe</outfile>
+                            <jar>${project.build.directory}/${project.name}-${project.version}.jar</jar>
+                            <outfile>${project.build.directory}/${project.name}-${project.version}.exe</outfile>
                             <classPath>
                                 <mainClass>${mainclass}</mainClass>
                                 <addDependencies>false</addDependencies>
@@ -175,32 +175,32 @@
                         <configuration>
                             <target>
                                 <chmod
-                                        file="${project.build.directory}/ATLauncher-${project.version}.jar"
+                                        file="${project.build.directory}/${project.name}-${project.version}.jar"
                                         perm="ugo+rwx"/>
 
-                                <mkdir dir="${project.build.directory}/ATLauncher.app"/>
-                                <copy todir="${project.build.directory}/ATLauncher.app">
+                                <mkdir dir="${project.build.directory}/${project.name}.app"/>
+                                <copy todir="${project.build.directory}/${project.name}.app">
                                     <fileset dir="${basedir}/macapp" includes="**"/>
                                 </copy>
                                 <copy
-                                        file="${project.build.directory}/ATLauncher-${project.version}.jar"
-                                        tofile="${project.build.directory}/ATLauncher.app/Contents/Resources/Java/ATLauncher.jar"/>
+                                        file="${project.build.directory}/${project.name}-${project.version}.jar"
+                                        tofile="${project.build.directory}/${project.name}.app/Contents/Resources/Java/${project.name}.jar"/>
                                 <copy file="${basedir}/src/main/resources/assets/image/Icon.icns"
-                                      tofile="${project.build.directory}/ATLauncher.app/Contents/Resources/Icon.icns"/>
+                                      tofile="${project.build.directory}/${project.name}.app/Contents/Resources/Icon.icns"/>
                                 <replace
-                                        file="${project.build.directory}/ATLauncher.app/Contents/Info.plist"
+                                        file="${project.build.directory}/${project.name}.app/Contents/Info.plist"
                                         token="%VERSION%" value="${project.version}"/>
 
                                 <zip
-                                        destfile="${project.build.directory}/ATLauncher-${project.version}.zip">
+                                        destfile="${project.build.directory}/${project.name}-${project.version}.zip">
                                     <zipfileset dir="${project.build.directory}/"
-                                                includes="ATLauncher.app/**"
-                                                excludes="ATLauncher.app/Contents/MacOS/JavaApplicationStub"/>
+                                                includes="${project.name}.app/**"
+                                                excludes="${project.name}.app/Contents/MacOS/JavaApplicationStub"/>
                                     <zipfileset dir="${project.build.directory}/"
-                                                includes="ATLauncher.app/Contents/MacOS/JavaApplicationStub"
+                                                includes="${project.name}.app/Contents/MacOS/JavaApplicationStub"
                                                 filemode="755"/>
                                 </zip>
-                                <delete dir="{project.build.directory}/ATLauncher.app"/>
+                                <delete dir="{project.build.directory}/${project.name}.app"/>
                             </target>
                         </configuration>
                         <goals>
