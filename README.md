@@ -64,6 +64,7 @@ To get started with the code and plug in your own data, you need to create a src
     public static final String PASTE_CHECK_URL = "";
     public static final String PASTE_API_URL = "";
     public static final Server[] SERVERS = new Server[] { new Server("Test", "my.file.server.com", true, true) };
+    public static final String LAUNCHER_NAME = "MyLauncher";
     
     }
 
@@ -87,6 +88,9 @@ This is a link to the create api command for the instance of [stikked](https://g
 
 #### SERVERS
 This is an array of Server type elements the launcher uses as a base to download files.
+
+#### LAUNCHER_NAME
+This is the name of the launcher.
 
 #### How to make your data
 
