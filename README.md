@@ -51,6 +51,15 @@ Make sure to add the directory containing launch4jc to your executable path whic
 C:\Program Files (x86)\Launch4j
 ```
 
+#### Linux
+
+Install the Java development Kit, Apache Maven and Launch4j packages for your Linux distribution:
+
+Arch Linux Build Dependencies:
+```
+yaourt -S maven launch4j
+```
+
 ### Plugging In Your Data
 
 To get started with the code and plug in your own data, you need to create a src/main/java/com/atlauncher/data/Constants.java file. Below is a starter to get you going:
