@@ -24,6 +24,7 @@ import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.utils.Utils;
+import main.java.com.atlauncher.data.Constants;
 
 import java.applet.Applet;
 import java.awt.Dimension;
@@ -372,7 +373,7 @@ public class LegacyMCLauncher {
                 try {
                     Class<?> MCAppletClass = cl.loadClass("net.minecraft.client.MinecraftApplet");
                     Applet mcappl = (Applet) MCAppletClass.newInstance();
-                    MCFrame mcWindow = new MCFrame("ATLauncher - " + instanceName);
+                    MCFrame mcWindow = new MCFrame(Constants.LAUNCHER_NAME + " - " + instanceName);
                     mcWindow.start(mcappl, username, session, winSize, maximize);
                 } catch (InstantiationException e) {
                     System.out.println("Applet wrapper failed! Falling back " + "to compatibility mode.");

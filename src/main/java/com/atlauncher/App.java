@@ -27,6 +27,7 @@ import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
+import main.java.com.atlauncher.data.Constants;
 
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
@@ -116,7 +117,7 @@ public class App {
                 } else if (parts[0].equalsIgnoreCase("--skip-minecraft-version-downloads")) {
                     skipMinecraftVersionDownloads = true;
                     LogManager.debug("Skipping Minecraft version downloads! This may cause issues, only use it as " +
-                            "directed by ATLauncher staff!", true);
+                            "directed by"  + Constants.LAUNCHER_NAME + " staff!", true);
                 } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
                     skipTrayIntegration = true;
                     LogManager.debug("Skipping tray integration!", true);
@@ -184,7 +185,7 @@ public class App {
 
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "ATLauncher " + Constants.VERSION);
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", Constants.LAUNCHER_NAME + " " + Constants.VERSION);
             try {
                 Class util = Class.forName("com.apple.eawt.Application");
                 Method getApplication = util.getMethod("getApplication", new Class[0]);

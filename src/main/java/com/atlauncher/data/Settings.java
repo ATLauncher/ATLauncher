@@ -43,6 +43,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import main.java.com.atlauncher.data.Constants;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -228,7 +229,7 @@ public class Settings {
         instancesDataFile = new File(configsDir, "instancesdata");
         checkingServersFile = new File(configsDir, "checkingservers.json");
         userDataFile = new File(configsDir, "userdata");
-        propertiesFile = new File(configsDir, "ATLauncher.conf");
+        propertiesFile = new File(configsDir, Constants.LAUNCHER_NAME + ".conf");
     }
 
     public void loadEverything() {
@@ -405,9 +406,9 @@ public class Settings {
     public void clearOldLogs() {
         LogManager.debug("Clearing out old logs");
 
-        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
+        File logFile1 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-1.txt");
+        File logFile2 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-2.txt");
+        File logFile3 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-3.txt");
 
         if (logFile3.exists()) {
             Utils.delete(logFile3);
@@ -431,7 +432,7 @@ public class Settings {
         for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
             try {
                 Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace
-                        ("ATLauncher-Log_", "").replace(".log", ""));
+                        (Constants.LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
 
                 if (date.before(toDeleteAfter)) {
                     Utils.delete(file);
@@ -446,9 +447,9 @@ public class Settings {
     }
 
     public void clearAllLogs() {
-        File logFile1 = new File(getBaseDir(), "ATLauncher-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), "ATLauncher-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), "ATLauncher-Log-3.txt");
+        File logFile1 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-1.txt");
+        File logFile2 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-2.txt");
+        File logFile3 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-3.txt");
 
         if (logFile3.exists()) {
             Utils.delete(logFile3);
@@ -594,7 +595,7 @@ public class Settings {
             }
             File newFile = new File(getTempDir(), saveAs);
             LogManager.info("Downloading Launcher Update");
-            Downloadable update = new Downloadable("ATLauncher." + toget, newFile, null, null, true);
+            Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + toget, newFile, null, null, true);
             update.download(false);
             runUpdate(path, newFile.getAbsolutePath());
         } catch (IOException e) {
@@ -1143,7 +1144,7 @@ public class Settings {
         }
         try {
             this.properties.load(new FileInputStream(propertiesFile));
-            this.theme = properties.getProperty("theme", "ATLauncher");
+            this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
                     !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
@@ -1386,7 +1387,7 @@ public class Settings {
                 this.daysOfLogsToKeep = 7;
             }
 
-            this.theme = properties.getProperty("theme", "ATLauncher");
+            this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
 
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
@@ -1469,7 +1470,7 @@ public class Settings {
             properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
             properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
-            this.properties.store(new FileOutputStream(propertiesFile), "ATLauncher Settings");
+            this.properties.store(new FileOutputStream(propertiesFile), Constants.LAUNCHER_NAME + " Settings");
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         } catch (IOException e) {
@@ -3053,7 +3054,7 @@ public class Settings {
     }
 
     public String getUserAgent() {
-        return this.userAgent + " ATLauncher/" + Constants.VERSION;
+        return this.userAgent + Constants.LAUNCHER_NAME + " /" + Constants.VERSION;
     }
 
     /**

@@ -28,6 +28,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.utils.Utils;
+import main.java.com.atlauncher.data.Constants;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -54,7 +55,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
     private JMenuItem copy;
 
     public LauncherConsole() {
-        this.setTitle("ATLauncher Console " + Constants.VERSION);
+        this.setTitle(Constants.LAUNCHER_NAME + " Console " + Constants.VERSION);
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setIconImage(Utils.getImage("/assets/image/Icon.png"));
         this.setMinimumSize(new Dimension(600, 400));

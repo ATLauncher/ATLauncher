@@ -27,6 +27,7 @@ import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
+import main.java.com.atlauncher.data.Constants;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -130,11 +131,11 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         dialog.doneTask();
                     }
 
-                    String result = Utils.uploadPaste("ATLauncher Network Test Log", results.toString());
+                    String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString());
                     if (result.contains(Constants.PASTE_CHECK_URL)) {
                         LogManager.info("Network Test has finished running, you can view the results at " + result);
                     } else {
-                        LogManager.error("Network Test failed to submit to ATLauncher!");
+                        LogManager.error("Network Test failed to submit to " + Constants.LAUNCHER_NAME + "!");
                         dialog.setReturnValue(false);
                     }
 
@@ -147,7 +148,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             if (dialog.getReturnValue() == null || !(Boolean) dialog.getReturnValue()) {
                 LogManager.error("Network Test failed to run!");
             } else {
-                LogManager.info("Network Test ran and submitted to ATLauncher!");
+                LogManager.info("Network Test ran and submitted to " + Constants.LAUNCHER_NAME + "!");
                 String[] options2 = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
                         .INSTANCE.localizeWithReplace("tools.networkheckercomplete", "<br/><br/>") +

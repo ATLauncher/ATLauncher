@@ -25,6 +25,7 @@ import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
+import main.java.com.atlauncher.data.Constants;
 import org.tukaani.xz.XZInputStream;
 
 import javax.crypto.BadPaddingException;
@@ -170,7 +171,7 @@ public class Utils {
                         .getSchemeSpecificPart()).getParentFile();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
-                return new File(System.getProperty("user.dir"), "ATLauncher");
+                return new File(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
             }
         } else {
             return new File(System.getProperty("user.dir"));
@@ -1378,7 +1379,7 @@ public class Utils {
             @Override
             public boolean accept(File dir, String name) {
                 File file = new File(dir, name);
-                return file.isFile() && name.startsWith("ATLauncher-Log_") && name.endsWith(".log");
+                return file.isFile() && name.startsWith(Constants.LAUNCHER_NAME + "-Log_") && name.endsWith(".log");
             }
         };
     }

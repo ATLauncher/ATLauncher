@@ -32,6 +32,7 @@ import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.utils.Utils;
+import main.java.com.atlauncher.data.Constants;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -65,7 +66,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         App.settings.setParentFrame(this);
         setSize(new Dimension(1000, 615));
-        setTitle("ATLauncher " + Constants.VERSION);
+        setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -99,7 +100,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
     }
 
     public void updateTitle(String str) {
-        setTitle("ATLauncher " + Constants.VERSION + " - " + str);
+        setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION + " - " + str);
     }
 
     /**
