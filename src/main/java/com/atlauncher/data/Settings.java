@@ -204,31 +204,130 @@ public class Settings {
     }
 
     public void setupFiles() {
-        baseDir = Utils.getCoreGracefully();
-        usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
-        logsDir = new File(baseDir, "Logs");
-        backupsDir = new File(baseDir, "Backups");
-        configsDir = new File(baseDir, "Configs");
-        themesDir = new File(configsDir, "Themes");
-        jsonDir = new File(configsDir, "JSON");
-        versionsDir = new File(configsDir, "Versions");
-        imagesDir = new File(configsDir, "Images");
-        skinsDir = new File(imagesDir, "Skins");
-        jarsDir = new File(configsDir, "Jars");
-        commonConfigsDir = new File(configsDir, "Common");
-        resourcesDir = new File(configsDir, "Resources");
-        librariesDir = new File(configsDir, "Libraries");
-        launcherLibrariesdir = new File(librariesDir, "Launcher");
-        languagesDir = new File(configsDir, "Languages");
-        downloadsDir = new File(baseDir, "Downloads");
-        instancesDir = new File(baseDir, "Instances");
-        serversDir = new File(baseDir, "Servers");
-        tempDir = new File(baseDir, "Temp");
-        failedDownloadsDir = new File(baseDir, "FailedDownloads");
-        instancesDataFile = new File(configsDir, "instancesdata");
-        checkingServersFile = new File(configsDir, "checkingservers.json");
-        userDataFile = new File(configsDir, "userdata");
-        propertiesFile = new File(configsDir, "ATLauncher.conf");
+        if(System.getenv("ATLAUNCHER_BASE_DIR") == null)
+            baseDir = Utils.getCoreGracefully();
+        else
+            baseDir = new File(System.getenv("ATLAUNCHER_BASE_DIR"));
+
+        if(System.getenv("ATLAUNCHER_USER_DOWNLOADS_DIR") == null)
+            usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
+        else
+            usersDownloadsFolder = new File(System.getenv("ATLAUNCHER_USER_DOWNLOADS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_LOGS_DIR") == null)
+            logsDir = new File(baseDir, "Logs");
+        else
+            logsDir = new File(System.getenv("ATLAUNCHER_LOGS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_BACKUPS_DIR") == null)
+            backupsDir = new File(baseDir, "Backups");
+        else
+            backupsDir = new File(System.getenv("ATLAUNCHER_BACKUPS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_CONFIGS_DIR") == null)
+            configsDir = new File(baseDir, "Configs");
+        else
+            configsDir = new File(System.getenv("ATLAUNCHER_CONFIGS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_THEMES_DIR") == null)
+            themesDir = new File(configsDir, "Themes");
+        else
+            themesDir = new File(System.getenv("ATLAUNCHER_THEMES_DIR"));
+
+        if(System.getenv("ATLAUNCHER_JSON_DIR") == null)
+            jsonDir = new File(configsDir, "JSON");
+        else
+            jsonDir = new File(System.getenv("ATLAUNCHER_JSON_DIR"));
+
+        if(System.getenv("ATLAUNCHER_VERSIONS_DIR") == null)
+            versionsDir = new File(configsDir, "Versions");
+        else
+            versionsDir = new File(System.getenv("ATLAUNCHER_VERSIONS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_IMAGES_DIR") == null)
+            imagesDir = new File(configsDir, "Images");
+        else
+            imagesDir = new File(System.getenv("ATLAUNCHER_IMAGES_DIR"));
+
+        if(System.getenv("ATLAUNCHER_SKINS_DIR") == null)
+            skinsDir = new File(imagesDir, "Skins");
+        else
+            skinsDir = new File(System.getenv("ATLAUNCHER_SKINS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_JARS_DIR") == null)
+            jarsDir = new File(configsDir, "Jars");
+        else
+            jarsDir = new File(System.getenv("ATLAUNCHER_JARS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_COMMON_CONFIGS_DIR") == null)
+            commonConfigsDir = new File(configsDir, "Common");
+        else
+            commonConfigsDir = new File(System.getenv("ATLAUNCHER_COMMON_CONFIGS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_RESOURCES_DIR") == null)
+            resourcesDir = new File(configsDir, "Resources");
+        else
+            resourcesDir = new File(System.getenv("ATLAUNCHER_RESOURCES_DIR"));
+
+        if(System.getenv("ATLAUNCHER_LIBRARIES_DIR") == null)
+            librariesDir = new File(configsDir, "Libraries");
+        else
+            librariesDir = new File(System.getenv("ATLAUNCHER_LIBRARIES_DIR"));
+
+        if(System.getenv("ATLAUNCHER_LAUNCHER_LIBRARIES_DIR") == null)
+            launcherLibrariesdir = new File(librariesDir, "Launcher");
+        else
+            launcherLibrariesdir = new File(System.getenv("ATLAUNCHER_LAUNCHER_LIBRARIES_DIR"));
+
+        if(System.getenv("ATLAUNCHER_LANGUAGES_DIR") == null)
+            languagesDir = new File(configsDir, "Languages");
+        else
+            languagesDir = new File(System.getenv("ATLAUNCHER_LANGUAGES_DIR"));
+
+        if(System.getenv("ATLAUNCHER_DOWNLOADS_DIR") == null)
+            downloadsDir = new File(baseDir, "Downloads");
+        else
+            downloadsDir = new File(System.getenv("ATLAUNCHER_DOWNLOADS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_INSTANCES_DIR") == null)
+            instancesDir = new File(baseDir, "Instances");
+        else
+            instancesDir = new File(System.getenv("ATLAUNCHER_INSTANCES_DIR"));
+
+        if(System.getenv("ATLAUNCHER_SERVERS_DIR") == null)
+            serversDir = new File(baseDir, "Servers");
+        else
+            serversDir = new File(System.getenv("ATLAUNCHER_SERVERS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_TEMP_DIR") == null)
+            tempDir = new File(baseDir, "Temp");
+        else
+            tempDir = new File(System.getenv("ATLAUNCHER_TEMP_DIR"));
+
+        if(System.getenv("ATLAUNCHER_FAILEDDOWNLOADS_DIR") == null)
+            failedDownloadsDir = new File(baseDir, "FailedDownloads");
+        else
+            failedDownloadsDir = new File(System.getenv("ATLAUNCHER_FAILEDDOWNLOADS_DIR"));
+
+        if(System.getenv("ATLAUNCHER_INSTANCESDATA_FILE") == null)
+            instancesDataFile = new File(configsDir, "instancesdata");
+        else
+            instancesDataFile = new File(System.getenv("ATLAUNCHER_INSTANCESDATA_FILE"));
+
+        if(System.getenv("ATLAUNCHER_CHECKINGSERVERS_FILE") == null)
+            checkingServersFile = new File(configsDir, "checkingservers.json");
+        else
+            checkingServersFile = new File(System.getenv("ATLAUNCHER_CHECKINGSERVERS_FILE"));
+
+        if(System.getenv("ATLAUNCHER_USERDATA_FILE") == null)
+            userDataFile = new File(configsDir, "userdata");
+        else
+            userDataFile = new File(System.getenv("ATLAUNCHER_USERDATA_FILE"));
+
+        if(System.getenv("ATLAUNCHER_PROPERTIES_FILE") == null)
+            propertiesFile = new File(configsDir, "ATLauncher.conf");
+        else
+            propertiesFile = new File(System.getenv("ATLAUNCHER_PROPERTIES_FILE"));
     }
 
     public void loadEverything() {

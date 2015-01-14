@@ -164,17 +164,7 @@ public class Utils {
     }
 
     public static File getCoreGracefully() {
-        if (Utils.isLinux()) {
-            try {
-                return new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()
-                        .getSchemeSpecificPart()).getParentFile();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-                return new File(System.getProperty("user.dir"), "ATLauncher");
-            }
-        } else {
-            return new File(System.getProperty("user.dir"));
-        }
+        return new File(System.getProperty("user.dir"));
     }
 
     /**

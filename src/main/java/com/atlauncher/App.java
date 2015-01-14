@@ -58,6 +58,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class App {
+    Map<String, String> env = System.getenv();
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
     public static final Toaster TOASTER = Toaster.instance();
 
