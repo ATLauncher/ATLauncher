@@ -55,7 +55,7 @@ C:\Program Files (x86)\Launch4j
 
 Install the Java development Kit, Apache Maven and Launch4j packages for your Linux distribution:
 
-Arch Linux Build Dependencies:
+Arch Linux Build Dependencies (need AUR for launch4j):
 ```
 yaourt -S maven launch4j
 ```
