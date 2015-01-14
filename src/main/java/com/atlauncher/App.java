@@ -128,8 +128,48 @@ public class App {
             }
         }
 
+        String[] env_var_names = {"ATLAUNCHER_BASE_DIR",
+            "ATLAUNCHER_USER_DOWNLOADS_DIR",
+            "ATLAUNCHER_LOGS_DIR",
+            "ATLAUNCHER_BACKUPS_DIR",
+            "ATLAUNCHER_CONFIGS_DIR",
+            "ATLAUNCHER_THEMES_DIR",
+            "ATLAUNCHER_JSON_DIR",
+            "ATLAUNCHER_VERSIONS_DIR",
+            "ATLAUNCHER_IMAGES_DIR",
+            "ATLAUNCHER_SKINS_DIR",
+            "ATLAUNCHER_JARS_DIR",
+            "ATLAUNCHER_COMMON_CONFIGS_DIR",
+            "ATLAUNCHER_RESOURCES_DIR",
+            "ATLAUNCHER_LIBRARIES_DIR",
+            "ATLAUNCHER_LAUNCHER_LIBRARIES_DIR",
+            "ATLAUNCHER_LANGUAGES_DIR",
+            "ATLAUNCHER_DOWNLOADS_DIR",
+            "ATLAUNCHER_INSTANCES_DIR",
+            "ATLAUNCHER_SERVERS_DIR",
+            "ATLAUNCHER_TEMP_DIR",
+            "ATLAUNCHER_FAILEDDOWNLOADS_DIR",
+            "ATLAUNCHER_INSTANCESDATA_FILE",
+            "ATLAUNCHER_CHECKINGSERVERS_FILE",
+            "ATLAUNCHER_USERDATA_FILE",
+            "ATLAUNCHER_PROPERTIES_FILE"};
+
+        // This code is to ensure that the launcher does not think
+        // that it is in the wrong location when environment variables
+        // are used to change the location of the launcher jar file or the
+        // folders in relation to it.
+        boolean bypassDirectoryCheck = false;
+        for(String env_var : env_var_names)
+        {
+            if(System.getenv(env_var) != null)
+            {
+                bypassDirectoryCheck = true;
+                break;
+            }
+        }
+
         File config = new File(Utils.getCoreGracefully(), "Configs");
-        if (!config.exists()) {
+        if (!config.exists() && ! bypassDirectoryCheck) {
             int files = config.getParentFile().list().length;
             if (files > 1) {
                 String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
