@@ -41,6 +41,7 @@ import java.awt.TrayIcon;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -165,7 +166,60 @@ public class App {
         }
 
         LogManager.info("ATLauncher Version: " + Constants.VERSION);
-        LogManager.info("Operating System: " + System.getProperty("os.name"));
+        if(System.getProperty("os.name").equals("Linux"))
+        {
+            String distro = "Unknown Distribution";
+            if(new File("/etc/lsb-release").exists())
+            {
+                try
+                {
+                    String line = "";
+                    BufferedReader lsbReader = new BufferedReader(new FileReader(new File("/etc/lsb-release")));
+                    while((line = lsbReader.readLine()) != null) {
+                        if(line.indexOf("DISTRIB_DESCRIPTION") != -1) {
+                            distro = line.substring(20).replace("\"","");
+                        }
+                    }
+                }
+                catch(IOException e) {
+                    LogManager.warn("Unable to read lsb-release:" + e.getMessage());
+                }
+            }
+            else if(new File("/etc/os-release").exists())
+            {
+                try
+                {
+                    String line = "";
+                    BufferedReader osReader = new BufferedReader(new FileReader(new File("/etc/os-release")));
+                    while((line = osReader.readLine()) != null) {
+                        if(line.indexOf("PRETTY_NAME") != -1) {
+                            distro = line.substring(12).replace("\"","");
+                        }
+                    }
+                }
+                catch(IOException e) {
+                    LogManager.warn("Unable to read os-release:" + e.getMessage());
+                }
+            }
+            else if(new File("/etc/redhat-release").exists())
+            {
+                try
+                {
+                    BufferedReader lsbReader = new BufferedReader(new FileReader(new File("/etc/redhat-release")));
+                    distro = lsbReader.readLine();
+                }
+                catch(IOException e) {
+                    LogManager.warn("Unable to read redhat-release:" + e.getMessage());
+                }
+            }
+            else if(new File("/etc/pacman.conf").exists())
+            {
+                distro = "Arch Linux";
+            }
+            LogManager.info("Operating System: Linux (" + distro + ")");
+        }
+        else
+            LogManager.info("Operating System: " + System.getProperty("os.name"));
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
         if (settings.isUsingCustomJavaPath()) {
             LogManager.warn("Custom Java Path Set!");
