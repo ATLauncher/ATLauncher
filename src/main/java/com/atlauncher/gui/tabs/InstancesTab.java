@@ -83,7 +83,7 @@ public class InstancesTab extends JPanel implements Tab {
             searchBox.setText(this.searchText);
         }
         searchBox.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
+            public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     reload();
                 }
