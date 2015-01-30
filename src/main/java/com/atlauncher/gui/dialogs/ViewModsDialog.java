@@ -76,7 +76,7 @@ public final class ViewModsDialog extends JDialog {
 
         this.searchField.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyTyped(KeyEvent e) {
+            public void keyReleased(KeyEvent e) {
                 reload();
             }
         });
