@@ -20,7 +20,9 @@ package com.atlauncher.gui.tabs;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
+import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.TabChangeListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.card.NilCard;
@@ -47,18 +49,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public final class PacksTab extends JPanel implements Tab {
+public final class PacksTab extends JPanel implements Tab, RelocalizationListener {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     private final JButton addButton = new JButton(Language.INSTANCE.localize("pack.addpack"));
     private final JButton clearButton = new JButton(Language.INSTANCE.localize("common.clear"));
-    private final JButton expandAllButton = new JButton("Expand All");
-    private final JButton collapseAllButton = new JButton("Collapse All");
+    private final JButton expandAllButton = new JButton(Language.INSTANCE.localize("pack.expandall"));
+    private final JButton collapseAllButton = new JButton(Language.INSTANCE.localize("pack.collapseall"));
     private final JTextField searchField = new JTextField(16);
     private final JCheckBox serversBox = new JCheckBox(Language.INSTANCE.localize("pack.cancreateserver"));
     private final JCheckBox privateBox = new JCheckBox(Language.INSTANCE.localize("pack.privatepacksonly"));
-    private final JCheckBox searchDescBox = new JCheckBox("Search Description");
+    private final JCheckBox searchDescBox = new JCheckBox(Language.INSTANCE.localize("pack.searchdescription"));
 
     private List<PackCard> cards = new LinkedList<PackCard>();
 
@@ -73,6 +75,8 @@ public final class PacksTab extends JPanel implements Tab {
         this.add(scrollPane, BorderLayout.CENTER);
         this.add(this.topPanel, BorderLayout.NORTH);
         this.add(this.bottomPanel, BorderLayout.SOUTH);
+
+        RelocalizationManager.addListener(this);
 
         this.setupTopPanel();
         this.preload();
@@ -253,5 +257,16 @@ public final class PacksTab extends JPanel implements Tab {
     @Override
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.packs");
+    }
+
+    @Override
+    public void onRelocalization() {
+        addButton.setText(Language.INSTANCE.localize("pack.addpack"));
+        clearButton.setText(Language.INSTANCE.localize("common.clear"));
+        expandAllButton.setText(Language.INSTANCE.localize("pack.expandall"));
+        collapseAllButton.setText(Language.INSTANCE.localize("pack.collapseall"));
+        serversBox.setText(Language.INSTANCE.localize("pack.cancreateserver"));
+        privateBox.setText(Language.INSTANCE.localize("pack.privatepacksonly"));
+        searchDescBox.setText(Language.INSTANCE.localize("pack.searchdescription"));
     }
 }
