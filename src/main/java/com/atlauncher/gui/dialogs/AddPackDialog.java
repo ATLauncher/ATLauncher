@@ -49,7 +49,7 @@ public class AddPackDialog extends JDialog {
 
     public AddPackDialog() {
         super(null, Language.INSTANCE.localize("pack.addpack"), ModalityType.APPLICATION_MODAL);
-        setSize(300, 150);
+        setSize(350, 150);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
