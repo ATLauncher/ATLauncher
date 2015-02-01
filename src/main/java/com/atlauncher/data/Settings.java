@@ -313,8 +313,7 @@ public class Settings {
                     .INSTANCE.localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
                     .ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
-                Utils.openBrowser("http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261" +
-                        ".html");
+                Utils.openBrowser("http://atl.pw/java7download");
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideOldJavaWarning = true;
@@ -332,8 +331,7 @@ public class Settings {
                     .INSTANCE.localize("settings.java8warningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
                     .ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
-                Utils.openBrowser("http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261" +
-                        ".html");
+                Utils.openBrowser("http://atl.pw/java7download");
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideJava8Warning = true;
