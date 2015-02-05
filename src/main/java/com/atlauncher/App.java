@@ -262,7 +262,9 @@ public class App {
             LogManager.info("Operating System: Linux (" + distro + ")");
         }
         else
+        {
             LogManager.info("Operating System: " + System.getProperty("os.name"));
+        }
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
         if (settings.isUsingCustomJavaPath()) {
             LogManager.warn("Custom Java Path Set!");
