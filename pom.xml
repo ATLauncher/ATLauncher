@@ -165,46 +165,21 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>osxappbundle-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <configuration>
+                    <bundleName>${project.name}</bundleName>
+                    <iconFile>src/main/resources/assets/image/Icon.icns</iconFile>
+                    <internetEnable>true</internetEnable>
+                    <jvmVersion>${project.jdk.version}+</jvmVersion>
+                    <mainClass>${mainclass}</mainClass>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>compile</id>
                         <phase>package</phase>
-                        <configuration>
-                            <target>
-                                <chmod
-                                        file="${project.build.directory}/${project.name}-${project.version}.jar"
-                                        perm="ugo+rwx"/>
-
-                                <mkdir dir="${project.build.directory}/${project.name}.app"/>
-                                <copy todir="${project.build.directory}/${project.name}.app">
-                                    <fileset dir="${basedir}/macapp" includes="**"/>
-                                </copy>
-                                <copy
-                                        file="${project.build.directory}/${project.name}-${project.version}.jar"
-                                        tofile="${project.build.directory}/${project.name}.app/Contents/Resources/Java/${project.name}.jar"/>
-                                <copy file="${basedir}/src/main/resources/assets/image/Icon.icns"
-                                      tofile="${project.build.directory}/${project.name}.app/Contents/Resources/Icon.icns"/>
-                                <replace
-                                        file="${project.build.directory}/${project.name}.app/Contents/Info.plist"
-                                        token="%VERSION%" value="${project.version}"/>
-
-                                <zip
-                                        destfile="${project.build.directory}/${project.name}-${project.version}.zip">
-                                    <zipfileset dir="${project.build.directory}/"
-                                                includes="${project.name}.app/**"
-                                                excludes="${project.name}.app/Contents/MacOS/JavaApplicationStub"/>
-                                    <zipfileset dir="${project.build.directory}/"
-                                                includes="${project.name}.app/Contents/MacOS/JavaApplicationStub"
-                                                filemode="755"/>
-                                </zip>
-                                <delete dir="{project.build.directory}/${project.name}.app"/>
-                            </target>
-                        </configuration>
                         <goals>
-                            <goal>run</goal>
+                            <goal>bundle</goal>
                         </goals>
                     </execution>
                 </executions>
