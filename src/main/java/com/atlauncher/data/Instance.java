@@ -985,7 +985,8 @@ public class Instance implements Cloneable {
      * there is no versions of the Pack
      */
     public String getLatestVersion() {
-        return (this.realPack != null ? this.realPack.getLatestVersion().getVersion() : null);
+        return (this.realPack != null ? (this.realPack.getLatestVersion() == null ? null : this.realPack
+                .getLatestVersion().getVersion()) : null);
     }
 
     /**
