@@ -241,6 +241,13 @@ public class Pack {
         return this.versions.get(0);
     }
 
+    public PackVersion getLatestDevVersion() {
+        if (this.devVersions.size() == 0) {
+            return null;
+        }
+        return this.devVersions.get(0);
+    }
+
     public boolean isLatestVersionNoUpdate() {
         if (this.versions.size() == 0) {
             return false;

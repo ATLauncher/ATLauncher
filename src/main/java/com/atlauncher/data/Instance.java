@@ -456,7 +456,15 @@ public class Instance implements Cloneable {
         if (this.ignoredUpdates == null) {
             this.ignoredUpdates = new ArrayList<String>();
         }
-        String version = getLatestVersion();
+
+        String version;
+
+        if (this.isDev) {
+            version = getLatestDevHash();
+        } else {
+            version = getLatestVersion();
+        }
+
         if (!hasUpdateBeenIgnored(version)) {
             this.ignoredUpdates.add(version);
             App.settings.saveInstances();
@@ -987,6 +995,11 @@ public class Instance implements Cloneable {
     public String getLatestVersion() {
         return (this.realPack != null ? (this.realPack.getLatestVersion() == null ? null : this.realPack
                 .getLatestVersion().getVersion()) : null);
+    }
+
+    public String getLatestDevHash() {
+        return (this.realPack != null ? (this.realPack.getLatestDevVersion() == null ? null : this.realPack
+                .getLatestDevVersion().getHash()) : null);
     }
 
     /**

@@ -18,3 +18,4 @@ Changelog
 - Add in build versioning for beta testing
 - Switch to Mojang's official AuthLib for authentication
 - Don't delete symlinks
+- Fix issues with dev versions with updates not being able to play until updated
