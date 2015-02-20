@@ -82,12 +82,17 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                     // Ping Test
                     for (Server server : App.settings.getServers()) {
+                        if (server.getHost().contains(":")) {
+                            dialog.doneTask();
+                            continue;
+                        }
+
                         results.append("Ping results to " + server.getHost() + " was " + Utils.pingAddress(server
                                 .getHost()) + "\n\n----------------\n\n");
                         dialog.doneTask();
 
-                        results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute("www.creeperrepo" +
-                                ".net"));
+                        results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute("www" +
+                                ".creeperrepo" + ".net"));
                         dialog.doneTask();
                     }
 
@@ -122,15 +127,16 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         float bps = file.length() / (timeTaken / 1000);
                         float kbps = bps / 1024;
                         float mbps = kbps / 1024;
-                        String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f " +
-                                "KB/s", kbps)) : String.format("%.2f MB/s", mbps));
+                        String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f "
+                                + "KB/s", kbps)) : String.format("%.2f MB/s", mbps));
                         results.append(String.format("Download speed to %s was %s, " +
-                                        "" + "taking %.2f seconds to download 20MB\n\n----------------\n\n", server
-                                .getHost(), speed, (timeTaken / 1000.0)));
+                                "" + "taking %.2f seconds to download 20MB\n\n----------------\n\n", server.getHost()
+                                , speed, (timeTaken / 1000.0)));
                         dialog.doneTask();
                     }
 
-                    String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString());
+                    String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString
+                            ());
                     if (result.contains(Constants.PASTE_CHECK_URL)) {
                         LogManager.info("Network Test has finished running, you can view the results at " + result);
                     } else {
@@ -151,7 +157,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 String[] options2 = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
                         .INSTANCE.localizeWithReplace("tools.networkheckercomplete", "<br/><br/>") +
-                                "</p></html>", Language.INSTANCE.localize("tools.networkchecker"), JOptionPane
+                        "</p></html>", Language.INSTANCE.localize("tools.networkchecker"), JOptionPane
                         .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options2, options2[0]);
             }
         }
