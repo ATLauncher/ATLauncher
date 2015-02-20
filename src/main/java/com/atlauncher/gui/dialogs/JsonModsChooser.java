@@ -137,7 +137,9 @@ public class JsonModsChooser extends JDialog {
                 String ret = JOptionPane.showInputDialog(null, Language.INSTANCE.localize("instance.entersharecode"),
                         Language.INSTANCE.localize("instance.sharecode"), JOptionPane.QUESTION_MESSAGE);
 
-                applyShareCode(ret);
+                if(ret != null) {
+                    applyShareCode(ret);
+                }
             }
         });
         bottomPanel.add(useShareCode);
@@ -360,6 +362,10 @@ public class JsonModsChooser extends JDialog {
             }.getType();
             List<String> optionalMods = Gsons.DEFAULT.fromJson(new String(Base64.decode(code)), type);
 
+            if (optionalMods == null || optionalMods.size() == 0) {
+                return;
+            }
+
             for (ModsJCheckBox checkbox : this.modCheckboxes) {
                 if (!checkbox.getJsonMod().isOptional()) {
                     continue;
@@ -379,7 +385,7 @@ public class JsonModsChooser extends JDialog {
                 }
             }
         } catch (Exception e) {
-            App.settings.logStackTrace("Error parsing share code!", e);
+            LogManager.error("Invalid share code!");
         }
     }
 
