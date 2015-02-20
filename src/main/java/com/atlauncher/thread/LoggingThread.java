@@ -22,6 +22,7 @@ import com.atlauncher.App;
 import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.writer.LogEventWriter;
+import main.java.com.atlauncher.data.Constants;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -34,7 +35,7 @@ public final class LoggingThread extends Thread {
     private final LogEventWriter writer;
     private final BlockingQueue<LogEvent> queue;
     private static final String date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
-    public static final String filename = "ATLauncher-Log_" + date + ".log";
+    public static final String filename = Constants.LAUNCHER_NAME + "-Log_" + date + ".log";
 
     public LoggingThread(BlockingQueue<LogEvent> queue) {
         this.queue = queue;

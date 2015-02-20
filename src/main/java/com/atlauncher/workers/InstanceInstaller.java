@@ -54,6 +54,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import main.java.com.atlauncher.data.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -2130,10 +2131,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 return installUsingJSON();
             } catch (JsonSyntaxException e) {
                 App.settings.logStackTrace("Couldn't read JSON of pack! Report this to the pack's developer/s and " +
-                        "NOT ATLauncher!", e);
+                        "NOT " + Constants.LAUNCHER_NAME + "!", e);
             } catch (JsonParseException e) {
                 App.settings.logStackTrace("Couldn't parse JSON of pack! Report this to the pack's developer/s and "
-                        + "NOT ATLauncher!", e);
+                        + "NOT " + Constants.LAUNCHER_NAME + "!", e);
             }
         }
         return installUsingXML();

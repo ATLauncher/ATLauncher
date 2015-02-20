@@ -23,6 +23,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.Utils;
+import main.java.com.atlauncher.data.Constants;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -46,7 +47,7 @@ import java.util.List;
  */
 public class DropboxSync extends SyncAbstract {
     private File dropboxLocation = null;
-    private String backupFolder = "ATLauncherBackup";
+    private String backupFolder = Constants.LAUNCHER_NAME + "Backup";
 
     public DropboxSync() {
         super("Dropbox");
