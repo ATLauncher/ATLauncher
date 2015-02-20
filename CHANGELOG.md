@@ -25,3 +25,4 @@ Changelog
 - Disable the update item in the instances right click menu if there is no update
 - Fixed network checker
 - Removed Java 8 warning
+- The Select All button will now show Select Recommended whenever there is ANY mod which is marked as recommended

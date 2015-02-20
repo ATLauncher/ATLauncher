@@ -757,8 +757,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean hasRecommendedMods() {
         for (Mod mod : allMods) {
-            if (!mod.isRecommeneded()) {
-                return true; // One of the mods is marked as not recommended, so return true
+            if (mod.isRecommeneded()) {
+                return true; // One of the mods is marked as recommended, so return true
             }
         }
         return false; // No non recommended mods found
@@ -766,8 +766,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean hasJsonRecommendedMods() {
         for (com.atlauncher.data.json.Mod mod : allJsonMods) {
-            if (!mod.isRecommended()) {
-                return true; // One of the mods is marked as not recommended, so return true
+            if (mod.isRecommended()) {
+                return true; // One of the mods is marked as recommended, so return true
             }
         }
         return false; // No non recommended mods found
