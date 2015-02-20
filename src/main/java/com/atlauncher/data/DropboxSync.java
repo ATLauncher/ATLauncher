@@ -23,7 +23,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.Utils;
-import main.java.com.atlauncher.data.Constants;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;

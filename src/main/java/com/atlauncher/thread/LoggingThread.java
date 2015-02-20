@@ -19,10 +19,10 @@
 package com.atlauncher.thread;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.writer.LogEventWriter;
-import main.java.com.atlauncher.data.Constants;
 
 import java.io.File;
 import java.io.FileWriter;

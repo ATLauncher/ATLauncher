@@ -25,7 +25,6 @@ import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
-import main.java.com.atlauncher.data.Constants;
 import org.tukaani.xz.XZInputStream;
 
 import javax.crypto.BadPaddingException;

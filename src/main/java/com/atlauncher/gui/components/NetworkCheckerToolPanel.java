@@ -27,7 +27,6 @@ import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
-import main.java.com.atlauncher.data.Constants;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;

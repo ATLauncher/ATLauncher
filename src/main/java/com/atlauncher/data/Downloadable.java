@@ -21,7 +21,6 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
-import main.java.com.atlauncher.data.Constants;
 
 import java.io.BufferedReader;
 import java.io.File;

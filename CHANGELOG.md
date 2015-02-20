@@ -19,3 +19,5 @@ Changelog
 - Switch to Mojang's official AuthLib for authentication
 - Don't delete symlinks
 - Fix issues with dev versions with updates not being able to play until updated
+- You can now ignore dev version updates as you can non dev versions
+- When adding mods to a pack via the Edit Mods button, the default type is now Mods Folder

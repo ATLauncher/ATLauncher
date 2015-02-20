@@ -20,7 +20,6 @@ package com.atlauncher.thread;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
-import main.java.com.atlauncher.data.Constants;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

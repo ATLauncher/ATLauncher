@@ -18,9 +18,9 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
-import main.java.com.atlauncher.data.Constants;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;

@@ -21,10 +21,10 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.utils.Utils;
-import main.java.com.atlauncher.data.Constants;
 
 import java.applet.Applet;
 import java.awt.Dimension;

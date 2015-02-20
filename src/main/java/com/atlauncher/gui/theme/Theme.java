@@ -19,9 +19,9 @@
 package com.atlauncher.gui.theme;
 
 import com.atlauncher.LogManager;
+import com.atlauncher.data.Constants;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
-import main.java.com.atlauncher.data.Constants;
 
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;

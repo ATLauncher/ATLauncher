@@ -27,7 +27,6 @@ import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
-import main.java.com.atlauncher.data.Constants;
 
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
