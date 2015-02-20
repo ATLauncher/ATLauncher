@@ -58,8 +58,8 @@ public class FileChooserDialog extends JDialog {
     private JButton bottomButton;
     private JButton selectButton;
 
-    public FileChooserDialog(String title, String labelName, String bottomText, String selectorText, String
-            selectorSelectText, String[] subOptions, String[] options) {
+    public FileChooserDialog(String title, String labelName, String bottomText, String selectorText, String[]
+            subOptions, String[] options) {
         super(App.settings.getParent(), title, ModalityType.APPLICATION_MODAL);
         this.fileOptions = options;
         setSize(400, 175);
@@ -140,7 +140,6 @@ public class FileChooserDialog extends JDialog {
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         selector = new JComboBox<String>();
-        selector.addItem(selectorSelectText);
         for (String item : subOptions) {
             selector.addItem(item);
         }
