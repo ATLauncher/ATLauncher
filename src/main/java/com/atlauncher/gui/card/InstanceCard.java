@@ -409,8 +409,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2) {
-                    if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) &&
-                            !instance.isDev()) {
+                    if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())) {
                         String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize
                                 ("common.no"), Language.INSTANCE.localize("instance" + "" +
                                 ".dontremindmeagain")};
@@ -424,8 +423,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 String[] optionss = {Language.INSTANCE.localize("common.ok")};
                                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize
                                         ("instance.cantupdate"), Language.INSTANCE.localize("instance" + "" +
-                                        ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                                        null, optionss, optionss[0]);
+                                                ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                        .ERROR_MESSAGE, null, optionss, optionss[0]);
                             } else {
                                 new InstanceInstallerDialog(instance, true, false);
                             }
@@ -462,6 +461,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     JMenuItem updateItem = new JMenuItem(Language.INSTANCE.localize("common.update"));
                     rightClickMenu.add(updateItem);
 
+                    if (!instance.hasUpdate()) {
+                        updateItem.setEnabled(false);
+                    }
+
                     rightClickMenu.show(image, e.getX(), e.getY());
 
                     changeImageItem.addActionListener(new ActionListener() {
@@ -490,17 +493,16 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     updateItem.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion()) &&
-                                    !instance.isDev()) {
+                            if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())) {
                                 String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE
                                         .localize("common.no"), Language.INSTANCE.localize("instance" + "" +
                                         ".dontremindmeagain")};
                                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p " +
-                                        "align=\"center\">" + Language.INSTANCE.localize("instance" + "" +
-                                        ".updatenow", "<br/><br/>") + "</p></html>", Language.INSTANCE.localize
-                                        ("instance" + "" +
-                                        ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                                        null, options, options[0]);
+                                                "align=\"center\">" + Language.INSTANCE.localize("instance" + "" +
+                                                ".updatenow", "<br/><br/>") + "</p></html>", Language.INSTANCE
+                                        .localize("instance" + "" +
+                                                ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                        .ERROR_MESSAGE, null, options, options[0]);
                                 if (ret == 0) {
                                     if (App.settings.getAccount() == null) {
                                         String[] optionss = {Language.INSTANCE.localize("common.ok")};
@@ -523,12 +525,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                         if (instance.launch()) {
                                             App.settings.setMinecraftLaunched(true);
                                         }
-                                    }
-                                }
-                            } else {
-                                if (!App.settings.isMinecraftLaunched()) {
-                                    if (instance.launch()) {
-                                        App.settings.setMinecraftLaunched(true);
                                     }
                                 }
                             }
