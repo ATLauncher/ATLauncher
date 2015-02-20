@@ -932,8 +932,10 @@ public class Utils {
             return;
         }
         if (file.isDirectory()) {
-            for (File c : file.listFiles()) {
-                delete(c);
+            if (file.listFiles() != null) {
+                for (File c : file.listFiles()) {
+                    delete(c);
+                }
             }
         }
 
@@ -1542,8 +1544,8 @@ public class Utils {
             return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.8");
         }
     }
-    
-     /**
+
+    /**
      * Checks if is java9.
      *
      * @return true, if is java9

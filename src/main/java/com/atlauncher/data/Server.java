@@ -54,7 +54,7 @@ public class Server {
     }
 
     public String getHost() {
-        return (this.baseURL.contains("/ATL") ? this.baseURL.replace("/ATL", "") : this.baseURL);
+        return (this.baseURL.contains("/containers/atl") ? this.baseURL.replace("/containers/atl", "") : this.baseURL);
     }
 
     public String getName() {
