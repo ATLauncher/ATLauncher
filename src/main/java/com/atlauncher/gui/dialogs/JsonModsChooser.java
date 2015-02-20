@@ -18,12 +18,15 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
+import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
+import com.google.gson.reflect.TypeToken;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -45,6 +48,7 @@ import java.util.List;
 public class JsonModsChooser extends JDialog {
     private static final long serialVersionUID = -5309108183485463434L;
     private InstanceInstaller installer;
+    private JButton useShareCode;
     private JButton selectAllButton;
     private JButton clearAllButton;
     private List<ModsJCheckBox> modCheckboxes;
@@ -124,6 +128,19 @@ public class JsonModsChooser extends JDialog {
 
         JPanel bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
+
+        useShareCode = new JButton();
+        useShareCode.setText(Language.INSTANCE.localize("instance.usesharecode"));
+        useShareCode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String ret = JOptionPane.showInputDialog(null, Language.INSTANCE.localize("instance.entersharecode"),
+                        Language.INSTANCE.localize("instance.sharecode"), JOptionPane.QUESTION_MESSAGE);
+
+                applyShareCode(ret);
+            }
+        });
+        bottomPanel.add(useShareCode);
 
         selectAllButton = new JButton();
 
@@ -271,7 +288,7 @@ public class JsonModsChooser extends JDialog {
                                     String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE
                                             .localize("common.no")};
                                     int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html>" +
-                                            message + "<br/>" +
+                                                    message + "<br/>" +
                                                     Language.INSTANCE.localize("instance.warningsure") + "</html>",
                                             Language.INSTANCE.localize("instance.warning"), JOptionPane
                                                     .DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options,
@@ -335,6 +352,35 @@ public class JsonModsChooser extends JDialog {
         }
         checkBoxPanel1.setPreferredSize(new Dimension(0, count1 * 20));
         checkBoxPanel2.setPreferredSize(new Dimension(0, count2 * 20));
+    }
+
+    private void applyShareCode(String code) {
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<String>>() {
+            }.getType();
+            List<String> optionalMods = Gsons.DEFAULT.fromJson(new String(Base64.decode(code)), type);
+
+            for (ModsJCheckBox checkbox : this.modCheckboxes) {
+                if (!checkbox.getJsonMod().isOptional()) {
+                    continue;
+                }
+
+                boolean found = false;
+
+                for (String mod : optionalMods) {
+                    if (mod.equalsIgnoreCase(checkbox.getJsonMod().getName())) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found) {
+                    checkbox.setSelected(true);
+                }
+            }
+        } catch (Exception e) {
+            App.settings.logStackTrace("Error parsing share code!", e);
+        }
     }
 
     private List<Mod> modsToChange(Mod mod) {

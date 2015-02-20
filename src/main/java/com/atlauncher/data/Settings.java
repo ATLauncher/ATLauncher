@@ -3051,7 +3051,7 @@ public class Settings {
     }
 
     public String getUserAgent() {
-        return this.userAgent + Constants.LAUNCHER_NAME + " /" + Constants.VERSION;
+        return this.userAgent + Constants.LAUNCHER_NAME + "/" + Constants.VERSION;
     }
 
     /**

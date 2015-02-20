@@ -21,3 +21,4 @@ Changelog
 - Fix issues with dev versions with updates not being able to play until updated
 - You can now ignore dev version updates as you can non dev versions
 - When adding mods to a pack via the Edit Mods button, the default type is now Mods Folder
+- Add in Share Codes to share a pack's optional mod configuration with others. Get it from right clicking an instances image and apply it to a instance when on the optional mods selection screen
