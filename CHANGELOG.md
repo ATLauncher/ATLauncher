@@ -23,3 +23,4 @@ Changelog
 - When adding mods to a pack via the Edit Mods button, the default type is now Mods Folder
 - Add in Share Codes to share a pack's optional mod configuration with others. Get it from right clicking an instances image and apply it to a instance when on the optional mods selection screen
 - Disable the update item in the instances right click menu if there is no update
+- Fixed network checker

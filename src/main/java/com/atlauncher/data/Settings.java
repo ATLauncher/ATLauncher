@@ -321,24 +321,6 @@ public class Settings {
             }
         }
 
-        if (Utils.isJava8() && !this.hideJava8Warning) {
-            LogManager.warn("You're using a possible game breaking version of Java (Java 8)!");
-            String[] options = {Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common" +
-                    ".ok"), Language.INSTANCE.localize("instance" + "" +
-                    ".dontremindmeagain")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                    .INSTANCE.localizeWithReplace("settings.java8warning", "<br/><br/>") + "</p></html>", Language
-                    .INSTANCE.localize("settings.java8warningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                    .ERROR_MESSAGE, null, options, options[0]);
-            if (ret == 0) {
-                Utils.openBrowser("http://atl.pw/java7download");
-                System.exit(0);
-            } else if (ret == 2) {
-                this.hideJava8Warning = true;
-                this.saveProperties();
-            }
-        }
-
         if (this.advancedBackup) {
             dropbox = new DropboxSync();
         }
