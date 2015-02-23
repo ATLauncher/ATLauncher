@@ -410,8 +410,8 @@ public class Settings {
 
         for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
             try {
-                Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace
-                        (Constants.LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
+                Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace(Constants
+                        .LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
 
                 if (date.before(toDeleteAfter)) {
                     Utils.delete(file);
@@ -752,10 +752,10 @@ public class Settings {
             } else {
                 String[] options = {"Ok"};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">Launcher " +
-                        "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
-                        "page.<br/><br/>Download " + "the update and replace the old ATLauncher file" +
-                        ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                        null, options, options[0]);
+                                "Update failed. Please click Ok to close " + "the launcher and open up the downloads " +
+                                "page.<br/><br/>Download " + "the update and replace the old ATLauncher file" +
+                                ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane
+                        .ERROR_MESSAGE, null, options, options[0]);
                 if (ret == 0) {
                     Utils.openBrowser("http://www.atlauncher.com/downloads/");
                     System.exit(0);
@@ -1761,22 +1761,30 @@ public class Settings {
             for (String folder : this.getInstancesDir().list(Utils.getInstanceFileFilter())) {
                 File instanceDir = new File(this.getInstancesDir(), folder);
                 FileReader fileReader;
+
+                Instance instance = null;
+
                 try {
                     fileReader = new FileReader(new File(instanceDir, "instance.json"));
-                } catch (FileNotFoundException e) {
-                    logStackTrace(e);
+                    instance = Settings.gson.fromJson(fileReader, Instance.class);
+                } catch (Exception e) {
+                    logStackTrace("Failed to load instance in the folder " + instanceDir, e);
                     continue; // Instance.json not found for some reason, continue before loading
                 }
-                Instance instance = Settings.gson.fromJson(fileReader, Instance.class);
+
                 if (instance == null) {
+                    LogManager.error("Failed to load instance in the folder " + instanceDir);
                     continue;
                 }
+
                 if (!instance.getDisabledModsDirectory().exists()) {
                     instance.getDisabledModsDirectory().mkdir();
                 }
+
                 if (isPackByName(instance.getPackName())) {
                     instance.setRealPack(getPackByName(instance.getPackName()));
                 }
+
                 this.instances.add(instance);
             }
             if (instancesDataFile.exists()) {
