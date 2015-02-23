@@ -26,3 +26,5 @@ Changelog
 - Fixed network checker
 - Removed Java 8 warning
 - The Select All button will now show Select Recommended whenever there is ANY mod which is marked as recommended
+- Let the launcher load when an instances json file is corrupt and alert the user
+- Add in log uploaders and reporters for when hashes or servers json downloading fails

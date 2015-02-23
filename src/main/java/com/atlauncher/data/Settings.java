@@ -638,7 +638,15 @@ public class Settings {
         Downloadable download = new Downloadable("launcher/json/hashes.json", true);
         java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {
         }.getType();
-        this.launcherFiles = gson.fromJson(download.getContents(), type);
+
+        String contents = download.getContents();
+
+        try {
+            this.launcherFiles = gson.fromJson(contents, type);
+        } catch (Exception e) {
+            String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", contents);
+            this.logStackTrace("Error loading in file hashes! See error details at " + result, e);
+        }
     }
 
     /**
@@ -1519,48 +1527,13 @@ public class Settings {
             try {
                 this.servers = gson.fromJson(response, type);
             } catch (Exception e) {
-                logStackTrace("Exception when reading in the servers", e);
+                String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", response);
+                logStackTrace("Exception when reading in the servers. See error details at " + result, e);
                 this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
             }
         }
 
         LogManager.debug("Finished finding servers to use");
-    }
-
-    private void checkCreeperRepoEdges() {
-        LogManager.debug("Checking CreeperRepo edges for availability");
-        // Check CreeperHosts available edges (servers)
-        JSONParser parser = new JSONParser();
-        try {
-            Downloadable download = new Downloadable("http://www.creeperrepo.net/edges.json", false);
-            String response = download.getContents();
-            if (response != null) {
-                Object obj = parser.parse(response);
-                JSONObject jsonObject = (JSONObject) obj;
-                Collection<String> values = jsonObject.values();
-                for (Server server : this.servers) {
-                    if (!server.isMaster() && !server.getName().equalsIgnoreCase("Auto")) {
-                        if (!values.contains(server.getHost())) {
-                            LogManager.warn("Server " + server.getHost() + " is no longer available!");
-                            server.disableServer();
-                        }
-                    }
-                }
-            }
-
-            ArrayList<Server> newServers = new ArrayList<Server>();
-
-            for (Server server : this.servers) {
-                if (!server.isDisabled()) {
-                    newServers.add(server);
-                }
-            }
-
-            this.servers = newServers;
-        } catch (ParseException e) {
-            this.logStackTrace(e);
-        }
-        LogManager.debug("Finished checking CreeperRepo edges for availability");
     }
 
     public boolean disableServerGetNext() {
