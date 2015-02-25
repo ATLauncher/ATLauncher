@@ -1,6 +1,6 @@
 Changelog
 ====================================
 
-### 3.2.2.4
+### 3.2.2.5
 
-- Fix offline mode not working
+- Fix launcher not closing after an instance is launched when logging is disabled

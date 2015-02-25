@@ -1119,6 +1119,11 @@ public class Instance implements Cloneable {
                         } else {
                             process = LegacyMCLauncher.launch(account, Instance.this, session);
                         }
+
+                        if (!App.settings.keepLauncherOpen() && !App.settings.enableLogs()) {
+                            System.exit(0);
+                        }
+
                         App.settings.showKillMinecraft(process);
                         InputStream is = process.getInputStream();
                         InputStreamReader isr = new InputStreamReader(is);
@@ -1153,9 +1158,7 @@ public class Instance implements Cloneable {
                             process.destroy(); // Kill the process
                         }
                         if (!App.settings.keepLauncherOpen()) {
-                            App.settings.getConsole().setVisible(false); // Hide the console to
-                            // pretend
-                            // we've closed
+                            App.settings.getConsole().setVisible(false); // Hide the console to pretend we've closed
                         }
                         if (exitValue != 0) {
                             // Submit any pending crash reports from Open Eye if need to since we
@@ -1214,7 +1217,7 @@ public class Instance implements Cloneable {
                             }
                         }
                         if (!App.settings.keepLauncherOpen()) {
-                            System.exit(1);
+                            System.exit(0);
                         }
                     } catch (IOException e1) {
                         App.settings.logStackTrace(e1);
