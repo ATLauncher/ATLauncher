@@ -115,7 +115,6 @@ public class ModsChooser extends JDialog {
         JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
                 .HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
-        scroller1.setPreferredSize(new Dimension(275, 350));
         modsInPack.setRightComponent(scroller1);
 
         JPanel checkBoxPanel2 = new JPanel();
@@ -125,7 +124,6 @@ public class ModsChooser extends JDialog {
         JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
                 .HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
-        scroller2.setPreferredSize(new Dimension(275, 350));
         modsInPack.setLeftComponent(scroller2);
 
         JPanel bottomPanel = new JPanel();
@@ -369,6 +367,8 @@ public class ModsChooser extends JDialog {
         checkBoxPanel2.setPreferredSize(new Dimension(0, count2 * 20));
 
         setSize(calculateWidth(), 450);
+        scroller1.setPreferredSize(new Dimension(calculateWidth() / 2, 350));
+        scroller2.setPreferredSize(new Dimension(calculateWidth() / 2, 350));
     }
 
     private int calculateWidth() {
