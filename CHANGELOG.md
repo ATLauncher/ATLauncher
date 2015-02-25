@@ -1,7 +1,5 @@
 Changelog
 ====================================
 
-### 3.2.2.3
+### 3.2.2.4
 
-- Fix issue adding mods to an instance
-- Fix issue with the mods selector not showing all buttons
