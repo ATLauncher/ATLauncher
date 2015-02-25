@@ -190,11 +190,7 @@ public class FileChooserDialog extends JDialog {
     }
 
     public String getSelectorValue() {
-        if (this.selector.getSelectedIndex() == 0) {
-            return null;
-        } else {
-            return (String) this.selector.getSelectedItem();
-        }
+        return (String) this.selector.getSelectedItem();
     }
 
 }
