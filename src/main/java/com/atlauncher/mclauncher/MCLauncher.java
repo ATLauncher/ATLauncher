@@ -187,7 +187,7 @@ public class MCLauncher {
         arguments.add(System.getProperty("java.class.path") + cpb.toString());
         arguments.add(instance.getMainClass());
 
-        String props = "";
+        String props = "[]";
 
         if (!response.isOffline()) {
             Gson gson = new GsonBuilder().registerTypeAdapter(PropertyMap.class, new PropertyMapSerializer()).create();
