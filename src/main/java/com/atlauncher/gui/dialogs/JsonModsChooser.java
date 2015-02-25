@@ -51,6 +51,7 @@ public class JsonModsChooser extends JDialog {
     private JButton useShareCode;
     private JButton selectAllButton;
     private JButton clearAllButton;
+    private JButton installButton;
     private List<ModsJCheckBox> modCheckboxes;
 
     private boolean wasClosed = false;
@@ -59,7 +60,6 @@ public class JsonModsChooser extends JDialog {
         super(App.settings.getParent(), Language.INSTANCE.localize("instance.selectmods"), ModalityType
                 .APPLICATION_MODAL);
         this.installer = installerr;
-        setSize(550, 450);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setLocationRelativeTo(App.settings.getParent());
         setLayout(new BorderLayout());
@@ -137,7 +137,7 @@ public class JsonModsChooser extends JDialog {
                 String ret = JOptionPane.showInputDialog(null, Language.INSTANCE.localize("instance.entersharecode"),
                         Language.INSTANCE.localize("instance.sharecode"), JOptionPane.QUESTION_MESSAGE);
 
-                if(ret != null) {
+                if (ret != null) {
                     applyShareCode(ret);
                 }
             }
@@ -205,7 +205,7 @@ public class JsonModsChooser extends JDialog {
         });
         bottomPanel.add(clearAllButton);
 
-        JButton installButton = new JButton(Language.INSTANCE.localize("common.install"));
+        installButton = new JButton(Language.INSTANCE.localize("common.install"));
         installButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
@@ -354,6 +354,23 @@ public class JsonModsChooser extends JDialog {
         }
         checkBoxPanel1.setPreferredSize(new Dimension(0, count1 * 20));
         checkBoxPanel2.setPreferredSize(new Dimension(0, count2 * 20));
+
+        setSize(calculateWidth(), 450);
+    }
+
+    private int calculateWidth() {
+        int width = 30;
+
+        width += useShareCode.getPreferredSize().width;
+        width += selectAllButton.getPreferredSize().width;
+        width += clearAllButton.getPreferredSize().width;
+        width += installButton.getPreferredSize().width;
+
+        if (width < 550) {
+            width = 550;
+        }
+
+        return width;
     }
 
     private void applyShareCode(String code) {
