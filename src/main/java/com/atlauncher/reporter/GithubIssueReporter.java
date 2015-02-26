@@ -19,9 +19,9 @@
 package com.atlauncher.reporter;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.APIResponse;
-import com.atlauncher.data.Settings;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.Utils;
 
@@ -41,7 +41,7 @@ public final class GithubIssueReporter {
             request.put("issue", new GithubIssue(title, body));
 
             try {
-                APIResponse response = Settings.gson.fromJson(Utils.sendAPICall("githubissue/", request), APIResponse
+                APIResponse response = Gsons.DEFAULT.fromJson(Utils.sendAPICall("githubissue/", request), APIResponse
                         .class);
                 if (!response.wasError() && response.getDataAsInt() != 0) {
                     LogManager.info("Exception reported to GitHub. Track/comment on the issue at " + response

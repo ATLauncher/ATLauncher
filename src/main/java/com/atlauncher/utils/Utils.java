@@ -18,6 +18,7 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Settings;
@@ -1273,7 +1274,7 @@ public class Utils {
     public static String sendAPICall(String path, Object data) throws IOException {
         StringBuilder response = null;
 
-        byte[] contents = Settings.gson.toJson(data).getBytes();
+        byte[] contents = Gsons.DEFAULT.toJson(data).getBytes();
 
         URL url = new URL(Constants.API_BASE_URL + path);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -1667,7 +1668,7 @@ public class Utils {
         }
 
         // Return an OpenEyeReportResponse object from the singular array returned in JSON
-        return Settings.gson.fromJson(response.toString(), OpenEyeReportResponse[].class)[0];
+        return Gsons.DEFAULT.fromJson(response.toString(), OpenEyeReportResponse[].class)[0];
     }
 
     /**

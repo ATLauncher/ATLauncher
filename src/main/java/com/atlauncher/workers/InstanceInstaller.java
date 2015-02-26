@@ -2127,7 +2127,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (App.experimentalJson) {
             LogManager.debug("Experimental JSON is enabled, using the JSON file!");
             try {
-                this.jsonVersion = Settings.gson.fromJson(this.pack.getJSON(version.getVersion()), Version.class);
+                this.jsonVersion = Gsons.DEFAULT.fromJson(this.pack.getJSON(version.getVersion()), Version.class);
                 return installUsingJSON();
             } catch (JsonSyntaxException e) {
                 App.settings.logStackTrace("Couldn't read JSON of pack! Report this to the pack's developer/s and " +

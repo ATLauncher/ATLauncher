@@ -21,11 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
-import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.json.LauncherLibrary;
-import com.atlauncher.data.mojang.DateTypeAdapter;
-import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
-import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
@@ -38,8 +34,6 @@ import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -52,7 +46,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
@@ -80,7 +73,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -97,17 +89,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Settings class for storing all data for the Launcher and the settings of the user
+ * Settings class for storing all data for the Launcher and the settings of the user.
  *
  * @author Ryan
  */
 public class Settings {
-    public static Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    public static Gson altGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapterFactory(new
-            EnumTypeAdapterFactory()).registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File
-            .class, new FileTypeAdapter()).create();
-    public static Gson themeGson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new
-            ColorTypeAdapter()).create();
     // Users Settings
     private Server server; // Server to use for the Launcher
     private String forgeLoggingLevel; // Logging level to use when running Minecraft with Forge
@@ -540,8 +526,8 @@ public class Settings {
 
     public boolean launcherHasUpdate() {
         try {
-            this.latestLauncherVersion = gson.fromJson(new FileReader(new File(this.jsonDir, "version.json")),
-                    LauncherVersion.class);
+            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(new File(this.jsonDir, "version.json")
+            ), LauncherVersion.class);
         } catch (JsonSyntaxException e) {
             this.logStackTrace("Exception when loading latest launcher version!", e);
         } catch (JsonIOException e) {
@@ -549,10 +535,8 @@ public class Settings {
         } catch (FileNotFoundException e) {
             this.logStackTrace("Exception when loading latest launcher version!", e);
         }
-        if (this.latestLauncherVersion == null) {
-            return false;
-        }
-        return Constants.VERSION.needsUpdate(this.latestLauncherVersion);
+
+        return this.latestLauncherVersion != null && Constants.VERSION.needsUpdate(this.latestLauncherVersion);
     }
 
     public boolean launcherHasBetaUpdate() {
@@ -643,7 +627,7 @@ public class Settings {
         String contents = download.getContents();
 
         try {
-            this.launcherFiles = gson.fromJson(contents, type);
+            this.launcherFiles = Gsons.DEFAULT.fromJson(contents, type);
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", contents);
             this.logStackTrace("Error loading in file hashes! See error details at " + result, e);
@@ -765,7 +749,7 @@ public class Settings {
                                 "page.<br/><br/>Download " + "the update and replace the old ATLauncher file" +
                                 ".</p></html>", "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane
                         .ERROR_MESSAGE, null, options, options[0]);
-                    Utils.openBrowser("http://www.atlauncher.com/downloads/");
+                Utils.openBrowser("http://www.atlauncher.com/downloads/");
                 System.exit(0);
             }
         } else if (Constants.VERSION.isBeta() && launcherHasBetaUpdate()) {
@@ -774,6 +758,10 @@ public class Settings {
         LogManager.debug("Finished checking for launcher update");
     }
 
+    /**
+     * Downloads and loads all external libraries used by the launcher as specified in the Configs/JSON/libraries.json
+     * file.
+     */
     private void downloadExternalLibraries() {
         LogManager.debug("Downloading external libraries");
 
@@ -1524,7 +1512,7 @@ public class Settings {
 
         if (response != null) {
             try {
-                this.servers = gson.fromJson(response, type);
+                this.servers = Gsons.DEFAULT.fromJson(response, type);
             } catch (Exception e) {
                 String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", response);
                 logStackTrace("Exception when reading in the servers. See error details at " + result, e);
@@ -1577,7 +1565,7 @@ public class Settings {
             File fileDir = new File(getJSONDir(), "news.json");
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "UTF-8"));
 
-            this.news = gson.fromJson(in, type);
+            this.news = Gsons.DEFAULT.fromJson(in, type);
             in.close();
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
@@ -1603,7 +1591,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
             }.getType();
-            list = gson.fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")), type);
+            list = Gsons.DEFAULT.fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")), type);
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
@@ -1648,7 +1636,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
-            this.packs = gson.fromJson(new FileReader(new File(getJSONDir(), "packs.json")), type);
+            this.packs = Gsons.DEFAULT.fromJson(new FileReader(new File(getJSONDir(), "packs.json")), type);
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
@@ -1669,7 +1657,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
-            packUsers = gson.fromJson(download.getContents(), type);
+            packUsers = Gsons.DEFAULT.fromJson(download.getContents(), type);
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
@@ -1738,7 +1726,7 @@ public class Settings {
 
                 try {
                     fileReader = new FileReader(new File(instanceDir, "instance.json"));
-                    instance = Settings.gson.fromJson(fileReader, Instance.class);
+                    instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
                 } catch (Exception e) {
                     logStackTrace("Failed to load instance in the folder " + instanceDir, e);
                     continue; // Instance.json not found for some reason, continue before loading
@@ -1778,7 +1766,7 @@ public class Settings {
 
                 fw = new FileWriter(instanceFile);
                 bw = new BufferedWriter(fw);
-                bw.write(Settings.gson.toJson(instance));
+                bw.write(Gsons.DEFAULT.toJson(instance));
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
             } finally {
@@ -1887,7 +1875,7 @@ public class Settings {
                 return;
             }
 
-            this.checkingServers = gson.fromJson(fileReader, MinecraftServer.LIST_TYPE);
+            this.checkingServers = Gsons.DEFAULT.fromJson(fileReader, MinecraftServer.LIST_TYPE);
 
             if (fileReader != null) {
                 try {
@@ -1911,7 +1899,7 @@ public class Settings {
 
             fw = new FileWriter(checkingServersFile);
             bw = new BufferedWriter(fw);
-            bw.write(Settings.gson.toJson(this.checkingServers));
+            bw.write(Gsons.DEFAULT.toJson(this.checkingServers));
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         } finally {

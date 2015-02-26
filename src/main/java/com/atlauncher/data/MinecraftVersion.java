@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.mojang.MojangVersion;
@@ -50,7 +51,7 @@ public class MinecraftVersion {
             }
         }
         try {
-            mojangVersion = Settings.altGson.fromJson(new FileReader(versionFile), MojangVersion.class);
+            mojangVersion = Gsons.DEFAULT_ALT.fromJson(new FileReader(versionFile), MojangVersion.class);
         } catch (JsonSyntaxException e) {
             App.settings.logStackTrace(e);
         } catch (JsonIOException e) {

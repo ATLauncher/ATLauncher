@@ -181,7 +181,7 @@ public class App {
                         continue;
                     }
 
-                    if (debugLevel < 1 || debugLevel >= 3) {
+                    if (debugLevel < 1 || debugLevel > 3) {
                         LogManager.error("Invalid debug level of '" + parts[1] + "' given!");
                         continue;
                     }
@@ -340,7 +340,7 @@ public class App {
                 }
 
                 if (stream != null) {
-                    THEME = Settings.themeGson.fromJson(new InputStreamReader(stream), Theme.class);
+                    THEME = Gsons.THEMES.fromJson(new InputStreamReader(stream), Theme.class);
                     stream.close();
                 }
 

@@ -18,7 +18,7 @@
 
 package com.atlauncher.reporter;
 
-import com.atlauncher.data.Settings;
+import com.atlauncher.Gsons;
 
 @SuppressWarnings("unused")
 public final class GithubIssue {
@@ -34,6 +34,6 @@ public final class GithubIssue {
 
     @Override
     public String toString() {
-        return Settings.gson.toJson(this);
+        return Gsons.DEFAULT.toJson(this);
     }
 }
