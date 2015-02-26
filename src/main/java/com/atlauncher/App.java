@@ -171,21 +171,26 @@ public class App {
                     LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
                             + "user data!");
                 } else if (parts[0].equalsIgnoreCase("--debug-level") && parts.length == 2) {
-                    int debugLevel = 0;
+                    int debugLevel;
 
                     try {
                         debugLevel = Integer.parseInt(parts[1]);
                     } catch (NumberFormatException e) {
+                        LogManager.error("Error converting given debug level string to an integer. The specified " +
+                                "debug level given was '" + parts[1] + "'");
                         continue;
                     }
 
-                    if (debugLevel >= 1 && debugLevel <= 3) {
-                        LogManager.debugLevel = debugLevel;
-                        LogManager.debug("Debug level has been set to " + debugLevel + "!");
+                    if (debugLevel < 1 || debugLevel >= 3) {
+                        LogManager.error("Invalid debug level of '" + parts[1] + "' given!");
+                        continue;
                     }
+
+                    LogManager.debugLevel = debugLevel;
+                    LogManager.debug("Debug level has been set to " + debugLevel + "!");
                 } else if (parts[0].equalsIgnoreCase("--usegzip") && parts[1].equalsIgnoreCase("false")) {
                     useGzipForDownloads = false;
-                    LogManager.debug("GZip has been turned off for downloads!  Don't ask for support with this " +
+                    LogManager.debug("GZip has been turned off for downloads! Don't ask for support with this " +
                             "disabled!", true);
                 } else if (parts[0].equalsIgnoreCase("--skip-minecraft-version-downloads")) {
                     skipMinecraftVersionDownloads = true;
@@ -204,9 +209,9 @@ public class App {
             if (files > 1) {
                 String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("I've detected that you may " +
-                                "not have installed this in the right location.<br/><br/>The exe or jar file should " +
-                                "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure " +
-                                "that's what you've done?"), "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane
+                        "not have installed this in the right location.<br/><br/>The exe or jar file should " +
+                        "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure " +
+                        "that's what you've done?"), "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane
                         .ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     System.exit(0);
