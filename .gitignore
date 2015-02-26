@@ -7,7 +7,8 @@
 !/macapp/
 !/.gitignore
 !/LICENSE
-!/README.md
 !/pom.xml
 !/IntelliJ-Coding-Style.xml
+!/README.md
+!/STYLE.md
 !/CHANGELOG.md

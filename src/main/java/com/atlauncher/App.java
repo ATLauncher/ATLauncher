@@ -56,30 +56,103 @@ import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * Main entry point for the application, Java runs the main method here when the application is launched.
+ */
 public class App {
+    /**
+     * The taskpool used to quickly add in tasks to do in the background.
+     */
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
+
+    /**
+     * The instance of toaster to show popups in the bottom right.
+     */
     public static final Toaster TOASTER = Toaster.instance();
 
+    /**
+     * The tray menu shown in the notification area or whatever it's called in non Windows OS.
+     */
     public static TrayMenu TRAY_MENU = new TrayMenu();
 
+    /**
+     * If the launcher was just updated and this is it's first time loading after the update. This is used to check for
+     * when there are possible issues in which the user may have to download the update manually.
+     */
     public static boolean wasUpdated = false;
+
+    /**
+     * This is used to turn on experimental JSON support. JSON is replacing XML when it comes to loading pack version
+     * information and installing packs. It's a much better system, but still in test and only enable when the command
+     * line argument shown below.
+     * <p/>
+     * --json=experimental
+     */
     public static boolean experimentalJson = false;
+
+    /**
+     * This controls if GZIP is used when downloading files through the launcher. It's used as a debugging tool and is
+     * enabled with the command line argument shown below.
+     * <p/>
+     * --usegzip=false
+     */
     public static boolean useGzipForDownloads = true;
+
+    /**
+     * This allows skipping the Minecraft version downloading which grabs all the Minecraft versions from Mojang so the
+     * launcher can know ahead of time what Minecraft versions there are and how to install them. Can be turned on to
+     * skip the downloading with the below command line argument.
+     * <p/>
+     * --skip-minecraft-version-downloads
+     */
     public static boolean skipMinecraftVersionDownloads = false;
+
+    /**
+     * This allows skipping the system tray intergation so that the launcher doesn't even try to show the icon and menu
+     * etc, in the users system tray. It can be skipped with the below command line argument.
+     * <p/>
+     * --skip-tray-integration
+     */
     public static boolean skipTrayIntegration = false;
 
+
+    public static String autoLaunch = null;
+
+    /**
+     * This is the Settings instance which holds all the users settings and alot of methods relating to getting things
+     * done.
+     *
+     * @TODO This should probably be switched to be less large and have less responsibility.
+     */
     public static Settings settings;
 
+    /**
+     * This is the theme used by the launcher. By default it uses the default theme until the theme can be created and
+     * loaded.
+     * <p/>
+     * For more information on themeing, please see https://atl.pw/theme
+     */
     public static Theme THEME = Theme.DEFAULT_THEME;
 
     static {
+        /**
+         * Sets up where all uncaught exceptions go to.
+         */
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
     }
 
+    /**
+     * Where the magic happens.
+     *
+     * @param args all the arguments passed in from the command line
+     */
     public static void main(String[] args) {
-        Locale.setDefault(Locale.ENGLISH); // Set English as the default locale
+        // Set English as the default locale. CodeChickenLib(?) has some issues when not using this on some systems.
+        Locale.setDefault(Locale.ENGLISH);
+
+        // Prefer to use IPv4
         System.setProperty("java.net.preferIPv4Stack", "true");
-        String autoLaunch = null;
+
         if (args != null) {
             for (String arg : args) {
                 String[] parts = arg.split("=");
@@ -116,7 +189,7 @@ public class App {
                 } else if (parts[0].equalsIgnoreCase("--skip-minecraft-version-downloads")) {
                     skipMinecraftVersionDownloads = true;
                     LogManager.debug("Skipping Minecraft version downloads! This may cause issues, only use it as " +
-                            "directed by"  + Constants.LAUNCHER_NAME + " staff!", true);
+                            "directed by" + Constants.LAUNCHER_NAME + " staff!", true);
                 } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
                     skipTrayIntegration = true;
                     LogManager.debug("Skipping tray integration!", true);
@@ -145,20 +218,30 @@ public class App {
                 }
             }
         }
-        settings = new Settings(); // Setup the Settings and wait for it to finish
+
+        // Setup the Settings and wait for it to finish.
+        settings = new Settings();
+
         final SplashScreen ss = new SplashScreen();
+
+        // Load and show the splash screen while we load other things.
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 ss.setVisible(true);
             }
         });
+
+        // Load the theme and style everything.
         loadTheme();
-        settings.loadConsole(); // Load console AFTER L&F
+
+        // Load the console, making sure it's after the theme and L&F has been loaded otherwise bad results may occur.
+        settings.loadConsole();
 
         if (settings.enableTrayIcon() && !skipTrayIntegration) {
             try {
-                trySystemTrayIntegration(); // Try to enable the tray icon
+                // Try to enable the tray icon.
+                trySystemTrayIntegration();
             } catch (Exception e) {
                 settings.logStackTrace(e);
             }
@@ -167,24 +250,30 @@ public class App {
         LogManager.info("ATLauncher Version: " + Constants.VERSION);
         LogManager.info("Operating System: " + System.getProperty("os.name"));
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
+
         if (settings.isUsingCustomJavaPath()) {
             LogManager.warn("Custom Java Path Set!");
         } else if (settings.isUsingMacApp()) {
+            // If the user is using the Mac Application, then we forcibly set the java path if they have none set.
+
             File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
             if (oracleJava.exists() && oracleJava.canExecute()) {
                 settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
                 LogManager.warn("Launcher Forced Custom Java Path Set!");
             }
         }
+
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
         LogManager.info("Java Path: " + settings.getJavaPath());
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
 
+        // Now for some Mac specific stuff, mainly just setting the name of the application and icon.
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", Constants.LAUNCHER_NAME + " " + Constants.VERSION);
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", Constants.LAUNCHER_NAME + " " +
+                    Constants.VERSION);
             try {
                 Class util = Class.forName("com.apple.eawt.Application");
                 Method getApplication = util.getMethod("getApplication", new Class[0]);
@@ -199,6 +288,7 @@ public class App {
         }
 
         if (settings.enableConsole()) {
+            // Show the console if enabled.
             settings.getConsole().setVisible(true);
         }
 
@@ -229,6 +319,9 @@ public class App {
         new LauncherFrame(open); // Open the Launcher
     }
 
+    /**
+     * Loads the theme and applies the theme's settings to the look and feel.
+     */
     public static void loadTheme() {
         File themeFile = settings.getThemeFile();
         if (themeFile != null) {
@@ -265,6 +358,11 @@ public class App {
         }
     }
 
+    /**
+     * Sets the look and feel to be that of nimbus which is the base.
+     *
+     * @throws Exception
+     */
     private static void setLAF() throws Exception {
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             if (info.getName().equalsIgnoreCase("nimbus")) {
@@ -273,6 +371,11 @@ public class App {
         }
     }
 
+    /**
+     * This modifies the look and feel based upon the theme loaded.
+     *
+     * @throws Exception
+     */
     private static void modifyLAF() throws Exception {
         THEME.apply();
         ToolTipManager.sharedInstance().setDismissDelay(15000);
@@ -287,6 +390,11 @@ public class App {
         }
     }
 
+    /**
+     * This tries to create the system tray menu.
+     *
+     * @throws Exception
+     */
     private static void trySystemTrayIntegration() throws Exception {
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
@@ -309,6 +417,10 @@ public class App {
         }
     }
 
+    /**
+     * This creates some integration files so the launcher can work with other applications by storing some properties
+     * about itself and it's location in a set location.
+     */
     public static void integrate() {
         try {
             File f = new File(new File(System.getProperty("user.home")), ".atl.properties");
