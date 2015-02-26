@@ -25,6 +25,7 @@ import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
 
@@ -202,17 +203,11 @@ public class App {
             int files = config.getParentFile().list().length;
             if (files > 1) {
                 String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
-                int ret = JOptionPane.showOptionDialog(null, "<html><p align=\"center\">I've detected that you may " +
-                                "not have installed this " + "in the right location.<br/><br/>The exe or jar file" +
-                                "should " +
-                                "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure" +
-                                " that's " +
-                                "not have installed this " + "in the right location.<br/><br/>The exe or jar file" +
-                                "should " +
-                                "be placed in it's own folder with nothing else " + "in it<br/><br/>Are you 100% sure" +
-                                " that's " +
-                                "what you've" + "done?</p></html>", "Warning", JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("I've detected that you may " +
+                                "not have installed this in the right location.<br/><br/>The exe or jar file should " +
+                                "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure " +
+                                "that's what you've done?"), "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane
+                        .ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     System.exit(0);
                 }
