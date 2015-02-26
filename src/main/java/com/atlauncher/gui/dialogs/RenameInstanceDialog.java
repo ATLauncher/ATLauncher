@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
+import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -89,20 +90,20 @@ public class RenameInstanceDialog extends JDialog {
                             ("instance.alreadyinstance", instanceName.getText()), Language.INSTANCE.localize("common"
                             + ".error"), JOptionPane.ERROR_MESSAGE);
                 } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                    JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
+                    JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
                             .INSTANCE.localize("common.error") + "<br/><br/>" + Language.INSTANCE.localizeWithReplace
-                            ("instance.invalidname", instanceName.getText()) + "</p></html>", Language.INSTANCE
-                            .localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                            ("instance.invalidname", instanceName.getText())), Language.INSTANCE.localize("common" +
+                            ".error"), JOptionPane.ERROR_MESSAGE);
                 } else {
                     if (instance.rename(instanceName.getText())) {
                         App.settings.saveInstances();
                         App.settings.reloadInstancesPanel();
                     } else {
                         LogManager.error("Unknown Error Occured While Renaming Instance!");
-                        JOptionPane.showMessageDialog(RenameInstanceDialog.this, "<html><p align=\"center\">" +
-                                Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".errorrenaming", instance.getName() + "<br/><br/>") + "</p></html>",
-                                Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(RenameInstanceDialog.this, HTMLUtils.centerParagraph(Language
+                                .INSTANCE.localizeWithReplace("instance" + "" +
+                                        ".errorrenaming", instance.getName() + "<br/><br/>")), Language.INSTANCE
+                                .localize("common.error"), JOptionPane.ERROR_MESSAGE);
                     }
                     close();
                 }

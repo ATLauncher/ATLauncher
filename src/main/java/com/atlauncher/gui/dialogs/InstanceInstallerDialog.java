@@ -22,6 +22,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
+import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -200,12 +201,11 @@ public class InstanceInstallerDialog extends JDialog {
                 if (!isReinstall && !isServer && App.settings.isInstance(instanceNameField.getText())) {
                     instance = App.settings.getInstanceByName(instanceNameField.getText());
                     if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
-                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><p " +
-                                "align=\"center\">" + Language.INSTANCE.localize("common.error") +
-                                        "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>") +
-                                        "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane
-                                .ERROR_MESSAGE);
+                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                                (Language.INSTANCE.localize("common.error") +
+                                "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>")), Language.INSTANCE
+                                .localize("common.error"), JOptionPane.ERROR_MESSAGE);
                         if (ret != JOptionPane.YES_OPTION) {
                             return;
                         }
@@ -214,21 +214,19 @@ public class InstanceInstallerDialog extends JDialog {
                             return;
                         }
                     } else {
-                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" +
-                                Language.INSTANCE.localize("common.error") +
-                                        "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".alreadyinstance", instanceNameField.getText() + "<br/><br/>") +
-                                        "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane
-                                .ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                                .INSTANCE.localize("common.error") +
+                                "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".alreadyinstance", instanceNameField.getText() + "<br/><br/>")), Language.INSTANCE
+                                .localize("common.error"), JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 } else if (!isReinstall && !isServer && instanceNameField.getText().replaceAll("[^A-Za-z0-9]", "")
                         .length() == 0) {
-                    JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
+                    JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
                             .INSTANCE.localize("common.error") + "<br/><br/>" + Language.INSTANCE.localizeWithReplace
-                            ("instance.invalidname", instanceNameField.getText()) +
-                                    "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane
-                            .ERROR_MESSAGE);
+                            ("instance.invalidname", instanceNameField.getText())), Language.INSTANCE.localize
+                            ("common.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
@@ -388,8 +386,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                         Utils.cleanTempDirectory();
 
-                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + text +
-                                "</p></html>", title, type);
+                        JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(text), title, type);
                     }
 
                 };

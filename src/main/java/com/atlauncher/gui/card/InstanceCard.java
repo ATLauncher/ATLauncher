@@ -34,6 +34,7 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.utils.Base64;
+import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -190,10 +191,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         .getLatestDevHash() : instance.getLatestVersion()))) {
                     String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common"
                             + ".no"), Language.INSTANCE.localize("instance.dontremindmeagain")};
-                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" +
-                                    Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                            ".updatenow", "<br/><br/>") + "</p></html>", Language.INSTANCE.localize
-                            ("instance" + "" +
+                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                            (Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                    ".updatenow", "<br/><br/>")), Language.INSTANCE.localize("instance" + "" +
                                     ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                             options, options[0]);
                     if (ret == 0) {
@@ -267,10 +267,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     new BackupDialog(instance).setVisible(true);
                 } else {
                     if (instance.getSavesDirectory().exists()) {
-                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><p " +
-                                "align=\"center\">" + Language.INSTANCE.localizeWithReplace("backup.sure",
-                                "<br/><br/>") + "</p></html>", Language.INSTANCE.localize("backup" + "" +
-                                ".backingup", instance.getName()), JOptionPane.YES_NO_OPTION);
+                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                                (Language.INSTANCE.localizeWithReplace("backup.sure", "<br/><br/>")), Language
+                                .INSTANCE.localize("backup.backingup", instance.getName()), JOptionPane.YES_NO_OPTION);
                         if (ret == JOptionPane.YES_OPTION) {
                             final JDialog dialog = new JDialog(App.settings.getParent(), Language.INSTANCE
                                     .localizeWithReplace("backup.backingup", instance.getName()), ModalityType
@@ -364,19 +363,19 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     dialog.start();
                 } else if (clonedName == null || clonedName.equals("")) {
                     LogManager.error("Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
-                    JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                            .INSTANCE.localizeWithReplace("instance.errorclone", instance.getName() + "<br/><br/>") +
-                            "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                            .INSTANCE.localizeWithReplace("instance.errorclone", instance.getName() + "<br/><br/>")),
+                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
                 } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                     LogManager.error("Error Occured While Cloning Instance! Invalid Name!");
-                    JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                            .INSTANCE.localizeWithReplace("instance.errorclone", instance.getName() + "<br/><br/>") +
-                            "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                            .INSTANCE.localizeWithReplace("instance.errorclone", instance.getName() + "<br/><br/>")),
+                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
                 } else {
                     LogManager.error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
-                    JOptionPane.showMessageDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                            .INSTANCE.localizeWithReplace("instance.errorclone", instance.getName() + "<br/><br/>") +
-                            "</p></html>", Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                            .INSTANCE.localizeWithReplace("instance.errorclone", instance.getName() + "<br/><br/>")),
+                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -413,11 +412,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize
                                 ("common.no"), Language.INSTANCE.localize("instance" + "" +
                                 ".dontremindmeagain")};
-                        int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">"
-                                + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".updatenow", "<br/><br/>") + "</p></html>", Language.INSTANCE.localize
-                                ("instance.updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                                null, options, options[0]);
+                        int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                                (Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                        ".updatenow", "<br/><br/>")), Language.INSTANCE.localize("instance" + "" +
+                                ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                options, options[0]);
                         if (ret == 0) {
                             if (App.settings.getAccount() == null) {
                                 String[] optionss = {Language.INSTANCE.localize("common.ok")};
@@ -497,12 +496,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE
                                         .localize("common.no"), Language.INSTANCE.localize("instance" + "" +
                                         ".dontremindmeagain")};
-                                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p " +
-                                                "align=\"center\">" + Language.INSTANCE.localize("instance" + "" +
-                                                ".updatenow", "<br/><br/>") + "</p></html>", Language.INSTANCE
-                                        .localize("instance" + "" +
-                                                ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                                        .ERROR_MESSAGE, null, options, options[0]);
+                                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils
+                                        .centerParagraph(Language.INSTANCE.localize("instance" + "" +
+                                                ".updatenow", "<br/><br/>")), Language.INSTANCE.localize("instance" +
+                                        ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                                        null, options, options[0]);
                                 if (ret == 0) {
                                     if (App.settings.getAccount() == null) {
                                         String[] optionss = {Language.INSTANCE.localize("common.ok")};

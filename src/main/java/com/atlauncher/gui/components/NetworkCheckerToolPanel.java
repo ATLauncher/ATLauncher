@@ -26,6 +26,7 @@ import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -44,8 +45,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.networkchecker"));
 
-    private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">" + Utils.splitMultilinedString(Language
-            .INSTANCE.localize("tools.networkchecker.info"), 60, "<br>") + "</p></html>");
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
+            .INSTANCE.localize("tools.networkchecker.info"), 60, "<br>")));
 
     public NetworkCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -65,11 +66,11 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     @Override
     public void actionPerformed(ActionEvent e) {
         String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common" + ".no")};
-        int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Utils
+        int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Utils
                 .splitMultilinedString(Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup", App
-                        .settings.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>") + "</p></html>", Language
-                .INSTANCE.localize("tools.networkchecker"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                null, options, options[0]);
+                        .settings.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>")), Language.INSTANCE
+                .localize("tools.networkchecker"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                options, options[0]);
         if (ret == 0) {
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"), App
                     .settings.getServers().size(), Language.INSTANCE.localize("tools.networkchecker" + "" +
@@ -155,10 +156,10 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             } else {
                 LogManager.info("Network Test ran and submitted to " + Constants.LAUNCHER_NAME + "!");
                 String[] options2 = {Language.INSTANCE.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" + Language
-                        .INSTANCE.localizeWithReplace("tools.networkheckercomplete", "<br/><br/>") +
-                        "</p></html>", Language.INSTANCE.localize("tools.networkchecker"), JOptionPane
-                        .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options2, options2[0]);
+                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
+                        .localizeWithReplace("tools.networkheckercomplete", "<br/><br/>")), Language.INSTANCE
+                        .localize("tools" + ".networkchecker"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                        .INFORMATION_MESSAGE, null, options2, options2[0]);
             }
         }
     }

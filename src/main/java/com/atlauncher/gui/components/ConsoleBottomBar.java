@@ -24,6 +24,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.thread.PasteUpload;
+import com.atlauncher.utils.HTMLUtils;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -100,9 +101,9 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
         });
         killMinecraftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), "<html><p align=\"center\">" +
-                        Language.INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>") + "</p></html>",
-                        Language.INSTANCE.localize("console.kill"), JOptionPane.YES_NO_OPTION);
+                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                        .INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>")), Language.INSTANCE.localize
+                        ("console.kill"), JOptionPane.YES_NO_OPTION);
                 if (ret == JOptionPane.YES_OPTION) {
                     App.settings.killMinecraft();
                     killMinecraftButton.setVisible(false);

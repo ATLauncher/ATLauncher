@@ -2124,19 +2124,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     @Override
     protected Boolean doInBackground() throws Exception {
         LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
+
         if (App.experimentalJson) {
             LogManager.debug("Experimental JSON is enabled, using the JSON file!");
             try {
                 this.jsonVersion = Gsons.DEFAULT.fromJson(this.pack.getJSON(version.getVersion()), Version.class);
                 return installUsingJSON();
-            } catch (JsonSyntaxException e) {
-                App.settings.logStackTrace("Couldn't read JSON of pack! Report this to the pack's developer/s and " +
-                        "NOT " + Constants.LAUNCHER_NAME + "!", e);
             } catch (JsonParseException e) {
-                App.settings.logStackTrace("Couldn't parse JSON of pack! Report this to the pack's developer/s and "
+                App.settings.logStackTrace("Couldn't parse JSON of pack! Report this to the pack developer/s and "
                         + "NOT " + Constants.LAUNCHER_NAME + "!", e);
             }
         }
+
         return installUsingXML();
     }
 

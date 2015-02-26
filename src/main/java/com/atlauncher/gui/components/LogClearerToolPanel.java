@@ -19,6 +19,7 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -35,8 +36,8 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
 
     private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.logclearer"));
 
-    private final JLabel INFO_LABEL = new JLabel("<html><p align=\"center\">" + Utils.splitMultilinedString(Language
-            .INSTANCE.localize("tools.logclearer.info"), 60, "<br>") + "</p></html>");
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
+            .INSTANCE.localize("tools.logclearer.info"), 60, "<br>")));
 
     public LogClearerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);

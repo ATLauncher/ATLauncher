@@ -24,6 +24,7 @@ import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
+import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
 import javax.imageio.ImageIO;
@@ -1045,11 +1046,10 @@ public class Instance implements Cloneable {
         } else {
             if ((App.settings.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
                 String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" +
-                        Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".insufficientram", "<b>" + this.memory + "</b> MB<br/><br/>") +
-                        "</p></html>", Language.INSTANCE.localize("instance.insufficientramtitle"), JOptionPane
-                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                        .INSTANCE.localizeWithReplace("instance.insufficientram", "<b>" + this.memory + "</b> " +
+                                "MB<br/><br/>")), Language.INSTANCE.localize("instance.insufficientramtitle"),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
                     App.settings.setMinecraftLaunched(false);
@@ -1058,11 +1058,10 @@ public class Instance implements Cloneable {
             }
             if (App.settings.getPermGen() < this.permgen) {
                 String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">" +
-                        Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".insufficientpermgen", "<b>" + this.permgen + "</b> MB<br/><br/>") +
-                        "</p></html>", Language.INSTANCE.localize("instance.insufficientpermgentitle"), JOptionPane
-                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                        .INSTANCE.localizeWithReplace("instance.insufficientpermgen", "<b>" + this.permgen + "</b> " +
+                                "MB<br/><br/>")), Language.INSTANCE.localize("instance.insufficientpermgentitle"),
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
                     App.settings.setMinecraftLaunched(false);
@@ -1251,12 +1250,11 @@ public class Instance implements Cloneable {
                     if (response.hasNote()) {
                         String[] options = {Language.INSTANCE.localize("common.opencrashreport"), Language.INSTANCE
                                 .localize("common.ok")};
-                        int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html><p align=\"center\">"
-                                + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".openeyereport1", "<br/><br/>") + response.getNoteDisplay() + Language.INSTANCE
-                                .localize("instance.openeyereport2") + "</p></html>", Language.INSTANCE.localize
-                                ("instance.aboutyourcrash"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                                .INFORMATION_MESSAGE, null, options, options[1]);
+                        int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                                (Language.INSTANCE.localizeWithReplace("instance.openeyereport1", "<br/><br/>") +
+                                        response.getNoteDisplay() + Language.INSTANCE.localize("instance" +
+                                        ".openeyereport2")), Language.INSTANCE.localize("instance.aboutyourcrash"),
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
                         if (ret == 0) {
                             Utils.openBrowser(response.getURL());
                         }
