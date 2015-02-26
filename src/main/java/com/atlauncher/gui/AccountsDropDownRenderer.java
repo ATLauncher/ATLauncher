@@ -36,9 +36,16 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
         setIconTextGap(10);
     }
 
-    /*
-     * This method finds the image and text corresponding to the selected value and returns the
-     * label, set up to display the text and image.
+    /**
+     * This finds the image and text corresponding to the selected value and returns the label to be displayed in the
+     * bottom accounts selection dropdown.
+     *
+     * @param list The JList we're painting
+     * @param account the account we're rendering
+     * @param index The cells index
+     * @param isSelected True if the specified cell was selected
+     * @param cellHasFocus True if the specified cell has the focus
+     * @return A component whose paint() method will render the specified value
      */
     @SuppressWarnings("rawtypes")
     public Component getListCellRendererComponent(JList list, Account account, int index, boolean isSelected, boolean

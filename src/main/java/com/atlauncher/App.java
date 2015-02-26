@@ -83,15 +83,6 @@ public class App {
     public static boolean wasUpdated = false;
 
     /**
-     * This is used to turn on experimental JSON support. JSON is replacing XML when it comes to loading pack version
-     * information and installing packs. It's a much better system, but still in test and only enable when the command
-     * line argument shown below.
-     * <p/>
-     * --json=experimental
-     */
-    public static boolean experimentalJson = false;
-
-    /**
      * This controls if GZIP is used when downloading files through the launcher. It's used as a debugging tool and is
      * enabled with the command line argument shown below.
      * <p/>
@@ -161,10 +152,6 @@ public class App {
                     autoLaunch = parts[1];
                 } else if (parts[0].equalsIgnoreCase("--updated")) {
                     wasUpdated = true;
-                } else if (parts[0].equalsIgnoreCase("--json") && parts[1].equalsIgnoreCase("experimental")) {
-                    experimentalJson = true;
-                    LogManager.debug("Experimental JSON support enabled! Don't ask for support with this enabled!",
-                            true);
                 } else if (parts[0].equalsIgnoreCase("--debug")) {
                     LogManager.showDebug = true;
                     LogManager.debugLevel = 1;

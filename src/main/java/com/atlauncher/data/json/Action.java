@@ -62,7 +62,7 @@ public class Action {
     public void convertMods(InstanceInstaller instanceInstaller) {
         Mod toAdd = null;
         for (String name : this.mod) {
-            toAdd = instanceInstaller.getJsonModByName(name);
+            toAdd = instanceInstaller.getModByName(name);
             if (toAdd != null) {
                 addMod(toAdd);
             }

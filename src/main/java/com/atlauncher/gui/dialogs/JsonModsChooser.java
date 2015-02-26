@@ -144,7 +144,7 @@ public class JsonModsChooser extends JDialog {
 
         selectAllButton = new JButton();
 
-        if (installer.hasJsonRecommendedMods()) {
+        if (installer.hasRecommendedMods()) {
             selectAllButton.setText(Language.INSTANCE.localize("instance.selectrecommended"));
         } else {
             selectAllButton.setText(Language.INSTANCE.localize("instance.selectall"));
@@ -162,7 +162,7 @@ public class JsonModsChooser extends JDialog {
                                     check.setSelected(true);
                                     check.setEnabled(true);
                                     sortOutMods(check);
-                                } else if (installer.hasJsonRecommendedMods()) {
+                                } else if (installer.hasRecommendedMods()) {
                                     check.setSelected(false);
                                 }
                             } else {
@@ -215,9 +215,9 @@ public class JsonModsChooser extends JDialog {
         int count1 = 0;
         int count2 = 0;
 
-        for (int i = 0; i < installer.getJsonMods().size(); ) {
+        for (int i = 0; i < installer.getMods().size(); ) {
             boolean skip = false;
-            final Mod mod = installer.getJsonMods().get(i);
+            final Mod mod = installer.getMods().get(i);
             if (installer.isServer() && !mod.installOnServer()) {
                 continue;
             }
@@ -229,7 +229,7 @@ public class JsonModsChooser extends JDialog {
                     if (!mod.hasLinked()) {
                         checkBox.setBounds(0, (count1 * 20), checkBox.getPreferredSize().width, 20);
                     } else {
-                        Mod linkedMod = installer.getJsonModByName(mod.getLinked());
+                        Mod linkedMod = installer.getModByName(mod.getLinked());
                         if (linkedMod == null) {
                             LogManager.error("The mod " + mod.getName() + " tried to reference a linked mod " + mod
                                     .getLinked() + " which doesn't exist!");
@@ -407,7 +407,7 @@ public class JsonModsChooser extends JDialog {
     }
 
     private List<Mod> modsToChange(Mod mod) {
-        return installer.getJsonLinkedMods(mod);
+        return installer.getLinkedMods(mod);
     }
 
     private List<Mod> modsInGroup(Mod mod) {
