@@ -488,6 +488,7 @@ public class Settings {
         LogManager.info("Checking account UUID's!");
         for (Account account : this.accounts) {
             if (account.getUUID() == null) {
+                // TODO: Move this to a separate class.
                 account.setUUID(Authentication.getUUID(account.getMinecraftUsername()));
                 this.saveAccounts();
             }

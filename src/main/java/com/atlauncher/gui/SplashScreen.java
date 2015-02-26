@@ -30,6 +30,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+/**
+ * The splash screen which shows when the launcher is started up and is loading it's stuff.
+ */
 public class SplashScreen extends JWindow {
     private static final BufferedImage img = Utils.getImage("SplashScreen");
     private final ContextMenu CONTEXT_MENU = new ContextMenu();
@@ -55,13 +58,16 @@ public class SplashScreen extends JWindow {
     }
 
     /**
-     * Closes and disposes of the splash screen
+     * Closes and disposes of the splash screen.
      */
     public void close() {
         this.setVisible(false);
         this.dispose();
     }
 
+    /**
+     * The context menu which is shows on right click for the splash screen image, giving a force quit option.
+     */
     private final class ContextMenu extends JPopupMenu {
         private final JMenuItem FORCE_QUIT = new JMenuItem(Language.INSTANCE.localize("common.forcequit"));
 

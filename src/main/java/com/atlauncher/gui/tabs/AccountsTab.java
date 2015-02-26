@@ -293,6 +293,7 @@ public class AccountsTab extends JPanel implements Tab {
                     usernameField.getText());
             dialog.addThread(new Thread() {
                 public void run() {
+                    // TODO: Change this to use Mojang authlib.
                     LoginResponse resp = Authentication.checkAccount(usernameField.getText(), new String
                             (passwordField.getPassword()));
                     dialog.setReturnValue(resp);
