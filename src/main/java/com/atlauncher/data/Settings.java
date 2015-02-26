@@ -32,6 +32,7 @@ import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.Authentication;
+import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -474,8 +475,7 @@ public class Settings {
         LogManager.info("Checking account UUID's!");
         for (Account account : this.accounts) {
             if (account.getUUID() == null) {
-                // TODO: Move this to a separate class.
-                account.setUUID(Authentication.getUUID(account.getMinecraftUsername()));
+                account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
                 this.saveAccounts();
             }
         }

@@ -93,13 +93,4 @@ public class Authentication {
 
         return response;
     }
-
-    public static String getUUID(String username) {
-        Downloadable downloadable = new Downloadable("https://api.mojang.com/users/profiles/minecraft/" + username,
-                false);
-
-        ProfileResponse profile = Gsons.DEFAULT.fromJson(downloadable.getContents(), ProfileResponse.class);
-
-        return profile.getId();
-    }
 }
