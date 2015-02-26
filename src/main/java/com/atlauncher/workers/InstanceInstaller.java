@@ -42,7 +42,7 @@ import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.data.mojang.Library;
 import com.atlauncher.data.mojang.MojangConstants;
-import com.atlauncher.gui.dialogs.JsonModsChooser;
+import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -1181,7 +1181,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (this.allMods.size() != 0 && hasOptional) {
-            JsonModsChooser modsChooser = new JsonModsChooser(this);
+            ModsChooser modsChooser = new ModsChooser(this);
             modsChooser.setVisible(true);
             if (modsChooser.wasClosed()) {
                 this.cancel(true);
