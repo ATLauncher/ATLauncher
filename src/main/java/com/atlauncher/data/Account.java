@@ -32,21 +32,10 @@ import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import com.mojang.util.UUIDTypeAdapter;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-import java.awt.Image;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -397,6 +386,11 @@ public class Account implements Serializable {
             this.remember = false;
         } else {
             this.password = Utils.decrypt(this.encryptedPassword);
+            if (this.password == null) {
+                LogManager.error("Error reading in saved password from file!");
+                this.password = "";
+                this.remember = false;
+            }
         }
         this.isReal = true;
     }
@@ -476,7 +470,7 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                                ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
+                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
                         .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
@@ -636,7 +630,7 @@ public class Account implements Serializable {
             LogManager.error(response.getErrorMessage());
             String[] options = {Language.INSTANCE.localize("common.ok")};
             JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
-                    .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())),
+                            .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())),
                     Language.INSTANCE.localize("instance" + ".errorloggingintitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);

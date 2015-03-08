@@ -1179,7 +1179,6 @@ public class Utils {
             byte[] decValue = c.doFinal(decordedValue);
             decryptedValue = new String(decValue);
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
         }
         return decryptedValue;
     }
