@@ -252,6 +252,10 @@ public class Settings {
 
         loadProperties(); // Load the users Properties
 
+        if (this.isUsingCustomJavaPath()) {
+            checkForValidJavaPath(true); // Checks for a valid Java path
+        }
+
         console.setupLanguage(); // Setup language on the console
 
         clearOldLogs(); // Clear all the old logs out
@@ -281,8 +285,8 @@ public class Settings {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
-                    ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                            .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
+                            ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
@@ -321,6 +325,20 @@ public class Settings {
         }
     }
 
+    public void checkForValidJavaPath(boolean save) {
+        File java = new File(App.settings.getJavaPath(), "bin" + File.separator + "java" + File.separator + "java" +
+                (Utils.isWindows() ? ".exe" : ""));
+
+        if (!java.exists()) {
+            LogManager.error("Custom Java Path Is Incorrect! Defaulting to valid value!");
+            this.setJavaPath(Utils.getJavaHome());
+
+            if (save) {
+                this.saveProperties();
+            }
+        }
+    }
+
     public void startCheckingServers() {
         if (this.checkingServersTimer != null) {
             // If it's not null, cancel and purge tasks left
@@ -354,8 +372,8 @@ public class Settings {
             String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
                     ".removepasswords")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
-                    ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                            .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
+                            ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 1) {
                 for (Account account : this.accounts) {
@@ -1112,8 +1130,9 @@ public class Settings {
                             ".<br/><br/>Make sure you're running the Launcher from somewhere with<br/>write" +
                             " permissions for your user account such as your Home/Users folder or desktop."),
                     "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                    System.exit(0);
-        } try {
+            System.exit(0);
+        }
+        try {
             this.properties.load(new FileInputStream(propertiesFile));
             this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");

@@ -29,25 +29,13 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
 
-import javax.swing.InputMap;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
-import java.awt.Image;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -240,6 +228,8 @@ public class App {
 
         if (settings.isUsingCustomJavaPath()) {
             LogManager.warn("Custom Java Path Set!");
+
+            settings.checkForValidJavaPath(false);
         } else if (settings.isUsingMacApp()) {
             // If the user is using the Mac Application, then we forcibly set the java path if they have none set.
 
