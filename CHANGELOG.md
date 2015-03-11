@@ -8,3 +8,4 @@ Changelog
 - Install packs using JSON rather than XML for better everything
 - Fix issue with failing to read in saved passwords (such as switching between computers)
 - Fix issues with old Java paths causing issues launching packs
+- Some changes to logging to the console to keep things in order under large loads

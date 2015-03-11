@@ -43,11 +43,19 @@ public final class LogManager {
     }
 
     public static void log(LogEvent event) {
-        queue.offer(event);
+        try {
+            queue.put(event);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void info(String message) {
-        queue.offer(new LogEvent(LogEvent.LogType.INFO, message));
+        try {
+            queue.put(new LogEvent(LogType.INFO, message));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void debug(String message) {
@@ -56,13 +64,21 @@ public final class LogManager {
 
     public static void debug(String message, boolean force) {
         if (showDebug || force) {
-            queue.offer(new LogEvent(LogEvent.LogType.DEBUG, message));
+            try {
+                queue.put(new LogEvent(LogType.DEBUG, message));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public static void debug(String message, int level) {
         if (showDebug || debugLevel >= level) {
-            queue.offer(new LogEvent(LogEvent.LogType.DEBUG, message));
+            try {
+                queue.put(new LogEvent(LogType.DEBUG, message));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -71,11 +87,19 @@ public final class LogManager {
     }
 
     public static void error(String message) {
-        queue.offer(new LogEvent(LogEvent.LogType.ERROR, message));
+        try {
+            queue.put(new LogEvent(LogType.ERROR, message));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void minecraft(String message) {
         Object[] value = Utils.prepareMessageForMinecraftLog(message);
-        queue.offer(new LogEvent((LogType) value[0], (String) value[1], 10));
+        try {
+            queue.put(new LogEvent((LogType) value[0], (String) value[1], 10));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

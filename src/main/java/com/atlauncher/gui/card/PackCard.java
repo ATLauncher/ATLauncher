@@ -56,7 +56,6 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     private final JButton modsButton = new JButton(Language.INSTANCE.localize("pack.viewmods"));
     private final JPanel actionsPanel = new JPanel(new BorderLayout());
     private final JSplitPane splitter = new JSplitPane();
-    private final GridBagConstraints gbc = new GridBagConstraints();
     private final Pack pack;
 
     public PackCard(final Pack pack) {
