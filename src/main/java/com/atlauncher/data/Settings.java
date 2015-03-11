@@ -2142,7 +2142,7 @@ public class Settings {
             if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
                 this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
-                this.reloadInstancesPanel();
+                this.reloadPacksPanel();
             }
         }
     }
