@@ -21,7 +21,6 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Settings;
 import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
@@ -175,6 +174,17 @@ public class Utils {
             }
         } else {
             return new File(System.getProperty("user.dir"));
+        }
+    }
+
+    public static File getOSStorageDir() {
+        switch (OperatingSystem.getOS()) {
+            case WINDOWS:
+                return new File(System.getenv("APPDATA"), "/.atlauncher");
+            case OSX:
+                return new File(System.getProperty("user.home"), "/Library/Application Support/.atlauncher");
+            default:
+                return new File(System.getProperty("user.home"), "/.atlauncher");
         }
     }
 

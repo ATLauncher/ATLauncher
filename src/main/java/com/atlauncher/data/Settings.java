@@ -2106,6 +2106,19 @@ public class Settings {
         return false;
     }
 
+    public Pack getSemiPublicPackByCode(String packCode) {
+        String packCodeMD5 = Utils.getMD5(packCode);
+        for (Pack pack : this.packs) {
+            if (pack.isSemiPublic()) {
+                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
+                    return pack;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public boolean addPack(String packCode) {
         String packCodeMD5 = Utils.getMD5(packCode);
         for (Pack pack : this.packs) {
