@@ -444,7 +444,10 @@ public class App {
             Properties props = new Properties();
             props.load(new FileInputStream(f));
 
+            props.setProperty("java_version", Utils.getJavaVersion());
             props.setProperty("location", App.settings.getBaseDir().toString());
+            props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
+                    .getPath()).getAbsolutePath());
 
             if (props.getProperty("pack_code_to_add", null) != null) {
                 packCodeToAdd = props.getProperty("pack_code_to_add");
