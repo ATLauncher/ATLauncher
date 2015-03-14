@@ -111,7 +111,7 @@ public class App {
     /**
      * This sets a pack code to be added to the launcher on startup.
      */
-    public static String packCodeToAdd = null;
+    public static String packCodeToAdd;
 
     public static String autoLaunch = null;
 
@@ -449,10 +449,8 @@ public class App {
             props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
                     .getPath()).getAbsolutePath());
 
-            if (props.getProperty("pack_code_to_add", null) != null) {
-                packCodeToAdd = props.getProperty("pack_code_to_add");
-                props.remove("pack_code_to_add");
-            }
+            packCodeToAdd = props.getProperty("pack_code_to_add", null);
+            props.remove("pack_code_to_add");
 
             props.store(new FileOutputStream(f), "");
         } catch (IOException e) {
