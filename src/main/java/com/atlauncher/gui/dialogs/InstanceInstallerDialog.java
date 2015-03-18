@@ -75,19 +75,19 @@ public class InstanceInstallerDialog extends JDialog {
     private String shareCode;
 
     public InstanceInstallerDialog(Object object) {
-        this(object, false, false, null, null);
+        this(object, false, false, null, null, true);
     }
 
-    public InstanceInstallerDialog(Pack pack, PackVersion version, String shareCode) {
-        this(pack, false, false, version, shareCode);
+    public InstanceInstallerDialog(Pack pack, PackVersion version, String shareCode, boolean showModsChooser) {
+        this(pack, false, false, version, shareCode, showModsChooser);
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this((Object) pack, false, true, null, null);
+        this((Object) pack, false, true, null, null, true);
     }
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer, final PackVersion
-            autoInstallVersion, final String shareCode) {
+            autoInstallVersion, final String shareCode, final boolean showModsChooser) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.autoInstallVersion = autoInstallVersion;
@@ -278,7 +278,7 @@ public class InstanceInstallerDialog extends JDialog {
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller((isServer ? "" : instanceNameField
-                        .getText()), pack, version, isReinstall, isServer, shareCode) {
+                        .getText()), pack, version, isReinstall, isServer, shareCode, showModsChooser) {
 
                     protected void done() {
                         Boolean success = false;

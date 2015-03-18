@@ -202,7 +202,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                     , JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, optionss,
                                     optionss[0]);
                         } else {
-                            new InstanceInstallerDialog(instance, true, false, null, null);
+                            new InstanceInstallerDialog(instance, true, false, null, null, true);
                         }
                     } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
                         if (!App.settings.isMinecraftLaunched()) {
@@ -248,7 +248,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                     ".cantupdate"), Language.INSTANCE.localize("instance.noaccountselected"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
-                    new InstanceInstallerDialog(instance, true, false, null, null);
+                    new InstanceInstallerDialog(instance, true, false, null, null, true);
                 }
             }
         });
@@ -423,7 +423,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                         ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
                                         .ERROR_MESSAGE, null, optionss, optionss[0]);
                             } else {
-                                new InstanceInstallerDialog(instance, true, false, null, null);
+                                new InstanceInstallerDialog(instance, true, false, null, null, true);
                             }
                         } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
                             if (!App.settings.isMinecraftLaunched()) {
@@ -507,7 +507,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                                         ("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
                                                 JOptionPane.ERROR_MESSAGE, null, optionss, optionss[0]);
                                     } else {
-                                        new InstanceInstallerDialog(instance, true, false, null, null);
+                                        new InstanceInstallerDialog(instance, true, false, null, null, true);
                                     }
                                 } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
                                     if (!App.settings.isMinecraftLaunched()) {

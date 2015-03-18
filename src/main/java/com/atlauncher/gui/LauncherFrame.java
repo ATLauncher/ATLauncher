@@ -103,30 +103,39 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         if (App.packToInstall != null) {
             Pack pack = App.settings.getPackBySafeName(App.packToInstall);
 
-            if (App.settings.isInOfflineMode() || App.settings.getAccount() == null || pack == null) {
-                LogManager.error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
+            if (pack != null && pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(pack.getCode())) {
+                LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the " +
+                        "pack added to the launcher!");
             } else {
-                new InstanceInstallerDialog(pack);
+                if (App.settings.isInOfflineMode() || App.settings.getAccount() == null || pack == null) {
+                    LogManager.error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
+                } else {
+                    new InstanceInstallerDialog(pack);
+                }
             }
         } else if (App.packShareCodeToInstall != null) {
             String[] parts = App.packShareCodeToInstall.split("\\|\\|\\|");
 
-            if (parts.length != 3) {
+            if (parts.length != 4) {
                 LogManager.error("Error automatically installing pack from share code!");
             } else {
                 Pack pack = App.settings.getPackBySafeName(parts[0]);
 
-                if (pack == null) {
-                    LogManager.error("Error automatically installing pack from share code!");
+                if (pack != null && pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(pack.getCode())) {
+                    LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the " +
+                            "pack added to the launcher!");
                 } else {
-                    PackVersion version = pack.getVersionByName(parts[1]);
+                    if (pack == null) {
+                        LogManager.error("Error automatically installing pack from share code!");
+                    } else {
+                        PackVersion version = pack.getVersionByName(parts[1]);
 
-                    if (version == null) {
-                        LogManager.error("Error automatically installing " + pack.getName() + " from share code!");
+                        if (version == null) {
+                            LogManager.error("Error automatically installing " + pack.getName() + " from share code!");
+                        } else {
+                            new InstanceInstallerDialog(pack, version, parts[2], Boolean.parseBoolean(parts[3]));
+                        }
                     }
-                    String shareCode = parts[2];
-
-                    new InstanceInstallerDialog(pack, version, shareCode);
                 }
 
             }
