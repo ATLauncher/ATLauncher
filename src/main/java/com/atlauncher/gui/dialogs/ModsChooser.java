@@ -26,6 +26,7 @@ import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
+import io.github.asyncronous.toast.Toaster;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -368,6 +369,7 @@ public class ModsChooser extends JDialog {
             String data = installer.getShareCodeData(code);
 
             if (data == null) {
+                Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
                 return;
             }
 
@@ -377,12 +379,14 @@ public class ModsChooser extends JDialog {
             Map<String, List<Map<String, String>>> mods = Gsons.DEFAULT.fromJson(data, type);
 
             if (mods == null) {
+                Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
                 return;
             }
 
             List<Map<String, String>> optionalMods = mods.get("optional");
 
             if (optionalMods == null || optionalMods.size() == 0) {
+                Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
                 return;
             }
 
@@ -406,6 +410,7 @@ public class ModsChooser extends JDialog {
             }
         } catch (Exception e) {
             LogManager.error("Invalid share code!");
+            Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
         }
     }
 
