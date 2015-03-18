@@ -1494,4 +1494,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             fireSubProgress((int) progress, String.format("%.2f MB / %.2f MB", done, toDo));
         }
     }
+
+    public String getShareCodeData(String code) {
+        String shareCodeData = null;
+
+        try {
+            APIResponse response = Gsons.DEFAULT.fromJson(Utils.sendGetAPICall("pack/" + this.pack.getSafeName() + "/" +
+                    version.getVersion() + "/share-code/" + code), APIResponse.class);
+
+            if (!response.wasError()) {
+                shareCodeData = response.getDataAsString();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return shareCodeData;
+    }
 }
