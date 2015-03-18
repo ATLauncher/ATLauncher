@@ -43,19 +43,11 @@ public final class LogManager {
     }
 
     public static void log(LogEvent event) {
-        try {
-            queue.put(event);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        queue.offer(event);
     }
 
     public static void info(String message) {
-        try {
-            queue.put(new LogEvent(LogType.INFO, message));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        queue.offer(new LogEvent(LogType.INFO, message));
     }
 
     public static void debug(String message) {
@@ -64,21 +56,13 @@ public final class LogManager {
 
     public static void debug(String message, boolean force) {
         if (showDebug || force) {
-            try {
-                queue.put(new LogEvent(LogType.DEBUG, message));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            queue.offer(new LogEvent(LogType.DEBUG, message));
         }
     }
 
     public static void debug(String message, int level) {
         if (showDebug || debugLevel >= level) {
-            try {
-                queue.put(new LogEvent(LogType.DEBUG, message));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            queue.offer(new LogEvent(LogType.DEBUG, message));
         }
     }
 
@@ -87,19 +71,11 @@ public final class LogManager {
     }
 
     public static void error(String message) {
-        try {
-            queue.put(new LogEvent(LogType.ERROR, message));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        queue.offer(new LogEvent(LogType.ERROR, message));
     }
 
     public static void minecraft(String message) {
         Object[] value = Utils.prepareMessageForMinecraftLog(message);
-        try {
-            queue.put(new LogEvent((LogType) value[0], (String) value[1], 10));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        queue.offer(new LogEvent((LogType) value[0], (String) value[1], 10));
     }
 }
