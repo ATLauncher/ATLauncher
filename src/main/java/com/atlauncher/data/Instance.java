@@ -190,7 +190,7 @@ public class Instance implements Cloneable {
      */
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe, String version, String
             minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder, String
-            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass, String assets,
+                            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass, String assets,
                     boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
@@ -241,7 +241,7 @@ public class Instance implements Cloneable {
      */
     public Instance(String name, String pack, Pack realPack, boolean installJustForMe, String version, String
             minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder, String
-            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass, String assets,
+                            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass, String assets,
                     boolean isDev, boolean newLaunchMethod) {
         this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen, mods, jarOrder,
                 librariesNeeded, extraArguments, minecraftArguments, mainClass, assets, isDev, true, newLaunchMethod);
@@ -1047,8 +1047,8 @@ public class Instance implements Cloneable {
             if ((App.settings.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
                 String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                        .INSTANCE.localizeWithReplace("instance.insufficientram", "<b>" + this.memory + "</b> " +
-                                "MB<br/><br/>")), Language.INSTANCE.localize("instance.insufficientramtitle"),
+                                .INSTANCE.localizeWithReplace("instance.insufficientram", "<b>" + this.memory + "</b> " +
+                                        "MB<br/><br/>")), Language.INSTANCE.localize("instance.insufficientramtitle"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
@@ -1059,8 +1059,8 @@ public class Instance implements Cloneable {
             if (App.settings.getPermGen() < this.permgen) {
                 String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                        .INSTANCE.localizeWithReplace("instance.insufficientpermgen", "<b>" + this.permgen + "</b> " +
-                                "MB<br/><br/>")), Language.INSTANCE.localize("instance.insufficientpermgentitle"),
+                                .INSTANCE.localizeWithReplace("instance.insufficientpermgen", "<b>" + this.permgen + "</b> " +
+                                        "MB<br/><br/>")), Language.INSTANCE.localize("instance.insufficientpermgentitle"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
@@ -1251,9 +1251,9 @@ public class Instance implements Cloneable {
                         String[] options = {Language.INSTANCE.localize("common.opencrashreport"), Language.INSTANCE
                                 .localize("common.ok")};
                         int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
-                                (Language.INSTANCE.localizeWithReplace("instance.openeyereport1", "<br/><br/>") +
-                                        response.getNoteDisplay() + Language.INSTANCE.localize("instance" +
-                                        ".openeyereport2")), Language.INSTANCE.localize("instance.aboutyourcrash"),
+                                        (Language.INSTANCE.localizeWithReplace("instance.openeyereport1", "<br/><br/>") +
+                                                response.getNoteDisplay() + Language.INSTANCE.localize("instance" +
+                                                ".openeyereport2")), Language.INSTANCE.localize("instance.aboutyourcrash"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
                         if (ret == 0) {
                             Utils.openBrowser(response.getURL());
@@ -1345,5 +1345,35 @@ public class Instance implements Cloneable {
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
+    }
+
+    public ArrayList<String> getInstalledOptionalModNames() {
+        ArrayList<String> installedOptionalMods = new ArrayList<String>();
+
+        for (DisableableMod mod : this.getInstalledMods()) {
+            if (mod.isOptional() && !mod.isUserAdded()) {
+                installedOptionalMods.add(mod.getName());
+            }
+        }
+
+        return installedOptionalMods;
+    }
+
+    public Map<String, Object> getShareCodeData() {
+        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> mods = new HashMap<String, Object>();
+        List<Map<String, Object>> optional = new ArrayList<Map<String, Object>>();
+
+        for (String mod : this.getInstalledOptionalModNames()) {
+            Map<String, Object> modInfo = new HashMap<String, Object>();
+            modInfo.put("name", mod);
+            modInfo.put("selected", true);
+            optional.add(modInfo);
+        }
+
+        mods.put("optional", optional);
+        data.put("mods", mods);
+
+        return data;
     }
 }

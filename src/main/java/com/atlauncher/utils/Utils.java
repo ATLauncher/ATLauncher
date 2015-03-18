@@ -1284,6 +1284,7 @@ public class Utils {
         StringBuilder response = null;
 
         byte[] contents = Gsons.DEFAULT.toJson(data).getBytes();
+        System.out.println(Gsons.DEFAULT.toJson(data));
 
         URL url = new URL(Constants.API_BASE_URL + path);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();

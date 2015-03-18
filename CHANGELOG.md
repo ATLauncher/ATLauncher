@@ -11,3 +11,4 @@ Changelog
 - Some changes to logging to the console to keep things in order under large loads
 - Add a way for semi public packs to auto add their codes to users launcher
 - Add the remove pack button back in for semi public packs
+- Create share codes server side
