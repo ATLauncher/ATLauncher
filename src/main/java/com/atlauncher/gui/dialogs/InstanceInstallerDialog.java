@@ -188,7 +188,7 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         middle.add(versionsDropDown, gbc);
 
-        if (autoInstallVersion == null) {
+        if (autoInstallVersion != null) {
             versionsDropDown.setSelectedItem(autoInstallVersion);
             versionsDropDown.setEnabled(false);
         }

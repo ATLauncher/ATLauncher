@@ -109,7 +109,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                 new InstanceInstallerDialog(pack);
             }
         } else if (App.packShareCodeToInstall != null) {
-            String[] parts = App.packShareCodeToInstall.split("|||");
+            String[] parts = App.packShareCodeToInstall.split("\\|\\|\\|");
 
             if (parts.length != 3) {
                 LogManager.error("Error automatically installing pack from share code!");
