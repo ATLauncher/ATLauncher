@@ -2387,6 +2387,21 @@ public class Settings {
     }
 
     /**
+     * Finds a Pack from the given safe name
+     *
+     * @param name name of the Pack to find
+     * @return Pack if the pack is found from the safe name
+     */
+    public Pack getPackBySafeName(String name) {
+        for (Pack pack : packs) {
+            if (pack.getSafeName().equalsIgnoreCase(name)) {
+                return pack;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Checks if there is an instance by the given name
      *
      * @param name name of the Instance to find

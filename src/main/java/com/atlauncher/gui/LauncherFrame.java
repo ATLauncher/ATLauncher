@@ -20,10 +20,12 @@ package com.atlauncher.gui;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
@@ -96,6 +98,16 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                 bottomBar.updateStatus(App.settings.getMojangStatus());
             }
         });
+
+        if (App.packToInstall != null) {
+            Pack pack = App.settings.getPackBySafeName(App.packToInstall);
+
+            if (App.settings.isInOfflineMode() || App.settings.getAccount() == null || pack == null) {
+                LogManager.error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
+            } else {
+                new InstanceInstallerDialog(pack);
+            }
+        }
     }
 
     public void updateTitle(String str) {
