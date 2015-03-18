@@ -364,7 +364,7 @@ public class ModsChooser extends JDialog {
         return width;
     }
 
-    private void applyShareCode(String code) {
+    public void applyShareCode(String code) {
         try {
             String data = installer.getShareCodeData(code);
 

@@ -71,16 +71,28 @@ public class InstanceInstallerDialog extends JDialog {
     private JLabel installForLabel;
     private JCheckBox installForMe;
 
+    private PackVersion autoInstallVersion;
+    private String shareCode;
+
     public InstanceInstallerDialog(Object object) {
-        this(object, false, false);
+        this(object, false, false, null, null);
+    }
+
+    public InstanceInstallerDialog(Pack pack, PackVersion version, String shareCode) {
+        this(pack, false, false, version, shareCode);
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this((Object) pack, false, true);
+        this((Object) pack, false, true, null, null);
     }
 
-    public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer) {
+    public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer, final PackVersion
+            autoInstallVersion, final String shareCode) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+
+        this.autoInstallVersion = autoInstallVersion;
+        this.shareCode = shareCode;
+
         if (object instanceof Pack) {
             pack = (Pack) object;
             setTitle(Language.INSTANCE.localize("common.installing") + " " + pack.getName());
@@ -176,6 +188,11 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.setPreferredSize(new Dimension(200, 25));
         middle.add(versionsDropDown, gbc);
 
+        if (autoInstallVersion == null) {
+            versionsDropDown.setSelectedItem(autoInstallVersion);
+            versionsDropDown.setEnabled(false);
+        }
+
         if (!this.isServer) {
             if (!isReinstall) {
                 gbc.gridx = 0;
@@ -203,8 +220,8 @@ public class InstanceInstallerDialog extends JDialog {
                     if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
                         int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph
                                 (Language.INSTANCE.localize("common.error") +
-                                "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>")), Language.INSTANCE
+                                        "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                        ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>")), Language.INSTANCE
                                 .localize("common.error"), JOptionPane.ERROR_MESSAGE);
                         if (ret != JOptionPane.YES_OPTION) {
                             return;
@@ -261,7 +278,7 @@ public class InstanceInstallerDialog extends JDialog {
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller((isServer ? "" : instanceNameField
-                        .getText()), pack, version, isReinstall, isServer) {
+                        .getText()), pack, version, isReinstall, isServer, shareCode) {
 
                     protected void done() {
                         Boolean success = false;

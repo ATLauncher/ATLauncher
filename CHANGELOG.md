@@ -12,4 +12,4 @@ Changelog
 - Add a way for semi public packs to auto add their codes to users launcher
 - Add the remove pack button back in for semi public packs
 - Create share codes server side
-- Add in auto pack installing on launch if asked to do so
+- Add in auto pack installing (as well as share code installing) on launch if asked to do so

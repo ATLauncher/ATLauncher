@@ -79,6 +79,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private PackVersion version;
     private boolean isReinstall;
     private boolean isServer;
+    private final String shareCode;
     private String jarOrder;
     private boolean instanceIsCorrupt = false; // If the instance should be set as corrupt
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
@@ -107,12 +108,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private List<String> forgeLibraries = new ArrayList<String>();
 
     public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean
-            isServer) {
+            isServer, String shareCode) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
         this.isReinstall = isReinstall;
         this.isServer = isServer;
+        this.shareCode = shareCode;
         if (isServer) {
             serverLibraries = new ArrayList<File>();
         }
@@ -1182,6 +1184,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (this.allMods.size() != 0 && hasOptional) {
             ModsChooser modsChooser = new ModsChooser(this);
+
+            if (this.shareCode != null) {
+                modsChooser.applyShareCode(this.shareCode);
+            }
+
             modsChooser.setVisible(true);
             if (modsChooser.wasClosed()) {
                 this.cancel(true);

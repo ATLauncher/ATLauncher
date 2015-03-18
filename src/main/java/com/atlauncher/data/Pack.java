@@ -235,6 +235,20 @@ public class Pack {
         return null;
     }
 
+    public PackVersion getVersionByName(String name) {
+        if (this.versions.size() == 0) {
+            return null;
+        }
+
+        for (PackVersion version : this.versions) {
+            if (version.versionMatches(name)) {
+                return version;
+            }
+        }
+
+        return null;
+    }
+
     public PackVersion getLatestVersion() {
         if (this.versions.size() == 0) {
             return null;
