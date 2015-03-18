@@ -326,7 +326,7 @@ public class Settings {
     }
 
     public void checkForValidJavaPath(boolean save) {
-        File java = new File(App.settings.getJavaPath(), "bin" + File.separator + "java" + File.separator + "java" +
+        File java = new File(App.settings.getJavaPath(), "bin" + File.separator + "java" +
                 (Utils.isWindows() ? ".exe" : ""));
 
         if (!java.exists()) {
