@@ -20,6 +20,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.DownloadType;
+import com.atlauncher.data.json.ExtractToType;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -41,7 +42,7 @@ public class Mod {
     private String warning;
     private String md5;
     private ModType type;
-    private ExtractTo extractTo;
+    private ExtractToType extractTo;
     private String extractFolder;
     private String decompFile;
     private DecompType decompType;
@@ -70,7 +71,8 @@ public class Mod {
     private String description;
 
     public Mod(String name, String version, String url, String file, String website, String donation, Color colour,
-               String warning, String md5, ModType type, ExtractTo extractTo, String extractFolder, String decompFile,
+               String warning, String md5, ModType type, ExtractToType extractTo, String extractFolder, String
+                       decompFile,
                DecompType decompType, boolean filePattern, String filePreference, String fileCheck, boolean client,
                boolean server, String serverURL, String serverFile, DownloadType serverDownload, String serverMD5, 
                ModType

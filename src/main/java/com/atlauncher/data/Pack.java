@@ -20,6 +20,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.DownloadType;
+import com.atlauncher.data.json.ExtractToType;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.utils.Utils;
 import org.w3c.dom.Document;
@@ -695,12 +696,12 @@ public class Pack {
                     }
                     String md5 = element.getAttribute("md5");
                     ModType type = ModType.valueOf(element.getAttribute("type").toLowerCase());
-                    ExtractTo extractTo = null;
+                    ExtractToType extractTo = null;
                     String extractFolder = null;
                     String decompFile = null;
                     DecompType decompType = null;
                     if (type == ModType.extract) {
-                        extractTo = ExtractTo.valueOf(element.getAttribute("extractto").toLowerCase());
+                        extractTo = ExtractToType.valueOf(element.getAttribute("extractto").toLowerCase());
                         if (element.hasAttribute("extractfolder")) {
                             extractFolder = element.getAttribute("extractfolder");
                         } else {
