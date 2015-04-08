@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.json.ModType;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -38,7 +39,7 @@ public class Mod {
     private Color colour;
     private String warning;
     private String md5;
-    private Type type;
+    private ModType type;
     private ExtractTo extractTo;
     private String extractFolder;
     private String decompFile;
@@ -52,7 +53,7 @@ public class Mod {
     private String serverFile;
     private Download serverDownload;
     private String serverMD5;
-    private Type serverType;
+    private ModType serverType;
     private boolean optional;
     private boolean serverOptional;
     private boolean selected;
@@ -68,9 +69,9 @@ public class Mod {
     private String description;
 
     public Mod(String name, String version, String url, String file, String website, String donation, Color colour,
-               String warning, String md5, Type type, ExtractTo extractTo, String extractFolder, String decompFile,
+               String warning, String md5, ModType type, ExtractTo extractTo, String extractFolder, String decompFile,
                DecompType decompType, boolean filePattern, String filePreference, String fileCheck, boolean client,
-               boolean server, String serverURL, String serverFile, Download serverDownload, String serverMD5, Type
+               boolean server, String serverURL, String serverFile, Download serverDownload, String serverMD5, ModType
                        serverType, boolean optional, boolean serverOptional, boolean selected, Download download,
                boolean hidden, boolean library, String group, String category, String linked, String[] depends,
                String filePrefix, boolean recommended, String description) {
@@ -125,7 +126,7 @@ public class Mod {
         return this.version;
     }
 
-    public Type getType() {
+    public ModType getType() {
         return this.type;
     }
 
@@ -560,7 +561,7 @@ public class Mod {
 
     public void install(InstanceInstaller installer) {
         File fileLocation;
-        Type thisType;
+        ModType thisType;
         if (installer.isServer() && this.serverURL != null) {
             fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
             thisType = this.serverType;
@@ -571,10 +572,10 @@ public class Mod {
         switch (thisType) {
             case jar:
             case forge:
-                if (installer.isServer() && thisType == Type.forge) {
+                if (installer.isServer() && thisType == ModType.forge) {
                     Utils.copyFile(fileLocation, installer.getRootDirectory());
                     break;
-                } else if (installer.isServer() && thisType == Type.jar) {
+                } else if (installer.isServer() && thisType == ModType.jar) {
                     Utils.unzip(fileLocation, installer.getTempJarDirectory());
                     break;
                 }
@@ -785,7 +786,7 @@ public class Mod {
     }
 
     public File getInstalledFile(InstanceInstaller installer) {
-        Type thisType;
+        ModType thisType;
         String file;
         File base = null;
         if (installer.isServer()) {
@@ -798,7 +799,7 @@ public class Mod {
         switch (thisType) {
             case jar:
             case forge:
-                if (installer.isServer() && thisType == Type.forge) {
+                if (installer.isServer() && thisType == ModType.forge) {
                     base = installer.getRootDirectory();
                     break;
                 }

@@ -20,6 +20,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
@@ -1308,7 +1309,7 @@ public class Instance implements Cloneable {
         return false;
     }
 
-    public List<String> getCustomMods(Type type) {
+    public List<String> getCustomMods(ModType type) {
         List<String> customMods = new ArrayList<String>();
         for (DisableableMod mod : this.mods) {
             if (mod.isUserAdded() && mod.getType() == type) {

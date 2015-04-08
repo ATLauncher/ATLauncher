@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.json.ModType;
 import com.atlauncher.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -692,19 +693,19 @@ public class Pack {
                         warning = element.getAttribute("warning");
                     }
                     String md5 = element.getAttribute("md5");
-                    Type type = Type.valueOf(element.getAttribute("type").toLowerCase());
+                    ModType type = ModType.valueOf(element.getAttribute("type").toLowerCase());
                     ExtractTo extractTo = null;
                     String extractFolder = null;
                     String decompFile = null;
                     DecompType decompType = null;
-                    if (type == Type.extract) {
+                    if (type == ModType.extract) {
                         extractTo = ExtractTo.valueOf(element.getAttribute("extractto").toLowerCase());
                         if (element.hasAttribute("extractfolder")) {
                             extractFolder = element.getAttribute("extractfolder");
                         } else {
                             extractFolder = "/";
                         }
-                    } else if (type == Type.decomp) {
+                    } else if (type == ModType.decomp) {
                         decompFile = element.getAttribute("decompfile");
                         decompType = DecompType.valueOf(element.getAttribute("decomptype").toLowerCase());
                     }
@@ -730,14 +731,14 @@ public class Pack {
                     boolean server = true;
                     String serverURL = null;
                     String serverFile = null;
-                    Type serverType = null;
+                    ModType serverType = null;
                     Download serverDownload = null;
                     String serverMD5 = null;
                     if (element.getAttribute("server").equalsIgnoreCase("seperate")) {
                         server = false;
                         serverURL = element.getAttribute("serverurl");
                         serverFile = element.getAttribute("serverfile");
-                        serverType = Type.valueOf(element.getAttribute("servertype").toLowerCase());
+                        serverType = ModType.valueOf(element.getAttribute("servertype").toLowerCase());
                         serverDownload = Download.valueOf(element.getAttribute("serverdownload").toLowerCase());
                         serverMD5 = element.getAttribute("servermd5");
                     } else if (element.getAttribute("server").equalsIgnoreCase("no")) {

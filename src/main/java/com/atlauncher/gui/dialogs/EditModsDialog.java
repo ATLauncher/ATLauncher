@@ -138,19 +138,19 @@ public class EditModsDialog extends JDialog {
                     boolean reload = false;
                     for (File file : files) {
                         String typeTemp = fcd.getSelectorValue();
-                        com.atlauncher.data.Type type = null;
+                        com.atlauncher.data.json.ModType type = null;
                         if (typeTemp.equalsIgnoreCase("Mods Folder")) {
-                            type = com.atlauncher.data.Type.mods;
+                            type = com.atlauncher.data.json.ModType.mods;
                         } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
-                            type = com.atlauncher.data.Type.jar;
+                            type = com.atlauncher.data.json.ModType.jar;
                         } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
-                            type = com.atlauncher.data.Type.coremods;
+                            type = com.atlauncher.data.json.ModType.coremods;
                         } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
-                            type = com.atlauncher.data.Type.texturepack;
+                            type = com.atlauncher.data.json.ModType.texturepack;
                         } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
-                            type = com.atlauncher.data.Type.resourcepack;
+                            type = com.atlauncher.data.json.ModType.resourcepack;
                         } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
-                            type = com.atlauncher.data.Type.shaderpack;
+                            type = com.atlauncher.data.json.ModType.shaderpack;
                         }
                         if (type != null) {
                             DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(),

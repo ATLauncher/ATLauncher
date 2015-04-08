@@ -27,7 +27,6 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
-import com.atlauncher.data.Type;
 import com.atlauncher.data.json.Action;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.DownloadType;
@@ -383,12 +382,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.delete(getConfigDirectory());
             if (instance != null && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion()
                     .getVersion()) && instance.hasCustomMods()) {
-                Utils.deleteWithFilter(getModsDirectory(), instance.getCustomMods(Type.mods));
+                Utils.deleteWithFilter(getModsDirectory(), instance.getCustomMods(ModType.mods));
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
-                    Utils.deleteWithFilter(getCoreModsDirectory(), instance.getCustomMods(Type.coremods));
+                    Utils.deleteWithFilter(getCoreModsDirectory(), instance.getCustomMods(ModType.coremods));
                 }
                 if (isReinstall) {
-                    Utils.deleteWithFilter(getJarModsDirectory(), instance.getCustomMods(Type.jar));
+                    Utils.deleteWithFilter(getJarModsDirectory(), instance.getCustomMods(ModType.jar));
                 }
             } else {
                 Utils.delete(getModsDirectory());
@@ -736,7 +735,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         File[] files;
         if (isReinstall && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion()
         )) {
-            final List<String> customMods = instance.getCustomMods(Type.mods);
+            final List<String> customMods = instance.getCustomMods(ModType.mods);
             FilenameFilter ffFilter = new FilenameFilter() {
 
                 @Override
@@ -1212,8 +1211,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
-            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, Type
-                    .valueOf(Type.class, mod.getType().toString()), this.jsonVersion.getColour(mod.getColour()), mod
+            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, ModType
+                    .valueOf(ModType.class, mod.getType().toString()), this.jsonVersion.getColour(mod.getColour()), mod
                     .getDescription(), false, false));
         }
 

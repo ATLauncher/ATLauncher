@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.json.ModType;
 import com.atlauncher.utils.Utils;
 
 import java.awt.Color;
@@ -37,13 +38,13 @@ public class DisableableMod implements Serializable {
     private String version;
     private boolean optional;
     private String file;
-    private Type type;
+    private ModType type;
     private Color colour;
     private String description;
     private boolean disabled;
     private boolean userAdded = false; // Default to not being user added
 
-    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour, String
+    public DisableableMod(String name, String version, boolean optional, String file, ModType type, Color colour, String
             description, boolean disabled, boolean userAdded) {
         this.name = name;
         this.version = version;
@@ -101,7 +102,7 @@ public class DisableableMod implements Serializable {
                 getFile(instance).getParentFile().mkdir();
             }
             if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
-                if (this.type == Type.jar) {
+                if (this.type == ModType.jar) {
                     File inputFile = instance.getMinecraftJar();
                     File outputTmpFile = new File(App.settings.getTempDir(), instance.getSafeName() + "-minecraft.jar");
                     if (Utils.hasMetaInf(inputFile)) {
@@ -193,7 +194,7 @@ public class DisableableMod implements Serializable {
         return new File(dir, file);
     }
 
-    public Type getType() {
+    public ModType getType() {
         return this.type;
     }
 
