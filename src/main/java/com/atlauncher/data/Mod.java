@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -51,13 +52,13 @@ public class Mod {
     private boolean server;
     private String serverURL;
     private String serverFile;
-    private Download serverDownload;
+    private DownloadType serverDownload;
     private String serverMD5;
     private ModType serverType;
     private boolean optional;
     private boolean serverOptional;
     private boolean selected;
-    private Download download;
+    private DownloadType download;
     private boolean hidden;
     private boolean library;
     private String group;
@@ -71,8 +72,9 @@ public class Mod {
     public Mod(String name, String version, String url, String file, String website, String donation, Color colour,
                String warning, String md5, ModType type, ExtractTo extractTo, String extractFolder, String decompFile,
                DecompType decompType, boolean filePattern, String filePreference, String fileCheck, boolean client,
-               boolean server, String serverURL, String serverFile, Download serverDownload, String serverMD5, ModType
-                       serverType, boolean optional, boolean serverOptional, boolean selected, Download download,
+               boolean server, String serverURL, String serverFile, DownloadType serverDownload, String serverMD5, 
+               ModType
+                       serverType, boolean optional, boolean serverOptional, boolean selected, DownloadType download,
                boolean hidden, boolean library, String group, String category, String linked, String[] depends,
                String filePrefix, boolean recommended, String description) {
         this.name = name;
@@ -236,36 +238,36 @@ public class Mod {
     }
 
     public boolean isBrowserDownload() {
-        return (this.download == Download.browser);
+        return (this.download == DownloadType.browser);
     }
 
     public boolean isDirectDownload() {
-        return (this.download == Download.direct);
+        return (this.download == DownloadType.direct);
     }
 
     public boolean isServerDownload() {
-        return (this.download == Download.server);
+        return (this.download == DownloadType.server);
     }
 
     public boolean isBrowserDownloadServer() {
         if (this.serverDownload == null) {
             return this.isBrowserDownload();
         }
-        return (this.serverDownload == Download.browser);
+        return (this.serverDownload == DownloadType.browser);
     }
 
     public boolean isDirectDownloadServer() {
         if (this.serverDownload == null) {
             return this.isDirectDownload();
         }
-        return (this.serverDownload == Download.direct);
+        return (this.serverDownload == DownloadType.direct);
     }
 
     public boolean isServerDownloadServer() {
         if (this.serverDownload == null) {
             return this.isServerDownload();
         }
-        return (this.serverDownload == Download.server);
+        return (this.serverDownload == DownloadType.server);
     }
 
     public void download(InstanceInstaller installer) {

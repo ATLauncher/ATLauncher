@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.utils.Utils;
 import org.w3c.dom.Document;
@@ -732,14 +733,14 @@ public class Pack {
                     String serverURL = null;
                     String serverFile = null;
                     ModType serverType = null;
-                    Download serverDownload = null;
+                    DownloadType serverDownload = null;
                     String serverMD5 = null;
                     if (element.getAttribute("server").equalsIgnoreCase("seperate")) {
                         server = false;
                         serverURL = element.getAttribute("serverurl");
                         serverFile = element.getAttribute("serverfile");
                         serverType = ModType.valueOf(element.getAttribute("servertype").toLowerCase());
-                        serverDownload = Download.valueOf(element.getAttribute("serverdownload").toLowerCase());
+                        serverDownload = DownloadType.valueOf(element.getAttribute("serverdownload").toLowerCase());
                         serverMD5 = element.getAttribute("servermd5");
                     } else if (element.getAttribute("server").equalsIgnoreCase("no")) {
                         server = false;
@@ -763,7 +764,7 @@ public class Pack {
                             selected = true;
                         }
                     }
-                    Download download = Download.valueOf(element.getAttribute("download").toLowerCase());
+                    DownloadType download = DownloadType.valueOf(element.getAttribute("download").toLowerCase());
                     boolean hidden = false;
                     if (element.getAttribute("hidden").equalsIgnoreCase("yes")) {
                         hidden = true;
