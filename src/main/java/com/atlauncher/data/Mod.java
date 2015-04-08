@@ -22,6 +22,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.ExtractToType;
 import com.atlauncher.data.json.ModType;
+import com.atlauncher.data.json.DecompType;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
