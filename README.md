@@ -80,7 +80,7 @@ This is a link to the create api command for the instance of [stikked](https://g
 *Please note that the domain given above IS NOT REAL. You must install [stikked](https://github.com/claudehohl/Stikked) on your own domain and reference it, the domain is only there as an example of what a valid value is.*
 
 #### SERVERS
-This is an array of Server type elements the launcher uses as a base to download files.
+This is an array of [Server](https://github.com/ATLauncher/ATLauncher/blob/master/src/main/java/com/atlauncher/data/Server.java) type elements the launcher uses as a base to download files.
 
 #### LAUNCHER_NAME
 This is the name of the launcher.
