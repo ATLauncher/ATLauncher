@@ -26,6 +26,7 @@ public class Library {
     private String server;
     private String md5;
     private DownloadType download;
+    private int filesize;
     private String depends;
     private String dependsGroup;
 
@@ -43,6 +44,10 @@ public class Library {
 
     public String getMD5() {
         return this.md5;
+    }
+
+    public int getFilesize() {
+        return this.filesize;
     }
 
     public DownloadType getDownloadType() {

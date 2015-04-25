@@ -39,6 +39,7 @@ public class Mod {
     private String url;
     private String file;
     private String md5;
+    private int filesize;
     private DownloadType download;
     private String website;
     private String donation;
@@ -108,6 +109,10 @@ public class Mod {
 
     public boolean hasMD5() {
         return this.md5 != null;
+    }
+
+    public int getFilesize() {
+        return this.filesize;
     }
 
     public DownloadType getDownload() {
@@ -379,13 +384,13 @@ public class Mod {
                                 .INSTANCE.localize("instance.ivedownloaded")};
                         retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
                                 (Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
+                                        ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
                                         (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>" +
-                                Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
-                                        : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
-                                        .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
-                                        .getUsersDownloadsDir()))), Language.INSTANCE.localize("common.downloading")
+                                        Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                                : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
+                                                .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
+                                                .getUsersDownloadsDir()))), Language.INSTANCE.localize("common.downloading")
                                 + " " +
                                 (serverFile == null ? (isFilePattern() ? getName() : getFile()) : (isFilePattern() ?
                                         getName() : getServerFile())), JOptionPane.DEFAULT_OPTION, JOptionPane
@@ -520,12 +525,12 @@ public class Mod {
                 Utils.openBrowser(this.serverUrl);
                 String[] options = new String[]{Language.INSTANCE.localize("instance.ivedownloaded")};
                 int retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
-                        (Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
-                                "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
-                                        : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App
-                                        .settings.getUsersDownloadsDir())), Language.INSTANCE.localize("common" + "" +
+                                (Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                        ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
+                                        "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                                : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App
+                                                .settings.getUsersDownloadsDir())), Language.INSTANCE.localize("common" + "" +
                                 ".downloading") + " " + (serverFile == null ? getFile() : getServerFile()),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 if (retValue == JOptionPane.CLOSED_OPTION) {

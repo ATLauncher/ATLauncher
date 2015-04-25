@@ -32,7 +32,6 @@ import com.atlauncher.data.json.Action;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
-import com.atlauncher.data.json.ModInfo;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.mojang.AssetIndex;
@@ -49,7 +48,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 import javax.swing.SwingWorker;
 import java.io.File;
@@ -61,7 +59,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -442,53 +439,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private List<Downloadable> getDownloadableMods() {
         List<Downloadable> mods = new ArrayList<Downloadable>();
-        List<String> files = new ArrayList<String>();
-        Map<String, ModInfo> fileSizes = new HashMap<String, ModInfo>();
-
-        for (Mod mod : this.selectedMods) {
-            if (mod.getDownload() == DownloadType.server) {
-                files.add(mod.getUrl());
-            }
-        }
-
-        if (!files.isEmpty()) {
-            APIResponse response = null;
-            try {
-                response = Gsons.DEFAULT.fromJson(Utils.sendAPICall("file-info", files), APIResponse.class);
-            } catch (IOException e1) {
-                App.settings.logStackTrace(e1);
-            }
-            if (response == null) {
-                LogManager.warn("Couldn't get info of files. Continuing regardless!");
-            } else {
-                try {
-                    java.lang.reflect.Type type = new TypeToken<Map<String, ModInfo>>() {
-                    }.getType();
-                    fileSizes = Gsons.DEFAULT.fromJson(response.getDataAsString(), type);
-                } catch (Exception e) {
-                    App.settings.logStackTrace("Failed to get response from the API, this won't affect the install "
-                            + "process!", e);
-                }
-            }
-        }
 
         for (Mod mod : this.selectedMods) {
             if (mod.getDownload() == DownloadType.server) {
                 Downloadable downloadable;
-                int size = -1;
-                String md5 = null;
-
-                if (mod.hasMD5()) {
-                    md5 = mod.getMD5();
-                }
-
-                if (fileSizes.containsKey(mod.getUrl())) {
-                    size = fileSizes.get(mod.getUrl()).getFilesize();
-                    md5 = fileSizes.get(mod.getUrl()).getMd5();
-                }
 
                 downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(), mod.getFile())
-                        , md5, size, this, true);
+                        , (mod.hasMD5() ? null : mod.getMD5()), mod.getFilesize(), this, true);
 
                 mods.add(downloadable);
             }
@@ -857,7 +814,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             downloadTo = new File(App.settings.getLibrariesDir(), library.getFile());
             if (library.getDownloadType() == DownloadType.server) {
-                libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), this, true));
+                libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), library.getFilesize(),
+                        this, true));
             } else if (library.getDownloadType() == DownloadType.direct) {
                 libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), this, false));
             } else {
