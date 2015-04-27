@@ -764,7 +764,8 @@ public class Settings {
                 String[] options = {"Ok"};
                 JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph("Update failed. " +
                                 "Please click Ok to close " + "the launcher and open up the downloads " +
-                                "page.<br/><br/>Download " + "the update and replace the old ATLauncher file."),
+                                "page.<br/><br/>Download " + "the update and replace the old " + Constants
+                                .LAUNCHER_NAME + " file."),
                         "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                         options[0]);
                 Utils.openBrowser("http://www.atlauncher.com/downloads/");
