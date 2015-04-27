@@ -249,7 +249,7 @@ public class App {
             }
         }
 
-        LogManager.info("ATLauncher Version: " + Constants.VERSION);
+        LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
         LogManager.info("Operating System: " + System.getProperty("os.name"));
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
 
@@ -428,7 +428,7 @@ public class App {
                     }
                 }
             });
-            trayIcon.setToolTip("ATLauncher");
+            trayIcon.setToolTip(Constants.LAUNCHER_NAME);
             trayIcon.setImageAutoSize(true);
 
             tray.add(trayIcon);
