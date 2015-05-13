@@ -1146,7 +1146,7 @@ public class Instance implements Cloneable {
                             App.settings.getParent().setVisible(true);
                         }
                         long end = System.currentTimeMillis();
-                        if (App.settings.isInOfflineMode()) {
+                        if (App.settings.isInOfflineMode() && !App.forceOfflineMode) {
                             App.settings.checkOnlineStatus();
                         }
                         int exitValue = 0; // Assume we exited fine

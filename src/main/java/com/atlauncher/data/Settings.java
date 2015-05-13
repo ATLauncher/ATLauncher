@@ -219,6 +219,10 @@ public class Settings {
     }
 
     public void loadEverything() {
+        if (App.forceOfflineMode) {
+            this.offlineMode = true;
+        }
+
         setupServers(); // Setup the servers available to use in the Launcher
         findActiveServers(); // Find active servers
         loadServerProperty(false); // Get users Server preference

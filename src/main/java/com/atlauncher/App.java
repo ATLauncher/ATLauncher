@@ -109,6 +109,13 @@ public class App {
     public static boolean skipTrayIntegration = false;
 
     /**
+     * This forces the launcher to start in offline mode. It can be enabled with the below command line argument.
+     * <p/>
+     * --force-offline-mode
+     */
+    public static boolean forceOfflineMode = false;
+
+    /**
      * This sets a pack code to be added to the launcher on startup.
      */
     public static String packCodeToAdd;
@@ -201,6 +208,9 @@ public class App {
                 } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
                     skipTrayIntegration = true;
                     LogManager.debug("Skipping tray integration!", true);
+                } else if (parts[0].equalsIgnoreCase("--force-offline-mode")) {
+                    forceOfflineMode = true;
+                    LogManager.debug("Forcing offline mode!", true);
                 }
             }
         }
