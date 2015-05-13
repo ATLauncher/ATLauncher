@@ -312,6 +312,10 @@ public class Account implements Serializable {
         return (this.uuid == null ? "0" : this.uuid);
     }
 
+    public boolean isUUIDNull() {
+        return this.uuid == null;
+    }
+
     /**
      * Gets the UUID of this account with no dashes.
      *

@@ -248,8 +248,6 @@ public class Settings {
 
         loadAccounts(); // Load the saved Accounts
 
-        checkAccountsUUIDs(); // Check account UUIDs for username changes
-
         loadCheckingServers(); // Load the saved servers we're checking with the tool
 
         loadProperties(); // Load the users Properties
@@ -265,6 +263,8 @@ public class Settings {
         checkResources(); // Check for new format of resources
 
         checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
+
+        checkAccountsForNameChanges(); // Check account for username changes
 
         LogManager.debug("Checking for access to master server");
         OUTER:
@@ -327,7 +327,9 @@ public class Settings {
         }
     }
 
-    private void checkAccountsUUIDs() {
+    private void checkAccountsForNameChanges() {
+        LogManager.info("Checking For Username Changes");
+
         boolean somethingChanged = false;
 
         for (Account account : this.accounts) {
@@ -339,6 +341,8 @@ public class Settings {
         if (somethingChanged) {
             this.saveAccounts();
         }
+
+        LogManager.info("Checking For Username Changes Complete");
     }
 
     public void checkForValidJavaPath(boolean save) {
@@ -508,7 +512,7 @@ public class Settings {
         LogManager.debug("Checking account UUID's");
         LogManager.info("Checking account UUID's!");
         for (Account account : this.accounts) {
-            if (account.getUUID() == null) {
+            if (account.isUUIDNull()) {
                 account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
                 this.saveAccounts();
             }
