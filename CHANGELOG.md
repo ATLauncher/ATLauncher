@@ -8,3 +8,4 @@ Changelog
 - Add in --force-offline-mode command line argument to, well, force offline mode. Should work fine
 - Fix semi public packs being added/removed not refreshing the packs list
 - Change the Install Just For Me to Enable User Lock and add in a warning popup
+- Change the User Lock option to use only UUID's so that they aren't affected by username changes

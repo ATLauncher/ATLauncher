@@ -268,6 +268,8 @@ public class Settings {
 
         checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
 
+        changeInstanceUserLocks(); // Changes any instances user locks to UUIDs if available
+
         checkAccountsForNameChanges(); // Check account for username changes
 
         LogManager.debug("Checking for access to master server");
@@ -522,6 +524,49 @@ public class Settings {
             }
         }
         LogManager.debug("Finished checking account UUID's");
+    }
+
+    public void changeInstanceUserLocks() {
+        LogManager.debug("Changing instances user locks to UUID's");
+
+        boolean wereChanges = false;
+
+        for (Instance instance : this.instances) {
+            if (instance.getInstalledBy() != null) {
+                boolean found = false;
+
+                for (Account account : this.accounts) {
+                    // This is the user who installed this so switch to their UUID
+                    if (account.getMinecraftUsername().equalsIgnoreCase(instance.getInstalledBy())) {
+                        found = true;
+                        wereChanges = true;
+
+                        instance.removeInstalledBy();
+
+                        // If the accounts UUID is null for whatever reason, don't set the lock
+                        if (!account.isUUIDNull()) {
+                            instance.setUserLock(account.getUUIDNoDashes());
+                        }
+                        break;
+                    }
+                }
+
+                // If there were no accounts with that username, we remove the lock and old installed by
+                if (!found) {
+                    wereChanges = true;
+
+                    instance.removeInstalledBy();
+                    instance.removeUserLock();
+                }
+            }
+        }
+
+        if (wereChanges) {
+            this.saveAccounts();
+            this.saveInstances();
+        }
+
+        LogManager.debug("Finished changing instances user locks to UUID's");
     }
 
     public void checkMojangStatus() {

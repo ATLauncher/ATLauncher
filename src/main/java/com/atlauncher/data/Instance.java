@@ -64,6 +64,11 @@ public class Instance implements Cloneable {
     private String installedBy;
 
     /**
+     * The UUID of the user who installed this if it's set to be for that user only.
+     */
+    private String userLock;
+
+    /**
      * The version installed for this Instance.
      */
     private String version;
@@ -210,10 +215,10 @@ public class Instance implements Cloneable {
         this.isDev = isDev;
         this.isPlayable = isPlayable;
         this.newLaunchMethod = newLaunchMethod;
-        if (enableUserLock) {
-            this.installedBy = App.settings.getAccount().getUUIDNoDashes();
+        if (enableUserLock && !App.settings.getAccount().isUUIDNull()) {
+            this.userLock = App.settings.getAccount().getUUIDNoDashes();
         } else {
-            this.installedBy = null;
+            this.userLock = null;
         }
         this.isConverted = true;
     }
@@ -946,13 +951,33 @@ public class Instance implements Cloneable {
         }
 
         // Check to see if this was a private Instance belonging to a specific user only.
-        if (this.installedBy != null && !App.settings.getAccount().getMinecraftUsername().equalsIgnoreCase(this
-                .installedBy)) {
+        if (this.userLock != null && !App.settings.getAccount().getUUIDNoDashes().equalsIgnoreCase(this
+                .userLock)) {
             return false;
         }
 
         // All good, no false returns yet so allow it.
         return true;
+    }
+
+    public String getInstalledBy() {
+        return this.installedBy;
+    }
+
+    public void removeInstalledBy() {
+        this.installedBy = null;
+    }
+
+    public String getUserLock() {
+        return this.userLock;
+    }
+
+    public void removeUserLock() {
+        this.userLock = null;
+    }
+
+    public void setUserLock(String lock) {
+        this.userLock = lock;
     }
 
     /**
