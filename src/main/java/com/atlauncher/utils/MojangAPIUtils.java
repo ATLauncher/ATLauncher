@@ -45,13 +45,18 @@ public class MojangAPIUtils {
     }
 
     public static String getCurrentUsername(String uuid) {
-        Downloadable downloadable = new Downloadable("https://api.mojang.com/users/profiles/" + uuid + "/names",
+        Downloadable downloadable = new Downloadable("https://api.mojang.com/user/profiles/" + uuid + "/names",
                 false);
 
         java.lang.reflect.Type type = new TypeToken<List<NameHistory>>() {
         }.getType();
 
         List<NameHistory> history = Gsons.DEFAULT.fromJson(downloadable.getContents(), type);
+
+        // Mojang API is down??
+        if (history == null) {
+            return null;
+        }
 
         // If there is only 1 entry that means they haven't done a name change
         if (history.size() == 1) {
@@ -65,8 +70,6 @@ public class MojangAPIUtils {
         long time = 0;
 
         for (NameHistory name : history) {
-            System.out.println(name.getName());
-
             if (!name.isAUsernameChange()) {
                 username = name.getName();
             } else if (time < name.getChangedToAt()) {

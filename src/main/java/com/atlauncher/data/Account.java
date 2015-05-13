@@ -669,7 +669,11 @@ public class Account implements Serializable {
             return false;
         }
 
-        String currentUsername = MojangAPIUtils.getCurrentUsername(this.uuid);
+        String currentUsername = MojangAPIUtils.getCurrentUsername(this.getUUIDNoDashes());
+
+        if (currentUsername == null) {
+            return false;
+        }
 
         if (!currentUsername.equals(this.minecraftUsername)) {
             this.minecraftUsername = currentUsername;
