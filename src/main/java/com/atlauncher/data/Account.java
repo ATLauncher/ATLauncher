@@ -676,6 +676,8 @@ public class Account implements Serializable {
         }
 
         if (!currentUsername.equals(this.minecraftUsername)) {
+            LogManager.info("The username for account with UUID of " + this.getUUIDNoDashes() + " changed from " +
+                    this.minecraftUsername + " to " + currentUsername);
             this.minecraftUsername = currentUsername;
             return true;
         }

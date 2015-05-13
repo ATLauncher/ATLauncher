@@ -66,7 +66,7 @@ public class MojangAPIUtils {
         // The username of the latest name
         String username = null;
 
-        // The time that the latest name change occured
+        // The time that the latest name change occurred
         long time = 0;
 
         for (NameHistory name : history) {
