@@ -248,6 +248,8 @@ public class Settings {
 
         loadAccounts(); // Load the saved Accounts
 
+        checkAccountsUUIDs(); // Check account UUIDs for username changes
+
         loadCheckingServers(); // Load the saved servers we're checking with the tool
 
         loadProperties(); // Load the users Properties
@@ -322,6 +324,20 @@ public class Settings {
 
         if (this.enableServerChecker) {
             this.startCheckingServers();
+        }
+    }
+
+    private void checkAccountsUUIDs() {
+        boolean somethingChanged = false;
+
+        for (Account account : this.accounts) {
+            if (account.checkForUsernameChange()) {
+                somethingChanged = true;
+            }
+        }
+
+        if (somethingChanged) {
+            this.saveAccounts();
         }
     }
 

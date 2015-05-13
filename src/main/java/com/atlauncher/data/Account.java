@@ -27,15 +27,27 @@ import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import com.mojang.util.UUIDTypeAdapter;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -649,5 +661,21 @@ public class Account implements Serializable {
         }
 
         return response;
+    }
+
+    public boolean checkForUsernameChange() {
+        if (this.uuid == null) {
+            LogManager.error("The account " + this.minecraftUsername + " has no UUID associated with it !");
+            return false;
+        }
+
+        String currentUsername = MojangAPIUtils.getCurrentUsername(this.uuid);
+
+        if (!currentUsername.equals(this.minecraftUsername)) {
+            this.minecraftUsername = currentUsername;
+            return true;
+        }
+
+        return false;
     }
 }

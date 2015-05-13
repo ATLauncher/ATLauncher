@@ -19,7 +19,11 @@ package com.atlauncher.utils;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.mojang.api.NameHistory;
 import com.atlauncher.data.mojang.api.ProfileResponse;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.List;
 
 /**
  * Various utility methods for interacting with the Mojang API.
@@ -38,5 +42,44 @@ public class MojangAPIUtils {
         ProfileResponse profile = Gsons.DEFAULT.fromJson(downloadable.getContents(), ProfileResponse.class);
 
         return profile.getId();
+    }
+
+    public static String getCurrentUsername(String uuid) {
+        Downloadable downloadable = new Downloadable("https://api.mojang.com/users/profiles/" + uuid + "/names",
+                false);
+
+        java.lang.reflect.Type type = new TypeToken<List<NameHistory>>() {
+        }.getType();
+
+        List<NameHistory> history = Gsons.DEFAULT.fromJson(downloadable.getContents(), type);
+
+        // If there is only 1 entry that means they haven't done a name change
+        if (history.size() == 1) {
+            return history.get(0).getName();
+        }
+
+        // The username of the latest name
+        String username = null;
+
+        // The time that the latest name change occured
+        long time = 0;
+
+        for (NameHistory name : history) {
+            System.out.println(name.getName());
+
+            if (!name.isAUsernameChange()) {
+                username = name.getName();
+            } else if (time < name.getChangedToAt()) {
+                time = name.getChangedToAt();
+                username = name.getName();
+            }
+        }
+
+        // Just in case, this should never happen, but better to be safe I guess
+        if (username == null) {
+            return history.get(0).getName();
+        }
+
+        return username;
     }
 }
