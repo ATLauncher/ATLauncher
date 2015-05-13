@@ -172,7 +172,7 @@ public class Instance implements Cloneable {
      * @param name               the name of the Instance
      * @param pack               the name of the Pack this Instance is of
      * @param realPack           the Pack object for the Pack this Instance is of
-     * @param installJustForMe   if this instance is only meant to be used by the original installer
+     * @param enableUserLock     if this instance is only meant to be used by the original installer
      * @param version            the version of the Pack this Instance is of
      * @param minecraftVersion   the Minecraft version this Instance runs off
      * @param memory             the minimum RAM/memory as recommended by the pack developer/s
@@ -188,10 +188,10 @@ public class Instance implements Cloneable {
      * @param isPlayable         if this instance is playable
      * @param newLaunchMethod    if this instance is using the new launch method for Minecraft
      */
-    public Instance(String name, String pack, Pack realPack, boolean installJustForMe, String version, String
+    public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version, String
             minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder, String
-                            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass, String assets,
-                    boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
+                            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
+                    String assets, boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -210,8 +210,8 @@ public class Instance implements Cloneable {
         this.isDev = isDev;
         this.isPlayable = isPlayable;
         this.newLaunchMethod = newLaunchMethod;
-        if (installJustForMe) {
-            this.installedBy = App.settings.getAccount().getMinecraftUsername();
+        if (enableUserLock) {
+            this.installedBy = App.settings.getAccount().getUUIDNoDashes();
         } else {
             this.installedBy = null;
         }
@@ -224,7 +224,7 @@ public class Instance implements Cloneable {
      * @param name               the name of the Instance
      * @param pack               the name of the Pack this Instance is of
      * @param realPack           the Pack object for the Pack this Instance is of
-     * @param installJustForMe   if this instance is only meant to be used by the original installer
+     * @param enableUserLock     if this instance is only meant to be used by the original installer
      * @param version            the version of the Pack this Instance is of
      * @param minecraftVersion   the Minecraft version this Instance runs off
      * @param memory             the minimum RAM/memory as recommended by the pack developer/s
@@ -239,11 +239,11 @@ public class Instance implements Cloneable {
      * @param isDev              if this Instance is using a dev version of the pack
      * @param newLaunchMethod    if this instance is using the new launch method for Minecraft
      */
-    public Instance(String name, String pack, Pack realPack, boolean installJustForMe, String version, String
+    public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version, String
             minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder, String
-                            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass, String assets,
-                    boolean isDev, boolean newLaunchMethod) {
-        this(name, pack, realPack, installJustForMe, version, minecraftVersion, memory, permgen, mods, jarOrder,
+                            librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
+                    String assets, boolean isDev, boolean newLaunchMethod) {
+        this(name, pack, realPack, enableUserLock, version, minecraftVersion, memory, permgen, mods, jarOrder,
                 librariesNeeded, extraArguments, minecraftArguments, mainClass, assets, isDev, true, newLaunchMethod);
     }
 
