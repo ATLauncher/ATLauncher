@@ -68,8 +68,8 @@ public class InstanceInstallerDialog extends JDialog {
     private JLabel versionLabel;
     private JComboBox<PackVersion> versionsDropDown;
     private ArrayList<PackVersion> versions = new ArrayList<PackVersion>();
-    private JLabel installForLabel;
-    private JCheckBox installForMe;
+    private JLabel enableUserLockLabel;
+    private JCheckBox enableUserLock;
 
     private PackVersion autoInstallVersion;
     private String shareCode;
@@ -198,13 +198,31 @@ public class InstanceInstallerDialog extends JDialog {
                 gbc.gridx = 0;
                 gbc.gridy++;
                 gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-                installForLabel = new JLabel(Language.INSTANCE.localize("instance.installjustforme") + "? ");
-                middle.add(installForLabel, gbc);
+                enableUserLockLabel = new JLabel(Language.INSTANCE.localize("instance.enableuserlock") + "? ");
+                middle.add(enableUserLockLabel, gbc);
 
                 gbc.gridx++;
                 gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-                installForMe = new JCheckBox();
-                middle.add(installForMe, gbc);
+                enableUserLock = new JCheckBox();
+                enableUserLock.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (enableUserLock.isSelected()) {
+                            String[] options = {Language.INSTANCE.localize("common.yes"),
+                                    Language.INSTANCE.localize("common.no")};
+
+                            int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph(Language.INSTANCE
+                                    .localizeWithReplace("instance.userlockhelp", "<br/>")), Language.INSTANCE
+                                    .localize("instance.userlocktitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                    .WARNING_MESSAGE, null, options, options[0]);
+
+                            if (ret != 0) {
+                                enableUserLock.setSelected(false);
+                            }
+                        }
+                    }
+                });
+                middle.add(enableUserLock, gbc);
             }
         }
 
@@ -345,7 +363,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                                 } else {
                                     Instance newInstance = new Instance(instanceNameField.getText(), pack.getName(),
-                                            pack, installForMe.isSelected(), version.getVersion(), version
+                                            pack, enableUserLock.isSelected(), version.getVersion(), version
                                             .getMinecraftVersion().getVersion(), this.getMemory(), this.getPermGen(),
                                             this.getModsInstalled(), this.getJarOrder(), this.getLibrariesNeeded(),
                                             this.getExtraArguments(), this.getMinecraftArguments(), this.getMainClass

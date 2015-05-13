@@ -7,3 +7,4 @@ Changelog
 - Fix issues with username changes causing users to not be able to login with Mojang anymore
 - Add in --force-offline-mode command line argument to, well, force offline mode. Should work fine
 - Fix semi public packs being added/removed not refreshing the packs list
+- Change the Install Just For Me to Enable User Lock and add in a warning popup
