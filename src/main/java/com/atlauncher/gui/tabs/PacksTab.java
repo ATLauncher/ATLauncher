@@ -254,6 +254,15 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         repaint();
     }
 
+    public void refresh() {
+        this.cards.clear();
+        preload();
+        this.contentPanel.removeAll();
+        load(true);
+        revalidate();
+        repaint();
+    }
+
     @Override
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.packs");

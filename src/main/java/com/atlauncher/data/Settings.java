@@ -2154,7 +2154,7 @@ public class Settings {
                     }
                     this.addedPacks += packCode + ",";
                     this.saveProperties();
-                    this.reloadInstancesPanel();
+                    this.refreshPacksPanel();
                     return true;
                 }
             }
@@ -2167,7 +2167,7 @@ public class Settings {
             if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
                 this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
-                this.reloadPacksPanel();
+                this.refreshPacksPanel();
             }
         }
     }
@@ -2329,6 +2329,13 @@ public class Settings {
      */
     public void reloadPacksPanel() {
         this.packsPanel.reload(); // Reload the instances panel
+    }
+
+    /**
+     * Refreshes the panel used for Packs
+     */
+    public void refreshPacksPanel() {
+        this.packsPanel.refresh(); // Refresh the instances panel
     }
 
     /**
