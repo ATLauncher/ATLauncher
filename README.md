@@ -9,7 +9,7 @@ ATLauncher is a Launcher for Minecraft which integrates multiple different ModPa
 
 
 ### Links
-[ATLauncher Website](http://www.atlauncher.com)
+[ATLauncher Website](https://www.atlauncher.com)
 
 [ATLauncher Facebook](http://www.facebook.com/ATLauncher)
 
@@ -109,8 +109,14 @@ Build is used for beta releases allowing you to have higher version numbers but 
 
 ### Need Help/Have Questions?
 
-If you have questions please don't hesitate to [contact us](http://www.atlauncher.com/contactus/)
+If you have questions please don't hesitate to [contact us](https://www.atlauncher.com/contact-us/)
 
 ### License
 
 This work is licensed under the GNU General Public License v3.0. To view a copy of this license, visit http://www.gnu.org/licenses/gpl-3.0.txt.
+
+A simple way to keep in terms of the license is by forking this repository and leaving it open source under the same license. We love free software, seeing people use our code and then not share the code, breaking the license, is saddening. So please take a look at the license and respect what we're doing.
+
+Also, while we cannot enforce this under the license, you cannot use our CDN/files/assets/modpacks on your own launcher. Again we cannot enforce this under the license, but needless to say, we'd be very unhappy if you did that and really would like to leave cease and desist letters as a last resort.
+
+If you have any questions or concerns as to the license or what we consider to be good and bad in your clone/fork, please use the contact link in the section right above this one.
