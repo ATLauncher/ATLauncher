@@ -1178,7 +1178,6 @@ public class Instance implements Cloneable {
                         try {
                             exitValue = process.exitValue(); // Try to get the real exit value
                         } catch (IllegalThreadStateException e) {
-                            App.settings.logStackTrace(e);
                             process.destroy(); // Kill the process
                         }
                         if (!App.settings.keepLauncherOpen()) {
