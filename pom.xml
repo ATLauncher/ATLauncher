@@ -198,8 +198,7 @@
                                             stubfile="${project.basedir}/src/main/resources/osxapp/universalJavaApplicationStub"
                                             useJavaXKey="true"
                                             jvmversion="1.7+"
-                                            workingdirectory="$APP_PACKAGE/Contents/Resources/Java"
-                                            version="${project.version}">
+                                            workingdirectory="$APP_PACKAGE/Contents/Resources/Java">
                                 </osxbundler>
 
                                 <zip destfile="${project.build.directory}/${project.name}-${project.version}.zip">
