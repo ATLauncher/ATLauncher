@@ -1,6 +1,6 @@
 Changelog
 ====================================
 
-### 3.2.3.1
+### 3.2.3.2
 
-- Fix mods being downloaded even when they have already been downloaded
+-
