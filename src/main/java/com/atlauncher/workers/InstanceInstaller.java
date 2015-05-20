@@ -445,7 +445,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 Downloadable downloadable;
 
                 downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(), mod.getFile())
-                        , (mod.hasMD5() ? null : mod.getMD5()), mod.getFilesize(), this, true);
+                        , mod.getMD5(), mod.getFilesize(), this, true);
 
                 mods.add(downloadable);
             }
