@@ -236,10 +236,11 @@ public class App {
 
         if (settings.isUsingMacApp() && !settings.isUsingNewMacApp()) {
             String[] options = {"Download"};
-            
+
             JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("You're using an old version of the" +
                             " ATLauncher Mac OSX app.<br/><br/>Please download the new Mac OSX app from below to " +
-                            "keep playing!<br/><br/>Sorry for any inconvenience caused!"),
+                            "keep playing!<br/><br/>Your instances and data will be transferred once the new app " +
+                            "is launcher.<br/><br/>Sorry for any inconvenience caused!"),
                     "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 
             Utils.openBrowser("https://atl.pw/oldosxapp");
