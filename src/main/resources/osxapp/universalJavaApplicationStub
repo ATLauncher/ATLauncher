@@ -257,7 +257,7 @@ if [ -z ${JAVACMD} ]; then
 	exit 3
 fi
 
-JAVAVER = ${JAVACMD} -version 2>&1 | awk -F '"' '/version/ {print $2}' | cut -c1-3
+JAVAVER = `"${JAVACMD}" -version 2>&1 | awk -F '"' '/version/ {print $2}' | cut -c1-3`
 
 # Check the java version we're trying to use isn't 1.6
 if [ -z ${JAVAVER} ] || [ ${JAVAVER} == '1.6' ]; then
