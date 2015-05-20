@@ -186,10 +186,13 @@
                                 <taskdef name="osxbundler" classpathref="maven.plugin.classpath"
                                          classname="net.sourceforge.jarbundler.JarBundler"/>
 
+                                <copy file="${project.build.directory}/${project.name}-${project.version}.jar"
+                                      tofile="${project.build.directory}/${project.name}.jar"/>
+
                                 <osxbundler dir="${project.basedir}/target/"
                                             name="${project.name}"
                                             mainclass="${mainclass}"
-                                            jar="${project.build.directory}/${project.name}-${project.version}.jar"
+                                            jar="${project.build.directory}/${project.name}.jar"
                                             shortname="${project.name}"
                                             icon="${project.basedir}/src/main/resources/assets/image/Icon.icns"
                                             stubfile="${project.basedir}/src/main/resources/osxapp/universalJavaApplicationStub"
@@ -208,6 +211,7 @@
                                                 filemode="755"/>
                                 </zip>
 
+                                <delete file="${project.build.directory}/${project.name}.jar"/>
                                 <delete dir="${project.build.directory}/${project.name}.app"/>
                             </target>
                         </configuration>
