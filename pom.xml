@@ -6,7 +6,7 @@
     <groupId>com.atlauncher</groupId>
     <artifactId>atlauncher</artifactId>
     <name>ATLauncher</name>
-    <version>3.2.3.2</version>
+    <version>3.3.0.0</version>
     <organization>
         <name>ATLauncher</name>
         <url>http://www.github.com/ATLauncher/</url>
@@ -162,7 +162,7 @@
                                 <preCp>anything</preCp>
                             </classPath>
                             <jre>
-                                <minVersion>1.6.0</minVersion>
+                                <minVersion>1.7.0</minVersion>
                             </jre>
                             <icon>src/main/resources/assets/image/Icon.ico</icon>
                         </configuration>
