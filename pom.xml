@@ -19,7 +19,7 @@
     <url>https://www.atlauncher.com</url>
 
     <properties>
-        <project.jdk.version>1.6</project.jdk.version>
+        <project.jdk.version>1.7</project.jdk.version>
         <mainclass>com.atlauncher.App</mainclass>
     </properties>
 

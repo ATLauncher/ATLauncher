@@ -215,7 +215,7 @@ public class App {
             }
         }
 
-        File config = new File(Utils.getCoreGracefully(), "Configs");
+        File config = FileSystem.CONFIGS.toFile();
         if (!config.exists()) {
             int files = config.getParentFile().list().length;
             if (files > 1) {
@@ -356,7 +356,7 @@ public class App {
      * Loads the theme and applies the theme's settings to the look and feel.
      */
     public static void loadTheme() {
-        File themeFile = settings.getThemeFile();
+        File themeFile = settings.getThemeFile().toFile();
         if (themeFile != null) {
             try {
                 InputStream stream = null;

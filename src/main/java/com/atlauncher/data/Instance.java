@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
@@ -38,6 +39,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -171,6 +173,8 @@ public class Instance implements Cloneable {
      */
     private List<String> ignoredUpdates;
 
+    public final transient Path root;
+
     /**
      * Instantiates a new instance.
      *
@@ -221,6 +225,7 @@ public class Instance implements Cloneable {
             this.userLock = null;
         }
         this.isConverted = true;
+        this.root = FileSystem.INSTANCES.resolve(this.getSafeName());
     }
 
     /**

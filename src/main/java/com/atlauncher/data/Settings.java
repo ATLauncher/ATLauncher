@@ -18,7 +18,9 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
+import com.atlauncher.FileSystemData;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
@@ -55,6 +57,7 @@ import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,9 +76,11 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URLDecoder;
+import java.nio.channels.Channels;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -87,6 +92,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -1124,24 +1130,24 @@ public class Settings {
      */
     public void loadServerProperty(boolean userSelectableOnly) {
         LogManager.debug("Loading server to use");
-        try {
-            this.properties.load(new FileInputStream(propertiesFile));
-            String serv = properties.getProperty("server", "Auto");
-            if (isServerByName(serv)) {
-                if (!userSelectableOnly || (userSelectableOnly && server.isUserSelectable())) {
-                    this.server = getServerByName(serv);
+        try{
+            this.properties.load(new FileInputStream(FileSystemData.PROPERTIES.toFile()));
+            String serv = this.properties.getProperty("server", "Auto");
+            if(this.isServerByName(serv)){
+                if(!userSelectableOnly || server.isUserSelectable()){
+                    this.server = this.getServerByName(serv);
                     this.originalServer = this.server;
                 }
+
+                if(this.server == null){
+                    LogManager.warn("Server " + serv + " is invalid");
+                    this.server = this.getServerByName("Auto");
+                    this.originalServer = this.server;
+
+                }
             }
-            if (this.server == null) {
-                LogManager.warn("Server " + serv + " is invalid");
-                this.server = getServerByName("Auto"); // Server not found, use default of Auto
-                this.originalServer = this.server;
-            }
-        } catch (FileNotFoundException e) {
-            logStackTrace(e);
-        } catch (IOException e) {
-            logStackTrace(e);
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
         LogManager.debug("Finished loading server to use");
     }
@@ -1151,8 +1157,8 @@ public class Settings {
      */
     public void loadStartingProperties() {
         try {
-            if (!propertiesFile.exists()) {
-                propertiesFile.createNewFile();
+            if(!Files.exists(FileSystemData.PROPERTIES)){
+                Files.createFile(FileSystemData.PROPERTIES);
             }
         } catch (IOException e) {
             String[] options = {"OK"};
@@ -1163,7 +1169,7 @@ public class Settings {
             System.exit(0);
         }
         try {
-            this.properties.load(new FileInputStream(propertiesFile));
+            this.properties.load(new FileInputStream(FileSystemData.PROPERTIES.toFile()));
             this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
@@ -1215,8 +1221,6 @@ public class Settings {
             if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
                 this.daysOfLogsToKeep = 7;
             }
-        } catch (FileNotFoundException e) {
-            logStackTrace(e);
         } catch (IOException e) {
             logStackTrace(e);
         }
@@ -1236,7 +1240,7 @@ public class Settings {
     public void loadProperties() {
         LogManager.debug("Loading properties");
         try {
-            this.properties.load(new FileInputStream(propertiesFile));
+            this.properties.load(new FileInputStream(FileSystemData.PROPERTIES.toFile()));
             this.firstTimeRun = Boolean.parseBoolean(properties.getProperty("firsttimerun", "true"));
 
             this.hadPasswordDialog = Boolean.parseBoolean(properties.getProperty("hadpassworddialog", "false"));
@@ -1483,7 +1487,7 @@ public class Settings {
             properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
             properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
-            this.properties.store(new FileOutputStream(propertiesFile), Constants.LAUNCHER_NAME + " Settings");
+            this.properties.store(new FileOutputStream(FileSystemData.PROPERTIES.toFile()), Constants.LAUNCHER_NAME + " Settings");
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         } catch (IOException e) {
@@ -1717,78 +1721,69 @@ public class Settings {
      */
     private void loadInstances() {
         LogManager.debug("Loading instances");
-        this.instances = new ArrayList<Instance>(); // Reset the instances list
-        if (instancesDataFile.exists()) {
-            try {
-                FileInputStream in = new FileInputStream(instancesDataFile);
-                ObjectInputStream objIn = new ObjectInputStream(in);
-                try {
+        try{
+            Data.INSTANCES.clear();
+            if(Files.exists(FileSystemData.INSTANCES_DATA)){
+                try(ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.INSTANCES_DATA.toFile()))){
                     Object obj;
-                    while ((obj = objIn.readObject()) != null) {
-                        if (obj instanceof Instance) {
-                            File dir = new File(getInstancesDir(), ((Instance) obj).getSafeName());
-                            if (!dir.exists()) {
-                                continue; // Skip the instance since the folder doesn't exist
-                            }
-                            Instance instance = (Instance) obj;
-                            if (!instance.hasBeenConverted()) {
-                                LogManager.warn("Instance " + instance.getName() + " is being converted! This is " +
-                                        "normal and should only appear once!");
-                                instance.convert();
-                            }
-                            if (!instance.getDisabledModsDirectory().exists()) {
-                                instance.getDisabledModsDirectory().mkdir();
-                            }
-                            instances.add(instance);
-                            if (isPackByName(instance.getPackName())) {
-                                instance.setRealPack(getPackByName(instance.getPackName()));
-                            }
+                    while((obj = oin.readObject()) != null){
+                        Instance instance = (Instance) obj;
+                        Path dir = FileSystem.INSTANCES.resolve(instance.getSafeName());
+                        if(!Files.exists(dir)){
+                            continue;
+                        }
+
+                        if(!instance.hasBeenConverted()){
+                            LogManager.warn("Instance " + instance.getName() + " is being converted, this is normal and should only appear once");
+                            instance.convert();
+                        }
+
+                        if(!Files.exists(instance.root.resolve("disabledmods"))){
+                            Files.createDirectory(instance.root.resolve("disabledmods"));
+                        }
+
+                        Data.INSTANCES.add(instance);
+                        if(this.isPackByName(instance.getPackName())){
+                            instance.setRealPack(this.getPackByName(instance.getPackName()));
                         }
                     }
-                } catch (EOFException e) {
-                    // Don't log this, it always happens when it gets to the end of the file
-                } finally {
-                    objIn.close();
-                    in.close();
+                } catch(EOFException ex){
+                    // Fallthrough
                 }
-            } catch (Exception e) {
-                logStackTrace(e);
+
+                this.saveInstances();
+                Files.delete(FileSystemData.INSTANCES_DATA);
+            } else{
+                try(DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.INSTANCES)){
+                    for(Path file : stream){
+                        byte[] bits = Files.readAllBytes(file);
+                        Instance instance;
+                        try{
+                            instance = Gsons.DEFAULT.fromJson(new String(bits), Instance.class);
+                        } catch(Exception e){
+                            this.logStackTrace("Failed to load instance in the folder " + file.getFileName(), e);
+                            continue;
+                        }
+
+                        if(instance == null){
+                            LogManager.error("Failed to load instance in folder " + file.getFileName());
+                            continue;
+                        }
+
+                        if(!Files.exists(instance.root.resolve("disabledmods"))){
+                            Files.createDirectory(instance.root.resolve("disabledmods"));
+                        }
+
+                        if(this.isPackByName(instance.getPackName())){
+                            instance.setRealPack(this.getPackByName(instance.getPackName()));
+                        }
+
+                        Data.INSTANCES.add(instance);
+                    }
+                }
             }
-            saveInstances(); // Save the instances to new json format
-            Utils.delete(instancesDataFile); // Remove old instances data file
-        } else {
-            for (String folder : this.getInstancesDir().list(Utils.getInstanceFileFilter())) {
-                File instanceDir = new File(this.getInstancesDir(), folder);
-                FileReader fileReader;
-
-                Instance instance = null;
-
-                try {
-                    fileReader = new FileReader(new File(instanceDir, "instance.json"));
-                    instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
-                } catch (Exception e) {
-                    logStackTrace("Failed to load instance in the folder " + instanceDir, e);
-                    continue; // Instance.json not found for some reason, continue before loading
-                }
-
-                if (instance == null) {
-                    LogManager.error("Failed to load instance in the folder " + instanceDir);
-                    continue;
-                }
-
-                if (!instance.getDisabledModsDirectory().exists()) {
-                    instance.getDisabledModsDirectory().mkdir();
-                }
-
-                if (isPackByName(instance.getPackName())) {
-                    instance.setRealPack(getPackByName(instance.getPackName()));
-                }
-
-                this.instances.add(instance);
-            }
-            if (instancesDataFile.exists()) {
-                Utils.delete(instancesDataFile); // Remove old instances data file
-            }
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
         LogManager.debug("Finished loading instances");
     }
@@ -1828,65 +1823,32 @@ public class Settings {
      * Loads the saved Accounts
      */
     private void loadAccounts() {
-        LogManager.debug("Loading accounts");
-        if (userDataFile.exists()) {
-            FileInputStream in = null;
-            ObjectInputStream objIn = null;
-            try {
-                in = new FileInputStream(userDataFile);
-                objIn = new ObjectInputStream(in);
+        LogManager.debug("Loading Accounts");
+        Data.ACCOUNTS.clear();
+        if(Files.exists(FileSystemData.USER_DATA)){
+            try(ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.USER_DATA.toFile()))){
                 Object obj;
-                while ((obj = objIn.readObject()) != null) {
-                    if (obj instanceof Account) {
-                        accounts.add((Account) obj);
+                while((obj = oin.readObject()) != null){
+                    if(obj instanceof Account){
+                        Data.ACCOUNTS.add((Account) obj);
                     }
                 }
-            } catch (EOFException e) {
-                // Don't log this, it always happens when it gets to the end of the file
-            } catch (IOException e) {
-                logStackTrace("Exception while trying to read accounts in from file.", e);
-            } catch (ClassNotFoundException e) {
-                logStackTrace("Exception while trying to read accounts in from file.", e);
-            } finally {
-                try {
-                    if (objIn != null) {
-                        objIn.close();
-                    }
-                    if (in != null) {
-                        in.close();
-                    }
-                } catch (IOException e) {
-                    logStackTrace("Exception while trying to close FileInputStream/ObjectInputStream when reading in " +
-                            "" + "accounts.", e);
-                }
+            } catch(EOFException e){
+                // Fallthrough
+            } catch(Exception e){
+                this.logStackTrace("Exception while trying to read accounts from file", e);
             }
         }
         LogManager.debug("Finished loading accounts");
     }
 
     public void saveAccounts() {
-        FileOutputStream out = null;
-        ObjectOutputStream objOut = null;
-        try {
-            out = new FileOutputStream(userDataFile);
-            objOut = new ObjectOutputStream(out);
-            for (Account account : accounts) {
-                objOut.writeObject(account);
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FileSystemData.USER_DATA.toFile()))){
+            for(Account acc : Data.ACCOUNTS){
+                oos.writeObject(acc);
             }
-        } catch (IOException e) {
-            logStackTrace(e);
-        } finally {
-            try {
-                if (objOut != null) {
-                    objOut.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                logStackTrace("Exception while trying to close FileOutputStream/ObjectOutputStream when saving " +
-                        "accounts.", e);
-            }
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
     }
 
@@ -1904,55 +1866,27 @@ public class Settings {
      */
     private void loadCheckingServers() {
         LogManager.debug("Loading servers to check");
-        this.checkingServers = new ArrayList<MinecraftServer>(); // Reset the list
-        if (checkingServersFile.exists()) {
-            FileReader fileReader = null;
-            try {
-                fileReader = new FileReader(checkingServersFile);
-            } catch (FileNotFoundException e) {
-                logStackTrace(e);
-                return;
+        try{
+            if(Files.exists(FileSystemData.CHECKING_SERVERS)){
+                byte[] bits = Files.readAllBytes(FileSystemData.CHECKING_SERVERS);
+                Data.CHECKING_SERVERS.addAll((List<MinecraftServer>)Gsons.DEFAULT.fromJson(new String(bits), MinecraftServer.LIST_TYPE));
             }
-
-            this.checkingServers = Gsons.DEFAULT.fromJson(fileReader, MinecraftServer.LIST_TYPE);
-
-            if (fileReader != null) {
-                try {
-                    fileReader.close();
-                } catch (IOException e) {
-                    logStackTrace("Exception while trying to close FileReader when loading servers for server " +
-                            "checker" + " tool.", e);
-                }
-            }
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
         LogManager.debug("Finished loading servers to check");
     }
 
     public void saveCheckingServers() {
-        FileWriter fw = null;
-        BufferedWriter bw = null;
-        try {
-            if (!checkingServersFile.exists()) {
-                checkingServersFile.createNewFile();
+        try{
+            if(!Files.exists(FileSystemData.CHECKING_SERVERS)){
+                Files.createFile(FileSystemData.CHECKING_SERVERS);
             }
 
-            fw = new FileWriter(checkingServersFile);
-            bw = new BufferedWriter(fw);
-            bw.write(Gsons.DEFAULT.toJson(this.checkingServers));
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        } finally {
-            try {
-                if (bw != null) {
-                    bw.close();
-                }
-                if (fw != null) {
-                    fw.close();
-                }
-            } catch (IOException e) {
-                logStackTrace("Exception while trying to close FileWriter/BufferedWriter when saving servers for " +
-                        "server checker tool.", e);
-            }
+            String data = Gsons.DEFAULT.toJson(Data.CHECKING_SERVERS);
+            Files.write(FileSystemData.CHECKING_SERVERS, data.getBytes(), StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
     }
 
@@ -2037,12 +1971,15 @@ public class Settings {
     }
 
     public boolean isUsingMacApp() {
-        return Utils.isMac() && new File(baseDir.getParentFile().getParentFile(), "MacOS").exists();
+        return Utils.isMac() &&
+               Files.exists(
+                                   FileSystem.BASE_DIR.getParent()
+                                                      .resolve("MacOS")
+               );
     }
 
     public boolean isUsingNewMacApp() {
-        return new File(new File(baseDir.getParentFile().getParentFile(), "MacOS"), "universalJavaApplicationStub")
-                .exists();
+        return Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS").resolve("universalJavaApplicationStub"));
     }
 
     public void setInstanceVisbility(Instance instance, boolean collapsed) {
@@ -2217,12 +2154,14 @@ public class Settings {
      */
     public List<String> getLanguages() {
         List<String> langs = new LinkedList<String>();
-        for (File file : this.getLanguagesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".lang");
-            }
-        })) {
+        for (File file : this.getLanguagesDir().listFiles(
+                                                                 new FilenameFilter() {
+                                                                     @Override
+                                                                     public boolean accept(File dir, String name) {
+                                                                         return name.endsWith(".lang");
+                                                                     }
+                                                                 }
+        )) {
             langs.add(file.getName().substring(0, file.getName().lastIndexOf(".")));
         }
         return langs;
@@ -3013,11 +2952,11 @@ public class Settings {
         this.theme = theme;
     }
 
-    public File getThemeFile() {
-        File theme = new File(this.themesDir, this.theme + ".zip");
-        if (theme.exists()) {
+    public Path getThemeFile() {
+        Path theme = FileSystem.THEMES.resolve(this.theme + ".zip");
+        if(Files.exists(theme)){
             return theme;
-        } else {
+        } else{
             return null;
         }
     }
@@ -3114,7 +3053,7 @@ public class Settings {
         if (this.isUsingMacApp()) {
             arguments.add("open");
             arguments.add("-n");
-            arguments.add(baseDir.getParentFile().getParentFile().getParentFile().getAbsolutePath());
+            arguments.add(FileSystem.BASE_DIR.getParent().getParent().toString());
 
         } else {
             String jpath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
