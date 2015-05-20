@@ -1361,13 +1361,6 @@ public class Settings {
                 this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
             } else {
                 this.javaPath = Utils.getJavaHome();
-                if (this.isUsingMacApp()) {
-                    File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin" + "" +
-                            ".plugin/Contents/Home/bin/java");
-                    if (oracleJava.exists() && oracleJava.canExecute()) {
-                        this.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
-                    }
-                }
             }
 
             this.javaParamaters = properties.getProperty("javaparameters", "");

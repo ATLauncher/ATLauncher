@@ -267,14 +267,6 @@ public class App {
             LogManager.warn("Custom Java Path Set!");
 
             settings.checkForValidJavaPath(false);
-        } else if (settings.isUsingMacApp()) {
-            // If the user is using the Mac Application, then we forcibly set the java path if they have none set.
-
-            File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
-            if (oracleJava.exists() && oracleJava.canExecute()) {
-                settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
-                LogManager.warn("Launcher Forced Custom Java Path Set!");
-            }
         }
 
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
