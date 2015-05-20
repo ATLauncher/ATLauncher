@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -413,15 +414,17 @@ public class Downloadable {
                         }
                         download(downloadAsLibrary); // Redownload the file
                     } else {
-                        Utils.copyFile(this.file, App.settings.getFailedDownloadsDir());
-                        LogManager.error("Failed to download file " + this.file.getName() + " from all " + Constants.LAUNCHER_NAME +
-                                "servers. Copied to FailedDownloads Folder. Cancelling install!");
+                        Utils.copyFile(this.file, FileSystem.FAILED_DOWNLOADS.toFile());
+                        LogManager.error(
+                                                "Failed to download file " + this.file.getName() + " from all " + Constants.LAUNCHER_NAME +
+                                                        "servers. Copied to FailedDownloads Folder. Cancelling install!"
+                        );
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);
                         }
                     }
                 } else {
-                    Utils.copyFile(this.file, App.settings.getFailedDownloadsDir());
+                    Utils.copyFile(this.file, FileSystem.FAILED_DOWNLOADS.toFile());
                     LogManager.error("Error downloading " + this.file.getName() + " from " + this.url + ". Expected " +
                             "hash of " + getHash() + " but got " + fileHash + " instead. Copied to FailedDownloads " +
                             "Folder. Cancelling install!");

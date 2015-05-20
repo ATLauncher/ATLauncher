@@ -26,6 +26,7 @@ import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
+import com.atlauncher.utils.walker.ClearDirVisitor;
 import com.atlauncher.utils.walker.CopyDirVisitor;
 import com.atlauncher.utils.walker.DeleteDirVisitor;
 import org.tukaani.xz.XZInputStream;
@@ -131,32 +132,25 @@ public class Utils {
      */
     public static ImageIcon getIconImage(String path) {
         try {
-            File themeFile = App.settings.getThemeFile();
-
-            if (themeFile != null) {
+            Path theme = App.settings.getThemeFile();
+            if(theme != null){
                 InputStream stream = null;
+                try(ZipFile zip = new ZipFile(theme.toFile())){
+                    Enumeration<? extends ZipEntry> entries = zip.entries();
+                    while(entries.hasMoreElements()){
+                        ZipEntry entry = entries.nextElement();
+                        if(entry.getName().equals("image/" + path.substring(path.lastIndexOf("/") + 1))){
+                            stream = zip.getInputStream(entry);
+                            break;
+                        }
+                    }
 
-                ZipFile zipFile = new ZipFile(themeFile);
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().equals("image/" + path.substring(path.lastIndexOf('/') + 1))) {
-                        stream = zipFile.getInputStream(entry);
-                        break;
+                    if(stream != null){
+                        BufferedImage image = ImageIO.read(stream);
+                        stream.close();
+                        return new ImageIcon(image);
                     }
                 }
-
-                if (stream != null) {
-                    BufferedImage image = ImageIO.read(stream);
-
-                    stream.close();
-                    zipFile.close();
-
-                    return new ImageIcon(image);
-                }
-
-                zipFile.close();
             }
 
             URL url = System.class.getResource(path);
@@ -213,6 +207,15 @@ public class Utils {
         return new ImageIcon(file.getAbsolutePath());
     }
 
+    public static ImageIcon getIconImage(Path p){
+        if(!Files.exists(p)){
+            LogManager.error("Unable to load file " + p);
+            return null;
+        }
+
+        return new ImageIcon(p.toAbsolutePath().toString());
+    }
+
     /**
      * Gets the font.
      *
@@ -239,32 +242,25 @@ public class Utils {
                 name = name + ".png";
             }
 
-            File themeFile = App.settings.getThemeFile();
-
-            if (themeFile != null) {
+            Path theme = App.settings.getThemeFile();
+            if(theme != null){
                 InputStream stream = null;
+                try(ZipFile zip = new ZipFile(theme.toFile())){
+                    Enumeration<? extends ZipEntry> entries = zip.entries();
+                    while(entries.hasMoreElements()){
+                        ZipEntry entry = entries.nextElement();
+                        if(entry.getName().equals("image/" + name.substring(name.lastIndexOf("/") + 1))){
+                            stream = zip.getInputStream(entry);
+                            break;
+                        }
+                    }
 
-                ZipFile zipFile = new ZipFile(themeFile);
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().equals("image/" + name.substring(name.lastIndexOf('/') + 1))) {
-                        stream = zipFile.getInputStream(entry);
-                        break;
+                    if(stream != null){
+                        BufferedImage image = ImageIO.read(stream);
+                        stream.close();
+                        return image;
                     }
                 }
-
-                if (stream != null) {
-                    BufferedImage image = ImageIO.read(stream);
-
-                    stream.close();
-                    zipFile.close();
-
-                    return image;
-                }
-
-                zipFile.close();
             }
 
             InputStream stream = App.class.getResourceAsStream(name);
@@ -970,15 +966,9 @@ public class Utils {
     /**
      * Clean temp directory.
      */
-    public static void cleanTempDirectory() {
-        File file = App.settings.getTempDir();
-        String[] myFiles;
-        if (file.isDirectory()) {
-            myFiles = file.list();
-            for (int i = 0; i < myFiles.length; i++) {
-                new File(file, myFiles[i]).delete();
-            }
-        }
+    public static void cleanTempDirectory()
+    throws IOException{
+        Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
     }
 
     public static void deleteDirectory(Path dir)
@@ -1093,6 +1083,14 @@ public class Utils {
             for (File c : files) {
                 delete(c);
             }
+        }
+    }
+
+    public static void deleteContents(Path p){
+        try {
+            Files.walkFileTree(p, new ClearDirVisitor());
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
         }
     }
 

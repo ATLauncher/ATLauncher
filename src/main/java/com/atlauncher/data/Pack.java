@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 import org.w3c.dom.Document;
@@ -35,8 +36,9 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,11 +86,11 @@ public class Pack {
     }
 
     public ImageIcon getImage() {
-        File imageFile = new File(App.settings.getImagesDir(), getSafeName().toLowerCase() + ".png");
-        if (!imageFile.exists()) {
-            imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
+        Path file = FileSystem.IMAGES.resolve(this.getSafeName().toLowerCase() + ".png");
+        if(!Files.exists(file)){
+            file = FileSystem.IMAGES.resolve("defaultimage.png");
         }
-        return Utils.getIconImage(imageFile);
+        return Utils.getIconImage(file);
     }
 
     public boolean isPublic() {

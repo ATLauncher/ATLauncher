@@ -285,7 +285,7 @@ public class App {
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
         LogManager.info("Java Path: " + settings.getJavaPath());
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
-        LogManager.info("Launcher Directory: " + settings.getBaseDir());
+        LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR.toString());
         LogManager.info("Using Theme: " + THEME);
 
         // Now for some Mac specific stuff, mainly just setting the name of the application and icon.
@@ -470,7 +470,7 @@ public class App {
             props.load(new FileInputStream(f));
 
             props.setProperty("java_version", Utils.getJavaVersion());
-            props.setProperty("location", App.settings.getBaseDir().toString());
+            props.setProperty("location", FileSystem.BASE_DIR.toString());
             props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
                     .getPath()).getAbsolutePath());
 

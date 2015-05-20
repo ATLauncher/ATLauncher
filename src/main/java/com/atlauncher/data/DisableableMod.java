@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 
@@ -103,7 +104,7 @@ public class DisableableMod implements Serializable {
             if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
                 if (this.type == Type.jar) {
                     File inputFile = instance.getMinecraftJar();
-                    File outputTmpFile = new File(App.settings.getTempDir(), instance.getSafeName() + "-minecraft.jar");
+                    File outputTmpFile = FileSystem.TMP.resolve(instance.getSafeName() + "-minecraft.jar").toFile();
                     if (Utils.hasMetaInf(inputFile)) {
                         try {
                             JarInputStream input = new JarInputStream(new FileInputStream(inputFile));

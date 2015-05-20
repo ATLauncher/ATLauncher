@@ -55,9 +55,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,9 +63,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -76,23 +72,21 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URLDecoder;
-import java.nio.channels.Channels;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -610,23 +604,23 @@ public class Settings {
     }
 
     public void downloadUpdate() {
-        try {
-            File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-            String path = thisFile.getCanonicalPath();
-            path = URLDecoder.decode(path, "UTF-8");
-            String toget;
-            String saveAs = thisFile.getName();
-            if (path.contains(".exe")) {
-                toget = "exe";
-            } else {
-                toget = "jar";
+        try{
+            Path self = Paths.get(App.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            String path = URLDecoder.decode(self.toString(), "UTF-8");
+            String target;
+            String saveAs = self.getFileName().toString();
+            if(path.contains(".exe")){
+                target = "exe";
+            } else{
+                target = "jar";
             }
-            File newFile = new File(getTempDir(), saveAs);
+
+            Path output = FileSystem.TMP.resolve(saveAs);
             LogManager.info("Downloading Launcher Update");
-            Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + toget, newFile, null, null, true);
+            Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + target, output.toFile(), null, null, true);
             update.download(false);
-            runUpdate(path, newFile.getAbsolutePath());
-        } catch (IOException e) {
+            this.runUpdate(path, output.toAbsolutePath().toString());
+        } catch(Exception e){
             this.logStackTrace(e);
         }
     }
@@ -643,7 +637,7 @@ public class Settings {
             } else {
                 toget = "jar";
             }
-            File newFile = new File(getTempDir(), saveAs);
+            File newFile = FileSystem.TMP.resolve(saveAs).toFile();
             LogManager.info("Downloading Launcher Update");
             Downloadable update = new Downloadable("https://api.atlauncher.com/v1/build/atlauncher/download/" +
                     toget, newFile, null, null, false);
@@ -843,9 +837,8 @@ public class Settings {
 
         ExecutorService executor = Utils.generateDownloadExecutor();
 
-        for (final LauncherLibrary library : this.launcherLibraries) {
+        for (final LauncherLibrary library : libraries) {
             executor.execute(new Runnable() {
-
                 @Override
                 public void run() {
                     Downloadable download = library.getDownloadable();
@@ -895,106 +888,7 @@ public class Settings {
         }
     }
 
-    /**
-     * Returns the base directory
-     *
-     * @return File object for the base directory
-     */
-    public File getBaseDir() {
-        return this.baseDir;
-    }
-
-    /**
-     * Returns the backups directory
-     *
-     * @return File object for the backups directory
-     */
-    public File getBackupsDir() {
-        return this.backupsDir;
-    }
-
-    /**
-     * Returns the configs directory
-     *
-     * @return File object for the configs directory
-     */
-    public File getConfigsDir() {
-        return this.configsDir;
-    }
-
-    /**
-     * Returns the themes directory
-     *
-     * @return File object for the themes directory
-     */
-    public File getThemesDir() {
-        return this.themesDir;
-    }
-
-    /**
-     * Returns the JSON directory
-     *
-     * @return File object for the JSON directory
-     */
-    public File getJSONDir() {
-        return this.jsonDir;
-    }
-
-    /**
-     * Returns the Versions directory
-     *
-     * @return File object for the Versions directory
-     */
-    public File getVersionsDir() {
-        return this.versionsDir;
-    }
-
-    /**
-     * Returns the common configs directory
-     *
-     * @return File object for the common configs directory
-     */
-    public File getCommonConfigsDir() {
-        return this.commonConfigsDir;
-    }
-
-    /**
-     * Returns the images directory
-     *
-     * @return File object for the images directory
-     */
-    public File getImagesDir() {
-        return this.imagesDir;
-    }
-
-    /**
-     * Returns the skins directory
-     *
-     * @return File object for the skins directory
-     */
-    public File getSkinsDir() {
-        return this.skinsDir;
-    }
-
-    /**
-     * Returns the jars directory
-     *
-     * @return File object for the jars directory
-     */
-    public File getJarsDir() {
-        return this.jarsDir;
-    }
-
-    /**
-     * Returns the resources directory
-     *
-     * @return File object for the resources directory
-     */
-    public File getResourcesDir() {
-        return this.resourcesDir;
-    }
-
-    public File getVirtualAssetsDir() {
+    /*public File getVirtualAssetsDir() {
         return new File(this.resourcesDir, "virtual");
     }
 
@@ -1004,116 +898,13 @@ public class Settings {
 
     public File getLegacyVirtualAssetsDir() {
         return new File(getVirtualAssetsDir(), "legacy");
-    }
-
-    /**
-     * Returns the libraries directory
-     *
-     * @return File object for the libraries directory
-     */
-    public File getLibrariesDir() {
-        return this.librariesDir;
-    }
-
-    /**
-     * Returns the launchers libraries directory
-     *
-     * @return File object for the libraries directory
-     */
-    public File getLauncherLibrariesDir() {
-        return this.launcherLibrariesdir;
-    }
-
-    /**
-     * Returns the languages directory
-     *
-     * @return File object for the languages directory
-     */
-    public File getLanguagesDir() {
-        return this.languagesDir;
-    }
-
-    /**
-     * Returns the downloads directory
-     *
-     * @return File object for the downloads directory
-     */
-    public File getDownloadsDir() {
-        return this.downloadsDir;
-    }
-
-    /**
-     * Returns the downloads directory for the user
-     *
-     * @return File object for the downloads directory for the users account
-     */
-    public File getUsersDownloadsDir() {
-        return this.usersDownloadsFolder;
-    }
-
-    /**
-     * Returns the instances directory
-     *
-     * @return File object for the instances directory
-     */
-    public File getInstancesDir() {
-        return this.instancesDir;
-    }
-
-    /**
-     * Returns the servers directory
-     *
-     * @return File object for the servers directory
-     */
-    public File getServersDir() {
-        return this.serversDir;
-    }
-
-    /**
-     * Returns the temp directory
-     *
-     * @return File object for the temp directory
-     */
-    public File getTempDir() {
-        return this.tempDir;
-    }
-
-    public File getFailedDownloadsDir() {
-        return this.failedDownloadsDir;
-    }
-
-    /**
-     * Returns the logs directory
-     *
-     * @return File object for the logs directory
-     */
-    public File getLogsDir() {
-        return this.logsDir;
-    }
+    }*/
 
     /**
      * Deletes all files in the Temp directory
      */
     public void clearTempDir() {
-        Utils.deleteContents(getTempDir());
-    }
-
-    /**
-     * Returns the instancesdata file
-     *
-     * @return File object for the instancesdata file
-     */
-    public File getInstancesDataFile() {
-        return instancesDataFile;
-    }
-
-    /**
-     * Returns the checkingservers file
-     *
-     * @return File object for the checkingservers file
-     */
-    public File getCheckingServersFile() {
-        return checkingServersFile;
+        Utils.deleteContents(FileSystem.TMP);
     }
 
     /**
@@ -1602,24 +1393,13 @@ public class Settings {
      */
     private void loadNews() {
         LogManager.debug("Loading news");
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<News>>() {
-            }.getType();
-            File fileDir = new File(getJSONDir(), "news.json");
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "UTF-8"));
-
-            this.news = Gsons.DEFAULT.fromJson(in, type);
-            in.close();
-        } catch (JsonSyntaxException e) {
-            logStackTrace(e);
-        } catch (JsonIOException e) {
-            logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            logStackTrace(e);
-        } catch (UnsupportedEncodingException e) {
-            logStackTrace(e);
-        } catch (IOException e) {
-            logStackTrace(e);
+        try{
+            java.lang.reflect.Type type = new TypeToken<List<News>>(){}.getType();
+            byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("news.json"));
+            Data.NEWS.clear();
+            Data.NEWS.addAll((List<News>) Gsons.DEFAULT.fromJson(new String(bits), type));
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
         LogManager.debug("Finished loading news");
     }
@@ -1629,28 +1409,23 @@ public class Settings {
      */
     private void loadMinecraftVersions() {
         LogManager.debug("Loading Minecraft versions");
-        this.minecraftVersions = new HashMap<String, MinecraftVersion>();
-        List<MinecraftVersion> list = new ArrayList<MinecraftVersion>();
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
-            }.getType();
-            list = Gsons.DEFAULT.fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")), type);
-        } catch (JsonSyntaxException e) {
-            logStackTrace(e);
-        } catch (JsonIOException e) {
-            logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            logStackTrace(e);
+
+        Data.MINECRAFT_VERSIONS.clear();
+        try{
+            java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>(){}.getType();
+            byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("minecraftversions.json"));
+            List<MinecraftVersion> versions = Gsons.DEFAULT.fromJson(new String(bits), type);
+
+            for(MinecraftVersion version : versions){
+                Data.MINECRAFT_VERSIONS.put(version.getVersion(), version);
+            }
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
-        if (list == null) {
-            LogManager.error("Error loading Minecraft Versions. List was null. Exiting!");
-            System.exit(1); // Cannot recover from this so exit
-        }
-        for (MinecraftVersion mv : list) {
-            this.minecraftVersions.put(mv.getVersion(), mv);
-        }
+
+
         LogManager.info("[Background] Checking Minecraft Versions Started");
-        ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
+        ExecutorService executor = Utils.generateDownloadExecutor();
         for (final Entry<String, MinecraftVersion> entry : this.minecraftVersions.entrySet()) {
             executor.execute(new Runnable() {
                 @Override
@@ -1659,15 +1434,8 @@ public class Settings {
                 }
             });
         }
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                LogManager.info("[Background] Checking Minecraft Versions Complete");
-            }
-        });
+        LogManager.info("[Background] Checking Minecraft Versions Complete");
         executor.shutdown();
-        while (!executor.isShutdown()) {
-        }
         LogManager.debug("Finished loading Minecraft versions");
     }
 
@@ -1676,16 +1444,13 @@ public class Settings {
      */
     private void loadPacks() {
         LogManager.debug("Loading packs");
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
-            }.getType();
-            this.packs = Gsons.DEFAULT.fromJson(new FileReader(new File(getJSONDir(), "packs.json")), type);
-        } catch (JsonSyntaxException e) {
-            logStackTrace(e);
-        } catch (JsonIOException e) {
-            logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            logStackTrace(e);
+        try{
+            java.lang.reflect.Type type = new TypeToken<List<Pack>>(){}.getType();
+            byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("packs.json"));
+            Data.PACKS.clear();
+            Data.PACKS.addAll((List<Pack>) Gsons.DEFAULT.fromJson(new String(bits), type));
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
         LogManager.debug("Finished loading packs");
     }
@@ -2147,22 +1912,31 @@ public class Settings {
         return news;
     }
 
+    private DirectoryStream.Filter<Path> languagesFilter(){
+        return new DirectoryStream.Filter<Path>() {
+            @Override
+            public boolean accept(Path o)
+            throws IOException {
+                return Files.isRegularFile(o) &&
+                       o.endsWith(".lang");
+            }
+        };
+    }
+
     /**
      * Get the Languages available in the Launcher
      *
      * @return The Languages available in the Launcher
      */
     public List<String> getLanguages() {
-        List<String> langs = new LinkedList<String>();
-        for (File file : this.getLanguagesDir().listFiles(
-                                                                 new FilenameFilter() {
-                                                                     @Override
-                                                                     public boolean accept(File dir, String name) {
-                                                                         return name.endsWith(".lang");
-                                                                     }
-                                                                 }
-        )) {
-            langs.add(file.getName().substring(0, file.getName().lastIndexOf(".")));
+        List<String> langs = new LinkedList<>();
+        try(DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LANGUAGES, this.languagesFilter())){
+            for(Path file : stream){
+                String name = file.getFileName().toString();
+                langs.add(name.substring(0, name.lastIndexOf(".")));
+            }
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
         return langs;
     }

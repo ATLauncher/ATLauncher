@@ -18,6 +18,7 @@
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
@@ -124,7 +125,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         });
         openFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Utils.openExplorer(App.settings.getBaseDir());
+                Utils.openExplorer(FileSystem.BASE_DIR.toFile());
             }
         });
         updateData.addActionListener(new ActionListener() {

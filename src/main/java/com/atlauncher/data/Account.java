@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
@@ -176,8 +177,7 @@ public class Account implements Serializable {
     public ImageIcon getMinecraftHead() {
         File file = null;
         if (this.isReal()) {
-            file = new File(App.settings.getSkinsDir(), (this.isUUIDNull() ? "default" : this.getUUIDNoDashes()) +
-                    ".png");
+            file = FileSystem.SKINS.resolve((this.isUUIDNull() ? "default" : this.getUUIDNoDashes()) + ".png").toFile();
             if (!file.exists()) {
                 this.updateSkin(); // Download/update the users skin
             }
@@ -185,7 +185,7 @@ public class Account implements Serializable {
 
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
-            file = new File(App.settings.getSkinsDir(), "default.png");
+            file = FileSystem.SKINS.resolve("default.png").toFile();
         }
 
         BufferedImage image = null;
@@ -216,7 +216,7 @@ public class Account implements Serializable {
     public ImageIcon getMinecraftSkin() {
         File file = null;
         if (this.isReal()) {
-            file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
+            file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
             if (!file.exists()) {
                 this.updateSkin(); // Download/update the users skin
             }
@@ -224,7 +224,7 @@ public class Account implements Serializable {
 
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
-            file = new File(App.settings.getSkinsDir(), "default.png");
+            file = FileSystem.SKINS.resolve("default.png").toFile();
         }
 
         BufferedImage image = null;
@@ -442,7 +442,7 @@ public class Account implements Serializable {
     public void updateSkin() {
         if (!this.skinUpdating) {
             this.skinUpdating = true;
-            final File file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
+            final File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
             LogManager.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
                     ".downloadingskin"), 0, Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin",
@@ -455,7 +455,7 @@ public class Account implements Serializable {
                         LogManager.error("Couldn't download skin because the url found was NULL");
                         if (!file.exists()) {
                             // Only copy over the default skin if there is no skin for the user
-                            Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                            Utils.copyFile(FileSystem.SKINS.resolve("default.png").toFile(), file, true);
                         }
                     } else {
                         try {
@@ -470,7 +470,7 @@ public class Account implements Serializable {
                             } else {
                                 if (!file.exists()) {
                                     // Only copy over the default skin if there is no skin for the user
-                                    Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                                    Utils.copyFile(FileSystem.SKINS.resolve("default.png").toFile(), file, true);
                                 }
                             }
                         } catch (MalformedURLException e) {
