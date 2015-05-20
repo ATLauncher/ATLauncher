@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
@@ -67,17 +68,18 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -149,11 +151,6 @@ public class Settings {
     private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
     private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
-    // Directories and Files for the Launcher
-    private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
-            commonConfigsDir, resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir,
-            usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir, instancesDataFile,
-            checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -180,7 +177,6 @@ public class Settings {
     private Timer checkingServersTimer = null; // Timer used for checking servers
 
     public Settings() {
-        setupFiles(); // Setup all the file and directory variables
         checkFolders(); // Checks the setup of the folders and makes sure they're there
         clearTempDir(); // Cleans all files in the Temp Dir
         loadStartingProperties(); // Get users Console preference and Java Path
@@ -189,34 +185,6 @@ public class Settings {
     public void loadConsole() {
         console = new LauncherConsole();
         LogManager.start();
-    }
-
-    public void setupFiles() {
-        baseDir = Utils.getCoreGracefully();
-        usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
-        logsDir = new File(baseDir, "Logs");
-        backupsDir = new File(baseDir, "Backups");
-        configsDir = new File(baseDir, "Configs");
-        themesDir = new File(configsDir, "Themes");
-        jsonDir = new File(configsDir, "JSON");
-        versionsDir = new File(configsDir, "Versions");
-        imagesDir = new File(configsDir, "Images");
-        skinsDir = new File(imagesDir, "Skins");
-        jarsDir = new File(configsDir, "Jars");
-        commonConfigsDir = new File(configsDir, "Common");
-        resourcesDir = new File(configsDir, "Resources");
-        librariesDir = new File(configsDir, "Libraries");
-        launcherLibrariesdir = new File(librariesDir, "Launcher");
-        languagesDir = new File(configsDir, "Languages");
-        downloadsDir = new File(baseDir, "Downloads");
-        instancesDir = new File(baseDir, "Instances");
-        serversDir = new File(baseDir, "Servers");
-        tempDir = new File(baseDir, "Temp");
-        failedDownloadsDir = new File(baseDir, "FailedDownloads");
-        instancesDataFile = new File(configsDir, "instancesdata");
-        checkingServersFile = new File(configsDir, "checkingservers.json");
-        userDataFile = new File(configsDir, "userdata");
-        propertiesFile = new File(configsDir, Constants.LAUNCHER_NAME + ".conf");
     }
 
     public void loadEverything() {
@@ -263,7 +231,7 @@ public class Settings {
 
         console.setupLanguage(); // Setup language on the console
 
-        clearOldLogs(); // Clear all the old logs out
+        clearAllLogs(); // Clear all the old logs out
 
         checkResources(); // Check for new format of resources
 
@@ -384,14 +352,16 @@ public class Settings {
 
         if (this.enableServerChecker) {
             this.checkingServersTimer = new Timer();
-            this.checkingServersTimer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    for (MinecraftServer server : checkingServers) {
-                        server.checkServer();
-                    }
-                }
-            }, 0, this.getServerCheckerWaitInMilliseconds());
+            this.checkingServersTimer.scheduleAtFixedRate(
+                                                                 new TimerTask() {
+                                                                     @Override
+                                                                     public void run() {
+                                                                         for (MinecraftServer server : checkingServers) {
+                                                                             server.checkServer();
+                                                                         }
+                                                                     }
+                                                                 }, 0, this.getServerCheckerWaitInMilliseconds()
+            );
         }
     }
 
@@ -422,78 +392,40 @@ public class Settings {
         }
         this.saveProperties();
     }
-
-    public void clearOldLogs() {
-        LogManager.debug("Clearing out old logs");
-
-        File logFile1 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-3.txt");
-
-        if (logFile3.exists()) {
-            Utils.delete(logFile3);
-        }
-
-        if (logFile2.exists()) {
-            Utils.delete(logFile2);
-        }
-
-        if (logFile1.exists()) {
-            Utils.delete(logFile1);
-        }
-
-        Date toDeleteAfter = new Date();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(toDeleteAfter);
-        calendar.add(Calendar.DATE, -(getDaysOfLogsToKeep()));
-        toDeleteAfter = calendar.getTime();
-
-        for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
-            try {
-                Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace(Constants
-                        .LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
-
-                if (date.before(toDeleteAfter)) {
-                    Utils.delete(file);
-                    LogManager.debug("Deleting log file " + file.getName());
-                }
-            } catch (java.text.ParseException e) {
-                LogManager.error("Invalid log file " + file.getName());
+    public void clearAllLogs() {
+        try{
+            for(int i = 0; i < 3; i++){
+                Path p = FileSystem.BASE_DIR.resolve(Constants.LAUNCHER_NAME + "-Log-" + i + ".txt");
+                Files.deleteIfExists(p);
             }
-        }
 
-        LogManager.debug("Finished clearing out old logs");
+            try(DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LOGS, this.logFilter())){
+                for(Path file : stream){
+                    if(file.getFileName().equals(LoggingThread.filename)){
+                        continue;
+                    }
+
+                    Files.deleteIfExists(file);
+                }
+            }
+        } catch(Exception e){
+            logStackTrace(e);
+        }
     }
 
-    public void clearAllLogs() {
-        File logFile1 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-3.txt");
-
-        if (logFile3.exists()) {
-            Utils.delete(logFile3);
-        }
-
-        if (logFile2.exists()) {
-            Utils.delete(logFile2);
-        }
-
-        if (logFile1.exists()) {
-            Utils.delete(logFile1);
-        }
-
-        for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
-            if (file.getName().equals(LoggingThread.filename)) {
-                continue; // Skip current log
+    private DirectoryStream.Filter logFilter(){
+        return new DirectoryStream.Filter() {
+            @Override
+            public boolean accept(Object o)
+            throws IOException {
+                Path p = (Path) o;
+                return Files.isRegularFile(p) && p.startsWith(Constants.LAUNCHER_NAME + "-Log_") && p.endsWith(".log");
             }
-
-            Utils.delete(file);
-        }
+        };
     }
 
     public void checkResources() {
-        LogManager.debug("Checking if using old format of resources");
+        /*LogManager.debug("Checking if using old format of resources");
         File indexesDir = new File(this.resourcesDir, "indexes");
         if (!indexesDir.exists() || !indexesDir.isDirectory()) {
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
@@ -521,7 +453,40 @@ public class Settings {
             dialog.start();
 
         }
-        LogManager.debug("Finished checking if using old format of resources");
+        LogManager.debug("Finished checking if using old format of resources");*/
+
+        LogManager.debug("Checking if using old format of resources");
+        Path indexes = FileSystem.RESOURCES.resolve("indexes");
+        if(!Files.exists(indexes) || !Files.isDirectory(indexes)){
+            final ProgressDialog dialog = new ProgressDialog(
+                        Language.INSTANCE.localize("settings.rearrangingresources"),
+                        0, Language.INSTANCE.localize("settings.rearrangingresources"), null
+            );
+            Thread t = new Thread(){
+                @Override
+                public void run(){
+                    Path indexes = FileSystem.RESOURCES.resolve("indexes");
+                    Path virtual = FileSystem.RESOURCES.resolve("virtual");
+                    Path objects = FileSystem.RESOURCES.resolve("objects");
+
+                    Path tmp = FileSystem.TMP.resolve("assets");
+                    Path legacy = virtual.resolve("legacy");
+
+                    try{
+                        Files.createDirectory(tmp);
+                        Utils.moveDirectory(FileSystem.RESOURCES, tmp);
+                        Files.createDirectory(indexes);
+                        Files.createDirectory(objects);
+                        Files.createDirectory(virtual);
+                        Files.createDirectory(legacy);
+                        Utils.moveDirectory(tmp, legacy);
+                        Utils.deleteDirectory(tmp);
+                    } catch(Exception e){
+                        App.settings.logStackTrace(e);
+                    }
+                }
+            };
+        }
     }
 
     public void checkAccountUUIDs() {
@@ -623,13 +588,9 @@ public class Settings {
 
     public boolean launcherHasUpdate() {
         try {
-            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(new File(this.jsonDir, "version.json")
+            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(FileSystem.JSON.resolve("version.json").toFile()
             ), LauncherVersion.class);
-        } catch (JsonSyntaxException e) {
-            this.logStackTrace("Exception when loading latest launcher version!", e);
-        } catch (JsonIOException e) {
-            this.logStackTrace("Exception when loading latest launcher version!", e);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e){
             this.logStackTrace("Exception when loading latest launcher version!", e);
         }
 
@@ -812,25 +773,27 @@ public class Settings {
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
-        App.TASKPOOL.execute(new Runnable() {
+        App.TASKPOOL.execute(
+                                    new Runnable() {
 
-            @Override
-            public void run() {
-                if (hasUpdatedFiles()) {
-                    downloadUpdatedFiles(); // Downloads updated files on the server
-                }
-                checkForLauncherUpdate();
-                loadNews(); // Load the news
-                reloadNewsPanel(); // Reload news panel
-                loadPacks(); // Load the Packs available in the Launcher
-                reloadPacksPanel(); // Reload packs panel
-                loadUsers(); // Load the Testers and Allowed Players for the packs
-                loadInstances(); // Load the users installed Instances
-                reloadInstancesPanel(); // Reload instances panel
-                dialog.setVisible(false); // Remove the dialog
-                dialog.dispose(); // Dispose the dialog
-            }
-        });
+                                        @Override
+                                        public void run() {
+                                            if (hasUpdatedFiles()) {
+                                                downloadUpdatedFiles(); // Downloads updated files on the server
+                                            }
+                                            checkForLauncherUpdate();
+                                            loadNews(); // Load the news
+                                            reloadNewsPanel(); // Reload news panel
+                                            loadPacks(); // Load the Packs available in the Launcher
+                                            reloadPacksPanel(); // Reload packs panel
+                                            loadUsers(); // Load the Testers and Allowed Players for the packs
+                                            loadInstances(); // Load the users installed Instances
+                                            reloadInstancesPanel(); // Reload instances panel
+                                            dialog.setVisible(false); // Remove the dialog
+                                            dialog.dispose(); // Dispose the dialog
+                                        }
+                                    }
+        );
         dialog.setVisible(true);
     }
 
@@ -862,29 +825,17 @@ public class Settings {
      */
     private void downloadExternalLibraries() {
         LogManager.debug("Downloading external libraries");
-
-        FileReader fr = null;
-
-        try {
-            fr = new FileReader(new File(this.jsonDir, "libraries.json"));
-
-            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
-            }.getType();
-
-            this.launcherLibraries = Gsons.DEFAULT.fromJson(fr, type);
-        } catch (Exception e) {
-            logStackTrace(e);
-        } finally {
-            if (fr != null) {
-                try {
-                    fr.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        List<LauncherLibrary> libraries;
+        try{
+            byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("libraries.json"));
+            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>(){}.getType();
+            libraries = Gsons.DEFAULT.fromJson(new String(bits), type);
+        } catch(Exception e){
+            this.logStackTrace(e);
+            libraries = new LinkedList<>();
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(getConcurrentConnections());
+        ExecutorService executor = Utils.generateDownloadExecutor();
 
         for (final LauncherLibrary library : this.launcherLibraries) {
             executor.execute(new Runnable() {
@@ -901,8 +852,6 @@ public class Settings {
             });
         }
         executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
 
         for (LauncherLibrary library : this.launcherLibraries) {
             File file = library.getFile();
@@ -923,19 +872,20 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = {backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
-                resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir, instancesDir,
-                serversDir, tempDir, failedDownloadsDir, logsDir};
-        for (File file : files) {
-            if (!file.exists()) {
-                file.mkdir();
-            }
-            if (!file.isDirectory()) {
-                if (file.delete()) {
-                    file.mkdir();
+        try{
+            for(Field field : FileSystem.class.getDeclaredFields()){
+                Path p = (Path) field.get(null);
+                if(!Files.exists(p)){
+                    Files.createDirectory(p);
                 }
 
+                if(!Files.isDirectory(p)){
+                    Files.delete(p);
+                    Files.createDirectory(p);
+                }
             }
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
     }
 

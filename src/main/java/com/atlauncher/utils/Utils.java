@@ -18,6 +18,7 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
@@ -25,6 +26,8 @@ import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
+import com.atlauncher.utils.walker.CopyDirVisitor;
+import com.atlauncher.utils.walker.DeleteDirVisitor;
 import org.tukaani.xz.XZInputStream;
 
 import javax.crypto.BadPaddingException;
@@ -77,6 +80,11 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.MessageDigest;
@@ -87,6 +95,8 @@ import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
@@ -163,17 +173,17 @@ public class Utils {
         }
     }
 
-    public static File getCoreGracefully() {
+    public static Path getCoreGracefully() {
         if (Utils.isLinux()) {
             try {
-                return new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()
-                        .getSchemeSpecificPart()).getParentFile();
+                return Paths.get(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()
+                                          .getSchemeSpecificPart()).getParent();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
-                return new File(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
+                return Paths.get(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
             }
         } else {
-            return new File(System.getProperty("user.dir"));
+            return Paths.get(System.getProperty("user.dir"));
         }
     }
 
@@ -641,6 +651,36 @@ public class Utils {
         return sb.toString();
     }
 
+    public static ExecutorService generateDownloadExecutor(){
+        return Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+    }
+
+    public static String getSHA1(Path p){
+        if(!Files.exists(p)){
+            LogManager.error("Cannot get SHA-1 hash of " + p + " as it doesn't exist");
+            return "0"; // File doesn't exists so MD5 is nothing
+        } else{
+            StringBuilder builder = new StringBuilder();
+            try{
+                byte[] bits = Files.readAllBytes(p);
+                MessageDigest digest = MessageDigest.getInstance("SHA-1");
+
+                digest.update(bits);
+                bits = digest.digest();
+
+                for (byte bit : bits) {
+                    builder.append(
+                                          Integer.toString((bit & 0xff) + 0x100, 16)
+                                                 .substring(1)
+                    );
+                }
+            } catch(Exception e){
+                App.settings.logStackTrace(e);
+            }
+            return builder.toString();
+        }
+    }
+
     /**
      * Gets the m d5.
      *
@@ -800,10 +840,18 @@ public class Utils {
             delete(sourceLocation);
             return true;
         } else {
-            LogManager.error("Couldn't move directory " + sourceLocation.getAbsolutePath() + " to " + targetLocation
-                    .getAbsolutePath());
+            LogManager.error(
+                                    "Couldn't move directory " + sourceLocation.getAbsolutePath() + " to " + targetLocation
+                                                                                                                     .getAbsolutePath()
+            );
             return false;
         }
+    }
+
+    public static void moveDirectory(Path from, Path to)
+    throws IOException {
+        Files.walkFileTree(from, new CopyDirVisitor(from, to));
+        Files.walkFileTree(from, new DeleteDirVisitor());
     }
 
     /**
@@ -933,6 +981,11 @@ public class Utils {
         }
     }
 
+    public static void deleteDirectory(Path dir)
+    throws IOException{
+        Files.walkFileTree(dir, new DeleteDirVisitor());
+    }
+
     /**
      * Delete.
      *
@@ -1006,22 +1059,22 @@ public class Utils {
         }
     }
 
-    /**
-     * Spread out resource files.
-     *
-     * @param dir the dir
-     */
-    public static void spreadOutResourceFiles(File dir) {
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                spreadOutResourceFiles(file);
-            } else {
-                String hash = getSHA1(file);
-                File saveTo = new File(App.settings.getObjectsAssetsDir(), hash.substring(0, 2) + File.separator +
-                        hash);
-                saveTo.mkdirs();
-                copyFile(file, saveTo, true);
+    public static void spreadOutResourceFiles(Path p){
+        try(DirectoryStream<Path> stream = Files.newDirectoryStream(p)){
+            for(Path file : stream){
+                if(Files.isDirectory(file)){
+                    spreadOutResourceFiles(file);
+                } else{
+                    String hash = Utils.getSHA1(p);
+                    Path save = FileSystem.RESOURCES
+                                        .resolve("assets")
+                                        .resolve(hash.substring(0, 2) + File.separator + hash);
+                    Files.createDirectories(save);
+                    Files.copy(file, save, StandardCopyOption.REPLACE_EXISTING);
+                }
             }
+        } catch(Exception e){
+            App.settings.logStackTrace(e);
         }
     }
 
@@ -1378,21 +1431,6 @@ public class Utils {
             }
         }
         return false;
-    }
-
-    /**
-     * Gets the logs file filter.
-     *
-     * @return the logs file filter
-     */
-    public static FilenameFilter getLogsFileFilter() {
-        return new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                File file = new File(dir, name);
-                return file.isFile() && name.startsWith(Constants.LAUNCHER_NAME + "-Log_") && name.endsWith(".log");
-            }
-        };
     }
 
     /**
