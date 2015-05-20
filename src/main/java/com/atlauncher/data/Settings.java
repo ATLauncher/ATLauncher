@@ -2080,6 +2080,11 @@ public class Settings {
         return Utils.isMac() && new File(baseDir.getParentFile().getParentFile(), "MacOS").exists();
     }
 
+    public boolean isUsingNewMacApp() {
+        return new File(new File(baseDir.getParentFile().getParentFile(), "MacOS"), "universalJavaApplicationStub")
+                .exists();
+    }
+
     public void setInstanceVisbility(Instance instance, boolean collapsed) {
         if (instance != null && account.isReal()) {
             if (collapsed) {
