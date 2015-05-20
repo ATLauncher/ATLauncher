@@ -176,7 +176,8 @@ public class Account implements Serializable {
     public ImageIcon getMinecraftHead() {
         File file = null;
         if (this.isReal()) {
-            file = new File(App.settings.getSkinsDir(), this.minecraftUsername + ".png");
+            file = new File(App.settings.getSkinsDir(), (this.isUUIDNull() ? "default" : this.getUUIDNoDashes()) +
+                    ".png");
             if (!file.exists()) {
                 this.updateSkin(); // Download/update the users skin
             }
@@ -215,7 +216,7 @@ public class Account implements Serializable {
     public ImageIcon getMinecraftSkin() {
         File file = null;
         if (this.isReal()) {
-            file = new File(App.settings.getSkinsDir(), this.minecraftUsername + ".png");
+            file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
             if (!file.exists()) {
                 this.updateSkin(); // Download/update the users skin
             }
@@ -441,7 +442,7 @@ public class Account implements Serializable {
     public void updateSkin() {
         if (!this.skinUpdating) {
             this.skinUpdating = true;
-            final File file = new File(App.settings.getSkinsDir(), this.minecraftUsername + ".png");
+            final File file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
             LogManager.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
                     ".downloadingskin"), 0, Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin",

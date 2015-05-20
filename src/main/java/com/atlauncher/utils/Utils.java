@@ -1284,10 +1284,9 @@ public class Utils {
         StringBuilder response = null;
 
         byte[] contents = Gsons.DEFAULT.toJson(data).getBytes();
-        System.out.println(Gsons.DEFAULT.toJson(data));
 
         URL url = new URL(Constants.API_BASE_URL + path);
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
