@@ -9,3 +9,4 @@ Changelog
 - Fix semi public packs being added/removed not refreshing the packs list
 - Change the Install Just For Me to Enable User Lock and add in a warning popup
 - Change the User Lock option to use only UUID's so that they aren't affected by username changes
+- Add in logging for os/java versions to keep statistics on what is used by users. Can be disabled by disabling logging in the settings. See our Privacy Policy at https://atl.pw/pp for more information on how we use that info
