@@ -219,11 +219,11 @@ public class EditModsDialog extends JDialog {
 
             checkBox = new ModsJCheckBox(mod);
             if (mod.isDisabled()) {
-                checkBox.setBounds(0, (dCount * 20), nameSize + 23, 20);
+                checkBox.setBounds(0, (dCount * 20), checkBox.getPreferredSize().width, 20);
                 disabledMods.add(checkBox);
                 dCount++;
             } else {
-                checkBox.setBounds(0, (eCount * 20), nameSize + 23, 20);
+                checkBox.setBounds(0, (eCount * 20), checkBox.getPreferredSize().width, 20);
                 enabledMods.add(checkBox);
                 eCount++;
             }
