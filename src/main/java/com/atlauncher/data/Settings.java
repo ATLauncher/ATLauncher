@@ -353,14 +353,14 @@ public class Settings {
         if (this.enableServerChecker) {
             this.checkingServersTimer = new Timer();
             this.checkingServersTimer.scheduleAtFixedRate(
-                                                                 new TimerTask() {
-                                                                     @Override
-                                                                     public void run() {
-                                                                         for (MinecraftServer server : checkingServers) {
-                                                                             server.checkServer();
-                                                                         }
-                                                                     }
-                                                                 }, 0, this.getServerCheckerWaitInMilliseconds()
+                    new TimerTask() {
+                        @Override
+                        public void run() {
+                            for (MinecraftServer server : checkingServers) {
+                                server.checkServer();
+                            }
+                        }
+                    }, 0, this.getServerCheckerWaitInMilliseconds()
             );
         }
     }
@@ -392,32 +392,33 @@ public class Settings {
         }
         this.saveProperties();
     }
+
     public void clearAllLogs() {
-        try{
-            for(int i = 0; i < 3; i++){
+        try {
+            for (int i = 0; i < 3; i++) {
                 Path p = FileSystem.BASE_DIR.resolve(Constants.LAUNCHER_NAME + "-Log-" + i + ".txt");
                 Files.deleteIfExists(p);
             }
 
-            try(DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LOGS, this.logFilter())){
-                for(Path file : stream){
-                    if(file.getFileName().equals(LoggingThread.filename)){
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LOGS, this.logFilter())) {
+                for (Path file : stream) {
+                    if (file.getFileName().equals(LoggingThread.filename)) {
                         continue;
                     }
 
                     Files.deleteIfExists(file);
                 }
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             logStackTrace(e);
         }
     }
 
-    private DirectoryStream.Filter logFilter(){
+    private DirectoryStream.Filter logFilter() {
         return new DirectoryStream.Filter() {
             @Override
             public boolean accept(Object o)
-            throws IOException {
+                    throws IOException {
                 Path p = (Path) o;
                 return Files.isRegularFile(p) && p.startsWith(Constants.LAUNCHER_NAME + "-Log_") && p.endsWith(".log");
             }
@@ -457,14 +458,14 @@ public class Settings {
 
         LogManager.debug("Checking if using old format of resources");
         Path indexes = FileSystem.RESOURCES.resolve("indexes");
-        if(!Files.exists(indexes) || !Files.isDirectory(indexes)){
+        if (!Files.exists(indexes) || !Files.isDirectory(indexes)) {
             final ProgressDialog dialog = new ProgressDialog(
-                        Language.INSTANCE.localize("settings.rearrangingresources"),
-                        0, Language.INSTANCE.localize("settings.rearrangingresources"), null
+                    Language.INSTANCE.localize("settings.rearrangingresources"),
+                    0, Language.INSTANCE.localize("settings.rearrangingresources"), null
             );
-            Thread t = new Thread(){
+            Thread t = new Thread() {
                 @Override
-                public void run(){
+                public void run() {
                     Path indexes = FileSystem.RESOURCES.resolve("indexes");
                     Path virtual = FileSystem.RESOURCES.resolve("virtual");
                     Path objects = FileSystem.RESOURCES.resolve("objects");
@@ -472,7 +473,7 @@ public class Settings {
                     Path tmp = FileSystem.TMP.resolve("assets");
                     Path legacy = virtual.resolve("legacy");
 
-                    try{
+                    try {
                         Files.createDirectory(tmp);
                         Utils.moveDirectory(FileSystem.RESOURCES, tmp);
                         Files.createDirectory(indexes);
@@ -481,7 +482,7 @@ public class Settings {
                         Files.createDirectory(legacy);
                         Utils.moveDirectory(tmp, legacy);
                         Utils.deleteDirectory(tmp);
-                    } catch(Exception e){
+                    } catch (Exception e) {
                         App.settings.logStackTrace(e);
                     }
                 }
@@ -590,7 +591,7 @@ public class Settings {
         try {
             this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(FileSystem.JSON.resolve("version.json").toFile()
             ), LauncherVersion.class);
-        } catch (Exception e){
+        } catch (Exception e) {
             this.logStackTrace("Exception when loading latest launcher version!", e);
         }
 
@@ -604,14 +605,14 @@ public class Settings {
     }
 
     public void downloadUpdate() {
-        try{
+        try {
             Path self = Paths.get(App.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             String path = URLDecoder.decode(self.toString(), "UTF-8");
             String target;
             String saveAs = self.getFileName().toString();
-            if(path.contains(".exe")){
+            if (path.contains(".exe")) {
                 target = "exe";
-            } else{
+            } else {
                 target = "jar";
             }
 
@@ -620,7 +621,7 @@ public class Settings {
             Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + target, output.toFile(), null, null, true);
             update.download(false);
             this.runUpdate(path, output.toAbsolutePath().toString());
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
     }
@@ -774,25 +775,25 @@ public class Settings {
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
         App.TASKPOOL.execute(
-                                    new Runnable() {
+                new Runnable() {
 
-                                        @Override
-                                        public void run() {
-                                            if (hasUpdatedFiles()) {
-                                                downloadUpdatedFiles(); // Downloads updated files on the server
-                                            }
-                                            checkForLauncherUpdate();
-                                            loadNews(); // Load the news
-                                            reloadNewsPanel(); // Reload news panel
-                                            loadPacks(); // Load the Packs available in the Launcher
-                                            reloadPacksPanel(); // Reload packs panel
-                                            loadUsers(); // Load the Testers and Allowed Players for the packs
-                                            loadInstances(); // Load the users installed Instances
-                                            reloadInstancesPanel(); // Reload instances panel
-                                            dialog.setVisible(false); // Remove the dialog
-                                            dialog.dispose(); // Dispose the dialog
-                                        }
-                                    }
+                    @Override
+                    public void run() {
+                        if (hasUpdatedFiles()) {
+                            downloadUpdatedFiles(); // Downloads updated files on the server
+                        }
+                        checkForLauncherUpdate();
+                        loadNews(); // Load the news
+                        reloadNewsPanel(); // Reload news panel
+                        loadPacks(); // Load the Packs available in the Launcher
+                        reloadPacksPanel(); // Reload packs panel
+                        loadUsers(); // Load the Testers and Allowed Players for the packs
+                        loadInstances(); // Load the users installed Instances
+                        reloadInstancesPanel(); // Reload instances panel
+                        dialog.setVisible(false); // Remove the dialog
+                        dialog.dispose(); // Dispose the dialog
+                    }
+                }
         );
         dialog.setVisible(true);
     }
@@ -826,11 +827,12 @@ public class Settings {
     private void downloadExternalLibraries() {
         LogManager.debug("Downloading external libraries");
         List<LauncherLibrary> libraries;
-        try{
+        try {
             byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("libraries.json"));
-            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>(){}.getType();
+            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
+            }.getType();
             libraries = Gsons.DEFAULT.fromJson(new String(bits), type);
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
             libraries = new LinkedList<>();
         }
@@ -871,19 +873,19 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        try{
-            for(Field field : FileSystem.class.getDeclaredFields()){
+        try {
+            for (Field field : FileSystem.class.getDeclaredFields()) {
                 Path p = (Path) field.get(null);
-                if(!Files.exists(p)){
+                if (!Files.exists(p)) {
                     Files.createDirectory(p);
                 }
 
-                if(!Files.isDirectory(p)){
+                if (!Files.isDirectory(p)) {
                     Files.delete(p);
                     Files.createDirectory(p);
                 }
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
     }
@@ -921,23 +923,23 @@ public class Settings {
      */
     public void loadServerProperty(boolean userSelectableOnly) {
         LogManager.debug("Loading server to use");
-        try{
+        try {
             this.properties.load(new FileInputStream(FileSystemData.PROPERTIES.toFile()));
             String serv = this.properties.getProperty("server", "Auto");
-            if(this.isServerByName(serv)){
-                if(!userSelectableOnly || server.isUserSelectable()){
+            if (this.isServerByName(serv)) {
+                if (!userSelectableOnly || server.isUserSelectable()) {
                     this.server = this.getServerByName(serv);
                     this.originalServer = this.server;
                 }
 
-                if(this.server == null){
+                if (this.server == null) {
                     LogManager.warn("Server " + serv + " is invalid");
                     this.server = this.getServerByName("Auto");
                     this.originalServer = this.server;
 
                 }
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
         LogManager.debug("Finished loading server to use");
@@ -948,7 +950,7 @@ public class Settings {
      */
     public void loadStartingProperties() {
         try {
-            if(!Files.exists(FileSystemData.PROPERTIES)){
+            if (!Files.exists(FileSystemData.PROPERTIES)) {
                 Files.createFile(FileSystemData.PROPERTIES);
             }
         } catch (IOException e) {
@@ -1393,12 +1395,13 @@ public class Settings {
      */
     private void loadNews() {
         LogManager.debug("Loading news");
-        try{
-            java.lang.reflect.Type type = new TypeToken<List<News>>(){}.getType();
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<News>>() {
+            }.getType();
             byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("news.json"));
             Data.NEWS.clear();
             Data.NEWS.addAll((List<News>) Gsons.DEFAULT.fromJson(new String(bits), type));
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
         LogManager.debug("Finished loading news");
@@ -1411,15 +1414,16 @@ public class Settings {
         LogManager.debug("Loading Minecraft versions");
 
         Data.MINECRAFT_VERSIONS.clear();
-        try{
-            java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>(){}.getType();
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
+            }.getType();
             byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("minecraftversions.json"));
             List<MinecraftVersion> versions = Gsons.DEFAULT.fromJson(new String(bits), type);
 
-            for(MinecraftVersion version : versions){
+            for (MinecraftVersion version : versions) {
                 Data.MINECRAFT_VERSIONS.put(version.getVersion(), version);
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
 
@@ -1444,12 +1448,13 @@ public class Settings {
      */
     private void loadPacks() {
         LogManager.debug("Loading packs");
-        try{
-            java.lang.reflect.Type type = new TypeToken<List<Pack>>(){}.getType();
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
+            }.getType();
             byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("packs.json"));
             Data.PACKS.clear();
             Data.PACKS.addAll((List<Pack>) Gsons.DEFAULT.fromJson(new String(bits), type));
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
         LogManager.debug("Finished loading packs");
@@ -1486,60 +1491,60 @@ public class Settings {
      */
     private void loadInstances() {
         LogManager.debug("Loading instances");
-        try{
+        try {
             Data.INSTANCES.clear();
-            if(Files.exists(FileSystemData.INSTANCES_DATA)){
-                try(ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.INSTANCES_DATA.toFile()))){
+            if (Files.exists(FileSystemData.INSTANCES_DATA)) {
+                try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.INSTANCES_DATA.toFile()))) {
                     Object obj;
-                    while((obj = oin.readObject()) != null){
+                    while ((obj = oin.readObject()) != null) {
                         Instance instance = (Instance) obj;
                         Path dir = FileSystem.INSTANCES.resolve(instance.getSafeName());
-                        if(!Files.exists(dir)){
+                        if (!Files.exists(dir)) {
                             continue;
                         }
 
-                        if(!instance.hasBeenConverted()){
+                        if (!instance.hasBeenConverted()) {
                             LogManager.warn("Instance " + instance.getName() + " is being converted, this is normal and should only appear once");
                             instance.convert();
                         }
 
-                        if(!Files.exists(instance.root.resolve("disabledmods"))){
+                        if (!Files.exists(instance.root.resolve("disabledmods"))) {
                             Files.createDirectory(instance.root.resolve("disabledmods"));
                         }
 
                         Data.INSTANCES.add(instance);
-                        if(this.isPackByName(instance.getPackName())){
+                        if (this.isPackByName(instance.getPackName())) {
                             instance.setRealPack(this.getPackByName(instance.getPackName()));
                         }
                     }
-                } catch(EOFException ex){
+                } catch (EOFException ex) {
                     // Fallthrough
                 }
 
                 this.saveInstances();
                 Files.delete(FileSystemData.INSTANCES_DATA);
-            } else{
-                try(DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.INSTANCES)){
-                    for(Path file : stream){
+            } else {
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.INSTANCES)) {
+                    for (Path file : stream) {
                         byte[] bits = Files.readAllBytes(file);
                         Instance instance;
-                        try{
+                        try {
                             instance = Gsons.DEFAULT.fromJson(new String(bits), Instance.class);
-                        } catch(Exception e){
+                        } catch (Exception e) {
                             this.logStackTrace("Failed to load instance in the folder " + file.getFileName(), e);
                             continue;
                         }
 
-                        if(instance == null){
+                        if (instance == null) {
                             LogManager.error("Failed to load instance in folder " + file.getFileName());
                             continue;
                         }
 
-                        if(!Files.exists(instance.root.resolve("disabledmods"))){
+                        if (!Files.exists(instance.root.resolve("disabledmods"))) {
                             Files.createDirectory(instance.root.resolve("disabledmods"));
                         }
 
-                        if(this.isPackByName(instance.getPackName())){
+                        if (this.isPackByName(instance.getPackName())) {
                             instance.setRealPack(this.getPackByName(instance.getPackName()));
                         }
 
@@ -1547,7 +1552,7 @@ public class Settings {
                     }
                 }
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
         LogManager.debug("Finished loading instances");
@@ -1590,17 +1595,17 @@ public class Settings {
     private void loadAccounts() {
         LogManager.debug("Loading Accounts");
         Data.ACCOUNTS.clear();
-        if(Files.exists(FileSystemData.USER_DATA)){
-            try(ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.USER_DATA.toFile()))){
+        if (Files.exists(FileSystemData.USER_DATA)) {
+            try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.USER_DATA.toFile()))) {
                 Object obj;
-                while((obj = oin.readObject()) != null){
-                    if(obj instanceof Account){
+                while ((obj = oin.readObject()) != null) {
+                    if (obj instanceof Account) {
                         Data.ACCOUNTS.add((Account) obj);
                     }
                 }
-            } catch(EOFException e){
+            } catch (EOFException e) {
                 // Fallthrough
-            } catch(Exception e){
+            } catch (Exception e) {
                 this.logStackTrace("Exception while trying to read accounts from file", e);
             }
         }
@@ -1608,11 +1613,11 @@ public class Settings {
     }
 
     public void saveAccounts() {
-        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FileSystemData.USER_DATA.toFile()))){
-            for(Account acc : Data.ACCOUNTS){
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FileSystemData.USER_DATA.toFile()))) {
+            for (Account acc : Data.ACCOUNTS) {
                 oos.writeObject(acc);
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
     }
@@ -1631,26 +1636,26 @@ public class Settings {
      */
     private void loadCheckingServers() {
         LogManager.debug("Loading servers to check");
-        try{
-            if(Files.exists(FileSystemData.CHECKING_SERVERS)){
+        try {
+            if (Files.exists(FileSystemData.CHECKING_SERVERS)) {
                 byte[] bits = Files.readAllBytes(FileSystemData.CHECKING_SERVERS);
-                Data.CHECKING_SERVERS.addAll((List<MinecraftServer>)Gsons.DEFAULT.fromJson(new String(bits), MinecraftServer.LIST_TYPE));
+                Data.CHECKING_SERVERS.addAll((List<MinecraftServer>) Gsons.DEFAULT.fromJson(new String(bits), MinecraftServer.LIST_TYPE));
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
         LogManager.debug("Finished loading servers to check");
     }
 
     public void saveCheckingServers() {
-        try{
-            if(!Files.exists(FileSystemData.CHECKING_SERVERS)){
+        try {
+            if (!Files.exists(FileSystemData.CHECKING_SERVERS)) {
                 Files.createFile(FileSystemData.CHECKING_SERVERS);
             }
 
             String data = Gsons.DEFAULT.toJson(Data.CHECKING_SERVERS);
             Files.write(FileSystemData.CHECKING_SERVERS, data.getBytes(), StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
     }
@@ -1737,10 +1742,10 @@ public class Settings {
 
     public boolean isUsingMacApp() {
         return Utils.isMac() &&
-               Files.exists(
-                                   FileSystem.BASE_DIR.getParent()
-                                                      .resolve("MacOS")
-               );
+                Files.exists(
+                        FileSystem.BASE_DIR.getParent()
+                                .resolve("MacOS")
+                );
     }
 
     public boolean isUsingNewMacApp() {
@@ -1912,13 +1917,13 @@ public class Settings {
         return news;
     }
 
-    private DirectoryStream.Filter<Path> languagesFilter(){
+    private DirectoryStream.Filter<Path> languagesFilter() {
         return new DirectoryStream.Filter<Path>() {
             @Override
             public boolean accept(Path o)
-            throws IOException {
+                    throws IOException {
                 return Files.isRegularFile(o) &&
-                       o.endsWith(".lang");
+                        o.endsWith(".lang");
             }
         };
     }
@@ -1930,12 +1935,12 @@ public class Settings {
      */
     public List<String> getLanguages() {
         List<String> langs = new LinkedList<>();
-        try(DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LANGUAGES, this.languagesFilter())){
-            for(Path file : stream){
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LANGUAGES, this.languagesFilter())) {
+            for (Path file : stream) {
                 String name = file.getFileName().toString();
                 langs.add(name.substring(0, name.lastIndexOf(".")));
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
         return langs;
@@ -2728,9 +2733,9 @@ public class Settings {
 
     public Path getThemeFile() {
         Path theme = FileSystem.THEMES.resolve(this.theme + ".zip");
-        if(Files.exists(theme)){
+        if (Files.exists(theme)) {
             return theme;
-        } else{
+        } else {
             return null;
         }
     }

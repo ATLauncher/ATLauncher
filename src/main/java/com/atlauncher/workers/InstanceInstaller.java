@@ -18,6 +18,7 @@
 package com.atlauncher.workers;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.APIResponse;
@@ -57,6 +58,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -102,7 +105,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private int downloadedBytes = 0; // Total number of bytes downloaded
     private Instance instance = null;
     private List<DisableableMod> modsInstalled;
-    private List<File> serverLibraries;
+    private List<Path> serverLibraries;
     private List<String> forgeLibraries = new ArrayList<String>();
 
     public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean
@@ -115,7 +118,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.shareCode = shareCode;
         this.showModsChooser = showModsChooser;
         if (isServer) {
-            serverLibraries = new ArrayList<File>();
+            serverLibraries = new ArrayList<Path>();
         }
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapterFactory(new EnumTypeAdapterFactory());
@@ -153,98 +156,95 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.instanceName.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    public File getRootDirectory() {
+    public Path getRootDirectory() {
         if (isServer) {
-            return new File(App.settings.getServersDir(), pack.getSafeName() + "_" + version.getSafeVersion());
+            return FileSystem.SERVERS.resolve(pack.getSafeName() + "_" + version.getSafeVersion());
         }
-        return new File(App.settings.getInstancesDir(), getInstanceSafeName());
+        return FileSystem.INSTANCES.resolve(getInstanceSafeName());
     }
 
-    public File getTempDirectory() {
-        return new File(App.settings.getTempDir(), pack.getSafeName() + "_" + version.getSafeVersion());
+    public Path getTempDirectory() {
+        return FileSystem.TMP.resolve(pack.getSafeName() + "_" + version.getSafeVersion());
     }
 
-    public File getTempJarDirectory() {
-        return new File(App.settings.getTempDir(), pack.getSafeName() + "_" + version.getSafeVersion() + "_JarTemp");
+    public Path getTempJarDirectory() {
+        return FileSystem.TMP.resolve(pack.getSafeName() + "_" + version.getSafeVersion() + "_JarTemp");
     }
 
-    public File getTempActionsDirectory() {
-        return new File(App.settings.getTempDir(), pack.getSafeName() + "_" + version.getSafeVersion() +
-                "_ActionsTemp");
+    public Path getTempActionsDirectory() {
+        return FileSystem.TMP.resolve(pack.getSafeName() + "_" + version.getSafeVersion() + "_ActionsTemp");
     }
 
-    public File getTempTexturePackDirectory() {
-        return new File(App.settings.getTempDir(), pack.getSafeName() + "_" + version.getSafeVersion() +
-                "_TexturePackTemp");
+    public Path getTempTexturePackDirectory() {
+        return FileSystem.TMP.resolve(pack.getSafeName() + "_" + version.getSafeVersion() + "_TexturePackTemp");
     }
 
-    public File getTempResourcePackDirectory() {
-        return new File(App.settings.getTempDir(), pack.getSafeName() + "_" + version.getSafeVersion() +
-                "_ResourcePackTemp");
+    public Path getTempResourcePackDirectory() {
+        return FileSystem.TMP.resolve(pack.getSafeName() + "_" + version.getSafeVersion() + "_ResourcePackTemp");
     }
 
-    public File getLibrariesDirectory() {
-        return new File(getRootDirectory(), "libraries");
+    public Path getLibrariesDirectory() {
+        return this.getRootDirectory().resolve("libraries");
     }
 
-    public File getTexturePacksDirectory() {
-        return new File(getRootDirectory(), "texturepacks");
+    public Path getTexturePacksDirectory() {
+        return this.getRootDirectory().resolve("texturepacks");
     }
 
-    public File getShaderPacksDirectory() {
-        return new File(getRootDirectory(), "shaderpacks");
+    public Path getShaderPacksDirectory() {
+        return this.getRootDirectory().resolve("shaderpacks");
     }
 
-    public File getResourcePacksDirectory() {
-        return new File(getRootDirectory(), "resourcepacks");
+    public Path getResourcePacksDirectory() {
+        return this.getRootDirectory().resolve("resourcepacks");
     }
 
-    public File getConfigDirectory() {
-        return new File(getRootDirectory(), "config");
+    public Path getConfigDirectory() {
+        return this.getRootDirectory().resolve("config");
     }
 
-    public File getModsDirectory() {
-        return new File(getRootDirectory(), "mods");
+    public Path getModsDirectory() {
+        return this.getRootDirectory().resolve("mods");
     }
 
-    public File getIC2LibDirectory() {
-        return new File(getModsDirectory(), "ic2");
+    public Path getIC2LibDirectory() {
+        return this.getModsDirectory().resolve("ic2");
     }
 
-    public File getDenLibDirectory() {
-        return new File(getModsDirectory(), "denlib");
+    public Path getDenLibDirectory() {
+        return this.getModsDirectory().resolve("denlib");
     }
 
-    public File getFlanDirectory() {
-        return new File(getRootDirectory(), "Flan");
+    public Path getFlanDirectory() {
+        return this.getRootDirectory().resolve("Flan");
     }
 
-    public File getDependencyDirectory() {
-        return new File(getModsDirectory(), this.version.getMinecraftVersion().getVersion());
+    public Path getDependencyDirectory() {
+        return this.getModsDirectory().resolve(this.version.getMinecraftVersion().getVersion());
     }
 
-    public File getPluginsDirectory() {
-        return new File(getRootDirectory(), "plugins");
+    public Path getPluginsDirectory() {
+        return this.getRootDirectory().resolve("plugins");
     }
 
-    public File getCoreModsDirectory() {
-        return new File(getRootDirectory(), "coremods");
+    public Path getCoreModsDirectory() {
+        return this.getRootDirectory().resolve("coremods");
     }
 
-    public File getJarModsDirectory() {
-        return new File(getRootDirectory(), "jarmods");
+    public Path getJarModsDirectory() {
+        return this.getRootDirectory().resolve("jarmods");
     }
 
-    public File getDisabledModsDirectory() {
-        return new File(getRootDirectory(), "disabledmods");
+    public Path getDisabledModsDirectory() {
+        return this.getRootDirectory().resolve("disabledmods");
     }
 
-    public File getBinDirectory() {
-        return new File(getRootDirectory(), "bin");
+    public Path getBinDirectory() {
+        return this.getRootDirectory().resolve("bin");
     }
 
-    public File getNativesDirectory() {
-        return new File(getBinDirectory(), "natives");
+    public Path getNativesDirectory() {
+        return this.getBinDirectory().resolve("natives");
     }
 
     public boolean hasActions() {
@@ -255,12 +255,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.version;
     }
 
-    public File getMinecraftJar() {
+    public Path getMinecraftJar() {
         if (isServer) {
-            return new File(getRootDirectory(), "minecraft_server." + this.version.getMinecraftVersion().getVersion()
+            return this.getRootDirectory().resolve("minecraft_server." + this.version.getMinecraftVersion().getVersion()
                     + ".jar");
         }
-        return new File(getBinDirectory(), "minecraft.jar");
+        return this.getBinDirectory().resolve("minecraft.jar");
     }
 
     public String getJarOrder() {
@@ -376,31 +376,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void makeDirectories() {
         if (isReinstall || isServer) {
             // We're reinstalling or installing a server so delete these folders
-            Utils.delete(getBinDirectory());
-            Utils.delete(getConfigDirectory());
+            Utils.deleteContents(this.getBinDirectory());
+            Utils.deleteContents(this.getConfigDirectory());
             if (instance != null && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion()
                     .getVersion()) && instance.hasCustomMods()) {
-                Utils.deleteWithFilter(getModsDirectory(), instance.getCustomMods(Type.mods));
+                Utils.deleteWithFilter(this.getModsDirectory(), instance.getCustomMods(Type.mods));
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
-                    Utils.deleteWithFilter(getCoreModsDirectory(), instance.getCustomMods(Type.coremods));
+                    Utils.deleteWithFilter(this.getCoreModsDirectory(), instance.getCustomMods(Type.coremods));
                 }
                 if (isReinstall) {
-                    Utils.deleteWithFilter(getJarModsDirectory(), instance.getCustomMods(Type.jar));
+                    Utils.deleteWithFilter(this.getJarModsDirectory(), instance.getCustomMods(Type.jar));
                 }
             } else {
-                Utils.delete(getModsDirectory());
+                Utils.delete(this.getModsDirectory());
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
-                    Utils.delete(getCoreModsDirectory());
+                    Utils.delete(this.getCoreModsDirectory());
                 }
                 if (isReinstall) {
-                    Utils.delete(getJarModsDirectory()); // Only delete if it's not a server
+                    Utils.delete(this.getJarModsDirectory()); // Only delete if it's not a server
                 }
             }
             if (isReinstall) {
-                Utils.delete(new File(getTexturePacksDirectory(), "TexturePack.zip"));
-                Utils.delete(new File(getResourcePacksDirectory(), "ResourcePack.zip"));
+                Utils.deleteContents(this.getTexturePacksDirectory().resolve("TexturePack.zip"));
+                Utils.deleteContents(this.getResourcePacksDirectory().resolve("ResourcePack.zip"));
             } else {
-                Utils.delete(getLibrariesDirectory()); // Only delete if it's a server
+                Utils.deleteContents(this.getLibrariesDirectory()); // Only delete if it's a server
             }
             if (this.instance != null) {
                 if (this.pack.hasDeleteArguments(true, this.version.getVersion())) {
@@ -421,19 +421,30 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         }
-        File[] directories;
+
+        Path[] directories;
         if (isServer) {
-            directories = new File[]{getRootDirectory(), getModsDirectory(), getTempDirectory(),
-                    getLibrariesDirectory()};
+            directories = new Path[]{this.getRootDirectory(), this.getModsDirectory(), this.getTempDirectory(),
+                    this.getLibrariesDirectory()};
         } else {
-            directories = new File[]{getRootDirectory(), getModsDirectory(), getDisabledModsDirectory(),
-                    getTempDirectory(), getJarModsDirectory(), getBinDirectory(), getNativesDirectory()};
+            directories = new Path[]{this.getRootDirectory(), this.getModsDirectory(), this.getDisabledModsDirectory(),
+                    this.getTempDirectory(), this.getJarModsDirectory(), this.getBinDirectory(), this.getNativesDirectory()};
         }
-        for (File directory : directories) {
-            directory.mkdir();
+
+        for (Path directory : directories) {
+            try {
+                Files.createDirectory(directory);
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+            }
         }
+
         if (this.version.getMinecraftVersion().usesCoreMods()) {
-            getCoreModsDirectory().mkdir();
+            try {
+                Files.createDirectory(this.getCoreModsDirectory());
+            } catch (IOException e) {
+                App.settings.logStackTrace(e);
+            }
         }
     }
 
@@ -444,8 +455,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (mod.getDownload() == DownloadType.server) {
                 Downloadable downloadable;
 
-                downloadable = new Downloadable(mod.getUrl(), new File(App.settings.getDownloadsDir(), mod.getFile())
-                        , mod.getMD5(), mod.getFilesize(), this, true);
+                downloadable = new Downloadable(mod.getUrl(), FileSystem.DOWNLOADS.resolve(mod.getFile()), mod.getMD5(),
+                        mod.getFilesize(), this, true);
 
                 mods.add(downloadable);
             }
@@ -634,16 +645,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgressUnknown();
         if (!isServer) {
             for (String libraryFile : forgeLibraries) {
-                File library = new File(App.settings.getLibrariesDir(), libraryFile);
-                if (library.exists()) {
-                    Utils.copyFile(library, getBinDirectory());
+                Path library = FileSystem.LIBRARIES.resolve(libraryFile);
+                if (Files.exists(library)) {
+                    Utils.copyFile(library, this.getBinDirectory());
                 } else {
-                    LogManager.error("Cannot install instance because the library file " + library.getAbsolutePath()
-                            + " wasn't found!");
+                    LogManager.error("Cannot install instance because the library file " + library + " wasn't found!");
                     this.cancel(true);
                     return;
                 }
-                libraryNamesAdded.add(library.getName().substring(0, library.getName().lastIndexOf("-")));
+                libraryNamesAdded.add(library.getFileName().toString().substring(0, library.getFileName().toString().lastIndexOf("-")));
             }
             for (Library library : this.version.getMinecraftVersion().getMojangVersion().getLibraries()) {
                 if (library.shouldInstall()) {
@@ -653,10 +663,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                     if (library.getFile().exists()) {
                         if (library.shouldExtract()) {
-                            Utils.unzip(library.getFile(), getNativesDirectory(), library.getExtractRule());
+                            Utils.unzip(library.getFile(), this.getNativesDirectory(), library.getExtractRule());
                         } else {
-                            File dirToInstall = getBinDirectory();
-                            Utils.copyFile(library.getFile(), getBinDirectory());
+                            Utils.copyFile(library.getFile(), this.getBinDirectory());
                         }
                     } else {
                         LogManager.error("Cannot install instance because the library file " + library.getFile()
@@ -667,22 +676,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         }
-        File toCopy, copyTo;
+        Path toCopy, copyTo;
         boolean withFilename = false;
         if (isServer) {
-            toCopy = new File(App.settings.getJarsDir(), "minecraft_server." + this.version.getMinecraftVersion()
+            toCopy = FileSystem.JARS.resolve("minecraft_server." + this.version.getMinecraftVersion()
                     .getVersion() + ".jar");
-            copyTo = getRootDirectory();
+            copyTo = this.getRootDirectory();
         } else {
-            toCopy = new File(App.settings.getJarsDir(), this.version.getMinecraftVersion().getVersion() + ".jar");
-            copyTo = new File(getBinDirectory(), "minecraft.jar");
+            toCopy = FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar");
+            copyTo = this.getBinDirectory().resolve("minecraft.jar");
             withFilename = true;
         }
-        if (toCopy.exists()) {
+        if (Files.exists(toCopy)) {
             Utils.copyFile(toCopy, copyTo, withFilename);
         } else {
-            LogManager.error("Cannot install instance because the library file " + toCopy.getAbsolutePath() + " " +
-                    "wasn't found!");
+            LogManager.error("Cannot install instance because the library file " + toCopy + " wasn't found!");
             this.cancel(true);
             return;
         }
@@ -810,9 +818,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (!library.forServer()) {
                     continue;
                 }
-                serverLibraries.add(new File(getLibrariesDirectory(), library.getServer()));
+                serverLibraries.add(this.getLibrariesDirectory().resolve(library.getServer()));
             }
-            downloadTo = new File(App.settings.getLibrariesDir(), library.getFile());
+            downloadTo = FileSystem.LIBRARIES.resolve(library.getFile());
             if (library.getDownloadType() == DownloadType.server) {
                 libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), library.getFilesize(),
                         this, true));
@@ -857,20 +865,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (isServer) {
             libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version
                     .getMinecraftVersion().getVersion() + "/minecraft_server." + this.version.getMinecraftVersion()
-                    .getVersion() + ".jar"), new File(App.settings.getJarsDir(), "minecraft_server." + this.version
+                    .getVersion() + ".jar"), FileSystem.JARS.resolve("minecraft_server." + this.version
                     .getMinecraftVersion().getVersion() + ".jar"), null, this, false));
         } else {
             libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version
                     .getMinecraftVersion().getVersion() + "/" + this.version.getMinecraftVersion().getVersion() + "" +
-                    ".jar"), new File(App.settings.getJarsDir(), this.version.getMinecraftVersion().getVersion() + "" +
-                    ".jar"), null, this, false));
+                    ".jar"), FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar"), null, this, false));
         }
         return libraries;
     }
 
     public void deleteMetaInf() {
-        File inputFile = getMinecraftJar();
-        File outputTmpFile = new File(App.settings.getTempDir(), pack.getSafeName() + "-minecraft.jar");
+        Path inputFile = this.getMinecraftJar();
+        Path outputTmpFile = FileSystem.TMP.resolve(pack.getSafeName() + "-minecraft.jar");
         try {
             JarInputStream input = new JarInputStream(new FileInputStream(inputFile));
             JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile));
@@ -902,7 +909,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public void configurePack() {
         // Download the configs zip file
         fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
-        File configs = new File(App.settings.getTempDir(), "Configs.zip");
+        Path configs = FileSystem.TMP.resolve("Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
         Downloadable configsDownload = new Downloadable(path, configs, null, this, true);
         this.totalBytes = configsDownload.getFilesize();
@@ -912,7 +919,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         // Extract the configs zip file
         fireSubProgressUnknown();
         fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
-        Utils.unzip(configs, getRootDirectory());
+        Utils.unzip(configs, this.getRootDirectory());
         Utils.delete(configs);
     }
 
@@ -1039,42 +1046,42 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void backupSelectFiles() {
-        File reis = new File(getModsDirectory(), "rei_minimap");
+        Path reis = this.getModsDirectory().resolve("rei_minimap");
         if (reis.exists() && reis.isDirectory()) {
             if (Utils.copyDirectory(reis, getTempDirectory(), true)) {
                 savedReis = true;
             }
         }
 
-        File zans = new File(getModsDirectory(), "VoxelMods");
+        Path zans = this.getModsDirectory().resolve("VoxelMods");
         if (zans.exists() && zans.isDirectory()) {
             if (Utils.copyDirectory(zans, getTempDirectory(), true)) {
                 savedZans = true;
             }
         }
 
-        File neiCfg = new File(getConfigDirectory(), "NEI.cfg");
+        Path neiCfg = this.getConfigDirectory().resolve("NEI.cfg");
         if (neiCfg.exists() && neiCfg.isFile()) {
             if (Utils.copyFile(neiCfg, getTempDirectory())) {
                 savedNEICfg = true;
             }
         }
 
-        File optionsTXT = new File(getRootDirectory(), "options.txt");
+        Path optionsTXT = this.getRootDirectory().resolve("options.txt");
         if (optionsTXT.exists() && optionsTXT.isFile()) {
             if (Utils.copyFile(optionsTXT, getTempDirectory())) {
                 savedOptionsTxt = true;
             }
         }
 
-        File serversDAT = new File(getRootDirectory(), "servers.dat");
+        Path serversDAT = this.getRootDirectory().resolve("servers.dat");
         if (serversDAT.exists() && serversDAT.isFile()) {
             if (Utils.copyFile(serversDAT, getTempDirectory())) {
                 savedServersDat = true;
             }
         }
 
-        File portalGunSounds = new File(getModsDirectory(), "PortalGunSounds.pak");
+        Path portalGunSounds = this.getModsDirectory().resolve("PortalGunSounds.pak");
         if (portalGunSounds.exists() && portalGunSounds.isFile()) {
             savedPortalGunSounds = true;
             Utils.copyFile(portalGunSounds, getTempDirectory());
@@ -1083,30 +1090,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void restoreSelectFiles() {
         if (savedReis) {
-            Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"), new File(getModsDirectory(),
+            Utils.copyDirectory(this.getTempDirectory().resolve("rei_minimap"), this.getModsDirectory().resolve(
                     "rei_minimap"));
         }
 
         if (savedZans) {
-            Utils.copyDirectory(new File(getTempDirectory(), "VoxelMods"), new File(getModsDirectory(), "VoxelMods"));
+            Utils.copyDirectory(this.getTempDirectory().resolve("VoxelMods"), this.getModsDirectory().resolve(
+                    "VoxelMods"));
         }
 
         if (savedNEICfg) {
-            Utils.copyFile(new File(getTempDirectory(), "NEI.cfg"), new File(getConfigDirectory(), "NEI.cfg"), true);
+            Utils.copyFile(this.getTempDirectory().resolve("NEI.cfg"), this.getConfigDirectory().resolve("NEI.cfg"), true);
         }
 
         if (savedOptionsTxt) {
-            Utils.copyFile(new File(getTempDirectory(), "options.txt"), new File(getRootDirectory(), "options.txt"),
+            Utils.copyFile(this.getTempDirectory().resolve("options.txt"), this.getRootDirectory().resolve("options.txt"),
                     true);
         }
 
         if (savedServersDat) {
-            Utils.copyFile(new File(getTempDirectory(), "servers.dat"), new File(getRootDirectory(), "servers.dat"),
+            Utils.copyFile(this.getTempDirectory().resolve("servers.dat"), this.getRootDirectory().resolve("servers.dat"),
                     true);
         }
 
         if (savedPortalGunSounds) {
-            Utils.copyFile(new File(getTempDirectory(), "PortalGunSounds.pak"), new File(getModsDirectory(),
+            Utils.copyFile(this.getTempDirectory().resolve("PortalGunSounds.pak"), this.getModsDirectory().resolve(
                     "PortalGunSounds.pak"), true);
         }
     }
@@ -1182,7 +1190,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
         this.instanceIsCorrupt = true; // From this point on the instance is corrupt
-        getTempDirectory().mkdirs(); // Make the temp directory
+        Files.createDirectory(this.getTempDirectory()); // Make the temp directory
         backupSelectFiles();
         makeDirectories();
         addPercent(5);
@@ -1203,9 +1211,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             return false;
         }
         if (this.isServer) {
-            for (File file : serverLibraries) {
-                file.mkdirs();
-                Utils.copyFile(new File(App.settings.getLibrariesDir(), file.getName()), file, true);
+            for (Path path : serverLibraries) {
+                Files.createDirectory(path);
+                Utils.copyFile(FileSystem.LIBRARIES.resolve(file.getName()), file, true);
             }
         }
         addPercent(5);
@@ -1244,18 +1252,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (extractedTexturePack) {
             fireTask(Language.INSTANCE.localize("instance.zippingtexturepackfiles"));
             fireSubProgressUnknown();
-            if (!getTexturePacksDirectory().exists()) {
-                getTexturePacksDirectory().mkdir();
+            if (!Files.exists(this.getTexturePacksDirectory())) {
+                Files.createDirectory(this.getTexturePacksDirectory());
             }
-            Utils.zip(getTempTexturePackDirectory(), new File(getTexturePacksDirectory(), "TexturePack.zip"));
+            Utils.zip(getTempTexturePackDirectory(), this.getTexturePacksDirectory().resolve("TexturePack.zip"));
         }
         if (extractedResourcePack) {
             fireTask(Language.INSTANCE.localize("instance.zippingresourcepackfiles"));
             fireSubProgressUnknown();
-            if (!getResourcePacksDirectory().exists()) {
-                getResourcePacksDirectory().mkdir();
+            if (!Files.exists(this.getResourcePacksDirectory())) {
+                Files.createDirectory(this.getResourcePacksDirectory());
             }
-            Utils.zip(getTempResourcePackDirectory(), new File(getResourcePacksDirectory(), "ResourcePack.zip"));
+            Utils.zip(getTempResourcePackDirectory(), this.getResourcePacksDirectory().resolve("ResourcePack.zip"));
         }
         if (isCancelled()) {
             return false;
@@ -1275,12 +1283,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         restoreSelectFiles();
         if (isServer) {
-            File batFile = new File(getRootDirectory(), "LaunchServer.bat");
-            File shFile = new File(getRootDirectory(), "LaunchServer.sh");
-            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"), batFile, "%%SERVERJAR%%",
+            File batFile = this.getRootDirectory().resolve("LaunchServer.bat").toFile();
+            File shFile = this.getRootDirectory().resolve("LaunchServer.sh").toFile();
+            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.bat"), batFile, "%%SERVERJAR%%",
                     getServerJar());
-            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.sh"), shFile, "%%SERVERJAR%%",
-                    getServerJar());
+            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.sh"), shFile, "%%SERVERJAR%%", getServerJar());
             batFile.setExecutable(true);
             shFile.setExecutable(true);
         }
