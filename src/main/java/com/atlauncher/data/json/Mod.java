@@ -18,6 +18,7 @@
 package com.atlauncher.data.json;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Downloadable;
@@ -30,6 +31,9 @@ import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 @Json
@@ -384,13 +388,13 @@ public class Mod {
                                 .INSTANCE.localize("instance.ivedownloaded")};
                         retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
                                 (Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
+                                ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
                                         (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>" +
-                                        Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
-                                                : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
-                                                .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
-                                                .getUsersDownloadsDir()))), Language.INSTANCE.localize("common.downloading")
+                                Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                        : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
+                                        .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
+                                        .getUsersDownloadsDir()))), Language.INSTANCE.localize("common.downloading")
                                 + " " +
                                 (serverFile == null ? (isFilePattern() ? getName() : getFile()) : (isFilePattern() ?
                                         getName() : getServerFile())), JOptionPane.DEFAULT_OPTION, JOptionPane
@@ -525,12 +529,12 @@ public class Mod {
                 Utils.openBrowser(this.serverUrl);
                 String[] options = new String[]{Language.INSTANCE.localize("instance.ivedownloaded")};
                 int retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
-                                (Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
-                                        "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
-                                                : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App
-                                                .settings.getUsersDownloadsDir())), Language.INSTANCE.localize("common" + "" +
+                        (Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
+                                "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                        : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App
+                                        .settings.getUsersDownloadsDir())), Language.INSTANCE.localize("common" + "" +
                                 ".downloading") + " " + (serverFile == null ? getFile() : getServerFile()),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 if (retValue == JOptionPane.CLOSED_OPTION) {
@@ -609,15 +613,17 @@ public class Mod {
     }
 
     public void install(InstanceInstaller installer) {
-        File fileLocation;
+        Path fileLocation;
         ModType thisType;
+
         if (installer.isServer() && this.serverUrl != null) {
-            fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
+            fileLocation = FileSystem.DOWNLOADS.resolve(getServerFile());
             thisType = this.serverType;
         } else {
-            fileLocation = new File(App.settings.getDownloadsDir(), getFile());
+            fileLocation = FileSystem.DOWNLOADS.resolve(getFile());
             thisType = this.type;
         }
+
         switch (thisType) {
             case jar:
             case forge:
@@ -628,6 +634,7 @@ public class Mod {
                     Utils.unzip(fileLocation, installer.getTempJarDirectory());
                     break;
                 }
+
                 Utils.copyFile(fileLocation, installer.getJarModsDirectory());
                 installer.addToJarOrder(getFile());
                 break;
@@ -638,36 +645,56 @@ public class Mod {
                 }
                 break;
             case texturepack:
-                if (!installer.getTexturePacksDirectory().exists()) {
-                    installer.getTexturePacksDirectory().mkdir();
+                if (!Files.exists(installer.getTexturePacksDirectory())) {
+                    try {
+                        Files.createDirectory(installer.getTexturePacksDirectory());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating folder " + installer.getTexturePacksDirectory(), e);
+                    }
                 }
+
                 Utils.copyFile(fileLocation, installer.getTexturePacksDirectory());
                 break;
             case resourcepack:
-                if (!installer.getResourcePacksDirectory().exists()) {
-                    installer.getResourcePacksDirectory().mkdir();
+                if (!Files.exists(installer.getResourcePacksDirectory())) {
+                    try {
+                        Files.createDirectory(installer.getResourcePacksDirectory());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating folder " + installer.getResourcePacksDirectory(), e);
+                    }
                 }
+
                 Utils.copyFile(fileLocation, installer.getResourcePacksDirectory());
                 break;
             case texturepackextract:
-                if (!installer.getTexturePacksDirectory().exists()) {
-                    installer.getTexturePacksDirectory().mkdir();
+                if (!Files.exists(installer.getTexturePacksDirectory())) {
+                    try {
+                        Files.createDirectory(installer.getTexturePacksDirectory());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating folder " + installer.getTexturePacksDirectory(), e);
+                    }
                 }
+
                 Utils.unzip(fileLocation, installer.getTempTexturePackDirectory());
                 installer.setTexturePackExtracted();
                 break;
             case resourcepackextract:
-                if (!installer.getResourcePacksDirectory().exists()) {
-                    installer.getResourcePacksDirectory().mkdir();
+                if (!Files.exists(installer.getResourcePacksDirectory())) {
+                    try {
+                        Files.createDirectory(installer.getResourcePacksDirectory());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating folder " + installer.getResourcePacksDirectory(), e);
+                    }
                 }
+
                 Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
                 installer.setResourcePackExtracted();
                 break;
             case millenaire:
-                File tempDirMillenaire = new File(App.settings.getTempDir(), getSafeName());
+                Path tempDirMillenaire = FileSystem.TMP.resolve(getSafeName());
                 Utils.unzip(fileLocation, tempDirMillenaire);
-                for (String folder : tempDirMillenaire.list()) {
-                    File thisFolder = new File(tempDirMillenaire, folder);
+                for (String folder : tempDirMillenaire.toFile().list()) {
+                    File thisFolder = tempDirMillenaire.resolve(folder).toFile();
                     for (String dir : thisFolder.list(new FilenameFilter() {
                         @Override
                         public boolean accept(File dir, String name) {
@@ -675,7 +702,7 @@ public class Mod {
                             return thisFile.isDirectory();
                         }
                     })) {
-                        Utils.copyDirectory(new File(thisFolder, dir), installer.getModsDirectory());
+                        Utils.copyDirectory(thisFolder.toPath().resolve(dir), installer.getModsDirectory());
                     }
                 }
                 Utils.delete(tempDirMillenaire);
@@ -684,62 +711,103 @@ public class Mod {
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
                 break;
             case ic2lib:
-                if (!installer.getIC2LibDirectory().exists()) {
-                    installer.getIC2LibDirectory().mkdir();
+                if (!Files.exists(installer.getIC2LibDirectory())) {
+                    try {
+                        Files.createDirectory(installer.getIC2LibDirectory());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating folder " + installer.getIC2LibDirectory(), e);
+                    }
                 }
+
                 Utils.copyFile(fileLocation, installer.getIC2LibDirectory());
                 break;
             case flan:
-                if (!installer.getFlanDirectory().exists()) {
-                    installer.getFlanDirectory().mkdir();
+                if (!Files.exists(installer.getFlanDirectory())) {
+                    try {
+                        Files.createDirectory(installer.getFlanDirectory());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating folder " + installer.getFlanDirectory(), e);
+                    }
                 }
+
                 Utils.copyFile(fileLocation, installer.getFlanDirectory());
                 break;
             case denlib:
-                if (!installer.getDenLibDirectory().exists()) {
-                    installer.getDenLibDirectory().mkdir();
+                if (!Files.exists(installer.getDenLibDirectory())) {
+                    try {
+                        Files.createDirectory(installer.getDenLibDirectory());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating folder " + installer.getDenLibDirectory(), e);
+                    }
                 }
+
                 Utils.copyFile(fileLocation, installer.getDenLibDirectory());
                 break;
             case depandency:
             case dependency:
-                if (!installer.getDependencyDirectory().exists()) {
-                    installer.getDependencyDirectory().mkdirs();
+                if (!Files.exists(installer.getDependencyDirectory())) {
+                    try {
+                        Files.createDirectory(installer.getDependencyDirectory());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating folder " + installer.getDependencyDirectory(), e);
+                    }
                 }
+
                 Utils.copyFile(fileLocation, installer.getDependencyDirectory());
                 break;
             case plugins:
-                if (!installer.getPluginsDirectory().exists()) {
-                    installer.getPluginsDirectory().mkdir();
+                if (!Files.exists(installer.getPluginsDirectory())) {
+                    try {
+                        Files.createDirectory(installer.getPluginsDirectory());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating folder " + installer.getPluginsDirectory(), e);
+                    }
                 }
+
                 Utils.copyFile(fileLocation, installer.getPluginsDirectory());
                 break;
             case coremods:
                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                    if (!installer.getCoreModsDirectory().exists()) {
-                        installer.getCoreModsDirectory().mkdir();
+                    if (!Files.exists(installer.getCoreModsDirectory())) {
+                        try {
+                            Files.createDirectory(installer.getCoreModsDirectory());
+                        } catch (IOException e) {
+                            App.settings.logStackTrace("Error creating folder " + installer.getCoreModsDirectory(), e);
+                        }
                     }
+
                     Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
                 } else {
                     Utils.copyFile(fileLocation, installer.getModsDirectory());
                 }
                 break;
             case shaderpack:
-                if (!installer.getShaderPacksDirectory().exists()) {
-                    installer.getShaderPacksDirectory().mkdir();
+                if (!Files.exists(installer.getShaderPacksDirectory())) {
+                    try {
+                        Files.createDirectory(installer.getShaderPacksDirectory());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating folder " + installer.getShaderPacksDirectory(), e);
+                    }
                 }
+
                 Utils.copyFile(fileLocation, installer.getShaderPacksDirectory());
                 break;
             case extract:
-                File tempDirExtract = new File(App.settings.getTempDir(), getSafeName());
+                Path tempDirExtract = FileSystem.TMP.resolve(getSafeName());
                 Utils.unzip(fileLocation, tempDirExtract);
-                File folder = new File(new File(App.settings.getTempDir(), getSafeName()), this.extractFolder);
+                Path folder = FileSystem.TMP.resolve(getSafeName()).resolve(this.extractFolder);
                 switch (extractTo) {
                     case coremods:
                         if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                            if (!installer.getCoreModsDirectory().exists()) {
-                                installer.getCoreModsDirectory().mkdir();
+                            if (!Files.exists(installer.getCoreModsDirectory())) {
+                                try {
+                                    Files.createDirectory(installer.getCoreModsDirectory());
+                                } catch (IOException e) {
+                                    App.settings.logStackTrace("Error creating folder " + installer
+                                            .getCoreModsDirectory(), e);
+                                }
                             }
+
                             Utils.copyDirectory(folder, installer.getCoreModsDirectory());
                         } else {
                             Utils.copyDirectory(folder, installer.getModsDirectory());
@@ -758,26 +826,38 @@ public class Mod {
                 Utils.delete(tempDirExtract);
                 break;
             case decomp:
-                File tempDirDecomp = new File(App.settings.getTempDir(), getSafeName());
+                Path tempDirDecomp = FileSystem.TMP.resolve(getSafeName());
                 Utils.unzip(fileLocation, tempDirDecomp);
-                File tempFileDecomp = new File(tempDirDecomp, decompFile);
-                if (tempFileDecomp.exists()) {
+                Path tempFileDecomp = tempDirDecomp.resolve(decompFile);
+                if (Files.exists(tempFileDecomp)) {
                     switch (decompType) {
                         case coremods:
-                            if (tempFileDecomp.isFile()) {
+                            if (Files.isRegularFile(tempFileDecomp)) {
                                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                                    if (!installer.getCoreModsDirectory().exists()) {
-                                        installer.getCoreModsDirectory().mkdir();
+                                    if (!Files.exists(installer.getCoreModsDirectory())) {
+                                        try {
+                                            Files.createDirectory(installer.getCoreModsDirectory());
+                                        } catch (IOException e) {
+                                            App.settings.logStackTrace("Error creating folder " + installer
+                                                    .getCoreModsDirectory(), e);
+                                        }
                                     }
+
                                     Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
                                 } else {
                                     Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
                                 }
                             } else {
                                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                                    if (!installer.getCoreModsDirectory().exists()) {
-                                        installer.getCoreModsDirectory().mkdir();
+                                    if (!Files.exists(installer.getCoreModsDirectory())) {
+                                        try {
+                                            Files.createDirectory(installer.getCoreModsDirectory());
+                                        } catch (IOException e) {
+                                            App.settings.logStackTrace("Error creating folder " + installer
+                                                    .getCoreModsDirectory(), e);
+                                        }
                                     }
+
                                     Utils.copyDirectory(tempFileDecomp, installer.getCoreModsDirectory());
                                 } else {
                                     Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
@@ -785,24 +865,24 @@ public class Mod {
                             }
                             break;
                         case jar:
-                            if (tempFileDecomp.isFile()) {
+                            if (Files.isRegularFile(tempFileDecomp)) {
                                 Utils.copyFile(tempFileDecomp, installer.getJarModsDirectory());
                                 installer.addToJarOrder(decompFile);
                             } else {
-                                File newFile = new File(installer.getJarModsDirectory(), getSafeName() + ".zip");
+                                Path newFile = installer.getJarModsDirectory().resolve(getSafeName() + ".zip");
                                 Utils.zip(tempFileDecomp, newFile);
                                 installer.addToJarOrder(getSafeName() + ".zip");
                             }
                             break;
                         case mods:
-                            if (tempFileDecomp.isFile()) {
+                            if (Files.isRegularFile(tempFileDecomp)) {
                                 Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
                             } else {
                                 Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
                             }
                             break;
                         case root:
-                            if (tempFileDecomp.isFile()) {
+                            if (Files.isRegularFile(tempFileDecomp)) {
                                 Utils.copyFile(tempFileDecomp, installer.getRootDirectory());
                             } else {
                                 Utils.copyDirectory(tempFileDecomp, installer.getRootDirectory());
@@ -824,10 +904,11 @@ public class Mod {
         }
     }
 
-    public File getInstalledFile(InstanceInstaller installer) {
+    public Path getInstalledFile(InstanceInstaller installer) {
         ModType thisType;
         String file;
-        File base = null;
+        Path base = null;
+
         if (installer.isServer()) {
             file = getServerFile();
             thisType = this.serverType;
@@ -835,6 +916,7 @@ public class Mod {
             file = getFile();
             thisType = this.type;
         }
+
         switch (thisType) {
             case jar:
             case forge:
@@ -882,9 +964,11 @@ public class Mod {
                 LogManager.error("No known way to find installed mod " + this.name + " with type " + thisType);
                 break;
         }
+
         if (base == null) {
             return null;
         }
-        return new File(base, file);
+
+        return base.resolve(file);
     }
 }
