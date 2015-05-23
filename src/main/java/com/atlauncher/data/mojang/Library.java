@@ -65,13 +65,6 @@ public class Library {
                 "/" + parts[1] + "-" + parts[2] + getClassifier() + ".jar");
     }
 
-    /**
-     * @deprecated use getFilePath()
-     */
-    public File getFile() {
-        return this.getFilePath().toFile();
-    }
-
     public Path getFilePath() {
         String[] parts = this.name.split(":", 3);
 

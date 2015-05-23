@@ -523,7 +523,7 @@ public class Instance implements Cloneable {
      * @param mod the DisableableMod object for the mod to remove
      */
     public void removeInstalledMod(DisableableMod mod) {
-        FileUtils.delete((mod.isDisabled() ? mod.getDisabledFile(this) : mod.getFile(this)));
+        FileUtils.delete((mod.isDisabled() ? mod.getDisabledFilePath(this) : mod.getFilePath(this)));
         this.mods.remove(mod); // Remove mod from mod List
     }
 

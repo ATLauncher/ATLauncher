@@ -2800,20 +2800,6 @@ public class Settings {
         return this.userAgent + Constants.LAUNCHER_NAME + "/" + Constants.VERSION;
     }
 
-    /**
-     * @deprecated
-     */
-    public String getLocalizedString(String string) {
-        return Language.INSTANCE.localize(string);
-    }
-
-    /**
-     * @deprecated
-     */
-    public String getLocalizedString(String string, String replace) {
-        return Language.INSTANCE.localize(string).replace("%s", replace);
-    }
-
     public void restartLauncher() {
         File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         String path = null;

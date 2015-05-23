@@ -51,13 +51,6 @@ public class LauncherLibrary {
         return this.version;
     }
 
-    /**
-     * @deprecated use getFilePath()
-     */
-    public File getFile() {
-        return this.getFilePath().toFile();
-    }
-
     public Path getFilePath() {
         return FileSystem.LAUNCHER_LIBRARIES.resolve(this.filename);
     }

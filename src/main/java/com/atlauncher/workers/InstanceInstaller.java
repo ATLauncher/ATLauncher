@@ -389,7 +389,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     .getVersion()) && instance.hasCustomMods()) {
                 FileUtils.deleteSpecifiedFiles(this.getModsDirectory(), instance.getCustomMods(ModType.mods));
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
-                    FileUtils.deleteSpecifiedFiles(this.getCoreModsDirectory(), instance.getCustomMods(ModType.coremods));
+                    FileUtils.deleteSpecifiedFiles(this.getCoreModsDirectory(), instance.getCustomMods(ModType
+                            .coremods));
                 }
                 if (isReinstall) {
                     FileUtils.deleteSpecifiedFiles(this.getJarModsDirectory(), instance.getCustomMods(ModType.jar));
@@ -664,13 +665,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             for (Library library : this.version.getMinecraftVersion().getMojangVersion().getLibraries()) {
                 if (library.shouldInstall()) {
-                    if (libraryNamesAdded.contains(library.getFile().getName().substring(0, library.getFile().getName
-                            ().lastIndexOf("-")))) {
+                    if (libraryNamesAdded.contains(library.getFilePath().getFileName().toString().substring(0,
+                            library.getFilePath().getFileName().toString().lastIndexOf("-")))) {
                         continue;
                     }
                     if (Files.exists(library.getFilePath())) {
                         if (library.shouldExtract()) {
-                            FileUtils.unzip(library.getFilePath(), this.getNativesDirectory(), library.getExtractRule());
+                            FileUtils.unzip(library.getFilePath(), this.getNativesDirectory(), library.getExtractRule
+                                    ());
                         } else {
                             FileUtils.copyFile(library.getFilePath(), this.getBinDirectory());
                         }
@@ -735,7 +737,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         try {
             new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + ".json"), indexFile,
                     null, this, false).download(false);
-            AssetIndex index = (AssetIndex) this.gson.fromJson(new FileReader(indexFile.toFile()), AssetIndex.class);
+            AssetIndex index = this.gson.fromJson(new FileReader(indexFile.toFile()), AssetIndex.class);
 
             if (!index.isVirtual() && !Files.exists(virtualRoot)) {
                 FileUtils.createDirectory(virtualRoot);
@@ -835,17 +837,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (!this.isServer) {
             for (Library library : this.version.getMinecraftVersion().getMojangVersion().getLibraries()) {
                 if (library.shouldInstall()) {
-                    if (libraryNamesAdded.contains(library.getFile().getName().substring(0, library.getFile().getName
-                            ().lastIndexOf("-")))) {
+                    if (libraryNamesAdded.contains(library.getFilePath().getFileName().toString().substring(0,
+                            library.getFilePath().getFileName().toString().lastIndexOf("-")))) {
                         LogManager.debug("Not adding library " + library.getName() + " as it's been overwritten " +
                                 "already by the packs libraries!");
                         continue;
                     }
                     if (!library.shouldExtract()) {
                         if (librariesNeeded == null) {
-                            this.librariesNeeded = library.getFile().getName();
+                            this.librariesNeeded = library.getFilePath().getFileName().toString();
                         } else {
-                            this.librariesNeeded += "," + library.getFile().getName();
+                            this.librariesNeeded += "," + library.getFilePath().getFileName().toString();
                         }
                     }
                     libraries.add(new Downloadable(library.getURL(), library.getFilePath(), null, this, false));
@@ -857,8 +859,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (isServer) {
             libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version
-                    .getMinecraftVersion().getVersion() + "/minecraft_server." + this.version.getMinecraftVersion()
-                    .getVersion() + ".jar"), FileSystem.JARS.resolve("minecraft_server." + this.version
+                    .getMinecraftVersion().getVersion() + "/minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar"), FileSystem.JARS.resolve("minecraft_server." + this.version
                     .getMinecraftVersion().getVersion() + ".jar"), null, this, false));
         } else {
             libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version
@@ -1110,8 +1111,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (savedPortalGunSounds) {
-            FileUtils.copyFile(this.getTempDirectory().resolve("PortalGunSounds.pak"), this.getModsDirectory()
-                    .resolve("PortalGunSounds.pak"), true);
+            FileUtils.copyFile(this.getTempDirectory().resolve("PortalGunSounds.pak"), this.getModsDirectory().resolve("PortalGunSounds.pak"), true);
         }
     }
 
@@ -1125,8 +1125,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 LogManager.error("Instance Install Cancelled After Viewing Message!");
                 cancel(true);
                 return false;
-            } else if (this.jsonVersion.getMessages().hasInstallMessage() && this.jsonVersion.getMessages()
-                    .showInstallMessage(this.pack) != 0) {
+            } else if (this.jsonVersion.getMessages().hasInstallMessage() && this.jsonVersion.getMessages().showInstallMessage(this.pack) != 0) {
                 LogManager.error("Instance Install Cancelled After Viewing Message!");
                 cancel(true);
                 return false;
@@ -1174,8 +1173,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
-            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, mod
-                    .getType(), this.jsonVersion.getColour(mod.getColour()), mod.getDescription(), false, false));
+            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, mod.getType(), this.jsonVersion.getColour(mod.getColour()), mod.getDescription(), false, false));
         }
 
         if (this.isReinstall && instance.hasCustomMods() && instance.getMinecraftVersion().equalsIgnoreCase(version
@@ -1355,8 +1353,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void setExtraArguments() {
         if (this.jsonVersion.hasExtraArguments()) {
-            if (!this.jsonVersion.getExtraArguments().hasDepends() && !this.jsonVersion.getExtraArguments()
-                    .hasDependsGroup()) {
+            if (!this.jsonVersion.getExtraArguments().hasDepends() && !this.jsonVersion.getExtraArguments().hasDependsGroup()) {
                 this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
             } else if (this.jsonVersion.getExtraArguments().hasDepends()) {
                 String depends = this.jsonVersion.getExtraArguments().getDepends();

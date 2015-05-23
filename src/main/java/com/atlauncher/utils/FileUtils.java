@@ -52,13 +52,6 @@ public class FileUtils {
         return moveFile(from, to, false);
     }
 
-    /**
-     * @deprecated use moveFile(Path, Path, boolean)
-     */
-    public static boolean moveFile(File from, File to, boolean withFilename) {
-        return moveFile(from.toPath(), to.toPath(), withFilename);
-    }
-
     public static boolean moveFile(Path from, Path to, boolean withFilename) {
         if (copyFile(from, to, withFilename)) {
             delete(from);
@@ -69,22 +62,8 @@ public class FileUtils {
         }
     }
 
-    /**
-     * @deprecated Use copyFile(Path, Path) instead
-     */
-    public static boolean copyFile(File from, File to) {
-        return copyFile(from.toPath(), to.toPath(), false);
-    }
-
     public static boolean copyFile(Path from, Path to) {
         return copyFile(from, to, false);
-    }
-
-    /**
-     * @deprecated Use copyFile(Path, Path, Boolean) instead
-     */
-    public static boolean copyFile(File from, File to, boolean withFilename) {
-        return copyFile(from.toPath(), to.toPath(), withFilename);
     }
 
     /**
@@ -120,24 +99,6 @@ public class FileUtils {
         return true;
     }
 
-    /**
-     * Move directory.
-     *
-     * @param sourceLocation the source location
-     * @param targetLocation the target location
-     * @return true, if successful
-     */
-    public static boolean moveDirectory(File sourceLocation, File targetLocation) {
-        if (copyDirectory(sourceLocation, targetLocation)) {
-            delete(sourceLocation);
-            return true;
-        } else {
-            LogManager.error("Couldn't move directory " + sourceLocation.getAbsolutePath() + " to " + targetLocation
-                    .getAbsolutePath());
-            return false;
-        }
-    }
-
     public static boolean copyDirectory(Path from, Path to) {
         return copyDirectory(from, to, false);
     }
@@ -161,50 +122,6 @@ public class FileUtils {
         return copyDirectory(from, to) && deleteDirectory(from);
     }
 
-    /**
-     * @deprecated use copyDirectory(Path, Path)
-     */
-    public static boolean copyDirectory(File sourceLocation, File targetLocation) {
-        return copyDirectory(sourceLocation.toPath(), targetLocation.toPath(), false);
-    }
-
-    /**
-     * @deprecated use copyDirectory(Path, Path, boolean)
-     */
-    public static boolean copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
-        if (copyFolder) {
-            targetLocation = new File(targetLocation, sourceLocation.getName());
-        }
-        try {
-            if (sourceLocation.isDirectory()) {
-                if (!targetLocation.exists()) {
-                    targetLocation.mkdirs();
-                }
-
-                String[] children = sourceLocation.list();
-                for (int i = 0; i < children.length; i++) {
-                    copyDirectory(new File(sourceLocation, children[i]), new File(targetLocation, children[i]));
-                }
-            } else {
-
-                InputStream in = new FileInputStream(sourceLocation);
-                OutputStream out = new FileOutputStream(targetLocation);
-
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                in.close();
-                out.close();
-            }
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-            return false;
-        }
-        return true;
-    }
-
     public static boolean deleteDirectory(Path dir) {
         if (!Files.exists(dir) || !Files.isDirectory(dir)) {
             LogManager.error("Cannot delete directory " + dir + " as it doesn't exist or isn't a directory!");
@@ -219,13 +136,6 @@ public class FileUtils {
         }
 
         return true;
-    }
-
-    /**
-     * @deprecated Use delete(Path)
-     */
-    public static boolean delete(File file) {
-        return delete(file.toPath());
     }
 
     public static boolean delete(Path path) {
@@ -253,19 +163,6 @@ public class FileUtils {
         return true;
     }
 
-    public static void deleteWithFilter(File file, final List<String> filesToIgnore) {
-        FilenameFilter ffFilter = new FilenameFilter() {
-
-            @Override
-            public boolean accept(File dir, String name) {
-                return !filesToIgnore.contains(name);
-            }
-        };
-        for (File aFile : file.listFiles(ffFilter)) {
-            delete(aFile);
-        }
-    }
-
     public static boolean deleteSpecifiedFiles(Path path, final List<String> files) {
         try {
             Files.walkFileTree(path, new DeleteSpecifiedFilesVisitor(files));
@@ -275,24 +172,6 @@ public class FileUtils {
         }
 
         return true;
-    }
-
-    /**
-     * Delete contents.
-     *
-     * @param file the file
-     */
-    public static void deleteContents(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files == null) {
-                // No contents in this folder so there are no files to delete
-                return;
-            }
-            for (File c : files) {
-                delete(c);
-            }
-        }
     }
 
     public static void deleteContents(Path p) {
@@ -328,20 +207,6 @@ public class FileUtils {
         }
 
         return false;
-    }
-
-    /**
-     * @deprecated use unzip(Path, Path, ExtractRule)
-     */
-    public static boolean unzip(File in, File out) {
-        return unzip(in.toPath(), out.toPath(), null);
-    }
-
-    /**
-     * @deprecated use unzip(Path, Path, ExtractRule)
-     */
-    public static boolean unzip(File in, File out, ExtractRule extractRule) {
-        return unzip(in.toPath(), out.toPath(), extractRule);
     }
 
     public static boolean unzip(Path in, Path out) {
@@ -394,39 +259,6 @@ public class FileUtils {
         }
 
         return true;
-    }
-
-    public static boolean isSymlink(File file) {
-        try {
-            if (file == null) {
-                throw new NullPointerException("File must not be null");
-            }
-
-            File canon;
-
-            if (file.getParent() == null) {
-                canon = file;
-            } else {
-                File canonDir = null;
-
-                canonDir = file.getParentFile().getCanonicalFile();
-
-                canon = new File(canonDir, file.getName());
-            }
-
-            return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    /**
-     * @deprecated use zip(Path, Path)
-     */
-    public static void zip(File in, File out) {
-        zip(in.toPath(), out.toPath());
     }
 
     // TODO: NIO this up

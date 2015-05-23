@@ -185,26 +185,8 @@ public class Downloadable {
         return this.hash;
     }
 
-    /**
-     * @deprecated Use getPath() instead
-     */
-    public File getFile() {
-        return this.path.toFile();
-    }
-
     public Path getPath() {
         return this.path;
-    }
-
-    /**
-     * @deprecated Use getCopyToPath() instead
-     */
-    public File getCopyToFile() {
-        return this.copyTo.toFile();
-    }
-
-    public Path getCopyToPath() {
-        return this.copyTo;
     }
 
     public boolean isGziped() {

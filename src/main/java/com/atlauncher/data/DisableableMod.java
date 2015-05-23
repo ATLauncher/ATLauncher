@@ -158,22 +158,8 @@ public class DisableableMod implements Serializable {
         return false;
     }
 
-    /**
-     * @deprecated use getDisabledFilePath(Instance)
-     */
-    public File getDisabledFile(Instance instance) {
-        return this.getDisabledFilePath(instance).toFile();
-    }
-
     public Path getDisabledFilePath(Instance instance) {
         return instance.getDisabledModsDirectory().resolve(this.file);
-    }
-
-    /**
-     * @deprecated use getFilePath(Instance)
-     */
-    public File getFile(Instance instance) {
-        return this.getFilePath(instance).toFile();
     }
 
     public Path getFilePath(Instance instance) {

@@ -37,13 +37,6 @@ public class AssetObject {
         return this.size;
     }
 
-    /**
-     * @deprecated use needToDownload(Path)
-     */
-    public boolean needToDownload(File file) {
-        return this.needToDownload(file.toPath());
-    }
-
     public boolean needToDownload(Path path) {
         if (!Files.exists(path) || !Files.isRegularFile(path)) {
             return true;

@@ -44,7 +44,6 @@ import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
@@ -59,7 +58,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
@@ -1550,41 +1548,19 @@ public class Utils {
         return new Object[]{type, message};
     }
 
-    public static byte[] readFile(File file) {
-        byte[] bytes = null;
-        RandomAccessFile f = null;
-        try {
-            f = new RandomAccessFile(file, "r");
-            bytes = new byte[(int) f.length()];
-            f.read(bytes);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        } finally {
-            if (f != null) {
-                try {
-                    f.close();
-                } catch (IOException e) {
-                    App.settings.logStackTrace(e);
-                }
-            }
-        }
-        return bytes;
-    }
-
-    public static void unXZPackFile(File xzFile, File packFile, File outputFile) {
+    public static void unXZPackFile(Path xzFile, Path packFile, Path outputFile) {
         unXZFile(xzFile, packFile);
         unpackFile(packFile, outputFile);
     }
 
-    public static void unXZFile(File input, File output) {
+    public static void unXZFile(Path input, Path output) {
         FileInputStream fis = null;
         FileOutputStream fos = null;
-        BufferedInputStream bis = null;
         XZInputStream xzis = null;
         try {
-            fis = new FileInputStream(input);
+            fis = new FileInputStream(input.toFile());
             xzis = new XZInputStream(fis);
-            fos = new FileOutputStream(output);
+            fos = new FileOutputStream(output.toFile());
 
             final byte[] buffer = new byte[8192];
             int n = 0;
@@ -1598,9 +1574,6 @@ public class Utils {
             try {
                 if (fis != null) {
                     fis.close();
-                }
-                if (bis != null) {
-                    bis.close();
                 }
                 if (fos != null) {
                     fos.close();
@@ -1617,15 +1590,21 @@ public class Utils {
     /*
      * From: http://atl.pw/1
      */
-    public static void unpackFile(File input, File output) {
-        if (output.exists()) {
+    public static void unpackFile(Path input, Path output) {
+        if (Files.exists(output)) {
             FileUtils.delete(output);
         }
 
-        byte[] decompressed = readFile(input);
+        byte[] decompressed = null;
+
+        try {
+            decompressed = Files.readAllBytes(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (decompressed == null) {
-            LogManager.error("unpackFile: While reading in " + input.getName() + " the file returned null");
+            LogManager.error("unpackFile: While reading in " + input + " the file returned null");
             return;
         }
 
@@ -1640,7 +1619,7 @@ public class Utils {
                 0xFF) << 16) | ((decompressed[x - 5] & 0xFF) << 24);
         byte[] checksums = Arrays.copyOfRange(decompressed, decompressed.length - len - 8, decompressed.length - 8);
         try {
-            FileOutputStream jarBytes = new FileOutputStream(output);
+            FileOutputStream jarBytes = new FileOutputStream(output.toFile());
             JarOutputStream jos = new JarOutputStream(jarBytes);
 
             Pack200.newUnpacker().unpack(new ByteArrayInputStream(decompressed), jos);
