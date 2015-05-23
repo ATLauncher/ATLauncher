@@ -735,11 +735,15 @@ public class Utils {
         return sb.toString();
     }
 
+    public static boolean moveFile(Path from, Path to) {
+        return Utils.moveFile(from, to, false);
+    }
+
     /**
      * @deprecated use moveFile(Path, Path, boolean)
      */
     public static boolean moveFile(File from, File to, boolean withFilename) {
-        Utils.moveFile(from.toPath(), to.toPath(), withFilename);
+        return Utils.moveFile(from.toPath(), to.toPath(), withFilename);
     }
 
     public static boolean moveFile(Path from, Path to, boolean withFilename) {
@@ -1429,15 +1433,16 @@ public class Utils {
     }
 
     /**
-     * Checks for meta inf.
-     *
-     * @param minecraftJar the minecraft jar
-     * @return true, if successful
+     * @deprecated use hasMetainf(Path)
      */
     public static boolean hasMetaInf(File minecraftJar) {
+        return Utils.hasMetaInf(minecraftJar.toPath());
+    }
+
+    public static boolean hasMetaInf(Path minecraftJar) {
         JarInputStream input = null;
         try {
-            input = new JarInputStream(new FileInputStream(minecraftJar));
+            input = new JarInputStream(new FileInputStream(minecraftJar.toFile()));
             JarEntry entry;
             boolean found = false;
             while ((entry = input.getNextJarEntry()) != null) {

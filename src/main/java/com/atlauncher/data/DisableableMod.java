@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -99,17 +100,24 @@ public class DisableableMod implements Serializable {
 
     public boolean enable(Instance instance) {
         if (this.disabled) {
-            if (!getFile(instance).getParentFile().exists()) {
-                getFile(instance).getParentFile().mkdir();
+            Path path = getFilePath(instance).getParent();
+            if (!Files.exists(path)) {
+                try {
+                    Files.createDirectories(path);
+                } catch (IOException e) {
+                    App.settings.logStackTrace("Error creating directory " + path + " while trying to enable mod!", e);
+                    return false;
+                }
             }
-            if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
+
+            if (Utils.moveFile(this.getDisabledFilePath(instance), this.getFilePath(instance), true)) {
                 if (this.type == Type.jar) {
-                    File inputFile = instance.getMinecraftJar();
-                    File outputTmpFile = FileSystem.TMP.resolve(instance.getSafeName() + "-minecraft.jar").toFile();
+                    Path inputFile = instance.getMinecraftJar();
+                    Path outputTmpFile = FileSystem.TMP.resolve(instance.getSafeName() + "-minecraft.jar");
                     if (Utils.hasMetaInf(inputFile)) {
                         try {
-                            JarInputStream input = new JarInputStream(new FileInputStream(inputFile));
-                            JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile));
+                            JarInputStream input = new JarInputStream(new FileInputStream(inputFile.toFile()));
+                            JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile.toFile()));
                             JarEntry entry;
 
                             while ((entry = input.getNextJarEntry()) != null) {
@@ -128,8 +136,8 @@ public class DisableableMod implements Serializable {
                             input.close();
                             output.close();
 
-                            inputFile.delete();
-                            outputTmpFile.renameTo(inputFile);
+                            Utils.delete(inputFile);
+                            Utils.moveFile(outputTmpFile, inputFile);
                         } catch (IOException e) {
                             App.settings.logStackTrace(e);
                         }
@@ -144,28 +152,36 @@ public class DisableableMod implements Serializable {
 
     public boolean disable(Instance instance) {
         if (!this.disabled) {
-            if (Utils.moveFile(getFile(instance), instance.getDisabledModsDirectory(), false)) {
+            if (Utils.moveFile(this.getFilePath(instance), instance.getDisabledModsDirectory(), false)) {
                 this.disabled = true;
                 return true;
             }
         }
+
         return false;
     }
 
     /**
-     *
-     * @deprecated use getDisabledFilePath
+     * @deprecated use getDisabledFilePath(Instance)
      */
     public File getDisabledFile(Instance instance) {
-        return new File(instance.getDisabledModsDirectory(), this.file);
+        return this.getDisabledFilePath(instance).toFile();
     }
 
     public Path getDisabledFilePath(Instance instance) {
         return instance.getDisabledModsDirectory().resolve(this.file);
     }
 
+    /**
+     * @deprecated use getFilePath(Instance)
+     */
     public File getFile(Instance instance) {
-        File dir = null;
+        return this.getFilePath(instance).toFile();
+    }
+
+    public Path getFilePath(Instance instance) {
+        Path dir = null;
+
         switch (type) {
             case jar:
             case forge:
@@ -197,10 +213,12 @@ public class DisableableMod implements Serializable {
                 LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
                 break;
         }
+
         if (dir == null) {
             return null;
         }
-        return new File(dir, file);
+
+        return dir.resolve(file);
     }
 
     public Type getType() {
