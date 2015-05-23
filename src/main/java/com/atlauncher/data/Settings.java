@@ -144,7 +144,6 @@ public class Settings {
     // Packs, Instances and Accounts
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
-    private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
     private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
     // Launcher Settings
@@ -312,7 +311,7 @@ public class Settings {
 
         boolean somethingChanged = false;
 
-        for (Account account : this.accounts) {
+        for (Account account : Data.ACCOUNTS) {
             if (account.checkForUsernameChange()) {
                 somethingChanged = true;
             }
@@ -361,8 +360,8 @@ public class Settings {
 
     public void checkAccounts() {
         boolean matches = false;
-        if (this.accounts != null || this.accounts.size() >= 1) {
-            for (Account account : this.accounts) {
+        if (Data.ACCOUNTS != null || Data.ACCOUNTS.size() >= 1) {
+            for (Account account : Data.ACCOUNTS) {
                 if (account.isRemembered()) {
                     matches = true;
                 }
@@ -376,7 +375,7 @@ public class Settings {
                     ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 1) {
-                for (Account account : this.accounts) {
+                for (Account account : Data.ACCOUNTS) {
                     if (account.isRemembered()) {
                         account.setRemember(false);
                     }
@@ -484,7 +483,7 @@ public class Settings {
     public void checkAccountUUIDs() {
         LogManager.debug("Checking account UUID's");
         LogManager.info("Checking account UUID's!");
-        for (Account account : this.accounts) {
+        for (Account account : Data.ACCOUNTS) {
             if (account.isUUIDNull()) {
                 account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
                 this.saveAccounts();
@@ -502,7 +501,7 @@ public class Settings {
             if (instance.getInstalledBy() != null) {
                 boolean found = false;
 
-                for (Account account : this.accounts) {
+                for (Account account : Data.ACCOUNTS) {
                     // This is the user who installed this so switch to their UUID
                     if (account.getMinecraftUsername().equalsIgnoreCase(instance.getInstalledBy())) {
                         found = true;
@@ -1288,7 +1287,7 @@ public class Settings {
     }
 
     public void addAccount(Account account) {
-        this.accounts.add(account);
+        Data.ACCOUNTS.add(account);
     }
 
     public void addCheckingServer(MinecraftServer server) {
@@ -1595,7 +1594,9 @@ public class Settings {
      */
     private void loadAccounts() {
         LogManager.debug("Loading Accounts");
+
         Data.ACCOUNTS.clear();
+
         if (Files.exists(FileSystemData.USER_DATA)) {
             try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.USER_DATA.toFile())
             )) {
@@ -1611,6 +1612,7 @@ public class Settings {
                 this.logStackTrace("Exception while trying to read accounts from file", e);
             }
         }
+
         LogManager.debug("Finished loading accounts");
     }
 
@@ -1628,7 +1630,8 @@ public class Settings {
         if (this.account == account) {
             switchAccount(null);
         }
-        accounts.remove(account);
+
+        Data.ACCOUNTS.remove(account);
         saveAccounts();
         reloadAccounts();
     }
@@ -1888,7 +1891,7 @@ public class Settings {
      * @return The Accounts added to the Launcher
      */
     public List<Account> getAccounts() {
-        return this.accounts;
+        return Data.ACCOUNTS;
     }
 
     /**
@@ -2234,7 +2237,7 @@ public class Settings {
      * @return Account if the Account is found from the username
      */
     public Account getAccountByName(String username) {
-        for (Account account : accounts) {
+        for (Account account : Data.ACCOUNTS) {
             if (account.getUsername().equalsIgnoreCase(username)) {
                 return account;
             }
@@ -2274,7 +2277,7 @@ public class Settings {
      * @return true if found, false if not
      */
     public boolean isAccountByName(String username) {
-        for (Account account : accounts) {
+        for (Account account : Data.ACCOUNTS) {
             if (account.getUsername().equalsIgnoreCase(username)) {
                 return true;
             }
