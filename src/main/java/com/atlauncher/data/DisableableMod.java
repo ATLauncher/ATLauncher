@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
@@ -151,8 +152,16 @@ public class DisableableMod implements Serializable {
         return false;
     }
 
+    /**
+     *
+     * @deprecated use getDisabledFilePath
+     */
     public File getDisabledFile(Instance instance) {
         return new File(instance.getDisabledModsDirectory(), this.file);
+    }
+
+    public Path getDisabledFilePath(Instance instance) {
+        return instance.getDisabledModsDirectory().resolve(this.file);
     }
 
     public File getFile(Instance instance) {
