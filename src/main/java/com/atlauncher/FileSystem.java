@@ -21,6 +21,7 @@ public final class FileSystem{
     public static final Path RESOURCES = CONFIGS.resolve("Resources");
     public static final Path RESOURCES_VIRTUAL = RESOURCES.resolve("virtual");
     public static final Path RESOURCES_OBJECTS = RESOURCES.resolve("objects");
+    public static final Path RESOURCES_INDEXES = RESOURCES.resolve("indexes");
     public static final Path RESOURCES_VIRTUAL_LEGACY = RESOURCES_VIRTUAL.resolve("legacy");
     public static final Path LIBRARIES = CONFIGS.resolve("Libraries");
     public static final Path LAUNCHER_LIBRARIES = LIBRARIES.resolve("Launcher");

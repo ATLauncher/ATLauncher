@@ -855,7 +855,15 @@ public class Utils {
         }
     }
 
-    public static boolean moveDirectory(Path from, Path to) {
+    public static boolean copyDirectory(Path from, Path to) {
+        return Utils.copyDirectory(from, to, false);
+    }
+
+    public static boolean copyDirectory(Path from, Path to, boolean copyFolder) {
+        if (copyFolder) {
+            to = to.resolve(from.getParent().getFileName());
+        }
+
         try {
             Files.walkFileTree(from, new CopyDirVisitor(from, to));
         } catch (IOException e) {
@@ -863,27 +871,22 @@ public class Utils {
             return false;
         }
 
-        return Utils.deleteDirectory(from);
+        return true;
+    }
+
+    public static boolean moveDirectory(Path from, Path to) {
+        return Utils.copyDirectory(from, to) && Utils.deleteDirectory(from);
     }
 
     /**
-     * Copy directory.
-     *
-     * @param sourceLocation the source location
-     * @param targetLocation the target location
-     * @return true, if successful
+     * @deprecated use copyDirectory(Path, Path)
      */
     public static boolean copyDirectory(File sourceLocation, File targetLocation) {
-        return copyDirectory(sourceLocation, targetLocation, false);
+        return Utils.copyDirectory(sourceLocation.toPath(), targetLocation.toPath(), false);
     }
 
     /**
-     * Copy directory.
-     *
-     * @param sourceLocation the source location
-     * @param targetLocation the target location
-     * @param copyFolder the copy folder
-     * @return true, if successful
+     * @deprecated use copyDirectory(Path, Path, boolean)
      */
     public static boolean copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
         if (copyFolder) {
@@ -920,29 +923,37 @@ public class Utils {
     }
 
     /**
-     * Unzip.
-     *
-     * @param in the in
-     * @param out the out
+     * @deprecated use unzip(Path, Path, ExtractRule)
      */
-    public static void unzip(File in, File out) {
-        unzip(in, out, null);
+    public static boolean unzip(File in, File out) {
+        return Utils.unzip(in.toPath(), out.toPath(), null);
     }
 
     /**
-     * Unzip.
-     *
-     * @param in the in
-     * @param out the out
-     * @param extractRule the extract rule
+     * @deprecated use unzip(Path, Path, ExtractRule)
      */
-    public static void unzip(File in, File out, ExtractRule extractRule) {
-        try {
-            ZipFile zipFile = null;
-            if (!out.exists()) {
-                out.mkdirs();
+    public static boolean unzip(File in, File out, ExtractRule extractRule) {
+        return Utils.unzip(in.toPath(), out.toPath(), extractRule);
+    }
+
+    public static boolean unzip(Path in, Path out) {
+        return Utils.unzip(in, out, null);
+    }
+
+    // TODO: Switch to NIO operations
+    public static boolean unzip(Path in, Path out, ExtractRule extractRule) {
+        if (!Files.exists(out)) {
+            try {
+                Files.createDirectory(out);
+            } catch (IOException e) {
+                App.settings.logStackTrace("Error creating directory " + out + " while unzipping file!", e);
+                return false;
             }
-            zipFile = new ZipFile(in);
+        }
+
+        ZipFile zipFile = null;
+        try {
+            zipFile = new ZipFile(in.toFile());
             Enumeration<?> e = zipFile.entries();
             while (e.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) e.nextElement();
@@ -954,10 +965,10 @@ public class Utils {
                     continue;
                 }
                 if (entry.isDirectory()) {
-                    File folder = new File(out, entryName);
+                    File folder = new File(out.toFile(), entryName);
                     folder.mkdirs();
                 }
-                File destinationFilePath = new File(out, entryName);
+                File destinationFilePath = new File(out.toFile(), entryName);
                 destinationFilePath.getParentFile().mkdirs();
                 if (!entry.isDirectory() && !entry.getName().equals(".minecraft")) {
                     BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
@@ -976,7 +987,10 @@ public class Utils {
             zipFile.close();
         } catch (IOException e) {
             App.settings.logStackTrace(e);
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -1128,25 +1142,29 @@ public class Utils {
     }
 
     /**
-     * Zip.
-     *
-     * @param in the in
-     * @param out the out
+     * @deprecated use zip(Path, Path)
      */
     public static void zip(File in, File out) {
+        Utils.zip(in.toPath(), out.toPath());
+    }
+
+    // TODO: NIO this up
+    public static void zip(Path in, Path out) {
+        File file = in.toFile();
+
         try {
-            URI base = in.toURI();
+            URI base = file.toURI();
             Deque<File> queue = new LinkedList<File>();
-            queue.push(in);
-            OutputStream stream = new FileOutputStream(out);
+            queue.push(file);
+            OutputStream stream = new FileOutputStream(out.toFile());
             Closeable res = stream;
             ZipOutputStream zout = null;
             try {
                 zout = new ZipOutputStream(stream);
                 res = zout;
                 while (!queue.isEmpty()) {
-                    in = queue.pop();
-                    for (File kid : in.listFiles()) {
+                    file = queue.pop();
+                    for (File kid : file.listFiles()) {
                         String name = base.relativize(kid.toURI()).getPath();
                         if (name.endsWith("aux_class")) {
                             name = "aux.class";

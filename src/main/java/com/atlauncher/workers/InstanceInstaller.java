@@ -44,6 +44,7 @@ import com.atlauncher.data.mojang.Library;
 import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
@@ -56,7 +57,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -257,8 +257,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public Path getMinecraftJar() {
         if (isServer) {
-            return this.getRootDirectory().resolve("minecraft_server." + this.version.getMinecraftVersion().getVersion()
-                    + ".jar");
+            return this.getRootDirectory().resolve("minecraft_server." + this.version.getMinecraftVersion()
+                    .getVersion() + ".jar");
         }
         return this.getBinDirectory().resolve("minecraft.jar");
     }
@@ -424,11 +424,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         Path[] directories;
         if (isServer) {
-            directories = new Path[]{this.getRootDirectory(), this.getModsDirectory(), this.getTempDirectory(),
-                    this.getLibrariesDirectory()};
+            directories = new Path[]{this.getRootDirectory(), this.getModsDirectory(), this.getTempDirectory(), this
+                    .getLibrariesDirectory()};
         } else {
-            directories = new Path[]{this.getRootDirectory(), this.getModsDirectory(), this.getDisabledModsDirectory(),
-                    this.getTempDirectory(), this.getJarModsDirectory(), this.getBinDirectory(), this.getNativesDirectory()};
+            directories = new Path[]{this.getRootDirectory(), this.getModsDirectory(), this.getDisabledModsDirectory
+                    (), this.getTempDirectory(), this.getJarModsDirectory(), this.getBinDirectory(), this
+                    .getNativesDirectory()};
         }
 
         for (Path directory : directories) {
@@ -455,8 +456,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (mod.getDownload() == DownloadType.server) {
                 Downloadable downloadable;
 
-                downloadable = new Downloadable(mod.getUrl(), FileSystem.DOWNLOADS.resolve(mod.getFile()), mod.getMD5(),
-                        mod.getFilesize(), this, true);
+                downloadable = new Downloadable(mod.getUrl(), FileSystem.DOWNLOADS.resolve(mod.getFile()), mod.getMD5
+                        (), mod.getFilesize(), this, true);
 
                 mods.add(downloadable);
             }
@@ -653,7 +654,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     this.cancel(true);
                     return;
                 }
-                libraryNamesAdded.add(library.getFileName().toString().substring(0, library.getFileName().toString().lastIndexOf("-")));
+                libraryNamesAdded.add(library.getFileName().toString().substring(0, library.getFileName().toString()
+                        .lastIndexOf("-")));
             }
             for (Library library : this.version.getMinecraftVersion().getMojangVersion().getLibraries()) {
                 if (library.shouldInstall()) {
@@ -661,15 +663,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             ().lastIndexOf("-")))) {
                         continue;
                     }
-                    if (library.getFile().exists()) {
+                    if (Files.exists(library.getFilePath())) {
                         if (library.shouldExtract()) {
-                            Utils.unzip(library.getFile(), this.getNativesDirectory(), library.getExtractRule());
+                            Utils.unzip(library.getFilePath(), this.getNativesDirectory(), library.getExtractRule());
                         } else {
-                            Utils.copyFile(library.getFile(), this.getBinDirectory());
+                            Utils.copyFile(library.getFilePath(), this.getBinDirectory());
                         }
                     } else {
-                        LogManager.error("Cannot install instance because the library file " + library.getFile()
-                                .getAbsolutePath() + " wasn't found!");
+                        LogManager.error("Cannot install instance because the library file " + library.getFilePath()
+                                + " wasn't found!");
                         this.cancel(true);
                         return;
                     }
@@ -679,8 +681,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         Path toCopy, copyTo;
         boolean withFilename = false;
         if (isServer) {
-            toCopy = FileSystem.JARS.resolve("minecraft_server." + this.version.getMinecraftVersion()
-                    .getVersion() + ".jar");
+            toCopy = FileSystem.JARS.resolve("minecraft_server." + this.version.getMinecraftVersion().getVersion() +
+                    ".jar");
             copyTo = this.getRootDirectory();
         } else {
             toCopy = FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar");
@@ -697,77 +699,69 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
+    /**
+     * @deprecated use doCaseConversions(Path)
+     */
     private void doCaseConversions(File dir) {
-        File[] files;
-        if (isReinstall && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion()
-        )) {
-            final List<String> customMods = instance.getCustomMods(Type.mods);
-            FilenameFilter ffFilter = new FilenameFilter() {
+        this.doCaseConversions(dir.toPath());
+    }
 
-                @Override
-                public boolean accept(File dir, String name) {
-                    return !customMods.contains(name);
-                }
-            };
-            files = dir.listFiles(ffFilter);
-        } else {
-            files = dir.listFiles();
-        }
-        for (File file : files) {
-            if (file.isFile() && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file
-                    .getName().endsWith("litemod"))) {
-                if (this.jsonVersion.getCaseAllFiles() == CaseType.upper) {
-                    file.renameTo(new File(file.getParentFile(), file.getName().substring(0, file.getName()
-                            .lastIndexOf(".")).toUpperCase() + file.getName().substring(file.getName()
-                            .lastIndexOf("."), file.getName().length())));
-                } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
-                    file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
-                }
+    // TODO: Switch to use NIO and paths natively
+    private void doCaseConversions(Path dir) {
+        try {
+            if (isReinstall && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion()
+                    .getVersion())) {
+                Files.walkFileTree(dir, new CaseFileVisitor(this.jsonVersion.getCaseAllFiles(), instance
+                        .getCustomMods(Type.mods)));
+            } else {
+                Files.walkFileTree(dir, new CaseFileVisitor(this.jsonVersion.getCaseAllFiles()));
             }
+        } catch (IOException e) {
+            App.settings.logStackTrace("Error casing files while installing instance!", e);
         }
     }
 
     private ArrayList<Downloadable> getResources() {
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>(); // All the files
-        File objectsFolder = new File(App.settings.getResourcesDir(), "objects");
-        File indexesFolder = new File(App.settings.getResourcesDir(), "indexes");
-        File virtualFolder = new File(App.settings.getResourcesDir(), "virtual");
         String assetVersion = this.version.getMinecraftVersion().getMojangVersion().getAssets();
-        File virtualRoot = new File(virtualFolder, assetVersion);
-        File indexFile = new File(indexesFolder, assetVersion + ".json");
-        objectsFolder.mkdirs();
-        indexesFolder.mkdirs();
-        virtualFolder.mkdirs();
+        Path virtualRoot = FileSystem.RESOURCES_VIRTUAL.resolve(assetVersion);
+        Path indexFile = FileSystem.RESOURCES_INDEXES.resolve(assetVersion + ".json");
+
         try {
             new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + ".json"), indexFile,
                     null, this, false).download(false);
-            AssetIndex index = (AssetIndex) this.gson.fromJson(new FileReader(indexFile), AssetIndex.class);
+            AssetIndex index = (AssetIndex) this.gson.fromJson(new FileReader(indexFile.toFile()), AssetIndex.class);
 
-            if (index.isVirtual()) {
-                virtualRoot.mkdirs();
+            if (!index.isVirtual() && !Files.exists(virtualRoot)) {
+                try {
+                    Files.createDirectory(virtualRoot);
+                } catch (IOException e) {
+                    App.settings.logStackTrace("Error creating directory " + virtualRoot, e);
+                }
             }
 
             for (Map.Entry<String, AssetObject> entry : index.getObjects().entrySet()) {
                 AssetObject object = entry.getValue();
                 String filename = object.getHash().substring(0, 2) + "/" + object.getHash();
-                File file = new File(objectsFolder, filename);
-                File virtualFile = new File(virtualRoot, entry.getKey());
+                Path file = FileSystem.RESOURCES_OBJECTS.resolve(filename);
+                Path virtualFile = virtualRoot.resolve(entry.getKey());
+
                 if (object.needToDownload(file)) {
                     downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), file, object
                             .getHash(), (int) object.getSize(), this, false, virtualFile, index.isVirtual()));
                 } else {
                     if (index.isVirtual()) {
-                        virtualFile.mkdirs();
-                        Utils.copyFile(file, virtualFile, true);
+                        try {
+                            Files.createDirectory(virtualFile.getParent());
+                            Utils.copyFile(file, virtualFile, true);
+                        } catch (IOException e) {
+                            App.settings.logStackTrace("Error creating directory " + virtualFile.getParent(), e);
+                        }
                     }
                 }
             }
-        } catch (JsonSyntaxException e) {
-            App.settings.logStackTrace(e);
-        } catch (JsonIOException e) {
-            App.settings.logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
+        } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
+            App.settings.logStackTrace("Error processing resources for Minecraft!", e);
         }
 
         return downloads;
@@ -812,15 +806,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else {
                 this.librariesNeeded += "," + library.getFile();
             }
+
             forgeLibraries.add(library.getFile());
-            File downloadTo = null;
+
             if (this.isServer) {
                 if (!library.forServer()) {
                     continue;
                 }
                 serverLibraries.add(this.getLibrariesDirectory().resolve(library.getServer()));
             }
-            downloadTo = FileSystem.LIBRARIES.resolve(library.getFile());
+
+            Path downloadTo = FileSystem.LIBRARIES.resolve(library.getFile());
             if (library.getDownloadType() == DownloadType.server) {
                 libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), library.getFilesize(),
                         this, true));
@@ -855,7 +851,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             this.librariesNeeded += "," + library.getFile().getName();
                         }
                     }
-                    libraries.add(new Downloadable(library.getURL(), library.getFile(), null, this, false));
+                    libraries.add(new Downloadable(library.getURL(), library.getFilePath(), null, this, false));
                 }
             }
         }
@@ -870,17 +866,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else {
             libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version
                     .getMinecraftVersion().getVersion() + "/" + this.version.getMinecraftVersion().getVersion() + "" +
-                    ".jar"), FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar"), null, this, false));
+                    ".jar"), FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar"), null,
+                    this, false));
         }
         return libraries;
     }
 
+    // TODO: Switch to NIO operations and possibly move to Utils/FileUtils (new class)
     public void deleteMetaInf() {
         Path inputFile = this.getMinecraftJar();
         Path outputTmpFile = FileSystem.TMP.resolve(pack.getSafeName() + "-minecraft.jar");
         try {
-            JarInputStream input = new JarInputStream(new FileInputStream(inputFile));
-            JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile));
+            JarInputStream input = new JarInputStream(new FileInputStream(inputFile.toFile()));
+            JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile.toFile()));
             JarEntry entry;
 
             while ((entry = input.getNextJarEntry()) != null) {
@@ -899,8 +897,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             input.close();
             output.close();
 
-            inputFile.delete();
-            outputTmpFile.renameTo(inputFile);
+            Utils.delete(inputFile);
+            Utils.moveFile(outputTmpFile, inputFile);
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
@@ -953,8 +951,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             if (mod.getType() == ModType.jar) {
                 return true;
-            } else if (mod.getType() == ModType.decomp && mod.getDecompType() == com
-                    .atlauncher.data.json.DecompType.jar) {
+            } else if (mod.getType() == ModType.decomp && mod.getDecompType() == com.atlauncher.data.json.DecompType
+                    .jar) {
                 return true;
             }
         }
@@ -1047,75 +1045,76 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void backupSelectFiles() {
         Path reis = this.getModsDirectory().resolve("rei_minimap");
-        if (reis.exists() && reis.isDirectory()) {
-            if (Utils.copyDirectory(reis, getTempDirectory(), true)) {
+        if (Files.exists(reis) && Files.isDirectory(reis)) {
+            if (Utils.copyDirectory(reis, this.getTempDirectory(), true)) {
                 savedReis = true;
             }
         }
 
         Path zans = this.getModsDirectory().resolve("VoxelMods");
-        if (zans.exists() && zans.isDirectory()) {
-            if (Utils.copyDirectory(zans, getTempDirectory(), true)) {
+        if (Files.exists(zans) && Files.isDirectory(zans)) {
+            if (Utils.copyDirectory(zans, this.getTempDirectory(), true)) {
                 savedZans = true;
             }
         }
 
         Path neiCfg = this.getConfigDirectory().resolve("NEI.cfg");
-        if (neiCfg.exists() && neiCfg.isFile()) {
-            if (Utils.copyFile(neiCfg, getTempDirectory())) {
+        if (Files.exists(neiCfg) && Files.isRegularFile(neiCfg)) {
+            if (Utils.copyFile(neiCfg, this.getTempDirectory())) {
                 savedNEICfg = true;
             }
         }
 
         Path optionsTXT = this.getRootDirectory().resolve("options.txt");
-        if (optionsTXT.exists() && optionsTXT.isFile()) {
-            if (Utils.copyFile(optionsTXT, getTempDirectory())) {
+        if (Files.exists(optionsTXT) && Files.isRegularFile(optionsTXT)) {
+            if (Utils.copyFile(optionsTXT, this.getTempDirectory())) {
                 savedOptionsTxt = true;
             }
         }
 
         Path serversDAT = this.getRootDirectory().resolve("servers.dat");
-        if (serversDAT.exists() && serversDAT.isFile()) {
-            if (Utils.copyFile(serversDAT, getTempDirectory())) {
+        if (Files.exists(serversDAT) && Files.isRegularFile(serversDAT)) {
+            if (Utils.copyFile(serversDAT, this.getTempDirectory())) {
                 savedServersDat = true;
             }
         }
 
         Path portalGunSounds = this.getModsDirectory().resolve("PortalGunSounds.pak");
-        if (portalGunSounds.exists() && portalGunSounds.isFile()) {
+        if (Files.exists(portalGunSounds) && Files.isRegularFile(portalGunSounds)) {
             savedPortalGunSounds = true;
-            Utils.copyFile(portalGunSounds, getTempDirectory());
+            Utils.copyFile(portalGunSounds, this.getTempDirectory());
         }
     }
 
     private void restoreSelectFiles() {
         if (savedReis) {
-            Utils.copyDirectory(this.getTempDirectory().resolve("rei_minimap"), this.getModsDirectory().resolve(
-                    "rei_minimap"));
+            Utils.copyDirectory(this.getTempDirectory().resolve("rei_minimap"), this.getModsDirectory().resolve
+                    ("rei_minimap"));
         }
 
         if (savedZans) {
-            Utils.copyDirectory(this.getTempDirectory().resolve("VoxelMods"), this.getModsDirectory().resolve(
-                    "VoxelMods"));
+            Utils.copyDirectory(this.getTempDirectory().resolve("VoxelMods"), this.getModsDirectory().resolve
+                    ("VoxelMods"));
         }
 
         if (savedNEICfg) {
-            Utils.copyFile(this.getTempDirectory().resolve("NEI.cfg"), this.getConfigDirectory().resolve("NEI.cfg"), true);
+            Utils.copyFile(this.getTempDirectory().resolve("NEI.cfg"), this.getConfigDirectory().resolve("NEI.cfg"),
+                    true);
         }
 
         if (savedOptionsTxt) {
-            Utils.copyFile(this.getTempDirectory().resolve("options.txt"), this.getRootDirectory().resolve("options.txt"),
-                    true);
+            Utils.copyFile(this.getTempDirectory().resolve("options.txt"), this.getRootDirectory().resolve("options"
+                    + ".txt"), true);
         }
 
         if (savedServersDat) {
-            Utils.copyFile(this.getTempDirectory().resolve("servers.dat"), this.getRootDirectory().resolve("servers.dat"),
-                    true);
+            Utils.copyFile(this.getTempDirectory().resolve("servers.dat"), this.getRootDirectory().resolve("servers"
+                    + ".dat"), true);
         }
 
         if (savedPortalGunSounds) {
-            Utils.copyFile(this.getTempDirectory().resolve("PortalGunSounds.pak"), this.getModsDirectory().resolve(
-                    "PortalGunSounds.pak"), true);
+            Utils.copyFile(this.getTempDirectory().resolve("PortalGunSounds.pak"), this.getModsDirectory().resolve
+                    ("PortalGunSounds.pak"), true);
         }
     }
 
@@ -1213,7 +1212,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (this.isServer) {
             for (Path path : serverLibraries) {
                 Files.createDirectory(path);
-                Utils.copyFile(FileSystem.LIBRARIES.resolve(file.getName()), file, true);
+                Utils.copyFile(FileSystem.LIBRARIES.resolve(path.getFileName()), path, true);
             }
         }
         addPercent(5);
@@ -1257,6 +1256,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             Utils.zip(getTempTexturePackDirectory(), this.getTexturePacksDirectory().resolve("TexturePack.zip"));
         }
+
         if (extractedResourcePack) {
             fireTask(Language.INSTANCE.localize("instance.zippingresourcepackfiles"));
             fireSubProgressUnknown();
@@ -1265,29 +1265,39 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             Utils.zip(getTempResourcePackDirectory(), this.getResourcePacksDirectory().resolve("ResourcePack.zip"));
         }
+
         if (isCancelled()) {
             return false;
         }
+
         if (hasActions()) {
             doActions();
         }
+
         if (isCancelled()) {
             return false;
         }
+
         if (!this.jsonVersion.hasNoConfigs()) {
             configurePack();
         }
+
         // Copy over common configs if any
-        if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
-            Utils.copyDirectory(App.settings.getCommonConfigsDir(), getRootDirectory());
+        if (FileSystem.COMMON.toFile().listFiles().length != 0) {
+            Utils.copyDirectory(FileSystem.COMMON, getRootDirectory());
         }
+
         restoreSelectFiles();
+
         if (isServer) {
             File batFile = this.getRootDirectory().resolve("LaunchServer.bat").toFile();
             File shFile = this.getRootDirectory().resolve("LaunchServer.sh").toFile();
-            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.bat"), batFile, "%%SERVERJAR%%",
+
+            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.bat").toFile(), batFile, "%%SERVERJAR%%",
                     getServerJar());
-            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.sh"), shFile, "%%SERVERJAR%%", getServerJar());
+            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.sh").toFile(), shFile, "%%SERVERJAR%%",
+                    getServerJar());
+
             batFile.setExecutable(true);
             shFile.setExecutable(true);
         }
