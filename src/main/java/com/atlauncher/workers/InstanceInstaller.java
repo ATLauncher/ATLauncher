@@ -28,7 +28,6 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
-import com.atlauncher.data.Type;
 import com.atlauncher.data.json.Action;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.Delete;
@@ -381,12 +380,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.deleteContents(this.getConfigDirectory());
             if (instance != null && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion()
                     .getVersion()) && instance.hasCustomMods()) {
-                Utils.deleteSpecifiedFiles(this.getModsDirectory(), instance.getCustomMods(Type.mods));
+                Utils.deleteSpecifiedFiles(this.getModsDirectory(), instance.getCustomMods(ModType.mods));
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
-                    Utils.deleteSpecifiedFiles(this.getCoreModsDirectory(), instance.getCustomMods(Type.coremods));
+                    Utils.deleteSpecifiedFiles(this.getCoreModsDirectory(), instance.getCustomMods(ModType.coremods));
                 }
                 if (isReinstall) {
-                    Utils.deleteSpecifiedFiles(this.getJarModsDirectory(), instance.getCustomMods(Type.jar));
+                    Utils.deleteSpecifiedFiles(this.getJarModsDirectory(), instance.getCustomMods(ModType.jar));
                 }
             } else {
                 Utils.deleteDirectory(this.getModsDirectory());
@@ -714,7 +713,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (isReinstall && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion()
                     .getVersion())) {
                 Files.walkFileTree(dir, new CaseFileVisitor(this.jsonVersion.getCaseAllFiles(), instance
-                        .getCustomMods(Type.mods)));
+                        .getCustomMods(ModType.mods)));
             } else {
                 Files.walkFileTree(dir, new CaseFileVisitor(this.jsonVersion.getCaseAllFiles()));
             }
@@ -1171,7 +1170,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (!hasOptional) {
             this.selectedMods = this.allMods;
         }
-        modsInstalled = new ArrayList<DisableableMod>();
+        modsInstalled = new ArrayList<>();
         for (Mod mod : this.selectedMods) {
             String file = mod.getFile();
             if (this.jsonVersion.getCaseAllFiles() == CaseType.upper) {
@@ -1179,9 +1178,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
-            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, Type
-                    .valueOf(Type.class, mod.getType().toString()), this.jsonVersion.getColour(mod.getColour()), mod
-                    .getDescription(), false, false));
+            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, mod
+                    .getType(), this.jsonVersion.getColour(mod.getColour()), mod.getDescription(), false, false));
         }
 
         if (this.isReinstall && instance.hasCustomMods() && instance.getMinecraftVersion().equalsIgnoreCase(version

@@ -20,6 +20,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.json.ModType;
 import com.atlauncher.utils.Utils;
 
 import java.awt.Color;
@@ -40,14 +41,14 @@ public class DisableableMod implements Serializable {
     private String version;
     private boolean optional;
     private String file;
-    private Type type;
+    private ModType type;
     private Color colour;
     private String description;
     private boolean disabled;
     private boolean userAdded = false; // Default to not being user added
 
-    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour, String
-            description, boolean disabled, boolean userAdded) {
+    public DisableableMod(String name, String version, boolean optional, String file, ModType type, Color colour,
+                          String description, boolean disabled, boolean userAdded) {
         this.name = name;
         this.version = version;
         this.optional = optional;
@@ -111,7 +112,7 @@ public class DisableableMod implements Serializable {
             }
 
             if (Utils.moveFile(this.getDisabledFilePath(instance), this.getFilePath(instance), true)) {
-                if (this.type == Type.jar) {
+                if (this.type == ModType.jar) {
                     Path inputFile = instance.getMinecraftJar();
                     Path outputTmpFile = FileSystem.TMP.resolve(instance.getSafeName() + "-minecraft.jar");
                     if (Utils.hasMetaInf(inputFile)) {
@@ -182,7 +183,7 @@ public class DisableableMod implements Serializable {
     public Path getFilePath(Instance instance) {
         Path dir = null;
 
-        switch (type) {
+        switch (this.type) {
             case jar:
             case forge:
             case mcpc:
@@ -221,7 +222,7 @@ public class DisableableMod implements Serializable {
         return dir.resolve(file);
     }
 
-    public Type getType() {
+    public ModType getType() {
         return this.type;
     }
 
