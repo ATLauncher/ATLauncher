@@ -1719,7 +1719,8 @@ public class Settings {
         List<Pack> packs = new LinkedList<Pack>(Data.PACKS);
         Collections.sort(packs, new Comparator<Pack>() {
             public int compare(Pack result1, Pack result2) {
-                return (result1.getPosition() < result2.getPosition()) ? -1 : ((result1.getPosition() == result2.getPosition()) ? 0 : 1);
+                return (result1.getPosition() < result2.getPosition()) ? -1 : ((result1.getPosition() == result2
+                        .getPosition()) ? 0 : 1);
             }
         });
         return packs;
@@ -1748,7 +1749,8 @@ public class Settings {
     }
 
     public boolean isUsingNewMacApp() {
-        return Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS").resolve("universalJavaApplicationStub"));
+        return Files.exists(FileSystem.BASE_DIR.getParent().getParent().resolve("MacOS").resolve
+                ("universalJavaApplicationStub"));
     }
 
     public void setInstanceVisbility(Instance instance, boolean collapsed) {
