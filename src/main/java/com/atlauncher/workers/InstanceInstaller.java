@@ -378,10 +378,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (isReinstall || isServer) {
             // We're reinstalling or installing a server so delete these folders
             if (Files.exists(this.getBinDirectory()) && Files.isDirectory(this.getBinDirectory())) {
-                Utils.deleteContents(this.getBinDirectory());
+                Utils.deleteDirectory(this.getBinDirectory());
             }
             if (Files.exists(this.getConfigDirectory()) && Files.isDirectory(this.getConfigDirectory())) {
-                Utils.deleteContents(this.getConfigDirectory());
+                Utils.deleteDirectory(this.getConfigDirectory());
             }
 
             if (instance != null && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion()

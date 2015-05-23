@@ -947,31 +947,33 @@ public class Utils {
     /**
      * @deprecated Use delete(Path)
      */
-    public static void delete(File file) {
-        Utils.delete(file.toPath());
+    public static boolean delete(File file) {
+        return Utils.delete(file.toPath());
     }
 
-    public static void delete(Path path) {
+    public static boolean delete(Path path) {
         if (!Files.exists(path)) {
             LogManager.error("Couldn't delete " + path + " as it doesn't exist!");
-            return;
+            return false;
         }
 
         if (Files.isSymbolicLink(path)) {
             LogManager.error("Not deleting " + path + " as it's a symlink!");
-            return;
+            return false;
         }
 
         if (Files.isDirectory(path)) {
-            Utils.deleteDirectory(path);
-            return;
+            return Utils.deleteDirectory(path);
         }
 
         try {
             Files.delete(path);
         } catch (IOException e) {
             LogManager.error("Path " + path + " couldn't be deleted!");
+            return false;
         }
+
+        return true;
     }
 
     public static boolean isSymlink(File file) {
@@ -1013,12 +1015,15 @@ public class Utils {
         }
     }
 
-    public static void deleteSpecifiedFiles(Path path, final List<String> files) {
+    public static boolean deleteSpecifiedFiles(Path path, final List<String> files) {
         try {
             Files.walkFileTree(path, new DeleteSpecifiedFilesVisitor(files));
         } catch (IOException e) {
             App.settings.logStackTrace("Error while trying to delete specific files from " + path, e);
+            return false;
         }
+
+        return true;
     }
 
     public static void spreadOutResourceFiles(Path p) {
