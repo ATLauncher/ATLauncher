@@ -19,23 +19,12 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
+import com.atlauncher.Gsons;
+import com.atlauncher.data.json.Version;
 import com.atlauncher.utils.Utils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.swing.ImageIcon;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.awt.Color;
-import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -59,8 +48,6 @@ public class Pack {
     private String websiteURL;
     private List<String> testers = new ArrayList<String>();
     private List<String> allowedPlayers = new ArrayList<String>();
-    private String xml; // The xml for a version of the pack
-    private String xmlVersion; // The version the XML above is for
     private String json; // The JSON for a version of the pack
     private String jsonVersion; // The version the JSON above is for
 
@@ -87,7 +74,7 @@ public class Pack {
 
     public ImageIcon getImage() {
         Path file = FileSystem.IMAGES.resolve(this.getSafeName().toLowerCase() + ".png");
-        if(!Files.exists(file)){
+        if (!Files.exists(file)) {
             file = FileSystem.IMAGES.resolve("defaultimage.png");
         }
         return Utils.getIconImage(file);
@@ -273,6 +260,10 @@ public class Pack {
             return true;
         }
         return !getLatestVersion().isRecommended();
+    }
+
+    public Version getJsonVersion(String version) {
+        return Gsons.DEFAULT.fromJson(this.getJSON(version), Version.class);
     }
 
     public String getJSON(String version) {

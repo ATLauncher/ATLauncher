@@ -17,7 +17,7 @@
  */
 package com.atlauncher.gui.card;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.utils.Utils;
@@ -30,7 +30,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Image;
-import java.io.File;
 
 /**
  * Class for displaying packs in the Pack Tab
@@ -38,8 +37,8 @@ import java.io.File;
  * @author Ryan
  */
 public class NilCard extends JPanel {
-    private static final Image defaultImage = Utils.getIconImage(new File(App.settings.getImagesDir(), "defaultimage" +
-            ".png")).getImage();
+    private static final Image defaultImage = Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage" + ".png")
+            .toFile()).getImage();
 
     private final JTextArea error = new JTextArea();
     private final JSplitPane splitter = new JSplitPane();

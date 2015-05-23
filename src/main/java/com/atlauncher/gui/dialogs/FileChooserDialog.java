@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
@@ -96,7 +97,7 @@ public class FileChooserDialog extends JDialog {
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser(App.settings.getBaseDir());
+                JFileChooser fileChooser = new JFileChooser(FileSystem.BASE_DIR.toFile());
                 fileChooser.setMultiSelectionEnabled(true);
                 fileChooser.setFileFilter(new FileFilter() {
                     @Override

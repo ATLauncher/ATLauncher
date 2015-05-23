@@ -809,36 +809,6 @@ public class Utils {
         return true;
     }
 
-    public static boolean safeCopy(File from, File to) throws IOException {
-        if (to.exists()) {
-            to.delete();
-        }
-
-        InputStream is = null;
-        OutputStream os = null;
-
-        try {
-            is = new FileInputStream(from);
-            os = new FileOutputStream(to);
-
-            byte[] buff = new byte[1024];
-            int len;
-            while ((len = is.read(buff)) > 0) {
-                os.write(buff, 0, len);
-            }
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-
-            if (os != null) {
-                os.close();
-            }
-        }
-
-        return true;
-    }
-
     /**
      * Move directory.
      *

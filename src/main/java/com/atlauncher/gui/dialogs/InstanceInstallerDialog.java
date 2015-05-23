@@ -331,7 +331,7 @@ public class InstanceInstallerDialog extends JDialog {
                                         ("common.hasbeen") + " " + ((isReinstall) ? Language.INSTANCE.localize
                                         ("common.reinstalled") : Language.INSTANCE.localize("common.installed")) +
                                         "<br/><br/>" + ((isServer) ? Language.INSTANCE.localizeWithReplace("instance"
-                                        + ".finditserver", "<br/><br/>" + this.getRootDirectory().getAbsolutePath())
+                                        + ".finditserver", "<br/><br/>" + this.getRootDirectory())
                                         : Language.INSTANCE.localize("instance.findit"));
                                 title = pack.getName() + " " + version.getVersion() + " " + Language.INSTANCE
                                         .localize("common.installed");

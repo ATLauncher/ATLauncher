@@ -19,6 +19,7 @@
 package com.atlauncher.evnt;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Timestamper;
@@ -41,7 +42,7 @@ public final class LogEvent {
     public LogEvent(LogType type, String body, int meta) {
         this.type = type;
         if (App.settings != null && !LogManager.showDebug) {
-            body = body.replace(App.settings.getBaseDir().getAbsolutePath(), "**USERSDIR**");
+            body = body.replace(FileSystem.BASE_DIR.toString(), "**USERSDIR**");
         }
         this.body = (!body.endsWith("\n") ? body + "\n" : body);
         this.meta = meta;
@@ -53,6 +54,7 @@ public final class LogEvent {
             c.setColor(this.type.color()).setBold(true).write("[" + Timestamper.now() + "] ");
             c.setColor(App.THEME.getConsoleTextColor()).setBold(false).write(this.body);
         }
+
         if ((this.meta & FILE) == FILE) {
             try {
                 writer.write(this);

@@ -18,7 +18,7 @@
 
 package com.atlauncher.gui.card;
 
-import com.atlauncher.data.Mod;
+import com.atlauncher.data.json.Mod;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JPanel;
@@ -37,9 +37,11 @@ public final class ModCard extends JPanel {
         Dimension dim = new Dimension(this.getPreferredSize().width, (int) (this.getPreferredSize().height * 1.5));
         this.setPreferredSize(dim);
         this.mod = mod;
+
         if (this.mod.hasWebsite()) {
             this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
+
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

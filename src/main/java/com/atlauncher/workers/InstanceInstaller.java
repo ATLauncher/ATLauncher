@@ -1312,7 +1312,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
 
         try {
-            this.jsonVersion = Gsons.DEFAULT.fromJson(this.pack.getJSON(version.getVersion()), Version.class);
+            this.jsonVersion = this.pack.getJsonVersion(version.getVersion());
             return installUsingJSON();
         } catch (JsonParseException e) {
             App.settings.logStackTrace("Couldn't parse JSON of pack!", e);

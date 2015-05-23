@@ -123,6 +123,10 @@ public class Mod {
         return this.download;
     }
 
+    public boolean hasWebsite() {
+        return this.website != null;
+    }
+
     public String getWebsite() {
         return this.website;
     }
