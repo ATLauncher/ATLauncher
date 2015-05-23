@@ -151,9 +151,9 @@ public class Downloadable {
 
         if (Files.exists(this.path)) {
             if (isMD5()) {
-                return Utils.getMD5(this.path).equalsIgnoreCase(getHash());
+                return !Utils.getMD5(this.path).equalsIgnoreCase(getHash());
             } else {
-                return Utils.getSHA1(this.path).equalsIgnoreCase(getHash());
+                return !Utils.getSHA1(this.path).equalsIgnoreCase(getHash());
             }
         }
 
@@ -389,11 +389,13 @@ public class Downloadable {
             Utils.delete(this.path);
         }
 
-        // Create the directory structure
-        try {
-            Files.createDirectories(this.path.getParent());
-        } catch (IOException e) {
-            App.settings.logStackTrace("Error creating directory at " + this.path.getParent(), e);
+        // Create the directory structure if the parent doesn't exist
+        if (!Files.exists(this.path.getParent())) {
+            try {
+                Files.createDirectories(this.path.getParent());
+            } catch (IOException e) {
+                App.settings.logStackTrace("Error creating directory at " + this.path.getParent(), e);
+            }
         }
 
         if (getHash().equalsIgnoreCase("-")) {
@@ -401,8 +403,10 @@ public class Downloadable {
         } else {
             String fileHash = "0";
             boolean done = false;
+
             while (attempts <= 3) {
                 attempts++;
+
                 if (Files.exists(this.path)) {
                     if (isMD5()) {
                         fileHash = Utils.getMD5(this.path);
@@ -412,20 +416,25 @@ public class Downloadable {
                 } else {
                     fileHash = "0";
                 }
+
                 if (fileHash.equalsIgnoreCase(getHash())) {
                     done = true;
                     break; // Hash matches, path is good
                 }
+
                 if (this.connection != null) {
                     this.connection.disconnect();
                     this.connection = null;
                 }
+
                 if (Files.exists(this.path)) {
                     Utils.delete(this.path); // Delete path since it doesn't match MD5
                 }
+
                 if (attempts != 1 && downloadAsLibrary) {
                     this.instanceInstaller.addTotalDownloadedBytes(this.size);
                 }
+
                 downloadFile(downloadAsLibrary); // Keep downloading path until it matches MD5
             }
             if (!done) {
