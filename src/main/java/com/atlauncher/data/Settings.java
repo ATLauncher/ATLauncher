@@ -144,10 +144,6 @@ public class Settings {
     // Packs, Instances and Accounts
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
-    private List<News> news; // News
-    private Map<String, MinecraftVersion> minecraftVersions; // Minecraft versions
-    private List<Pack> packs; // Packs in the Launcher
-    private List<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
     private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
     private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
@@ -243,7 +239,7 @@ public class Settings {
 
         LogManager.debug("Checking for access to master server");
         OUTER:
-        for (Pack pack : this.packs) {
+        for (Pack pack : Data.PACKS) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
                     if (server.getName().equals("Master Server (Testing Only)")) {
@@ -502,7 +498,7 @@ public class Settings {
 
         boolean wereChanges = false;
 
-        for (Instance instance : this.instances) {
+        for (Instance instance : Data.INSTANCES) {
             if (instance.getInstalledBy() != null) {
                 boolean found = false;
 
@@ -1433,7 +1429,7 @@ public class Settings {
 
         LogManager.info("[Background] Checking Minecraft Versions Started");
         ExecutorService executor = Utils.generateDownloadExecutor();
-        for (final Entry<String, MinecraftVersion> entry : this.minecraftVersions.entrySet()) {
+        for (final Entry<String, MinecraftVersion> entry : Data.MINECRAFT_VERSIONS.entrySet()) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -1564,7 +1560,7 @@ public class Settings {
     }
 
     public void saveInstances() {
-        for (Instance instance : this.instances) {
+        for (Instance instance : Data.INSTANCES) {
             Path instanceFile = instance.getRootDirectory().resolve("instance.json");
             FileWriter fw = null;
             BufferedWriter bw = null;
@@ -1696,7 +1692,7 @@ public class Settings {
      * @return The Packs available in the Launcher
      */
     public List<Pack> getPacks() {
-        return this.packs;
+        return Data.PACKS;
     }
 
     /**
@@ -1705,7 +1701,7 @@ public class Settings {
      * @return The Packs available in the Launcher sorted alphabetically
      */
     public List<Pack> getPacksSortedAlphabetically() {
-        List<Pack> packs = new LinkedList<Pack>(this.packs);
+        List<Pack> packs = new LinkedList<>(Data.PACKS);
         Collections.sort(packs, new Comparator<Pack>() {
             public int compare(Pack result1, Pack result2) {
                 return result1.getName().compareTo(result2.getName());
@@ -1720,7 +1716,7 @@ public class Settings {
      * @return The Packs available in the Launcher sorted by position
      */
     public List<Pack> getPacksSortedPositionally() {
-        List<Pack> packs = new LinkedList<Pack>(this.packs);
+        List<Pack> packs = new LinkedList<Pack>(Data.PACKS);
         Collections.sort(packs, new Comparator<Pack>() {
             public int compare(Pack result1, Pack result2) {
                 return (result1.getPosition() < result2.getPosition()) ? -1 : ((result1.getPosition() == result2
@@ -1780,7 +1776,7 @@ public class Settings {
      * @return The Instances available in the Launcher
      */
     public List<Instance> getInstances() {
-        return this.instances;
+        return Data.INSTANCES;
     }
 
     /**
@@ -1789,7 +1785,7 @@ public class Settings {
      * @return The Instances available in the Launcher sorted alphabetically
      */
     public ArrayList<Instance> getInstancesSorted() {
-        ArrayList<Instance> instances = new ArrayList<Instance>(this.instances);
+        ArrayList<Instance> instances = new ArrayList<Instance>(Data.INSTANCES);
         Collections.sort(instances, new Comparator<Instance>() {
             public int compare(Instance result1, Instance result2) {
                 return result1.getName().compareTo(result2.getName());
@@ -1810,7 +1806,7 @@ public class Settings {
      * @param instance The Instance to remove from the launcher.
      */
     public void removeInstance(Instance instance) {
-        if (this.instances.remove(instance)) {
+        if (Data.INSTANCES.remove(instance)) {
             Utils.delete(instance.getRootDirectory());
             saveInstances();
             reloadInstancesPanel();
@@ -1827,15 +1823,15 @@ public class Settings {
     }
 
     public MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
-        if (this.minecraftVersions.containsKey(version)) {
-            return this.minecraftVersions.get(version);
+        if (Data.MINECRAFT_VERSIONS.containsKey(version)) {
+            return Data.MINECRAFT_VERSIONS.get(version);
         }
         throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
     }
 
     public boolean semiPublicPackExistsFromCode(String packCode) {
         String packCodeMD5 = Utils.getMD5(packCode);
-        for (Pack pack : this.packs) {
+        for (Pack pack : Data.PACKS) {
             if (pack.isSemiPublic()) {
                 if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
                     return true;
@@ -1847,7 +1843,7 @@ public class Settings {
 
     public Pack getSemiPublicPackByCode(String packCode) {
         String packCodeMD5 = Utils.getMD5(packCode);
-        for (Pack pack : this.packs) {
+        for (Pack pack : Data.PACKS) {
             if (pack.isSemiPublic()) {
                 if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
                     return pack;
@@ -1860,7 +1856,7 @@ public class Settings {
 
     public boolean addPack(String packCode) {
         String packCodeMD5 = Utils.getMD5(packCode);
-        for (Pack pack : this.packs) {
+        for (Pack pack : Data.PACKS) {
             if (pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(packCodeMD5)) {
                 if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
                     if (pack.isTester()) {
@@ -1901,7 +1897,7 @@ public class Settings {
      * @return The News items
      */
     public List<News> getNews() {
-        return this.news;
+        return Data.NEWS;
     }
 
     /**
@@ -2087,7 +2083,7 @@ public class Settings {
      * @return True if there is an instance with the same name already
      */
     public boolean isInstance(String name) {
-        for (Instance instance : instances) {
+        for (Instance instance : Data.INSTANCES) {
             if (instance.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", ""))) {
                 return true;
             }
@@ -2103,7 +2099,7 @@ public class Settings {
      * @throws InvalidPack If ID is not found
      */
     public Pack getPackByID(int id) throws InvalidPack {
-        for (Pack pack : packs) {
+        for (Pack pack : Data.PACKS) {
             if (pack.getID() == id) {
                 return pack;
             }
@@ -2118,7 +2114,7 @@ public class Settings {
      * @return True if the pack is found from the name
      */
     public boolean isPackByName(String name) {
-        for (Pack pack : packs) {
+        for (Pack pack : Data.PACKS) {
             if (pack.getName().equalsIgnoreCase(name)) {
                 return true;
             }
@@ -2133,7 +2129,7 @@ public class Settings {
      * @return Pack if the pack is found from the name
      */
     public Pack getPackByName(String name) {
-        for (Pack pack : packs) {
+        for (Pack pack : Data.PACKS) {
             if (pack.getName().equalsIgnoreCase(name)) {
                 return pack;
             }
@@ -2148,7 +2144,7 @@ public class Settings {
      * @return Pack if the pack is found from the safe name
      */
     public Pack getPackBySafeName(String name) {
-        for (Pack pack : packs) {
+        for (Pack pack : Data.PACKS) {
             if (pack.getSafeName().equalsIgnoreCase(name)) {
                 return pack;
             }
@@ -2163,7 +2159,7 @@ public class Settings {
      * @return True if the instance is found from the name
      */
     public boolean isInstanceByName(String name) {
-        for (Instance instance : instances) {
+        for (Instance instance : Data.INSTANCES) {
             if (instance.getName().equalsIgnoreCase(name)) {
                 return true;
             }
@@ -2178,7 +2174,7 @@ public class Settings {
      * @return True if the instance is found from the name
      */
     public boolean isInstanceBySafeName(String name) {
-        for (Instance instance : instances) {
+        for (Instance instance : Data.INSTANCES) {
             if (instance.getSafeName().equalsIgnoreCase(name)) {
                 return true;
             }
@@ -2193,7 +2189,7 @@ public class Settings {
      * @return Instance if the instance is found from the name
      */
     public Instance getInstanceByName(String name) {
-        for (Instance instance : instances) {
+        for (Instance instance : Data.INSTANCES) {
             if (instance.getName().equalsIgnoreCase(name)) {
                 return instance;
             }
@@ -2208,7 +2204,7 @@ public class Settings {
      * @return Instance if the instance is found from the name
      */
     public Instance getInstanceBySafeName(String name) {
-        for (Instance instance : instances) {
+        for (Instance instance : Data.INSTANCES) {
             if (instance.getSafeName().equalsIgnoreCase(name)) {
                 return instance;
             }
@@ -2867,7 +2863,7 @@ public class Settings {
             try {
                 Files.createDirectory(clonedInstance.getRootDirectory());
                 Utils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
-                this.instances.add(clonedInstance);
+                Data.INSTANCES.add(clonedInstance);
                 this.saveInstances();
                 this.reloadInstancesPanel();
             } catch (IOException e) {
