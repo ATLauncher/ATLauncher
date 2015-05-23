@@ -165,13 +165,8 @@ public class Downloadable {
             if (Files.exists(this.copyTo)) {
                 Utils.delete(this.copyTo);
             }
-            try {
-                Files.createDirectories(this.copyTo.getParent());
-            } catch (IOException e) {
-                App.settings.logStackTrace("Error creating directory " + this.copyTo.getParent(), e);
-                return;
-            }
 
+            Utils.createDirectory(this.copyTo.getParent());
             Utils.copyFile(this.path, this.copyTo, true);
         }
     }
@@ -391,11 +386,7 @@ public class Downloadable {
 
         // Create the directory structure if the parent doesn't exist
         if (!Files.exists(this.path.getParent())) {
-            try {
-                Files.createDirectories(this.path.getParent());
-            } catch (IOException e) {
-                App.settings.logStackTrace("Error creating directory at " + this.path.getParent(), e);
-            }
+            Utils.createDirectory(this.path.getParent());
         }
 
         if (getHash().equalsIgnoreCase("-")) {
@@ -482,11 +473,7 @@ public class Downloadable {
                         Utils.delete(this.copyTo);
                     }
 
-                    try {
-                        Files.createDirectories(this.copyTo.getParent());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating directory at " + this.copyTo.getParent(), e);
-                    }
+                    Utils.createDirectory(this.copyTo.getParent());
 
                     Utils.copyFile(this.path, this.copyTo, true);
                 }

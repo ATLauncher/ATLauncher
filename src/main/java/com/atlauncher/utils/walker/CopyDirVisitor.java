@@ -1,5 +1,7 @@
 package com.atlauncher.utils.walker;
 
+import com.atlauncher.utils.Utils;
+
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -27,7 +29,7 @@ public final class CopyDirVisitor extends SimpleFileVisitor<Path> {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         Path target = this.to.resolve(this.from.relativize(dir));
         if (!Files.exists(target)) {
-            Files.createDirectory(target);
+            Utils.createDirectory(target);
         }
         return FileVisitResult.CONTINUE;
     }

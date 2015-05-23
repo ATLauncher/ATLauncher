@@ -432,19 +432,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         for (Path directory : directories) {
-            try {
-                Files.createDirectory(directory);
-            } catch (IOException e) {
-                App.settings.logStackTrace(e);
-            }
+            Utils.createDirectory(directory);
         }
 
         if (this.version.getMinecraftVersion().usesCoreMods()) {
-            try {
-                Files.createDirectory(this.getCoreModsDirectory());
-            } catch (IOException e) {
-                App.settings.logStackTrace(e);
-            }
+            Utils.createDirectory(this.getCoreModsDirectory());
         }
     }
 
@@ -732,11 +724,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             AssetIndex index = (AssetIndex) this.gson.fromJson(new FileReader(indexFile.toFile()), AssetIndex.class);
 
             if (!index.isVirtual() && !Files.exists(virtualRoot)) {
-                try {
-                    Files.createDirectory(virtualRoot);
-                } catch (IOException e) {
-                    App.settings.logStackTrace("Error creating directory " + virtualRoot, e);
-                }
+                Utils.createDirectory(virtualRoot);
             }
 
             for (Map.Entry<String, AssetObject> entry : index.getObjects().entrySet()) {
@@ -750,12 +738,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             .getHash(), (int) object.getSize(), this, false, virtualFile, index.isVirtual()));
                 } else {
                     if (index.isVirtual()) {
-                        try {
-                            Files.createDirectory(virtualFile.getParent());
-                            Utils.copyFile(file, virtualFile, true);
-                        } catch (IOException e) {
-                            App.settings.logStackTrace("Error creating directory " + virtualFile.getParent(), e);
-                        }
+                        Utils.createDirectory(virtualFile.getParent());
+                        Utils.copyFile(file, virtualFile, true);
                     }
                 }
             }
@@ -1209,7 +1193,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         if (this.isServer) {
             for (Path path : serverLibraries) {
-                Files.createDirectory(path);
+                Utils.createDirectory(path);
                 Utils.copyFile(FileSystem.LIBRARIES.resolve(path.getFileName()), path, true);
             }
         }
@@ -1250,7 +1234,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             fireTask(Language.INSTANCE.localize("instance.zippingtexturepackfiles"));
             fireSubProgressUnknown();
             if (!Files.exists(this.getTexturePacksDirectory())) {
-                Files.createDirectory(this.getTexturePacksDirectory());
+                Utils.createDirectory(this.getTexturePacksDirectory());
             }
             Utils.zip(getTempTexturePackDirectory(), this.getTexturePacksDirectory().resolve("TexturePack.zip"));
         }
@@ -1259,7 +1243,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             fireTask(Language.INSTANCE.localize("instance.zippingresourcepackfiles"));
             fireSubProgressUnknown();
             if (!Files.exists(this.getResourcePacksDirectory())) {
-                Files.createDirectory(this.getResourcePacksDirectory());
+                Utils.createDirectory(this.getResourcePacksDirectory());
             }
             Utils.zip(getTempResourcePackDirectory(), this.getResourcePacksDirectory().resolve("ResourcePack.zip"));
         }

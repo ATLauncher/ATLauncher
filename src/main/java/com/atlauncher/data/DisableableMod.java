@@ -103,12 +103,7 @@ public class DisableableMod implements Serializable {
         if (this.disabled) {
             Path path = getFilePath(instance).getParent();
             if (!Files.exists(path)) {
-                try {
-                    Files.createDirectories(path);
-                } catch (IOException e) {
-                    App.settings.logStackTrace("Error creating directory " + path + " while trying to enable mod!", e);
-                    return false;
-                }
+                Utils.createDirectory(path);
             }
 
             if (Utils.moveFile(this.getDisabledFilePath(instance), this.getFilePath(instance), true)) {

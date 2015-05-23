@@ -651,33 +651,21 @@ public class Mod {
                 break;
             case texturepack:
                 if (!Files.exists(installer.getTexturePacksDirectory())) {
-                    try {
-                        Files.createDirectory(installer.getTexturePacksDirectory());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating folder " + installer.getTexturePacksDirectory(), e);
-                    }
+                    Utils.createDirectory(installer.getTexturePacksDirectory());
                 }
 
                 Utils.copyFile(fileLocation, installer.getTexturePacksDirectory());
                 break;
             case resourcepack:
                 if (!Files.exists(installer.getResourcePacksDirectory())) {
-                    try {
-                        Files.createDirectory(installer.getResourcePacksDirectory());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating folder " + installer.getResourcePacksDirectory(), e);
-                    }
+                    Utils.createDirectory(installer.getResourcePacksDirectory());
                 }
 
                 Utils.copyFile(fileLocation, installer.getResourcePacksDirectory());
                 break;
             case texturepackextract:
                 if (!Files.exists(installer.getTexturePacksDirectory())) {
-                    try {
-                        Files.createDirectory(installer.getTexturePacksDirectory());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating folder " + installer.getTexturePacksDirectory(), e);
-                    }
+                    Utils.createDirectory(installer.getTexturePacksDirectory());
                 }
 
                 Utils.unzip(fileLocation, installer.getTempTexturePackDirectory());
@@ -685,11 +673,7 @@ public class Mod {
                 break;
             case resourcepackextract:
                 if (!Files.exists(installer.getResourcePacksDirectory())) {
-                    try {
-                        Files.createDirectory(installer.getResourcePacksDirectory());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating folder " + installer.getResourcePacksDirectory(), e);
-                    }
+                    Utils.createDirectory(installer.getResourcePacksDirectory());
                 }
 
                 Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
@@ -717,33 +701,21 @@ public class Mod {
                 break;
             case ic2lib:
                 if (!Files.exists(installer.getIC2LibDirectory())) {
-                    try {
-                        Files.createDirectory(installer.getIC2LibDirectory());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating folder " + installer.getIC2LibDirectory(), e);
-                    }
+                    Utils.createDirectory(installer.getIC2LibDirectory());
                 }
 
                 Utils.copyFile(fileLocation, installer.getIC2LibDirectory());
                 break;
             case flan:
                 if (!Files.exists(installer.getFlanDirectory())) {
-                    try {
-                        Files.createDirectory(installer.getFlanDirectory());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating folder " + installer.getFlanDirectory(), e);
-                    }
+                    Utils.createDirectory(installer.getFlanDirectory());
                 }
 
                 Utils.copyFile(fileLocation, installer.getFlanDirectory());
                 break;
             case denlib:
                 if (!Files.exists(installer.getDenLibDirectory())) {
-                    try {
-                        Files.createDirectory(installer.getDenLibDirectory());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating folder " + installer.getDenLibDirectory(), e);
-                    }
+                    Utils.createDirectory(installer.getDenLibDirectory());
                 }
 
                 Utils.copyFile(fileLocation, installer.getDenLibDirectory());
@@ -751,22 +723,14 @@ public class Mod {
             case depandency:
             case dependency:
                 if (!Files.exists(installer.getDependencyDirectory())) {
-                    try {
-                        Files.createDirectory(installer.getDependencyDirectory());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating folder " + installer.getDependencyDirectory(), e);
-                    }
+                    Utils.createDirectory(installer.getDependencyDirectory());
                 }
 
                 Utils.copyFile(fileLocation, installer.getDependencyDirectory());
                 break;
             case plugins:
                 if (!Files.exists(installer.getPluginsDirectory())) {
-                    try {
-                        Files.createDirectory(installer.getPluginsDirectory());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating folder " + installer.getPluginsDirectory(), e);
-                    }
+                    Utils.createDirectory(installer.getPluginsDirectory());
                 }
 
                 Utils.copyFile(fileLocation, installer.getPluginsDirectory());
@@ -774,11 +738,7 @@ public class Mod {
             case coremods:
                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                     if (!Files.exists(installer.getCoreModsDirectory())) {
-                        try {
-                            Files.createDirectory(installer.getCoreModsDirectory());
-                        } catch (IOException e) {
-                            App.settings.logStackTrace("Error creating folder " + installer.getCoreModsDirectory(), e);
-                        }
+                        Utils.createDirectory(installer.getCoreModsDirectory());
                     }
 
                     Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
@@ -788,11 +748,7 @@ public class Mod {
                 break;
             case shaderpack:
                 if (!Files.exists(installer.getShaderPacksDirectory())) {
-                    try {
-                        Files.createDirectory(installer.getShaderPacksDirectory());
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Error creating folder " + installer.getShaderPacksDirectory(), e);
-                    }
+                    Utils.createDirectory(installer.getShaderPacksDirectory());
                 }
 
                 Utils.copyFile(fileLocation, installer.getShaderPacksDirectory());
@@ -805,12 +761,7 @@ public class Mod {
                     case coremods:
                         if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                             if (!Files.exists(installer.getCoreModsDirectory())) {
-                                try {
-                                    Files.createDirectory(installer.getCoreModsDirectory());
-                                } catch (IOException e) {
-                                    App.settings.logStackTrace("Error creating folder " + installer
-                                            .getCoreModsDirectory(), e);
-                                }
+                                Utils.createDirectory(installer.getCoreModsDirectory());
                             }
 
                             Utils.copyDirectory(folder, installer.getCoreModsDirectory());
@@ -840,12 +791,7 @@ public class Mod {
                             if (Files.isRegularFile(tempFileDecomp)) {
                                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                                     if (!Files.exists(installer.getCoreModsDirectory())) {
-                                        try {
-                                            Files.createDirectory(installer.getCoreModsDirectory());
-                                        } catch (IOException e) {
-                                            App.settings.logStackTrace("Error creating folder " + installer
-                                                    .getCoreModsDirectory(), e);
-                                        }
+                                        Utils.createDirectory(installer.getCoreModsDirectory());
                                     }
 
                                     Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
@@ -855,12 +801,7 @@ public class Mod {
                             } else {
                                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                                     if (!Files.exists(installer.getCoreModsDirectory())) {
-                                        try {
-                                            Files.createDirectory(installer.getCoreModsDirectory());
-                                        } catch (IOException e) {
-                                            App.settings.logStackTrace("Error creating folder " + installer
-                                                    .getCoreModsDirectory(), e);
-                                        }
+                                        Utils.createDirectory(installer.getCoreModsDirectory());
                                     }
 
                                     Utils.copyDirectory(tempFileDecomp, installer.getCoreModsDirectory());

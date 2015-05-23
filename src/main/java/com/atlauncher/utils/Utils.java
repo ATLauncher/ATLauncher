@@ -872,12 +872,7 @@ public class Utils {
     // TODO: Switch to NIO operations
     public static boolean unzip(Path in, Path out, ExtractRule extractRule) {
         if (!Files.exists(out)) {
-            try {
-                Files.createDirectory(out);
-            } catch (IOException e) {
-                App.settings.logStackTrace("Error creating directory " + out + " while unzipping file!", e);
-                return false;
-            }
+            Utils.createDirectory(out);
         }
 
         ZipFile zipFile = null;
@@ -1035,7 +1030,7 @@ public class Utils {
                     String hash = Utils.getSHA1(p);
                     Path save = FileSystem.RESOURCES.resolve("assets").resolve(hash.substring(0, 2) + File.separator
                             + hash);
-                    Files.createDirectories(save);
+                    Utils.createDirectory(save);
                     Files.copy(file, save, StandardCopyOption.REPLACE_EXISTING);
                 }
             }

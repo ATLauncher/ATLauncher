@@ -84,7 +84,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Timer;
@@ -464,12 +463,12 @@ public class Settings {
                     Path legacy = virtual.resolve("legacy");
 
                     try {
-                        Files.createDirectory(tmp);
+                        Utils.createDirectory(tmp);
                         Utils.moveDirectory(FileSystem.RESOURCES, tmp);
-                        Files.createDirectory(indexes);
-                        Files.createDirectory(objects);
-                        Files.createDirectory(virtual);
-                        Files.createDirectory(legacy);
+                        Utils.createDirectory(indexes);
+                        Utils.createDirectory(objects);
+                        Utils.createDirectory(virtual);
+                        Utils.createDirectory(legacy);
                         Utils.moveDirectory(tmp, legacy);
                         Utils.deleteDirectory(tmp);
                     } catch (Exception e) {
@@ -794,10 +793,11 @@ public class Settings {
             } else {
                 String[] options = {"Ok"};
                 JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph("Update failed. " +
-                        "Please click Ok to close " + "the launcher and open up the downloads " +
-                        "page.<br/><br/>Download " + "the update and replace the old " + Constants.LAUNCHER_NAME + " " +
-                        "file."), "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                        options, options[0]);
+                                "Please click Ok to close " + "the launcher and open up the downloads " +
+                                "page.<br/><br/>Download " + "the update and replace the old " + Constants
+                        .LAUNCHER_NAME + " " +
+                                "file."), "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                        null, options, options[0]);
                 Utils.openBrowser("http://www.atlauncher.com/downloads/");
                 System.exit(0);
             }
@@ -867,30 +867,18 @@ public class Settings {
             for (Field field : FileSystem.class.getDeclaredFields()) {
                 Path p = (Path) field.get(null);
                 if (!Files.exists(p)) {
-                    Files.createDirectory(p);
+                    Utils.createDirectory(p);
                 }
 
                 if (!Files.isDirectory(p)) {
                     Files.delete(p);
-                    Files.createDirectory(p);
+                    Utils.createDirectory(p);
                 }
             }
         } catch (Exception e) {
             this.logStackTrace(e);
         }
     }
-
-    /*public File getVirtualAssetsDir() {
-        return new File(this.resourcesDir, "virtual");
-    }
-
-    public File getObjectsAssetsDir() {
-        return new File(this.resourcesDir, "objects");
-    }
-
-    public File getLegacyVirtualAssetsDir() {
-        return new File(getVirtualAssetsDir(), "legacy");
-    }*/
 
     /**
      * Deletes all files in the Temp directory
@@ -1509,7 +1497,7 @@ public class Settings {
                         }
 
                         if (!Files.exists(instance.root.resolve("disabledmods"))) {
-                            Files.createDirectory(instance.root.resolve("disabledmods"));
+                            Utils.createDirectory(instance.root.resolve("disabledmods"));
                         }
 
                         Data.INSTANCES.add(instance);
@@ -1541,7 +1529,7 @@ public class Settings {
                         }
 
                         if (!Files.exists(instance.root.resolve("disabledmods"))) {
-                            Files.createDirectory(instance.root.resolve("disabledmods"));
+                            Utils.createDirectory(instance.root.resolve("disabledmods"));
                         }
 
                         if (this.isPackByName(instance.getPackName())) {
@@ -2865,15 +2853,11 @@ public class Settings {
         } else {
             clonedInstance.setName(clonedName);
 
-            try {
-                Files.createDirectory(clonedInstance.getRootDirectory());
-                Utils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
-                Data.INSTANCES.add(clonedInstance);
-                this.saveInstances();
-                this.reloadInstancesPanel();
-            } catch (IOException e) {
-                this.logStackTrace("Error occurred while cloning instance! Instance object couldn't be cloned!", e);
-            }
+            Utils.createDirectory(clonedInstance.getRootDirectory());
+            Utils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
+            Data.INSTANCES.add(clonedInstance);
+            this.saveInstances();
+            this.reloadInstancesPanel();
         }
     }
 

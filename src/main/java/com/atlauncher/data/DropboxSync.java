@@ -109,12 +109,7 @@ public class DropboxSync extends SyncAbstract {
         Path backup = backupDir.resolve(backupName + ".zip");
 
         if (!Files.exists(backupDir)) {
-            try {
-                Files.createDirectory(backupDir);
-            } catch (IOException e) {
-                App.settings.logStackTrace("Error creating directory " + backupDir + " while backing up to Dropbox!",
-                        e);
-            }
+            Utils.createDirectory(backupDir);
         }
 
         if (Files.exists(backup)) {
