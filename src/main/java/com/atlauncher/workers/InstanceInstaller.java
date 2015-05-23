@@ -425,12 +425,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         Path[] directories;
         if (isServer) {
-            directories = new Path[]{this.getRootDirectory(), this.getModsDirectory(), this.getTempDirectory(), this
-                    .getLibrariesDirectory()};
+            directories = new Path[]{this.getRootDirectory(), this.getModsDirectory(), this.getLibrariesDirectory()};
         } else {
             directories = new Path[]{this.getRootDirectory(), this.getModsDirectory(), this.getDisabledModsDirectory
-                    (), this.getTempDirectory(), this.getJarModsDirectory(), this.getBinDirectory(), this
-                    .getNativesDirectory()};
+                    (), this.getJarModsDirectory(), this.getBinDirectory(), this.getNativesDirectory()};
         }
 
         for (Path directory : directories) {

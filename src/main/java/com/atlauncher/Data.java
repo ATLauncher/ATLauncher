@@ -12,7 +12,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public final class Data{
+/**
+ * This class keeps all the data used by the launcher including the packs on the launcher, users instances and more.
+ */
+public final class Data {
     public static final List<Instance> INSTANCES = new LinkedList<>();
     public static final List<Account> ACCOUNTS = new LinkedList<>();
     public static final List<News> NEWS = new LinkedList<>();
