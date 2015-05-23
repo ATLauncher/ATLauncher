@@ -31,6 +31,7 @@ import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.json.Action;
 import com.atlauncher.data.json.CaseType;
+import com.atlauncher.data.json.Delete;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
@@ -403,19 +404,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 Utils.deleteContents(this.getLibrariesDirectory()); // Only delete if it's a server
             }
             if (this.instance != null) {
-                if (this.pack.hasDeleteArguments(true, this.version.getVersion())) {
-                    List<File> fileDeletes = this.pack.getDeletes(true, this.version.getVersion(), this.instance);
-                    for (File file : fileDeletes) {
-                        if (file.exists()) {
+                if (this.jsonVersion.hasDeletes()) {
+                    // Do the files
+                    for (Delete delete : this.jsonVersion.getDeletes().getFiles()) {
+                        Path file = delete.getFile(this.instance);
+                        if (delete.isValid() && Files.exists(file)) {
                             Utils.delete(file);
                         }
                     }
-                }
-                if (this.pack.hasDeleteArguments(false, this.version.getVersion())) {
-                    List<File> fileDeletes = this.pack.getDeletes(false, this.version.getVersion(), this.instance);
-                    for (File file : fileDeletes) {
-                        if (file.exists()) {
-                            Utils.delete(file);
+
+                    // Do the folders
+                    for (Delete delete : this.jsonVersion.getDeletes().getFolders()) {
+                        Path file = delete.getFile(this.instance);
+                        if (delete.isValid() && Files.exists(file)) {
+                            Utils.deleteDirectory(file);
                         }
                     }
                 }

@@ -170,12 +170,16 @@ public class Version {
         return this.mainClass != null && this.mainClass.getMainClass() != null;
     }
 
+    public boolean hasExtraArguments() {
+        return this.extraArguments != null && this.extraArguments.getArguments() != null;
+    }
+
     public ExtraArguments getExtraArguments() {
         return this.extraArguments;
     }
 
-    public boolean hasExtraArguments() {
-        return this.extraArguments != null && this.extraArguments.getArguments() != null;
+    public boolean hasDeletes() {
+        return this.deletes != null;
     }
 
     public Deletes getDeletes() {
