@@ -13,6 +13,7 @@ So if you wish to submit any Pull Requests, please follow these coding standards
 + Please use the IntelliJ-Coding-Style.xml for the project (if using IntelliJ) in order to keep all formatting consistent.
 + Please update the CHANGELOG.md file when fixing/adding something so it's easier to keep track of than git commits. Feel free to add in a 'by MyUsername' to the end of the changes you've made.
 + Please don't do large commits. My preference is a single commit for a single fix/addition rather than bundled up commits.
++ Please Use final where possible
 
 ### Styling Guidelines
 
