@@ -17,11 +17,12 @@
  */
 package com.atlauncher.data.json;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Downloadable;
 
 import java.io.File;
+import java.nio.file.Path;
 
 @Json
 public class LauncherLibrary {
@@ -50,13 +51,20 @@ public class LauncherLibrary {
         return this.version;
     }
 
+    /**
+     * @deprecated use getFilePath()
+     */
     public File getFile() {
-        return new File(App.settings.getLauncherLibrariesDir(), this.filename);
+        return this.getFilePath().toFile();
+    }
+
+    public Path getFilePath() {
+        return FileSystem.LAUNCHER_LIBRARIES.resolve(this.filename);
     }
 
     public Downloadable getDownloadable() {
-        return new Downloadable(this.url, new File(App.settings.getLauncherLibrariesDir(), this.filename), this.md5,
-                null, this.atlauncherDownload);
+        return new Downloadable(this.url, FileSystem.LAUNCHER_LIBRARIES.resolve(this.filename), this.md5, null, this
+                .atlauncherDownload);
     }
 
     public String getMd5() {

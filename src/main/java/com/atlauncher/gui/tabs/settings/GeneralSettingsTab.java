@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -97,7 +98,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<String>();
-        for (String themee : App.settings.getThemesDir().list(Utils.getThemesFileFilter())) {
+        for (String themee : FileSystem.THEMES.toFile().list(Utils.getThemesFileFilter())) {
             theme.addItem(themee.replace(".zip", ""));
         }
         theme.setSelectedItem(App.settings.getTheme());

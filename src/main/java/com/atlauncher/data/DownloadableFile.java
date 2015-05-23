@@ -19,7 +19,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.FileSystem;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class DownloadableFile {
     private String name;
@@ -41,11 +41,13 @@ public class DownloadableFile {
     }
 
     public Downloadable getDownloadable() {
-        File file = FileSystem.CONFIGS.resolve(this.folder).resolve(this.name).toFile();
+        Path path = FileSystem.CONFIGS.resolve(this.folder).resolve(this.name);
+
         if (this.folder.equalsIgnoreCase("Skins")) {
-            file = FileSystem.SKINS.resolve(this.name).toFile();
+            path = FileSystem.SKINS.resolve(this.name);
         }
-        return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name, file, this.sha1, this
+
+        return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name, path, this.sha1, this
                 .size, null, true);
     }
 }

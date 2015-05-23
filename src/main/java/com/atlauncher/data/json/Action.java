@@ -21,7 +21,7 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 @Json
@@ -90,21 +90,21 @@ public class Action {
                 }
                 switch (this.type) {
                     case mods:
-                        Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                .getModsDirectory(), saveAs));
+                        Utils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.getModsDirectory()
+                                .resolve(saveAs));
                         break;
                     case coremods:
                         if (instanceInstaller.getVersion().getMinecraftVersion().usesCoreMods()) {
-                            Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                    .getCoreModsDirectory(), saveAs));
+                            Utils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
+                                    .getCoreModsDirectory().resolve(saveAs));
                         } else {
-                            Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                    .getModsDirectory(), saveAs));
+                            Utils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.getModsDirectory
+                                    ().resolve(saveAs));
                         }
                         break;
                     case jar:
-                        Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                .getJarModsDirectory(), saveAs));
+                        Utils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.getJarModsDirectory
+                                ().resolve(saveAs));
                         instanceInstaller.addToJarOrder(this.saveAs);
                         break;
                     default:
@@ -113,11 +113,12 @@ public class Action {
             }
         } else if (this.action == TheAction.rename) {
             if (mods.size() == 1) {
-                File from = mods.get(0).getInstalledFile(instanceInstaller);
-                File to = new File(from.getParentFile(), saveAs);
+                Path from = mods.get(0).getInstalledFile(instanceInstaller);
+                Path to = from.getParent().resolve(saveAs);
                 Utils.moveFile(from, to, true);
             }
         }
+
         if (this.after == ActionAfter.delete) {
             for (Mod mod : this.mods) {
                 Utils.delete(mod.getInstalledFile(instanceInstaller));

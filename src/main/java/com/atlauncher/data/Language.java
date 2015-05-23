@@ -19,12 +19,15 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -44,7 +47,7 @@ public enum Language {
     }
 
     public static String[] available() {
-        File[] files = App.settings.getLanguagesDir().listFiles(new FilenameFilter() {
+        File[] files = FileSystem.LANGUAGES.toFile().listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".lang");
@@ -65,12 +68,13 @@ public enum Language {
     public synchronized void load(String lang) throws IOException {
         if (!this.langs.containsKey(lang)) {
             Properties props = new Properties();
-            File langFile = new File(App.settings.getLanguagesDir(), lang.toLowerCase() + ".lang");
-            if (!langFile.exists()) {
-                LogManager.error("Language file " + langFile.getName() + " doesn't exist! Defaulting it inbuilt one!");
+            Path langFile = FileSystem.LANGUAGES.resolve(lang.toLowerCase() + ".lang");
+
+            if (!Files.exists(langFile)) {
+                LogManager.error("Language file " + langFile.getFileName() + " doesn't exist! Defaulting it inbuilt one!");
                 props.load(App.class.getResourceAsStream("/assets/lang/english.lang"));
             } else {
-                props.load(new FileInputStream(langFile));
+                props.load(new FileInputStream(langFile.toFile()));
             }
             this.langs.put(lang, props);
             LogManager.info("Loading Language: " + lang);

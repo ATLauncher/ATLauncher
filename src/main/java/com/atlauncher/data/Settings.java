@@ -262,8 +262,8 @@ public class Settings {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                            .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
-                            ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
+                    ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
@@ -352,16 +352,14 @@ public class Settings {
 
         if (this.enableServerChecker) {
             this.checkingServersTimer = new Timer();
-            this.checkingServersTimer.scheduleAtFixedRate(
-                    new TimerTask() {
-                        @Override
-                        public void run() {
-                            for (MinecraftServer server : checkingServers) {
-                                server.checkServer();
-                            }
-                        }
-                    }, 0, this.getServerCheckerWaitInMilliseconds()
-            );
+            this.checkingServersTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    for (MinecraftServer server : checkingServers) {
+                        server.checkServer();
+                    }
+                }
+            }, 0, this.getServerCheckerWaitInMilliseconds());
         }
     }
 
@@ -378,8 +376,8 @@ public class Settings {
             String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
                     ".removepasswords")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                            .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
-                            ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
+                    ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 1) {
                 for (Account account : this.accounts) {
@@ -417,8 +415,7 @@ public class Settings {
     private DirectoryStream.Filter logFilter() {
         return new DirectoryStream.Filter() {
             @Override
-            public boolean accept(Object o)
-                    throws IOException {
+            public boolean accept(Object o) throws IOException {
                 Path p = (Path) o;
                 return Files.isRegularFile(p) && p.startsWith(Constants.LAUNCHER_NAME + "-Log_") && p.endsWith(".log");
             }
@@ -459,10 +456,8 @@ public class Settings {
         LogManager.debug("Checking if using old format of resources");
         Path indexes = FileSystem.RESOURCES.resolve("indexes");
         if (!Files.exists(indexes) || !Files.isDirectory(indexes)) {
-            final ProgressDialog dialog = new ProgressDialog(
-                    Language.INSTANCE.localize("settings.rearrangingresources"),
-                    0, Language.INSTANCE.localize("settings.rearrangingresources"), null
-            );
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
+                    ".rearrangingresources"), 0, Language.INSTANCE.localize("settings.rearrangingresources"), null);
             Thread t = new Thread() {
                 @Override
                 public void run() {
@@ -589,8 +584,8 @@ public class Settings {
 
     public boolean launcherHasUpdate() {
         try {
-            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(FileSystem.JSON.resolve("version.json").toFile()
-            ), LauncherVersion.class);
+            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(FileSystem.JSON.resolve("version" + "" +
+                    ".json").toFile()), LauncherVersion.class);
         } catch (Exception e) {
             this.logStackTrace("Exception when loading latest launcher version!", e);
         }
@@ -618,7 +613,7 @@ public class Settings {
 
             Path output = FileSystem.TMP.resolve(saveAs);
             LogManager.info("Downloading Launcher Update");
-            Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + target, output.toFile(), null, null, true);
+            Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + target, output, null, null, true);
             update.download(false);
             this.runUpdate(path, output.toAbsolutePath().toString());
         } catch (Exception e) {
@@ -638,12 +633,12 @@ public class Settings {
             } else {
                 toget = "jar";
             }
-            File newFile = FileSystem.TMP.resolve(saveAs).toFile();
+            Path newFile = FileSystem.TMP.resolve(saveAs);
             LogManager.info("Downloading Launcher Update");
             Downloadable update = new Downloadable("https://api.atlauncher.com/v1/build/atlauncher/download/" +
                     toget, newFile, null, null, false);
             update.download(false);
-            runUpdate(path, newFile.getAbsolutePath());
+            runUpdate(path, newFile.toString());
         } catch (IOException e) {
             this.logStackTrace(e);
         }
@@ -774,27 +769,25 @@ public class Settings {
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
-        App.TASKPOOL.execute(
-                new Runnable() {
+        App.TASKPOOL.execute(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        if (hasUpdatedFiles()) {
-                            downloadUpdatedFiles(); // Downloads updated files on the server
-                        }
-                        checkForLauncherUpdate();
-                        loadNews(); // Load the news
-                        reloadNewsPanel(); // Reload news panel
-                        loadPacks(); // Load the Packs available in the Launcher
-                        reloadPacksPanel(); // Reload packs panel
-                        loadUsers(); // Load the Testers and Allowed Players for the packs
-                        loadInstances(); // Load the users installed Instances
-                        reloadInstancesPanel(); // Reload instances panel
-                        dialog.setVisible(false); // Remove the dialog
-                        dialog.dispose(); // Dispose the dialog
-                    }
+            @Override
+            public void run() {
+                if (hasUpdatedFiles()) {
+                    downloadUpdatedFiles(); // Downloads updated files on the server
                 }
-        );
+                checkForLauncherUpdate();
+                loadNews(); // Load the news
+                reloadNewsPanel(); // Reload news panel
+                loadPacks(); // Load the Packs available in the Launcher
+                reloadPacksPanel(); // Reload packs panel
+                loadUsers(); // Load the Testers and Allowed Players for the packs
+                loadInstances(); // Load the users installed Instances
+                reloadInstancesPanel(); // Reload instances panel
+                dialog.setVisible(false); // Remove the dialog
+                dialog.dispose(); // Dispose the dialog
+            }
+        });
         dialog.setVisible(true);
     }
 
@@ -806,11 +799,10 @@ public class Settings {
             } else {
                 String[] options = {"Ok"};
                 JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph("Update failed. " +
-                                "Please click Ok to close " + "the launcher and open up the downloads " +
-                                "page.<br/><br/>Download " + "the update and replace the old " + Constants
-                                .LAUNCHER_NAME + " file."),
-                        "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                        options[0]);
+                        "Please click Ok to close " + "the launcher and open up the downloads " +
+                        "page.<br/><br/>Download " + "the update and replace the old " + Constants.LAUNCHER_NAME + " " +
+                        "file."), "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                        options, options[0]);
                 Utils.openBrowser("http://www.atlauncher.com/downloads/");
                 System.exit(0);
             }
@@ -1280,7 +1272,8 @@ public class Settings {
             properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
             properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
-            this.properties.store(new FileOutputStream(FileSystemData.PROPERTIES.toFile()), Constants.LAUNCHER_NAME + " Settings");
+            this.properties.store(new FileOutputStream(FileSystemData.PROPERTIES.toFile()), Constants.LAUNCHER_NAME +
+                    " Settings");
         } catch (FileNotFoundException e) {
             logStackTrace(e);
         } catch (IOException e) {
@@ -1494,7 +1487,8 @@ public class Settings {
         try {
             Data.INSTANCES.clear();
             if (Files.exists(FileSystemData.INSTANCES_DATA)) {
-                try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.INSTANCES_DATA.toFile()))) {
+                try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.INSTANCES_DATA
+                        .toFile()))) {
                     Object obj;
                     while ((obj = oin.readObject()) != null) {
                         Instance instance = (Instance) obj;
@@ -1504,7 +1498,8 @@ public class Settings {
                         }
 
                         if (!instance.hasBeenConverted()) {
-                            LogManager.warn("Instance " + instance.getName() + " is being converted, this is normal and should only appear once");
+                            LogManager.warn("Instance " + instance.getName() + " is being converted, this is normal " +
+                                    "and should only appear once");
                             instance.convert();
                         }
 
@@ -1560,15 +1555,15 @@ public class Settings {
 
     public void saveInstances() {
         for (Instance instance : this.instances) {
-            File instanceFile = new File(instance.getRootDirectory(), "instance.json");
+            Path instanceFile = instance.getRootDirectory().resolve("instance.json");
             FileWriter fw = null;
             BufferedWriter bw = null;
             try {
-                if (!instanceFile.exists()) {
-                    instanceFile.createNewFile();
+                if (!Files.exists(instanceFile)) {
+                    Files.createFile(instanceFile);
                 }
 
-                fw = new FileWriter(instanceFile);
+                fw = new FileWriter(instanceFile.toFile());
                 bw = new BufferedWriter(fw);
                 bw.write(Gsons.DEFAULT.toJson(instance));
             } catch (IOException e) {
@@ -1582,8 +1577,8 @@ public class Settings {
                         fw.close();
                     }
                 } catch (IOException e) {
-                    logStackTrace("Exception while trying to close FileWriter/BufferedWriter for saving instances " +
-                            "json file.", e);
+                    logStackTrace("Exception while trying to close FileWriter/BufferedWriter for saving an instances " +
+                            "" + "json file.", e);
                 }
             }
         }
@@ -1596,7 +1591,8 @@ public class Settings {
         LogManager.debug("Loading Accounts");
         Data.ACCOUNTS.clear();
         if (Files.exists(FileSystemData.USER_DATA)) {
-            try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.USER_DATA.toFile()))) {
+            try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.USER_DATA.toFile())
+            )) {
                 Object obj;
                 while ((obj = oin.readObject()) != null) {
                     if (obj instanceof Account) {
@@ -1639,7 +1635,8 @@ public class Settings {
         try {
             if (Files.exists(FileSystemData.CHECKING_SERVERS)) {
                 byte[] bits = Files.readAllBytes(FileSystemData.CHECKING_SERVERS);
-                Data.CHECKING_SERVERS.addAll((List<MinecraftServer>) Gsons.DEFAULT.fromJson(new String(bits), MinecraftServer.LIST_TYPE));
+                Data.CHECKING_SERVERS.addAll((List<MinecraftServer>) Gsons.DEFAULT.fromJson(new String(bits),
+                        MinecraftServer.LIST_TYPE));
             }
         } catch (Exception e) {
             this.logStackTrace(e);
@@ -1654,7 +1651,8 @@ public class Settings {
             }
 
             String data = Gsons.DEFAULT.toJson(Data.CHECKING_SERVERS);
-            Files.write(FileSystemData.CHECKING_SERVERS, data.getBytes(), StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+            Files.write(FileSystemData.CHECKING_SERVERS, data.getBytes(), StandardOpenOption.CREATE_NEW,
+                    StandardOpenOption.WRITE);
         } catch (Exception e) {
             this.logStackTrace(e);
         }
@@ -1741,11 +1739,7 @@ public class Settings {
     }
 
     public boolean isUsingMacApp() {
-        return Utils.isMac() &&
-                Files.exists(
-                        FileSystem.BASE_DIR.getParent()
-                                .resolve("MacOS")
-                );
+        return Utils.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
     }
 
     public boolean isUsingNewMacApp() {
@@ -1920,10 +1914,8 @@ public class Settings {
     private DirectoryStream.Filter<Path> languagesFilter() {
         return new DirectoryStream.Filter<Path>() {
             @Override
-            public boolean accept(Path o)
-                    throws IOException {
-                return Files.isRegularFile(o) &&
-                        o.endsWith(".lang");
+            public boolean accept(Path o) throws IOException {
+                return Files.isRegularFile(o) && o.endsWith(".lang");
             }
         };
     }
@@ -2357,7 +2349,7 @@ public class Settings {
     /**
      * Logs a stack trace to the console window with a custom message before it
      *
-     * @param message   A message regarding the stack trace to show before it providing more insight
+     * @param message A message regarding the stack trace to show before it providing more insight
      * @param exception The exception to show in the console
      */
     public void logStackTrace(String message, Exception exception) {
@@ -2858,14 +2850,19 @@ public class Settings {
     public void cloneInstance(Instance instance, String clonedName) {
         Instance clonedInstance = (Instance) instance.clone();
         if (clonedInstance == null) {
-            LogManager.error("Error Occured While Cloning Instance! Instance Object Couldn't Be Cloned!");
+            LogManager.error("Error occurred while cloning instance! Instance object couldn't be cloned!");
         } else {
             clonedInstance.setName(clonedName);
-            clonedInstance.getRootDirectory().mkdir();
-            Utils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
-            this.instances.add(clonedInstance);
-            this.saveInstances();
-            this.reloadInstancesPanel();
+
+            try {
+                Files.createDirectory(clonedInstance.getRootDirectory());
+                Utils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
+                this.instances.add(clonedInstance);
+                this.saveInstances();
+                this.reloadInstancesPanel();
+            } catch (IOException e) {
+                this.logStackTrace("Error occurred while cloning instance! Instance object couldn't be cloned!", e);
+            }
         }
     }
 
