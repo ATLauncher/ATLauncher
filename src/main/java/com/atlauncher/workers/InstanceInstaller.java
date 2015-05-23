@@ -398,10 +398,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
             if (isReinstall) {
-                Utils.deleteContents(this.getTexturePacksDirectory().resolve("TexturePack.zip"));
-                Utils.deleteContents(this.getResourcePacksDirectory().resolve("ResourcePack.zip"));
+                if (Files.exists(this.getTexturePacksDirectory().resolve("TexturePack.zip"))) {
+                    Utils.delete(this.getTexturePacksDirectory().resolve("TexturePack.zip"));
+                }
+
+                if (Files.exists(this.getTexturePacksDirectory().resolve("ResourcePack.zip"))) {
+                    Utils.delete(this.getResourcePacksDirectory().resolve("ResourcePack.zip"));
+                }
             } else {
-                Utils.deleteContents(this.getLibrariesDirectory()); // Only delete if it's a server
+                if (Files.exists(this.getLibrariesDirectory()) && Files.isDirectory(this.getLibrariesDirectory())) {
+                    Utils.deleteDirectory(this.getLibrariesDirectory()); // Only delete if it's a server
+                }
             }
             if (this.instance != null) {
                 if (this.jsonVersion.hasDeletes()) {
@@ -1342,7 +1349,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void setExtraArguments() {
         if (this.jsonVersion.hasExtraArguments()) {
-            if (!this.jsonVersion.getExtraArguments().hasDepends() && !this.jsonVersion.getExtraArguments().hasDependsGroup()) {
+            if (!this.jsonVersion.getExtraArguments().hasDepends() && !this.jsonVersion.getExtraArguments()
+                    .hasDependsGroup()) {
                 this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
             } else if (this.jsonVersion.getExtraArguments().hasDepends()) {
                 String depends = this.jsonVersion.getExtraArguments().getDepends();
