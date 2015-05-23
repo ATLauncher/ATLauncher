@@ -19,6 +19,10 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.json.DownloadType;
+import com.atlauncher.data.json.ExtractToType;
+import com.atlauncher.data.json.ModType;
+import com.atlauncher.data.json.DecompType;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -38,8 +42,8 @@ public class Mod {
     private Color colour;
     private String warning;
     private String md5;
-    private Type type;
-    private ExtractTo extractTo;
+    private ModType type;
+    private ExtractToType extractTo;
     private String extractFolder;
     private String decompFile;
     private DecompType decompType;
@@ -50,13 +54,13 @@ public class Mod {
     private boolean server;
     private String serverURL;
     private String serverFile;
-    private Download serverDownload;
+    private DownloadType serverDownload;
     private String serverMD5;
-    private Type serverType;
+    private ModType serverType;
     private boolean optional;
     private boolean serverOptional;
     private boolean selected;
-    private Download download;
+    private DownloadType download;
     private boolean hidden;
     private boolean library;
     private String group;
@@ -68,10 +72,12 @@ public class Mod {
     private String description;
 
     public Mod(String name, String version, String url, String file, String website, String donation, Color colour,
-               String warning, String md5, Type type, ExtractTo extractTo, String extractFolder, String decompFile,
+               String warning, String md5, ModType type, ExtractToType extractTo, String extractFolder, String
+                       decompFile,
                DecompType decompType, boolean filePattern, String filePreference, String fileCheck, boolean client,
-               boolean server, String serverURL, String serverFile, Download serverDownload, String serverMD5, Type
-                       serverType, boolean optional, boolean serverOptional, boolean selected, Download download,
+               boolean server, String serverURL, String serverFile, DownloadType serverDownload, String serverMD5, 
+               ModType
+                       serverType, boolean optional, boolean serverOptional, boolean selected, DownloadType download,
                boolean hidden, boolean library, String group, String category, String linked, String[] depends,
                String filePrefix, boolean recommended, String description) {
         this.name = name;
@@ -125,7 +131,7 @@ public class Mod {
         return this.version;
     }
 
-    public Type getType() {
+    public ModType getType() {
         return this.type;
     }
 
@@ -235,36 +241,36 @@ public class Mod {
     }
 
     public boolean isBrowserDownload() {
-        return (this.download == Download.browser);
+        return (this.download == DownloadType.browser);
     }
 
     public boolean isDirectDownload() {
-        return (this.download == Download.direct);
+        return (this.download == DownloadType.direct);
     }
 
     public boolean isServerDownload() {
-        return (this.download == Download.server);
+        return (this.download == DownloadType.server);
     }
 
     public boolean isBrowserDownloadServer() {
         if (this.serverDownload == null) {
             return this.isBrowserDownload();
         }
-        return (this.serverDownload == Download.browser);
+        return (this.serverDownload == DownloadType.browser);
     }
 
     public boolean isDirectDownloadServer() {
         if (this.serverDownload == null) {
             return this.isDirectDownload();
         }
-        return (this.serverDownload == Download.direct);
+        return (this.serverDownload == DownloadType.direct);
     }
 
     public boolean isServerDownloadServer() {
         if (this.serverDownload == null) {
             return this.isServerDownload();
         }
-        return (this.serverDownload == Download.server);
+        return (this.serverDownload == DownloadType.server);
     }
 
     public void download(InstanceInstaller installer) {
@@ -560,7 +566,7 @@ public class Mod {
 
     public void install(InstanceInstaller installer) {
         File fileLocation;
-        Type thisType;
+        ModType thisType;
         if (installer.isServer() && this.serverURL != null) {
             fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
             thisType = this.serverType;
@@ -571,10 +577,10 @@ public class Mod {
         switch (thisType) {
             case jar:
             case forge:
-                if (installer.isServer() && thisType == Type.forge) {
+                if (installer.isServer() && thisType == ModType.forge) {
                     Utils.copyFile(fileLocation, installer.getRootDirectory());
                     break;
-                } else if (installer.isServer() && thisType == Type.jar) {
+                } else if (installer.isServer() && thisType == ModType.jar) {
                     Utils.unzip(fileLocation, installer.getTempJarDirectory());
                     break;
                 }
@@ -785,7 +791,7 @@ public class Mod {
     }
 
     public File getInstalledFile(InstanceInstaller installer) {
-        Type thisType;
+        ModType thisType;
         String file;
         File base = null;
         if (installer.isServer()) {
@@ -798,7 +804,7 @@ public class Mod {
         switch (thisType) {
             case jar:
             case forge:
-                if (installer.isServer() && thisType == Type.forge) {
+                if (installer.isServer() && thisType == ModType.forge) {
                     base = installer.getRootDirectory();
                     break;
                 }
