@@ -280,14 +280,16 @@ public class Utils {
     }
 
     /**
-     * Open explorer.
-     *
-     * @param file the file
+     * @deprecated user openExplorer(Path)
      */
     public static void openExplorer(File file) {
+        Utils.openExplorer(file.toPath());
+    }
+
+    public static void openExplorer(Path path) {
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().open(file);
+                Desktop.getDesktop().open(path.toFile());
             } catch (Exception e) {
                 App.settings.logStackTrace(e);
             }
