@@ -80,6 +80,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
@@ -187,7 +188,8 @@ public class Utils {
             case WINDOWS:
                 return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
             case OSX:
-                return new File(System.getProperty("user.home"), "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
+                return new File(System.getProperty("user.home"), "/Library/Application Support/." + Constants
+                        .LAUNCHER_NAME.toLowerCase());
             default:
                 return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
         }
@@ -532,7 +534,7 @@ public class Utils {
      * Upload paste.
      *
      * @param title the title
-     * @param log   the log
+     * @param log the log
      * @return the string
      */
     public static String uploadPaste(String title, String log) {
@@ -605,11 +607,39 @@ public class Utils {
         return sb.toString();
     }
 
+    public static String getMD5(Path path) {
+        if (!Files.exists(path)) {
+            LogManager.error("Cannot get MD5 of " + path + " as it doesn't exist!");
+            return "0"; // File doesn't exist so MD5 is nothing
+        }
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            FileInputStream fis = new FileInputStream(path.toFile());
+            FileChannel channel = fis.getChannel();
+            ByteBuffer buff = ByteBuffer.allocateDirect(2048);
+            while (channel.read(buff) != -1) {
+                buff.flip();
+                md.update(buff);
+                buff.clear();
+            }
+            return new String(md.digest());
+        } catch (NoSuchAlgorithmException e) {
+            App.settings.logStackTrace(e);
+        } catch (FileNotFoundException e) {
+            App.settings.logStackTrace(e);
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
+
+        return "0";
+    }
+
     /**
-     * Gets the SH a1.
+     * Gets the SHA1 hash of a given file.
      *
      * @param file the file
-     * @return the SH a1
+     * @return the SHA1 hash
      */
     public static String getSHA1(File file) {
         if (!file.exists()) {
@@ -666,10 +696,7 @@ public class Utils {
                 bits = digest.digest();
 
                 for (byte bit : bits) {
-                    builder.append(
-                            Integer.toString((bit & 0xff) + 0x100, 16)
-                                    .substring(1)
-                    );
+                    builder.append(Integer.toString((bit & 0xff) + 0x100, 16).substring(1));
                 }
             } catch (Exception e) {
                 App.settings.logStackTrace(e);
@@ -709,89 +736,70 @@ public class Utils {
     }
 
     /**
-     * Move file.
-     *
-     * @param from         the from
-     * @param to           the to
-     * @param withFilename the with filename
-     * @return true, if successful
+     * @deprecated use moveFile(Path, Path, boolean)
      */
     public static boolean moveFile(File from, File to, boolean withFilename) {
-        if (copyFile(from, to, withFilename)) {
-            delete(from);
+        Utils.moveFile(from.toPath(), to.toPath(), withFilename);
+    }
+
+    public static boolean moveFile(Path from, Path to, boolean withFilename) {
+        if (Utils.copyFile(from, to, withFilename)) {
+            Utils.delete(from);
             return true;
         } else {
-            LogManager.error("Couldn't move file " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+            LogManager.error("Couldn't move file " + from + " to " + to);
             return false;
         }
     }
 
     /**
-     * Copy file.
-     *
-     * @param from the from
-     * @param to   the to
-     * @return true, if successful
+     * @deprecated Use copyFile(Path, Path) instead
      */
     public static boolean copyFile(File from, File to) {
-        return copyFile(from, to, false);
+        return Utils.copyFile(from, to, false);
+    }
+
+    public static boolean copyFile(Path from, Path to) {
+        return Utils.copyFile(from, to, false);
+    }
+
+    /**
+     * @deprecated Use copyFile(Path, Path, Boolean) instead
+     */
+    public static boolean copyFile(File from, File to, boolean withFilename) {
+        return Utils.copyFile(from.toPath(), to.toPath(), withFilename);
     }
 
     /**
      * Copy file.
      *
-     * @param from         the from
-     * @param to           the to
+     * @param from the path of the file to copy from
+     * @param to the path of the file to copy to
      * @param withFilename the with filename
-     * @return true, if successful
+     * @return if the file was copied or not
      */
-    public static boolean copyFile(File from, File to, boolean withFilename) {
-        if (!from.isFile()) {
-            LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as" +
-                    " it isn't a file");
-        }
-        if (!from.exists()) {
-            LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as" +
-                    " it doesn't exist");
+    public static boolean copyFile(Path from, Path to, boolean withFilename) {
+        if (!Files.isRegularFile(from)) {
+            LogManager.error("File " + from + " cannot be copied to " + to + " as it isn't a file!");
             return false;
         }
+
+        if (!Files.exists(to)) {
+            LogManager.error("File " + from + " cannot be copied to " + to + " as it doesn't exist!");
+            return false;
+        }
+
         if (!withFilename) {
-            to = new File(to, from.getName());
-        }
-        if (to.exists()) {
-            to.delete();
+            to = to.resolve(from.getFileName());
         }
 
         try {
-            to.createNewFile();
+            Files.copy(from, to, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            App.settings.logStackTrace("Failed to copy file " + from + " to " + to, e);
             return false;
         }
 
-        FileChannel source = null;
-        FileChannel destination = null;
-
-        try {
-            source = new FileInputStream(from).getChannel();
-            destination = new FileOutputStream(to).getChannel();
-            destination.transferFrom(source, 0, source.size());
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-            return false;
-        } finally {
-            try {
-                if (source != null) {
-                    source.close();
-                }
-                if (destination != null) {
-                    destination.close();
-                }
-            } catch (IOException e) {
-                App.settings.logStackTrace(e);
-                return false;
-            }
-        }
         return true;
     }
 
@@ -837,10 +845,8 @@ public class Utils {
             delete(sourceLocation);
             return true;
         } else {
-            LogManager.error(
-                    "Couldn't move directory " + sourceLocation.getAbsolutePath() + " to " + targetLocation
-                            .getAbsolutePath()
-            );
+            LogManager.error("Couldn't move directory " + sourceLocation.getAbsolutePath() + " to " + targetLocation
+                    .getAbsolutePath());
             return false;
         }
     }
@@ -871,7 +877,7 @@ public class Utils {
      *
      * @param sourceLocation the source location
      * @param targetLocation the target location
-     * @param copyFolder     the copy folder
+     * @param copyFolder the copy folder
      * @return true, if successful
      */
     public static boolean copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
@@ -911,7 +917,7 @@ public class Utils {
     /**
      * Unzip.
      *
-     * @param in  the in
+     * @param in the in
      * @param out the out
      */
     public static void unzip(File in, File out) {
@@ -921,8 +927,8 @@ public class Utils {
     /**
      * Unzip.
      *
-     * @param in          the in
-     * @param out         the out
+     * @param in the in
+     * @param out the out
      * @param extractRule the extract rule
      */
     public static void unzip(File in, File out, ExtractRule extractRule) {
@@ -993,31 +999,32 @@ public class Utils {
     }
 
     /**
-     * Delete.
-     *
-     * @param file the file
+     * @deprecated Use delete(Path)
      */
     public static void delete(File file) {
-        if (!file.exists()) {
-            return;
-        }
-        if (file.isDirectory()) {
-            if (file.listFiles() != null) {
-                for (File c : file.listFiles()) {
-                    delete(c);
-                }
-            }
-        }
+        Utils.delete(file.toPath());
+    }
 
-        if (isSymlink(file)) {
-            LogManager.error("Not deleting the " + (file.isFile() ? "file" : "folder") + file.getAbsolutePath() +
-                    "as it's a symlink");
+    public static void delete(Path path) {
+        if (!Files.exists(path)) {
+            LogManager.error("Couldn't delete " + path + " as it doesn't exist!");
             return;
         }
 
-        if (!file.delete()) {
-            LogManager.error((file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath() + " couldn't be " +
-                    "deleted");
+        if (Files.isSymbolicLink(path)) {
+            LogManager.error("Not deleting " + path + " as it's a symlink!");
+            return;
+        }
+
+        if (Files.isDirectory(path)) {
+            Utils.deleteDirectory(path);
+            return;
+        }
+
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            LogManager.error("Path " + path + " couldn't be deleted!");
         }
     }
 
@@ -1075,9 +1082,8 @@ public class Utils {
                     spreadOutResourceFiles(file);
                 } else {
                     String hash = Utils.getSHA1(p);
-                    Path save = FileSystem.RESOURCES
-                            .resolve("assets")
-                            .resolve(hash.substring(0, 2) + File.separator + hash);
+                    Path save = FileSystem.RESOURCES.resolve("assets").resolve(hash.substring(0, 2) + File.separator
+                            + hash);
                     Files.createDirectories(save);
                     Files.copy(file, save, StandardCopyOption.REPLACE_EXISTING);
                 }
@@ -1116,7 +1122,7 @@ public class Utils {
     /**
      * Zip.
      *
-     * @param in  the in
+     * @param in the in
      * @param out the out
      */
     public static void zip(File in, File out) {
@@ -1162,7 +1168,7 @@ public class Utils {
     /**
      * Copy.
      *
-     * @param in  the in
+     * @param in the in
      * @param out the out
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -1181,7 +1187,7 @@ public class Utils {
      * Copy.
      *
      * @param file the file
-     * @param out  the out
+     * @param out the out
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private static void copy(File file, OutputStream out) throws IOException {
@@ -1276,10 +1282,10 @@ public class Utils {
     /**
      * Replace text.
      *
-     * @param originalFile    the original file
+     * @param originalFile the original file
      * @param destinationFile the destination file
-     * @param replaceThis     the replace this
-     * @param withThis        the with this
+     * @param replaceThis the replace this
+     * @param withThis the with this
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static void replaceText(File originalFile, File destinationFile, String replaceThis, String withThis)
@@ -1310,7 +1316,7 @@ public class Utils {
      *
      * @param urll the urll
      * @param text the text
-     * @param key  the key
+     * @param key the key
      * @return the string
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -1776,7 +1782,7 @@ public class Utils {
     /**
      * This splits up a string into a multi lined string by adding a separator at every space after a given count.
      *
-     * @param string        the string to split up
+     * @param string the string to split up
      * @param maxLineLength the number of characters minimum to have per line
      * @param lineSeparator the string to place when a new line should be placed
      * @return the new multi lined string

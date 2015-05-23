@@ -32,6 +32,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -39,21 +41,21 @@ import java.util.zip.GZIPInputStream;
 public class Downloadable {
     private String beforeURL;
     private String url;
-    private File file;
-    private File oldFile;
+    private Path path;
+    private Path oldPath;
     private String hash;
     private int size;
     private HttpURLConnection connection;
     private InstanceInstaller instanceInstaller;
     private boolean isATLauncherDownload;
-    private File copyTo;
+    private Path copyTo;
     private boolean actuallyCopy;
     private int attempts = 0;
     private List<Server> servers;
     private Server server;
 
-    public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller, boolean
-            isATLauncherDownload, File copyTo, boolean actuallyCopy) {
+    public Downloadable(String url, Path path, String hash, int size, InstanceInstaller instanceInstaller, boolean
+            isATLauncherDownload, Path copyTo, boolean actuallyCopy) {
         if (isATLauncherDownload) {
             this.servers = new ArrayList<Server>(App.settings.getServers());
             this.server = this.servers.get(0);
@@ -68,7 +70,7 @@ public class Downloadable {
             this.url = url;
         }
         this.beforeURL = url;
-        this.file = file;
+        this.path = path;
         this.hash = hash;
         this.size = size;
         this.instanceInstaller = instanceInstaller;
@@ -77,18 +79,18 @@ public class Downloadable {
         this.actuallyCopy = actuallyCopy;
     }
 
-    public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller, boolean
+    public Downloadable(String url, Path path, String hash, int size, InstanceInstaller instanceInstaller, boolean
             isATLauncherDownload) {
-        this(url, file, hash, size, instanceInstaller, isATLauncherDownload, null, false);
+        this(url, path, hash, size, instanceInstaller, isATLauncherDownload, null, false);
     }
 
-    public Downloadable(String url, File file, String hash, InstanceInstaller instanceInstaller, boolean
+    public Downloadable(String url, Path path, String hash, InstanceInstaller instanceInstaller, boolean
             isATLauncherDownload) {
-        this(url, file, hash, -1, instanceInstaller, isATLauncherDownload, null, false);
+        this(url, path, hash, -1, instanceInstaller, isATLauncherDownload, null, false);
     }
 
-    public Downloadable(String url, File file) {
-        this(url, file, null, -1, null, false, null, false);
+    public Downloadable(String url, Path path) {
+        this(url, path, null, -1, null, false, null, false);
     }
 
     public Downloadable(String url, boolean isATLauncherDownload) {
@@ -97,9 +99,10 @@ public class Downloadable {
 
     public String getFilename() {
         if (this.copyTo == null) {
-            return this.file.getName();
+            return this.path.getFileName().toString();
         }
-        return this.copyTo.getName();
+
+        return this.copyTo.getFileName().toString();
     }
 
     public boolean isMD5() {
@@ -142,31 +145,34 @@ public class Downloadable {
     }
 
     public boolean needToDownload() {
-        if (this.file == null) {
+        if (this.path == null) {
             return true;
         }
-        if (this.file.exists()) {
+
+        if (Files.exists(this.path)) {
             if (isMD5()) {
-                if (Utils.getMD5(this.file).equalsIgnoreCase(getHash())) {
-                    return false;
-                }
+                return Utils.getMD5(this.path).equalsIgnoreCase(getHash());
             } else {
-                if (Utils.getSHA1(this.file).equalsIgnoreCase(getHash())) {
-                    return false;
-                }
+                return Utils.getSHA1(this.path).equalsIgnoreCase(getHash());
             }
         }
+
         return true;
     }
 
     public void copyFile() {
         if (this.copyTo != null && this.actuallyCopy) {
-            if (this.copyTo.exists()) {
+            if (Files.exists(this.copyTo)) {
                 Utils.delete(this.copyTo);
             }
-            new File(this.copyTo.getAbsolutePath().substring(0, this.copyTo.getAbsolutePath().lastIndexOf(File
-                    .separatorChar))).mkdirs();
-            Utils.copyFile(this.file, this.copyTo, true);
+            try {
+                Files.createDirectories(this.copyTo.getParent());
+            } catch (IOException e) {
+                App.settings.logStackTrace("Error creating directory " + this.copyTo.getParent(), e);
+                return;
+            }
+
+            Utils.copyFile(this.path, this.copyTo, true);
         }
     }
 
@@ -183,11 +189,25 @@ public class Downloadable {
         return this.hash;
     }
 
+    /**
+     * @deprecated Use getPath() instead
+     */
     public File getFile() {
-        return this.file;
+        return this.path.toFile();
     }
 
+    public Path getPath() {
+        return this.path;
+    }
+
+    /**
+     * @deprecated Use getCopyToPath() instead
+     */
     public File getCopyToFile() {
+        return this.copyTo.toFile();
+    }
+
+    public Path getCopyToPath() {
         return this.copyTo;
     }
 
@@ -241,7 +261,8 @@ public class Downloadable {
                         this.connection = null;
                         return getConnection();
                     } else {
-                        LogManager.error("Failed to download " + this.beforeURL + " from all " + Constants.LAUNCHER_NAME + " servers. " +
+                        LogManager.error("Failed to download " + this.beforeURL + " from all " + Constants
+                                .LAUNCHER_NAME + " servers. " +
                                 "Cancelling install!");
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);
@@ -267,7 +288,7 @@ public class Downloadable {
             } else {
                 in = getConnection().getInputStream();
             }
-            writer = new FileOutputStream(this.file);
+            writer = new FileOutputStream(this.path.toFile());
             byte[] buffer = new byte[2048];
             int bytesRead = 0;
             while ((bytesRead = in.read(buffer)) > 0) {
@@ -283,14 +304,14 @@ public class Downloadable {
             App.settings.logStackTrace(e);
             this.connection.disconnect();
             this.connection = null;
-            if (this.oldFile != null && this.oldFile.exists()) {
-                Utils.moveFile(this.oldFile, this.file, true);
+            if (this.oldPath != null && Files.exists(this.oldPath)) {
+                Utils.moveFile(this.oldPath, this.path, true);
             }
         } catch (IOException e) {
             LogManager.error("Failed to download " + this.url + " due to IOException!");
             App.settings.logStackTrace(e);
-            if (this.oldFile != null && this.oldFile.exists()) {
-                Utils.moveFile(this.oldFile, this.file, true);
+            if (this.oldPath != null && Files.exists(this.oldPath)) {
+                Utils.moveFile(this.oldPath, this.path, true);
             }
         } finally {
             try {
@@ -347,116 +368,129 @@ public class Downloadable {
             this.connection.disconnect();
             this.connection = null;
         }
-        if (this.file == null) {
-            LogManager.error("Cannot download " + this.url + " to file as one wasn't specified!");
+
+        if (this.path == null) {
+            LogManager.error("Cannot download " + this.url + " to path as one wasn't specified!");
             return;
         }
-        if (this.file.exists()) {
-            this.oldFile = new File(this.file.getParent(), this.file.getName() + ".bak");
-            Utils.moveFile(this.file, this.oldFile, true);
+
+        if (Files.exists(this.path)) {
+            this.oldPath = this.path.resolveSibling(this.path.getFileName().toString() + ".bak");
+            Utils.moveFile(this.path, this.oldPath, true);
         }
+
         if (instanceInstaller != null) {
             if (instanceInstaller.isCancelled()) {
                 return;
             }
         }
-        if (!this.file.canWrite()) {
-            Utils.delete(this.file);
+
+        if (!Files.isWritable(this.path)) {
+            Utils.delete(this.path);
         }
-        if (this.file.exists() && this.file.isFile()) {
-            Utils.delete(this.file);
+
+        if (Files.exists(this.path) && Files.isRegularFile(this.path)) {
+            Utils.delete(this.path);
         }
+
         // Create the directory structure
-        new File(this.file.getAbsolutePath().substring(0, this.file.getAbsolutePath().lastIndexOf(File.separatorChar)
-        )).mkdirs();
+        try {
+            Files.createDirectories(this.path.getParent());
+        } catch (IOException e) {
+            App.settings.logStackTrace("Error creating directory at " + this.path.getParent(), e);
+        }
+
         if (getHash().equalsIgnoreCase("-")) {
-            downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to
-            // check
+            downloadFile(downloadAsLibrary); // Only download the path once since we have no MD5 to check
         } else {
             String fileHash = "0";
             boolean done = false;
             while (attempts <= 3) {
                 attempts++;
-                if (this.file.exists()) {
+                if (Files.exists(this.path)) {
                     if (isMD5()) {
-                        fileHash = Utils.getMD5(this.file);
+                        fileHash = Utils.getMD5(this.path);
                     } else {
-                        fileHash = Utils.getSHA1(this.file);
+                        fileHash = Utils.getSHA1(this.path);
                     }
                 } else {
                     fileHash = "0";
                 }
                 if (fileHash.equalsIgnoreCase(getHash())) {
                     done = true;
-                    break; // Hash matches, file is good
+                    break; // Hash matches, path is good
                 }
                 if (this.connection != null) {
                     this.connection.disconnect();
                     this.connection = null;
                 }
-                if (this.file.exists()) {
-                    Utils.delete(this.file); // Delete file since it doesn't match MD5
+                if (Files.exists(this.path)) {
+                    Utils.delete(this.path); // Delete path since it doesn't match MD5
                 }
                 if (attempts != 1 && downloadAsLibrary) {
                     this.instanceInstaller.addTotalDownloadedBytes(this.size);
                 }
-                downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
+                downloadFile(downloadAsLibrary); // Keep downloading path until it matches MD5
             }
             if (!done) {
                 if (this.isATLauncherDownload) {
                     if (getNextServer()) {
-                        LogManager.warn("Error downloading " + this.file.getName() + " from " + this.url + ". " +
+                        LogManager.warn("Error downloading " + this.path.getFileName() + " from " + this.url + ". " +
                                 "Expected hash of " + getHash() + " but got " + fileHash + " instead. Trying another " +
                                 "server!");
                         this.url = server.getFileURL(this.beforeURL);
                         if (downloadAsLibrary) {
                             this.instanceInstaller.addTotalDownloadedBytes(this.size);
                         }
-                        download(downloadAsLibrary); // Redownload the file
+                        download(downloadAsLibrary); // Redownload the path
                     } else {
-                        Utils.copyFile(this.file, FileSystem.FAILED_DOWNLOADS.toFile());
-                        LogManager.error(
-                                                "Failed to download file " + this.file.getName() + " from all " + Constants.LAUNCHER_NAME +
-                                                        "servers. Copied to FailedDownloads Folder. Cancelling install!"
-                        );
+                        Utils.copyFile(this.path, FileSystem.FAILED_DOWNLOADS);
+                        LogManager.error("Failed to download path " + this.path.getFileName() + " from all " +
+                                Constants.LAUNCHER_NAME + "servers. Copied to FailedDownloads folder and Cancelling " +
+                                "install!");
                         if (this.instanceInstaller != null) {
                             instanceInstaller.cancel(true);
                         }
                     }
                 } else {
-                    Utils.copyFile(this.file, FileSystem.FAILED_DOWNLOADS.toFile());
-                    LogManager.error("Error downloading " + this.file.getName() + " from " + this.url + ". Expected " +
-                            "hash of " + getHash() + " but got " + fileHash + " instead. Copied to FailedDownloads " +
-                            "Folder. Cancelling install!");
+                    Utils.copyFile(this.path, FileSystem.FAILED_DOWNLOADS);
+                    LogManager.error("Error downloading " + this.path.getFileName() + " from " + this.url + ". " +
+                            "Expected  hash of " + getHash() + " but got " + fileHash + " instead. Copied to " +
+                            "FailedDownloads folder and cancelling install!");
                     if (this.instanceInstaller != null) {
                         instanceInstaller.cancel(true);
                     }
                 }
             } else if (this.copyTo != null && this.actuallyCopy) {
                 String fileHash2;
-                if (this.copyTo.exists()) {
+                if (Files.exists(this.copyTo)) {
                     if (isMD5()) {
-                        fileHash2 = Utils.getMD5(this.file);
+                        fileHash2 = Utils.getMD5(this.path);
                     } else {
-                        fileHash2 = Utils.getSHA1(this.file);
+                        fileHash2 = Utils.getSHA1(this.path);
                     }
                 } else {
                     fileHash2 = "0";
                 }
                 if (!fileHash2.equalsIgnoreCase(getHash())) {
-                    if (this.copyTo.exists()) {
+                    if (Files.exists(this.copyTo)) {
                         Utils.delete(this.copyTo);
                     }
-                    new File(this.copyTo.getAbsolutePath().substring(0, this.copyTo.getAbsolutePath().lastIndexOf
-                            (File.separatorChar))).mkdirs();
-                    Utils.copyFile(this.file, this.copyTo, true);
+
+                    try {
+                        Files.createDirectories(this.copyTo.getParent());
+                    } catch (IOException e) {
+                        App.settings.logStackTrace("Error creating directory at " + this.copyTo.getParent(), e);
+                    }
+
+                    Utils.copyFile(this.path, this.copyTo, true);
                 }
             }
             App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used
         }
 
-        if (this.oldFile != null && this.oldFile.exists()) {
-            Utils.delete(this.oldFile);
+        if (this.oldPath != null && Files.exists(this.oldPath)) {
+            Utils.delete(this.oldPath);
         }
 
         if (this.connection != null) {
