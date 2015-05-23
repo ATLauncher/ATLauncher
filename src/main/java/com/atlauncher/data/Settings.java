@@ -1924,7 +1924,7 @@ public class Settings {
         return new DirectoryStream.Filter<Path>() {
             @Override
             public boolean accept(Path o) throws IOException {
-                return Files.isRegularFile(o) && o.endsWith(".lang");
+                return Files.isRegularFile(o) && o.toString().endsWith(".lang");
             }
         };
     }
@@ -1936,6 +1936,7 @@ public class Settings {
      */
     public List<String> getLanguages() {
         List<String> langs = new LinkedList<>();
+
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LANGUAGES, this.languagesFilter())) {
             for (Path file : stream) {
                 String name = file.getFileName().toString();
@@ -1944,6 +1945,7 @@ public class Settings {
         } catch (Exception e) {
             this.logStackTrace(e);
         }
+
         return langs;
     }
 
