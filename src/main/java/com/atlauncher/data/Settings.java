@@ -823,15 +823,16 @@ public class Settings {
             byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("libraries.json"));
             java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
             }.getType();
-            libraries = Gsons.DEFAULT.fromJson(new String(bits), type);
+
+            this.launcherLibraries = Gsons.DEFAULT.fromJson(new String(bits), type);
         } catch (Exception e) {
             this.logStackTrace(e);
-            libraries = new LinkedList<>();
+            this.launcherLibraries = new LinkedList<>();
         }
 
         ExecutorService executor = Utils.generateDownloadExecutor();
 
-        for (final LauncherLibrary library : libraries) {
+        for (final LauncherLibrary library : this.launcherLibraries) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -845,6 +846,8 @@ public class Settings {
             });
         }
         executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
 
         for (LauncherLibrary library : this.launcherLibraries) {
             Path path = library.getFilePath();
