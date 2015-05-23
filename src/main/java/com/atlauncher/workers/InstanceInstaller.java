@@ -380,20 +380,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             Utils.deleteContents(this.getConfigDirectory());
             if (instance != null && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion()
                     .getVersion()) && instance.hasCustomMods()) {
-                Utils.deleteWithFilter(this.getModsDirectory(), instance.getCustomMods(Type.mods));
+                Utils.deleteSpecifiedFiles(this.getModsDirectory(), instance.getCustomMods(Type.mods));
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
-                    Utils.deleteWithFilter(this.getCoreModsDirectory(), instance.getCustomMods(Type.coremods));
+                    Utils.deleteSpecifiedFiles(this.getCoreModsDirectory(), instance.getCustomMods(Type.coremods));
                 }
                 if (isReinstall) {
-                    Utils.deleteWithFilter(this.getJarModsDirectory(), instance.getCustomMods(Type.jar));
+                    Utils.deleteSpecifiedFiles(this.getJarModsDirectory(), instance.getCustomMods(Type.jar));
                 }
             } else {
-                Utils.delete(this.getModsDirectory());
+                Utils.deleteDirectory(this.getModsDirectory());
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
-                    Utils.delete(this.getCoreModsDirectory());
+                    Utils.deleteDirectory(this.getCoreModsDirectory());
                 }
                 if (isReinstall) {
-                    Utils.delete(this.getJarModsDirectory()); // Only delete if it's not a server
+                    Utils.deleteDirectory(this.getJarModsDirectory()); // Only delete if it's not a server
                 }
             }
             if (isReinstall) {

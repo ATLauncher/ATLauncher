@@ -29,6 +29,7 @@ import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.utils.walker.ClearDirVisitor;
 import com.atlauncher.utils.walker.CopyDirVisitor;
 import com.atlauncher.utils.walker.DeleteDirVisitor;
+import com.atlauncher.utils.walker.DeleteSpecifiedFilesVisitor;
 import org.tukaani.xz.XZInputStream;
 
 import javax.crypto.BadPaddingException;
@@ -133,19 +134,19 @@ public class Utils {
     public static ImageIcon getIconImage(String path) {
         try {
             Path theme = App.settings.getThemeFile();
-            if(theme != null){
+            if (theme != null) {
                 InputStream stream = null;
-                try(ZipFile zip = new ZipFile(theme.toFile())){
+                try (ZipFile zip = new ZipFile(theme.toFile())) {
                     Enumeration<? extends ZipEntry> entries = zip.entries();
-                    while(entries.hasMoreElements()){
+                    while (entries.hasMoreElements()) {
                         ZipEntry entry = entries.nextElement();
-                        if(entry.getName().equals("image/" + path.substring(path.lastIndexOf("/") + 1))){
+                        if (entry.getName().equals("image/" + path.substring(path.lastIndexOf("/") + 1))) {
                             stream = zip.getInputStream(entry);
                             break;
                         }
                     }
 
-                    if(stream != null){
+                    if (stream != null) {
                         BufferedImage image = ImageIO.read(stream);
                         stream.close();
                         return new ImageIcon(image);
@@ -171,7 +172,7 @@ public class Utils {
         if (Utils.isLinux()) {
             try {
                 return Paths.get(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()
-                                          .getSchemeSpecificPart()).getParent();
+                        .getSchemeSpecificPart()).getParent();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
                 return Paths.get(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
@@ -207,8 +208,8 @@ public class Utils {
         return new ImageIcon(file.getAbsolutePath());
     }
 
-    public static ImageIcon getIconImage(Path p){
-        if(!Files.exists(p)){
+    public static ImageIcon getIconImage(Path p) {
+        if (!Files.exists(p)) {
             LogManager.error("Unable to load file " + p);
             return null;
         }
@@ -243,19 +244,19 @@ public class Utils {
             }
 
             Path theme = App.settings.getThemeFile();
-            if(theme != null){
+            if (theme != null) {
                 InputStream stream = null;
-                try(ZipFile zip = new ZipFile(theme.toFile())){
+                try (ZipFile zip = new ZipFile(theme.toFile())) {
                     Enumeration<? extends ZipEntry> entries = zip.entries();
-                    while(entries.hasMoreElements()){
+                    while (entries.hasMoreElements()) {
                         ZipEntry entry = entries.nextElement();
-                        if(entry.getName().equals("image/" + name.substring(name.lastIndexOf("/") + 1))){
+                        if (entry.getName().equals("image/" + name.substring(name.lastIndexOf("/") + 1))) {
                             stream = zip.getInputStream(entry);
                             break;
                         }
                     }
 
-                    if(stream != null){
+                    if (stream != null) {
                         BufferedImage image = ImageIO.read(stream);
                         stream.close();
                         return image;
@@ -647,17 +648,17 @@ public class Utils {
         return sb.toString();
     }
 
-    public static ExecutorService generateDownloadExecutor(){
+    public static ExecutorService generateDownloadExecutor() {
         return Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
     }
 
-    public static String getSHA1(Path p){
-        if(!Files.exists(p)){
+    public static String getSHA1(Path p) {
+        if (!Files.exists(p)) {
             LogManager.error("Cannot get SHA-1 hash of " + p + " as it doesn't exist");
             return "0"; // File doesn't exists so MD5 is nothing
-        } else{
+        } else {
             StringBuilder builder = new StringBuilder();
-            try{
+            try {
                 byte[] bits = Files.readAllBytes(p);
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
 
@@ -666,11 +667,11 @@ public class Utils {
 
                 for (byte bit : bits) {
                     builder.append(
-                                          Integer.toString((bit & 0xff) + 0x100, 16)
-                                                 .substring(1)
+                            Integer.toString((bit & 0xff) + 0x100, 16)
+                                    .substring(1)
                     );
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 App.settings.logStackTrace(e);
             }
             return builder.toString();
@@ -837,17 +838,21 @@ public class Utils {
             return true;
         } else {
             LogManager.error(
-                                    "Couldn't move directory " + sourceLocation.getAbsolutePath() + " to " + targetLocation
-                                                                                                                     .getAbsolutePath()
+                    "Couldn't move directory " + sourceLocation.getAbsolutePath() + " to " + targetLocation
+                            .getAbsolutePath()
             );
             return false;
         }
     }
 
-    public static void moveDirectory(Path from, Path to)
-    throws IOException {
-        Files.walkFileTree(from, new CopyDirVisitor(from, to));
-        Files.walkFileTree(from, new DeleteDirVisitor());
+    public static void moveDirectory(Path from, Path to) {
+        try {
+            Files.walkFileTree(from, new CopyDirVisitor(from, to));
+        } catch (IOException e) {
+            App.settings.logStackTrace("Error while trying to copy files from " + from + " to " + to, e);
+        }
+
+        Utils.deleteDirectory(from);
     }
 
     /**
@@ -966,14 +971,25 @@ public class Utils {
     /**
      * Clean temp directory.
      */
-    public static void cleanTempDirectory()
-    throws IOException{
-        Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
+    public static void cleanTempDirectory() {
+        try {
+            Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
+        } catch (IOException e) {
+            App.settings.logStackTrace("Error trying to clean the temp directory", e);
+        }
     }
 
-    public static void deleteDirectory(Path dir)
-    throws IOException{
-        Files.walkFileTree(dir, new DeleteDirVisitor());
+    public static void deleteDirectory(Path dir) {
+        if (!Files.exists(dir) || !Files.isDirectory(dir)) {
+            LogManager.error("Cannot delete directory " + dir + " as it doesn't exist or isn't a directory!");
+            return;
+        }
+
+        try {
+            Files.walkFileTree(dir, new DeleteDirVisitor());
+        } catch (IOException e) {
+            App.settings.logStackTrace("Error trying to delete the directory " + dir, e);
+        }
     }
 
     /**
@@ -1031,11 +1047,6 @@ public class Utils {
         return false;
     }
 
-    /**
-     * Delete.
-     *
-     * @param file the file
-     */
     public static void deleteWithFilter(File file, final List<String> filesToIgnore) {
         FilenameFilter ffFilter = new FilenameFilter() {
 
@@ -1049,21 +1060,29 @@ public class Utils {
         }
     }
 
-    public static void spreadOutResourceFiles(Path p){
-        try(DirectoryStream<Path> stream = Files.newDirectoryStream(p)){
-            for(Path file : stream){
-                if(Files.isDirectory(file)){
+    public static void deleteSpecifiedFiles(Path path, final List<String> files) {
+        try {
+            Files.walkFileTree(path, new DeleteSpecifiedFilesVisitor(files));
+        } catch (IOException e) {
+            App.settings.logStackTrace("Error while trying to delete specific files from " + path, e);
+        }
+    }
+
+    public static void spreadOutResourceFiles(Path p) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(p)) {
+            for (Path file : stream) {
+                if (Files.isDirectory(file)) {
                     spreadOutResourceFiles(file);
-                } else{
+                } else {
                     String hash = Utils.getSHA1(p);
                     Path save = FileSystem.RESOURCES
-                                        .resolve("assets")
-                                        .resolve(hash.substring(0, 2) + File.separator + hash);
+                            .resolve("assets")
+                            .resolve(hash.substring(0, 2) + File.separator + hash);
                     Files.createDirectories(save);
                     Files.copy(file, save, StandardCopyOption.REPLACE_EXISTING);
                 }
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             App.settings.logStackTrace(e);
         }
     }
@@ -1086,7 +1105,7 @@ public class Utils {
         }
     }
 
-    public static void deleteContents(Path p){
+    public static void deleteContents(Path p) {
         try {
             Files.walkFileTree(p, new ClearDirVisitor());
         } catch (IOException e) {
