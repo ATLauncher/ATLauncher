@@ -18,6 +18,7 @@
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
@@ -35,7 +36,9 @@ import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
     /**
@@ -115,17 +118,28 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                     // Speed Test
                     for (Server server : App.settings.getServers()) {
-                        File file = new File(App.settings.getTempDir(), "20MB.test");
-                        if (file.exists()) {
+                        Path file = FileSystem.TMP.resolve("20MB.test");
+
+                        if (Files.exists(file)) {
                             Utils.delete(file);
                         }
+
                         long started = System.currentTimeMillis();
 
                         Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
                         download.download(false);
 
+                        long size = 0;
+
+                        try {
+                            size = Files.size(file);
+                        } catch (IOException e1) {
+                            App.settings.logStackTrace("Error getting file size of " + file + " while running network" +
+                                    " checker!", e1);
+                        }
+
                         long timeTaken = System.currentTimeMillis() - started;
-                        float bps = file.length() / (timeTaken / 1000);
+                        float bps = size / (timeTaken / 1000);
                         float kbps = bps / 1024;
                         float mbps = kbps / 1024;
                         String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f "

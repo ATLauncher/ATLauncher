@@ -1688,10 +1688,13 @@ public class Utils {
      */
     public static OpenEyeReportResponse sendOpenEyePendingReport(Path report) {
         StringBuilder response = null;
-        String request = Utils.getFileContents(report);
-        if (request == null) {
-            LogManager.error("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath() + "'. Pending " +
-                    "report sending failed!");
+        String request;
+
+        try {
+            request = new String(Files.readAllBytes(report));
+        } catch (IOException e) {
+            App.settings.logStackTrace("OpenEye: Couldn't read contents of file '" + report + "'. Pending  report " +
+                    "sending failed!", e);
             return null;
         }
 
