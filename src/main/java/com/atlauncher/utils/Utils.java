@@ -30,6 +30,7 @@ import com.atlauncher.utils.walker.ClearDirVisitor;
 import com.atlauncher.utils.walker.CopyDirVisitor;
 import com.atlauncher.utils.walker.DeleteDirVisitor;
 import com.atlauncher.utils.walker.DeleteSpecifiedFilesVisitor;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.tukaani.xz.XZInputStream;
 
 import javax.crypto.BadPaddingException;
@@ -80,8 +81,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -615,96 +614,54 @@ public class Utils {
             return "0"; // File doesn't exist so MD5 is nothing
         }
 
+        FileInputStream fis = null;
+        String md5 = "0";
+
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            FileInputStream fis = new FileInputStream(path.toFile());
-            FileChannel channel = fis.getChannel();
-            ByteBuffer buff = ByteBuffer.allocateDirect(2048);
-            while (channel.read(buff) != -1) {
-                buff.flip();
-                md.update(buff);
-                buff.clear();
-            }
-            return new String(md.digest());
-        } catch (NoSuchAlgorithmException e) {
-            App.settings.logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
+            fis = new FileInputStream(path.toFile());
+            md5 = DigestUtils.md5Hex(fis);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
-
-        return "0";
-    }
-
-    /**
-     * Gets the SHA1 hash of a given file.
-     *
-     * @param file the file
-     * @return the SHA1 hash
-     */
-    public static String getSHA1(File file) {
-        if (!file.exists()) {
-            LogManager.error("Cannot get SHA-1 hash of " + file.getAbsolutePath() + " as it doesn't exist");
-            return "0"; // File doesn't exists so MD5 is nothing
-        }
-        StringBuffer sb = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            FileInputStream fis = new FileInputStream(file);
-
-            byte[] dataBytes = new byte[1024];
-
-            int nread = 0;
-            while ((nread = fis.read(dataBytes)) != -1) {
-                md.update(dataBytes, 0, nread);
-            }
-
-            byte[] mdbytes = md.digest();
-
-            sb = new StringBuffer();
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-
+            App.settings.logStackTrace("Error getting MD5 of file " + path, e);
+        } finally {
             if (fis != null) {
-                fis.close();
+                try {
+                    fis.close();
+                } catch (IOException ignored) {
+                }
             }
-        } catch (NoSuchAlgorithmException e) {
-            App.settings.logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
         }
-        return sb.toString();
+
+        return md5;
     }
 
     public static ExecutorService generateDownloadExecutor() {
         return Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
     }
 
-    public static String getSHA1(Path p) {
-        if (!Files.exists(p)) {
-            LogManager.error("Cannot get SHA-1 hash of " + p + " as it doesn't exist");
+    public static String getSHA1(Path path) {
+        if (!Files.exists(path)) {
+            LogManager.error("Cannot get SHA-1 hash of " + path + " as it doesn't exist");
             return "0"; // File doesn't exists so MD5 is nothing
-        } else {
-            StringBuilder builder = new StringBuilder();
-            try {
-                byte[] bits = Files.readAllBytes(p);
-                MessageDigest digest = MessageDigest.getInstance("SHA-1");
-
-                digest.update(bits);
-                bits = digest.digest();
-
-                for (byte bit : bits) {
-                    builder.append(Integer.toString((bit & 0xff) + 0x100, 16).substring(1));
-                }
-            } catch (Exception e) {
-                App.settings.logStackTrace(e);
-            }
-            return builder.toString();
         }
+
+        FileInputStream fis = null;
+        String sha1 = "0";
+
+        try {
+            fis = new FileInputStream(path.toFile());
+            sha1 = DigestUtils.sha1Hex(fis);
+        } catch (IOException e) {
+            App.settings.logStackTrace("Error getting SHA-1 of file " + path, e);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+
+        return sha1;
     }
 
     /**
@@ -790,7 +747,7 @@ public class Utils {
             return false;
         }
 
-        if (!Files.exists(to)) {
+        if (!Files.exists(from)) {
             LogManager.error("File " + from + " cannot be copied to " + to + " as it doesn't exist!");
             return false;
         }
@@ -2187,20 +2144,30 @@ public class Utils {
     }
 
     /**
-     * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
+     * @deprecated use addToClasspath(Path)
      */
     public static boolean addToClasspath(File file) {
-        LogManager.info("Loading external library " + file.getName() + " to classpath");
+        return Utils.addToClasspath(file.toPath());
+    }
+
+    /**
+     * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
+     */
+    public static boolean addToClasspath(Path path) {
+        LogManager.info("Loading external library " + path.getFileName() + " to classpath!");
+
         try {
-            if (file.exists()) {
-                addURL(file.toURI().toURL());
+            if (Files.exists(path)) {
+                addURL(path.toUri().toURL());
             } else {
-                LogManager.error("Error loading AuthLib");
+                LogManager.error("Error loading " + path.getFileName() + " to classpath as it doesn't exist!");
+                return false;
             }
         } catch (Throwable t) {
             if (t.getMessage() != null) {
                 LogManager.error(t.getMessage());
             }
+
             return false;
         }
 

@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
@@ -356,12 +357,12 @@ public class App {
      * Loads the theme and applies the theme's settings to the look and feel.
      */
     public static void loadTheme() {
-        File themeFile = settings.getThemeFile().toFile();
+        Path themeFile = settings.getThemeFile();
         if (themeFile != null) {
             try {
                 InputStream stream = null;
 
-                ZipFile zipFile = new ZipFile(themeFile);
+                ZipFile zipFile = new ZipFile(themeFile.toFile());
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
                 while (entries.hasMoreElements()) {

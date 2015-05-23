@@ -716,7 +716,7 @@ public class Settings {
                     @Override
                     public void run() {
                         if (download.needToDownload()) {
-                            LogManager.info("Downloading Launcher File " + download.getFile().getName());
+                            LogManager.info("Downloading Launcher File " + download.getPath().getFileName().toString());
                             download.download(false);
                         }
                     }
@@ -847,10 +847,10 @@ public class Settings {
         executor.shutdown();
 
         for (LauncherLibrary library : this.launcherLibraries) {
-            File file = library.getFile();
+            Path path = library.getFilePath();
 
-            if (library.shouldAutoLoad() && !Utils.addToClasspath(file)) {
-                LogManager.error("Couldn't add " + file + " to the classpath!");
+            if (library.shouldAutoLoad() && !Utils.addToClasspath(path)) {
+                LogManager.error("Couldn't add " + path + " to the classpath!");
                 if (library.shouldExitOnFail()) {
                     LogManager.error("Library is necessary so launcher will exit!");
                     System.exit(1);
@@ -953,17 +953,24 @@ public class Settings {
                     "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             System.exit(0);
         }
+
         try {
             this.properties.load(new FileInputStream(FileSystemData.PROPERTIES.toFile()));
+
             this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
+
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
                     !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
                 this.dateFormat = "dd/M/yyy";
             }
+
             this.enablePackTags = Boolean.parseBoolean(properties.getProperty("enablepacktags", "false"));
+
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "true"));
+
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
+
             if (!properties.containsKey("usingcustomjavapath")) {
                 this.usingCustomJavaPath = false;
                 this.javaPath = Utils.getJavaHome();

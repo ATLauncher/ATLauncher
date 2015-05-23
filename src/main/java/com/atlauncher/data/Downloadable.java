@@ -385,10 +385,6 @@ public class Downloadable {
             }
         }
 
-        if (!Files.isWritable(this.path)) {
-            Utils.delete(this.path);
-        }
-
         if (Files.exists(this.path) && Files.isRegularFile(this.path)) {
             Utils.delete(this.path);
         }
