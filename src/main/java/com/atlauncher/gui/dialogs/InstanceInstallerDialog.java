@@ -22,6 +22,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -404,7 +405,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     }
                                 } else {
                                     // Install failed so delete the folder and clear Temp Dir
-                                    Utils.delete(this.getRootDirectory());
+                                    FileUtils.delete(this.getRootDirectory());
                                     type = JOptionPane.ERROR_MESSAGE;
                                     text = pack.getName() + " " + version.getVersion() + " " + Language.INSTANCE
                                             .localize("common.wasnt") + " " + Language.INSTANCE.localize("common" + "" +

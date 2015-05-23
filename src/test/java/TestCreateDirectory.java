@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.DeleteDirVisitor;
 import org.junit.After;
@@ -52,13 +53,13 @@ public class TestCreateDirectory {
 
         // Testing making a single folder
         testPath = this.testStorage.resolve("SingleTest");
-        Assert.assertTrue(Utils.createDirectory(testPath));
+        Assert.assertTrue(FileUtils.createDirectory(testPath));
         Assert.assertTrue(Files.exists(testPath));
         Assert.assertTrue(Files.isDirectory(testPath));
 
         // Testing making a 2 folders folder
         testPath = this.testStorage.resolve("DoubleTest").resolve("Another");
-        Assert.assertTrue(Utils.createDirectory(testPath));
+        Assert.assertTrue(FileUtils.createDirectory(testPath));
         Assert.assertTrue(Files.exists(testPath));
         Assert.assertTrue(Files.isDirectory(testPath));
         Assert.assertTrue(Files.exists(testPath.getParent()));
@@ -66,7 +67,7 @@ public class TestCreateDirectory {
 
         // Testing making a 3 folders folder
         testPath = this.testStorage.resolve("TripleTest").resolve("Another").resolve("Another");
-        Assert.assertTrue(Utils.createDirectory(testPath));
+        Assert.assertTrue(FileUtils.createDirectory(testPath));
         Assert.assertTrue(Files.exists(testPath));
         Assert.assertTrue(Files.isDirectory(testPath));
         Assert.assertTrue(Files.exists(testPath.getParent()));
@@ -84,7 +85,7 @@ public class TestCreateDirectory {
             Assert.fail();
         }
 
-        Assert.assertTrue(Utils.createDirectory(testPath));
+        Assert.assertTrue(FileUtils.createDirectory(testPath));
         Assert.assertTrue(Files.exists(testPath));
         Assert.assertTrue(Files.isDirectory(testPath));
     }

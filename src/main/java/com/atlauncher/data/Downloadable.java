@@ -20,6 +20,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -163,11 +164,11 @@ public class Downloadable {
     public void copyFile() {
         if (this.copyTo != null && this.actuallyCopy) {
             if (Files.exists(this.copyTo)) {
-                Utils.delete(this.copyTo);
+                FileUtils.delete(this.copyTo);
             }
 
-            Utils.createDirectory(this.copyTo.getParent());
-            Utils.copyFile(this.path, this.copyTo, true);
+            FileUtils.createDirectory(this.copyTo.getParent());
+            FileUtils.copyFile(this.path, this.copyTo, true);
         }
     }
 
@@ -300,13 +301,13 @@ public class Downloadable {
             this.connection.disconnect();
             this.connection = null;
             if (this.oldPath != null && Files.exists(this.oldPath)) {
-                Utils.moveFile(this.oldPath, this.path, true);
+                FileUtils.moveFile(this.oldPath, this.path, true);
             }
         } catch (IOException e) {
             LogManager.error("Failed to download " + this.url + " due to IOException!");
             App.settings.logStackTrace(e);
             if (this.oldPath != null && Files.exists(this.oldPath)) {
-                Utils.moveFile(this.oldPath, this.path, true);
+                FileUtils.moveFile(this.oldPath, this.path, true);
             }
         } finally {
             try {
@@ -371,7 +372,7 @@ public class Downloadable {
 
         if (Files.exists(this.path)) {
             this.oldPath = this.path.resolveSibling(this.path.getFileName().toString() + ".bak");
-            Utils.moveFile(this.path, this.oldPath, true);
+            FileUtils.moveFile(this.path, this.oldPath, true);
         }
 
         if (instanceInstaller != null) {
@@ -381,12 +382,12 @@ public class Downloadable {
         }
 
         if (Files.exists(this.path) && Files.isRegularFile(this.path)) {
-            Utils.delete(this.path);
+            FileUtils.delete(this.path);
         }
 
         // Create the directory structure if the parent doesn't exist
         if (!Files.exists(this.path.getParent())) {
-            Utils.createDirectory(this.path.getParent());
+            FileUtils.createDirectory(this.path.getParent());
         }
 
         if (getHash().equalsIgnoreCase("-")) {
@@ -419,7 +420,7 @@ public class Downloadable {
                 }
 
                 if (Files.exists(this.path)) {
-                    Utils.delete(this.path); // Delete path since it doesn't match MD5
+                    FileUtils.delete(this.path); // Delete path since it doesn't match MD5
                 }
 
                 if (attempts != 1 && downloadAsLibrary) {
@@ -440,7 +441,7 @@ public class Downloadable {
                         }
                         download(downloadAsLibrary); // Redownload the path
                     } else {
-                        Utils.copyFile(this.path, FileSystem.FAILED_DOWNLOADS);
+                        FileUtils.copyFile(this.path, FileSystem.FAILED_DOWNLOADS);
                         LogManager.error("Failed to download path " + this.path.getFileName() + " from all " +
                                 Constants.LAUNCHER_NAME + "servers. Copied to FailedDownloads folder and Cancelling " +
                                 "install!");
@@ -449,7 +450,7 @@ public class Downloadable {
                         }
                     }
                 } else {
-                    Utils.copyFile(this.path, FileSystem.FAILED_DOWNLOADS);
+                    FileUtils.copyFile(this.path, FileSystem.FAILED_DOWNLOADS);
                     LogManager.error("Error downloading " + this.path.getFileName() + " from " + this.url + ". " +
                             "Expected  hash of " + getHash() + " but got " + fileHash + " instead. Copied to " +
                             "FailedDownloads folder and cancelling install!");
@@ -470,19 +471,19 @@ public class Downloadable {
                 }
                 if (!fileHash2.equalsIgnoreCase(getHash())) {
                     if (Files.exists(this.copyTo)) {
-                        Utils.delete(this.copyTo);
+                        FileUtils.delete(this.copyTo);
                     }
 
-                    Utils.createDirectory(this.copyTo.getParent());
+                    FileUtils.createDirectory(this.copyTo.getParent());
 
-                    Utils.copyFile(this.path, this.copyTo, true);
+                    FileUtils.copyFile(this.path, this.copyTo, true);
                 }
             }
             App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used
         }
 
         if (this.oldPath != null && Files.exists(this.oldPath)) {
-            Utils.delete(this.oldPath);
+            FileUtils.delete(this.oldPath);
         }
 
         if (this.connection != null) {

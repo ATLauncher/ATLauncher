@@ -27,6 +27,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.utils.Authentication;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
@@ -457,14 +458,14 @@ public class Account implements Serializable {
                         LogManager.error("Couldn't download skin because the url found was NULL");
                         if (!Files.exists(path)) {
                             // Only copy over the default skin if there is no skin for the user
-                            Utils.copyFile(FileSystem.SKINS.resolve("default.png"), path, true);
+                            FileUtils.copyFile(FileSystem.SKINS.resolve("default.png"), path, true);
                         }
                     } else {
                         try {
                             HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
                             if (conn.getResponseCode() == 200) {
                                 if (Files.exists(path)) {
-                                    Utils.delete(path);
+                                    FileUtils.delete(path);
                                 }
 
                                 Downloadable skin = new Downloadable(skinURL, path, null, null, false);
@@ -473,7 +474,7 @@ public class Account implements Serializable {
                             } else {
                                 if (!Files.exists(path)) {
                                     // Only copy over the default skin if there is no skin for the user
-                                    Utils.copyFile(FileSystem.SKINS.resolve("default.png"), path, true);
+                                    FileUtils.copyFile(FileSystem.SKINS.resolve("default.png"), path, true);
                                 }
                             }
                         } catch (IOException e) {

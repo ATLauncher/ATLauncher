@@ -22,6 +22,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.utils.Base64;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -109,7 +110,7 @@ public class DropboxSync extends SyncAbstract {
         Path backup = backupDir.resolve(backupName + ".zip");
 
         if (!Files.exists(backupDir)) {
-            Utils.createDirectory(backupDir);
+            FileUtils.createDirectory(backupDir);
         }
 
         if (Files.exists(backup)) {
@@ -117,7 +118,7 @@ public class DropboxSync extends SyncAbstract {
                     ".message" + ".backupexists", backupName), Language.INSTANCE.localize("backup.message" + "" +
                     ".backupexists.title"), JOptionPane.ERROR_MESSAGE);
         } else {
-            Utils.zip(worldData.toPath(), backup);
+            FileUtils.zip(worldData.toPath(), backup);
 
             if (App.settings.getNotifyBackup()) {
                 JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("backup" + "" +
@@ -159,11 +160,12 @@ public class DropboxSync extends SyncAbstract {
                     ("backup" + ".message.backupoverwrite", backupName.replace(".zip", "")), Language.INSTANCE
                     .localize("backup.message.backupoverwrite.title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane
                     .WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
-                Utils.unzip(dropboxLocation.resolve(backupFolder).resolve(instance.getName()).resolve(backupName),
-                        target);
+                FileUtils.unzip(dropboxLocation.resolve(backupFolder).resolve(instance.getName()).resolve(backupName)
+                        , target);
             }
         } else {
-            Utils.unzip(dropboxLocation.resolve(backupFolder).resolve(instance.getName()).resolve(backupName), target);
+            FileUtils.unzip(dropboxLocation.resolve(backupFolder).resolve(instance.getName()).resolve(backupName),
+                    target);
         }
 
         if (App.settings.getNotifyBackup()) {
@@ -179,7 +181,7 @@ public class DropboxSync extends SyncAbstract {
         Path backupData = dropboxLocation.resolve(backupFolder).resolve(instance.getName()).resolve(backupName);
 
         if (Files.exists(backupData)) {
-            Utils.delete(backupData);
+            FileUtils.delete(backupData);
         }
     }
 

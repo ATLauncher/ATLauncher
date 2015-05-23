@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.ModType;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
 import java.awt.Color;
@@ -103,10 +104,10 @@ public class DisableableMod implements Serializable {
         if (this.disabled) {
             Path path = getFilePath(instance).getParent();
             if (!Files.exists(path)) {
-                Utils.createDirectory(path);
+                FileUtils.createDirectory(path);
             }
 
-            if (Utils.moveFile(this.getDisabledFilePath(instance), this.getFilePath(instance), true)) {
+            if (FileUtils.moveFile(this.getDisabledFilePath(instance), this.getFilePath(instance), true)) {
                 if (this.type == ModType.jar) {
                     Path inputFile = instance.getMinecraftJar();
                     Path outputTmpFile = FileSystem.TMP.resolve(instance.getSafeName() + "-minecraft.jar");
@@ -132,8 +133,8 @@ public class DisableableMod implements Serializable {
                             input.close();
                             output.close();
 
-                            Utils.delete(inputFile);
-                            Utils.moveFile(outputTmpFile, inputFile);
+                            FileUtils.delete(inputFile);
+                            FileUtils.moveFile(outputTmpFile, inputFile);
                         } catch (IOException e) {
                             App.settings.logStackTrace(e);
                         }
@@ -148,7 +149,7 @@ public class DisableableMod implements Serializable {
 
     public boolean disable(Instance instance) {
         if (!this.disabled) {
-            if (Utils.moveFile(this.getFilePath(instance), instance.getDisabledModsDirectory(), false)) {
+            if (FileUtils.moveFile(this.getFilePath(instance), instance.getDisabledModsDirectory(), false)) {
                 this.disabled = true;
                 return true;
             }

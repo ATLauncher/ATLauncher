@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -60,7 +61,7 @@ public final class SendOpenEyeReportsVisitor extends SimpleFileVisitor<Path> {
             }
         }
 
-        Utils.delete(file); // Delete the pending report since we've sent it
+        FileUtils.delete(file); // Delete the pending report since we've sent it
 
         return FileVisitResult.CONTINUE;
     }

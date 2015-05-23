@@ -18,7 +18,7 @@
 package com.atlauncher.data.json;
 
 import com.atlauncher.annot.Json;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
 
 import java.nio.file.Path;
@@ -80,31 +80,32 @@ public class Action {
             return;
         }
         convertMods(instanceInstaller);
-        Utils.deleteContents(instanceInstaller.getTempActionsDirectory());
+        FileUtils.deleteContents(instanceInstaller.getTempActionsDirectory());
         instanceInstaller.fireTask("Executing Action");
         instanceInstaller.fireSubProgressUnknown();
         if (this.action == TheAction.createZip) {
             if (mod.size() >= 2) {
                 for (Mod mod : this.mods) {
-                    Utils.unzip(mod.getInstalledFile(instanceInstaller), instanceInstaller.getTempActionsDirectory());
+                    FileUtils.unzip(mod.getInstalledFile(instanceInstaller), instanceInstaller
+                            .getTempActionsDirectory());
                 }
                 switch (this.type) {
                     case mods:
-                        Utils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.getModsDirectory()
-                                .resolve(saveAs));
+                        FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.getModsDirectory
+                                ().resolve(saveAs));
                         break;
                     case coremods:
                         if (instanceInstaller.getVersion().getMinecraftVersion().usesCoreMods()) {
-                            Utils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
+                            FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
                                     .getCoreModsDirectory().resolve(saveAs));
                         } else {
-                            Utils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.getModsDirectory
-                                    ().resolve(saveAs));
+                            FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
+                                    .getModsDirectory().resolve(saveAs));
                         }
                         break;
                     case jar:
-                        Utils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.getJarModsDirectory
-                                ().resolve(saveAs));
+                        FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
+                                .getJarModsDirectory().resolve(saveAs));
                         instanceInstaller.addToJarOrder(this.saveAs);
                         break;
                     default:
@@ -115,13 +116,13 @@ public class Action {
             if (mods.size() == 1) {
                 Path from = mods.get(0).getInstalledFile(instanceInstaller);
                 Path to = from.getParent().resolve(saveAs);
-                Utils.moveFile(from, to, true);
+                FileUtils.moveFile(from, to, true);
             }
         }
 
         if (this.after == ActionAfter.delete) {
             for (Mod mod : this.mods) {
-                Utils.delete(mod.getInstalledFile(instanceInstaller));
+                FileUtils.delete(mod.getInstalledFile(instanceInstaller));
             }
         }
     }

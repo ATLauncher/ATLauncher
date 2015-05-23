@@ -18,7 +18,7 @@
 package com.atlauncher.utils.walker;
 
 import com.atlauncher.data.json.CaseType;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -54,9 +54,9 @@ public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
             if (caseType == CaseType.upper) {
                 Path moveTo = path.getParent().resolve(path.getFileName().subpath(0, path.getFileName().toString()
                         .lastIndexOf(".")));
-                Utils.moveFile(path, moveTo);
+                FileUtils.moveFile(path, moveTo);
             } else if (caseType == CaseType.lower) {
-                Utils.moveFile(path, path.getParent().resolve(path.getFileName().toString().toLowerCase()));
+                FileUtils.moveFile(path, path.getParent().resolve(path.getFileName().toString().toLowerCase()));
             }
         }
 

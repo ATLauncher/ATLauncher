@@ -35,6 +35,7 @@ import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Timestamper;
@@ -463,14 +464,14 @@ public class Settings {
                     Path legacy = virtual.resolve("legacy");
 
                     try {
-                        Utils.createDirectory(tmp);
-                        Utils.moveDirectory(FileSystem.RESOURCES, tmp);
-                        Utils.createDirectory(indexes);
-                        Utils.createDirectory(objects);
-                        Utils.createDirectory(virtual);
-                        Utils.createDirectory(legacy);
-                        Utils.moveDirectory(tmp, legacy);
-                        Utils.deleteDirectory(tmp);
+                        FileUtils.createDirectory(tmp);
+                        FileUtils.moveDirectory(FileSystem.RESOURCES, tmp);
+                        FileUtils.createDirectory(indexes);
+                        FileUtils.createDirectory(objects);
+                        FileUtils.createDirectory(virtual);
+                        FileUtils.createDirectory(legacy);
+                        FileUtils.moveDirectory(tmp, legacy);
+                        FileUtils.deleteDirectory(tmp);
                     } catch (Exception e) {
                         App.settings.logStackTrace(e);
                     }
@@ -867,12 +868,12 @@ public class Settings {
             for (Field field : FileSystem.class.getDeclaredFields()) {
                 Path p = (Path) field.get(null);
                 if (!Files.exists(p)) {
-                    Utils.createDirectory(p);
+                    FileUtils.createDirectory(p);
                 }
 
                 if (!Files.isDirectory(p)) {
                     Files.delete(p);
-                    Utils.createDirectory(p);
+                    FileUtils.createDirectory(p);
                 }
             }
         } catch (Exception e) {
@@ -884,7 +885,7 @@ public class Settings {
      * Deletes all files in the Temp directory
      */
     public void clearTempDir() {
-        Utils.deleteContents(FileSystem.TMP);
+        FileUtils.deleteContents(FileSystem.TMP);
     }
 
     /**
@@ -1497,7 +1498,7 @@ public class Settings {
                         }
 
                         if (!Files.exists(instance.root.resolve("disabledmods"))) {
-                            Utils.createDirectory(instance.root.resolve("disabledmods"));
+                            FileUtils.createDirectory(instance.root.resolve("disabledmods"));
                         }
 
                         Data.INSTANCES.add(instance);
@@ -1537,7 +1538,7 @@ public class Settings {
                         }
 
                         if (!Files.exists(instance.getRootDirectory().resolve("disabledmods"))) {
-                            Utils.createDirectory(instance.getRootDirectory().resolve("disabledmods"));
+                            FileUtils.createDirectory(instance.getRootDirectory().resolve("disabledmods"));
                         }
 
                         if (this.isPackByName(instance.getPackName())) {
@@ -1805,7 +1806,7 @@ public class Settings {
      */
     public void removeInstance(Instance instance) {
         if (Data.INSTANCES.remove(instance)) {
-            Utils.delete(instance.getRootDirectory());
+            FileUtils.delete(instance.getRootDirectory());
             saveInstances();
             reloadInstancesPanel();
         }
@@ -2860,8 +2861,8 @@ public class Settings {
         } else {
             clonedInstance.setName(clonedName);
 
-            Utils.createDirectory(clonedInstance.getRootDirectory());
-            Utils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
+            FileUtils.createDirectory(clonedInstance.getRootDirectory());
+            FileUtils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
             Data.INSTANCES.add(clonedInstance);
             this.saveInstances();
             this.reloadInstancesPanel();

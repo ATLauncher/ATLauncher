@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.DeleteDirVisitor;
 import org.junit.After;
@@ -64,7 +65,7 @@ public class TestDelete {
 
         Assert.assertTrue(Files.exists(testPath));
         Assert.assertTrue(Files.isRegularFile(testPath));
-        Assert.assertTrue(Utils.delete(testPath));
+        Assert.assertTrue(FileUtils.delete(testPath));
         Assert.assertFalse(Files.exists(testPath));
 
         // Testing deleting a a directory
@@ -84,7 +85,7 @@ public class TestDelete {
         Assert.assertTrue(Files.isDirectory(testPath));
         Assert.assertTrue(Files.exists(file));
         Assert.assertTrue(Files.isRegularFile(file));
-        Assert.assertTrue(Utils.delete(testPath));
+        Assert.assertTrue(FileUtils.delete(testPath));
         Assert.assertFalse(Files.exists(testPath));
 
         // Testing deleting a directory with a filter
@@ -108,7 +109,7 @@ public class TestDelete {
         Assert.assertTrue(Files.isRegularFile(testPath.resolve("Test1.txt")));
         Assert.assertTrue(Files.exists(testPath.resolve("Test2.txt")));
         Assert.assertTrue(Files.isRegularFile(testPath.resolve("Test2.txt")));
-        Assert.assertTrue(Utils.deleteSpecifiedFiles(testPath, deleteThese));
+        Assert.assertTrue(FileUtils.deleteSpecifiedFiles(testPath, deleteThese));
         Assert.assertTrue(Files.exists(testPath));
         Assert.assertFalse(Files.exists(testPath.resolve("Test1.txt")));
         Assert.assertTrue(Files.exists(testPath.resolve("Test2.txt")));

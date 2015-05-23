@@ -25,6 +25,7 @@ import com.atlauncher.data.json.ModType;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.SendOpenEyeReportsVisitor;
@@ -372,7 +373,7 @@ public class Instance implements Cloneable {
         this.name = newName;
 
         Path newDir = this.getRootDirectory();
-        if (Utils.moveDirectory(oldDir, newDir)) {
+        if (FileUtils.moveDirectory(oldDir, newDir)) {
             return true;
         } else {
             this.name = oldName;
@@ -522,7 +523,7 @@ public class Instance implements Cloneable {
      * @param mod the DisableableMod object for the mod to remove
      */
     public void removeInstalledMod(DisableableMod mod) {
-        Utils.delete((mod.isDisabled() ? mod.getDisabledFile(this) : mod.getFile(this)));
+        FileUtils.delete((mod.isDisabled() ? mod.getDisabledFile(this) : mod.getFile(this)));
         this.mods.remove(mod); // Remove mod from mod List
     }
 

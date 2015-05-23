@@ -23,6 +23,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -345,7 +346,7 @@ public class Mod {
                 if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
                     return; // File already exists and matches hash, don't download it
                 } else {
-                    Utils.delete(fileLocation); // File exists but is corrupt, delete it
+                    FileUtils.delete(fileLocation); // File exists but is corrupt, delete it
                 }
             } else {
                 long size = 0;
@@ -367,7 +368,7 @@ public class Mod {
                 Path downloadsFolderFile = FileSystem.USER_DOWNLOADS.resolve(getFile());
 
                 if (Files.exists(downloadsFolderFile)) {
-                    Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                    FileUtils.moveFile(downloadsFolderFile, fileLocation, true);
                 }
 
                 if (fileCheck != null && fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
@@ -450,17 +451,17 @@ public class Mod {
                         if (!Files.exists(fileLocation)) {
                             // Check users downloads folder to see if it's there
                             if (Files.exists(downloadsFolderFile)) {
-                                Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                                FileUtils.moveFile(downloadsFolderFile, fileLocation, true);
                             }
 
                             // Check to see if a browser has added a .zip to the end of the file
                             Path zipAddedFile = FileSystem.DOWNLOADS.resolve(getFile() + ".zip");
                             if (Files.exists(zipAddedFile)) {
-                                Utils.moveFile(zipAddedFile, fileLocation, true);
+                                FileUtils.moveFile(zipAddedFile, fileLocation, true);
                             } else {
                                 zipAddedFile = FileSystem.USER_DOWNLOADS.resolve(getFile() + ".zip");
                                 if (Files.exists(zipAddedFile)) {
-                                    Utils.moveFile(zipAddedFile, fileLocation, true);
+                                    FileUtils.moveFile(zipAddedFile, fileLocation, true);
                                 }
                             }
                         }
@@ -484,7 +485,7 @@ public class Mod {
 
         if (hasMD5() && !Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
             if (attempt < 5) {
-                Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
+                FileUtils.delete(fileLocation); // MD5 hash doesn't match, delete it
                 downloadClient(installer, ++attempt); // download again
             } else {
                 LogManager.error("Cannot download " + fileLocation + ". Aborting install!");
@@ -500,7 +501,7 @@ public class Mod {
                 if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)) {
                     return; // File already exists and matches hash, don't download it
                 } else {
-                    Utils.delete(fileLocation); // File exists but is corrupt, delete it
+                    FileUtils.delete(fileLocation); // File exists but is corrupt, delete it
                 }
             } else {
                 return; // No MD5, but file is there, can only assume it's fine
@@ -509,7 +510,7 @@ public class Mod {
         if (this.serverDownload == DownloadType.browser) {
             Path downloadsFolderFile = FileSystem.USER_DOWNLOADS.resolve(getServerFile());
             if (Files.exists(downloadsFolderFile)) {
-                Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                FileUtils.moveFile(downloadsFolderFile, fileLocation, true);
             }
 
             if (fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
@@ -580,17 +581,17 @@ public class Mod {
                     if (!Files.exists(fileLocation)) {
                         // Check users downloads folder to see if it's there
                         if (Files.exists(downloadsFolderFile)) {
-                            Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                            FileUtils.moveFile(downloadsFolderFile, fileLocation, true);
                         }
 
                         // Check to see if a browser has added a .zip to the end of the file
                         Path zipAddedFile = FileSystem.DOWNLOADS.resolve(getServerFile() + ".zip");
                         if (Files.exists(zipAddedFile)) {
-                            Utils.moveFile(zipAddedFile, fileLocation, true);
+                            FileUtils.moveFile(zipAddedFile, fileLocation, true);
                         } else {
                             zipAddedFile = FileSystem.USER_DOWNLOADS.resolve(getServerFile() + ".zip");
                             if (Files.exists(zipAddedFile)) {
-                                Utils.moveFile(zipAddedFile, fileLocation, true);
+                                FileUtils.moveFile(zipAddedFile, fileLocation, true);
                             }
                         }
                     }
@@ -606,7 +607,7 @@ public class Mod {
 
         if (hasServerMD5() && !Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)) {
             if (attempt < 5) {
-                Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
+                FileUtils.delete(fileLocation); // MD5 hash doesn't match, delete it
                 downloadServer(installer, ++attempt); // download again
             } else {
                 LogManager.error("Cannot download " + fileLocation + ". Aborting install!");
@@ -633,55 +634,55 @@ public class Mod {
             case jar:
             case forge:
                 if (installer.isServer() && thisType == ModType.forge) {
-                    Utils.copyFile(fileLocation, installer.getRootDirectory());
+                    FileUtils.copyFile(fileLocation, installer.getRootDirectory());
                     break;
                 } else if (installer.isServer() && thisType == ModType.jar) {
-                    Utils.unzip(fileLocation, installer.getTempJarDirectory());
+                    FileUtils.unzip(fileLocation, installer.getTempJarDirectory());
                     break;
                 }
 
-                Utils.copyFile(fileLocation, installer.getJarModsDirectory());
+                FileUtils.copyFile(fileLocation, installer.getJarModsDirectory());
                 installer.addToJarOrder(getFile());
                 break;
             case mcpc:
                 if (installer.isServer()) {
-                    Utils.copyFile(fileLocation, installer.getRootDirectory());
+                    FileUtils.copyFile(fileLocation, installer.getRootDirectory());
                     break;
                 }
                 break;
             case texturepack:
                 if (!Files.exists(installer.getTexturePacksDirectory())) {
-                    Utils.createDirectory(installer.getTexturePacksDirectory());
+                    FileUtils.createDirectory(installer.getTexturePacksDirectory());
                 }
 
-                Utils.copyFile(fileLocation, installer.getTexturePacksDirectory());
+                FileUtils.copyFile(fileLocation, installer.getTexturePacksDirectory());
                 break;
             case resourcepack:
                 if (!Files.exists(installer.getResourcePacksDirectory())) {
-                    Utils.createDirectory(installer.getResourcePacksDirectory());
+                    FileUtils.createDirectory(installer.getResourcePacksDirectory());
                 }
 
-                Utils.copyFile(fileLocation, installer.getResourcePacksDirectory());
+                FileUtils.copyFile(fileLocation, installer.getResourcePacksDirectory());
                 break;
             case texturepackextract:
                 if (!Files.exists(installer.getTexturePacksDirectory())) {
-                    Utils.createDirectory(installer.getTexturePacksDirectory());
+                    FileUtils.createDirectory(installer.getTexturePacksDirectory());
                 }
 
-                Utils.unzip(fileLocation, installer.getTempTexturePackDirectory());
+                FileUtils.unzip(fileLocation, installer.getTempTexturePackDirectory());
                 installer.setTexturePackExtracted();
                 break;
             case resourcepackextract:
                 if (!Files.exists(installer.getResourcePacksDirectory())) {
-                    Utils.createDirectory(installer.getResourcePacksDirectory());
+                    FileUtils.createDirectory(installer.getResourcePacksDirectory());
                 }
 
-                Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
+                FileUtils.unzip(fileLocation, installer.getTempResourcePackDirectory());
                 installer.setResourcePackExtracted();
                 break;
             case millenaire:
                 Path tempDirMillenaire = FileSystem.TMP.resolve(getSafeName());
-                Utils.unzip(fileLocation, tempDirMillenaire);
+                FileUtils.unzip(fileLocation, tempDirMillenaire);
                 for (String folder : tempDirMillenaire.toFile().list()) {
                     File thisFolder = tempDirMillenaire.resolve(folder).toFile();
                     for (String dir : thisFolder.list(new FilenameFilter() {
@@ -691,86 +692,86 @@ public class Mod {
                             return thisFile.isDirectory();
                         }
                     })) {
-                        Utils.copyDirectory(thisFolder.toPath().resolve(dir), installer.getModsDirectory());
+                        FileUtils.copyDirectory(thisFolder.toPath().resolve(dir), installer.getModsDirectory());
                     }
                 }
-                Utils.delete(tempDirMillenaire);
+                FileUtils.delete(tempDirMillenaire);
                 break;
             case mods:
-                Utils.copyFile(fileLocation, installer.getModsDirectory());
+                FileUtils.copyFile(fileLocation, installer.getModsDirectory());
                 break;
             case ic2lib:
                 if (!Files.exists(installer.getIC2LibDirectory())) {
-                    Utils.createDirectory(installer.getIC2LibDirectory());
+                    FileUtils.createDirectory(installer.getIC2LibDirectory());
                 }
 
-                Utils.copyFile(fileLocation, installer.getIC2LibDirectory());
+                FileUtils.copyFile(fileLocation, installer.getIC2LibDirectory());
                 break;
             case flan:
                 if (!Files.exists(installer.getFlanDirectory())) {
-                    Utils.createDirectory(installer.getFlanDirectory());
+                    FileUtils.createDirectory(installer.getFlanDirectory());
                 }
 
-                Utils.copyFile(fileLocation, installer.getFlanDirectory());
+                FileUtils.copyFile(fileLocation, installer.getFlanDirectory());
                 break;
             case denlib:
                 if (!Files.exists(installer.getDenLibDirectory())) {
-                    Utils.createDirectory(installer.getDenLibDirectory());
+                    FileUtils.createDirectory(installer.getDenLibDirectory());
                 }
 
-                Utils.copyFile(fileLocation, installer.getDenLibDirectory());
+                FileUtils.copyFile(fileLocation, installer.getDenLibDirectory());
                 break;
             case depandency:
             case dependency:
                 if (!Files.exists(installer.getDependencyDirectory())) {
-                    Utils.createDirectory(installer.getDependencyDirectory());
+                    FileUtils.createDirectory(installer.getDependencyDirectory());
                 }
 
-                Utils.copyFile(fileLocation, installer.getDependencyDirectory());
+                FileUtils.copyFile(fileLocation, installer.getDependencyDirectory());
                 break;
             case plugins:
                 if (!Files.exists(installer.getPluginsDirectory())) {
-                    Utils.createDirectory(installer.getPluginsDirectory());
+                    FileUtils.createDirectory(installer.getPluginsDirectory());
                 }
 
-                Utils.copyFile(fileLocation, installer.getPluginsDirectory());
+                FileUtils.copyFile(fileLocation, installer.getPluginsDirectory());
                 break;
             case coremods:
                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                     if (!Files.exists(installer.getCoreModsDirectory())) {
-                        Utils.createDirectory(installer.getCoreModsDirectory());
+                        FileUtils.createDirectory(installer.getCoreModsDirectory());
                     }
 
-                    Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
+                    FileUtils.copyFile(fileLocation, installer.getCoreModsDirectory());
                 } else {
-                    Utils.copyFile(fileLocation, installer.getModsDirectory());
+                    FileUtils.copyFile(fileLocation, installer.getModsDirectory());
                 }
                 break;
             case shaderpack:
                 if (!Files.exists(installer.getShaderPacksDirectory())) {
-                    Utils.createDirectory(installer.getShaderPacksDirectory());
+                    FileUtils.createDirectory(installer.getShaderPacksDirectory());
                 }
 
-                Utils.copyFile(fileLocation, installer.getShaderPacksDirectory());
+                FileUtils.copyFile(fileLocation, installer.getShaderPacksDirectory());
                 break;
             case extract:
                 switch (extractTo) {
                     case coremods:
                         if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                             if (!Files.exists(installer.getCoreModsDirectory())) {
-                                Utils.createDirectory(installer.getCoreModsDirectory());
+                                FileUtils.createDirectory(installer.getCoreModsDirectory());
                             }
 
-                            Utils.unzip(fileLocation, installer.getCoreModsDirectory());
+                            FileUtils.unzip(fileLocation, installer.getCoreModsDirectory());
                         } else {
-                            Utils.unzip(fileLocation, installer.getModsDirectory());
+                            FileUtils.unzip(fileLocation, installer.getModsDirectory());
                         }
                         break;
                     case mods:
-                        Utils.unzip(fileLocation, installer.getModsDirectory());
+                        FileUtils.unzip(fileLocation, installer.getModsDirectory());
                         break;
                     case root:
-                        Utils.unzip(fileLocation, installer.getRootDirectory());
+                        FileUtils.unzip(fileLocation, installer.getRootDirectory());
                         break;
                     default:
                         LogManager.error("No known way to extract mod " + this.name + " with type " + this.extractTo);
@@ -779,7 +780,7 @@ public class Mod {
                 break;
             case decomp:
                 Path tempDirDecomp = FileSystem.TMP.resolve(getSafeName());
-                Utils.unzip(fileLocation, tempDirDecomp);
+                FileUtils.unzip(fileLocation, tempDirDecomp);
                 Path tempFileDecomp = tempDirDecomp.resolve(decompFile);
                 if (Files.exists(tempFileDecomp)) {
                     switch (decompType) {
@@ -787,47 +788,47 @@ public class Mod {
                             if (Files.isRegularFile(tempFileDecomp)) {
                                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                                     if (!Files.exists(installer.getCoreModsDirectory())) {
-                                        Utils.createDirectory(installer.getCoreModsDirectory());
+                                        FileUtils.createDirectory(installer.getCoreModsDirectory());
                                     }
 
-                                    Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
+                                    FileUtils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
                                 } else {
-                                    Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
+                                    FileUtils.copyFile(tempFileDecomp, installer.getModsDirectory());
                                 }
                             } else {
                                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                                     if (!Files.exists(installer.getCoreModsDirectory())) {
-                                        Utils.createDirectory(installer.getCoreModsDirectory());
+                                        FileUtils.createDirectory(installer.getCoreModsDirectory());
                                     }
 
-                                    Utils.copyDirectory(tempFileDecomp, installer.getCoreModsDirectory());
+                                    FileUtils.copyDirectory(tempFileDecomp, installer.getCoreModsDirectory());
                                 } else {
-                                    Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
+                                    FileUtils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
                                 }
                             }
                             break;
                         case jar:
                             if (Files.isRegularFile(tempFileDecomp)) {
-                                Utils.copyFile(tempFileDecomp, installer.getJarModsDirectory());
+                                FileUtils.copyFile(tempFileDecomp, installer.getJarModsDirectory());
                                 installer.addToJarOrder(decompFile);
                             } else {
                                 Path newFile = installer.getJarModsDirectory().resolve(getSafeName() + ".zip");
-                                Utils.zip(tempFileDecomp, newFile);
+                                FileUtils.zip(tempFileDecomp, newFile);
                                 installer.addToJarOrder(getSafeName() + ".zip");
                             }
                             break;
                         case mods:
                             if (Files.isRegularFile(tempFileDecomp)) {
-                                Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
+                                FileUtils.copyFile(tempFileDecomp, installer.getModsDirectory());
                             } else {
-                                Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
+                                FileUtils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
                             }
                             break;
                         case root:
                             if (Files.isRegularFile(tempFileDecomp)) {
-                                Utils.copyFile(tempFileDecomp, installer.getRootDirectory());
+                                FileUtils.copyFile(tempFileDecomp, installer.getRootDirectory());
                             } else {
-                                Utils.copyDirectory(tempFileDecomp, installer.getRootDirectory());
+                                FileUtils.copyDirectory(tempFileDecomp, installer.getRootDirectory());
                             }
                             break;
                         default:
@@ -838,7 +839,7 @@ public class Mod {
                 } else {
                     LogManager.error("Couldn't find decomp file " + this.decompFile + " for mod " + this.name);
                 }
-                Utils.delete(tempDirDecomp);
+                FileUtils.delete(tempDirDecomp);
                 break;
             default:
                 LogManager.error("No known way to install mod " + this.name + " with type " + thisType);

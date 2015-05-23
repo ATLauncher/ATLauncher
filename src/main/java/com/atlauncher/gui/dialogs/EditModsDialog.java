@@ -23,6 +23,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.gui.components.ModsJCheckBox;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -156,7 +157,7 @@ public class EditModsDialog extends JDialog {
                         if (type != null) {
                             DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(),
                                     type, null, null, true, true);
-                            if (Utils.copyFile(file.toPath(), instance.getDisabledModsDirectory())) {
+                            if (FileUtils.copyFile(file.toPath(), instance.getDisabledModsDirectory())) {
                                 instance.getInstalledMods().add(mod);
                                 disabledMods.add(new ModsJCheckBox(mod));
                                 reload = true;

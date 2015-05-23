@@ -27,6 +27,7 @@ import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -121,7 +122,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         Path file = FileSystem.TMP.resolve("20MB.test");
 
                         if (Files.exists(file)) {
-                            Utils.delete(file);
+                            FileUtils.delete(file);
                         }
 
                         long started = System.currentTimeMillis();

@@ -43,6 +43,7 @@ import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.data.mojang.Library;
 import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.gui.dialogs.ModsChooser;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.Gson;
@@ -378,41 +379,41 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (isReinstall || isServer) {
             // We're reinstalling or installing a server so delete these folders
             if (Files.exists(this.getBinDirectory()) && Files.isDirectory(this.getBinDirectory())) {
-                Utils.deleteDirectory(this.getBinDirectory());
+                FileUtils.deleteDirectory(this.getBinDirectory());
             }
             if (Files.exists(this.getConfigDirectory()) && Files.isDirectory(this.getConfigDirectory())) {
-                Utils.deleteDirectory(this.getConfigDirectory());
+                FileUtils.deleteDirectory(this.getConfigDirectory());
             }
 
             if (instance != null && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion()
                     .getVersion()) && instance.hasCustomMods()) {
-                Utils.deleteSpecifiedFiles(this.getModsDirectory(), instance.getCustomMods(ModType.mods));
+                FileUtils.deleteSpecifiedFiles(this.getModsDirectory(), instance.getCustomMods(ModType.mods));
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
-                    Utils.deleteSpecifiedFiles(this.getCoreModsDirectory(), instance.getCustomMods(ModType.coremods));
+                    FileUtils.deleteSpecifiedFiles(this.getCoreModsDirectory(), instance.getCustomMods(ModType.coremods));
                 }
                 if (isReinstall) {
-                    Utils.deleteSpecifiedFiles(this.getJarModsDirectory(), instance.getCustomMods(ModType.jar));
+                    FileUtils.deleteSpecifiedFiles(this.getJarModsDirectory(), instance.getCustomMods(ModType.jar));
                 }
             } else {
-                Utils.deleteDirectory(this.getModsDirectory());
+                FileUtils.deleteDirectory(this.getModsDirectory());
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
-                    Utils.deleteDirectory(this.getCoreModsDirectory());
+                    FileUtils.deleteDirectory(this.getCoreModsDirectory());
                 }
                 if (isReinstall) {
-                    Utils.deleteDirectory(this.getJarModsDirectory()); // Only delete if it's not a server
+                    FileUtils.deleteDirectory(this.getJarModsDirectory()); // Only delete if it's not a server
                 }
             }
             if (isReinstall) {
                 if (Files.exists(this.getTexturePacksDirectory().resolve("TexturePack.zip"))) {
-                    Utils.delete(this.getTexturePacksDirectory().resolve("TexturePack.zip"));
+                    FileUtils.delete(this.getTexturePacksDirectory().resolve("TexturePack.zip"));
                 }
 
                 if (Files.exists(this.getTexturePacksDirectory().resolve("ResourcePack.zip"))) {
-                    Utils.delete(this.getResourcePacksDirectory().resolve("ResourcePack.zip"));
+                    FileUtils.delete(this.getResourcePacksDirectory().resolve("ResourcePack.zip"));
                 }
             } else {
                 if (Files.exists(this.getLibrariesDirectory()) && Files.isDirectory(this.getLibrariesDirectory())) {
-                    Utils.deleteDirectory(this.getLibrariesDirectory()); // Only delete if it's a server
+                    FileUtils.deleteDirectory(this.getLibrariesDirectory()); // Only delete if it's a server
                 }
             }
             if (this.instance != null) {
@@ -421,7 +422,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     for (Delete delete : this.jsonVersion.getDeletes().getFiles()) {
                         Path file = delete.getFile(this.instance);
                         if (delete.isValid() && Files.exists(file)) {
-                            Utils.delete(file);
+                            FileUtils.delete(file);
                         }
                     }
 
@@ -429,7 +430,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     for (Delete delete : this.jsonVersion.getDeletes().getFolders()) {
                         Path file = delete.getFile(this.instance);
                         if (delete.isValid() && Files.exists(file)) {
-                            Utils.deleteDirectory(file);
+                            FileUtils.deleteDirectory(file);
                         }
                     }
                 }
@@ -445,11 +446,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         for (Path directory : directories) {
-            Utils.createDirectory(directory);
+            FileUtils.createDirectory(directory);
         }
 
         if (this.version.getMinecraftVersion().usesCoreMods()) {
-            Utils.createDirectory(this.getCoreModsDirectory());
+            FileUtils.createDirectory(this.getCoreModsDirectory());
         }
     }
 
@@ -652,7 +653,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             for (String libraryFile : forgeLibraries) {
                 Path library = FileSystem.LIBRARIES.resolve(libraryFile);
                 if (Files.exists(library)) {
-                    Utils.copyFile(library, this.getBinDirectory());
+                    FileUtils.copyFile(library, this.getBinDirectory());
                 } else {
                     LogManager.error("Cannot install instance because the library file " + library + " wasn't found!");
                     this.cancel(true);
@@ -669,9 +670,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                     if (Files.exists(library.getFilePath())) {
                         if (library.shouldExtract()) {
-                            Utils.unzip(library.getFilePath(), this.getNativesDirectory(), library.getExtractRule());
+                            FileUtils.unzip(library.getFilePath(), this.getNativesDirectory(), library.getExtractRule());
                         } else {
-                            Utils.copyFile(library.getFilePath(), this.getBinDirectory());
+                            FileUtils.copyFile(library.getFilePath(), this.getBinDirectory());
                         }
                     } else {
                         LogManager.error("Cannot install instance because the library file " + library.getFilePath()
@@ -694,7 +695,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             withFilename = true;
         }
         if (Files.exists(toCopy)) {
-            Utils.copyFile(toCopy, copyTo, withFilename);
+            FileUtils.copyFile(toCopy, copyTo, withFilename);
         } else {
             LogManager.error("Cannot install instance because the library file " + toCopy + " wasn't found!");
             this.cancel(true);
@@ -737,7 +738,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             AssetIndex index = (AssetIndex) this.gson.fromJson(new FileReader(indexFile.toFile()), AssetIndex.class);
 
             if (!index.isVirtual() && !Files.exists(virtualRoot)) {
-                Utils.createDirectory(virtualRoot);
+                FileUtils.createDirectory(virtualRoot);
             }
 
             for (Map.Entry<String, AssetObject> entry : index.getObjects().entrySet()) {
@@ -751,8 +752,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             .getHash(), (int) object.getSize(), this, false, virtualFile, index.isVirtual()));
                 } else {
                     if (index.isVirtual()) {
-                        Utils.createDirectory(virtualFile.getParent());
-                        Utils.copyFile(file, virtualFile, true);
+                        FileUtils.createDirectory(virtualFile.getParent());
+                        FileUtils.copyFile(file, virtualFile, true);
                     }
                 }
             }
@@ -893,8 +894,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             input.close();
             output.close();
 
-            Utils.delete(inputFile);
-            Utils.moveFile(outputTmpFile, inputFile);
+            FileUtils.delete(inputFile);
+            FileUtils.moveFile(outputTmpFile, inputFile);
         } catch (IOException e) {
             App.settings.logStackTrace(e);
         }
@@ -913,8 +914,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         // Extract the configs zip file
         fireSubProgressUnknown();
         fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
-        Utils.unzip(configs, this.getRootDirectory());
-        Utils.delete(configs);
+        FileUtils.unzip(configs, this.getRootDirectory());
+        FileUtils.delete(configs);
     }
 
     public String getServerJar() {
@@ -1042,35 +1043,35 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void backupSelectFiles() {
         Path reis = this.getModsDirectory().resolve("rei_minimap");
         if (Files.exists(reis) && Files.isDirectory(reis)) {
-            if (Utils.copyDirectory(reis, this.getTempDirectory(), true)) {
+            if (FileUtils.copyDirectory(reis, this.getTempDirectory(), true)) {
                 savedReis = true;
             }
         }
 
         Path zans = this.getModsDirectory().resolve("VoxelMods");
         if (Files.exists(zans) && Files.isDirectory(zans)) {
-            if (Utils.copyDirectory(zans, this.getTempDirectory(), true)) {
+            if (FileUtils.copyDirectory(zans, this.getTempDirectory(), true)) {
                 savedZans = true;
             }
         }
 
         Path neiCfg = this.getConfigDirectory().resolve("NEI.cfg");
         if (Files.exists(neiCfg) && Files.isRegularFile(neiCfg)) {
-            if (Utils.copyFile(neiCfg, this.getTempDirectory())) {
+            if (FileUtils.copyFile(neiCfg, this.getTempDirectory())) {
                 savedNEICfg = true;
             }
         }
 
         Path optionsTXT = this.getRootDirectory().resolve("options.txt");
         if (Files.exists(optionsTXT) && Files.isRegularFile(optionsTXT)) {
-            if (Utils.copyFile(optionsTXT, this.getTempDirectory())) {
+            if (FileUtils.copyFile(optionsTXT, this.getTempDirectory())) {
                 savedOptionsTxt = true;
             }
         }
 
         Path serversDAT = this.getRootDirectory().resolve("servers.dat");
         if (Files.exists(serversDAT) && Files.isRegularFile(serversDAT)) {
-            if (Utils.copyFile(serversDAT, this.getTempDirectory())) {
+            if (FileUtils.copyFile(serversDAT, this.getTempDirectory())) {
                 savedServersDat = true;
             }
         }
@@ -1078,39 +1079,39 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         Path portalGunSounds = this.getModsDirectory().resolve("PortalGunSounds.pak");
         if (Files.exists(portalGunSounds) && Files.isRegularFile(portalGunSounds)) {
             savedPortalGunSounds = true;
-            Utils.copyFile(portalGunSounds, this.getTempDirectory());
+            FileUtils.copyFile(portalGunSounds, this.getTempDirectory());
         }
     }
 
     private void restoreSelectFiles() {
         if (savedReis) {
-            Utils.copyDirectory(this.getTempDirectory().resolve("rei_minimap"), this.getModsDirectory().resolve
+            FileUtils.copyDirectory(this.getTempDirectory().resolve("rei_minimap"), this.getModsDirectory().resolve
                     ("rei_minimap"));
         }
 
         if (savedZans) {
-            Utils.copyDirectory(this.getTempDirectory().resolve("VoxelMods"), this.getModsDirectory().resolve
+            FileUtils.copyDirectory(this.getTempDirectory().resolve("VoxelMods"), this.getModsDirectory().resolve
                     ("VoxelMods"));
         }
 
         if (savedNEICfg) {
-            Utils.copyFile(this.getTempDirectory().resolve("NEI.cfg"), this.getConfigDirectory().resolve("NEI.cfg"),
-                    true);
+            FileUtils.copyFile(this.getTempDirectory().resolve("NEI.cfg"), this.getConfigDirectory().resolve("NEI" +
+                    ".cfg"), true);
         }
 
         if (savedOptionsTxt) {
-            Utils.copyFile(this.getTempDirectory().resolve("options.txt"), this.getRootDirectory().resolve("options"
-                    + ".txt"), true);
+            FileUtils.copyFile(this.getTempDirectory().resolve("options.txt"), this.getRootDirectory().resolve
+                    ("options" + ".txt"), true);
         }
 
         if (savedServersDat) {
-            Utils.copyFile(this.getTempDirectory().resolve("servers.dat"), this.getRootDirectory().resolve("servers"
-                    + ".dat"), true);
+            FileUtils.copyFile(this.getTempDirectory().resolve("servers.dat"), this.getRootDirectory().resolve
+                    ("servers" + ".dat"), true);
         }
 
         if (savedPortalGunSounds) {
-            Utils.copyFile(this.getTempDirectory().resolve("PortalGunSounds.pak"), this.getModsDirectory().resolve
-                    ("PortalGunSounds.pak"), true);
+            FileUtils.copyFile(this.getTempDirectory().resolve("PortalGunSounds.pak"), this.getModsDirectory()
+                    .resolve("PortalGunSounds.pak"), true);
         }
     }
 
@@ -1184,7 +1185,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
         this.instanceIsCorrupt = true; // From this point on the instance is corrupt
-        Utils.createDirectory(this.getTempDirectory()); // Make the temp directory
+        FileUtils.createDirectory(this.getTempDirectory()); // Make the temp directory
         backupSelectFiles();
         makeDirectories();
         addPercent(5);
@@ -1206,15 +1207,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         if (this.isServer) {
             for (Path path : serverLibraries) {
-                Utils.createDirectory(path);
-                Utils.copyFile(FileSystem.LIBRARIES.resolve(path.getFileName()), path, true);
+                FileUtils.createDirectory(path);
+                FileUtils.copyFile(FileSystem.LIBRARIES.resolve(path.getFileName()), path, true);
             }
         }
         addPercent(5);
         if (this.isServer && this.hasJarMods()) {
             fireTask(Language.INSTANCE.localize("server.extractingjar"));
             fireSubProgressUnknown();
-            Utils.unzip(getMinecraftJar(), getTempJarDirectory());
+            FileUtils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
         if (!this.isServer && this.hasJarMods() && !this.hasForge()) {
             deleteMetaInf();
@@ -1241,24 +1242,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (isServer && hasJarMods()) {
             fireTask(Language.INSTANCE.localize("server.zippingjar"));
             fireSubProgressUnknown();
-            Utils.zip(getTempJarDirectory(), getMinecraftJar());
+            FileUtils.zip(getTempJarDirectory(), getMinecraftJar());
         }
         if (extractedTexturePack) {
             fireTask(Language.INSTANCE.localize("instance.zippingtexturepackfiles"));
             fireSubProgressUnknown();
             if (!Files.exists(this.getTexturePacksDirectory())) {
-                Utils.createDirectory(this.getTexturePacksDirectory());
+                FileUtils.createDirectory(this.getTexturePacksDirectory());
             }
-            Utils.zip(getTempTexturePackDirectory(), this.getTexturePacksDirectory().resolve("TexturePack.zip"));
+            FileUtils.zip(getTempTexturePackDirectory(), this.getTexturePacksDirectory().resolve("TexturePack.zip"));
         }
 
         if (extractedResourcePack) {
             fireTask(Language.INSTANCE.localize("instance.zippingresourcepackfiles"));
             fireSubProgressUnknown();
             if (!Files.exists(this.getResourcePacksDirectory())) {
-                Utils.createDirectory(this.getResourcePacksDirectory());
+                FileUtils.createDirectory(this.getResourcePacksDirectory());
             }
-            Utils.zip(getTempResourcePackDirectory(), this.getResourcePacksDirectory().resolve("ResourcePack.zip"));
+            FileUtils.zip(getTempResourcePackDirectory(), this.getResourcePacksDirectory().resolve("ResourcePack.zip"));
         }
 
         if (isCancelled()) {
@@ -1279,7 +1280,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // Copy over common configs if any
         if (FileSystem.COMMON.toFile().listFiles().length != 0) {
-            Utils.copyDirectory(FileSystem.COMMON, getRootDirectory());
+            FileUtils.copyDirectory(FileSystem.COMMON, getRootDirectory());
         }
 
         restoreSelectFiles();

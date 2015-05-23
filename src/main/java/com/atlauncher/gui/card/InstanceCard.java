@@ -34,6 +34,7 @@ import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -301,7 +302,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                     String time = timestamp.toString().replaceAll("[^0-9]", "_");
                                     String filename = instance.getSafeName() + "-" + time.substring(0, time
                                             .lastIndexOf("_")) + ".zip";
-                                    Utils.zip(instance.getSavesDirectory(), FileSystem.BACKUPS.resolve(filename));
+                                    FileUtils.zip(instance.getSavesDirectory(), FileSystem.BACKUPS.resolve(filename));
                                     dialog.dispose();
                                     App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("backup.backupcomplete", " " +
                                             "" + filename));
@@ -476,7 +477,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             if (ret == JFileChooser.APPROVE_OPTION) {
                                 Path img = chooser.getSelectedFile().toPath();
                                 if (img.endsWith(".png")) {
-                                    Utils.copyFile(img, instance.getRootDirectory().resolve("instance.png"));
+                                    FileUtils.copyFile(img, instance.getRootDirectory().resolve("instance.png"));
                                     image.setImage(instance.getImage().getImage());
                                     instance.save();
                                 }

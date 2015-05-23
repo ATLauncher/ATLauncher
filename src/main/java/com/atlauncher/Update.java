@@ -17,6 +17,7 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class Update {
         String temporaryUpdatePath = args[1];
         File launcher = new File(launcherPath);
         File temporaryUpdate = new File(temporaryUpdatePath);
-        Utils.copyFile(temporaryUpdate, launcher.getParentFile());
+        FileUtils.copyFile(temporaryUpdate, launcher.getParentFile());
 
         List<String> arguments = new ArrayList<String>();
 
