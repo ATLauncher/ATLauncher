@@ -160,6 +160,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (isServer) {
             return FileSystem.SERVERS.resolve(pack.getSafeName() + "_" + version.getSafeVersion());
         }
+
         return FileSystem.INSTANCES.resolve(getInstanceSafeName());
     }
 

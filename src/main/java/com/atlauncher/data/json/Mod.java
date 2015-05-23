@@ -754,9 +754,6 @@ public class Mod {
                 Utils.copyFile(fileLocation, installer.getShaderPacksDirectory());
                 break;
             case extract:
-                Path tempDirExtract = FileSystem.TMP.resolve(getSafeName());
-                Utils.unzip(fileLocation, tempDirExtract);
-                Path folder = FileSystem.TMP.resolve(getSafeName()).resolve(this.extractFolder);
                 switch (extractTo) {
                     case coremods:
                         if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
@@ -764,22 +761,21 @@ public class Mod {
                                 Utils.createDirectory(installer.getCoreModsDirectory());
                             }
 
-                            Utils.copyDirectory(folder, installer.getCoreModsDirectory());
+                            Utils.unzip(fileLocation, installer.getCoreModsDirectory());
                         } else {
-                            Utils.copyDirectory(folder, installer.getModsDirectory());
+                            Utils.unzip(fileLocation, installer.getModsDirectory());
                         }
                         break;
                     case mods:
-                        Utils.copyDirectory(folder, installer.getModsDirectory());
+                        Utils.unzip(fileLocation, installer.getModsDirectory());
                         break;
                     case root:
-                        Utils.copyDirectory(folder, installer.getRootDirectory());
+                        Utils.unzip(fileLocation, installer.getRootDirectory());
                         break;
                     default:
                         LogManager.error("No known way to extract mod " + this.name + " with type " + this.extractTo);
                         break;
                 }
-                Utils.delete(tempDirExtract);
                 break;
             case decomp:
                 Path tempDirDecomp = FileSystem.TMP.resolve(getSafeName());
