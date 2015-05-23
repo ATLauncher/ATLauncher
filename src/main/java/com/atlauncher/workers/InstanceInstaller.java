@@ -1187,7 +1187,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
         this.instanceIsCorrupt = true; // From this point on the instance is corrupt
-        Files.createDirectory(this.getTempDirectory()); // Make the temp directory
+        Utils.createDirectory(this.getTempDirectory()); // Make the temp directory
         backupSelectFiles();
         makeDirectories();
         addPercent(5);
@@ -1357,8 +1357,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void setExtraArguments() {
         if (this.jsonVersion.hasExtraArguments()) {
-            if (!this.jsonVersion.getExtraArguments().hasDepends() && !this.jsonVersion.getExtraArguments()
-                    .hasDependsGroup()) {
+            if (!this.jsonVersion.getExtraArguments().hasDepends() && !this.jsonVersion.getExtraArguments().hasDependsGroup()) {
                 this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
             } else if (this.jsonVersion.getExtraArguments().hasDepends()) {
                 String depends = this.jsonVersion.getExtraArguments().getDepends();

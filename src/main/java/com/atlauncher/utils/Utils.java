@@ -2205,4 +2205,31 @@ public class Utils {
             throw new IOException("Error, could not add URL to system classloader");
         }
     }
+
+    public static boolean createDirectory(Path directory) {
+        if (Files.exists(directory)) {
+            if (Files.isDirectory(directory)) {
+                return true;
+            }
+
+            // It exists but is not a directory so delete it
+            Utils.delete(directory);
+        }
+
+        Path path = directory.getParent();
+        if (!Files.exists(path) || !Files.isDirectory(path)) {
+            if (!Utils.createDirectory(path)) {
+                return false;
+            }
+        }
+
+        try {
+            Files.createDirectory(directory);
+            return true;
+        } catch (IOException e) {
+            App.settings.logStackTrace("Error creating directory " + directory, e);
+        }
+
+        return false;
+    }
 }
