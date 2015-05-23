@@ -30,9 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.Path;
 
-/**
- * TODO: Rewrite along with {@link com.atlauncher.data.Version} {@link com.atlauncher.data.LauncherVersion}
- */
 @Json
 public class MinecraftVersion {
     private String version;
