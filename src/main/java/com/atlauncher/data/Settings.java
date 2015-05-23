@@ -1514,7 +1514,15 @@ public class Settings {
             } else {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.INSTANCES)) {
                     for (Path file : stream) {
-                        byte[] bits = Files.readAllBytes(file);
+                        Path instanceJson = file.resolve("instance.json");
+
+                        if (!Files.exists(instanceJson)) {
+                            LogManager.error("Failed to load instance in folder " + file.getFileName() + " due to " +
+                                    "missing instance.json!");
+                            continue;
+                        }
+
+                        byte[] bits = Files.readAllBytes(instanceJson);
                         Instance instance;
                         try {
                             instance = Gsons.DEFAULT.fromJson(new String(bits), Instance.class);
@@ -1528,8 +1536,8 @@ public class Settings {
                             continue;
                         }
 
-                        if (!Files.exists(instance.root.resolve("disabledmods"))) {
-                            Utils.createDirectory(instance.root.resolve("disabledmods"));
+                        if (!Files.exists(instance.getRootDirectory().resolve("disabledmods"))) {
+                            Utils.createDirectory(instance.getRootDirectory().resolve("disabledmods"));
                         }
 
                         if (this.isPackByName(instance.getPackName())) {
@@ -1710,8 +1718,7 @@ public class Settings {
         List<Pack> packs = new LinkedList<Pack>(Data.PACKS);
         Collections.sort(packs, new Comparator<Pack>() {
             public int compare(Pack result1, Pack result2) {
-                return (result1.getPosition() < result2.getPosition()) ? -1 : ((result1.getPosition() == result2
-                        .getPosition()) ? 0 : 1);
+                return (result1.getPosition() < result2.getPosition()) ? -1 : ((result1.getPosition() == result2.getPosition()) ? 0 : 1);
             }
         });
         return packs;
