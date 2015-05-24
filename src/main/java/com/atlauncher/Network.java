@@ -17,8 +17,35 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.evnt.listener.ProgressListener;
+import com.atlauncher.utils.ProgressResponseBody;
+import com.atlauncher.workers.InstanceInstaller;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 public final class Network {
     public static final OkHttpClient CLIENT = new OkHttpClient();
+    public static final OkHttpClient PROGRESS_CLIENT = new OkHttpClient();
+
+    public static void setupProgressClient(final InstanceInstaller installer) {
+        final ProgressListener progressListener = new ProgressListener() {
+            public void update(long bytesRead, long contentLength, boolean done) {
+                if (bytesRead > 0 && installer != null) {
+                    installer.addDownloadedBytes((int) bytesRead);
+                }
+            }
+        };
+
+        Network.PROGRESS_CLIENT.networkInterceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Response originalResponse = chain.proceed(chain.request());
+                return originalResponse.newBuilder().body(new ProgressResponseBody(originalResponse.body(),
+                        progressListener)).build();
+            }
+        });
+    }
 }

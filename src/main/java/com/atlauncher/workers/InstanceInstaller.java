@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.Network;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Downloadable;
@@ -512,25 +513,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         totalBytes = 0;
         downloadedBytes = 0;
 
+        for (Downloadable download : downloads) {
+            if (download.needToDownload()) {
+                totalBytes += download.getFilesize();
+            }
+        }
+
         fireSubProgress(0); // Show the subprogress bar
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            try {
-                                if (download.needToDownload()) {
-                                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.to
-                                            .getFileName().toString());
-                                    download.download();
-                                } else {
-                                    download.copy();
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace(System.err);
-                            }
+                @Override
+                public void run() {
+                    try {
+                        if (download.needToDownload()) {
+                            fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.to.getFileName
+                                    ().toString());
+                            download.download();
+                        } else {
+                            download.copy();
                         }
-                    });
+                    } catch (Exception e) {
+                        e.printStackTrace(System.err);
+                    }
+                }
+            });
         }
         executor.shutdown();
         while (!executor.isTerminated()) {
@@ -543,8 +550,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgressUnknown();
         ExecutorService executor;
         ArrayList<Downloadable> downloads = getLibraries();
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
         totalBytes = 0;
         downloadedBytes = 0;
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        totalBytes += download.getFilesize();
+                    }
+                }
+            });
+        }
+
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
 
         fireSubProgress(0); // Show the subprogress bar
 
@@ -553,20 +576,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            try {
-                                if (download.needToDownload()) {
-                                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.to
-                                            .getFileName().toString());
-                                    download.download();
-                                }
-                            } catch (Exception e) {
-                                App.settings.logStackTrace(e);
-                                e.printStackTrace(System.err);
-                            }
+                @Override
+                public void run() {
+                    try {
+                        if (download.needToDownload()) {
+                            fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.to.getFileName
+                                    ().toString());
+                            download.download();
                         }
-                    });
+                    } catch (Exception e) {
+                        App.settings.logStackTrace(e);
+                        e.printStackTrace(System.err);
+                    }
+                }
+            });
         }
         executor.shutdown();
         while (!executor.isTerminated()) {
@@ -578,8 +601,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgressUnknown();
         ExecutorService executor;
         List<Downloadable> downloads = getDownloadableMods();
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
         totalBytes = 0;
         downloadedBytes = 0;
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        totalBytes += download.getFilesize();
+                    }
+                }
+            });
+        }
+
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
 
         fireSubProgress(0); // Show the subprogress bar
 
@@ -1284,6 +1323,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     @Override
     protected Boolean doInBackground() throws Exception {
         LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
+
+        Network.setupProgressClient(this);
 
         try {
             this.jsonVersion = this.pack.getJsonVersion(version.getVersion());
