@@ -25,6 +25,7 @@ import com.atlauncher.Network;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
+import com.squareup.okhttp.CacheControl;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
@@ -37,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public final class Downloadable {
     public static final int MAX_ATTEMPTS = 3;
@@ -197,8 +199,8 @@ public final class Downloadable {
     private void execute() throws IOException {
         LogManager.debug("Opening connection to " + this.url, 3);
         Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", App.settings
-                .getUserAgent()).addHeader("Cache-Control", "no-store,max-age=0,no-cache").addHeader("Expires", "0")
-                .addHeader("Pragma", "no-cache");
+                .getUserAgent()).addHeader("Expires", "0").cacheControl(new CacheControl.Builder().noStore().noCache
+                ().maxAge(0, TimeUnit.MILLISECONDS).build());
         this.response = Network.CLIENT.newCall(builder.build()).execute();
 
         if (!this.response.isSuccessful()) {
