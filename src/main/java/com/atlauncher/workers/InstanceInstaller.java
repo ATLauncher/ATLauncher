@@ -513,6 +513,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         totalBytes = 0;
         downloadedBytes = 0;
 
+        // Sets up the progress client for Downloadables to show file download progress
+        Network.setupProgressClient(this);
+
         for (Downloadable download : downloads) {
             if (download.needToDownload()) {
                 totalBytes += download.getFilesize();
@@ -1323,8 +1326,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     @Override
     protected Boolean doInBackground() throws Exception {
         LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
-
-        Network.setupProgressClient(this);
 
         try {
             this.jsonVersion = this.pack.getJsonVersion(version.getVersion());
