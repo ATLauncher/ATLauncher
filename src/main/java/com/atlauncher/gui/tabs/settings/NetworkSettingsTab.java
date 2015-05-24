@@ -271,6 +271,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
             App.settings.setProxyHost(proxyHost.getText());
             App.settings.setProxyPort(Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")));
             App.settings.setProxyType(((String) proxyType.getSelectedItem()));
+            App.settings.configureProxy();
         }
     }
 

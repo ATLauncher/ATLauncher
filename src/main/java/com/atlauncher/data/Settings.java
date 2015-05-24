@@ -23,6 +23,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.Network;
 import com.atlauncher.Update;
 import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -989,6 +990,8 @@ public class Settings {
                         ("DIRECT")) {
                     this.enableProxy = false;
                 }
+
+                this.configureProxy();
             } else {
                 this.proxyHost = "";
                 this.proxyPort = 0;
@@ -1007,6 +1010,10 @@ public class Settings {
         } catch (IOException e) {
             logStackTrace(e);
         }
+    }
+
+    public void configureProxy() {
+        Network.CLIENT.setProxy(this.getProxy());
     }
 
     public boolean enabledPackTags() {

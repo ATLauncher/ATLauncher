@@ -55,7 +55,6 @@ public final class Downloadable {
     private String hash;
     private Server server;
     private Response response;
-    private boolean gzip;
 
     public Downloadable(String url, boolean atlauncher) {
         this(url, null, null, null, -1, atlauncher, false, null);
