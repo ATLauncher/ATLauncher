@@ -10,7 +10,7 @@ So if you wish to submit any Pull Requests, please follow these coding standards
 + Please keep all inner classes at the bottom.
 + Please don't use star imports.
 + Please mark all classes that are to be de/serialized with Gson with the @Json annotation for other developers.
-+ Please use the IntelliJ-Coding-Style.xml for the project (if using IntelliJ) in order to keep all formatting consistent.
++ Please use the IntelliJ-Coding-Style.jar for the project (if using IntelliJ) in order to keep all formatting consistent.
 + Please update the CHANGELOG.md file when fixing/adding something so it's easier to keep track of than git commits. Feel free to add in a 'by MyUsername' to the end of the changes you've made.
 + Please don't do large commits. My preference is a single commit for a single fix/addition rather than bundled up commits.
 + Please use final where possible.
