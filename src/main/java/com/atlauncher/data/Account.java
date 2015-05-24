@@ -468,8 +468,8 @@ public class Account implements Serializable {
                                     FileUtils.delete(path);
                                 }
 
-                                Downloadable skin = new Downloadable(skinURL, path, null, null, false);
-                                skin.download(false);
+                                Downloadable skin = new Downloadable(skinURL, path, false);
+                                skin.download();
                                 dialog.setReturnValue(true);
                             } else {
                                 if (!Files.exists(path)) {

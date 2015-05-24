@@ -21,7 +21,6 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Downloadable;
 
-import java.io.File;
 import java.nio.file.Path;
 
 @Json
@@ -56,8 +55,7 @@ public class LauncherLibrary {
     }
 
     public Downloadable getDownloadable() {
-        return new Downloadable(this.url, FileSystem.LAUNCHER_LIBRARIES.resolve(this.filename), this.md5, null, this
-                .atlauncherDownload);
+        return new Downloadable(this.url, this.md5, FileSystem.LAUNCHER_LIBRARIES.resolve(this.filename), -1, this.atlauncherDownload, null);
     }
 
     public String getMd5() {

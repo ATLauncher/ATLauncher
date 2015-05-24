@@ -40,13 +40,10 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -82,7 +79,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -536,34 +532,30 @@ public class Settings {
     }
 
     public void checkMojangStatus() {
-        JSONParser parser = new JSONParser();
-        try {
-            Downloadable download = new Downloadable("http://status.mojang.com/check", false);
-            String response = download.getContents();
-            if (response == null) {
-                minecraftSessionServerUp = false;
-                minecraftLoginServerUp = false;
+        try{
+            Downloadable dl = new Downloadable("http://status.mojang.com/check", false);
+            String resp = dl.toString();
+
+            if(resp == null){
+                this.minecraftLoginServerUp = false;
+                this.minecraftSessionServerUp = false;
                 return;
             }
-            Object obj = parser.parse(response);
-            JSONArray jsonObject = (JSONArray) obj;
-            Iterator<JSONObject> iterator = jsonObject.iterator();
-            while (iterator.hasNext()) {
-                JSONObject object = iterator.next();
-                if (object.containsKey("authserver.mojang.com")) {
-                    if (((String) object.get("authserver.mojang.com")).equalsIgnoreCase("green")) {
-                        minecraftLoginServerUp = true;
-                    }
-                } else if (object.containsKey("session.minecraft.net")) {
-                    if (((String) object.get("session.minecraft.net")).equalsIgnoreCase("green")) {
-                        minecraftSessionServerUp = true;
+
+            JsonArray array = Gsons.PARSER.parse(resp).getAsJsonArray();
+            for(JsonElement e : array){
+                JsonObject obj = e.getAsJsonObject();
+                if(obj.has("authserver.mojang.com")){
+                    if(obj.get("authserver.mojang.com").getAsString().equalsIgnoreCase("green")){
+                        this.minecraftLoginServerUp = true;
+                    } else if(obj.get("session.minecraft.net").getAsString().equalsIgnoreCase("green")){
+                        this.minecraftSessionServerUp = true;
                     }
                 }
             }
-        } catch (ParseException e) {
-            this.logStackTrace(e);
-            minecraftSessionServerUp = false;
-            minecraftLoginServerUp = false;
+        } catch(Exception e){
+            this.minecraftLoginServerUp = false;
+            this.minecraftSessionServerUp = false;
         }
     }
 
@@ -589,9 +581,14 @@ public class Settings {
     }
 
     public boolean launcherHasBetaUpdate() {
-        Downloadable downloadable = new Downloadable("https://api.atlauncher.com/v1/build/atlauncher/build/", false);
-        APIResponseInt response = Gsons.DEFAULT.fromJson(downloadable.getContents(), APIResponseInt.class);
-        return response.getData() > Constants.VERSION.getBuild();
+        try{
+            Downloadable downloadable = new Downloadable("https://api.atlauncher.com/v1/build/atlauncher/build/", false);
+            APIResponseInt response = downloadable.fromJson(APIResponseInt.class);
+            return response.getData() > Constants.VERSION.getBuild();
+        } catch(Exception e){
+            App.settings.logStackTrace(e);
+            return false;
+        }
     }
 
     public void downloadUpdate() {
@@ -608,9 +605,12 @@ public class Settings {
 
             Path output = FileSystem.TMP.resolve(saveAs);
             LogManager.info("Downloading Launcher Update");
-            Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + target, output, null, null, true);
-            update.download(false);
-            this.runUpdate(path, output.toAbsolutePath().toString());
+            Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + target, output, true);
+            update.download();
+            this.runUpdate(
+                                  path, output.toAbsolutePath()
+                                              .toString()
+            );
         } catch (Exception e) {
             this.logStackTrace(e);
         }
@@ -631,8 +631,8 @@ public class Settings {
             Path newFile = FileSystem.TMP.resolve(saveAs);
             LogManager.info("Downloading Launcher Update");
             Downloadable update = new Downloadable("https://api.atlauncher.com/v1/build/atlauncher/download/" +
-                    toget, newFile, null, null, false);
-            update.download(false);
+                    toget, newFile, false);
+            update.download();
             runUpdate(path, newFile.toString());
         } catch (IOException e) {
             this.logStackTrace(e);
@@ -673,12 +673,10 @@ public class Settings {
         java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {
         }.getType();
 
-        String contents = download.getContents();
-
         try {
-            this.launcherFiles = Gsons.DEFAULT.fromJson(contents, type);
+            this.launcherFiles = download.fromJson(type);
         } catch (Exception e) {
-            String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", contents);
+            String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", download.toString());
             this.logStackTrace("Error loading in file hashes! See error details at " + result, e);
         }
     }
@@ -711,8 +709,12 @@ public class Settings {
                     @Override
                     public void run() {
                         if (download.needToDownload()) {
-                            LogManager.info("Downloading Launcher File " + download.getPath().getFileName().toString());
-                            download.download(false);
+                            LogManager.info("Downloading Launcher File " + download.to.getFileName().toString());
+                            try {
+                                download.download();
+                            } catch (IOException e) {
+                                App.settings.logStackTrace(e);
+                            }
                         }
                     }
                 });
@@ -764,25 +766,27 @@ public class Settings {
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
-        App.TASKPOOL.execute(new Runnable() {
+        App.TASKPOOL.execute(
+                                    new Runnable() {
 
-            @Override
-            public void run() {
-                if (hasUpdatedFiles()) {
-                    downloadUpdatedFiles(); // Downloads updated files on the server
-                }
-                checkForLauncherUpdate();
-                loadNews(); // Load the news
-                reloadNewsPanel(); // Reload news panel
-                loadPacks(); // Load the Packs available in the Launcher
-                reloadPacksPanel(); // Reload packs panel
-                loadUsers(); // Load the Testers and Allowed Players for the packs
-                loadInstances(); // Load the users installed Instances
-                reloadInstancesPanel(); // Reload instances panel
-                dialog.setVisible(false); // Remove the dialog
-                dialog.dispose(); // Dispose the dialog
-            }
-        });
+                                        @Override
+                                        public void run() {
+                                            if (hasUpdatedFiles()) {
+                                                downloadUpdatedFiles(); // Downloads updated files on the server
+                                            }
+                                            checkForLauncherUpdate();
+                                            loadNews(); // Load the news
+                                            reloadNewsPanel(); // Reload news panel
+                                            loadPacks(); // Load the Packs available in the Launcher
+                                            reloadPacksPanel(); // Reload packs panel
+                                            loadUsers(); // Load the Testers and Allowed Players for the packs
+                                            loadInstances(); // Load the users installed Instances
+                                            reloadInstancesPanel(); // Reload instances panel
+                                            dialog.setVisible(false); // Remove the dialog
+                                            dialog.dispose(); // Dispose the dialog
+                                        }
+                                    }
+        );
         dialog.setVisible(true);
     }
 
@@ -836,7 +840,11 @@ public class Settings {
 
                     if (download.needToDownload()) {
                         LogManager.info("Downloading library " + library.getFilename() + "!");
-                        download.download(false);
+                        try {
+                            download.download();
+                        } catch (IOException e) {
+                            App.settings.logStackTrace(e);
+                        }
                     }
                 }
             });
@@ -1320,30 +1328,20 @@ public class Settings {
      * These MUST be hardcoded in order for the Launcher to make the initial connections to download files
      */
     private void setupServers() {
-        this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
+        this.servers = new ArrayList<>(Arrays.asList(Constants.SERVERS));
     }
 
     private void findActiveServers() {
         LogManager.debug("Finding servers to use");
-
-        Downloadable download = new Downloadable(this.getMasterFileURL("launcher/json/servers.json"), false);
-
-        String response = download.getContents();
-
-        java.lang.reflect.Type type = new TypeToken<List<Server>>() {
-        }.getType();
-
-        if (response != null) {
-            try {
-                this.servers = Gsons.DEFAULT.fromJson(response, type);
-            } catch (Exception e) {
-                String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", response);
-                logStackTrace("Exception when reading in the servers. See error details at " + result, e);
-                this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
-            }
+        Downloadable dl = new Downloadable(this.getMasterFileURL("launcher/json/servers.json"), false);
+        try{
+            java.lang.reflect.Type type = new TypeToken<List<Server>>(){}.getType();
+            this.servers = dl.fromJson(type);
+        } catch(Exception e){
+            String res = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", dl.toString());
+            App.settings.logStackTrace("Exception when reading in the servers see @ " + res, e);
+            this.servers = new ArrayList<>(Arrays.asList(Constants.SERVERS));
         }
-
-        LogManager.debug("Finished finding servers to use");
     }
 
     public boolean disableServerGetNext() {
@@ -1453,22 +1451,20 @@ public class Settings {
     private void loadUsers() {
         LogManager.debug("Loading users");
         Downloadable download = new Downloadable("launcher/json/users.json", true);
-        List<PackUsers> packUsers = null;
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
-            }.getType();
-            packUsers = Gsons.DEFAULT.fromJson(download.getContents(), type);
-        } catch (JsonSyntaxException e) {
-            logStackTrace(e);
-        } catch (JsonIOException e) {
-            logStackTrace(e);
-        }
-        if (packUsers == null) {
-            this.offlineMode = true;
-            return;
-        }
-        for (PackUsers pu : packUsers) {
-            pu.addUsers();
+        try{
+            java.lang.reflect.Type type = new TypeToken<List<PackUsers>>(){}.getType();
+            List<PackUsers> users = download.fromJson(type);
+
+            if(users == null){
+                this.offlineMode = true;
+                return;
+            }
+
+            for(PackUsers user : users){
+                user.addUsers();
+            }
+        } catch(Exception e){
+            this.logStackTrace(e);
         }
         LogManager.debug("Finished loading users");
     }
@@ -1971,7 +1967,7 @@ public class Settings {
         }
         this.offlineMode = false;
         Downloadable download = new Downloadable("ping", true);
-        String test = download.getContents();
+        String test = download.toString();
         if (test != null && test.equalsIgnoreCase("pong")) {
             reloadPacksPanel();
             reloadInstancesPanel();

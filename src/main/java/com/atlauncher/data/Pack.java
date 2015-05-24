@@ -276,7 +276,7 @@ public class Pack {
             Downloadable download = new Downloadable(path, true);
             int tries = 1;
             do {
-                this.json = download.getContents();
+                this.json = download.toString();
                 tries++;
             } while (json == null && tries < 5);
             this.jsonVersion = version;

@@ -78,12 +78,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -98,6 +100,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class Utils {
+    public static EnumSet<StandardOpenOption> WRITE = EnumSet.of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+    public static EnumSet<StandardOpenOption> READ = EnumSet.of(StandardOpenOption.READ);
+
     public static String error(Throwable t) {
         StringBuilder builder = new StringBuilder();
 

@@ -44,9 +44,13 @@ public class MinecraftVersion {
 
         if (!App.skipMinecraftVersionDownloads) {
             Downloadable download = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version +
-                    "/" + this.version + ".json"), versionFile, null, null, false);
+                    "/" + this.version + ".json"), versionFile, false);
             if (download.needToDownload()) {
-                download.download(false);
+                try{
+                    download.download();
+                } catch(Exception e){
+                    App.settings.logStackTrace(e);
+                }
             }
         }
 

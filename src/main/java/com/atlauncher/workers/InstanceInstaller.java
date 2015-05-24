@@ -55,7 +55,6 @@ import com.google.gson.JsonSyntaxException;
 import javax.swing.SwingWorker;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -460,12 +459,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : this.selectedMods) {
             if (mod.getDownload() == DownloadType.server) {
-                Downloadable downloadable;
-
-                downloadable = new Downloadable(mod.getUrl(), FileSystem.DOWNLOADS.resolve(mod.getFile()), mod.getMD5
-                        (), mod.getFilesize(), this, true);
-
-                mods.add(downloadable);
+                mods.add(new Downloadable(mod.getUrl(), mod.getMD5(), FileSystem.DOWNLOADS.resolve(mod.getFile()), mod.getFilesize(), true, this));
             }
         }
 
@@ -517,26 +511,26 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         totalBytes = 0;
         downloadedBytes = 0;
 
-        for (Downloadable download : downloads) {
-            if (download.needToDownload()) {
-                totalBytes += download.getFilesize();
-            }
-        }
-
         fireSubProgress(0); // Show the subprogress bar
         for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
+            executor.execute(
+                                    new Runnable() {
 
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
-                        download.download(true);
-                    } else {
-                        download.copyFile();
-                    }
-                }
-            });
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                if (download.needToDownload()) {
+                                                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.to.getFileName().toString());
+                                                    download.download();
+                                                } else {
+                                                    download.copy();
+                                                }
+                                            } catch(Exception e){
+                                                throw new RuntimeException(e);
+                                            }
+                                        }
+                                    }
+            );
         }
         executor.shutdown();
         while (!executor.isTerminated()) {
@@ -552,38 +546,30 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         totalBytes = 0;
         downloadedBytes = 0;
 
-        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
-
-        for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        totalBytes += download.getFilesize();
-                    }
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
-
         fireSubProgress(0); // Show the subprogress bar
 
         executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
+            executor.execute(
+                                    new Runnable() {
 
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
-                        download.download(true);
-                    }
-                }
-            });
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                if (download.needToDownload()) {
+                                                    fireTask(
+                                                                    Language.INSTANCE.localize("common.downloading") + " " + download.to.getFileName()
+                                                                                                                                        .toString()
+                                                    );
+                                                    download.download();
+                                                }
+                                            } catch (Exception e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                        }
+                                    }
+            );
         }
         executor.shutdown();
         while (!executor.isTerminated()) {
@@ -598,34 +584,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         totalBytes = 0;
         downloadedBytes = 0;
 
-        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
-
-        for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        totalBytes += download.getFilesize();
-                    }
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
-
         fireSubProgress(0); // Show the subprogress bar
 
         executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
             executor.execute(new Runnable() {
-
                 @Override
                 public void run() {
-                    if (download.needToDownload()) {
-                        download.download(true);
+                    try{
+                        if (download.needToDownload()) {
+                            download.download();
+                        }
+                    } catch(Exception e){
+                        throw new RuntimeException(e);
                     }
                 }
             });
@@ -735,8 +707,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         Path indexFile = FileSystem.RESOURCES_INDEXES.resolve(assetVersion + ".json");
 
         try {
-            new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + ".json"), indexFile,
-                    null, this, false).download(false);
+            new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + ".json"), null, indexFile, -1, false, this).download();
             AssetIndex index = this.gson.fromJson(new FileReader(indexFile.toFile()), AssetIndex.class);
 
             if (!index.isVirtual() && !Files.exists(virtualRoot)) {
@@ -750,8 +721,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 Path virtualFile = virtualRoot.resolve(entry.getKey());
 
                 if (object.needToDownload(file)) {
-                    downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), file, object
-                            .getHash(), (int) object.getSize(), this, false, virtualFile, index.isVirtual()));
+                    downloads.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL(filename), object.getHash(), file, (int) object.getSize(), false, this));
                 } else {
                     if (index.isVirtual()) {
                         FileUtils.createDirectory(virtualFile.getParent());
@@ -759,7 +729,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                 }
             }
-        } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
+        } catch (JsonSyntaxException | JsonIOException | IOException e) {
             App.settings.logStackTrace("Error processing resources for Minecraft!", e);
         }
 
@@ -817,10 +787,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
             Path downloadTo = FileSystem.LIBRARIES.resolve(library.getFile());
             if (library.getDownloadType() == DownloadType.server) {
-                libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), library.getFilesize(),
-                        this, true));
+                libraries.add(new Downloadable(library.getUrl(), library.getMD5(), downloadTo, library.getFilesize(), true, this));
             } else if (library.getDownloadType() == DownloadType.direct) {
-                libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), this, false));
+                libraries.add(new Downloadable(library.getUrl(), library.getMD5(), downloadTo, -1, false, this));
             } else {
                 LogManager.error("DownloadType for server library " + library.getFile() + " is invalid with a " +
                         "value of " + library.getDownloadType());
@@ -850,7 +819,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             this.librariesNeeded += "," + library.getFilePath().getFileName().toString();
                         }
                     }
-                    libraries.add(new Downloadable(library.getURL(), library.getFilePath(), null, this, false));
+                    libraries.add(new Downloadable(library.getURL(), null, library.getFilePath(), -1, false, this));
                 }
             }
         }
@@ -858,16 +827,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         // Add Minecraft.jar
 
         if (isServer) {
-            libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version
-                    .getMinecraftVersion().getVersion() + "/minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar"), FileSystem.JARS.resolve("minecraft_server." + this.version
-                    .getMinecraftVersion().getVersion() + ".jar"), null, this, false));
+            libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL(this.getServerURL()), null, FileSystem.JARS.resolve("minecraft_server." + this.version
+                    .getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
         } else {
-            libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version
-                    .getMinecraftVersion().getVersion() + "/" + this.version.getMinecraftVersion().getVersion() + "" +
-                    ".jar"), FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar"), null,
-                    this, false));
+            libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL(this.getClientURL()), null, FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
         }
         return libraries;
+    }
+
+    private String getClientURL(){
+        return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version.getMinecraftVersion().getVersion() + "/" + this.version.getMinecraftVersion().getVersion() + ".jar");
+    }
+
+    private String getServerURL(){
+        return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version.getMinecraftVersion().getVersion() + "/minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar");
     }
 
     // TODO: Switch to NIO operations and possibly move to Utils/FileUtils (new class)
@@ -907,10 +880,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
         Path configs = FileSystem.TMP.resolve("Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
-        Downloadable configsDownload = new Downloadable(path, configs, null, this, true);
-        this.totalBytes = configsDownload.getFilesize();
+        Downloadable configsDownload = new Downloadable(path, null, configs, -1, true, this);
         this.downloadedBytes = 0;
-        configsDownload.download(true); // Download the file
+        try {
+            configsDownload.download(); // Download the file
+        } catch (IOException e) {
+            App.settings.logStackTrace(e);
+        }
 
         // Extract the configs zip file
         fireSubProgressUnknown();

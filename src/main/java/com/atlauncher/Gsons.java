@@ -24,6 +24,7 @@ import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 
 import java.awt.Color;
 import java.io.File;
@@ -38,4 +39,6 @@ public final class Gsons {
     public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
             .registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File.class, new
                     FileTypeAdapter()).create();
+
+    public static final JsonParser PARSER = new JsonParser();
 }

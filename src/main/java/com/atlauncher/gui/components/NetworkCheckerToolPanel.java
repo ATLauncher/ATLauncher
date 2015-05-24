@@ -103,17 +103,21 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                     // Response Code Test
                     for (Server server : App.settings.getServers()) {
-                        Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"), false);
-                        results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server
-                                .getHost(), download.getResponseCode()));
-                        dialog.doneTask();
+                        try{
+                            Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"), false);
+                            results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server
+                                                                                                                       .getHost(), download.code()));
+                            dialog.doneTask();
+                        } catch(Exception e){
+                            App.settings.logStackTrace(e);
+                        }
                     }
 
                     // Ping Pong Test
                     for (Server server : App.settings.getServers()) {
                         Downloadable download = new Downloadable(server.getFileURL("ping"), false);
                         results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n", server
-                                .getHost(), download.getContents()));
+                                .getHost(), download.toString()));
                         dialog.doneTask();
                     }
 
@@ -127,8 +131,12 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                         long started = System.currentTimeMillis();
 
-                        Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
-                        download.download(false);
+                        try{
+                            Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
+                            download.download();
+                        } catch(Exception e){
+                            App.settings.logStackTrace(e);
+                        }
 
                         long size = 0;
 

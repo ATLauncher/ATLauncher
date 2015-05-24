@@ -469,16 +469,23 @@ public class Mod {
                 }
                 break;
             case direct:
-                Downloadable download1 = new Downloadable(this.getUrl(), fileLocation, this.md5, installer, false);
+                Downloadable download1 = new Downloadable(this.getUrl(), this.md5, fileLocation, -1, false, installer);
                 if (download1.needToDownload()) {
-                    installer.resetDownloadedBytes(download1.getFilesize());
-                    download1.download(true);
+                    try{
+                        download1.download();
+                    } catch(Exception e){
+                        App.settings.logStackTrace(e);
+                    }
                 }
                 break;
             case server:
-                Downloadable download2 = new Downloadable(this.getUrl(), fileLocation, this.md5, installer, true);
+                Downloadable download2 = new Downloadable(this.getUrl(), this.md5, fileLocation, -1, true, installer);
                 if (download2.needToDownload()) {
-                    download2.download(false);
+                    try{
+                        download2.download();
+                    } catch(Exception e){
+                        App.settings.logStackTrace(e);
+                    }
                 }
                 break;
         }
@@ -598,10 +605,13 @@ public class Mod {
                 }
             }
         } else {
-            Downloadable download = new Downloadable(this.serverUrl, fileLocation, this.serverMD5, installer, this
-                    .serverDownload == DownloadType.server);
+            Downloadable download = new Downloadable(this.serverUrl, this.serverMD5, fileLocation, -1, this.serverDownload == DownloadType.server, installer);
             if (download.needToDownload()) {
-                download.download(false);
+                try{
+                    download.download();
+                } catch(Exception e){
+                    App.settings.logStackTrace(e);
+                }
             }
         }
 
