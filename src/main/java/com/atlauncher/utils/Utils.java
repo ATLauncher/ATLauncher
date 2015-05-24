@@ -602,29 +602,17 @@ public class Utils {
     }
 
     public static String getMD5(Path path) {
-        if (!Files.exists(path)) {
-            LogManager.error("Cannot get MD5 of " + path + " as it doesn't exist!");
-            return "0"; // File doesn't exist so MD5 is nothing
-        }
-
-        FileInputStream fis = null;
-        String md5 = "0";
-
-        try {
-            fis = new FileInputStream(path.toFile());
-            md5 = DigestUtils.md5Hex(fis);
-        } catch (IOException e) {
-            App.settings.logStackTrace("Error getting MD5 of file " + path, e);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ignored) {
-                }
+        try{
+            if(!Files.exists(path)){
+                return "";
             }
-        }
 
-        return md5;
+            byte[] bits = Files.readAllBytes(path);
+            return DigestUtils.md5Hex(bits);
+        } catch(Exception e){
+            App.settings.logStackTrace(e);
+            return "";
+        }
     }
 
     public static ExecutorService generateDownloadExecutor() {

@@ -713,7 +713,7 @@ public class Settings {
                             try {
                                 download.download();
                             } catch (IOException e) {
-                                App.settings.logStackTrace(e);
+                                e.printStackTrace(System.err);
                             }
                         }
                     }

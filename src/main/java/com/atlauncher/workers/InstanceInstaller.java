@@ -526,7 +526,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                                     download.copy();
                                                 }
                                             } catch(Exception e){
-                                                throw new RuntimeException(e);
+                                                e.printStackTrace(System.err);
                                             }
                                         }
                                     }
@@ -565,7 +565,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                                     download.download();
                                                 }
                                             } catch (Exception e) {
-                                                throw new RuntimeException(e);
+                                                App.settings.logStackTrace(e);
+                                                e.printStackTrace(System.err);
                                             }
                                         }
                                     }
@@ -597,7 +598,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             download.download();
                         }
                     } catch(Exception e){
-                        throw new RuntimeException(e);
+                        App.settings.logStackTrace(e);
+                        e.printStackTrace(System.err);
                     }
                 }
             });
@@ -721,7 +723,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 Path virtualFile = virtualRoot.resolve(entry.getKey());
 
                 if (object.needToDownload(file)) {
-                    downloads.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL(filename), object.getHash(), file, (int) object.getSize(), false, this));
+                    downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), object.getHash(), file, (int) object.getSize(), false, this));
                 } else {
                     if (index.isVirtual()) {
                         FileUtils.createDirectory(virtualFile.getParent());
@@ -825,12 +827,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         // Add Minecraft.jar
-
         if (isServer) {
-            libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL(this.getServerURL()), null, FileSystem.JARS.resolve("minecraft_server." + this.version
+            libraries.add(new Downloadable(this.getServerURL(), null, FileSystem.JARS.resolve("minecraft_server." + this.version
                     .getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
         } else {
-            libraries.add(new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL(this.getClientURL()), null, FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
+            libraries.add(new Downloadable(this.getClientURL(), null, FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
         }
         return libraries;
     }

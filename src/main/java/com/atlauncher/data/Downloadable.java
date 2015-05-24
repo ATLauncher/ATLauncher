@@ -55,6 +55,7 @@ public final class Downloadable{
     private String hash;
     private Server server;
     private Response response;
+    private boolean gzip;
 
     public Downloadable(String url, boolean atlauncher){
         this(url, null, null, null, -1, atlauncher, false, null);
@@ -77,8 +78,15 @@ public final class Downloadable{
         this.URL = url;
         this.copy = copy;
         this.copyTo = copyTo;
+
         if(this.atlauncher){
-            this.server = App.settings.getServer();
+            this.server = App.settings.getServers().get(0);
+            for (Server server : this.servers) {
+                if (server.getName().equals(App.settings.getServer().getName())) {
+                    this.server = server;
+                    break;
+                }
+            }
             this.url = this.server.getFileURL(url);
         } else{
             this.url = url;
@@ -130,6 +138,7 @@ public final class Downloadable{
 
     private String getHashFromURL()
     throws IOException{
+        this.execute();
         String etag = this.response.header("ETag");
         if(etag == null){
             etag = this.response.header(Constants.LAUNCHER_NAME + "-MD5");
@@ -191,16 +200,15 @@ public final class Downloadable{
     private void execute()
     throws IOException{
         LogManager.debug("Opening connection to " + this.url, 3);
-        if(this.response == null){
-            Request.Builder builder = new Request.Builder()
-                                              .url(this.url)
-                                              .addHeader("User-Agent", App.settings.getUserAgent())
-                                              .addHeader("Cache-Control", "no-store,max-age=0,no-cache")
-                                              .addHeader("Expires", "0")
-                                              .addHeader("Pragma", "no-cache");
-            if(App.useGzipForDownloads) builder.addHeader("Accept-Encoding", "gzip");
-            this.response = Network.CLIENT.newCall(builder.build()).execute();
-            if(!this.response.isSuccessful()) throw new IOException(this.url + " GET Wasn't Successful: " + this.response);
+        Request.Builder builder = new Request.Builder()
+                                          .url(this.url)
+                                          .addHeader("User-Agent", App.settings.getUserAgent())
+                                          .addHeader("Cache-Control", "no-store,max-age=0,no-cache")
+                                          .addHeader("Expires", "0")
+                                          .addHeader("Pragma", "no-cache");
+        this.response = Network.CLIENT.newCall(builder.build()).execute();
+        if(!this.response.isSuccessful()){
+            throw new IOException(this.url + " request Wasn't Successful: " + this.response);
         }
         LogManager.debug("Connection Opened to " + this.url, 3);
     }
@@ -208,7 +216,6 @@ public final class Downloadable{
     private void downloadDirect(){
         try(FileChannel fc = FileChannel.open(this.to, Utils.WRITE);
             ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())){
-
             fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch(Exception e){
             App.settings.logStackTrace(e);
@@ -216,30 +223,27 @@ public final class Downloadable{
     }
 
     private boolean downloadRec(int attempt){
-        if(attempt <= MAX_ATTEMPTS){
+        if(attempt <= MAX_ATTEMPTS) {
             String fileHash = "0";
-            if(Files.exists(this.to)){
-                if(this.md5()){
+            if (Files.exists(this.to)) {
+                if (this.md5()) {
                     fileHash = Utils.getMD5(this.to);
-                } else{
+                } else {
                     fileHash = Utils.getSHA1(this.to);
                 }
             }
 
-            if(fileHash.equalsIgnoreCase(this.getHash())){
+            if (fileHash.equalsIgnoreCase(this.getHash())) {
                 return true;
             }
 
-            if(Files.exists(this.to)){
+            if (Files.exists(this.to)) {
                 FileUtils.delete(this.to);
             }
 
             this.downloadDirect();
-        } else{
-            return this.downloadRec(attempt - 1);
         }
-
-        return false;
+        return this.downloadRec(attempt + 1);
     }
 
     public void copy(){
@@ -247,10 +251,10 @@ public final class Downloadable{
             if(Files.exists(this.copyTo)){
                 FileUtils.delete(this.copyTo);
             }
-        }
 
-        FileUtils.createDirectory(this.copyTo.getParent());
-        FileUtils.copyFile(this.to, this.copyTo);
+            FileUtils.createDirectory(this.copyTo.getParent());
+            FileUtils.copyFile(this.to, this.copyTo);
+        }
     }
 
     public void download()
@@ -277,23 +281,35 @@ public final class Downloadable{
             FileUtils.createDirectory(this.to.getParent());
         }
 
-        String expectedHash = this.getHash();
+        String expectedHash = this.getHash().trim();
         if(expectedHash.equalsIgnoreCase("-")){
             this.downloadDirect();
         } else{
-            boolean finished = this.downloadRec(3);
+            boolean finished = this.downloadRec(1);
             if(!finished){
                 if(this.atlauncher){
                     if(this.getNextServer()){
+                        LogManager.warn("Error downloading " + this.to.getFileName()+ " from " + this.url + ". " +
+                                                "Expected hash of " + expectedHash + " but got " + this.hash + " instead. Trying another " +
+                                                "server!");
                         this.url = this.server.getFileURL(this.URL);
                     } else{
                         FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
+                        LogManager.error(
+                                                "Failed to download file " + this.to.getFileName() + " from all " + Constants.LAUNCHER_NAME +
+                                                        "servers. Copied to FailedDownloads Folder. Cancelling install!"
+                        );
                         if(this.installer != null){
                             this.installer.cancel(true);
                         }
                     }
                 } else{
                     FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
+                    LogManager.error(
+                                            "Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected " +
+                                                    "hash of " + expectedHash + " but got " + this.hash + " instead. Copied to FailedDownloads " +
+                                                    "Folder. Cancelling install!"
+                    );
                     if(this.installer != null){
                         this.installer.cancel(true);
                     }
@@ -308,7 +324,7 @@ public final class Downloadable{
                     }
                 }
 
-                if(!fileHash2.equalsIgnoreCase(expectedHash)){
+                if(!fileHash2.trim().equalsIgnoreCase(expectedHash)){
                     if(Files.exists(this.copyTo)){
                         FileUtils.delete(this.copyTo);
                     }
