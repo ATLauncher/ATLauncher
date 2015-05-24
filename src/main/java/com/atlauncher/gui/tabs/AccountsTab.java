@@ -273,8 +273,8 @@ public class AccountsTab extends JPanel implements Tab {
         if (App.settings.isInOfflineMode()) {
             String[] options = {Language.INSTANCE.localize("common.ok")};
             JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                    ".offlinemode"), Language.INSTANCE.localize("common.offline"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                            ".offlinemode"), Language.INSTANCE.localize("common.offline"), JOptionPane
+                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
         } else {
             Account account;
             String username = usernameField.getText();
@@ -283,8 +283,8 @@ public class AccountsTab extends JPanel implements Tab {
             if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                        ".exists"), Language.INSTANCE.localize("account.notadded"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                ".exists"), Language.INSTANCE.localize("account.notadded"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 return;
             }
 
@@ -329,8 +329,8 @@ public class AccountsTab extends JPanel implements Tab {
                     LogManager.info("Edited Account " + account);
                     String[] options = {Language.INSTANCE.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                                    ".editeddone"), Language.INSTANCE.localize("account.edited"), JOptionPane
-                            .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                            ".editeddone"), Language.INSTANCE.localize("account.edited"), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 }
                 response.save();
                 App.settings.reloadAccounts();
@@ -345,7 +345,7 @@ public class AccountsTab extends JPanel implements Tab {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
                         .localize("account.incorrect") +
-                                "<br/><br/>" + response.getErrorMessage()), Language.INSTANCE.localize("account" +
+                        "<br/><br/>" + response.getErrorMessage()), Language.INSTANCE.localize("account" + "" +
                         ".notadded"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
         }

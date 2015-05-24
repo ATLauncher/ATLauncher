@@ -489,8 +489,8 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                                ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
-                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }

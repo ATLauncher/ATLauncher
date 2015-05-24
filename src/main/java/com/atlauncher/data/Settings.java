@@ -532,28 +532,28 @@ public class Settings {
     }
 
     public void checkMojangStatus() {
-        try{
+        try {
             Downloadable dl = new Downloadable("http://status.mojang.com/check", false);
             String resp = dl.toString();
 
-            if(resp == null){
+            if (resp == null) {
                 this.minecraftLoginServerUp = false;
                 this.minecraftSessionServerUp = false;
                 return;
             }
 
             JsonArray array = Gsons.PARSER.parse(resp).getAsJsonArray();
-            for(JsonElement e : array){
+            for (JsonElement e : array) {
                 JsonObject obj = e.getAsJsonObject();
-                if(obj.has("authserver.mojang.com")){
-                    if(obj.get("authserver.mojang.com").getAsString().equalsIgnoreCase("green")){
+                if (obj.has("authserver.mojang.com")) {
+                    if (obj.get("authserver.mojang.com").getAsString().equalsIgnoreCase("green")) {
                         this.minecraftLoginServerUp = true;
-                    } else if(obj.get("session.minecraft.net").getAsString().equalsIgnoreCase("green")){
+                    } else if (obj.get("session.minecraft.net").getAsString().equalsIgnoreCase("green")) {
                         this.minecraftSessionServerUp = true;
                     }
                 }
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             this.minecraftLoginServerUp = false;
             this.minecraftSessionServerUp = false;
         }
@@ -581,11 +581,12 @@ public class Settings {
     }
 
     public boolean launcherHasBetaUpdate() {
-        try{
-            Downloadable downloadable = new Downloadable("https://api.atlauncher.com/v1/build/atlauncher/build/", false);
+        try {
+            Downloadable downloadable = new Downloadable("https://api.atlauncher.com/v1/build/atlauncher/build/",
+                    false);
             APIResponseInt response = downloadable.fromJson(APIResponseInt.class);
             return response.getData() > Constants.VERSION.getBuild();
-        } catch(Exception e){
+        } catch (Exception e) {
             App.settings.logStackTrace(e);
             return false;
         }
@@ -607,10 +608,7 @@ public class Settings {
             LogManager.info("Downloading Launcher Update");
             Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + target, output, true);
             update.download();
-            this.runUpdate(
-                                  path, output.toAbsolutePath()
-                                              .toString()
-            );
+            this.runUpdate(path, output.toAbsolutePath().toString());
         } catch (Exception e) {
             this.logStackTrace(e);
         }
@@ -766,27 +764,25 @@ public class Settings {
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
-        App.TASKPOOL.execute(
-                                    new Runnable() {
+        App.TASKPOOL.execute(new Runnable() {
 
-                                        @Override
-                                        public void run() {
-                                            if (hasUpdatedFiles()) {
-                                                downloadUpdatedFiles(); // Downloads updated files on the server
-                                            }
-                                            checkForLauncherUpdate();
-                                            loadNews(); // Load the news
-                                            reloadNewsPanel(); // Reload news panel
-                                            loadPacks(); // Load the Packs available in the Launcher
-                                            reloadPacksPanel(); // Reload packs panel
-                                            loadUsers(); // Load the Testers and Allowed Players for the packs
-                                            loadInstances(); // Load the users installed Instances
-                                            reloadInstancesPanel(); // Reload instances panel
-                                            dialog.setVisible(false); // Remove the dialog
-                                            dialog.dispose(); // Dispose the dialog
-                                        }
-                                    }
-        );
+            @Override
+            public void run() {
+                if (hasUpdatedFiles()) {
+                    downloadUpdatedFiles(); // Downloads updated files on the server
+                }
+                checkForLauncherUpdate();
+                loadNews(); // Load the news
+                reloadNewsPanel(); // Reload news panel
+                loadPacks(); // Load the Packs available in the Launcher
+                reloadPacksPanel(); // Reload packs panel
+                loadUsers(); // Load the Testers and Allowed Players for the packs
+                loadInstances(); // Load the users installed Instances
+                reloadInstancesPanel(); // Reload instances panel
+                dialog.setVisible(false); // Remove the dialog
+                dialog.dispose(); // Dispose the dialog
+            }
+        });
         dialog.setVisible(true);
     }
 
@@ -1334,10 +1330,11 @@ public class Settings {
     private void findActiveServers() {
         LogManager.debug("Finding servers to use");
         Downloadable dl = new Downloadable(this.getMasterFileURL("launcher/json/servers.json"), false);
-        try{
-            java.lang.reflect.Type type = new TypeToken<List<Server>>(){}.getType();
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<Server>>() {
+            }.getType();
             this.servers = dl.fromJson(type);
-        } catch(Exception e){
+        } catch (Exception e) {
             String res = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", dl.toString());
             App.settings.logStackTrace("Exception when reading in the servers see @ " + res, e);
             this.servers = new ArrayList<>(Arrays.asList(Constants.SERVERS));
@@ -1451,19 +1448,20 @@ public class Settings {
     private void loadUsers() {
         LogManager.debug("Loading users");
         Downloadable download = new Downloadable("launcher/json/users.json", true);
-        try{
-            java.lang.reflect.Type type = new TypeToken<List<PackUsers>>(){}.getType();
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
+            }.getType();
             List<PackUsers> users = download.fromJson(type);
 
-            if(users == null){
+            if (users == null) {
                 this.offlineMode = true;
                 return;
             }
 
-            for(PackUsers user : users){
+            for (PackUsers user : users) {
                 user.addUsers();
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             this.logStackTrace(e);
         }
         LogManager.debug("Finished loading users");

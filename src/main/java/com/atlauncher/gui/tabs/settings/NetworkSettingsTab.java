@@ -255,8 +255,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
         if (!(Boolean) dialog.getReturnValue()) {
             JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("settings" + "" +
-                            ".proxycannotconnect"), Language.INSTANCE.localize("settings.help"), JOptionPane
-                    .PLAIN_MESSAGE);
+                    ".proxycannotconnect"), Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
 

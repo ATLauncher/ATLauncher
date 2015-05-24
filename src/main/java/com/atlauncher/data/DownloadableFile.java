@@ -47,6 +47,7 @@ public class DownloadableFile {
             path = FileSystem.SKINS.resolve(this.name);
         }
 
-        return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name, this.getSHA1(), path, null, this.size, true, false, null);
+        return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name, this.getSHA1(), path,
+                null, this.size, true, false, null);
     }
 }

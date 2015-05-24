@@ -471,9 +471,9 @@ public class Mod {
             case direct:
                 Downloadable download1 = new Downloadable(this.getUrl(), this.md5, fileLocation, -1, false, installer);
                 if (download1.needToDownload()) {
-                    try{
+                    try {
                         download1.download();
-                    } catch(Exception e){
+                    } catch (Exception e) {
                         App.settings.logStackTrace(e);
                     }
                 }
@@ -481,9 +481,9 @@ public class Mod {
             case server:
                 Downloadable download2 = new Downloadable(this.getUrl(), this.md5, fileLocation, -1, true, installer);
                 if (download2.needToDownload()) {
-                    try{
+                    try {
                         download2.download();
-                    } catch(Exception e){
+                    } catch (Exception e) {
                         App.settings.logStackTrace(e);
                     }
                 }
@@ -605,11 +605,12 @@ public class Mod {
                 }
             }
         } else {
-            Downloadable download = new Downloadable(this.serverUrl, this.serverMD5, fileLocation, -1, this.serverDownload == DownloadType.server, installer);
+            Downloadable download = new Downloadable(this.serverUrl, this.serverMD5, fileLocation, -1, this
+                    .serverDownload == DownloadType.server, installer);
             if (download.needToDownload()) {
-                try{
+                try {
                     download.download();
-                } catch(Exception e){
+                } catch (Exception e) {
                     App.settings.logStackTrace(e);
                 }
             }

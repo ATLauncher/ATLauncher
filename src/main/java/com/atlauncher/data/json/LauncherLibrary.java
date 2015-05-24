@@ -55,7 +55,8 @@ public class LauncherLibrary {
     }
 
     public Downloadable getDownloadable() {
-        return new Downloadable(this.url, this.md5, FileSystem.LAUNCHER_LIBRARIES.resolve(this.filename), -1, this.atlauncherDownload, null);
+        return new Downloadable(this.url, this.md5, FileSystem.LAUNCHER_LIBRARIES.resolve(this.filename), -1, this
+                .atlauncherDownload, null);
     }
 
     public String getMd5() {

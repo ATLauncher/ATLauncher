@@ -65,9 +65,9 @@ public class MinecraftServer {
     /**
      * Default constructor for creating an instance of this class.
      *
-     * @param name         The friendly name of the server shown to the user
-     * @param host         The host/IP of the server
-     * @param port         The port of the server
+     * @param name The friendly name of the server shown to the user
+     * @param host The host/IP of the server
+     * @param port The port of the server
      * @param queryVersion The version of Minecraft querying we should use
      */
     public MinecraftServer(String name, String host, int port, QueryVersion queryVersion) {

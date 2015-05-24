@@ -46,9 +46,9 @@ public class MinecraftVersion {
             Downloadable download = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version +
                     "/" + this.version + ".json"), versionFile, false);
             if (download.needToDownload()) {
-                try{
+                try {
                     download.download();
-                } catch(Exception e){
+                } catch (Exception e) {
                     App.settings.logStackTrace(e);
                 }
             }

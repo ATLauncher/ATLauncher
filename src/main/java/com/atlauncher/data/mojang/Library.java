@@ -20,7 +20,6 @@ package com.atlauncher.data.mojang;
 import com.atlauncher.FileSystem;
 import com.atlauncher.utils.Utils;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;

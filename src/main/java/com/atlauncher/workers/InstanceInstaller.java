@@ -459,7 +459,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : this.selectedMods) {
             if (mod.getDownload() == DownloadType.server) {
-                mods.add(new Downloadable(mod.getUrl(), mod.getMD5(), FileSystem.DOWNLOADS.resolve(mod.getFile()), mod.getFilesize(), true, this));
+                mods.add(new Downloadable(mod.getUrl(), mod.getMD5(), FileSystem.DOWNLOADS.resolve(mod.getFile()),
+                        mod.getFilesize(), true, this));
             }
         }
 
@@ -513,24 +514,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         fireSubProgress(0); // Show the subprogress bar
         for (final Downloadable download : downloads) {
-            executor.execute(
-                                    new Runnable() {
+            executor.execute(new Runnable() {
 
-                                        @Override
-                                        public void run() {
-                                            try {
-                                                if (download.needToDownload()) {
-                                                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.to.getFileName().toString());
-                                                    download.download();
-                                                } else {
-                                                    download.copy();
-                                                }
-                                            } catch(Exception e){
-                                                e.printStackTrace(System.err);
-                                            }
-                                        }
-                                    }
-            );
+                        @Override
+                        public void run() {
+                            try {
+                                if (download.needToDownload()) {
+                                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.to
+                                            .getFileName().toString());
+                                    download.download();
+                                } else {
+                                    download.copy();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace(System.err);
+                            }
+                        }
+                    });
         }
         executor.shutdown();
         while (!executor.isTerminated()) {
@@ -551,26 +551,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
-            executor.execute(
-                                    new Runnable() {
+            executor.execute(new Runnable() {
 
-                                        @Override
-                                        public void run() {
-                                            try {
-                                                if (download.needToDownload()) {
-                                                    fireTask(
-                                                                    Language.INSTANCE.localize("common.downloading") + " " + download.to.getFileName()
-                                                                                                                                        .toString()
-                                                    );
-                                                    download.download();
-                                                }
-                                            } catch (Exception e) {
-                                                App.settings.logStackTrace(e);
-                                                e.printStackTrace(System.err);
-                                            }
-                                        }
-                                    }
-            );
+                        @Override
+                        public void run() {
+                            try {
+                                if (download.needToDownload()) {
+                                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.to
+                                            .getFileName().toString());
+                                    download.download();
+                                }
+                            } catch (Exception e) {
+                                App.settings.logStackTrace(e);
+                                e.printStackTrace(System.err);
+                            }
+                        }
+                    });
         }
         executor.shutdown();
         while (!executor.isTerminated()) {
@@ -593,11 +589,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    try{
+                    try {
                         if (download.needToDownload()) {
                             download.download();
                         }
-                    } catch(Exception e){
+                    } catch (Exception e) {
                         App.settings.logStackTrace(e);
                         e.printStackTrace(System.err);
                     }
@@ -709,7 +705,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         Path indexFile = FileSystem.RESOURCES_INDEXES.resolve(assetVersion + ".json");
 
         try {
-            new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + ".json"), null, indexFile, -1, false, this).download();
+            new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + ".json"), null,
+                    indexFile, -1, false, this).download();
             AssetIndex index = this.gson.fromJson(new FileReader(indexFile.toFile()), AssetIndex.class);
 
             if (!index.isVirtual() && !Files.exists(virtualRoot)) {
@@ -723,7 +720,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 Path virtualFile = virtualRoot.resolve(entry.getKey());
 
                 if (object.needToDownload(file)) {
-                    downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), object.getHash(), file, (int) object.getSize(), false, this));
+                    downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), object.getHash(),
+                            file, (int) object.getSize(), false, this));
                 } else {
                     if (index.isVirtual()) {
                         FileUtils.createDirectory(virtualFile.getParent());
@@ -789,7 +787,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
             Path downloadTo = FileSystem.LIBRARIES.resolve(library.getFile());
             if (library.getDownloadType() == DownloadType.server) {
-                libraries.add(new Downloadable(library.getUrl(), library.getMD5(), downloadTo, library.getFilesize(), true, this));
+                libraries.add(new Downloadable(library.getUrl(), library.getMD5(), downloadTo, library.getFilesize(),
+                        true, this));
             } else if (library.getDownloadType() == DownloadType.direct) {
                 libraries.add(new Downloadable(library.getUrl(), library.getMD5(), downloadTo, -1, false, this));
             } else {
@@ -828,20 +827,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // Add Minecraft.jar
         if (isServer) {
-            libraries.add(new Downloadable(this.getServerURL(), null, FileSystem.JARS.resolve("minecraft_server." + this.version
-                    .getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
+            libraries.add(new Downloadable(this.getServerURL(), null, FileSystem.JARS.resolve("minecraft_server." +
+                    this.version.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
         } else {
-            libraries.add(new Downloadable(this.getClientURL(), null, FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
+            libraries.add(new Downloadable(this.getClientURL(), null, FileSystem.JARS.resolve(this.version
+                    .getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
         }
         return libraries;
     }
 
-    private String getClientURL(){
-        return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version.getMinecraftVersion().getVersion() + "/" + this.version.getMinecraftVersion().getVersion() + ".jar");
+    private String getClientURL() {
+        return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version.getMinecraftVersion().getVersion() +
+                "/" + this.version.getMinecraftVersion().getVersion() + ".jar");
     }
 
-    private String getServerURL(){
-        return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version.getMinecraftVersion().getVersion() + "/minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar");
+    private String getServerURL() {
+        return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version.getMinecraftVersion().getVersion() +
+                "/minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar");
     }
 
     // TODO: Switch to NIO operations and possibly move to Utils/FileUtils (new class)
@@ -1088,7 +1090,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (savedPortalGunSounds) {
-            FileUtils.copyFile(this.getTempDirectory().resolve("PortalGunSounds.pak"), this.getModsDirectory().resolve("PortalGunSounds.pak"), true);
+            FileUtils.copyFile(this.getTempDirectory().resolve("PortalGunSounds.pak"), this.getModsDirectory()
+                    .resolve("PortalGunSounds.pak"), true);
         }
     }
 
@@ -1102,7 +1105,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 LogManager.error("Instance Install Cancelled After Viewing Message!");
                 cancel(true);
                 return false;
-            } else if (this.jsonVersion.getMessages().hasInstallMessage() && this.jsonVersion.getMessages().showInstallMessage(this.pack) != 0) {
+            } else if (this.jsonVersion.getMessages().hasInstallMessage() && this.jsonVersion.getMessages()
+                    .showInstallMessage(this.pack) != 0) {
                 LogManager.error("Instance Install Cancelled After Viewing Message!");
                 cancel(true);
                 return false;
@@ -1150,7 +1154,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
-            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, mod.getType(), this.jsonVersion.getColour(mod.getColour()), mod.getDescription(), false, false));
+            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, mod
+                    .getType(), this.jsonVersion.getColour(mod.getColour()), mod.getDescription(), false, false));
         }
 
         if (this.isReinstall && instance.hasCustomMods() && instance.getMinecraftVersion().equalsIgnoreCase(version
@@ -1330,7 +1335,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void setExtraArguments() {
         if (this.jsonVersion.hasExtraArguments()) {
-            if (!this.jsonVersion.getExtraArguments().hasDepends() && !this.jsonVersion.getExtraArguments().hasDependsGroup()) {
+            if (!this.jsonVersion.getExtraArguments().hasDepends() && !this.jsonVersion.getExtraArguments()
+                    .hasDependsGroup()) {
                 this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
             } else if (this.jsonVersion.getExtraArguments().hasDepends()) {
                 String depends = this.jsonVersion.getExtraArguments().getDepends();

@@ -96,7 +96,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1 || Integer.parseInt
                 (serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
             JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("settings" + "" +
-                            ".servercheckerwaitinvalid"), Language.INSTANCE.localize("settings.help"), JOptionPane
+                    ".servercheckerwaitinvalid"), Language.INSTANCE.localize("settings.help"), JOptionPane
                     .PLAIN_MESSAGE);
             return false;
         }

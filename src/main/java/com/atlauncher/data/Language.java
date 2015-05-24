@@ -71,7 +71,8 @@ public enum Language {
             Path langFile = FileSystem.LANGUAGES.resolve(lang.toLowerCase() + ".lang");
 
             if (!Files.exists(langFile)) {
-                LogManager.error("Language file " + langFile.getFileName() + " doesn't exist! Defaulting it inbuilt one!");
+                LogManager.error("Language file " + langFile.getFileName() + " doesn't exist! Defaulting it inbuilt " +
+                        "one!");
                 props.load(App.class.getResourceAsStream("/assets/lang/english.lang"));
             } else {
                 props.load(new FileInputStream(langFile.toFile()));

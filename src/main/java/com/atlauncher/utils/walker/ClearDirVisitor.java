@@ -24,11 +24,9 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
-public final class ClearDirVisitor
-        extends SimpleFileVisitor<Path> {
+public final class ClearDirVisitor extends SimpleFileVisitor<Path> {
     @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-    throws IOException {
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Files.delete(file);
         return FileVisitResult.CONTINUE;
     }

@@ -209,8 +209,8 @@ public class InstanceInstallerDialog extends JDialog {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if (enableUserLock.isSelected()) {
-                            String[] options = {Language.INSTANCE.localize("common.yes"),
-                                    Language.INSTANCE.localize("common.no")};
+                            String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize
+                                    ("common.no")};
 
                             int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph(Language.INSTANCE
                                     .localizeWithReplace("instance.userlockhelp", "<br/>")), Language.INSTANCE
@@ -239,8 +239,8 @@ public class InstanceInstallerDialog extends JDialog {
                     if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
                         int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph
                                 (Language.INSTANCE.localize("common.error") +
-                                        "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>")), Language.INSTANCE
+                                "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>")), Language.INSTANCE
                                 .localize("common.error"), JOptionPane.ERROR_MESSAGE);
                         if (ret != JOptionPane.YES_OPTION) {
                             return;
@@ -332,8 +332,8 @@ public class InstanceInstallerDialog extends JDialog {
                                         ("common.hasbeen") + " " + ((isReinstall) ? Language.INSTANCE.localize
                                         ("common.reinstalled") : Language.INSTANCE.localize("common.installed")) +
                                         "<br/><br/>" + ((isServer) ? Language.INSTANCE.localizeWithReplace("instance"
-                                        + ".finditserver", "<br/><br/>" + this.getRootDirectory())
-                                        : Language.INSTANCE.localize("instance.findit"));
+                                        + ".finditserver", "<br/><br/>" + this.getRootDirectory()) : Language
+                                        .INSTANCE.localize("instance.findit"));
                                 title = pack.getName() + " " + version.getVersion() + " " + Language.INSTANCE
                                         .localize("common.installed");
                                 if (isReinstall) {
@@ -422,7 +422,8 @@ public class InstanceInstallerDialog extends JDialog {
 
                         Utils.cleanTempDirectory();
 
-                        JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(text), title, type);
+                        JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(text),
+                                title, type);
                     }
 
                 };

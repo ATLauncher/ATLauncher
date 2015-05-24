@@ -68,20 +68,20 @@ public final class Resources {
                 StyleSheet sheet = new StyleSheet();
 
                 Path theme = App.settings.getThemeFile();
-                if(theme != null){
+                if (theme != null) {
                     InputStream stream = null;
-                    try(ZipFile zip = new ZipFile(theme.toFile())){
+                    try (ZipFile zip = new ZipFile(theme.toFile())) {
                         Enumeration<? extends ZipEntry> entries = zip.entries();
-                        while(entries.hasMoreElements()){
+                        while (entries.hasMoreElements()) {
                             ZipEntry entry = entries.nextElement();
-                            if(entry.getName().equals("css/" + name + ".css")){
+                            if (entry.getName().equals("css/" + name + ".css")) {
                                 stream = zip.getInputStream(entry);
                                 break;
                             }
                         }
 
-                        if(stream != null){
-                            try(Reader reader = new InputStreamReader(stream)){
+                        if (stream != null) {
+                            try (Reader reader = new InputStreamReader(stream)) {
                                 sheet.loadRules(reader, null);
                                 stream.close();
                                 zip.close();
@@ -91,7 +91,8 @@ public final class Resources {
                     }
                 }
 
-                try(Reader reader = new InputStreamReader(System.class.getResourceAsStream("/assets/css/" + name + ".css"))){
+                try (Reader reader = new InputStreamReader(System.class.getResourceAsStream("/assets/css/" + name + "" +
+                        ".css"))) {
                     sheet.loadRules(reader, null);
                 }
 
@@ -122,19 +123,19 @@ public final class Resources {
                     URL url = System.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
                         Path theme = App.settings.getThemeFile();
-                        if(theme != null){
+                        if (theme != null) {
                             InputStream stream = null;
-                            try(ZipFile zip = new ZipFile(theme.toFile())){
+                            try (ZipFile zip = new ZipFile(theme.toFile())) {
                                 Enumeration<? extends ZipEntry> entries = zip.entries();
-                                while(entries.hasMoreElements()){
+                                while (entries.hasMoreElements()) {
                                     ZipEntry entry = entries.nextElement();
-                                    if(entry.getName().equals("font/" + name + ".ttf")){
+                                    if (entry.getName().equals("font/" + name + ".ttf")) {
                                         stream = zip.getInputStream(entry);
                                         break;
                                     }
                                 }
 
-                                if(stream != null){
+                                if (stream != null) {
                                     Font f = Font.createFont(Font.TRUETYPE_FONT, stream);
                                     resources.put(name, f);
                                     stream.close();

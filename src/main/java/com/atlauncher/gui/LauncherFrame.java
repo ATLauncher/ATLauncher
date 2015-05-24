@@ -108,7 +108,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                         "pack added to the launcher!");
             } else {
                 if (App.settings.isInOfflineMode() || App.settings.getAccount() == null || pack == null) {
-                    LogManager.error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
+                    LogManager.error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) +
+                            "!");
                 } else {
                     new InstanceInstallerDialog(pack);
                 }

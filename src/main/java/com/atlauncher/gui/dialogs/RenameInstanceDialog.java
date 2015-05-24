@@ -102,8 +102,8 @@ public class RenameInstanceDialog extends JDialog {
                         LogManager.error("Unknown Error Occured While Renaming Instance!");
                         JOptionPane.showMessageDialog(RenameInstanceDialog.this, HTMLUtils.centerParagraph(Language
                                 .INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".errorrenaming", instance.getName() + "<br/><br/>")), Language.INSTANCE
-                                .localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                                ".errorrenaming", instance.getName() + "<br/><br/>")), Language.INSTANCE.localize
+                                ("common.error"), JOptionPane.ERROR_MESSAGE);
                     }
                     close();
                 }

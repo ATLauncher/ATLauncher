@@ -37,7 +37,7 @@ public final class DeleteSpecifiedFilesVisitor extends SimpleFileVisitor<Path> {
         if (files.contains(file.getFileName().toString())) {
             Files.delete(file);
         }
-        
+
         return FileVisitResult.CONTINUE;
     }
 }

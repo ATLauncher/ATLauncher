@@ -167,7 +167,7 @@ public class App {
         Locale.setDefault(Locale.ENGLISH);
 
         // Prefer to use IPv4
-        System.setProperty("http.keeyAlive", "false");
+        System.setProperty("http.keepAlive", "false");
         System.setProperty("java.net.preferIPv4Stack", "true");
         System.setProperty("http.keepAliveDuration", String.valueOf(TimeUnit.MINUTES.toMillis(1)));
 
@@ -244,8 +244,8 @@ public class App {
             JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("You're using an old version of the" +
                             " ATLauncher Mac OSX app.<br/><br/>Please download the new Mac OSX app from below to " +
                             "keep playing!<br/><br/>Your instances and data will be transferred once the new app " +
-                            "is launcher.<br/><br/>Sorry for any inconvenience caused!"),
-                    "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                            "is launcher.<br/><br/>Sorry for any inconvenience caused!"), "Error", JOptionPane
+                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 
             Utils.openBrowser("https://atl.pw/oldosxapp");
             System.exit(0);

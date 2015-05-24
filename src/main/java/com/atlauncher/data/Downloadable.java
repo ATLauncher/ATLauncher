@@ -38,7 +38,7 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
-public final class Downloadable{
+public final class Downloadable {
     public static final int MAX_ATTEMPTS = 3;
 
     public final String URL;
@@ -57,29 +57,30 @@ public final class Downloadable{
     private Response response;
     private boolean gzip;
 
-    public Downloadable(String url, boolean atlauncher){
+    public Downloadable(String url, boolean atlauncher) {
         this(url, null, null, null, -1, atlauncher, false, null);
     }
 
-    public Downloadable(String url, Path to){
+    public Downloadable(String url, Path to) {
         this(url, null, to, null, -1, false, false, null);
     }
 
-    public Downloadable(String url, Path output, boolean atlauncher){
+    public Downloadable(String url, Path output, boolean atlauncher) {
         this(url, null, output, null, -1, atlauncher, false, null);
     }
 
-    public Downloadable(String url, String hash, Path to, int size, boolean atlauncher, InstanceInstaller installer){
+    public Downloadable(String url, String hash, Path to, int size, boolean atlauncher, InstanceInstaller installer) {
         this(url, hash, to, null, size, atlauncher, false, installer);
     }
 
-    public Downloadable(String url, String hash, Path to, Path copyTo, int size, boolean atlauncher, boolean copy, InstanceInstaller installer){
+    public Downloadable(String url, String hash, Path to, Path copyTo, int size, boolean atlauncher, boolean copy,
+                        InstanceInstaller installer) {
         this.atlauncher = atlauncher;
         this.URL = url;
         this.copy = copy;
         this.copyTo = copyTo;
 
-        if(this.atlauncher){
+        if (this.atlauncher) {
             this.server = App.settings.getServers().get(0);
             for (Server server : this.servers) {
                 if (server.getName().equals(App.settings.getServer().getName())) {
@@ -88,7 +89,7 @@ public final class Downloadable{
                 }
             }
             this.url = this.server.getFileURL(url);
-        } else{
+        } else {
             this.url = url;
         }
 
@@ -98,20 +99,19 @@ public final class Downloadable{
         this.to = to;
     }
 
-    public int code(){
-        try{
+    public int code() {
+        try {
             this.execute();
             return this.response.code();
-        } catch(Exception e){
+        } catch (Exception e) {
             App.settings.logStackTrace(e);
             return -1;
         }
     }
 
-    public <T> T fromJson(Class<T> tClass)
-    throws IOException{
-        if(this.installer != null){
-            if(this.installer.isCancelled()){
+    public <T> T fromJson(Class<T> tClass) throws IOException {
+        if (this.installer != null) {
+            if (this.installer.isCancelled()) {
                 return null;
             }
         }
@@ -120,10 +120,9 @@ public final class Downloadable{
         return Gsons.DEFAULT.fromJson(this.response.body().charStream(), tClass);
     }
 
-    public <T> T fromJson(Type type)
-    throws IOException{
-        if(this.installer != null){
-            if(this.installer.isCancelled()){
+    public <T> T fromJson(Type type) throws IOException {
+        if (this.installer != null) {
+            if (this.installer.isCancelled()) {
                 return null;
             }
         }
@@ -132,34 +131,33 @@ public final class Downloadable{
         return Gsons.DEFAULT.fromJson(this.response.body().charStream(), type);
     }
 
-    private boolean md5(){
+    private boolean md5() {
         return this.hash == null || this.hash.length() != 40;
     }
 
-    private String getHashFromURL()
-    throws IOException{
+    private String getHashFromURL() throws IOException {
         this.execute();
         String etag = this.response.header("ETag");
-        if(etag == null){
+        if (etag == null) {
             etag = this.response.header(Constants.LAUNCHER_NAME + "-MD5");
         }
 
-        if(etag == null){
+        if (etag == null) {
             return "-";
         }
 
-        if(etag.startsWith("\"") && etag.endsWith("\"")){
+        if (etag.startsWith("\"") && etag.endsWith("\"")) {
             etag = etag.substring(1, etag.length() - 1);
         }
 
         return etag.matches("[A-Za-z0-9]{32}") ? etag : "-";
     }
 
-    public String getHash(){
-        if(this.hash == null || this.hash.isEmpty()){
-            try{
+    public String getHash() {
+        if (this.hash == null || this.hash.isEmpty()) {
+            try {
                 this.hash = this.getHashFromURL();
-            } catch(Exception e){
+            } catch (Exception e) {
                 App.settings.logStackTrace(e);
                 this.hash = "-";
             }
@@ -168,15 +166,15 @@ public final class Downloadable{
         return this.hash;
     }
 
-    public boolean needToDownload(){
-        if(this.to == null){
+    public boolean needToDownload() {
+        if (this.to == null) {
             return true;
         }
 
-        if(Files.exists(this.to)){
-            if(this.md5()){
+        if (Files.exists(this.to)) {
+            if (this.md5()) {
                 return !Utils.getMD5(this.to).equalsIgnoreCase(this.getHash());
-            } else{
+            } else {
                 return !Utils.getSHA1(this.to).equalsIgnoreCase(this.getHash());
             }
         }
@@ -184,9 +182,9 @@ public final class Downloadable{
         return true;
     }
 
-    private boolean getNextServer(){
-        for(Server server : this.servers){
-            if(this.server != server){
+    private boolean getNextServer() {
+        for (Server server : this.servers) {
+            if (this.server != server) {
                 LogManager.warn("Server " + this.server.getName() + " Not Available");
                 this.servers.remove(this.server);
                 this.server = server;
@@ -197,33 +195,29 @@ public final class Downloadable{
         return false;
     }
 
-    private void execute()
-    throws IOException{
+    private void execute() throws IOException {
         LogManager.debug("Opening connection to " + this.url, 3);
-        Request.Builder builder = new Request.Builder()
-                                          .url(this.url)
-                                          .addHeader("User-Agent", App.settings.getUserAgent())
-                                          .addHeader("Cache-Control", "no-store,max-age=0,no-cache")
-                                          .addHeader("Expires", "0")
-                                          .addHeader("Pragma", "no-cache");
+        Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", App.settings
+                .getUserAgent()).addHeader("Cache-Control", "no-store,max-age=0,no-cache").addHeader("Expires", "0")
+                .addHeader("Pragma", "no-cache");
         this.response = Network.CLIENT.newCall(builder.build()).execute();
-        if(!this.response.isSuccessful()){
-            throw new IOException(this.url + " request Wasn't Successful: " + this.response);
+
+        if (!this.response.isSuccessful()) {
+            throw new IOException(this.url + " request wasn't successful: " + this.response);
         }
-        LogManager.debug("Connection Opened to " + this.url, 3);
     }
 
-    private void downloadDirect(){
-        try(FileChannel fc = FileChannel.open(this.to, Utils.WRITE);
-            ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())){
+    private void downloadDirect() {
+        try (FileChannel fc = FileChannel.open(this.to, Utils.WRITE);
+             ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())) {
             fc.transferFrom(rbc, 0, Long.MAX_VALUE);
-        } catch(Exception e){
+        } catch (Exception e) {
             App.settings.logStackTrace(e);
         }
     }
 
-    private boolean downloadRec(int attempt){
-        if(attempt <= MAX_ATTEMPTS) {
+    private boolean downloadRec(int attempt) {
+        if (attempt <= MAX_ATTEMPTS) {
             String fileHash = "0";
             if (Files.exists(this.to)) {
                 if (this.md5()) {
@@ -246,9 +240,9 @@ public final class Downloadable{
         return this.downloadRec(attempt + 1);
     }
 
-    public void copy(){
-        if(this.copyTo != null && this.copy){
-            if(Files.exists(this.copyTo)){
+    public void copy() {
+        if (this.copyTo != null && this.copy) {
+            if (Files.exists(this.copyTo)) {
                 FileUtils.delete(this.copyTo);
             }
 
@@ -257,75 +251,74 @@ public final class Downloadable{
         }
     }
 
-    public void download()
-    throws IOException{
+    public void download() throws IOException {
         this.execute();
 
         Path oldPath = null;
-        if(Files.exists(this.to)){
+        if (Files.exists(this.to)) {
             oldPath = this.to.resolveSibling(this.to.getFileName().toString() + ".bak");
             FileUtils.moveFile(this.to, oldPath, true);
         }
 
-        if(this.installer != null){
-            if(this.installer.isCancelled()){
+        if (this.installer != null) {
+            if (this.installer.isCancelled()) {
                 return;
             }
         }
 
-        if(Files.exists(this.to) && Files.isRegularFile(this.to)){
+        if (Files.exists(this.to) && Files.isRegularFile(this.to)) {
             FileUtils.delete(this.to);
         }
 
-        if(!Files.exists(this.to.getParent())){
+        if (!Files.exists(this.to.getParent())) {
             FileUtils.createDirectory(this.to.getParent());
         }
 
         String expectedHash = this.getHash().trim();
-        if(expectedHash.equalsIgnoreCase("-")){
+        if (expectedHash.equalsIgnoreCase("-")) {
             this.downloadDirect();
-        } else{
+        } else {
             boolean finished = this.downloadRec(1);
-            if(!finished){
-                if(this.atlauncher){
-                    if(this.getNextServer()){
-                        LogManager.warn("Error downloading " + this.to.getFileName()+ " from " + this.url + ". " +
-                                                "Expected hash of " + expectedHash + " but got " + this.hash + " instead. Trying another " +
-                                                "server!");
+            if (!finished) {
+                if (this.atlauncher) {
+                    if (this.getNextServer()) {
+                        LogManager.warn("Error downloading " + this.to.getFileName() + " from " + this.url + ". " +
+                                "Expected hash of " + expectedHash + " but got " + this.hash + " instead. Trying " +
+                                "another " +
+                                "server!");
                         this.url = this.server.getFileURL(this.URL);
-                    } else{
+                    } else {
                         FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
-                        LogManager.error(
-                                                "Failed to download file " + this.to.getFileName() + " from all " + Constants.LAUNCHER_NAME +
-                                                        "servers. Copied to FailedDownloads Folder. Cancelling install!"
-                        );
-                        if(this.installer != null){
+                        LogManager.error("Failed to download file " + this.to.getFileName() + " from all " +
+                                Constants.LAUNCHER_NAME +
+                                "servers. Copied to FailedDownloads Folder. Cancelling install!");
+                        if (this.installer != null) {
                             this.installer.cancel(true);
                         }
                     }
-                } else{
+                } else {
                     FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
-                    LogManager.error(
-                                            "Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected " +
-                                                    "hash of " + expectedHash + " but got " + this.hash + " instead. Copied to FailedDownloads " +
-                                                    "Folder. Cancelling install!"
-                    );
-                    if(this.installer != null){
+                    LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected" +
+                            " " +
+                            "hash of " + expectedHash + " but got " + this.hash + " instead. Copied to " +
+                            "FailedDownloads " +
+                            "Folder. Cancelling install!");
+                    if (this.installer != null) {
                         this.installer.cancel(true);
                     }
                 }
-            } else if(this.copyTo != null && this.copy){
+            } else if (this.copyTo != null && this.copy) {
                 String fileHash2 = "0";
-                if(Files.exists(this.copyTo)){
-                    if(this.md5()){
+                if (Files.exists(this.copyTo)) {
+                    if (this.md5()) {
                         fileHash2 = Utils.getMD5(this.to);
-                    } else{
+                    } else {
                         fileHash2 = Utils.getSHA1(this.to);
                     }
                 }
 
-                if(!fileHash2.trim().equalsIgnoreCase(expectedHash)){
-                    if(Files.exists(this.copyTo)){
+                if (!fileHash2.trim().equalsIgnoreCase(expectedHash)) {
+                    if (Files.exists(this.copyTo)) {
                         FileUtils.delete(this.copyTo);
                     }
 
@@ -337,13 +330,13 @@ public final class Downloadable{
             App.settings.clearTriedServers();
         }
 
-        if(oldPath != null && Files.exists(oldPath)){
+        if (oldPath != null && Files.exists(oldPath)) {
             FileUtils.delete(oldPath);
         }
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         try {
             this.execute();
             return this.response.body().string();

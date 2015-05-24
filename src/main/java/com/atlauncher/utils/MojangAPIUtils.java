@@ -38,22 +38,21 @@ public class MojangAPIUtils {
         Downloadable downloadable = new Downloadable("https://api.mojang.com/users/profiles/minecraft/" + username,
                 false);
 
-        try{
+        try {
             ProfileResponse profile = downloadable.fromJson(ProfileResponse.class);
             return profile.getId();
-        } catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
     public static String getCurrentUsername(String uuid) {
-        Downloadable downloadable = new Downloadable("https://api.mojang.com/user/profiles/" + uuid + "/names",
-                false);
+        Downloadable downloadable = new Downloadable("https://api.mojang.com/user/profiles/" + uuid + "/names", false);
 
         java.lang.reflect.Type type = new TypeToken<List<NameHistory>>() {
         }.getType();
 
-        try{
+        try {
             List<NameHistory> history = downloadable.fromJson(type);
 
             // Mojang API is down??
@@ -87,7 +86,7 @@ public class MojangAPIUtils {
             }
 
             return username;
-        } catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }

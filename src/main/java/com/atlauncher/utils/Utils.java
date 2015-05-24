@@ -100,7 +100,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class Utils {
-    public static EnumSet<StandardOpenOption> WRITE = EnumSet.of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+    public static EnumSet<StandardOpenOption> WRITE = EnumSet.of(StandardOpenOption.CREATE_NEW, StandardOpenOption
+            .WRITE);
     public static EnumSet<StandardOpenOption> READ = EnumSet.of(StandardOpenOption.READ);
 
     public static String error(Throwable t) {
@@ -602,14 +603,14 @@ public class Utils {
     }
 
     public static String getMD5(Path path) {
-        try{
-            if(!Files.exists(path)){
+        try {
+            if (!Files.exists(path)) {
                 return "";
             }
 
             byte[] bits = Files.readAllBytes(path);
             return DigestUtils.md5Hex(bits);
-        } catch(Exception e){
+        } catch (Exception e) {
             App.settings.logStackTrace(e);
             return "";
         }

@@ -18,11 +18,8 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
 import com.atlauncher.data.Account;
-import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.LoginResponse;
-import com.atlauncher.data.mojang.api.ProfileResponse;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
