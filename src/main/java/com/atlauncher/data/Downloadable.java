@@ -42,6 +42,8 @@ import java.util.concurrent.TimeUnit;
 
 public final class Downloadable {
     public static final int MAX_ATTEMPTS = 3;
+    public static final CacheControl CACHE_CONTROL = new CacheControl.Builder().noStore().noCache().maxAge(0,
+            TimeUnit.MILLISECONDS).build();
 
     public final String URL;
     public final int size;
@@ -199,8 +201,7 @@ public final class Downloadable {
     private void execute() throws IOException {
         LogManager.debug("Opening connection to " + this.url, 3);
         Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", App.settings
-                .getUserAgent()).addHeader("Expires", "0").cacheControl(new CacheControl.Builder().noStore().noCache
-                ().maxAge(0, TimeUnit.MILLISECONDS).build());
+                .getUserAgent()).addHeader("Expires", "0").cacheControl(CACHE_CONTROL);
         this.response = Network.CLIENT.newCall(builder.build()).execute();
 
         if (!this.response.isSuccessful()) {
