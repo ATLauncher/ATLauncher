@@ -22,6 +22,7 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
+import com.atlauncher.evnt.manager.PackChangeManager;
 
 import java.io.EOFException;
 import java.io.FileInputStream;
@@ -104,7 +105,7 @@ public class AccountManager {
                 AccountManager.activeAccount = null;
             }
         }
-        App.settings.reloadPacksPanel();
+        PackChangeManager.reload();
         App.settings.reloadInstancesPanel();
         App.settings.reloadAccounts();
         App.settings.saveProperties();

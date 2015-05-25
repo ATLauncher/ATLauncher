@@ -24,6 +24,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Pack;
+import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.utils.Utils;
 import com.google.gson.reflect.TypeToken;
@@ -52,6 +53,8 @@ public class PackManager {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
+
+        PackChangeManager.change();
 
         LogManager.debug("Finished loading packs");
     }
@@ -224,7 +227,7 @@ public class PackManager {
                     }
                     PackManager.semiPublicPackCodes.add(packCode);
                     App.settings.saveProperties();
-                    App.settings.refreshPacksPanel();
+                    PackChangeManager.change();
                     return true;
                 }
             }
@@ -237,7 +240,7 @@ public class PackManager {
             if (Utils.getMD5(code).equalsIgnoreCase(packCode) && PackManager.semiPublicPackCodes.contains(code)) {
                 PackManager.semiPublicPackCodes.remove(code);
                 App.settings.saveProperties();
-                App.settings.refreshPacksPanel();
+                PackChangeManager.change();
             }
         }
     }

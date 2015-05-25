@@ -20,8 +20,10 @@ package com.atlauncher.gui.tabs;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
+import com.atlauncher.evnt.listener.PackChangeListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.TabChangeListener;
+import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.LauncherFrame;
@@ -50,7 +52,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public final class PacksTab extends JPanel implements Tab, RelocalizationListener {
+public final class PacksTab extends JPanel implements Tab, RelocalizationListener, PackChangeListener {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -78,6 +80,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.add(this.bottomPanel, BorderLayout.SOUTH);
 
         RelocalizationManager.addListener(this);
+        PackChangeManager.addListener(this);
 
         this.setupTopPanel();
         this.preload();
@@ -278,5 +281,15 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         serversBox.setText(Language.INSTANCE.localize("pack.cancreateserver"));
         privateBox.setText(Language.INSTANCE.localize("pack.privatepacksonly"));
         searchDescBox.setText(Language.INSTANCE.localize("pack.searchdescription"));
+    }
+
+    @Override
+    public void onPacksChanged() {
+        this.refresh();
+    }
+
+    @Override
+    public void onPacksNeedToBeReloaded() {
+        this.reload();
     }
 }

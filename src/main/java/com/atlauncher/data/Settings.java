@@ -26,6 +26,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.Update;
 import com.atlauncher.data.json.LauncherLibrary;
+import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.components.LauncherBottomBar;
@@ -773,7 +774,6 @@ public class Settings {
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
                 PackManager.loadPacks(); // Load the Packs available in the Launcher
-                reloadPacksPanel(); // Reload packs panel
                 loadUsers(); // Load the Testers and Allowed Players for the packs
                 InstanceManager.loadInstances(); // Load the users installed Instances
                 reloadInstancesPanel(); // Reload instances panel
@@ -1503,7 +1503,7 @@ public class Settings {
                 }
             }
             AccountManager.saveAccounts();
-            reloadPacksPanel();
+            PackChangeManager.reload();
         }
     }
 
@@ -1639,7 +1639,7 @@ public class Settings {
         Downloadable download = new Downloadable("ping", true);
         String test = download.toString();
         if (test != null && test.equalsIgnoreCase("pong")) {
-            reloadPacksPanel();
+            PackChangeManager.reload();
             reloadInstancesPanel();
         } else {
             this.offlineMode = true;
@@ -1717,13 +1717,6 @@ public class Settings {
      */
     public void reloadPacksPanel() {
         this.packsPanel.reload(); // Reload the instances panel
-    }
-
-    /**
-     * Refreshes the panel used for Packs
-     */
-    public void refreshPacksPanel() {
-        this.packsPanel.refresh(); // Refresh the instances panel
     }
 
     /**
