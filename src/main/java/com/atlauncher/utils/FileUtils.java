@@ -56,7 +56,7 @@ public class FileUtils {
             try {
                 // Don't delete the from file in case it's the same file such as on case insensitive file systems
                 if (!Files.isSameFile(from, to)) {
-                    delete(from);
+                    FileUtils.delete(from);
                 }
             } catch (IOException e) {
                 App.settings.logStackTrace("Couldn't delete file " + from + " while renaming to " + to, e);
@@ -93,6 +93,21 @@ public class FileUtils {
 
         if (!withFilename) {
             to = to.resolve(from.getFileName());
+        }
+
+        if (!Files.exists(to.getParent())) {
+            FileUtils.createDirectory(to.getParent());
+        }
+
+        // If they're the same file, but different cases, then rename it using old File types
+        try {
+            if (Files.exists(to) && Files.isSameFile(from, to) && !from.getFileName().toString().equals(to
+                    .getFileName().toString())) {
+                from.toFile().renameTo(to.toFile());
+            }
+        } catch (IOException e) {
+            App.settings.logStackTrace("Failed to copy file " + from + " to " + to, e);
+            return false;
         }
 
         try {
