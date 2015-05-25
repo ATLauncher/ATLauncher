@@ -17,10 +17,13 @@ ATLauncher is a Launcher for Minecraft which integrates multiple different ModPa
 
 [ATLauncher Twitter](http://twitter.com/ATLauncher)
 
-
 ### Coding Standards & Styling Guidelines
 
 Please see the STYLE.md file for coding standards and style guidelines.
+
+### Testing
+
+Please see the TESTING.md file for information on how we write tests.
 
 ### Building
 

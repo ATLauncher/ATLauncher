@@ -15,18 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package com.atlauncher.data;
 
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.LauncherVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TestLauncherVersion {
+public class LauncherVersionTest {
 
     @Test
-    public void test() {
+    public void testNeedsUpdate() {
         // Test same version - no update
         assertFalse(Constants.VERSION.needsUpdate(new LauncherVersion(Constants.VERSION.getReserved(), Constants
                 .VERSION.getMajor(), Constants.VERSION.getMinor(), Constants.VERSION.getRevision(), Constants.VERSION
