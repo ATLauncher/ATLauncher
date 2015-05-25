@@ -27,7 +27,9 @@ import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -261,5 +263,46 @@ public class FileUtilsTest {
         Assert.assertTrue(Files.isRegularFile(outputZip));
 
         Assert.assertTrue(ZipUtil.containsEntry(outputZip.toFile(), "Test.txt"));
+    }
+
+    @Test
+    public void testUnzip() {
+        Path testFolder = this.testStorage.resolve("TestUnzip");
+        Path testFolderOut = this.testStorage.resolve("TestUnzipOut");
+        Path testFile = testFolder.resolve("Test.txt");
+        Path testFileOut = testFolderOut.resolve("Test.txt");
+        Path outputZip = testFolder.resolve("Test.zip");
+
+        byte[] bytes = {'T', 'e', 's', 't'};
+
+        try {
+            Files.createDirectory(testFolder);
+            Files.write(testFile, bytes, StandardOpenOption.CREATE_NEW);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        ZipUtil.pack(testFolder.toFile(), outputZip.toFile());
+
+        Assert.assertTrue(ZipUtil.containsEntry(outputZip.toFile(), "Test.txt"));
+
+        Assert.assertTrue(Files.exists(outputZip));
+        Assert.assertTrue(Files.isRegularFile(outputZip));
+
+        FileUtils.unzip(outputZip, testFolderOut);
+
+        Assert.assertTrue(Files.exists(testFolderOut));
+        Assert.assertTrue(Files.isDirectory(testFolderOut));
+
+        Assert.assertTrue(Files.exists(testFileOut));
+        Assert.assertTrue(Files.isRegularFile(testFileOut));
+
+        try {
+            Assert.assertEquals("Test", new String(Files.readAllBytes(testFileOut)));
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
     }
 }
