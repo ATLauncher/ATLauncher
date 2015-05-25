@@ -4,7 +4,7 @@ ATLauncher Testing
 While we haven't worked too much on testing in the past, we'd like to change that. Below is a simple set of rules we try to follow when making tests.
 
 ### Directory structure
-When creating tests for a class it should be placed in the src/test/java/ folder within it's correct package name structure.
+When creating tests for a class it should be placed in the 'src/test/java/' folder within it's correct package name structure.
 
 For instance a test for 'com.atlauncher.SomeClass' would go in 'src/test/java/com/atlauncher/'.
 
