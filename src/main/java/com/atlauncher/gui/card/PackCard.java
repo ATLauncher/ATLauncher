@@ -26,6 +26,7 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -176,7 +177,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.removePackButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                App.settings.removePack(pack.getCode());
+                PackManager.removeSemiPublicPack(pack.getCode());
             }
         });
     }

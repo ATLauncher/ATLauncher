@@ -27,7 +27,6 @@ import com.atlauncher.Network;
 import com.atlauncher.Update;
 import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
-import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -57,16 +56,11 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
-import java.io.BufferedWriter;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
@@ -126,7 +120,6 @@ public class Settings {
     private int concurrentConnections; // Number of concurrent connections to open when downloading
     private int daysOfLogsToKeep; // Number of days of logs to keep
     private Account account; // Account using the Launcher
-    private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private Proxy proxy = null; // The proxy object if any
     private String theme; // The theme to use
     private String dateFormat; // The date format to use
@@ -1219,7 +1212,17 @@ public class Settings {
                 }
             }
 
-            this.addedPacks = properties.getProperty("addedpacks", "");
+            String addedPacks = properties.getProperty("addedpacks", null);
+            List<String> semiPublicPackCodes = new LinkedList<>();
+            if (addedPacks != null) {
+                if (addedPacks.contains(",")) {
+                    Collections.addAll(semiPublicPackCodes, addedPacks.split(","));
+                } else {
+                    semiPublicPackCodes.add(addedPacks);
+                }
+            }
+            PackManager.setSemiPublicPackCodes(semiPublicPackCodes);
+
             this.autoBackup = Boolean.parseBoolean(properties.getProperty("autobackup", "false"));
             this.notifyBackup = Boolean.parseBoolean(properties.getProperty("notifybackup", "true"));
             this.dropboxFolderLocation = properties.getProperty("dropboxlocation", "");
@@ -1275,7 +1278,7 @@ public class Settings {
             } else {
                 properties.setProperty("lastaccount", "");
             }
-            properties.setProperty("addedpacks", this.addedPacks);
+            properties.setProperty("addedpacks", PackManager.getSemiPublicPackCodesForProperties());
             properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
             properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
@@ -1574,73 +1577,11 @@ public class Settings {
         }
     }
 
-    public boolean canViewSemiPublicPackByCode(String packCode) {
-        for (String code : this.addedPacks.split(",")) {
-            if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
         if (Data.MINECRAFT_VERSIONS.containsKey(version)) {
             return Data.MINECRAFT_VERSIONS.get(version);
         }
         throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
-    }
-
-    public boolean semiPublicPackExistsFromCode(String packCode) {
-        String packCodeMD5 = Utils.getMD5(packCode);
-        for (Pack pack : PackManager.getPacks()) {
-            if (pack.isSemiPublic()) {
-                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public Pack getSemiPublicPackByCode(String packCode) {
-        String packCodeMD5 = Utils.getMD5(packCode);
-        for (Pack pack : PackManager.getPacks()) {
-            if (pack.isSemiPublic()) {
-                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
-                    return pack;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public boolean addPack(String packCode) {
-        String packCodeMD5 = Utils.getMD5(packCode);
-        for (Pack pack : PackManager.getPacks()) {
-            if (pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(packCodeMD5)) {
-                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
-                    if (pack.isTester()) {
-                        return false;
-                    }
-                    this.addedPacks += packCode + ",";
-                    this.saveProperties();
-                    this.refreshPacksPanel();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void removePack(String packCode) {
-        for (String code : this.addedPacks.split(",")) {
-            if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
-                this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
-                this.saveProperties();
-                this.refreshPacksPanel();
-            }
-        }
     }
 
     private DirectoryStream.Filter<Path> languagesFilter() {

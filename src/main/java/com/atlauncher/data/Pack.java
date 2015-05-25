@@ -22,6 +22,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.Version;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.ImageIcon;
@@ -176,7 +177,7 @@ public class Pack {
                 return true;
             }
         } else if (this.type == PackType.SEMIPUBLIC) {
-            if (isTester() || (hasVersions() && App.settings.canViewSemiPublicPackByCode(this.code))) {
+            if (isTester() || (hasVersions() && PackManager.canViewSemiPublicPackByCode(this.code))) {
                 return true;
             }
         } else {

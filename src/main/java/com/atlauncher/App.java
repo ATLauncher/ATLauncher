@@ -26,6 +26,7 @@ import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
@@ -341,8 +342,8 @@ public class App {
         ss.close();
 
         if (packCodeToAdd != null) {
-            if (settings.addPack(packCodeToAdd)) {
-                Pack packAdded = settings.getSemiPublicPackByCode(packCodeToAdd);
+            if (PackManager.addSemiPublicPack(packCodeToAdd)) {
+                Pack packAdded = PackManager.getSemiPublicPackByCode(packCodeToAdd);
                 if (packAdded != null) {
                     LogManager.info("The pack " + packAdded.getName() + " was automatically added to the launcher!");
                 } else {

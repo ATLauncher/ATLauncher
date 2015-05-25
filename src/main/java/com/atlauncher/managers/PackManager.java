@@ -18,12 +18,14 @@
 
 package com.atlauncher.managers;
 
+import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Pack;
 import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.utils.Utils;
 import com.google.gson.reflect.TypeToken;
 
 import java.nio.file.Files;
@@ -33,6 +35,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PackManager {
+    private static List<String> semiPublicPackCodes = new LinkedList<>();
+
     /**
      * Loads the Packs for use in the Launcher.
      */
@@ -155,5 +159,86 @@ public class PackManager {
             }
         }
         return null;
+    }
+
+    public static void setSemiPublicPackCodes(List<String> codes) {
+        PackManager.semiPublicPackCodes = codes;
+    }
+
+    public static boolean canViewSemiPublicPackByCode(String packCode) {
+        for (String code : PackManager.semiPublicPackCodes) {
+            if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static List<String> getSemiPublicPackCodes() {
+        return PackManager.semiPublicPackCodes;
+    }
+
+    public static String getSemiPublicPackCodesForProperties() {
+        StringBuilder sb = new StringBuilder("");
+
+        for (String code : PackManager.semiPublicPackCodes) {
+            sb.append(code);
+            sb.append(",");
+        }
+
+        return sb.toString();
+    }
+
+    public static boolean semiPublicPackExistsFromCode(String packCode) {
+        String packCodeMD5 = Utils.getMD5(packCode);
+        for (Pack pack : PackManager.getPacks()) {
+            if (pack.isSemiPublic()) {
+                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static Pack getSemiPublicPackByCode(String packCode) {
+        String packCodeMD5 = Utils.getMD5(packCode);
+        for (Pack pack : PackManager.getPacks()) {
+            if (pack.isSemiPublic()) {
+                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
+                    return pack;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static boolean addSemiPublicPack(String packCode) {
+        String packCodeMD5 = Utils.getMD5(packCode);
+        for (Pack pack : PackManager.getPacks()) {
+            if (pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(packCodeMD5)) {
+                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
+                    if (pack.isTester()) {
+                        return false;
+                    }
+                    PackManager.semiPublicPackCodes.add(packCode);
+                    App.settings.saveProperties();
+                    App.settings.refreshPacksPanel();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static void removeSemiPublicPack(String packCode) {
+        for (String code : PackManager.semiPublicPackCodes) {
+            if (Utils.getMD5(code).equalsIgnoreCase(packCode) && PackManager.semiPublicPackCodes.contains(code)) {
+                PackManager.semiPublicPackCodes.remove(code);
+                App.settings.saveProperties();
+                App.settings.refreshPacksPanel();
+            }
+        }
     }
 }
