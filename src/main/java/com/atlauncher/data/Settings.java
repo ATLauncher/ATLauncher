@@ -26,6 +26,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.Update;
 import com.atlauncher.data.json.LauncherLibrary;
+import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.LauncherConsole;
@@ -145,10 +146,7 @@ public class Settings {
     private LauncherConsole console; // The Launcher's Console
     private List<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
     private List<Server> triedServers = new ArrayList<Server>(); // Servers tried to connect to
-    private InstancesTab instancesPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
-    private PacksTab packsPanel; // The packs panel
-    private LauncherBottomBar bottomBar; // The bottom bar
     private boolean hadPasswordDialog = false; // If the user has seen the password dialog
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private boolean offlineMode = false; // If offline mode is enabled
@@ -776,7 +774,7 @@ public class Settings {
                 PackManager.loadPacks(); // Load the Packs available in the Launcher
                 loadUsers(); // Load the Testers and Allowed Players for the packs
                 InstanceManager.loadInstances(); // Load the users installed Instances
-                reloadInstancesPanel(); // Reload instances panel
+                InstanceChangeManager.change();
                 dialog.setVisible(false); // Remove the dialog
                 dialog.dispose(); // Dispose the dialog
             }
@@ -1530,7 +1528,7 @@ public class Settings {
                 }
             }
             AccountManager.saveAccounts();
-            reloadInstancesPanel();
+            InstanceChangeManager.change();
         }
     }
 
@@ -1561,7 +1559,7 @@ public class Settings {
     public void setInstanceUnplayable(Instance instance) {
         instance.setUnplayable();
         InstanceManager.saveInstances();
-        reloadInstancesPanel();
+        InstanceChangeManager.change();
     }
 
     /**
@@ -1573,7 +1571,7 @@ public class Settings {
         if (Data.INSTANCES.remove(instance)) {
             FileUtils.delete(instance.getRootDirectory());
             InstanceManager.saveInstances();
-            reloadInstancesPanel();
+            InstanceChangeManager.change();
         }
     }
 
@@ -1640,7 +1638,7 @@ public class Settings {
         String test = download.toString();
         if (test != null && test.equalsIgnoreCase("pong")) {
             PackChangeManager.reload();
-            reloadInstancesPanel();
+            InstanceChangeManager.change();
         } else {
             this.offlineMode = true;
         }
@@ -1670,33 +1668,6 @@ public class Settings {
     }
 
     /**
-     * Sets the panel used for Instances
-     *
-     * @param instancesPanel Instances Panel
-     */
-    public void setInstancesPanel(InstancesTab instancesPanel) {
-        this.instancesPanel = instancesPanel;
-    }
-
-    /**
-     * Reloads the panel used for Instances
-     */
-    public void reloadInstancesPanel() {
-        if (instancesPanel != null) {
-            this.instancesPanel.reload(); // Reload the instances panel
-        }
-    }
-
-    /**
-     * Sets the panel used for Packs
-     *
-     * @param packsPanel Packs Panel
-     */
-    public void setPacksPanel(PacksTab packsPanel) {
-        this.packsPanel = packsPanel;
-    }
-
-    /**
      * Sets the panel used for News
      *
      * @param newsPanel News Panel
@@ -1710,32 +1681,6 @@ public class Settings {
      */
     public void reloadNewsPanel() {
         this.newsPanel.reload(); // Reload the news panel
-    }
-
-    /**
-     * Reloads the panel used for Packs
-     */
-    public void reloadPacksPanel() {
-        this.packsPanel.reload(); // Reload the instances panel
-    }
-
-    /**
-     * Sets the bottom bar
-     *
-     * @param bottomBar The Bottom Bar
-     */
-    public void setBottomBar(LauncherBottomBar bottomBar) {
-        this.bottomBar = bottomBar;
-    }
-
-    /**
-     * Reloads the bottom bar accounts combobox
-     */
-    public void reloadAccounts() {
-        if (this.bottomBar == null) {
-            return; // Bottom Bar hasn't been made yet, so don't do anything
-        }
-        this.bottomBar.reloadAccounts(); // Reload the Bottom Bar accounts combobox
     }
 
     /**
@@ -2425,7 +2370,7 @@ public class Settings {
             FileUtils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
             Data.INSTANCES.add(clonedInstance);
             InstanceManager.saveInstances();
-            this.reloadInstancesPanel();
+            InstanceChangeManager.change();
         }
     }
 

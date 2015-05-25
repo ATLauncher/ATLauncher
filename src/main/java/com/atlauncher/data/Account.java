@@ -23,6 +23,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
 import com.atlauncher.data.mojang.api.ProfileTexture;
+import com.atlauncher.evnt.manager.AccountChangeManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
@@ -481,7 +482,7 @@ public class Account implements Serializable {
                         } catch (IOException e) {
                             LogManager.logStackTrace(e);
                         }
-                        App.settings.reloadAccounts();
+                        AccountChangeManager.change();
                     }
                     dialog.close();
                 }

@@ -22,9 +22,11 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
+import com.atlauncher.evnt.listener.AccountChangeListener;
 import com.atlauncher.evnt.listener.ConsoleCloseListener;
 import com.atlauncher.evnt.listener.ConsoleOpenListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.AccountChangeManager;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -57,7 +59,7 @@ import java.awt.event.ItemListener;
  */
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
+public class LauncherBottomBar extends BottomBar implements RelocalizationListener, AccountChangeListener {
     private final JButton submitError = new JButton("Submit Bug");
     private JPanel leftSide;
     private JPanel middle;
@@ -113,6 +115,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
         RelocalizationManager.addListener(this);
+        AccountChangeManager.addListener(this);
     }
 
     /**
@@ -181,7 +184,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         openFolder = new JButton(Language.INSTANCE.localize("common.openfolder"));
         updateData = new JButton(Language.INSTANCE.localize("common.updatedata"));
 
-        username = new JComboBox<Account>();
+        username = new JComboBox<>();
         username.setRenderer(new AccountsDropDownRenderer());
         fillerAccount = new Account(Language.INSTANCE.localize("account.select"));
         username.addItem(fillerAccount);
@@ -235,21 +238,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
     }
 
-    public void reloadAccounts() {
-        dontSave = true;
-        username.removeAllItems();
-        username.addItem(fillerAccount);
-        for (Account account : AccountManager.getAccounts()) {
-            username.addItem(account);
-        }
-        if (App.settings.getAccount() == null) {
-            username.setSelectedIndex(0);
-        } else {
-            username.setSelectedItem(App.settings.getAccount());
-        }
-        dontSave = false;
-    }
-
     @Override
     public void onRelocalization() {
         if (App.settings.getConsole().isVisible()) {
@@ -259,5 +247,24 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
         this.updateData.setText(Language.INSTANCE.localize("common.updatedata"));
         this.openFolder.setText(Language.INSTANCE.localize("common.openfolder"));
+    }
+
+    @Override
+    public void onAccountsChanged() {
+        dontSave = true;
+        username.removeAllItems();
+        username.addItem(fillerAccount);
+
+        for (Account account : AccountManager.getAccounts()) {
+            username.addItem(account);
+        }
+
+        if (App.settings.getAccount() == null) {
+            username.setSelectedIndex(0);
+        } else {
+            username.setSelectedItem(App.settings.getAccount());
+        }
+
+        dontSave = false;
     }
 }

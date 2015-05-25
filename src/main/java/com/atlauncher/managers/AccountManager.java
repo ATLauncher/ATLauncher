@@ -22,6 +22,8 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
+import com.atlauncher.evnt.manager.AccountChangeManager;
+import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
 
 import java.io.EOFException;
@@ -84,7 +86,7 @@ public class AccountManager {
 
         Data.ACCOUNTS.remove(account);
         saveAccounts();
-        App.settings.reloadAccounts();
+        AccountChangeManager.change();
     }
 
     /**
@@ -106,8 +108,8 @@ public class AccountManager {
             }
         }
         PackChangeManager.reload();
-        App.settings.reloadInstancesPanel();
-        App.settings.reloadAccounts();
+        InstanceChangeManager.change();
+        AccountChangeManager.change();
         App.settings.saveProperties();
     }
 }

@@ -158,9 +158,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         newsTab = new NewsTab();
         App.settings.setNewsPanel(newsTab);
         packsTab = new PacksTab();
-        App.settings.setPacksPanel(packsTab);
         instancesTab = new InstancesTab();
-        App.settings.setInstancesPanel(instancesTab);
         accountsTab = new AccountsTab();
         toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
@@ -193,7 +191,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
      */
     private void setupBottomBar() {
         bottomBar = new LauncherBottomBar();
-        App.settings.setBottomBar(bottomBar);
     }
 
     @Override
