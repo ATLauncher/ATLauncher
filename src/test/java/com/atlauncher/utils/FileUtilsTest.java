@@ -122,14 +122,9 @@ public class FileUtilsTest {
 
         FileUtils.moveFile(testPath, movedTo, true);
 
-        Assert.assertTrue(!Files.exists(this.testStorage.resolve("uppercase-test.txt.bak")));
+        Assert.assertTrue(Files.exists(this.testStorage.resolve("UPPERCASE-TEST.txt")));
 
-        try {
-            Assert.assertEquals("UPPERCASE-TEST.txt", testPath.toRealPath().getFileName().toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
+        Assert.assertEquals("UPPERCASE-TEST.txt", movedTo.getFileName().toString());
 
         Assert.assertTrue(Files.isRegularFile(movedTo));
     }

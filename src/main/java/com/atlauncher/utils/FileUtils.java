@@ -103,7 +103,7 @@ public class FileUtils {
         try {
             if (Files.exists(to) && Files.isSameFile(from, to) && !from.getFileName().toString().equals(to
                     .getFileName().toString())) {
-                from.toFile().renameTo(to.toFile());
+                return from.toFile().renameTo(to.toFile());
             }
         } catch (IOException e) {
             LogManager.logStackTrace("Failed to copy file " + from + " to " + to, e);
