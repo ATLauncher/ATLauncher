@@ -34,6 +34,7 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
@@ -108,7 +109,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                 LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the " +
                         "pack added to the launcher!");
             } else {
-                if (App.settings.isInOfflineMode() || App.settings.getAccount() == null || pack == null) {
+                if (App.settings.isInOfflineMode() || AccountManager.getActiveAccount() == null || pack == null) {
                     LogManager.error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) +
                             "!");
                 } else {

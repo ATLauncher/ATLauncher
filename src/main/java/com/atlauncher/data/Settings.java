@@ -2020,10 +2020,6 @@ public class Settings {
         this.javaParamaters = javaParamaters;
     }
 
-    public Account getAccount() {
-        return this.account;
-    }
-
     /**
      * If the user has selected to start Minecraft maximised
      *

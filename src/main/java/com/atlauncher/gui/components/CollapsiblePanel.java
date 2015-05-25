@@ -20,6 +20,7 @@ package com.atlauncher.gui.components;
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.AbstractAction;
@@ -98,8 +99,8 @@ public class CollapsiblePanel extends JPanel {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedPacks().contains(pack.getName())) {
+        if (AccountManager.getActiveAccount() != null) {
+            if (AccountManager.getActiveAccount().getCollapsedPacks().contains(pack.getName())) {
                 setCollapsed(true);
             }
         }
@@ -118,8 +119,8 @@ public class CollapsiblePanel extends JPanel {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedInstances().contains(instance.getName())) {
+        if (AccountManager.getActiveAccount() != null) {
+            if (AccountManager.getActiveAccount().getCollapsedInstances().contains(instance.getName())) {
                 setCollapsed(true);
             }
         }

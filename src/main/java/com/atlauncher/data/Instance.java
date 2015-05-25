@@ -224,8 +224,10 @@ public class Instance implements Cloneable {
         this.isDev = isDev;
         this.isPlayable = isPlayable;
         this.newLaunchMethod = newLaunchMethod;
-        if (enableUserLock && !App.settings.getAccount().isUUIDNull()) {
-            this.userLock = App.settings.getAccount().getUUIDNoDashes();
+
+        Account account = AccountManager.getActiveAccount();
+        if (enableUserLock && !account.isUUIDNull()) {
+            this.userLock = account.getUUIDNoDashes();
         } else {
             this.userLock = null;
         }
@@ -956,13 +958,15 @@ public class Instance implements Cloneable {
      * @return true if the user can play this Instance
      */
     public boolean canPlay() {
+        Account account = AccountManager.getActiveAccount();
+
         // Make sure an account is selected first.
-        if (App.settings.getAccount() == null || !App.settings.getAccount().isReal()) {
+        if (account == null || !account.isReal()) {
             return false;
         }
 
         // Check to see if this was a private Instance belonging to a specific user only.
-        if (this.userLock != null && !App.settings.getAccount().getUUIDNoDashes().equalsIgnoreCase(this.userLock)) {
+        if (this.userLock != null && !account.getUUIDNoDashes().equalsIgnoreCase(this.userLock)) {
             return false;
         }
 
@@ -1070,7 +1074,7 @@ public class Instance implements Cloneable {
      * @return true if the Minecraft process was started
      */
     public boolean launch() {
-        final Account account = App.settings.getAccount();
+        final Account account = AccountManager.getActiveAccount();
         if (account == null) {
             String[] options = {Language.INSTANCE.localize("common.ok")};
             JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance.noaccount"),
@@ -1282,7 +1286,7 @@ public class Instance implements Cloneable {
         Map<String, Object> request = new HashMap<String, Object>();
 
         if (App.settings.enableLeaderboards()) {
-            request.put("username", App.settings.getAccount().getMinecraftUsername());
+            request.put("username", AccountManager.getActiveAccount().getMinecraftUsername());
         } else {
             request.put("username", null);
         }

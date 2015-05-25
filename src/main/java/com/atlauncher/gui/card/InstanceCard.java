@@ -34,6 +34,7 @@ import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -198,7 +199,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                     ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                             options, options[0]);
                     if (ret == 0) {
-                        if (App.settings.getAccount() == null) {
+                        if (AccountManager.getActiveAccount() == null) {
                             String[] optionss = {Language.INSTANCE.localize("common.ok")};
                             JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize
                                     ("instance.cantupdate"), Language.INSTANCE.localize("instance.noaccountselected")
@@ -233,7 +234,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.reinstallButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.getAccount() == null) {
+                if (AccountManager.getActiveAccount() == null) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" + "" +
                                     ".cantreinstall"), Language.INSTANCE.localize("instance.noaccountselected"),
@@ -245,7 +246,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         });
         this.updateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.getAccount() == null) {
+                if (AccountManager.getActiveAccount() == null) {
                     String[] options = {Language.INSTANCE.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance" + "" +
                                     ".cantupdate"), Language.INSTANCE.localize("instance.noaccountselected"),
@@ -418,7 +419,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                         ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
                                 null, options, options[0]);
                         if (ret == 0) {
-                            if (App.settings.getAccount() == null) {
+                            if (AccountManager.getActiveAccount() == null) {
                                 String[] optionss = {Language.INSTANCE.localize("common.ok")};
                                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize
                                         ("instance.cantupdate"), Language.INSTANCE.localize("instance" + "" +
@@ -498,7 +499,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                         ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
                                         null, options, options[0]);
                                 if (ret == 0) {
-                                    if (App.settings.getAccount() == null) {
+                                    if (AccountManager.getActiveAccount() == null) {
                                         String[] optionss = {Language.INSTANCE.localize("common.ok")};
                                         JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE
                                                 .localize("instance.cantupdate"), Language.INSTANCE.localize

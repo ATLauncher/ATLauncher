@@ -22,6 +22,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.Version;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
@@ -151,7 +152,7 @@ public class Pack {
     }
 
     public boolean isTester() {
-        Account account = App.settings.getAccount();
+        Account account = AccountManager.getActiveAccount();
         if (account == null) {
             return false;
         }
@@ -192,7 +193,7 @@ public class Pack {
         if (this.type != PackType.PRIVATE) {
             return true;
         }
-        Account account = App.settings.getAccount();
+        Account account = AccountManager.getActiveAccount();
         if (account == null) {
             return false;
         }
@@ -289,7 +290,7 @@ public class Pack {
     public String addInstall(String version) {
         Map<String, Object> request = new HashMap<String, Object>();
 
-        request.put("username", App.settings.getAccount().getMinecraftUsername());
+        request.put("username", AccountManager.getActiveAccount().getMinecraftUsername());
         request.put("version", version);
 
         try {
@@ -303,7 +304,7 @@ public class Pack {
     public String addServerInstall(String version) {
         Map<String, Object> request = new HashMap<String, Object>();
 
-        request.put("username", App.settings.getAccount().getMinecraftUsername());
+        request.put("username", AccountManager.getActiveAccount().getMinecraftUsername());
         request.put("version", version);
 
         try {
@@ -317,7 +318,7 @@ public class Pack {
     public String addUpdate(String version) {
         Map<String, Object> request = new HashMap<String, Object>();
 
-        request.put("username", App.settings.getAccount().getMinecraftUsername());
+        request.put("username", AccountManager.getActiveAccount().getMinecraftUsername());
         request.put("version", version);
 
         try {

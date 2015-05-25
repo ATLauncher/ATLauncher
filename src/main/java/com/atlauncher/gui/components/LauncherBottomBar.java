@@ -191,7 +191,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         for (Account account : AccountManager.getAccounts()) {
             username.addItem(account);
         }
-        Account active = App.settings.getAccount();
+        Account active = AccountManager.getActiveAccount();
         if (active == null) {
             username.setSelectedIndex(0);
         } else {
@@ -259,10 +259,10 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             username.addItem(account);
         }
 
-        if (App.settings.getAccount() == null) {
+        if (AccountManager.getActiveAccount() == null) {
             username.setSelectedIndex(0);
         } else {
-            username.setSelectedItem(App.settings.getAccount());
+            username.setSelectedItem(AccountManager.getActiveAccount());
         }
 
         dontSave = false;

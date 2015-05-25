@@ -26,6 +26,7 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
@@ -123,7 +124,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                             ".offlinenewinstance"), Language.INSTANCE.localize("common.offline"), JOptionPane
                             .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
-                    if (App.settings.getAccount() == null) {
+                    if (AccountManager.getActiveAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
                         JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
                                 + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
@@ -143,7 +144,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                                     ".offlinecreateserver"), Language.INSTANCE.localize("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
-                    if (App.settings.getAccount() == null) {
+                    if (AccountManager.getActiveAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
                         JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
                                 + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
