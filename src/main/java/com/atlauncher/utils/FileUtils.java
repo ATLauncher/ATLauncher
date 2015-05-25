@@ -53,7 +53,14 @@ public class FileUtils {
 
     public static boolean moveFile(Path from, Path to, boolean withFilename) {
         if (copyFile(from, to, withFilename)) {
-            delete(from);
+            try {
+                // Don't delete the from file in case it's the same file such as on case insensitive file systems
+                if (!Files.isSameFile(from, to)) {
+                    delete(from);
+                }
+            } catch (IOException e) {
+                App.settings.logStackTrace("Couldn't delete file " + from + " while renaming to " + to, e);
+            }
             return true;
         } else {
             LogManager.error("Couldn't move file " + from + " to " + to);
