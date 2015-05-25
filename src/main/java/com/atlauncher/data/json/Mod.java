@@ -94,7 +94,7 @@ public class Mod {
     }
 
     public String getUrl() {
-        return this.url.replace("&amp;", "&").replace(" ", "%20");
+        return this.url.replace("&amp;", "&").replace(" ", "%20").replace("[", "%5B").replace("]", "%5D");
     }
 
     public String getRawFile() {

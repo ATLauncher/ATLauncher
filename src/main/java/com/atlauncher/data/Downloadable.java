@@ -205,7 +205,8 @@ public final class Downloadable {
     private void execute() throws IOException {
         LogManager.debug("Opening connection to " + this.url, 3);
 
-        Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", App.settings
+        Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", App
+                .settings
                 .getUserAgent()).addHeader("Expires", "0").cacheControl(CACHE_CONTROL);
 
         this.response = (this.installer != null ? Network.PROGRESS_CLIENT : Network.CLIENT).newCall(builder.build())
