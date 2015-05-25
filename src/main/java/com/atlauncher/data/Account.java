@@ -26,6 +26,7 @@ import com.atlauncher.data.mojang.api.ProfileTexture;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
@@ -603,7 +604,7 @@ public class Account implements Serializable {
 
     public void saveStore(Map<String, Object> store) {
         this.store = store;
-        App.settings.saveAccounts();
+        AccountManager.saveAccounts();
     }
 
     // TODO: Change to use Mojang authlib
@@ -619,7 +620,7 @@ public class Account implements Serializable {
             if (this.hasAccessToken()) {
                 LogManager.error("Access token is NOT valid! Will attempt to get another one!");
                 this.setAccessToken(null);
-                App.settings.saveAccounts();
+                AccountManager.saveAccounts();
             }
 
             if (!this.isRemembered()) {
@@ -664,7 +665,7 @@ public class Account implements Serializable {
             this.setAccessToken(response.getAuth().getAuthenticatedToken());
             this.setUUID(response.getAuth().getSelectedProfile().getId().toString());
             response.save();
-            App.settings.saveAccounts();
+            AccountManager.saveAccounts();
         }
 
         return response;

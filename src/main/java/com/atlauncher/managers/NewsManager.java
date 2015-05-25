@@ -15,35 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data;
+package com.atlauncher.managers;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.annot.Json;
-import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.managers.PackManager;
+import com.atlauncher.Data;
+import com.atlauncher.data.News;
 
 import java.util.List;
 
-@Json
-public class PackUsers {
-    private int pack;
-    private List<String> testers;
-    private List<String> allowedPlayers;
+public class NewsManager {
+    public static List<News> getNews() {
+        return Data.NEWS;
+    }
 
-    public void addUsers() {
-        Pack pack = null;
-        try {
-            pack = PackManager.getPackByID(this.pack);
-        } catch (InvalidPack e) {
-            LogManager.logStackTrace(e);
-            return;
+    public static String getNewsHTML() {
+        String news = "<html>";
+
+        for (News newsItem : NewsManager.getNews()) {
+            news += newsItem.getHTML() + "<hr/>";
         }
-        if (this.testers != null) {
-            pack.addTesters(testers);
-        }
-        if (this.allowedPlayers != null) {
-            pack.addAllowedPlayers(allowedPlayers);
-        }
+
+        news = news.substring(0, news.length() - 5);
+
+        news += "</html>";
+        return news;
     }
 }

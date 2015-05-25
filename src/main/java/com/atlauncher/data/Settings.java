@@ -34,6 +34,9 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
@@ -204,13 +207,13 @@ public class Settings {
 
         loadMinecraftVersions(); // Load info about the different Minecraft versions
 
-        loadPacks(); // Load the Packs available in the Launcher
+        PackManager.loadPacks(); // Load the Packs available in the Launcher
 
         loadUsers(); // Load the Testers and Allowed Players for the packs
 
-        loadInstances(); // Load the users installed Instances
+        InstanceManager.loadInstances(); // Load the users installed Instances
 
-        loadAccounts(); // Load the saved Accounts
+        AccountManager.loadAccounts(); // Load the saved Accounts
 
         loadCheckingServers(); // Load the saved servers we're checking with the tool
 
@@ -314,7 +317,7 @@ public class Settings {
         }
 
         if (somethingChanged) {
-            this.saveAccounts();
+            AccountManager.saveAccounts();
         }
 
         LogManager.info("Checking For Username Changes Complete");
@@ -376,7 +379,7 @@ public class Settings {
                         account.setRemember(false);
                     }
                 }
-                this.saveAccounts();
+                AccountManager.saveAccounts();
             }
         }
         this.saveProperties();
@@ -482,7 +485,7 @@ public class Settings {
         for (Account account : Data.ACCOUNTS) {
             if (account.isUUIDNull()) {
                 account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
-                this.saveAccounts();
+                AccountManager.saveAccounts();
             }
         }
         LogManager.debug("Finished checking account UUID's");
@@ -524,8 +527,8 @@ public class Settings {
         }
 
         if (wereChanges) {
-            this.saveAccounts();
-            this.saveInstances();
+            AccountManager.saveAccounts();
+            InstanceManager.saveInstances();
         }
 
         LogManager.debug("Finished changing instances user locks to UUID's");
@@ -776,10 +779,10 @@ public class Settings {
                 checkForLauncherUpdate();
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
-                loadPacks(); // Load the Packs available in the Launcher
+                PackManager.loadPacks(); // Load the Packs available in the Launcher
                 reloadPacksPanel(); // Reload packs panel
                 loadUsers(); // Load the Testers and Allowed Players for the packs
-                loadInstances(); // Load the users installed Instances
+                InstanceManager.loadInstances(); // Load the users installed Instances
                 reloadInstancesPanel(); // Reload instances panel
                 dialog.setVisible(false); // Remove the dialog
                 dialog.dispose(); // Dispose the dialog
@@ -1299,30 +1302,6 @@ public class Settings {
     }
 
     /**
-     * Switch account currently used and save it
-     *
-     * @param account Account to switch to
-     */
-    public void switchAccount(Account account) {
-        if (account == null) {
-            LogManager.info("Logging out of account");
-            this.account = null;
-        } else {
-            if (account.isReal()) {
-                LogManager.info("Changed account to " + account);
-                this.account = account;
-            } else {
-                LogManager.info("Logging out of account");
-                this.account = null;
-            }
-        }
-        reloadPacksPanel();
-        reloadInstancesPanel();
-        reloadAccounts();
-        saveProperties();
-    }
-
-    /**
      * The servers available to use in the Launcher
      * <p/>
      * These MUST be hardcoded in order for the Launcher to make the initial connections to download files
@@ -1430,23 +1409,6 @@ public class Settings {
     }
 
     /**
-     * Loads the Packs for use in the Launcher
-     */
-    private void loadPacks() {
-        LogManager.debug("Loading packs");
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
-            }.getType();
-            byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("packs.json"));
-            Data.PACKS.clear();
-            Data.PACKS.addAll((List<Pack>) Gsons.DEFAULT.fromJson(new String(bits), type));
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-        }
-        LogManager.debug("Finished loading packs");
-    }
-
-    /**
      * Loads the Testers and Allowed Players for the packs in the Launcher
      */
     private void loadUsers() {
@@ -1469,166 +1431,6 @@ public class Settings {
             LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading users");
-    }
-
-    /**
-     * Loads the user installed Instances
-     */
-    private void loadInstances() {
-        LogManager.debug("Loading instances");
-        try {
-            Data.INSTANCES.clear();
-            if (Files.exists(FileSystemData.INSTANCES_DATA)) {
-                try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.INSTANCES_DATA
-                        .toFile()))) {
-                    Object obj;
-                    while ((obj = oin.readObject()) != null) {
-                        Instance instance = (Instance) obj;
-                        Path dir = FileSystem.INSTANCES.resolve(instance.getSafeName());
-                        if (!Files.exists(dir)) {
-                            continue;
-                        }
-
-                        if (!instance.hasBeenConverted()) {
-                            LogManager.warn("Instance " + instance.getName() + " is being converted, this is normal " +
-                                    "and should only appear once");
-                            instance.convert();
-                        }
-
-                        if (!Files.exists(instance.root.resolve("disabledmods"))) {
-                            FileUtils.createDirectory(instance.root.resolve("disabledmods"));
-                        }
-
-                        Data.INSTANCES.add(instance);
-                        if (this.isPackByName(instance.getPackName())) {
-                            instance.setRealPack(this.getPackByName(instance.getPackName()));
-                        }
-                    }
-                } catch (EOFException ex) {
-                    // Fallthrough
-                }
-
-                this.saveInstances();
-                Files.delete(FileSystemData.INSTANCES_DATA);
-            } else {
-                try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.INSTANCES)) {
-                    for (Path file : stream) {
-                        Path instanceJson = file.resolve("instance.json");
-
-                        if (!Files.exists(instanceJson)) {
-                            LogManager.error("Failed to load instance in folder " + file.getFileName() + " due to " +
-                                    "missing instance.json!");
-                            continue;
-                        }
-
-                        byte[] bits = Files.readAllBytes(instanceJson);
-                        Instance instance;
-                        try {
-                            instance = Gsons.DEFAULT.fromJson(new String(bits), Instance.class);
-                        } catch (Exception e) {
-                            LogManager.logStackTrace("Failed to load instance in the folder " + file.getFileName(), e);
-                            continue;
-                        }
-
-                        if (instance == null) {
-                            LogManager.error("Failed to load instance in folder " + file.getFileName());
-                            continue;
-                        }
-
-                        if (!Files.exists(instance.getRootDirectory().resolve("disabledmods"))) {
-                            FileUtils.createDirectory(instance.getRootDirectory().resolve("disabledmods"));
-                        }
-
-                        if (this.isPackByName(instance.getPackName())) {
-                            instance.setRealPack(this.getPackByName(instance.getPackName()));
-                        }
-
-                        Data.INSTANCES.add(instance);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-        }
-        LogManager.debug("Finished loading instances");
-    }
-
-    public void saveInstances() {
-        for (Instance instance : Data.INSTANCES) {
-            Path instanceFile = instance.getRootDirectory().resolve("instance.json");
-            FileWriter fw = null;
-            BufferedWriter bw = null;
-            try {
-                if (!Files.exists(instanceFile)) {
-                    Files.createFile(instanceFile);
-                }
-
-                fw = new FileWriter(instanceFile.toFile());
-                bw = new BufferedWriter(fw);
-                bw.write(Gsons.DEFAULT.toJson(instance));
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            } finally {
-                try {
-                    if (bw != null) {
-                        bw.close();
-                    }
-                    if (fw != null) {
-                        fw.close();
-                    }
-                } catch (IOException e) {
-                    LogManager.logStackTrace("Exception while trying to close FileWriter/BufferedWriter for saving " +
-                            "an" + " instances json file.", e);
-                }
-            }
-        }
-    }
-
-    /**
-     * Loads the saved Accounts
-     */
-    private void loadAccounts() {
-        LogManager.debug("Loading Accounts");
-
-        Data.ACCOUNTS.clear();
-
-        if (Files.exists(FileSystemData.USER_DATA)) {
-            try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.USER_DATA.toFile())
-            )) {
-                Object obj;
-                while ((obj = oin.readObject()) != null) {
-                    if (obj instanceof Account) {
-                        Data.ACCOUNTS.add((Account) obj);
-                    }
-                }
-            } catch (EOFException e) {
-                // Fallthrough
-            } catch (Exception e) {
-                LogManager.logStackTrace("Exception while trying to read accounts from file", e);
-            }
-        }
-
-        LogManager.debug("Finished loading accounts");
-    }
-
-    public void saveAccounts() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FileSystemData.USER_DATA.toFile()))) {
-            for (Account acc : Data.ACCOUNTS) {
-                oos.writeObject(acc);
-            }
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-        }
-    }
-
-    public void removeAccount(Account account) {
-        if (this.account == account) {
-            switchAccount(null);
-        }
-
-        Data.ACCOUNTS.remove(account);
-        saveAccounts();
-        reloadAccounts();
     }
 
     /**
@@ -1684,46 +1486,6 @@ public class Settings {
         App.TRAY_MENU.setMinecraftLaunched(launched);
     }
 
-    /**
-     * Get the Packs available in the Launcher
-     *
-     * @return The Packs available in the Launcher
-     */
-    public List<Pack> getPacks() {
-        return Data.PACKS;
-    }
-
-    /**
-     * Get the Packs available in the Launcher sorted alphabetically
-     *
-     * @return The Packs available in the Launcher sorted alphabetically
-     */
-    public List<Pack> getPacksSortedAlphabetically() {
-        List<Pack> packs = new LinkedList<>(Data.PACKS);
-        Collections.sort(packs, new Comparator<Pack>() {
-            public int compare(Pack result1, Pack result2) {
-                return result1.getName().compareTo(result2.getName());
-            }
-        });
-        return packs;
-    }
-
-    /**
-     * Get the Packs available in the Launcher sorted by position
-     *
-     * @return The Packs available in the Launcher sorted by position
-     */
-    public List<Pack> getPacksSortedPositionally() {
-        List<Pack> packs = new LinkedList<Pack>(Data.PACKS);
-        Collections.sort(packs, new Comparator<Pack>() {
-            public int compare(Pack result1, Pack result2) {
-                return (result1.getPosition() < result2.getPosition()) ? -1 : ((result1.getPosition() == result2
-                        .getPosition()) ? 0 : 1);
-            }
-        });
-        return packs;
-    }
-
     public void setPackVisbility(Pack pack, boolean collapsed) {
         if (pack != null && account != null && account.isReal()) {
             if (collapsed) {
@@ -1737,7 +1499,7 @@ public class Settings {
                     account.getCollapsedPacks().remove(pack.getName());
                 }
             }
-            saveAccounts();
+            AccountManager.saveAccounts();
             reloadPacksPanel();
         }
     }
@@ -1764,7 +1526,7 @@ public class Settings {
                     account.getCollapsedInstances().remove(instance.getName());
                 }
             }
-            saveAccounts();
+            AccountManager.saveAccounts();
             reloadInstancesPanel();
         }
     }
@@ -1795,7 +1557,7 @@ public class Settings {
 
     public void setInstanceUnplayable(Instance instance) {
         instance.setUnplayable();
-        saveInstances();
+        InstanceManager.saveInstances();
         reloadInstancesPanel();
     }
 
@@ -1807,7 +1569,7 @@ public class Settings {
     public void removeInstance(Instance instance) {
         if (Data.INSTANCES.remove(instance)) {
             FileUtils.delete(instance.getRootDirectory());
-            saveInstances();
+            InstanceManager.saveInstances();
             reloadInstancesPanel();
         }
     }
@@ -1830,7 +1592,7 @@ public class Settings {
 
     public boolean semiPublicPackExistsFromCode(String packCode) {
         String packCodeMD5 = Utils.getMD5(packCode);
-        for (Pack pack : Data.PACKS) {
+        for (Pack pack : PackManager.getPacks()) {
             if (pack.isSemiPublic()) {
                 if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
                     return true;
@@ -1842,7 +1604,7 @@ public class Settings {
 
     public Pack getSemiPublicPackByCode(String packCode) {
         String packCodeMD5 = Utils.getMD5(packCode);
-        for (Pack pack : Data.PACKS) {
+        for (Pack pack : PackManager.getPacks()) {
             if (pack.isSemiPublic()) {
                 if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
                     return pack;
@@ -1855,7 +1617,7 @@ public class Settings {
 
     public boolean addPack(String packCode) {
         String packCodeMD5 = Utils.getMD5(packCode);
-        for (Pack pack : Data.PACKS) {
+        for (Pack pack : PackManager.getPacks()) {
             if (pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(packCodeMD5)) {
                 if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
                     if (pack.isTester()) {
@@ -1879,41 +1641,6 @@ public class Settings {
                 this.refreshPacksPanel();
             }
         }
-    }
-
-    /**
-     * Get the Accounts added to the Launcher
-     *
-     * @return The Accounts added to the Launcher
-     */
-    public List<Account> getAccounts() {
-        return Data.ACCOUNTS;
-    }
-
-    /**
-     * Get the News for the Launcher
-     *
-     * @return The News items
-     */
-    public List<News> getNews() {
-        return Data.NEWS;
-    }
-
-    /**
-     * Get the News for the Launcher in HTML for display on the news panel.
-     *
-     * @return The HTML for displaying on the News Panel
-     */
-    public String getNewsHTML() {
-        String news = "<html>";
-        for (News newsItem : App.settings.getNews()) {
-            news += newsItem.getHTML();
-            if (App.settings.getNews().get(App.settings.getNews().size() - 1) != newsItem) {
-                news += "<hr/>";
-            }
-        }
-        news += "</html>";
-        return news;
     }
 
     private DirectoryStream.Filter<Path> languagesFilter() {
@@ -2090,67 +1817,6 @@ public class Settings {
             }
         }
         return false;
-    }
-
-    /**
-     * Finds a Pack from the given ID number
-     *
-     * @param id ID of the Pack to find
-     * @return Pack if the pack is found from the ID
-     * @throws InvalidPack If ID is not found
-     */
-    public Pack getPackByID(int id) throws InvalidPack {
-        for (Pack pack : Data.PACKS) {
-            if (pack.getID() == id) {
-                return pack;
-            }
-        }
-        throw new InvalidPack("No pack exists with ID " + id);
-    }
-
-    /**
-     * Checks if there is a pack by the given name
-     *
-     * @param name name of the Pack to find
-     * @return True if the pack is found from the name
-     */
-    public boolean isPackByName(String name) {
-        for (Pack pack : Data.PACKS) {
-            if (pack.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Finds a Pack from the given name
-     *
-     * @param name name of the Pack to find
-     * @return Pack if the pack is found from the name
-     */
-    public Pack getPackByName(String name) {
-        for (Pack pack : Data.PACKS) {
-            if (pack.getName().equalsIgnoreCase(name)) {
-                return pack;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Finds a Pack from the given safe name
-     *
-     * @param name name of the Pack to find
-     * @return Pack if the pack is found from the safe name
-     */
-    public Pack getPackBySafeName(String name) {
-        for (Pack pack : Data.PACKS) {
-            if (pack.getSafeName().equalsIgnoreCase(name)) {
-                return pack;
-            }
-        }
-        return null;
     }
 
     /**
@@ -2824,14 +2490,14 @@ public class Settings {
             FileUtils.createDirectory(clonedInstance.getRootDirectory());
             FileUtils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
             Data.INSTANCES.add(clonedInstance);
-            this.saveInstances();
+            InstanceManager.saveInstances();
             this.reloadInstancesPanel();
         }
     }
 
     public String getPackInstallableCount() {
         int count = 0;
-        for (Pack pack : this.getPacks()) {
+        for (Pack pack : PackManager.getPacks()) {
             if (pack.canInstall()) {
                 count++;
             }

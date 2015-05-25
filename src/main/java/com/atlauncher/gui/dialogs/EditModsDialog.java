@@ -23,6 +23,8 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.gui.components.ModsJCheckBox;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
@@ -281,7 +283,7 @@ public class EditModsDialog extends JDialog {
     }
 
     private void reloadPanels() {
-        App.settings.saveInstances();
+        InstanceManager.saveInstances();
         enabledModsPanel.removeAll();
         disabledModsPanel.removeAll();
         loadMods();

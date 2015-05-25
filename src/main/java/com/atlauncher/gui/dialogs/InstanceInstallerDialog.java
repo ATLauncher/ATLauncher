@@ -23,6 +23,8 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -379,7 +381,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     App.settings.getInstances().add(newInstance);
 
                                 }
-                                App.settings.saveInstances();
+                                InstanceManager.saveInstances();
                                 App.settings.reloadInstancesPanel();
                                 if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev()) {
                                     if (isServer) {

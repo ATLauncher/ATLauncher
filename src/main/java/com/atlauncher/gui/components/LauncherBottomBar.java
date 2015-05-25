@@ -32,6 +32,7 @@ import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -125,7 +126,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         });
         openFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Utils.openExplorer(FileSystem.BASE_DIR.toFile());
+                Utils.openExplorer(FileSystem.BASE_DIR);
             }
         });
         updateData.addActionListener(new ActionListener() {
@@ -148,7 +149,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     if (!dontSave) {
-                        App.settings.switchAccount((Account) username.getSelectedItem());
+                        AccountManager.switchAccount((Account) username.getSelectedItem());
                     }
                 }
             }
@@ -184,7 +185,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         username.setRenderer(new AccountsDropDownRenderer());
         fillerAccount = new Account(Language.INSTANCE.localize("account.select"));
         username.addItem(fillerAccount);
-        for (Account account : App.settings.getAccounts()) {
+        for (Account account : AccountManager.getAccounts()) {
             username.addItem(account);
         }
         Account active = App.settings.getAccount();
@@ -238,7 +239,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         dontSave = true;
         username.removeAllItems();
         username.addItem(fillerAccount);
-        for (Account account : App.settings.getAccounts()) {
+        for (Account account : AccountManager.getAccounts()) {
             username.addItem(account);
         }
         if (App.settings.getAccount() == null) {

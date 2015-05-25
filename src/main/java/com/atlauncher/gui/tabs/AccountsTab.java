@@ -23,6 +23,7 @@ import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
 
@@ -97,7 +98,7 @@ public class AccountsTab extends JPanel implements Tab {
 
         accountsComboBox = new JComboBox<Account>();
         accountsComboBox.addItem(fillerAccount);
-        for (Account account : App.settings.getAccounts()) {
+        for (Account account : AccountManager.getAccounts()) {
             accountsComboBox.addItem(account);
         }
         accountsComboBox.setSelectedIndex(0);
@@ -224,10 +225,10 @@ public class AccountsTab extends JPanel implements Tab {
                             .localizeWithReplace("account.deletesure", usernameField.getText()), Language.INSTANCE
                             .localize("account.delete"), JOptionPane.YES_NO_OPTION);
                     if (res == JOptionPane.YES_OPTION) {
-                        App.settings.removeAccount(account);
+                        AccountManager.removeAccount(account);
                         accountsComboBox.removeAllItems();
                         accountsComboBox.addItem(fillerAccount);
-                        for (Account accountt : App.settings.getAccounts()) {
+                        for (Account accountt : AccountManager.getAccounts()) {
                             accountsComboBox.addItem(accountt);
                         }
                         accountsComboBox.setSelectedIndex(0);
@@ -315,7 +316,7 @@ public class AccountsTab extends JPanel implements Tab {
                             ("account.addedswitch"), Language.INSTANCE.localize("account.added"), JOptionPane
                             .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                     if (ret == 0) {
-                        App.settings.switchAccount(account);
+                        AccountManager.switchAccount(account);
                     }
                 } else {
                     account = (Account) accountsComboBox.getSelectedItem();
@@ -336,7 +337,7 @@ public class AccountsTab extends JPanel implements Tab {
                 App.settings.reloadAccounts();
                 accountsComboBox.removeAllItems();
                 accountsComboBox.addItem(fillerAccount);
-                for (Account accountt : App.settings.getAccounts()) {
+                for (Account accountt : AccountManager.getAccounts()) {
                     accountsComboBox.addItem(accountt);
                 }
                 accountsComboBox.setSelectedItem(account);

@@ -23,6 +23,8 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.FileUtils;
@@ -482,7 +484,7 @@ public class Instance implements Cloneable {
 
         if (!hasUpdateBeenIgnored(version)) {
             this.ignoredUpdates.add(version);
-            App.settings.saveInstances();
+            InstanceManager.saveInstances();
         }
     }
 

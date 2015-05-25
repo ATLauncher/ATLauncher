@@ -34,6 +34,7 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JFrame;
@@ -101,7 +102,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         });
 
         if (App.packToInstall != null) {
-            Pack pack = App.settings.getPackBySafeName(App.packToInstall);
+            Pack pack = PackManager.getPackBySafeName(App.packToInstall);
 
             if (pack != null && pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(pack.getCode())) {
                 LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the " +
@@ -120,7 +121,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             if (parts.length != 4) {
                 LogManager.error("Error automatically installing pack from share code!");
             } else {
-                Pack pack = App.settings.getPackBySafeName(parts[0]);
+                Pack pack = PackManager.getPackBySafeName(parts[0]);
 
                 if (pack != null && pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(pack.getCode())) {
                     LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the " +

@@ -21,6 +21,8 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -96,7 +98,7 @@ public class RenameInstanceDialog extends JDialog {
                             ".error"), JOptionPane.ERROR_MESSAGE);
                 } else {
                     if (instance.rename(instanceName.getText())) {
-                        App.settings.saveInstances();
+                        InstanceManager.saveInstances();
                         App.settings.reloadInstancesPanel();
                     } else {
                         LogManager.error("Unknown Error Occured While Renaming Instance!");
