@@ -103,13 +103,14 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                     // Response Code Test
                     for (Server server : App.settings.getServers()) {
-                        try{
-                            Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"), false);
+                        try {
+                            Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"),
+                                    false);
                             results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server
-                                                                                                                       .getHost(), download.code()));
+                                    .getHost(), download.code()));
                             dialog.doneTask();
-                        } catch(Exception e){
-                            App.settings.logStackTrace(e);
+                        } catch (Exception e) {
+                            LogManager.logStackTrace(e);
                         }
                     }
 
@@ -131,11 +132,11 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                         long started = System.currentTimeMillis();
 
-                        try{
+                        try {
                             Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
                             download.download();
-                        } catch(Exception e){
-                            App.settings.logStackTrace(e);
+                        } catch (Exception e) {
+                            LogManager.logStackTrace(e);
                         }
 
                         long size = 0;
@@ -143,7 +144,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         try {
                             size = Files.size(file);
                         } catch (IOException e1) {
-                            App.settings.logStackTrace("Error getting file size of " + file + " while running network" +
+                            LogManager.logStackTrace("Error getting file size of " + file + " while running network" +
                                     " checker!", e1);
                         }
 

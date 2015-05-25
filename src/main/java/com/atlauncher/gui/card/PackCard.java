@@ -125,7 +125,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                     if (App.settings.getAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
                         JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
-                                        + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                                + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack);
@@ -145,7 +145,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                     if (App.settings.getAccount() == null) {
                         String[] options = {Language.INSTANCE.localize("common.ok")};
                         JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
-                                        + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                                + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack, true);

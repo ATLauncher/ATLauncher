@@ -422,8 +422,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 String[] optionss = {Language.INSTANCE.localize("common.ok")};
                                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize
                                         ("instance.cantupdate"), Language.INSTANCE.localize("instance" + "" +
-                                        ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                                        null, optionss, optionss[0]);
+                                                ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                        .ERROR_MESSAGE, null, optionss, optionss[0]);
                             } else {
                                 new InstanceInstallerDialog(instance, true, false, null, null, true);
                             }

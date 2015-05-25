@@ -159,8 +159,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                         JOptionPane.ERROR_MESSAGE);
             } else if (!isValidPort()) {
                 JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("settings" + "" +
-                                ".proxyportinvalid"), Language.INSTANCE.localize("common.error"), JOptionPane
-                        .ERROR_MESSAGE);
+                        ".proxyportinvalid"), Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
             } else {
                 String name = serverName.getText();
                 final String host = serverHost.getText();

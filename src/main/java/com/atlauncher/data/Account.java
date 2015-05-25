@@ -194,7 +194,7 @@ public class Account implements Serializable {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
 
         BufferedImage main = image.getSubimage(8, 8, 8, 8);
@@ -233,7 +233,7 @@ public class Account implements Serializable {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
 
         BufferedImage head = image.getSubimage(8, 8, 8, 8);
@@ -478,7 +478,7 @@ public class Account implements Serializable {
                                 }
                             }
                         } catch (IOException e) {
-                            App.settings.logStackTrace(e);
+                            LogManager.logStackTrace(e);
                         }
                         App.settings.reloadAccounts();
                     }
@@ -489,8 +489,8 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
@@ -528,7 +528,7 @@ public class Account implements Serializable {
             }
             reader.close();
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             response = null;
         }
 

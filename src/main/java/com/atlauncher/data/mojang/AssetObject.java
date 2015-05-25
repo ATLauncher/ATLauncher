@@ -17,7 +17,7 @@
  */
 package com.atlauncher.data.mojang;
 
-import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class AssetObject {
         try {
             size = Files.size(path);
         } catch (IOException e) {
-            App.settings.logStackTrace("Error getting filesize from " + path, e);
+            LogManager.logStackTrace("Error getting filesize from " + path, e);
         }
 
         return (size != this.size) || (!this.hash.equalsIgnoreCase(Utils.getSHA1(path)));

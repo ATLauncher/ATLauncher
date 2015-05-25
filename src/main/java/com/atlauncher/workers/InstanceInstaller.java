@@ -588,7 +588,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             download.download();
                         }
                     } catch (Exception e) {
-                        App.settings.logStackTrace(e);
+                        LogManager.logStackTrace(e);
                         e.printStackTrace(System.err);
                     }
                 }
@@ -636,7 +636,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             download.download();
                         }
                     } catch (Exception e) {
-                        App.settings.logStackTrace(e);
+                        LogManager.logStackTrace(e);
                         e.printStackTrace(System.err);
                     }
                 }
@@ -736,7 +736,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 Files.walkFileTree(dir, new CaseFileVisitor(this.jsonVersion.getCaseAllFiles()));
             }
         } catch (IOException e) {
-            App.settings.logStackTrace("Error casing files while installing instance!", e);
+            LogManager.logStackTrace("Error casing files while installing instance!", e);
         }
     }
 
@@ -772,7 +772,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         } catch (JsonSyntaxException | JsonIOException | IOException e) {
-            App.settings.logStackTrace("Error processing resources for Minecraft!", e);
+            LogManager.logStackTrace("Error processing resources for Minecraft!", e);
         }
 
         return downloads;
@@ -916,7 +916,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             FileUtils.delete(inputFile);
             FileUtils.moveFile(outputTmpFile, inputFile);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -930,7 +930,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         try {
             configsDownload.download(); // Download the file
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
 
         // Extract the configs zip file
@@ -1331,7 +1331,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             this.jsonVersion = this.pack.getJsonVersion(version.getVersion());
             return installUsingJSON();
         } catch (JsonParseException e) {
-            App.settings.logStackTrace("Couldn't parse JSON of pack!", e);
+            LogManager.logStackTrace("Couldn't parse JSON of pack!", e);
         }
 
         return false;

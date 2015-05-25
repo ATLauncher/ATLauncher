@@ -17,8 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.utils.walker.DeleteDirVisitor;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;

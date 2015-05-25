@@ -89,7 +89,7 @@ public class DropboxSync extends SyncAbstract {
                 try {
                     bufferedReader.close();
                 } catch (IOException e) {
-                    App.settings.logStackTrace(e);
+                    LogManager.logStackTrace(e);
                 }
             }
         }

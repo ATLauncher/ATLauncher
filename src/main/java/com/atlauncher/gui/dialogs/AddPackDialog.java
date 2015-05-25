@@ -89,8 +89,8 @@ public class AddPackDialog extends JDialog {
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                        ".packalreadyaddedmessage"), Language.INSTANCE.localize("pack" +
-                                ".packalreadyadded"), JOptionPane.ERROR_MESSAGE);
+                                ".packalreadyaddedmessage"), Language.INSTANCE.localize("pack" + ".packalreadyadded")
+                                , JOptionPane.ERROR_MESSAGE);
                     }
                     setVisible(false);
                     dispose();

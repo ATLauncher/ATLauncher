@@ -107,7 +107,7 @@ public final class Downloadable {
             this.execute();
             return this.response.code();
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             return -1;
         }
     }
@@ -161,7 +161,7 @@ public final class Downloadable {
             try {
                 this.hash = this.getHashFromURL();
             } catch (Exception e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
                 this.hash = "-";
             }
         }
@@ -205,8 +205,7 @@ public final class Downloadable {
     private void execute() throws IOException {
         LogManager.debug("Opening connection to " + this.url, 3);
 
-        Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", App
-                .settings
+        Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", App.settings
                 .getUserAgent()).addHeader("Expires", "0").cacheControl(CACHE_CONTROL);
 
         this.response = (this.installer != null ? Network.PROGRESS_CLIENT : Network.CLIENT).newCall(builder.build())
@@ -222,7 +221,7 @@ public final class Downloadable {
              ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())) {
             fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 

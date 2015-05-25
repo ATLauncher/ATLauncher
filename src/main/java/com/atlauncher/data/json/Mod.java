@@ -354,7 +354,7 @@ public class Mod {
                 try {
                     size = Files.size(fileLocation);
                 } catch (IOException e) {
-                    App.settings.logStackTrace("Error getting file size of " + fileLocation, e);
+                    LogManager.logStackTrace("Error getting file size of " + fileLocation, e);
                 }
 
                 if (size != 0) {
@@ -474,7 +474,7 @@ public class Mod {
                     try {
                         download1.download();
                     } catch (Exception e) {
-                        App.settings.logStackTrace(e);
+                        LogManager.logStackTrace(e);
                     }
                 }
                 break;
@@ -484,7 +484,7 @@ public class Mod {
                     try {
                         download2.download();
                     } catch (Exception e) {
-                        App.settings.logStackTrace(e);
+                        LogManager.logStackTrace(e);
                     }
                 }
                 break;
@@ -611,7 +611,7 @@ public class Mod {
                 try {
                     download.download();
                 } catch (Exception e) {
-                    App.settings.logStackTrace(e);
+                    LogManager.logStackTrace(e);
                 }
             }
         }

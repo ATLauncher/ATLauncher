@@ -17,7 +17,6 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.ModType;
@@ -135,7 +134,7 @@ public class DisableableMod implements Serializable {
                             FileUtils.delete(inputFile);
                             FileUtils.moveFile(outputTmpFile, inputFile);
                         } catch (IOException e) {
-                            App.settings.logStackTrace(e);
+                            LogManager.logStackTrace(e);
                         }
                     }
                 }

@@ -78,4 +78,19 @@ public final class LogManager {
         Object[] value = Utils.prepareMessageForMinecraftLog(message);
         queue.offer(new LogEvent((LogType) value[0], (String) value[1], 10));
     }
+
+    public static void logStackTrace(Exception exception) {
+        exception.printStackTrace();
+
+        LogManager.error(exception.getMessage());
+
+        for (StackTraceElement element : exception.getStackTrace()) {
+            LogManager.error(element.toString());
+        }
+    }
+
+    public static void logStackTrace(String message, Exception exception) {
+        LogManager.error(message);
+        LogManager.logStackTrace(exception);
+    }
 }

@@ -20,6 +20,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.utils.Utils;
 
@@ -293,7 +294,7 @@ public class Pack {
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return "Install Not Added!";
     }
@@ -307,7 +308,7 @@ public class Pack {
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/serverinstalled/", request);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return "Install Not Added!";
     }
@@ -321,7 +322,7 @@ public class Pack {
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/updated/", request);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return "Install Not Added!";
     }

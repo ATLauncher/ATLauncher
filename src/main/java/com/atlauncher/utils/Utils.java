@@ -284,7 +284,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().open(path.toFile());
             } catch (Exception e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
     }
@@ -300,7 +300,7 @@ public class Utils {
                 Desktop.getDesktop().browse(new URI(URL));
             } catch (Exception e) {
                 LogManager.error("Failed to open link " + URL + " in browser!");
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
     }
@@ -316,7 +316,7 @@ public class Utils {
                 Desktop.getDesktop().browse(URL.toURI());
             } catch (Exception e) {
                 LogManager.error("Failed to open link " + URL + " in browser!");
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
     }
@@ -452,15 +452,15 @@ public class Utils {
                 ram = 1024;
             }
         } catch (SecurityException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (NoSuchMethodException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IllegalArgumentException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IllegalAccessException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (InvocationTargetException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return ram;
     }
@@ -554,7 +554,7 @@ public class Utils {
             writer.close();
             reader.close();
         } catch (IOException e1) {
-            App.settings.logStackTrace(e1);
+            LogManager.logStackTrace(e1);
         }
         return result;
     }
@@ -593,11 +593,11 @@ public class Utils {
                 fis.close();
             }
         } catch (NoSuchAlgorithmException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return sb.toString();
     }
@@ -611,7 +611,7 @@ public class Utils {
             byte[] bits = Files.readAllBytes(path);
             return DigestUtils.md5Hex(bits);
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             return "";
         }
     }
@@ -633,7 +633,7 @@ public class Utils {
             fis = new FileInputStream(path.toFile());
             sha1 = DigestUtils.sha1Hex(fis);
         } catch (IOException e) {
-            App.settings.logStackTrace("Error getting SHA-1 of file " + path, e);
+            LogManager.logStackTrace("Error getting SHA-1 of file " + path, e);
         } finally {
             if (fis != null) {
                 try {
@@ -669,9 +669,9 @@ public class Utils {
                 sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
             }
         } catch (NoSuchAlgorithmException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return sb.toString();
     }
@@ -683,7 +683,7 @@ public class Utils {
         try {
             Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
         } catch (IOException e) {
-            App.settings.logStackTrace("Error trying to clean the temp directory", e);
+            LogManager.logStackTrace("Error trying to clean the temp directory", e);
         }
     }
 
@@ -701,7 +701,7 @@ public class Utils {
                 }
             }
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -721,7 +721,7 @@ public class Utils {
             byte[] encVal = c.doFinal(Data.getBytes());
             encryptedValue = Base64.encodeBytes(encVal);
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return encryptedValue;
     }
@@ -749,7 +749,7 @@ public class Utils {
         } catch (IllegalBlockSizeException e) {
             return Utils.decryptOld(encryptedData);
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return decryptedValue;
     }
@@ -950,13 +950,13 @@ public class Utils {
             }
             return found;
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    App.settings.logStackTrace("Unable to close input stream", e);
+                    LogManager.logStackTrace("Unable to close input stream", e);
                 }
             }
         }
@@ -1014,13 +1014,13 @@ public class Utils {
                     }
                 }
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close process input stream reader", e);
+                        LogManager.logStackTrace("Cannot close process input stream reader", e);
                     }
                 }
             }
@@ -1066,15 +1066,15 @@ public class Utils {
                     return version >= 7;
                 }
             } catch (NumberFormatException e) {
-                App.settings.logStackTrace("Cannot get number from the ouput of java -version", e);
+                LogManager.logStackTrace("Cannot get number from the ouput of java -version", e);
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close input stream reader", e);
+                        LogManager.logStackTrace("Cannot close input stream reader", e);
                     }
                 }
             }
@@ -1107,13 +1107,13 @@ public class Utils {
                 String line = br.readLine(); // Read first line only
                 return line.contains("\"1.8");
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close input stream reader", e);
+                        LogManager.logStackTrace("Cannot close input stream reader", e);
                     }
                 }
             }
@@ -1146,13 +1146,13 @@ public class Utils {
                 String line = br.readLine(); // Read first line only
                 return line.contains("\"1.9");
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close input stream reader", e);
+                        LogManager.logStackTrace("Cannot close input stream reader", e);
                     }
                 }
             }
@@ -1201,7 +1201,7 @@ public class Utils {
         try {
             request = new String(Files.readAllBytes(report));
         } catch (IOException e) {
-            App.settings.logStackTrace("OpenEye: Couldn't read contents of file '" + report + "'. Pending  report " +
+            LogManager.logStackTrace("OpenEye: Couldn't read contents of file '" + report + "'. Pending  report " +
                     "sending failed!", e);
             return null;
         }
@@ -1226,7 +1226,7 @@ public class Utils {
             writer.flush();
             writer.close();
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             return null; // Report not sent
         }
 
@@ -1242,7 +1242,7 @@ public class Utils {
                 response.append('\r');
             }
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             return null; // Report sent, but no response
         } finally {
             try {
@@ -1250,7 +1250,7 @@ public class Utils {
                     reader.close();
                 }
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
 
@@ -1283,14 +1283,14 @@ public class Utils {
             }
             contents = sb.toString();
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             try {
                 if (br != null) {
                     br.close();
                 }
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
         return contents;
@@ -1420,7 +1420,7 @@ public class Utils {
             pingStats = response.toString();
 
         } catch (IOException e) {
-            App.settings.logStackTrace("IOException while running ping on host " + host, e);
+            LogManager.logStackTrace("IOException while running ping on host " + host, e);
         }
 
         return pingStats;
@@ -1452,7 +1452,7 @@ public class Utils {
             route = response.toString();
 
         } catch (IOException e) {
-            App.settings.logStackTrace("IOException while running traceRoute on host " + host, e);
+            LogManager.logStackTrace("IOException while running traceRoute on host " + host, e);
         }
 
         return route;
@@ -1563,7 +1563,7 @@ public class Utils {
             }
 
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             try {
                 if (fis != null) {
@@ -1576,7 +1576,7 @@ public class Utils {
                     xzis.close();
                 }
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
     }
@@ -1625,7 +1625,7 @@ public class Utils {
             jos.close();
             jarBytes.close();
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -1667,7 +1667,7 @@ public class Utils {
                 }
             }
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             returnStr = (returnStr == null ? "NotARandomKeyYes" : returnStr);
         }
@@ -1713,7 +1713,7 @@ public class Utils {
             App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
             App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
         } catch (ClassNotFoundException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             return false;
         }
 

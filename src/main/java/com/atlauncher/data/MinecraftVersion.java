@@ -20,6 +20,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.mojang.MojangVersion;
@@ -49,7 +50,7 @@ public class MinecraftVersion {
                 try {
                     download.download();
                 } catch (Exception e) {
-                    App.settings.logStackTrace(e);
+                    LogManager.logStackTrace(e);
                 }
             }
         }
@@ -57,11 +58,11 @@ public class MinecraftVersion {
         try {
             mojangVersion = Gsons.DEFAULT_ALT.fromJson(new FileReader(versionFile.toFile()), MojangVersion.class);
         } catch (JsonSyntaxException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (JsonIOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 

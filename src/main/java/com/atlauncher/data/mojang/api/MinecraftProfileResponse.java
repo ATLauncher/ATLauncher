@@ -17,7 +17,7 @@
  */
 package com.atlauncher.data.mojang.api;
 
-import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class MinecraftProfileResponse {
                 try {
                     return property.parse();
                 } catch (IOException e) {
-                    App.settings.logStackTrace("Error parsing user property " + name + " for username " + name, e);
+                    LogManager.logStackTrace("Error parsing user property " + name + " for username " + name, e);
                 }
             }
         }

@@ -184,10 +184,10 @@ public class LegacyMCLauncher {
             pathh = URLDecoder.decode(pathh, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             pathh = System.getProperty("java.class.path");
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
             pathh = System.getProperty("java.class.path");
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         System.out.println(System.getProperty("java.class.path"));
         arguments.add(pathh + cpb.toString());

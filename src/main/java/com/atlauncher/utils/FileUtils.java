@@ -17,7 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.utils.walker.ClearDirVisitor;
@@ -59,7 +58,8 @@ public class FileUtils {
                     FileUtils.delete(from);
                 }
             } catch (IOException e) {
-                App.settings.logStackTrace("Couldn't delete file " + from + " while renaming to " + to, e);
+                LogManager.logStackTrace("Couldn't delete file " + from + " while renaming to " + to, e);
+                LogManager.logStackTrace("Couldn't delete file " + from + " while renaming to " + to, e);
             }
             return true;
         } else {
@@ -106,14 +106,14 @@ public class FileUtils {
                 from.toFile().renameTo(to.toFile());
             }
         } catch (IOException e) {
-            App.settings.logStackTrace("Failed to copy file " + from + " to " + to, e);
+            LogManager.logStackTrace("Failed to copy file " + from + " to " + to, e);
             return false;
         }
 
         try {
             Files.copy(from, to, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            App.settings.logStackTrace("Failed to copy file " + from + " to " + to, e);
+            LogManager.logStackTrace("Failed to copy file " + from + " to " + to, e);
             return false;
         }
 
@@ -132,7 +132,7 @@ public class FileUtils {
         try {
             Files.walkFileTree(from, new CopyDirVisitor(from, to));
         } catch (IOException e) {
-            App.settings.logStackTrace("Error while trying to copy files from " + from + " to " + to, e);
+            LogManager.logStackTrace("Error while trying to copy files from " + from + " to " + to, e);
             return false;
         }
 
@@ -152,7 +152,7 @@ public class FileUtils {
         try {
             Files.walkFileTree(dir, new DeleteDirVisitor());
         } catch (IOException e) {
-            App.settings.logStackTrace("Error trying to delete the directory " + dir, e);
+            LogManager.logStackTrace("Error trying to delete the directory " + dir, e);
             return false;
         }
 
@@ -188,7 +188,7 @@ public class FileUtils {
         try {
             Files.walkFileTree(path, new DeleteSpecifiedFilesVisitor(files));
         } catch (IOException e) {
-            App.settings.logStackTrace("Error while trying to delete specific files from " + path, e);
+            LogManager.logStackTrace("Error while trying to delete specific files from " + path, e);
             return false;
         }
 
@@ -199,7 +199,7 @@ public class FileUtils {
         try {
             Files.walkFileTree(p, new ClearDirVisitor());
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -224,7 +224,7 @@ public class FileUtils {
             Files.createDirectory(directory);
             return true;
         } catch (IOException e) {
-            App.settings.logStackTrace("Error creating directory " + directory, e);
+            LogManager.logStackTrace("Error creating directory " + directory, e);
         }
 
         return false;
@@ -275,7 +275,7 @@ public class FileUtils {
             }
             zipFile.close();
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             return false;
         }
 
@@ -321,7 +321,7 @@ public class FileUtils {
                 }
             }
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 
