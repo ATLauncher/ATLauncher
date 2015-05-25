@@ -22,12 +22,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.zeroturnaround.zip.ZipInfoCallback;
+import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
 
 public class FileUtilsTest {
     @Rule
@@ -236,5 +239,27 @@ public class FileUtilsTest {
         Assert.assertTrue(Files.exists(testPath));
         Assert.assertFalse(Files.exists(testPath.resolve("Test1.txt")));
         Assert.assertTrue(Files.exists(testPath.resolve("Test2.txt")));
+    }
+
+    @Test
+    public void testZip() {
+        Path testFolder = this.testStorage.resolve("TestZip");
+        Path testFile = testFolder.resolve("Test.txt");
+        Path outputZip = testFolder.resolve("Test.zip");
+
+        try {
+            Files.createDirectory(testFolder);
+            Files.createFile(testFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        FileUtils.zip(testFolder, outputZip);
+
+        Assert.assertTrue(Files.exists(outputZip));
+        Assert.assertTrue(Files.isRegularFile(outputZip));
+
+        Assert.assertTrue(ZipUtil.containsEntry(outputZip.toFile(), "Test.txt"));
     }
 }
