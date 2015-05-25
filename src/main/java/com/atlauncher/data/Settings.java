@@ -548,7 +548,9 @@ public class Settings {
                 if (obj.has("authserver.mojang.com")) {
                     if (obj.get("authserver.mojang.com").getAsString().equalsIgnoreCase("green")) {
                         this.minecraftLoginServerUp = true;
-                    } else if (obj.get("session.minecraft.net").getAsString().equalsIgnoreCase("green")) {
+                    }
+                } else if (obj.has("session.minecraft.net")) {
+                    if (obj.get("session.minecraft.net").getAsString().equalsIgnoreCase("green")) {
                         this.minecraftSessionServerUp = true;
                     }
                 }
