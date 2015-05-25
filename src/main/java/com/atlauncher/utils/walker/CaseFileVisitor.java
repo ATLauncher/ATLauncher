@@ -52,9 +52,10 @@ public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
         if (!Files.isRegularFile(path) || (!path.getFileName().endsWith("jar") && !path.getFileName().endsWith("zip") &&
                 !path.getFileName().endsWith("litemod"))) {
             if (caseType == CaseType.upper) {
-                Path moveTo = path.getParent().resolve(path.getFileName().subpath(0, path.getFileName().toString()
-                        .lastIndexOf(".")));
-                FileUtils.moveFile(path, moveTo);
+                String filename = path.getFileName().toString();
+                filename = filename.substring(0, filename.lastIndexOf(".")).toUpperCase() + filename.substring
+                        (filename.lastIndexOf("."));
+                FileUtils.moveFile(path, path.getParent().resolve(filename), true);
             } else if (caseType == CaseType.lower) {
                 FileUtils.moveFile(path, path.getParent().resolve(path.getFileName().toString().toLowerCase()));
             }
