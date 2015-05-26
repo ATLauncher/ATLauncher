@@ -108,7 +108,7 @@ public class DisableableMod implements Serializable {
             if (FileUtils.moveFile(this.getDisabledFilePath(instance), this.getFilePath(instance), true)) {
                 if (this.type == ModType.JAR) {
                     Path inputFile = instance.getMinecraftJar();
-                    Path outputTmpFile = FileSystem.TMP.resolve(instance.getSafeName() + "-minecraft.JAR");
+                    Path outputTmpFile = FileSystem.TMP.resolve(instance.getSafeName() + "-minecraft.jar");
                     if (Utils.hasMetaInf(inputFile)) {
                         try {
                             JarInputStream input = new JarInputStream(new FileInputStream(inputFile.toFile()));

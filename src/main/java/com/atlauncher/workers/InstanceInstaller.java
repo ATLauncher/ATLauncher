@@ -260,9 +260,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public Path getMinecraftJar() {
         if (isServer) {
             return this.getRootDirectory().resolve("minecraft_server." + this.version.getMinecraftVersion()
-                    .getVersion() + ".JAR");
+                    .getVersion() + ".jar");
         }
-        return this.getBinDirectory().resolve("minecraft.JAR");
+        return this.getBinDirectory().resolve("minecraft.jar");
     }
 
     public String getJarOrder() {
@@ -708,11 +708,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         boolean withFilename = false;
         if (isServer) {
             toCopy = FileSystem.JARS.resolve("minecraft_server." + this.version.getMinecraftVersion().getVersion() +
-                    ".JAR");
+                    ".jar");
             copyTo = this.getRootDirectory();
         } else {
-            toCopy = FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".JAR");
-            copyTo = this.getBinDirectory().resolve("minecraft.JAR");
+            toCopy = FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar");
+            copyTo = this.getBinDirectory().resolve("minecraft.jar");
             withFilename = true;
         }
         if (Files.exists(toCopy)) {
@@ -877,28 +877,28 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         // Add Minecraft.JAR
         if (isServer) {
             libraries.add(new Downloadable(this.getServerURL(), null, FileSystem.JARS.resolve("minecraft_server." +
-                    this.version.getMinecraftVersion().getVersion() + ".JAR"), -1, false, this));
+                    this.version.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
         } else {
             libraries.add(new Downloadable(this.getClientURL(), null, FileSystem.JARS.resolve(this.version
-                    .getMinecraftVersion().getVersion() + ".JAR"), -1, false, this));
+                    .getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
         }
         return libraries;
     }
 
     private String getClientURL() {
         return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version.getMinecraftVersion().getVersion() +
-                "/" + this.version.getMinecraftVersion().getVersion() + ".JAR");
+                "/" + this.version.getMinecraftVersion().getVersion() + ".jar");
     }
 
     private String getServerURL() {
         return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version.getMinecraftVersion().getVersion() +
-                "/minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".JAR");
+                "/minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar");
     }
 
     // TODO: Switch to NIO operations and possibly move to Utils/FileUtils (new class)
     public void deleteMetaInf() {
         Path inputFile = this.getMinecraftJar();
-        Path outputTmpFile = FileSystem.TMP.resolve(pack.getSafeName() + "-minecraft.JAR");
+        Path outputTmpFile = FileSystem.TMP.resolve(pack.getSafeName() + "-minecraft.jar");
         try {
             JarInputStream input = new JarInputStream(new FileInputStream(inputFile.toFile()));
             JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile.toFile()));
@@ -962,7 +962,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else if (forge != null) {
             return forge.getFile();
         } else {
-            return "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".JAR";
+            return "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar";
         }
     }
 
@@ -1241,7 +1241,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         addPercent(5);
         if (this.isServer && this.hasJarMods()) {
-            fireTask(Language.INSTANCE.localize("SERVER.extractingjar"));
+            fireTask(Language.INSTANCE.localize("server.extractingjar"));
             fireSubProgressUnknown();
             FileUtils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
@@ -1268,7 +1268,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             doCaseConversions(getModsDirectory());
         }
         if (isServer && hasJarMods()) {
-            fireTask(Language.INSTANCE.localize("SERVER.zippingjar"));
+            fireTask(Language.INSTANCE.localize("server.zippingjar"));
             fireSubProgressUnknown();
             FileUtils.zip(getTempJarDirectory(), getMinecraftJar());
         }

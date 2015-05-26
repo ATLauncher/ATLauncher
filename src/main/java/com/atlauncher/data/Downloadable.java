@@ -82,9 +82,7 @@ public final class Downloadable {
     public Downloadable(String url, String hash, Path to, Path copyTo, int size, boolean atlauncher, boolean copy,
                         InstanceInstaller installer) {
         this.atlauncher = atlauncher;
-        this.URL = url.replace(".JAR", ".jar")
-                      .replace(".ZIP", ".zip")
-                      .replace(".LITEMOD", ".litemod");
+        this.URL = url;
         this.copy = copy;
         this.copyTo = copyTo;
 
@@ -96,14 +94,9 @@ public final class Downloadable {
                     break;
                 }
             }
-            this.url = this.server.getFileURL(url)
-                                  .replace(".JAR", ".jar")
-                                  .replace(".ZIP", ".zip")
-                                  .replace(".LITEMOD", ".litemod");
+            this.url = this.server.getFileURL(url);
         } else {
-            this.url = url.replace(".JAR", ".jar")
-                    .replace(".ZIP", ".zip")
-                    .replace(".LITEMOD", ".litemod");
+            this.url = url;
         }
 
         this.installer = installer;

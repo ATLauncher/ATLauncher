@@ -61,13 +61,13 @@ public class Library {
         String[] parts = this.name.split(":", 3);
 
         return MojangConstants.LIBRARIES_BASE.getURL(parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2] +
-                "/" + parts[1] + "-" + parts[2] + getClassifier() + ".JAR");
+                "/" + parts[1] + "-" + parts[2] + getClassifier() + ".jar");
     }
 
     public Path getFilePath() {
         String[] parts = this.name.split(":", 3);
 
-        return FileSystem.LIBRARIES.resolve(parts[1] + "-" + parts[2] + getClassifier() + ".JAR");
+        return FileSystem.LIBRARIES.resolve(parts[1] + "-" + parts[2] + getClassifier() + ".jar");
     }
 
     public String getClassifier() {
