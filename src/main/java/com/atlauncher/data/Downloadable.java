@@ -42,11 +42,8 @@ import java.util.concurrent.TimeUnit;
 
 public final class Downloadable {
     public static final int MAX_ATTEMPTS = 3;
-    public static final CacheControl CACHE_CONTROL = new CacheControl.Builder()
-                                                             .noStore()
-                                                             .noCache()
-                                                             .maxAge(0, TimeUnit.MILLISECONDS)
-                                                             .build();
+    public static final CacheControl CACHE_CONTROL = new CacheControl.Builder().noStore().noCache().maxAge(0,
+            TimeUnit.MILLISECONDS).build();
 
     public final String URL;
     public final int size;

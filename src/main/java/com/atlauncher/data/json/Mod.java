@@ -31,7 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Json
-public final class Mod{
+public final class Mod {
     public static final int MAX_ATTEMPTS = 5;
 
     public final String name;
@@ -74,7 +74,13 @@ public final class Mod{
 
     private Color compiledColor;
 
-    public Mod(String name, String version, String url, String md5, String serverMD5, String donation, String website, String description, String file, String serverUrl, String serverFile, String filePrefix, String decompFile, String group, String linked, String filePreference, String color, String fileCheck, String warning, String[] depends, String[] authors, boolean client, boolean optional, boolean server, boolean recommended, boolean hidden, boolean library, boolean filePattern, Boolean serverOptional, int filesize, DownloadType download, DownloadType serverDownload, ModType type, ModType serverType, ExtractToType extractTo, DecompType decompType, boolean selected) {
+    public Mod(String name, String version, String url, String md5, String serverMD5, String donation, String
+            website, String description, String file, String serverUrl, String serverFile, String filePrefix, String
+            decompFile, String group, String linked, String filePreference, String color, String fileCheck, String
+            warning, String[] depends, String[] authors, boolean client, boolean optional, boolean server, boolean
+            recommended, boolean hidden, boolean library, boolean filePattern, Boolean serverOptional, int filesize,
+               DownloadType download, DownloadType serverDownload, ModType type, ModType serverType, ExtractToType
+                       extractTo, DecompType decompType, boolean selected) {
         this.name = name;
         this.version = version;
         this.url = url;
@@ -114,48 +120,45 @@ public final class Mod{
         this.selected = selected;
     }
 
-    public String getUrl(){
-        return this.url.replace("&amp;", "&")
-                .replace(" ", "%20")
-                .replace("[", "%5B")
-                .replace("]", "%5D");
+    public String getUrl() {
+        return this.url.replace("&amp;", "&").replace(" ", "%20").replace("[", "%5B").replace("]", "%5D");
     }
 
-    public boolean isServerOptional(){
+    public boolean isServerOptional() {
         return (this.serverOptional == null ? this.optional : this.serverOptional);
     }
 
-    public boolean hasDescription(){
+    public boolean hasDescription() {
         return this.description != null && !this.description.isEmpty();
     }
 
-    public boolean hasMD5(){
+    public boolean hasMD5() {
         return this.md5 != null && !this.md5.isEmpty();
     }
 
-    public boolean hasWebsite(){
+    public boolean hasWebsite() {
         return this.website != null && !this.website.isEmpty();
     }
 
-    public boolean hasGroup(){
+    public boolean hasGroup() {
         return this.group != null && !this.group.isEmpty();
     }
 
-    public boolean hasWarning(){
+    public boolean hasWarning() {
         return this.warning != null && !this.warning.isEmpty();
     }
 
-    public boolean hasLinked(){
+    public boolean hasLinked() {
         return this.linked != null && !this.linked.isEmpty();
     }
 
-    public boolean hasDepends(){
+    public boolean hasDepends() {
         return this.depends != null && this.depends.length != 0;
     }
 
-    public boolean isDependencyOf(Mod mod){
-        for(String str : this.depends){
-            if(str.equalsIgnoreCase(mod.name)){
+    public boolean isDependencyOf(Mod mod) {
+        for (String str : this.depends) {
+            if (str.equalsIgnoreCase(mod.name)) {
                 return true;
             }
         }
@@ -163,34 +166,34 @@ public final class Mod{
         return false;
     }
 
-    public Path getInstalledFile(InstanceInstaller installer){
+    public Path getInstalledFile(InstanceInstaller installer) {
         String file = (installer.isServer() ? this.serverFile : this.getFile());
         Path base = (installer.isServer() ? this.serverType : this.type).getInstallDirectory(installer, this);
         return base.resolve(file);
     }
 
-    public DisableableMod generateDisableableMod(InstanceInstaller installer, String file){
-        return new DisableableMod(this.name, this.version, this.optional, file, this.type, installer.getJsonVersion().getColour(this.color), this.description, false, false);
+    public DisableableMod generateDisableableMod(InstanceInstaller installer, String file) {
+        return new DisableableMod(this.name, this.version, this.optional, file, this.type, installer.getJsonVersion()
+                .getColour(this.color), this.description, false, false);
     }
 
-    private void downloadClient(InstanceInstaller installer, int attempt)
-    throws Exception{
+    private void downloadClient(InstanceInstaller installer, int attempt) throws Exception {
         Path fileLoc = FileSystem.DOWNLOADS.resolve(this.getFile());
-        if(Files.exists(fileLoc)){
-            if(this.hasMD5()){
-                if(Utils.getMD5(fileLoc).equalsIgnoreCase(this.md5)){
+        if (Files.exists(fileLoc)) {
+            if (this.hasMD5()) {
+                if (Utils.getMD5(fileLoc).equalsIgnoreCase(this.md5)) {
                     return;
-                } else{
+                } else {
                     FileUtils.delete(fileLoc);
                 }
-            } else{
+            } else {
                 long size = 0;
-                try{
+                try {
                     size = Files.size(fileLoc);
-                } catch(Exception e){
+                } catch (Exception e) {
                     LogManager.logStackTrace("Error getting file size of " + fileLoc, e);
                 }
-                if(size != 0){
+                if (size != 0) {
                     return;
                 }
             }
@@ -198,103 +201,101 @@ public final class Mod{
 
         this.download.download(installer, fileLoc, this);
 
-        if(this.hasMD5() && !Utils.getMD5(fileLoc).equalsIgnoreCase(this.md5)){
-            if(attempt < MAX_ATTEMPTS){
+        if (this.hasMD5() && !Utils.getMD5(fileLoc).equalsIgnoreCase(this.md5)) {
+            if (attempt < MAX_ATTEMPTS) {
                 FileUtils.delete(fileLoc);
                 this.downloadClient(installer, attempt + 1);
-            } else{
+            } else {
                 LogManager.error("Cannot download " + fileLoc + ". Aborting install");
                 installer.cancel(true);
             }
         }
     }
 
-    private void downloadServer(InstanceInstaller installer, int attempt)
-    throws Exception{
+    private void downloadServer(InstanceInstaller installer, int attempt) throws Exception {
         Path fileLoc = FileSystem.DOWNLOADS.resolve(this.serverFile);
-        if(Files.exists(fileLoc)){
-            if(this.serverMD5 != null && !this.serverMD5.isEmpty()){
-                if(Utils.getMD5(fileLoc).equalsIgnoreCase(this.serverMD5)){
+        if (Files.exists(fileLoc)) {
+            if (this.serverMD5 != null && !this.serverMD5.isEmpty()) {
+                if (Utils.getMD5(fileLoc).equalsIgnoreCase(this.serverMD5)) {
                     return;
-                } else{
+                } else {
                     FileUtils.delete(fileLoc);
                 }
-            } else{
+            } else {
                 return;
             }
         }
 
-        if(this.serverDownload == DownloadType.BROWSER){
+        if (this.serverDownload == DownloadType.BROWSER) {
             this.serverDownload.download(installer, fileLoc, this);
-        } else{
-            try{
-                Downloadable dl = new Downloadable(this.serverUrl, this.serverMD5, fileLoc, -1, this.serverDownload == DownloadType.SERVER, installer);
-                if(dl.needToDownload()){
+        } else {
+            try {
+                Downloadable dl = new Downloadable(this.serverUrl, this.serverMD5, fileLoc, -1, this.serverDownload
+                        == DownloadType.SERVER, installer);
+                if (dl.needToDownload()) {
                     dl.download();
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 LogManager.logStackTrace(e);
             }
         }
 
-        if(this.serverMD5 != null && !this.serverMD5.isEmpty()){
-            if(attempt < MAX_ATTEMPTS){
+        if (this.serverMD5 != null && !this.serverMD5.isEmpty()) {
+            if (attempt < MAX_ATTEMPTS) {
                 FileUtils.delete(fileLoc);
                 this.downloadServer(installer, attempt + 1);
-            } else{
+            } else {
                 LogManager.error("Cannot download " + fileLoc + ". Aborting install");
                 installer.cancel(true);
             }
         }
     }
 
-    protected Downloadable generateDownloadable(Path to, InstanceInstaller installer, boolean server){
+    protected Downloadable generateDownloadable(Path to, InstanceInstaller installer, boolean server) {
         return new Downloadable(this.getUrl(), this.md5, to, -1, server, installer);
     }
 
-    public void download(InstanceInstaller installer)
-    throws Exception{
-        if(installer.isServer() && this.serverUrl != null){
+    public void download(InstanceInstaller installer) throws Exception {
+        if (installer.isServer() && this.serverUrl != null) {
             this.downloadServer(installer, 1);
-        } else{
+        } else {
             this.downloadClient(installer, 1);
         }
     }
 
-    public void install(InstanceInstaller installer)
-    throws Exception{
+    public void install(InstanceInstaller installer) throws Exception {
         ModType type = this.getType(installer);
-        if(type == null){
+        if (type == null) {
             throw new IllegalStateException("Type == null on mod: " + this.name);
         }
         type.install(installer, this);
     }
 
-    public String getFile(){
-        if(this.filePrefix != null){
+    public String getFile() {
+        if (this.filePrefix != null) {
             return this.filePrefix + this.file;
-        } else{
+        } else {
             return this.file;
         }
     }
 
-    protected Path getFile(InstanceInstaller installer){
-        if(installer.isServer() && this.serverUrl != null){
+    protected Path getFile(InstanceInstaller installer) {
+        if (installer.isServer() && this.serverUrl != null) {
             return FileSystem.DOWNLOADS.resolve(this.serverFile);
-        } else{
+        } else {
             return FileSystem.DOWNLOADS.resolve(this.file);
         }
     }
 
-    protected ModType getType(InstanceInstaller installer){
-        if(installer.isServer() && this.serverUrl != null){
+    protected ModType getType(InstanceInstaller installer) {
+        if (installer.isServer() && this.serverUrl != null) {
             return this.serverType;
-        } else{
+        } else {
             return this.type;
         }
     }
 
-    public String getSafeName(){
+    public String getSafeName() {
         return this.name.replaceAll("[^A-Za-z0-9]", "");
     }
 

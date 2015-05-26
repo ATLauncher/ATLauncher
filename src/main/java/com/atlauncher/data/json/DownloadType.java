@@ -35,40 +35,40 @@ import java.nio.file.Path;
 import java.util.List;
 
 public enum DownloadType {
-    SERVER(){
+    SERVER() {
         @Override
         public void download(InstanceInstaller installer, Path to, Mod mod) {
-            try{
+            try {
                 Downloadable dl = mod.generateDownloadable(to, installer, true);
-                if(dl.needToDownload()){
+                if (dl.needToDownload()) {
                     dl.download();
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 LogManager.logStackTrace(e);
             }
         }
     },
-    BROWSER(){
+    BROWSER() {
         @Override
-        public void download(InstanceInstaller installer, Path to, Mod mod)
-        throws Exception{
-            Path dlFile = (mod.server ? FileSystem.DOWNLOADS : FileSystem.USER_DOWNLOADS).resolve((mod.server ? mod.serverFile : mod.getFile()));
-            if(Files.exists(dlFile)){
+        public void download(InstanceInstaller installer, Path to, Mod mod) throws Exception {
+            Path dlFile = (mod.server ? FileSystem.DOWNLOADS : FileSystem.USER_DOWNLOADS).resolve((mod.server ? mod
+                    .serverFile : mod.getFile()));
+            if (Files.exists(dlFile)) {
                 FileUtils.moveFile(dlFile, to, true);
             }
 
-            if(mod.fileCheck.equalsIgnoreCase("before") && mod.filePattern){
+            if (mod.fileCheck.equalsIgnoreCase("before") && mod.filePattern) {
                 List<String> files = FileUtils.listFiles(FileSystem.getDownloads(), this.getFilter(mod));
-                if(files.size() == 1){
+                if (files.size() == 1) {
                     to = FileSystem.getDownloads().resolve(files.get(0));
-                } else if(files.size() > 1){
-                    for(int i = 0; i < files.size(); i++){
-                        if(mod.filePreference.equalsIgnoreCase("first") && i == 0){
+                } else if (files.size() > 1) {
+                    for (int i = 0; i < files.size(); i++) {
+                        if (mod.filePreference.equalsIgnoreCase("first") && i == 0) {
                             to = FileSystem.getDownloads().resolve(files.get(i));
                             break;
                         }
 
-                        if(mod.filePreference.equalsIgnoreCase("last") && (i + 1) == files.size()){
+                        if (mod.filePreference.equalsIgnoreCase("last") && (i + 1) == files.size()) {
                             to = FileSystem.getDownloads().resolve(files.get(i));
                             break;
                         }
@@ -76,69 +76,64 @@ public enum DownloadType {
                 }
             }
 
-            while(!Files.exists(to)){
+            while (!Files.exists(to)) {
                 int ret = 1;
-                do{
-                    if(ret == 1){
+                do {
+                    if (ret == 1) {
                         Utils.openBrowser(mod.getUrl());
                     }
-                    String[] options = new String[]{
-                        Language.INSTANCE.localize("common.openfolder"),
-                        Language.INSTANCE.localize("instance.ivedownloaded")
-                    };
-                    ret = JOptionPane.showOptionDialog(
-                            App.settings.getParent(),
-                            HTMLUtils.centerParagraph(
-                                Language.INSTANCE.localizeWithReplace(
-                                    "instance.browseropened", (mod.serverFile == null ?
-                                    (mod.filePattern ? mod.name : mod.getFile()) :
-                                    (mod.filePattern ? mod.name : mod.serverFile))
-                                ) + "<br/><br/>" +
-                                Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                (App.settings.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod.filePattern ?
-                                FileSystem.DOWNLOADS : FileSystem.DOWNLOADS + " or<br/>" + FileSystem.USER_DOWNLOADS))
-                            ),
-                            Language.INSTANCE.localize("common.downloading") + " " + (mod.serverFile == null ? (mod.filePattern ? mod.name : mod.getFile()) : (mod.filePattern ? mod.name : mod.serverFile)),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]
-                    );
+                    String[] options = new String[]{Language.INSTANCE.localize("common.openfolder"), Language
+                            .INSTANCE.localize("instance.ivedownloaded")};
+                    ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                            .INSTANCE.localizeWithReplace("instance.browseropened", (mod.serverFile == null ? (mod
+                                    .filePattern ? mod.name : mod.getFile()) : (mod.filePattern ? mod.name : mod
+                                    .serverFile))) + "<br/><br/>" +
+                                            Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                            (App.settings.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod
+                                                    .filePattern ? FileSystem.DOWNLOADS : FileSystem.DOWNLOADS + " " +
+                                                    "or<br/>" + FileSystem.USER_DOWNLOADS))), Language.INSTANCE
+                            .localize("common.downloading") + " " + (mod.serverFile == null ? (mod.filePattern ? mod
+                            .name : mod.getFile()) : (mod.filePattern ? mod.name : mod.serverFile)), JOptionPane
+                            .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
-                    if(ret == JOptionPane.CLOSED_OPTION){
+                    if (ret == JOptionPane.CLOSED_OPTION) {
                         installer.cancel(true);
                         return;
-                    } else if(ret == 0){
+                    } else if (ret == 0) {
                         Utils.openExplorer(FileSystem.USER_DOWNLOADS);
                     }
-                } while(ret != 1);
+                } while (ret != 1);
 
-                if(mod.filePattern){
+                if (mod.filePattern) {
                     List<String> files = FileUtils.listFiles(FileSystem.getDownloads(), this.getFilter(mod));
-                    if(files.size() == 1){
+                    if (files.size() == 1) {
                         to = FileSystem.getDownloads().resolve(files.get(0));
-                    } else if(files.size() > 1){
-                        for(int i = 0; i < files.size(); i++){
-                            if(mod.filePreference.equalsIgnoreCase("first") && i == 0){
+                    } else if (files.size() > 1) {
+                        for (int i = 0; i < files.size(); i++) {
+                            if (mod.filePreference.equalsIgnoreCase("first") && i == 0) {
                                 to = FileSystem.getDownloads().resolve(files.get(i));
                                 break;
                             }
 
-                            if(mod.filePreference.equalsIgnoreCase("last") && (i + 1) == files.size()){
+                            if (mod.filePreference.equalsIgnoreCase("last") && (i + 1) == files.size()) {
                                 to = FileSystem.getDownloads().resolve(files.get(i));
                                 break;
                             }
                         }
                     }
-                } else{
-                    if(!Files.exists(to)){
-                        if(Files.exists(dlFile)){
+                } else {
+                    if (!Files.exists(to)) {
+                        if (Files.exists(dlFile)) {
                             FileUtils.moveFile(dlFile, to, true);
                         }
 
                         Path zip = FileSystem.DOWNLOADS.resolve((mod.server ? mod.serverFile : mod.getFile()) + ".zip");
-                        if(Files.exists(zip)){
+                        if (Files.exists(zip)) {
                             FileUtils.moveFile(zip, to, true);
-                        } else{
-                            zip = FileSystem.USER_DOWNLOADS.resolve((mod.server ? mod.serverFile : mod.getFile()) + ".zip");
-                            if(Files.exists(zip)){
+                        } else {
+                            zip = FileSystem.USER_DOWNLOADS.resolve((mod.server ? mod.serverFile : mod.getFile()) + "" +
+                                    ".zip");
+                            if (Files.exists(zip)) {
                                 FileUtils.moveFile(zip, to, true);
                             }
                         }
@@ -147,30 +142,28 @@ public enum DownloadType {
             }
         }
 
-        private DirectoryStream.Filter<Path> getFilter(final Mod mod){
+        private DirectoryStream.Filter<Path> getFilter(final Mod mod) {
             return new DirectoryStream.Filter<Path>() {
                 @Override
-                public boolean accept(Path path)
-                throws IOException {
+                public boolean accept(Path path) throws IOException {
                     return path.getFileName().toString().matches(mod.name);
                 }
             };
         }
     },
-    DIRECT(){
+    DIRECT() {
         @Override
         public void download(InstanceInstaller installer, Path to, Mod mod) {
-            try{
+            try {
                 Downloadable dl = mod.generateDownloadable(to, installer, false);
-                if(dl.needToDownload()){
+                if (dl.needToDownload()) {
                     dl.download();
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 LogManager.logStackTrace(e);
             }
         }
     };
 
-    public abstract void download(InstanceInstaller installer, Path to, Mod mod)
-    throws Exception;
+    public abstract void download(InstanceInstaller installer, Path to, Mod mod) throws Exception;
 }

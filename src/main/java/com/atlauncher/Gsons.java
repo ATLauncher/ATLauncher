@@ -31,7 +31,8 @@ import java.io.File;
 import java.util.Date;
 
 public final class Gsons {
-    public static final Gson DEFAULT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory()).setPrettyPrinting().create();
+    public static final Gson DEFAULT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
+            .setPrettyPrinting().create();
 
     public static final Gson THEMES = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new
             ColorTypeAdapter()).create();

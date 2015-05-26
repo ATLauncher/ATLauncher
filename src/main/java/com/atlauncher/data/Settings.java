@@ -1589,8 +1589,7 @@ public class Settings {
     }
 
     /**
-<<<<<<< HEAD
-     * Finds if an Account is available
+     * <<<<<<< HEAD Finds if an Account is available
      *
      * @param username The username of the Account
      * @return true if found, false if not
@@ -1605,10 +1604,8 @@ public class Settings {
     }
 
     /**
-     * Gets the URL for a file on the user selected SERVER
-=======
-     * Gets the URL for a file on the user selected server
->>>>>>> cc798dd546680cdd5865380f8b7573e665804780
+     * Gets the URL for a file on the user selected SERVER ======= Gets the URL for a file on the user selected server
+     * >>>>>>> cc798dd546680cdd5865380f8b7573e665804780
      *
      * @param filename Filename including directories on the SERVER
      * @return URL of the file

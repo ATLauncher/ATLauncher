@@ -157,8 +157,7 @@ public class ModsChooser extends JDialog {
                     if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod().optional)) {
                         if (check.getMod().recommended) {
                             if (check.getMod().hasGroup()) {
-                                if (check.getMod().recommended && installer.isOnlyRecommendedInGroup(check.getMod
-                                        ())) {
+                                if (check.getMod().recommended && installer.isOnlyRecommendedInGroup(check.getMod())) {
                                     check.setSelected(true);
                                     check.setEnabled(true);
                                     sortOutMods(check);
@@ -214,7 +213,7 @@ public class ModsChooser extends JDialog {
         for (int i = 0; i < installer.getMods().size(); ) {
             boolean skip = false;
             final Mod mod = installer.getMods().get(i);
-            if (installer.isServer() && !mod.server){
+            if (installer.isServer() && !mod.server) {
                 continue;
             }
             ModsJCheckBox checkBox = null;
@@ -227,7 +226,8 @@ public class ModsChooser extends JDialog {
                     } else {
                         Mod linkedMod = installer.getModByName(mod.linked);
                         if (linkedMod == null) {
-                            LogManager.error("The mod " + mod.name + " tried to reference a linked mod " + mod.linked + " which doesn't exist!");
+                            LogManager.error("The mod " + mod.name + " tried to reference a linked mod " + mod.linked
+                                    + " which doesn't exist!");
                             installer.cancel(true);
                             return;
                         }
@@ -275,7 +275,8 @@ public class ModsChooser extends JDialog {
                     checkBox.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            if (finalCheckBox.isSelected() && installer.getJsonVersion().hasWarningMessage(mod.warning)) {
+                            if (finalCheckBox.isSelected() && installer.getJsonVersion().hasWarningMessage(mod
+                                    .warning)) {
                                 String message = installer.getJsonVersion().getWarningMessage(mod.warning);
 
                                 if (message != null) {

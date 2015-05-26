@@ -51,12 +51,11 @@ public class FileUtils {
         return moveFile(from, to, false);
     }
 
-    public static List<String> listFiles(Path dir)
-    throws Exception{
+    public static List<String> listFiles(Path dir) throws Exception {
         List<String> files = new LinkedList<>();
 
-        try(DirectoryStream<Path> stream = Files.newDirectoryStream(dir)){
-            for(Path p : stream){
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
+            for (Path p : stream) {
                 files.add(p.getFileName().toString());
             }
         }
@@ -64,12 +63,11 @@ public class FileUtils {
         return files;
     }
 
-    public static List<String> listFiles(Path dir, DirectoryStream.Filter<Path> filter)
-    throws Exception{
+    public static List<String> listFiles(Path dir, DirectoryStream.Filter<Path> filter) throws Exception {
         List<String> files = new LinkedList<>();
 
-        try(DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)){
-            for(Path p : stream){
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
+            for (Path p : stream) {
                 files.add(p.getFileName().toString());
             }
         }

@@ -460,8 +460,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : this.selectedMods) {
             if (mod.download == DownloadType.SERVER) {
-                mods.add(new Downloadable(mod.getUrl(), mod.md5, FileSystem.DOWNLOADS.resolve(mod.getFile()),
-                        mod.filesize, true, this));
+                mods.add(new Downloadable(mod.getUrl(), mod.md5, FileSystem.DOWNLOADS.resolve(mod.getFile()), mod
+                        .filesize, true, this));
             }
         }
 
@@ -479,9 +479,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (!isCancelled()) {
                 fireTask(Language.INSTANCE.localize("common.installing") + " " + mod.name);
                 addPercent(this.selectedMods.size() / 40);
-                try{
+                try {
                     mod.install(this);
-                } catch(Exception e){
+                } catch (Exception e) {
                     LogManager.logStackTrace(e);
                 }
             }
@@ -654,10 +654,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.filePattern ? mod.name : mod.getFile()));
-                try{
+                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.filePattern ? mod.name : mod
+                        .getFile()));
+                try {
                     mod.download(this);
-                } catch(Exception e){
+                } catch (Exception e) {
                     LogManager.logStackTrace(e);
                 }
                 fireSubProgress(-1); // Hide the subprogress bar
@@ -977,8 +978,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             if (mod.type == ModType.JAR) {
                 return true;
-            } else if (mod.type == ModType.DECOMP && mod.decompType == com.atlauncher.data.json.DecompType
-                    .jar) {
+            } else if (mod.type == ModType.DECOMP && mod.decompType == com.atlauncher.data.json.DecompType.jar) {
                 return true;
             }
         }

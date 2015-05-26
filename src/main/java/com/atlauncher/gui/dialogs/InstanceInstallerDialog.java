@@ -24,7 +24,6 @@ import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
-import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;

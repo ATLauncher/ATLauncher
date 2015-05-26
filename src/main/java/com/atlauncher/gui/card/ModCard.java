@@ -65,6 +65,7 @@ public final class ModCard extends JPanel {
         g2.setColor(Color.WHITE);
         g2.drawString(this.mod.name, 10, 10);
         g2.setColor(this.mod.optional ? Color.GREEN : Color.RED);
-        g2.drawString(this.mod.optional ? "Optional" : "Required", g2.getFontMetrics().stringWidth(this.mod.name) + g2.getFontMetrics().charWidth('M') * 2, 10);
+        g2.drawString(this.mod.optional ? "Optional" : "Required", g2.getFontMetrics().stringWidth(this.mod.name) +
+                g2.getFontMetrics().charWidth('M') * 2, 10);
     }
 }
