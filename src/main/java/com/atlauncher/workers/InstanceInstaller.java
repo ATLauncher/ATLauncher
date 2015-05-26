@@ -366,9 +366,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         Path virtual = FileSystem.RESOURCES_VIRTUAL.resolve(assetVersion);
         Path indexFile = FileSystem.RESOURCES_INDEXES.resolve(assetVersion + ".json");
 
+        Downloadable dl = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + "" +
+                ".json"), Utils.getMD5(indexFile), indexFile, -1, false, this);
+
         try {
-            new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + ".json"), null,
-                    indexFile, -1, false, this).download();
+            if (dl.needToDownload()) {
+                dl.download();
+            }
+
             AssetIndex index = new JsonFile(indexFile).convert(AssetIndex.class);
             if (!index.isVirtual() && !Files.exists(virtual)) {
                 FileUtils.createDirectory(virtual);
@@ -541,20 +546,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
 
-            if (this.instance != null) {
-                if (this.version.hasDeletes()) {
-                    for (Delete del : this.version.getDeletes().getFiles()) {
-                        Path file = del.getFile(this.instance);
-                        if (del.isValid() && Files.exists(file)) {
-                            FileUtils.delete(file);
-                        }
+            if (this.instance != null && this.version.hasDeletes()) {
+                for (Delete del : this.version.getDeletes().getFiles()) {
+                    Path file = del.getFile(this.instance);
+                    if (del.isValid() && Files.exists(file)) {
+                        FileUtils.delete(file);
                     }
+                }
 
-                    for (Delete del : this.version.getDeletes().getFiles()) {
-                        Path file = del.getFile(this.instance);
-                        if (del.isValid() && Files.exists(file)) {
-                            FileUtils.deleteDirectory(file);
-                        }
+                for (Delete del : this.version.getDeletes().getFiles()) {
+                    Path file = del.getFile(this.instance);
+                    if (del.isValid() && Files.exists(file)) {
+                        FileUtils.deleteDirectory(file);
                     }
                 }
             }
