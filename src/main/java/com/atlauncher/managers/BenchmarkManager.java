@@ -25,15 +25,29 @@ import java.util.Map;
 public class BenchmarkManager {
     public static final Map<String, Long> benchmarks = new HashMap<>();
 
+    public static void start() {
+        BenchmarkManager.start(BenchmarkManager.getCallersName());
+    }
+
     public static void start(String name) {
         benchmarks.put(name, System.currentTimeMillis());
     }
 
-    public static void stop(String name) {
-        LogManager.debug("[" + BenchmarkManager.getCallersName() + "] " + name + " took " + (System.currentTimeMillis
-                () - benchmarks.get(name)) + " ms to run!", 1);
+    public static void stop() {
+        BenchmarkManager.stop(BenchmarkManager.getCallersName(), false);
+    }
 
-        benchmarks.remove(name);
+    public static void stop(String name) {
+        BenchmarkManager.stop(name, false);
+    }
+
+    public static void stop(String name, boolean withName) {
+        if (benchmarks.containsKey(name)) {
+            LogManager.debug("[" + BenchmarkManager.getCallersName() + "] " + (withName ? name + " " : "") + "took " +
+                    (System.currentTimeMillis() - benchmarks.get(name)) + " ms to run!", 1);
+
+            benchmarks.remove(name);
+        }
     }
 
     public static String getCallersName() {

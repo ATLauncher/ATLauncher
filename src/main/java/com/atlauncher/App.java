@@ -165,7 +165,7 @@ public class App {
      * @param args all the arguments passed in from the command line
      */
     public static void main(String[] args) {
-        BenchmarkManager.start("Startup");
+        BenchmarkManager.start();
         // Set English as the default locale. CodeChickenLib(?) has some issues when not using this on some systems.
         Locale.setDefault(Locale.ENGLISH);
 
@@ -356,8 +356,8 @@ public class App {
             }
         }
 
-        BenchmarkManager.stop("Startup");
-        
+        BenchmarkManager.stop();
+
         new LauncherFrame(open); // Open the Launcher
     }
 
