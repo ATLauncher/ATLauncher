@@ -30,11 +30,8 @@ import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
-import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
@@ -42,7 +39,6 @@ import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonArray;
@@ -77,7 +73,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -1128,13 +1123,8 @@ public class Settings {
 
             String lastAccountTemp = properties.getProperty("lastaccount", "");
             if (!lastAccountTemp.isEmpty()) {
-                if (isAccountByName(lastAccountTemp)) {
-                    this.account = getAccountByName(lastAccountTemp);
-                } else {
-                    LogManager.warn("The Account " + lastAccountTemp + " is no longer available. Logging out of " +
-                            "Account!");
-                    this.account = null; // Account not found
-                }
+                // Set the account. If it's null, that's okay, it uses that to signify nobody logged in
+                AccountManager.setActiveAccount(AccountManager.getAccountByName(lastAccountTemp));
             }
 
             String addedPacks = properties.getProperty("addedpacks", null);
@@ -1643,21 +1633,6 @@ public class Settings {
     }
 
     /**
-     * Finds an Account from the given username
-     *
-     * @param username Username of the Account to find
-     * @return Account if the Account is found from the username
-     */
-    public Account getAccountByName(String username) {
-        for (Account account : Data.ACCOUNTS) {
-            if (account.getUsername().equalsIgnoreCase(username)) {
-                return account;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Finds if a language is available
      *
      * @param name The name of the Language
@@ -1676,21 +1651,6 @@ public class Settings {
     public boolean isServerByName(String name) {
         for (Server server : servers) {
             if (server.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Finds if an Account is available
-     *
-     * @param username The username of the Account
-     * @return true if found, false if not
-     */
-    public boolean isAccountByName(String username) {
-        for (Account account : Data.ACCOUNTS) {
-            if (account.getUsername().equalsIgnoreCase(username)) {
                 return true;
             }
         }

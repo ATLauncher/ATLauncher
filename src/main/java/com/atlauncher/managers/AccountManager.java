@@ -48,6 +48,33 @@ public class AccountManager {
         return AccountManager.activeAccount;
     }
 
+    /**
+     * Should only be used to set the account when first starting up. If you need to switch an account, use
+     * switchAccount(Account)
+     *
+     * @param account the account to be active, or null if none
+     */
+    public static void setActiveAccount(Account account) {
+        AccountManager.activeAccount = account;
+    }
+
+
+    /**
+     * Finds an Account from the given username
+     *
+     * @param username Username of the Account to find
+     * @return Account if the Account is found from the username
+     */
+    public static Account getAccountByName(String username) {
+        for (Account account : Data.ACCOUNTS) {
+            if (account.getUsername().equalsIgnoreCase(username)) {
+                return account;
+            }
+        }
+
+        return null;
+    }
+
     public static void loadAccounts() {
         LogManager.debug("Loading Accounts");
 
@@ -110,6 +137,7 @@ public class AccountManager {
                 AccountManager.activeAccount = null;
             }
         }
+
         PackChangeManager.reload();
         InstanceChangeManager.change();
         AccountChangeManager.change();
@@ -147,7 +175,7 @@ public class AccountManager {
 
     public static void setPackVisbility(Pack pack, boolean collapsed) {
         Account account = AccountManager.activeAccount;
-        
+
         if (pack != null && account != null && account.isReal()) {
             if (collapsed) {
                 // Closed It
