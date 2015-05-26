@@ -52,9 +52,9 @@ import java.util.zip.ZipFile;
 public class LegacyMCLauncher {
 
     public static Process launch(Account account, Instance instance, LoginResponse sess) throws IOException {
-        String lwjgl = "lwjgl.JAR";
-        String lwjgl_util = "lwjgl_util.JAR";
-        String jinput = "jinput.JAR";
+        String lwjgl = "lwjgl.jar";
+        String lwjgl_util = "lwjgl_util.jar";
+        String jinput = "jinput.jar";
         File[] files = instance.getBinDirectory().toFile().listFiles();
         for (File file : files) {
             if (file.getName().startsWith("lwjgl-")) {
@@ -65,7 +65,7 @@ public class LegacyMCLauncher {
                 jinput = file.getName();
             }
         }
-        String[] jarFiles = new String[]{"minecraft.JAR", lwjgl, lwjgl_util, jinput};
+        String[] jarFiles = new String[]{"minecraft.jar", lwjgl, lwjgl_util, jinput};
         StringBuilder cpb = new StringBuilder("");
 
         Path jarMods = instance.getJarModsDirectory();
@@ -242,9 +242,9 @@ public class LegacyMCLauncher {
             File lwjglDir = binDir;
 
             System.out.println("Loading jars...");
-            String lwjgl = "lwjgl.JAR";
-            String lwjgl_util = "lwjgl_util.JAR";
-            String jinput = "jinput.JAR";
+            String lwjgl = "lwjgl.jar";
+            String lwjgl_util = "lwjgl_util.jar";
+            String jinput = "jinput.jar";
             File[] files = new File(workingDirectory, "bin").listFiles();
             for (File file : files) {
                 if (file.getName().startsWith("lwjgl-")) {
@@ -260,7 +260,7 @@ public class LegacyMCLauncher {
             URL[] urls = new URL[4];
 
             try {
-                File f = new File(binDir, "minecraft.JAR");
+                File f = new File(binDir, "minecraft.jar");
                 urls[0] = f.toURI().toURL();
                 System.out.println("Loading URL: " + urls[0].toString());
 
@@ -304,7 +304,7 @@ public class LegacyMCLauncher {
                 System.err.println("Can't find main class. Searching...");
 
                 // Look for any class that looks like the main class.
-                File mcJar = new File(new File(cwd, "bin"), "minecraft.JAR");
+                File mcJar = new File(new File(cwd, "bin"), "minecraft.jar");
                 ZipFile zip = null;
                 try {
                     zip = new ZipFile(mcJar);

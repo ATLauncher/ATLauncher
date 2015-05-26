@@ -377,7 +377,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void makeDirectories() {
         if (isReinstall || isServer) {
-            // We're reinstalling or installing a SERVER so delete these folders
+            // We're reinstalling or installing a server so delete these folders
             if (Files.exists(this.getBinDirectory()) && Files.isDirectory(this.getBinDirectory())) {
                 FileUtils.deleteDirectory(this.getBinDirectory());
             }
@@ -401,7 +401,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     FileUtils.deleteDirectory(this.getCoreModsDirectory());
                 }
                 if (isReinstall) {
-                    FileUtils.deleteDirectory(this.getJarModsDirectory()); // Only delete if it's not a SERVER
+                    FileUtils.deleteDirectory(this.getJarModsDirectory()); // Only delete if it's not a server
                 }
             }
             if (isReinstall) {
@@ -414,7 +414,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             } else {
                 if (Files.exists(this.getLibrariesDirectory()) && Files.isDirectory(this.getLibrariesDirectory())) {
-                    FileUtils.deleteDirectory(this.getLibrariesDirectory()); // Only delete if it's a SERVER
+                    FileUtils.deleteDirectory(this.getLibrariesDirectory()); // Only delete if it's a server
                 }
             }
             if (this.instance != null) {
@@ -842,7 +842,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else if (library.getDownloadType() == DownloadType.DIRECT) {
                 libraries.add(new Downloadable(library.getUrl(), library.getMD5(), downloadTo, -1, false, this));
             } else {
-                LogManager.error("DownloadType for SERVER library " + library.getFile() + " is invalid with a " +
+                LogManager.error("DownloadType for server library " + library.getFile() + " is invalid with a " +
                         "value of " + library.getDownloadType());
                 this.cancel(true);
                 return null;
@@ -875,7 +875,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
-        // Add Minecraft.JAR
+        // Add Minecraft.jar
         if (isServer) {
             libraries.add(new Downloadable(this.getServerURL(), null, FileSystem.JARS.resolve("minecraft_server." +
                     this.version.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));

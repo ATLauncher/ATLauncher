@@ -102,7 +102,7 @@ public class FileChooserDialog extends JDialog {
                 fileChooser.setFileFilter(new FileFilter() {
                     @Override
                     public String getDescription() {
-                        return "Mod Files (.JAR; .zip; .litemod)";
+                        return "Mod Files (.jar; .zip; .litemod)";
                     }
 
                     @Override

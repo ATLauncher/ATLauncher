@@ -133,8 +133,8 @@ public class EditModsDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 FileChooserDialog fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
                         .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
-                        .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.JAR",
-                        "CoreMods Mod", "Texture Pack", "Resource Pack", "Shader Pack"}, new String[]{"JAR", "zip",
+                        .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
+                        "CoreMods Mod", "Texture Pack", "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip",
                         "litemod"});
                 ArrayList<File> files = fcd.getChosenFiles();
                 if (files != null && files.size() >= 1) {
@@ -144,7 +144,7 @@ public class EditModsDialog extends JDialog {
                         ModType type = null;
                         if (typeTemp.equalsIgnoreCase("Mods Folder")) {
                             type = ModType.MODS;
-                        } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.JAR")) {
+                        } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
                             type = ModType.JAR;
                         } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
                             type = ModType.COREMODS;

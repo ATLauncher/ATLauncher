@@ -290,7 +290,7 @@ public class Utils {
     }
 
     /**
-     * Open BROWSER.
+     * Open browser.
      *
      * @param URL the url
      */
@@ -299,14 +299,14 @@ public class Utils {
             try {
                 Desktop.getDesktop().browse(new URI(URL));
             } catch (Exception e) {
-                LogManager.error("Failed to open link " + URL + " in BROWSER!");
+                LogManager.error("Failed to open link " + URL + " in browser!");
                 LogManager.logStackTrace(e);
             }
         }
     }
 
     /**
-     * Open BROWSER.
+     * Open browser.
      *
      * @param URL the url
      */
@@ -315,7 +315,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().browse(URL.toURI());
             } catch (Exception e) {
-                LogManager.error("Failed to open link " + URL + " in BROWSER!");
+                LogManager.error("Failed to open link " + URL + " in browser!");
                 LogManager.logStackTrace(e);
             }
         }

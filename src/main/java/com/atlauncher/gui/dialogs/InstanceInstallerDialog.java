@@ -102,7 +102,7 @@ public class InstanceInstallerDialog extends JDialog {
             setTitle(Language.INSTANCE.localize("common.installing") + " " + pack.getName());
             if (isServer) {
                 setTitle(Language.INSTANCE.localize("common.installing") + " " + pack.getName() + " " + Language
-                        .INSTANCE.localize("common.SERVER"));
+                        .INSTANCE.localize("common.server"));
                 this.isServer = true;
             }
         } else {
@@ -272,7 +272,7 @@ public class InstanceInstallerDialog extends JDialog {
                 final JDialog dialog = new JDialog(App.settings.getParent(), ((isReinstall) ? Language.INSTANCE
                         .localize("common.reinstalling") : Language.INSTANCE.localize("common.installing")) + " " +
                         pack.getName() + " " + version.getVersion() + ((isServer) ? " " + Language.INSTANCE.localize
-                        ("common.SERVER") : ""), ModalityType.DOCUMENT_MODAL);
+                        ("common.server") : ""), ModalityType.DOCUMENT_MODAL);
                 dialog.setLocationRelativeTo(App.settings.getParent());
                 dialog.setSize(300, 100);
                 dialog.setResizable(false);

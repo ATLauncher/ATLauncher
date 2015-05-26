@@ -33,22 +33,22 @@ public class MinecraftServer {
     }.getType();
 
     /**
-     * The name of the SERVER given by the user.
+     * The name of the server given by the user.
      */
     private String name;
 
     /**
-     * The host/IP of the SERVER to use when connecting to query it.
+     * The host/IP of the server to use when connecting to query it.
      */
     private String host;
 
     /**
-     * The port to use when connecting to the SERVER to query it.
+     * The port to use when connecting to the server to query it.
      */
     private int port;
 
     /**
-     * The QueryVersion to use when querying the SERVER so we don't have to loop through and try them all everytime.
+     * The QueryVersion to use when querying the server so we don't have to loop through and try them all everytime.
      */
     private QueryVersion queryVersion;
 
@@ -65,9 +65,9 @@ public class MinecraftServer {
     /**
      * Default constructor for creating an instance of this class.
      *
-     * @param name The friendly name of the SERVER shown to the user
-     * @param host The host/IP of the SERVER
-     * @param port The port of the SERVER
+     * @param name The friendly name of the server shown to the user
+     * @param host The host/IP of the server
+     * @param port The port of the server
      * @param queryVersion The version of Minecraft querying we should use
      */
     public MinecraftServer(String name, String host, int port, QueryVersion queryVersion) {
@@ -78,7 +78,7 @@ public class MinecraftServer {
     }
 
     /**
-     * Checks this SERVER to see if it's online or not and if a notification should be displayed to the user.
+     * Checks this server to see if it's online or not and if a notification should be displayed to the user.
      */
     public void checkServer() {
         int playersOnline = MCQuery.getNumberOfPlayers(this.host, this.port, this.queryVersion);
@@ -89,10 +89,10 @@ public class MinecraftServer {
             this.hasRun = true;
         } else {
             if (playersOnline == -1 && this.playersOnline >= 0) {
-                // The SERVER WAS online and now it isn't
+                // The server WAS online and now it isn't
                 App.TOASTER.popError(String.format("Server %s is now offline!", this.name));
             } else if (playersOnline >= 0 && this.playersOnline == -1) {
-                // The SERVER WAS offline and now it isn't
+                // The server WAS offline and now it isn't
                 App.TOASTER.pop(String.format("Server %s is now online with %d players", this.name, this
                         .playersOnline));
             }
@@ -102,9 +102,9 @@ public class MinecraftServer {
     }
 
     /**
-     * Gets the friendly name of this SERVER as specified by the user.
+     * Gets the friendly name of this server as specified by the user.
      *
-     * @return The name of this SERVER
+     * @return The name of this server
      */
     public String getName() {
         return this.name;

@@ -293,8 +293,7 @@ public final class Downloadable {
                     if (this.getNextServer()) {
                         LogManager.warn("Error downloading " + this.to.getFileName() + " from " + this.url + ". " +
                                 "Expected hash of " + expectedHash + " but got " + this.hash + " instead. Trying " +
-                                "another " +
-                                "SERVER!");
+                                "another server!");
                         this.url = this.server.getFileURL(this.URL);
                     } else {
                         FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
@@ -308,10 +307,8 @@ public final class Downloadable {
                 } else {
                     FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected" +
-                            " " +
-                            "hash of " + expectedHash + " but got " + this.hash + " instead. Copied to " +
-                            "FailedDownloads " +
-                            "Folder. Cancelling install!");
+                            " hash of " + expectedHash + " but got " + this.hash + " instead. Copied to " +
+                            "FailedDownloads folder & cancelling install!");
                     if (this.installer != null) {
                         this.installer.cancel(true);
                     }
