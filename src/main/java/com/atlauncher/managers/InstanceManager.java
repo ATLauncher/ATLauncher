@@ -22,7 +22,9 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
+import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.utils.FileUtils;
 
 import java.io.BufferedWriter;
@@ -34,8 +36,31 @@ import java.io.ObjectInputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class InstanceManager {
+    public static List<Instance> getInstances() {
+        return Data.INSTANCES;
+    }
+
+    /**
+     * Get the Instances available in the Launcher sorted alphabetically
+     *
+     * @return The Instances available in the Launcher sorted alphabetically
+     */
+    public static List<Instance> getInstancesSorted() {
+        ArrayList<Instance> instances = new ArrayList<>(Data.INSTANCES);
+        Collections.sort(instances, new Comparator<Instance>() {
+            public int compare(Instance result1, Instance result2) {
+                return result1.getName().compareTo(result2.getName());
+            }
+        });
+        return instances;
+    }
+
     /**
      * Loads the user installed Instances
      */
@@ -149,4 +174,159 @@ public class InstanceManager {
         }
     }
 
+    public static void changeUserLocks() {
+        LogManager.debug("Changing instances user locks to UUID's");
+
+        boolean wereChanges = false;
+
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getInstalledBy() != null) {
+                boolean found = false;
+
+                for (Account account : AccountManager.getAccounts()) {
+                    // This is the user who installed this so switch to their UUID
+                    if (account.getMinecraftUsername().equalsIgnoreCase(instance.getInstalledBy())) {
+                        found = true;
+                        wereChanges = true;
+
+                        instance.removeInstalledBy();
+
+                        // If the accounts UUID is null for whatever reason, don't set the lock
+                        if (!account.isUUIDNull()) {
+                            instance.setUserLock(account.getUUIDNoDashes());
+                        }
+                        break;
+                    }
+                }
+
+                // If there were no accounts with that username, we remove the lock and old installed by
+                if (!found) {
+                    wereChanges = true;
+
+                    instance.removeInstalledBy();
+                    instance.removeUserLock();
+                }
+            }
+        }
+
+        if (wereChanges) {
+            AccountManager.saveAccounts();
+            InstanceManager.saveInstances();
+        }
+
+        LogManager.debug("Finished changing instances user locks to UUID's");
+    }
+
+    public static void addInstance(Instance instance) {
+        Data.INSTANCES.add(instance);
+    }
+
+    public static void setInstanceUnplayable(Instance instance) {
+        instance.setUnplayable();
+        InstanceManager.saveInstances();
+        InstanceChangeManager.change();
+    }
+
+    /**
+     * Removes an instance from the Launcher
+     *
+     * @param instance The Instance to remove from the launcher.
+     */
+    public static void removeInstance(Instance instance) {
+        if (Data.INSTANCES.remove(instance)) {
+            FileUtils.delete(instance.getRootDirectory());
+            InstanceManager.saveInstances();
+            InstanceChangeManager.change();
+        }
+    }
+
+    /**
+     * Checks to see if there is already an instance with the name provided or not
+     *
+     * @param name The name of the instance to check for
+     * @return True if there is an instance with the same name already
+     */
+    public static boolean isInstance(String name) {
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", ""))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if there is an instance by the given name
+     *
+     * @param name name of the Instance to find
+     * @return True if the instance is found from the name
+     */
+    public static boolean isInstanceByName(String name) {
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if there is an instance by the given name
+     *
+     * @param name name of the Instance to find
+     * @return True if the instance is found from the name
+     */
+    public static boolean isInstanceBySafeName(String name) {
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getSafeName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Finds a Instance from the given name
+     *
+     * @param name name of the Instance to find
+     * @return Instance if the instance is found from the name
+     */
+    public static Instance getInstanceByName(String name) {
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getName().equalsIgnoreCase(name)) {
+                return instance;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds a Instance from the given name
+     *
+     * @param name name of the Instance to find
+     * @return Instance if the instance is found from the name
+     */
+    public static Instance getInstanceBySafeName(String name) {
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getSafeName().equalsIgnoreCase(name)) {
+                return instance;
+            }
+        }
+        return null;
+    }
+
+    public static void cloneInstance(Instance instance, String clonedName) {
+        Instance clonedInstance = (Instance) instance.clone();
+        if (clonedInstance == null) {
+            LogManager.error("Error occurred while cloning instance! Instance object couldn't be cloned!");
+        } else {
+            clonedInstance.setName(clonedName);
+
+            FileUtils.createDirectory(clonedInstance.getRootDirectory());
+            FileUtils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
+            Data.INSTANCES.add(clonedInstance);
+            InstanceManager.saveInstances();
+            InstanceChangeManager.change();
+        }
+    }
 }

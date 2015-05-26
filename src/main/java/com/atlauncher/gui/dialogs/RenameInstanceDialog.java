@@ -88,7 +88,7 @@ public class RenameInstanceDialog extends JDialog {
         saveButton = new JButton(Language.INSTANCE.localize("common.save"));
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.isInstance(instanceName.getText())) {
+                if (InstanceManager.isInstance(instanceName.getText())) {
                     JOptionPane.showMessageDialog(RenameInstanceDialog.this, Language.INSTANCE.localizeWithReplace
                             ("instance.alreadyinstance", instanceName.getText()), Language.INSTANCE.localize("common"
                             + ".error"), JOptionPane.ERROR_MESSAGE);

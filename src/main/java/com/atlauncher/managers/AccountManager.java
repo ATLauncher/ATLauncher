@@ -22,9 +22,12 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.manager.AccountChangeManager;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
+import com.atlauncher.utils.MojangAPIUtils;
 
 import java.io.EOFException;
 import java.io.FileInputStream;
@@ -43,6 +46,33 @@ public class AccountManager {
 
     public static Account getActiveAccount() {
         return AccountManager.activeAccount;
+    }
+
+    /**
+     * Should only be used to set the account when first starting up. If you need to switch an account, use
+     * switchAccount(Account)
+     *
+     * @param account the account to be active, or null if none
+     */
+    public static void setActiveAccount(Account account) {
+        AccountManager.activeAccount = account;
+    }
+
+
+    /**
+     * Finds an Account from the given username
+     *
+     * @param username Username of the Account to find
+     * @return Account if the Account is found from the username
+     */
+    public static Account getAccountByName(String username) {
+        for (Account account : Data.ACCOUNTS) {
+            if (account.getUsername().equalsIgnoreCase(username)) {
+                return account;
+            }
+        }
+
+        return null;
     }
 
     public static void loadAccounts() {
@@ -107,9 +137,81 @@ public class AccountManager {
                 AccountManager.activeAccount = null;
             }
         }
+
         PackChangeManager.reload();
         InstanceChangeManager.change();
         AccountChangeManager.change();
         App.settings.saveProperties();
+    }
+
+    public static void checkForNameChanges() {
+        LogManager.info("Checking For Username Changes");
+
+        boolean somethingChanged = false;
+
+        for (Account account : Data.ACCOUNTS) {
+            if (account.checkForUsernameChange()) {
+                somethingChanged = true;
+            }
+        }
+
+        if (somethingChanged) {
+            AccountManager.saveAccounts();
+        }
+
+        LogManager.info("Checking For Username Changes Complete");
+    }
+
+    public static void checkUUIDs() {
+        LogManager.info("Checking account UUID's!");
+        for (Account account : Data.ACCOUNTS) {
+            if (account.isUUIDNull()) {
+                account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
+                AccountManager.saveAccounts();
+            }
+        }
+        LogManager.debug("Finished checking account UUID's");
+    }
+
+    public static void setPackVisbility(Pack pack, boolean collapsed) {
+        Account account = AccountManager.activeAccount;
+
+        if (pack != null && account != null && account.isReal()) {
+            if (collapsed) {
+                // Closed It
+                if (!account.getCollapsedPacks().contains(pack.getName())) {
+                    account.getCollapsedPacks().add(pack.getName());
+                }
+            } else {
+                // Opened It
+                if (account.getCollapsedPacks().contains(pack.getName())) {
+                    account.getCollapsedPacks().remove(pack.getName());
+                }
+            }
+
+            AccountManager.saveAccounts();
+            PackChangeManager.reload();
+        }
+    }
+
+    public static void setInstanceVisbility(Instance instance, boolean collapsed) {
+        Account account = AccountManager.activeAccount;
+
+        if (instance != null && account.isReal()) {
+            if (collapsed) {
+                // Closed It
+                if (!account.getCollapsedInstances().contains(instance.getName())) {
+                    account.getCollapsedInstances().add(instance.getName());
+                }
+            } else {
+                // Opened It
+                if (account.getCollapsedInstances().contains(instance.getName())) {
+                    account.getCollapsedInstances().remove(instance.getName());
+                }
+            }
+
+            AccountManager.saveAccounts();
+            InstanceChangeManager.change();
+        }
     }
 }

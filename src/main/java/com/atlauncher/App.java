@@ -26,6 +26,8 @@ import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.managers.BenchmarkManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -164,6 +166,7 @@ public class App {
      * @param args all the arguments passed in from the command line
      */
     public static void main(String[] args) {
+        BenchmarkManager.start();
         // Set English as the default locale. CodeChickenLib(?) has some issues when not using this on some systems.
         Locale.setDefault(Locale.ENGLISH);
 
@@ -327,8 +330,8 @@ public class App {
 
         boolean open = true;
 
-        if (autoLaunch != null && settings.isInstanceBySafeName(autoLaunch)) {
-            Instance instance = settings.getInstanceBySafeName(autoLaunch);
+        if (autoLaunch != null && InstanceManager.isInstanceBySafeName(autoLaunch)) {
+            Instance instance = InstanceManager.getInstanceBySafeName(autoLaunch);
             LogManager.info("Opening Instance " + instance.getName());
             if (instance.launch()) {
                 open = false;
@@ -353,6 +356,8 @@ public class App {
                 LogManager.error("Error automatically adding semi public pack with code of " + packCodeToAdd + "!");
             }
         }
+
+        BenchmarkManager.stop();
 
         new LauncherFrame(open); // Open the Launcher
     }

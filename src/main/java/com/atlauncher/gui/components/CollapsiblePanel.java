@@ -258,18 +258,18 @@ public class CollapsiblePanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             setCollapsed(!isCollapsed());
             if (pack != null) {
-                App.settings.setPackVisbility(pack, isCollapsed());
+                AccountManager.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
-                App.settings.setInstanceVisbility(instance, isCollapsed());
+                AccountManager.setInstanceVisbility(instance, isCollapsed());
             }
         }
 
         public void itemStateChanged(ItemEvent e) {
             setCollapsed(!isCollapsed());
             if (pack != null) {
-                App.settings.setPackVisbility(pack, isCollapsed());
+                AccountManager.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
-                App.settings.setInstanceVisbility(instance, isCollapsed());
+                AccountManager.setInstanceVisbility(instance, isCollapsed());
             }
         }
     }

@@ -31,6 +31,8 @@ public final class Network {
     public static final OkHttpClient PROGRESS_CLIENT = new OkHttpClient();
 
     public static void setupProgressClient(final InstanceInstaller installer) {
+        Network.PROGRESS_CLIENT.networkInterceptors().clear();
+
         final ProgressListener progressListener = new ProgressListener() {
             public void update(long bytesRead, long contentLength, boolean done) {
                 if (bytesRead > 0 && installer != null) {

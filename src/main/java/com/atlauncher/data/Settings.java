@@ -30,11 +30,8 @@ import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
-import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
@@ -45,6 +42,7 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.walker.ClearDirVisitor;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -57,7 +55,6 @@ import javax.swing.JOptionPane;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -77,7 +74,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -139,7 +135,6 @@ public class Settings {
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
-    private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -219,13 +214,11 @@ public class Settings {
 
         clearAllLogs(); // Clear all the old logs out
 
-        checkResources(); // Check for new format of resources
+        AccountManager.checkUUIDs(); // Check for accounts UUID's and add them if necessary
 
-        checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
+        InstanceManager.changeUserLocks(); // Changes any instances user locks to UUIDs if available
 
-        changeInstanceUserLocks(); // Changes any instances user locks to UUIDs if available
-
-        checkAccountsForNameChanges(); // Check account for username changes
+        AccountManager.checkForNameChanges(); // Check account for username changes
 
         LogManager.debug("Checking for access to master SERVER");
         OUTER:
@@ -297,24 +290,6 @@ public class Settings {
         }
     }
 
-    private void checkAccountsForNameChanges() {
-        LogManager.info("Checking For Username Changes");
-
-        boolean somethingChanged = false;
-
-        for (Account account : Data.ACCOUNTS) {
-            if (account.checkForUsernameChange()) {
-                somethingChanged = true;
-            }
-        }
-
-        if (somethingChanged) {
-            AccountManager.saveAccounts();
-        }
-
-        LogManager.info("Checking For Username Changes Complete");
-    }
-
     public void checkForValidJavaPath(boolean save) {
         File java = new File(App.settings.getJavaPath(), "bin" + File.separator + "java" +
                 (Utils.isWindows() ? ".exe" : ""));
@@ -351,13 +326,13 @@ public class Settings {
 
     public void checkAccounts() {
         boolean matches = false;
-        if (Data.ACCOUNTS != null || Data.ACCOUNTS.size() >= 1) {
-            for (Account account : Data.ACCOUNTS) {
-                if (account.isRemembered()) {
-                    matches = true;
-                }
+
+        for (Account account : AccountManager.getAccounts()) {
+            if (account.isRemembered()) {
+                matches = true;
             }
         }
+
         if (matches) {
             String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
                     ".removepasswords")};
@@ -365,15 +340,18 @@ public class Settings {
                     .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
                     ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
+
             if (ret == 1) {
-                for (Account account : Data.ACCOUNTS) {
+                for (Account account : AccountManager.getAccounts()) {
                     if (account.isRemembered()) {
                         account.setRemember(false);
                     }
                 }
+
                 AccountManager.saveAccounts();
             }
         }
+
         this.saveProperties();
     }
 
@@ -386,7 +364,7 @@ public class Settings {
 
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LOGS, this.logFilter())) {
                 for (Path file : stream) {
-                    if (file.getFileName().equals(LoggingThread.filename)) {
+                    if (file.getFileName().toString().equals(LoggingThread.filename)) {
                         continue;
                     }
 
@@ -655,7 +633,7 @@ public class Settings {
             this.offlineMode = true;
             return null;
         }
-        ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
+        ArrayList<Downloadable> downloads = new ArrayList<>();
         for (DownloadableFile file : this.launcherFiles) {
             if (file.isLauncher()) {
                 continue;
@@ -708,17 +686,20 @@ public class Settings {
             return false;
         }
         LogManager.info("Checking for updated files!");
-        ArrayList<Downloadable> downloads = getLauncherFiles();
+        List<Downloadable> downloads = getLauncherFiles();
+
         if (downloads == null) {
             this.offlineMode = true;
             return false;
         }
+
         for (Downloadable download : downloads) {
             if (download.needToDownload()) {
                 LogManager.info("Updates found!");
                 return true; // 1 file needs to be updated so there is updated files
             }
         }
+
         LogManager.info("No updates found!");
         return false; // No updates
     }
@@ -731,8 +712,8 @@ public class Settings {
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
-        App.TASKPOOL.execute(new Runnable() {
 
+        App.TASKPOOL.execute(new Runnable() {
             @Override
             public void run() {
                 if (hasUpdatedFiles()) {
@@ -754,6 +735,7 @@ public class Settings {
 
     private void checkForLauncherUpdate() {
         LogManager.debug("Checking for launcher update");
+
         if (launcherHasUpdate()) {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
@@ -771,6 +753,7 @@ public class Settings {
         } else if (Constants.VERSION.isBeta() && launcherHasBetaUpdate()) {
             downloadBetaUpdate();
         }
+
         LogManager.debug("Finished checking for launcher update");
     }
 
@@ -781,20 +764,21 @@ public class Settings {
     private void downloadExternalLibraries() {
         LogManager.debug("Downloading external libraries");
         List<LauncherLibrary> libraries;
+
         try {
             byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("libraries.json"));
             java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
             }.getType();
 
-            this.launcherLibraries = Gsons.DEFAULT.fromJson(new String(bits), type);
+            libraries = Gsons.DEFAULT.fromJson(new String(bits), type);
         } catch (Exception e) {
             LogManager.logStackTrace(e);
-            this.launcherLibraries = new LinkedList<>();
+            libraries = new LinkedList<>();
         }
 
         ExecutorService executor = Utils.generateDownloadExecutor();
 
-        for (final LauncherLibrary library : this.launcherLibraries) {
+        for (final LauncherLibrary library : libraries) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -815,7 +799,7 @@ public class Settings {
         while (!executor.isTerminated()) {
         }
 
-        for (LauncherLibrary library : this.launcherLibraries) {
+        for (LauncherLibrary library : libraries) {
             Path path = library.getFilePath();
 
             if (library.shouldAutoLoad() && !Utils.addToClasspath(path)) {
@@ -855,7 +839,11 @@ public class Settings {
      * Deletes all files in the Temp directory
      */
     public void clearTempDir() {
-        FileUtils.deleteContents(FileSystem.TMP);
+        try {
+            Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error clearing temp directory at " + FileSystem.TMP, e);
+        }
     }
 
     /**
@@ -979,14 +967,15 @@ public class Settings {
 
     public void configureProxy() {
         Network.CLIENT.setProxy(this.getProxy());
+        Network.PROGRESS_CLIENT.setProxy(this.getProxy());
     }
 
     public boolean enabledPackTags() {
         return this.enablePackTags;
     }
 
-    public void setPackTags(boolean b) {
-        this.enablePackTags = b;
+    public void setPackTags(boolean enablePackTags) {
+        this.enablePackTags = enablePackTags;
     }
 
     /**
@@ -1171,13 +1160,8 @@ public class Settings {
 
             String lastAccountTemp = properties.getProperty("lastaccount", "");
             if (!lastAccountTemp.isEmpty()) {
-                if (isAccountByName(lastAccountTemp)) {
-                    this.account = getAccountByName(lastAccountTemp);
-                } else {
-                    LogManager.warn("The Account " + lastAccountTemp + " is no longer available. Logging out of " +
-                            "Account!");
-                    this.account = null; // Account not found
-                }
+                // Set the account. If it's null, that's okay, it uses that to signify nobody logged in
+                AccountManager.setActiveAccount(AccountManager.getAccountByName(lastAccountTemp));
             }
 
             String addedPacks = properties.getProperty("addedpacks", null);
@@ -1241,11 +1225,13 @@ public class Settings {
             properties.setProperty("daysoflogstokeep", this.daysOfLogsToKeep + "");
             properties.setProperty("theme", this.theme);
             properties.setProperty("dateformat", this.dateFormat);
-            if (account != null) {
-                properties.setProperty("lastaccount", account.getUsername());
+
+            if (AccountManager.getActiveAccount() != null) {
+                properties.setProperty("lastaccount", AccountManager.getActiveAccount().getUsername());
             } else {
                 properties.setProperty("lastaccount", "");
             }
+
             properties.setProperty("addedpacks", PackManager.getSemiPublicPackCodesForProperties());
             properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
@@ -1290,7 +1276,7 @@ public class Settings {
             this.servers = dl.fromJson(type);
         } catch (Exception e) {
             String res = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", dl.toString());
-            LogManager.logStackTrace("Exception when reading in the servers see @ " + res, e);
+            LogManager.logStackTrace("Exception when reading in the servers see " + res, e);
             this.servers = new ArrayList<>(Arrays.asList(Constants.SERVERS));
         }
     }
@@ -1331,6 +1317,7 @@ public class Settings {
      */
     private void loadNews() {
         LogManager.debug("Loading news");
+
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
@@ -1340,6 +1327,7 @@ public class Settings {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
+
         LogManager.debug("Finished loading news");
     }
 
@@ -1384,7 +1372,9 @@ public class Settings {
      */
     private void loadUsers() {
         LogManager.debug("Loading users");
+
         Downloadable download = new Downloadable("launcher/json/users.json", true);
+
         try {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
@@ -1401,6 +1391,7 @@ public class Settings {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
+
         LogManager.debug("Finished loading users");
     }
 
@@ -1409,6 +1400,7 @@ public class Settings {
      */
     private void loadCheckingServers() {
         LogManager.debug("Loading servers to check");
+
         try {
             if (Files.exists(FileSystemData.CHECKING_SERVERS)) {
                 byte[] bits = Files.readAllBytes(FileSystemData.CHECKING_SERVERS);
@@ -1418,6 +1410,7 @@ public class Settings {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
+
         LogManager.debug("Finished loading servers to check");
     }
 
@@ -1457,24 +1450,6 @@ public class Settings {
         App.TRAY_MENU.setMinecraftLaunched(launched);
     }
 
-    public void setPackVisbility(Pack pack, boolean collapsed) {
-        if (pack != null && account != null && account.isReal()) {
-            if (collapsed) {
-                // Closed It
-                if (!account.getCollapsedPacks().contains(pack.getName())) {
-                    account.getCollapsedPacks().add(pack.getName());
-                }
-            } else {
-                // Opened It
-                if (account.getCollapsedPacks().contains(pack.getName())) {
-                    account.getCollapsedPacks().remove(pack.getName());
-                }
-            }
-            AccountManager.saveAccounts();
-            PackChangeManager.reload();
-        }
-    }
-
     public boolean isUsingMacApp() {
         return Utils.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
     }
@@ -1482,67 +1457,6 @@ public class Settings {
     public boolean isUsingNewMacApp() {
         return Files.exists(FileSystem.BASE_DIR.getParent().getParent().resolve("MacOS").resolve
                 ("universalJavaApplicationStub"));
-    }
-
-    public void setInstanceVisbility(Instance instance, boolean collapsed) {
-        if (instance != null && account.isReal()) {
-            if (collapsed) {
-                // Closed It
-                if (!account.getCollapsedInstances().contains(instance.getName())) {
-                    account.getCollapsedInstances().add(instance.getName());
-                }
-            } else {
-                // Opened It
-                if (account.getCollapsedInstances().contains(instance.getName())) {
-                    account.getCollapsedInstances().remove(instance.getName());
-                }
-            }
-            AccountManager.saveAccounts();
-            InstanceChangeManager.change();
-        }
-    }
-
-    /**
-     * Get the Instances available in the Launcher
-     *
-     * @return The Instances available in the Launcher
-     */
-    public List<Instance> getInstances() {
-        return Data.INSTANCES;
-    }
-
-    /**
-     * Get the Instances available in the Launcher sorted alphabetically
-     *
-     * @return The Instances available in the Launcher sorted alphabetically
-     */
-    public ArrayList<Instance> getInstancesSorted() {
-        ArrayList<Instance> instances = new ArrayList<Instance>(Data.INSTANCES);
-        Collections.sort(instances, new Comparator<Instance>() {
-            public int compare(Instance result1, Instance result2) {
-                return result1.getName().compareTo(result2.getName());
-            }
-        });
-        return instances;
-    }
-
-    public void setInstanceUnplayable(Instance instance) {
-        instance.setUnplayable();
-        InstanceManager.saveInstances();
-        InstanceChangeManager.change();
-    }
-
-    /**
-     * Removes an instance from the Launcher
-     *
-     * @param instance The Instance to remove from the launcher.
-     */
-    public void removeInstance(Instance instance) {
-        if (Data.INSTANCES.remove(instance)) {
-            FileUtils.delete(instance.getRootDirectory());
-            InstanceManager.saveInstances();
-            InstanceChangeManager.change();
-        }
     }
 
     public MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
@@ -1615,20 +1529,6 @@ public class Settings {
     }
 
     /**
-     * Sets the launcher to offline mode
-     */
-    public void setOfflineMode() {
-        this.offlineMode = true;
-    }
-
-    /**
-     * Sets the launcher to online mode
-     */
-    public void setOnlineMode() {
-        this.offlineMode = false;
-    }
-
-    /**
      * Returns the JFrame reference of the main Launcher
      *
      * @return Main JFrame of the Launcher
@@ -1654,81 +1554,6 @@ public class Settings {
     }
 
     /**
-     * Checks to see if there is already an instance with the name provided or not
-     *
-     * @param name The name of the instance to check for
-     * @return True if there is an instance with the same name already
-     */
-    public boolean isInstance(String name) {
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", ""))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if there is an instance by the given name
-     *
-     * @param name name of the Instance to find
-     * @return True if the instance is found from the name
-     */
-    public boolean isInstanceByName(String name) {
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if there is an instance by the given name
-     *
-     * @param name name of the Instance to find
-     * @return True if the instance is found from the name
-     */
-    public boolean isInstanceBySafeName(String name) {
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getSafeName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Finds a Instance from the given name
-     *
-     * @param name name of the Instance to find
-     * @return Instance if the instance is found from the name
-     */
-    public Instance getInstanceByName(String name) {
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getName().equalsIgnoreCase(name)) {
-                return instance;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Finds a Instance from the given name
-     *
-     * @param name name of the Instance to find
-     * @return Instance if the instance is found from the name
-     */
-    public Instance getInstanceBySafeName(String name) {
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getSafeName().equalsIgnoreCase(name)) {
-                return instance;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Finds a Server from the given name
      *
      * @param name Name of the Server to find
@@ -1738,21 +1563,6 @@ public class Settings {
         for (Server server : servers) {
             if (server.getName().equalsIgnoreCase(name)) {
                 return server;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Finds an Account from the given username
-     *
-     * @param username Username of the Account to find
-     * @return Account if the Account is found from the username
-     */
-    public Account getAccountByName(String username) {
-        for (Account account : Data.ACCOUNTS) {
-            if (account.getUsername().equalsIgnoreCase(username)) {
-                return account;
             }
         }
         return null;
@@ -1784,6 +1594,7 @@ public class Settings {
     }
 
     /**
+<<<<<<< HEAD
      * Finds if an Account is available
      *
      * @param username The username of the Account
@@ -1800,6 +1611,9 @@ public class Settings {
 
     /**
      * Gets the URL for a file on the user selected SERVER
+=======
+     * Gets the URL for a file on the user selected server
+>>>>>>> cc798dd546680cdd5865380f8b7573e665804780
      *
      * @param filename Filename including directories on the SERVER
      * @return URL of the file
@@ -1843,10 +1657,6 @@ public class Settings {
 
     public void clearConsole() {
         this.console.clearConsole();
-    }
-
-    public void addConsoleListener(WindowAdapter wa) {
-        this.console.addWindowListener(wa);
     }
 
     public String getLog() {
@@ -2323,30 +2133,5 @@ public class Settings {
             e.printStackTrace();
         }
         System.exit(0);
-    }
-
-    public void cloneInstance(Instance instance, String clonedName) {
-        Instance clonedInstance = (Instance) instance.clone();
-        if (clonedInstance == null) {
-            LogManager.error("Error occurred while cloning instance! Instance object couldn't be cloned!");
-        } else {
-            clonedInstance.setName(clonedName);
-
-            FileUtils.createDirectory(clonedInstance.getRootDirectory());
-            FileUtils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
-            Data.INSTANCES.add(clonedInstance);
-            InstanceManager.saveInstances();
-            InstanceChangeManager.change();
-        }
-    }
-
-    public String getPackInstallableCount() {
-        int count = 0;
-        for (Pack pack : PackManager.getPacks()) {
-            if (pack.canInstall()) {
-                count++;
-            }
-        }
-        return count + "";
     }
 }
