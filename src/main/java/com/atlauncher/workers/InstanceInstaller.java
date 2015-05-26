@@ -931,10 +931,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public void configurePack() {
         // Download the configs zip file
         fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
-        Path configs = FileSystem.TMP.resolve("Configs.zip");
+        Path configs = this.getTempDirectory().resolve("Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
         Downloadable configsDownload = new Downloadable(path, null, configs, -1, true, this);
-        this.downloadedBytes = 0;
+
+        this.resetDownloadedBytes(0);
+
         try {
             configsDownload.download(); // Download the file
         } catch (IOException e) {
