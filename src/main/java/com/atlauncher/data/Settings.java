@@ -25,6 +25,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.Update;
+import com.atlauncher.collection.DownloadPool;
 import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
@@ -81,7 +82,6 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user.
@@ -184,11 +184,9 @@ public class Settings {
         setupServers(); // Setup the servers available to use in the Launcher
         findActiveServers(); // Find active servers
         loadServerProperty(false); // Get users Server preference
-        if (hasUpdatedFiles()) {
-            downloadUpdatedFiles(); // Downloads updated files on the
-            // serverserverserverserverserverserverserverserverserverserverserverserver
+        if(this.hasUpdatedFiles()){
+            this.downloadUpdatedFiles();
         }
-
         checkForLauncherUpdate();
 
         downloadExternalLibraries();
@@ -322,14 +320,16 @@ public class Settings {
 
         if (this.enableServerChecker) {
             this.checkingServersTimer = new Timer();
-            this.checkingServersTimer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    for (MinecraftServer server : checkingServers) {
-                        server.checkServer();
-                    }
-                }
-            }, 0, this.getServerCheckerWaitInMilliseconds());
+            this.checkingServersTimer.scheduleAtFixedRate(
+                                                                 new TimerTask() {
+                                                                     @Override
+                                                                     public void run() {
+                                                                         for (MinecraftServer server : checkingServers) {
+                                                                             server.checkServer();
+                                                                         }
+                                                                     }
+                                                                 }, 0, this.getServerCheckerWaitInMilliseconds()
+            );
         }
     }
 
@@ -617,64 +617,48 @@ public class Settings {
         System.exit(0);
     }
 
-    private void getFileHashes() {
-        this.launcherFiles = null;
-        Downloadable download = new Downloadable("launcher/json/hashes.json", true);
-        java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {
-        }.getType();
-
-        try {
-            this.launcherFiles = download.fromJson(type);
-        } catch (Exception e) {
-            String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", download.toString());
-            LogManager.logStackTrace("Error loading in file hashes! See error details at " + result, e);
+    public boolean hasUpdatedFiles(){
+        DownloadPool pool = this.getLauncherFiles();
+        if(pool != null){
+            return pool.any();
+        } else{
+            return false;
         }
     }
 
-    /**
-     * This checks the servers hashes.json file and gets the files that the Launcher needs to have
-     */
-    private ArrayList<Downloadable> getLauncherFiles() {
-        getFileHashes(); // Get File Hashes
-        if (this.launcherFiles == null) {
-            this.offlineMode = true;
+    private DownloadPool getLauncherFiles(){
+        Downloadable dl = new Downloadable("launcher/json/hashes.json", true);
+        try{
+            List<DownloadableFile> files = dl.fromJson(new TypeToken<List<DownloadableFile>>(){}.getType());
+            if(files == null){
+                this.offlineMode = true;
+                return null;
+            }
+
+            DownloadPool pool = new DownloadPool();
+            for(DownloadableFile df : files){
+                if(df.isLauncher()){
+                    continue;
+                }
+
+                pool.add(df.getDownloadable());
+            }
+
+            return pool;
+        } catch(Exception e){
+            String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", dl.toString());
+            LogManager.logStackTrace("Error loading in file hashes, see error details @ " + result, e);
             return null;
         }
-        ArrayList<Downloadable> downloads = new ArrayList<>();
-        for (DownloadableFile file : this.launcherFiles) {
-            if (file.isLauncher()) {
-                continue;
-            }
-            downloads.add(file.getDownloadable());
-        }
-        return downloads;
     }
 
-    public void downloadUpdatedFiles() {
-        ArrayList<Downloadable> downloads = getLauncherFiles();
-        if (downloads != null) {
-            ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
-            for (final Downloadable download : downloads) {
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (download.needToDownload()) {
-                            LogManager.info("Downloading Launcher File " + download.to.getFileName().toString());
-                            try {
-                                download.download();
-                            } catch (IOException e) {
-                                e.printStackTrace(System.err);
-                            }
-                        }
-                    }
-                });
-            }
-            executor.shutdown();
-            while (!executor.isTerminated()) {
-            }
+    private void downloadUpdatedFiles(){
+        LogManager.info("Downloading launcher files");
+        DownloadPool pool = this.getLauncherFiles();
+        if(pool != null){
+            pool.downloadAll();
         }
-
-        LogManager.info("Finished downloading updated files!");
+        LogManager.info("Finished downloading launcher files");
 
         if (Language.INSTANCE.getCurrent() != null) {
             try {
@@ -683,32 +667,6 @@ public class Settings {
                 LogManager.logStackTrace("Couldn't reload language " + Language.INSTANCE.getCurrent(), e);
             }
         }
-    }
-
-    /**
-     * This checks the servers hashes.json file and looks for new/updated files that differ from what the user has
-     */
-    public boolean hasUpdatedFiles() {
-        if (isInOfflineMode()) {
-            return false;
-        }
-        LogManager.info("Checking for updated files!");
-        List<Downloadable> downloads = getLauncherFiles();
-
-        if (downloads == null) {
-            this.offlineMode = true;
-            return false;
-        }
-
-        for (Downloadable download : downloads) {
-            if (download.needToDownload()) {
-                LogManager.info("Updates found!");
-                return true; // 1 file needs to be updated so there is updated files
-            }
-        }
-
-        LogManager.info("No updates found!");
-        return false; // No updates
     }
 
     public void reloadLauncherData() {
@@ -723,8 +681,8 @@ public class Settings {
         App.TASKPOOL.execute(new Runnable() {
             @Override
             public void run() {
-                if (hasUpdatedFiles()) {
-                    downloadUpdatedFiles(); // Downloads updated files on the server
+                if(hasUpdatedFiles()){
+                    downloadUpdatedFiles();
                 }
                 checkForLauncherUpdate();
                 loadNews(); // Load the news
@@ -768,56 +726,42 @@ public class Settings {
      * Downloads and loads all external libraries used by the launcher as specified in the Configs/JSON/libraries.json
      * file.
      */
-    private void downloadExternalLibraries() {
+    private void downloadExternalLibraries(){
         LogManager.debug("Downloading external libraries");
-        List<LauncherLibrary> libraries;
-
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
-            }.getType();
-
-            libraries = JsonFile.of("libraries.json", type);
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-            libraries = new LinkedList<>();
-        }
-
-        ExecutorService executor = Utils.generateDownloadExecutor();
-
-        for (final LauncherLibrary library : libraries) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    Downloadable download = library.getDownloadable();
-
-                    if (download.needToDownload()) {
-                        LogManager.info("Downloading library " + library.getFilename() + "!");
-                        try {
-                            download.download();
-                        } catch (IOException e) {
-                            LogManager.logStackTrace(e);
-                        }
-                    }
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
-
-        for (LauncherLibrary library : libraries) {
-            Path path = library.getFilePath();
-
-            if (library.shouldAutoLoad() && !Utils.addToClasspath(path)) {
-                LogManager.error("Couldn't add " + path + " to the classpath!");
-                if (library.shouldExitOnFail()) {
-                    LogManager.error("Library is necessary so launcher will exit!");
-                    System.exit(1);
-                }
+        try{
+            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>(){}.getType();
+            List<LauncherLibrary> libraries = JsonFile.of("libraries.json", type);
+            ExecutorService executor = Utils.generateDownloadExecutor();
+            for(final LauncherLibrary lib : libraries){
+                executor.execute(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try{
+                                                    Downloadable dl = lib.getDownloadable();
+                                                    if(dl.needToDownload()){
+                                                        dl.download();
+                                                    }
+                                                    Path path = lib.getFilePath();
+                                                    if (lib.shouldAutoLoad() && !Utils.addToClasspath(path)) {
+                                                        LogManager.error("Couldn't add " + path + " to the classpath!");
+                                                        if (lib.shouldExitOnFail()) {
+                                                            LogManager.error("Library is necessary so launcher will exit!");
+                                                            System.exit(1);
+                                                        }
+                                                    }
+                                                } catch(Exception e){
+                                                    LogManager.logStackTrace("Error downloading library " + lib.getName(), e);
+                                                }
+                                            }
+                                        }
+                );
             }
+            executor.shutdown();
+            while(!executor.isTerminated()){}
+        } catch(Exception e){
+            LogManager.logStackTrace(e);
         }
-
-        LogManager.debug("Finished downloading external libraries");
     }
 
     /**

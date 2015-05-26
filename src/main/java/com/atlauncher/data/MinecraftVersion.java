@@ -57,11 +57,7 @@ public class MinecraftVersion {
 
         try {
             mojangVersion = Gsons.DEFAULT_ALT.fromJson(new FileReader(versionFile.toFile()), MojangVersion.class);
-        } catch (JsonSyntaxException e) {
-            LogManager.logStackTrace(e);
-        } catch (JsonIOException e) {
-            LogManager.logStackTrace(e);
-        } catch (FileNotFoundException e) {
+        } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
             LogManager.logStackTrace(e);
         }
     }

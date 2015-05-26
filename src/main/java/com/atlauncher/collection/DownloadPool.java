@@ -62,6 +62,16 @@ extends LinkedList<Downloadable>{
         return pool;
     }
 
+    public boolean any(){
+        for(Downloadable dl : this){
+            if(dl.needToDownload()){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private final class SizeCollector
     implements Callable<Integer>{
         @Override
@@ -115,7 +125,7 @@ extends LinkedList<Downloadable>{
                     this.dl.download();
                 }
             } catch(Exception e){
-                LogManager.logStackTrace(e);
+                LogManager.logStackTrace("Error trying to download " + this.dl.to.getFileName(), e);
             }
         }
     }

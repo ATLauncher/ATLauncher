@@ -202,7 +202,8 @@ public final class Downloadable {
         return false;
     }
 
-    private void execute() throws IOException {
+    private void execute()
+    throws IOException {
         LogManager.debug("Opening connection to " + this.url, 3);
 
         Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", App.settings
