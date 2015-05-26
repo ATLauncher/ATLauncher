@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class AssetIndex {
-
     private Map<String, AssetObject> objects;
     private boolean virtual;
 

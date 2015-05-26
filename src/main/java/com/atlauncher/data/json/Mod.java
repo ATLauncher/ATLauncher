@@ -167,14 +167,18 @@ public final class Mod {
     }
 
     public Path getInstalledFile(InstanceInstaller installer) {
-        String file = (installer.isServer() ? this.serverFile : this.getFile());
-        Path base = (installer.isServer() ? this.serverType : this.type).getInstallDirectory(installer, this);
+        String file = (installer.server ? this.serverFile : this.getFile());
+        Path base = (installer.server ? this.serverType : this.type).getInstallDirectory(installer, this);
         return base.resolve(file);
     }
 
     public DisableableMod generateDisableableMod(InstanceInstaller installer, String file) {
-        return new DisableableMod(this.name, this.version, this.optional, file, this.type, installer.getJsonVersion()
+        return new DisableableMod(this.name, this.version, this.optional, file, this.type, installer.version
                 .getColour(this.color), this.description, false, false);
+    }
+
+    public Downloadable generateDownloadable(InstanceInstaller installer){
+        return new Downloadable(this.getUrl(), this.md5, FileSystem.DOWNLOADS.resolve(this.getFile()), this.filesize, true, installer);
     }
 
     private void downloadClient(InstanceInstaller installer, int attempt) throws Exception {
@@ -256,7 +260,7 @@ public final class Mod {
     }
 
     public void download(InstanceInstaller installer) throws Exception {
-        if (installer.isServer() && this.serverUrl != null) {
+        if (installer.server && this.serverUrl != null) {
             this.downloadServer(installer, 1);
         } else {
             this.downloadClient(installer, 1);
@@ -280,7 +284,7 @@ public final class Mod {
     }
 
     protected Path getFile(InstanceInstaller installer) {
-        if (installer.isServer() && this.serverUrl != null) {
+        if (installer.server && this.serverUrl != null) {
             return FileSystem.DOWNLOADS.resolve(this.serverFile);
         } else {
             return FileSystem.DOWNLOADS.resolve(this.file);
@@ -288,7 +292,7 @@ public final class Mod {
     }
 
     protected ModType getType(InstanceInstaller installer) {
-        if (installer.isServer() && this.serverUrl != null) {
+        if (installer.server && this.serverUrl != null) {
             return this.serverType;
         } else {
             return this.type;

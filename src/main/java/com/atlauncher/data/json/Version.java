@@ -19,6 +19,7 @@ package com.atlauncher.data.json;
 
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.collection.ModList;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class Version {
     /**
      * A list of mods to be installed with this version.
      */
-    private List<Mod> mods;
+    private ModList mods;
 
     /**
      * A list of actions to perform on this version.
@@ -115,7 +116,7 @@ public class Version {
     public Version() {
         this.libraries = new ArrayList<Library>();
         this.colours = new HashMap<String, String>();
-        this.mods = new ArrayList<Mod>();
+        this.mods = new ModList();
         this.actions = new ArrayList<Action>();
     }
 
@@ -202,28 +203,8 @@ public class Version {
         return this.colours;
     }
 
-    public List<Mod> getMods() {
+    public ModList getMods() {
         return this.mods;
-    }
-
-    public List<Mod> getClientInstallMods() {
-        List<Mod> mods = new ArrayList<Mod>();
-        for (Mod mod : this.mods) {
-            if (mod.client) {
-                mods.add(mod);
-            }
-        }
-        return mods;
-    }
-
-    public List<Mod> getServerInstallMods() {
-        List<Mod> mods = new ArrayList<Mod>();
-        for (Mod mod : this.mods) {
-            if (mod.server) {
-                mods.add(mod);
-            }
-        }
-        return mods;
     }
 
     public List<Action> getActions() {

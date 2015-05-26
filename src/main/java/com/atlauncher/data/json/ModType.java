@@ -33,28 +33,28 @@ public enum ModType {
     JAR() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (installer.isServer() && mod.getType(installer) == ModType.JAR) {
+            if (installer.server && mod.getType(installer) == ModType.JAR) {
                 FileUtils.unzip(mod.getFile(installer), installer.getTempJarDirectory());
                 return;
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getJarModsDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.jarmods);
             installer.addToJarOrder(mod.getFile());
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            return installer.getJarModsDirectory();
+            return installer.jarmods;
         }
     },
     DEPENDENCY() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (!Files.exists(installer.getDependencyDirectory())) {
-                FileUtils.createDirectory(installer.getDependencyDirectory());
+            if (!Files.exists(installer.dependencies)) {
+                FileUtils.createDirectory(installer.dependencies);
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getDependencyDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.dependencies);
         }
 
         @Override
@@ -65,11 +65,11 @@ public enum ModType {
     DEPANDENCY() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (!Files.exists(installer.getDependencyDirectory())) {
-                FileUtils.createDirectory(installer.getDependencyDirectory());
+            if (!Files.exists(installer.dependencies)) {
+                FileUtils.createDirectory(installer.dependencies);
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getDependencyDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.dependencies);
         }
 
         @Override
@@ -80,36 +80,36 @@ public enum ModType {
     FORGE() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (installer.isServer() && mod.getType(installer) == ModType.FORGE) {
-                FileUtils.copyFile(mod.getFile(installer), installer.getRootDirectory());
+            if (installer.server && mod.getType(installer) == ModType.FORGE) {
+                FileUtils.copyFile(mod.getFile(installer), installer.root);
                 return;
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getJarModsDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.jarmods);
             installer.addToJarOrder(mod.getFile());
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            if (installer.isServer()) {
-                return installer.getRootDirectory();
+            if (installer.server) {
+                return installer.root;
             } else {
-                return installer.getJarModsDirectory();
+                return installer.jarmods;
             }
         }
     },
     MCPC() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (installer.isServer()) {
-                FileUtils.copyFile(mod.getFile(installer), installer.getRootDirectory());
+            if (installer.server) {
+                FileUtils.copyFile(mod.getFile(installer), installer.root);
             }
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            if (installer.isServer()) {
-                return installer.getRootDirectory();
+            if (installer.server) {
+                return installer.root;
             }
 
             return null;
@@ -118,94 +118,94 @@ public enum ModType {
     MODS() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            FileUtils.copyFile(mod.getFile(installer), installer.getModsDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.mods);
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            return installer.getModsDirectory();
+            return installer.mods;
         }
     },
     PLUGINS() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (!Files.exists(installer.getPluginsDirectory())) {
-                FileUtils.createDirectory(installer.getPluginsDirectory());
+            if (!Files.exists(installer.plugins)) {
+                FileUtils.createDirectory(installer.plugins);
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getPluginsDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.plugins);
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            return installer.getModsDirectory();
+            return installer.mods;
         }
     },
     IC2LIB() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (!Files.exists(installer.getIC2LibDirectory())) {
-                FileUtils.createDirectory(installer.getIC2LibDirectory());
+            if (!Files.exists(installer.ic2)) {
+                FileUtils.createDirectory(installer.ic2);
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getIC2LibDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.ic2);
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            return installer.getIC2LibDirectory();
+            return installer.ic2;
         }
     },
     DENLIB() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (!Files.exists(installer.getDenLibDirectory())) {
-                FileUtils.createDirectory(installer.getDenLibDirectory());
+            if (!Files.exists(installer.denlib)) {
+                FileUtils.createDirectory(installer.denlib);
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getDenLibDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.denlib);
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            return installer.getDenLibDirectory();
+            return installer.denlib;
         }
     },
     FLAN() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (Files.exists(installer.getFlanDirectory())) {
-                FileUtils.createDirectory(installer.getFlanDirectory());
+            if (Files.exists(installer.flans)) {
+                FileUtils.createDirectory(installer.flans);
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getFlanDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.flans);
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            return installer.getFlanDirectory();
+            return installer.flans;
         }
     },
     COREMODS() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                if (!Files.exists(installer.getCoreModsDirectory())) {
-                    FileUtils.createDirectory(installer.getCoreModsDirectory());
+            if (installer.packVersion.getMinecraftVersion().usesCoreMods()) {
+                if (!Files.exists(installer.coremods)) {
+                    FileUtils.createDirectory(installer.coremods);
                 }
 
-                FileUtils.copyFile(mod.getFile(installer), installer.getCoreModsDirectory());
+                FileUtils.copyFile(mod.getFile(installer), installer.coremods);
             } else {
-                FileUtils.copyFile(mod.getFile(installer), installer.getModsDirectory());
+                FileUtils.copyFile(mod.getFile(installer), installer.mods);
             }
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                return installer.getCoreModsDirectory();
+            if (installer.packVersion.getMinecraftVersion().usesCoreMods()) {
+                return installer.coremods;
             } else {
-                return installer.getModsDirectory();
+                return installer.mods;
             }
         }
     },
@@ -214,23 +214,23 @@ public enum ModType {
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
             switch (mod.extractTo) {
                 case coremods: {
-                    if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                        if (!Files.exists(installer.getCoreModsDirectory())) {
-                            FileUtils.createDirectory(installer.getCoreModsDirectory());
+                    if (installer.packVersion.getMinecraftVersion().usesCoreMods()) {
+                        if (!Files.exists(installer.coremods)) {
+                            FileUtils.createDirectory(installer.coremods);
                         }
 
-                        FileUtils.unzip(mod.getFile(installer), installer.getCoreModsDirectory());
+                        FileUtils.unzip(mod.getFile(installer), installer.coremods);
                     } else {
-                        FileUtils.unzip(mod.getFile(installer), installer.getModsDirectory());
+                        FileUtils.unzip(mod.getFile(installer), installer.mods);
                     }
                     break;
                 }
                 case mods: {
-                    FileUtils.unzip(mod.getFile(installer), installer.getModsDirectory());
+                    FileUtils.unzip(mod.getFile(installer), installer.mods);
                     break;
                 }
                 case root: {
-                    FileUtils.unzip(mod.getFile(installer), installer.getRootDirectory());
+                    FileUtils.unzip(mod.getFile(installer), installer.root);
                     break;
                 }
                 default: {
@@ -256,34 +256,34 @@ public enum ModType {
                 switch (mod.decompType) {
                     case coremods: {
                         if (Files.isRegularFile(tmpDecompFile)) {
-                            if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                                if (!Files.exists(installer.getCoreModsDirectory())) {
-                                    FileUtils.createDirectory(installer.getCoreModsDirectory());
+                            if (installer.packVersion.getMinecraftVersion().usesCoreMods()) {
+                                if (!Files.exists(installer.coremods)) {
+                                    FileUtils.createDirectory(installer.coremods);
                                 }
 
-                                FileUtils.copyFile(tmpDecompFile, installer.getCoreModsDirectory());
+                                FileUtils.copyFile(tmpDecompFile, installer.coremods);
                             } else {
-                                FileUtils.copyFile(tmpDecompFile, installer.getModsDirectory());
+                                FileUtils.copyFile(tmpDecompFile, installer.mods);
                             }
                         } else {
-                            if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                                if (!Files.exists(installer.getCoreModsDirectory())) {
-                                    FileUtils.createDirectory(installer.getCoreModsDirectory());
+                            if (installer.packVersion.getMinecraftVersion().usesCoreMods()) {
+                                if (!Files.exists(installer.coremods)) {
+                                    FileUtils.createDirectory(installer.coremods);
                                 }
 
-                                FileUtils.copyDirectory(tmpDecompFile, installer.getCoreModsDirectory());
+                                FileUtils.copyDirectory(tmpDecompFile, installer.coremods);
                             } else {
-                                FileUtils.copyDirectory(tmpDecompFile, installer.getModsDirectory());
+                                FileUtils.copyDirectory(tmpDecompFile, installer.mods);
                             }
                         }
                         break;
                     }
                     case jar: {
                         if (Files.isRegularFile(tmpDecompFile)) {
-                            FileUtils.copyFile(tmpDecompFile, installer.getJarModsDirectory());
+                            FileUtils.copyFile(tmpDecompFile, installer.jarmods);
                             installer.addToJarOrder(mod.decompFile);
                         } else {
-                            Path newFile = installer.getJarModsDirectory().resolve(mod.getSafeName() + ".zip");
+                            Path newFile = installer.jarmods.resolve(mod.getSafeName() + ".zip");
                             FileUtils.zip(tmpDecompFile, newFile);
                             installer.addToJarOrder(mod.getSafeName() + ".zip");
                         }
@@ -291,17 +291,17 @@ public enum ModType {
                     }
                     case mods: {
                         if (Files.isRegularFile(tmpDecompFile)) {
-                            FileUtils.copyFile(tmpDecompFile, installer.getModsDirectory());
+                            FileUtils.copyFile(tmpDecompFile, installer.mods);
                         } else {
-                            FileUtils.copyDirectory(tmpDecompFile, installer.getModsDirectory());
+                            FileUtils.copyDirectory(tmpDecompFile, installer.mods);
                         }
                         break;
                     }
                     case root: {
                         if (Files.isRegularFile(tmpDecompFile)) {
-                            FileUtils.copyFile(tmpDecompFile, installer.getRootDirectory());
+                            FileUtils.copyFile(tmpDecompFile, installer.root);
                         } else {
-                            FileUtils.copyDirectory(tmpDecompFile, installer.getRootDirectory());
+                            FileUtils.copyDirectory(tmpDecompFile, installer.root);
                         }
                         break;
                     }
@@ -327,7 +327,7 @@ public enum ModType {
                 for (Path p : stream1) {
                     try (DirectoryStream<Path> stream2 = Files.newDirectoryStream(p, this.dirFilter())) {
                         for (Path file : stream2) {
-                            FileUtils.copyDirectory(file, installer.getModsDirectory());
+                            FileUtils.copyDirectory(file, installer.mods);
                         }
                     }
                 }
@@ -352,42 +352,42 @@ public enum ModType {
     TEXTUREPACK() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (!Files.exists(installer.getTexturePacksDirectory())) {
-                FileUtils.createDirectory(installer.getTexturePacksDirectory());
+            if (!Files.exists(installer.texturepacks)) {
+                FileUtils.createDirectory(installer.texturepacks);
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getTexturePacksDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.texturepacks);
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            return installer.getTexturePacksDirectory();
+            return installer.texturepacks;
         }
     },
     RESOURCEPACK() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (!Files.exists(installer.getResourcePacksDirectory())) {
-                FileUtils.createDirectory(installer.getResourcePacksDirectory());
+            if (!Files.exists(installer.resourcepacks)) {
+                FileUtils.createDirectory(installer.resourcepacks);
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getResourcePacksDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.resourcepacks);
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            return installer.getResourcePacksDirectory();
+            return installer.resourcepacks;
         }
     },
     TEXTUREPACKEXTRACT() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (!Files.exists(installer.getTexturePacksDirectory())) {
-                FileUtils.createDirectory(installer.getTexturePacksDirectory());
+            if (!Files.exists(installer.texturepacks)) {
+                FileUtils.createDirectory(installer.texturepacks);
             }
 
-            FileUtils.unzip(mod.getFile(installer), installer.getTempTexturePackDirectory());
-            installer.setTexturePackExtracted();
+            FileUtils.unzip(mod.getFile(installer), installer.getTempTexturePacksDirectory());
+            installer.setTexturePacksExtracted();
         }
 
         @Override
@@ -398,12 +398,12 @@ public enum ModType {
     RESOURCEPACKEXTRACT() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (!Files.exists(installer.getTempResourcePackDirectory())) {
-                FileUtils.createDirectory(installer.getResourcePacksDirectory());
+            if (!Files.exists(installer.getTempResourcePacksDirectory())) {
+                FileUtils.createDirectory(installer.resourcepacks);
             }
 
-            FileUtils.unzip(mod.getFile(installer), installer.getTempResourcePackDirectory());
-            installer.setResourcePackExtracted();
+            FileUtils.unzip(mod.getFile(installer), installer.getTempResourcePacksDirectory());
+            installer.setResourcePacksExtracted();
         }
 
         @Override
@@ -414,16 +414,16 @@ public enum ModType {
     SHADERPACK() {
         @Override
         public void install(InstanceInstaller installer, Mod mod) throws Exception {
-            if (!Files.exists(installer.getShaderPacksDirectory())) {
-                FileUtils.createDirectory(installer.getShaderPacksDirectory());
+            if (!Files.exists(installer.shaderpacks)) {
+                FileUtils.createDirectory(installer.shaderpacks);
             }
 
-            FileUtils.copyFile(mod.getFile(installer), installer.getShaderPacksDirectory());
+            FileUtils.copyFile(mod.getFile(installer), installer.shaderpacks);
         }
 
         @Override
         public Path getInstallDirectory(InstanceInstaller installer, Mod mod) {
-            return installer.getShaderPacksDirectory();
+            return installer.shaderpacks;
         }
     };
 

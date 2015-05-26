@@ -300,7 +300,7 @@ public class InstanceInstallerDialog extends JDialog {
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller((isServer ? "" : instanceNameField
-                        .getText()), pack, version, isReinstall, isServer, shareCode, showModsChooser) {
+                        .getText()), pack, version, isReinstall, shareCode, isServer, showModsChooser) {
 
                     protected void done() {
                         Boolean success = false;
@@ -317,7 +317,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     ("common.not") + " " + ((isReinstall) ? Language.INSTANCE.localize("common" + "" +
                                     ".reinstalled") : Language.INSTANCE.localize("common.installed"));
                             if (isReinstall) {
-                                if (shouldCorruptInstance()) {
+                                if (this.corrupt) {
                                     InstanceManager.setInstanceUnplayable(instance);
                                 }
                             }
@@ -335,27 +335,27 @@ public class InstanceInstallerDialog extends JDialog {
                                         ("common.hasbeen") + " " + ((isReinstall) ? Language.INSTANCE.localize
                                         ("common.reinstalled") : Language.INSTANCE.localize("common.installed")) +
                                         "<br/><br/>" + ((isServer) ? Language.INSTANCE.localizeWithReplace("instance"
-                                        + ".finditserver", "<br/><br/>" + this.getRootDirectory()) : Language
+                                        + ".finditserver", "<br/><br/>" + this.root) : Language
                                         .INSTANCE.localize("instance.findit"));
-                                title = pack.getName() + " " + version.getVersion() + " " + Language.INSTANCE
+                                title = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                         .localize("common.installed");
                                 if (isReinstall) {
-                                    instance.setVersion(version.getVersion());
-                                    instance.setMinecraftVersion(version.getMinecraftVersion().getVersion());
-                                    instance.setModsInstalled(this.getModsInstalled());
-                                    instance.setJarOrder(this.getJarOrder());
-                                    instance.setMemory(this.getMemory());
-                                    instance.setPermgen(this.getPermGen());
-                                    instance.setIsNewLaunchMethod(!this.isLegacy());
-                                    instance.setLibrariesNeeded(this.getLibrariesNeeded());
-                                    instance.setMinecraftArguments(this.getMinecraftArguments());
-                                    instance.setExtraArguments(this.getExtraArguments());
-                                    instance.setMainClass(this.getMainClass());
-                                    instance.setAssets(version.getMinecraftVersion().getMojangVersion().getAssets());
-                                    if (version.isDev()) {
+                                    instance.setVersion(packVersion.getVersion());
+                                    instance.setMinecraftVersion(packVersion.getMinecraftVersion().getVersion());
+                                    instance.setModsInstalled(this.installedMods);
+                                    instance.setJarOrder(this.jarOrder);
+                                    instance.setMemory(this.memory);
+                                    instance.setPermgen(this.permgen);
+                                    instance.setIsNewLaunchMethod(!this.packVersion.getMinecraftVersion().isLegacy());
+                                    instance.setLibrariesNeeded(this.librariesNeeded);
+                                    instance.setMinecraftArguments(this.packVersion.getMinecraftVersion().getMojangVersion().getMinecraftArguments());
+                                    instance.setExtraArguments(this.extraArgs);
+                                    instance.setMainClass(this.mainClass);
+                                    instance.setAssets(this.packVersion.getMinecraftVersion().getMojangVersion().getAssets());
+                                    if (packVersion.isDev()) {
                                         instance.setDevVersion();
-                                        if (version.getHash() != null) {
-                                            instance.setHash(version.getHash());
+                                        if (packVersion.getHash() != null) {
+                                            instance.setHash(packVersion.getHash());
                                         }
                                     } else {
                                         instance.setNotDevVersion();
@@ -367,15 +367,15 @@ public class InstanceInstallerDialog extends JDialog {
 
                                 } else {
                                     Instance newInstance = new Instance(instanceNameField.getText(), pack.getName(),
-                                            pack, enableUserLock.isSelected(), version.getVersion(), version
-                                            .getMinecraftVersion().getVersion(), this.getMemory(), this.getPermGen(),
-                                            this.getModsInstalled(), this.getJarOrder(), this.getLibrariesNeeded(),
-                                            this.getExtraArguments(), this.getMinecraftArguments(), this.getMainClass
-                                            (), version.getMinecraftVersion().getMojangVersion().getAssets(), version
-                                            .isDev(), !version.getMinecraftVersion().isLegacy());
+                                            pack, enableUserLock.isSelected(), version.getVersion(), packVersion.getMinecraftVersion().getVersion(),
+                                                                        this.memory, this.permgen,
+                                            this.installedMods, this.jarOrder, this.librariesNeeded,
+                                            this.extraArgs, this.packVersion.getMinecraftVersion().getMojangVersion().getMinecraftArguments(), this.mainClass,
+                                            this.packVersion.getMinecraftVersion().getMojangVersion().getAssets(), this.packVersion.isDev(),
+                                            !packVersion.getMinecraftVersion().isLegacy());
 
-                                    if (version.isDev() && (version.getHash() != null)) {
-                                        newInstance.setHash(version.getHash());
+                                    if (packVersion.isDev() && (packVersion.getHash()!= null)) {
+                                        newInstance.setHash(packVersion.getHash());
                                     }
 
                                     InstanceManager.addInstance(newInstance);
@@ -383,38 +383,38 @@ public class InstanceInstallerDialog extends JDialog {
                                 }
                                 InstanceManager.saveInstances();
                                 InstanceChangeManager.change();
-                                if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev()) {
+                                if (pack.isLoggingEnabled() && App.settings.enableLogs() && !packVersion.isDev()) {
                                     if (isServer) {
-                                        pack.addServerInstall(version.getVersion());
+                                        pack.addServerInstall(packVersion.getVersion());
                                     } else if (isUpdate) {
-                                        pack.addUpdate(version.getVersion());
+                                        pack.addUpdate(packVersion.getVersion());
                                     } else {
-                                        pack.addInstall(version.getVersion());
+                                        pack.addInstall(packVersion.getVersion());
                                     }
                                 }
                             } else {
                                 if (isReinstall) {
                                     type = JOptionPane.ERROR_MESSAGE;
-                                    text = pack.getName() + " " + version.getVersion() + " " + Language.INSTANCE
+                                    text = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                             .localize("common.wasnt") + " " + Language.INSTANCE.localize("common" + "" +
-                                            ".reinstalled") + "<br/><br/>" + (this.shouldCorruptInstance() ? Language
+                                            ".reinstalled") + "<br/><br/>" + (this.corrupt ? Language
                                             .INSTANCE.localize("instance.nolongerplayable") : "") + "<br/><br/>" +
                                             Language.INSTANCE.localize("instance.checkerrorlogs") + "!";
-                                    title = pack.getName() + " " + version.getVersion() + " " + Language.INSTANCE
+                                    title = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                             .localize("common.not") + " " + Language.INSTANCE.localize("common" + "" +
                                             ".reinstalled");
-                                    if (this.shouldCorruptInstance()) {
+                                    if (this.corrupt) {
                                         InstanceManager.setInstanceUnplayable(instance);
                                     }
                                 } else {
                                     // Install failed so delete the folder and clear Temp Dir
-                                    FileUtils.delete(this.getRootDirectory());
+                                    FileUtils.delete(this.root);
                                     type = JOptionPane.ERROR_MESSAGE;
-                                    text = pack.getName() + " " + version.getVersion() + " " + Language.INSTANCE
+                                    text = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                             .localize("common.wasnt") + " " + Language.INSTANCE.localize("common" + "" +
                                             ".installed") + "<br/><br/>" + Language.INSTANCE.localize("instance" + "" +
                                             ".checkerrorlogs") + "!";
-                                    title = pack.getName() + " " + version.getVersion() + " " + Language.INSTANCE
+                                    title = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                             .localize("common.not") + " " + Language.INSTANCE.localize("common" + "" +
                                             ".installed");
                                 }

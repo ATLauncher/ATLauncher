@@ -19,7 +19,6 @@ package com.atlauncher.data.json;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.FileUtils;
@@ -37,21 +36,19 @@ import java.util.List;
 public enum DownloadType {
     SERVER() {
         @Override
-        public void download(InstanceInstaller installer, Path to, Mod mod) {
-            try {
-                Downloadable dl = mod.generateDownloadable(to, installer, true);
-                if (dl.needToDownload()) {
-                    dl.download();
-                }
-            } catch (Exception e) {
-                LogManager.logStackTrace(e);
+        public void download(InstanceInstaller installer, Path to, Mod mod)
+        throws Exception{
+            Downloadable dl = mod.generateDownloadable(to, installer, true);
+            if (dl.needToDownload()) {
+                dl.download();
             }
         }
     },
     BROWSER() {
         @Override
-        public void download(InstanceInstaller installer, Path to, Mod mod) throws Exception {
-            Path dlFile = (mod.server ? FileSystem.DOWNLOADS : FileSystem.USER_DOWNLOADS).resolve((mod.server ? mod
+        public void download(InstanceInstaller installer, Path to, Mod mod)
+        throws Exception {
+            Path dlFile = (mod.server ? FileSystem.USER_DOWNLOADS : FileSystem.DOWNLOADS).resolve((mod.server ? mod
                     .serverFile : mod.getFile()));
             if (Files.exists(dlFile)) {
                 FileUtils.moveFile(dlFile, to, true);
@@ -153,14 +150,11 @@ public enum DownloadType {
     },
     DIRECT() {
         @Override
-        public void download(InstanceInstaller installer, Path to, Mod mod) {
-            try {
-                Downloadable dl = mod.generateDownloadable(to, installer, false);
-                if (dl.needToDownload()) {
-                    dl.download();
-                }
-            } catch (Exception e) {
-                LogManager.logStackTrace(e);
+        public void download(InstanceInstaller installer, Path to, Mod mod)
+        throws Exception{
+            Downloadable dl = mod.generateDownloadable(to, installer, false);
+            if (dl.needToDownload()) {
+                dl.download();
             }
         }
     };
