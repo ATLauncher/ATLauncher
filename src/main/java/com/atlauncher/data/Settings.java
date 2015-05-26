@@ -229,18 +229,14 @@ public class Settings {
 
         AccountManager.checkForNameChanges(); // Check account for username changes
 
-        LogManager.debug("Checking for access to master " +
-                "serverserverserverserverserverserverserverserverserverserverserverserver");
+        LogManager.debug("Checking for access to master server");
         OUTER:
         for (Pack pack : Data.PACKS) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
                     if (server.getName().equals("Master Server (Testing Only)")) {
                         server.setUserSelectable(true);
-                        LogManager.debug("Access to master " +
-                                "serverserverserverserverserverserverserverserverserverserverserverserver" +
-                                " " +
-                                "granted");
+                        LogManager.debug("Access to master server granted");
                         break OUTER; // Don't need to check anymore so break the outer loop
                     }
                 }
