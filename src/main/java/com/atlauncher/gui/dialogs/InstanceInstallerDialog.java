@@ -238,8 +238,8 @@ public class InstanceInstallerDialog extends JDialog {
                 .INSTANCE.localize("common.reinstall")) : Language.INSTANCE.localize("common.install")));
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (!isReinstall && !isServer && App.settings.isInstance(instanceNameField.getText())) {
-                    instance = App.settings.getInstanceByName(instanceNameField.getText());
+                if (!isReinstall && !isServer && InstanceManager.isInstance(instanceNameField.getText())) {
+                    instance = InstanceManager.getInstanceByName(instanceNameField.getText());
                     if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
                         int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph
                                 (Language.INSTANCE.localize("common.error") +
@@ -319,7 +319,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     ".reinstalled") : Language.INSTANCE.localize("common.installed"));
                             if (isReinstall) {
                                 if (shouldCoruptInstance()) {
-                                    App.settings.setInstanceUnplayable(instance);
+                                    InstanceManager.setInstanceUnplayable(instance);
                                 }
                             }
                         } else {
@@ -405,7 +405,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             .localize("common.not") + " " + Language.INSTANCE.localize("common" + "" +
                                             ".reinstalled");
                                     if (this.shouldCoruptInstance()) {
-                                        App.settings.setInstanceUnplayable(instance);
+                                        InstanceManager.setInstanceUnplayable(instance);
                                     }
                                 } else {
                                     // Install failed so delete the folder and clear Temp Dir

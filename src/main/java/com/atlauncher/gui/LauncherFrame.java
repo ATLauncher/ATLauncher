@@ -175,7 +175,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             public void stateChanged(ChangeEvent e) {
                 String tabName = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
                 if (tabbedPane.getSelectedIndex() == 1) {
-                    updateTitle("Packs - " + App.settings.getPackInstallableCount());
+                    updateTitle("Packs - " + PackManager.getInstallableCount());
                 } else {
                     updateTitle(tabName);
                 }

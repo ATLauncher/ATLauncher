@@ -23,9 +23,12 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
+import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.google.gson.reflect.TypeToken;
 
@@ -243,5 +246,17 @@ public class PackManager {
                 PackChangeManager.change();
             }
         }
+    }
+
+    public static int getInstallableCount() {
+        int count = 0;
+
+        for (Pack pack : PackManager.getPacks()) {
+            if (pack.canInstall()) {
+                count++;
+            }
+        }
+
+        return count;
     }
 }

@@ -30,7 +30,6 @@ import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
@@ -41,6 +40,7 @@ import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.walker.ClearDirVisitor;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -134,7 +134,6 @@ public class Settings {
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
-    private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -213,8 +212,6 @@ public class Settings {
         console.setupLanguage(); // Setup language on the console
 
         clearAllLogs(); // Clear all the old logs out
-
-        checkResources(); // Check for new format of resources
 
         AccountManager.checkUUIDs(); // Check for accounts UUID's and add them if necessary
 
@@ -328,13 +325,13 @@ public class Settings {
 
     public void checkAccounts() {
         boolean matches = false;
-        if (Data.ACCOUNTS != null || Data.ACCOUNTS.size() >= 1) {
-            for (Account account : Data.ACCOUNTS) {
-                if (account.isRemembered()) {
-                    matches = true;
-                }
+
+        for (Account account : AccountManager.getAccounts()) {
+            if (account.isRemembered()) {
+                matches = true;
             }
         }
+
         if (matches) {
             String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
                     ".removepasswords")};
@@ -342,15 +339,18 @@ public class Settings {
                     .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
                     ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
+
             if (ret == 1) {
-                for (Account account : Data.ACCOUNTS) {
+                for (Account account : AccountManager.getAccounts()) {
                     if (account.isRemembered()) {
                         account.setRemember(false);
                     }
                 }
+
                 AccountManager.saveAccounts();
             }
         }
+
         this.saveProperties();
     }
 
@@ -363,7 +363,7 @@ public class Settings {
 
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LOGS, this.logFilter())) {
                 for (Path file : stream) {
-                    if (file.getFileName().equals(LoggingThread.filename)) {
+                    if (file.getFileName().toString().equals(LoggingThread.filename)) {
                         continue;
                     }
 
@@ -383,69 +383,6 @@ public class Settings {
                 return Files.isRegularFile(p) && p.startsWith(Constants.LAUNCHER_NAME + "-Log_") && p.endsWith(".log");
             }
         };
-    }
-
-    public void checkResources() {
-        /*LogManager.debug("Checking if using old format of resources");
-        File indexesDir = new File(this.resourcesDir, "indexes");
-        if (!indexesDir.exists() || !indexesDir.isDirectory()) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
-                    ".rearrangingresources"), 0, Language.INSTANCE.localize("settings.rearrangingresources"), null);
-            Thread thread = new Thread() {
-                public void run() {
-                    File indexesDir = new File(getResourcesDir(), "indexes");
-                    File objectsDir = new File(getResourcesDir(), "objects");
-                    File virtualDir = new File(getResourcesDir(), "virtual");
-                    File legacyDir = new File(virtualDir, "legacy");
-                    File tempDir = new File(getTempDir(), "assets");
-                    tempDir.mkdir();
-                    Utils.moveDirectory(getResourcesDir(), tempDir);
-                    indexesDir.mkdirs();
-                    objectsDir.mkdirs();
-                    virtualDir.mkdirs();
-                    legacyDir.mkdirs();
-                    Utils.moveDirectory(tempDir, legacyDir);
-                    Utils.delete(tempDir);
-                    Utils.spreadOutResourceFiles(legacyDir);
-                    dialog.close();
-                }
-            };
-            dialog.addThread(thread);
-            dialog.start();
-
-        }
-        LogManager.debug("Finished checking if using old format of resources");*/
-
-        LogManager.debug("Checking if using old format of resources");
-        Path indexes = FileSystem.RESOURCES.resolve("indexes");
-        if (!Files.exists(indexes) || !Files.isDirectory(indexes)) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
-                    ".rearrangingresources"), 0, Language.INSTANCE.localize("settings.rearrangingresources"), null);
-            Thread t = new Thread() {
-                @Override
-                public void run() {
-                    Path indexes = FileSystem.RESOURCES.resolve("indexes");
-                    Path virtual = FileSystem.RESOURCES.resolve("virtual");
-                    Path objects = FileSystem.RESOURCES.resolve("objects");
-
-                    Path tmp = FileSystem.TMP.resolve("assets");
-                    Path legacy = virtual.resolve("legacy");
-
-                    try {
-                        FileUtils.createDirectory(tmp);
-                        FileUtils.moveDirectory(FileSystem.RESOURCES, tmp);
-                        FileUtils.createDirectory(indexes);
-                        FileUtils.createDirectory(objects);
-                        FileUtils.createDirectory(virtual);
-                        FileUtils.createDirectory(legacy);
-                        FileUtils.moveDirectory(tmp, legacy);
-                        FileUtils.deleteDirectory(tmp);
-                    } catch (Exception e) {
-                        LogManager.logStackTrace(e);
-                    }
-                }
-            };
-        }
     }
 
     public void checkMojangStatus() {
@@ -607,7 +544,7 @@ public class Settings {
             this.offlineMode = true;
             return null;
         }
-        ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
+        ArrayList<Downloadable> downloads = new ArrayList<>();
         for (DownloadableFile file : this.launcherFiles) {
             if (file.isLauncher()) {
                 continue;
@@ -660,17 +597,20 @@ public class Settings {
             return false;
         }
         LogManager.info("Checking for updated files!");
-        ArrayList<Downloadable> downloads = getLauncherFiles();
+        List<Downloadable> downloads = getLauncherFiles();
+
         if (downloads == null) {
             this.offlineMode = true;
             return false;
         }
+
         for (Downloadable download : downloads) {
             if (download.needToDownload()) {
                 LogManager.info("Updates found!");
                 return true; // 1 file needs to be updated so there is updated files
             }
         }
+
         LogManager.info("No updates found!");
         return false; // No updates
     }
@@ -683,8 +623,8 @@ public class Settings {
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
-        App.TASKPOOL.execute(new Runnable() {
 
+        App.TASKPOOL.execute(new Runnable() {
             @Override
             public void run() {
                 if (hasUpdatedFiles()) {
@@ -706,6 +646,7 @@ public class Settings {
 
     private void checkForLauncherUpdate() {
         LogManager.debug("Checking for launcher update");
+
         if (launcherHasUpdate()) {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
@@ -723,6 +664,7 @@ public class Settings {
         } else if (Constants.VERSION.isBeta() && launcherHasBetaUpdate()) {
             downloadBetaUpdate();
         }
+
         LogManager.debug("Finished checking for launcher update");
     }
 
@@ -733,20 +675,21 @@ public class Settings {
     private void downloadExternalLibraries() {
         LogManager.debug("Downloading external libraries");
         List<LauncherLibrary> libraries;
+
         try {
             byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("libraries.json"));
             java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
             }.getType();
 
-            this.launcherLibraries = Gsons.DEFAULT.fromJson(new String(bits), type);
+            libraries = Gsons.DEFAULT.fromJson(new String(bits), type);
         } catch (Exception e) {
             LogManager.logStackTrace(e);
-            this.launcherLibraries = new LinkedList<>();
+            libraries = new LinkedList<>();
         }
 
         ExecutorService executor = Utils.generateDownloadExecutor();
 
-        for (final LauncherLibrary library : this.launcherLibraries) {
+        for (final LauncherLibrary library : libraries) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -767,7 +710,7 @@ public class Settings {
         while (!executor.isTerminated()) {
         }
 
-        for (LauncherLibrary library : this.launcherLibraries) {
+        for (LauncherLibrary library : libraries) {
             Path path = library.getFilePath();
 
             if (library.shouldAutoLoad() && !Utils.addToClasspath(path)) {
@@ -807,7 +750,11 @@ public class Settings {
      * Deletes all files in the Temp directory
      */
     public void clearTempDir() {
-        FileUtils.deleteContents(FileSystem.TMP);
+        try {
+            Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error clearing temp directory at " + FileSystem.TMP, e);
+        }
     }
 
     /**
@@ -931,14 +878,15 @@ public class Settings {
 
     public void configureProxy() {
         Network.CLIENT.setProxy(this.getProxy());
+        Network.PROGRESS_CLIENT.setProxy(this.getProxy());
     }
 
     public boolean enabledPackTags() {
         return this.enablePackTags;
     }
 
-    public void setPackTags(boolean b) {
-        this.enablePackTags = b;
+    public void setPackTags(boolean enablePackTags) {
+        this.enablePackTags = enablePackTags;
     }
 
     /**
@@ -1239,7 +1187,7 @@ public class Settings {
             this.servers = dl.fromJson(type);
         } catch (Exception e) {
             String res = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", dl.toString());
-            LogManager.logStackTrace("Exception when reading in the servers see @ " + res, e);
+            LogManager.logStackTrace("Exception when reading in the servers see " + res, e);
             this.servers = new ArrayList<>(Arrays.asList(Constants.SERVERS));
         }
     }
@@ -1280,6 +1228,7 @@ public class Settings {
      */
     private void loadNews() {
         LogManager.debug("Loading news");
+
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
@@ -1289,6 +1238,7 @@ public class Settings {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
+
         LogManager.debug("Finished loading news");
     }
 
@@ -1333,7 +1283,9 @@ public class Settings {
      */
     private void loadUsers() {
         LogManager.debug("Loading users");
+
         Downloadable download = new Downloadable("launcher/json/users.json", true);
+
         try {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
@@ -1350,6 +1302,7 @@ public class Settings {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
+
         LogManager.debug("Finished loading users");
     }
 
@@ -1358,6 +1311,7 @@ public class Settings {
      */
     private void loadCheckingServers() {
         LogManager.debug("Loading servers to check");
+
         try {
             if (Files.exists(FileSystemData.CHECKING_SERVERS)) {
                 byte[] bits = Files.readAllBytes(FileSystemData.CHECKING_SERVERS);
@@ -1367,6 +1321,7 @@ public class Settings {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
+
         LogManager.debug("Finished loading servers to check");
     }
 
@@ -1413,25 +1368,6 @@ public class Settings {
     public boolean isUsingNewMacApp() {
         return Files.exists(FileSystem.BASE_DIR.getParent().getParent().resolve("MacOS").resolve
                 ("universalJavaApplicationStub"));
-    }
-
-    public void setInstanceUnplayable(Instance instance) {
-        instance.setUnplayable();
-        InstanceManager.saveInstances();
-        InstanceChangeManager.change();
-    }
-
-    /**
-     * Removes an instance from the Launcher
-     *
-     * @param instance The Instance to remove from the launcher.
-     */
-    public void removeInstance(Instance instance) {
-        if (Data.INSTANCES.remove(instance)) {
-            FileUtils.delete(instance.getRootDirectory());
-            InstanceManager.saveInstances();
-            InstanceChangeManager.change();
-        }
     }
 
     public MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
@@ -1504,20 +1440,6 @@ public class Settings {
     }
 
     /**
-     * Sets the launcher to offline mode
-     */
-    public void setOfflineMode() {
-        this.offlineMode = true;
-    }
-
-    /**
-     * Sets the launcher to online mode
-     */
-    public void setOnlineMode() {
-        this.offlineMode = false;
-    }
-
-    /**
      * Returns the JFrame reference of the main Launcher
      *
      * @return Main JFrame of the Launcher
@@ -1540,81 +1462,6 @@ public class Settings {
      */
     public void reloadNewsPanel() {
         this.newsPanel.reload(); // Reload the news panel
-    }
-
-    /**
-     * Checks to see if there is already an instance with the name provided or not
-     *
-     * @param name The name of the instance to check for
-     * @return True if there is an instance with the same name already
-     */
-    public boolean isInstance(String name) {
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", ""))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if there is an instance by the given name
-     *
-     * @param name name of the Instance to find
-     * @return True if the instance is found from the name
-     */
-    public boolean isInstanceByName(String name) {
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if there is an instance by the given name
-     *
-     * @param name name of the Instance to find
-     * @return True if the instance is found from the name
-     */
-    public boolean isInstanceBySafeName(String name) {
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getSafeName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Finds a Instance from the given name
-     *
-     * @param name name of the Instance to find
-     * @return Instance if the instance is found from the name
-     */
-    public Instance getInstanceByName(String name) {
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getName().equalsIgnoreCase(name)) {
-                return instance;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Finds a Instance from the given name
-     *
-     * @param name name of the Instance to find
-     * @return Instance if the instance is found from the name
-     */
-    public Instance getInstanceBySafeName(String name) {
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getSafeName().equalsIgnoreCase(name)) {
-                return instance;
-            }
-        }
-        return null;
     }
 
     /**
@@ -1702,10 +1549,6 @@ public class Settings {
 
     public void clearConsole() {
         this.console.clearConsole();
-    }
-
-    public void addConsoleListener(WindowAdapter wa) {
-        this.console.addWindowListener(wa);
     }
 
     public String getLog() {
@@ -2182,30 +2025,5 @@ public class Settings {
             e.printStackTrace();
         }
         System.exit(0);
-    }
-
-    public void cloneInstance(Instance instance, String clonedName) {
-        Instance clonedInstance = (Instance) instance.clone();
-        if (clonedInstance == null) {
-            LogManager.error("Error occurred while cloning instance! Instance object couldn't be cloned!");
-        } else {
-            clonedInstance.setName(clonedName);
-
-            FileUtils.createDirectory(clonedInstance.getRootDirectory());
-            FileUtils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
-            Data.INSTANCES.add(clonedInstance);
-            InstanceManager.saveInstances();
-            InstanceChangeManager.change();
-        }
-    }
-
-    public String getPackInstallableCount() {
-        int count = 0;
-        for (Pack pack : PackManager.getPacks()) {
-            if (pack.canInstall()) {
-                count++;
-            }
-        }
-        return count + "";
     }
 }

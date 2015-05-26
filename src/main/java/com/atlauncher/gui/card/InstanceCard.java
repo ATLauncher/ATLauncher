@@ -35,6 +35,7 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -345,8 +346,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 String clonedName = JOptionPane.showInputDialog(App.settings.getParent(), Language.INSTANCE.localize
                         ("instance.cloneenter"), Language.INSTANCE.localize("instance" + "" +
                         ".clonetitle"), JOptionPane.INFORMATION_MESSAGE);
-                if (clonedName != null && clonedName.length() >= 1 && App.settings.getInstanceByName(clonedName) ==
-                        null && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
+                if (clonedName != null && clonedName.length() >= 1 && InstanceManager.getInstanceByName(clonedName) ==
+                        null && InstanceManager.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
                         && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
 
                     final String newName = clonedName;
@@ -355,7 +356,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     dialog.addThread(new Thread() {
                         @Override
                         public void run() {
-                            App.settings.cloneInstance(instance, newName);
+                            InstanceManager.cloneInstance(instance, newName);
                             dialog.close();
                             App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("instance.clonedsuccessfully",
                                     instance.getName()));
@@ -392,7 +393,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     dialog.addThread(new Thread() {
                         @Override
                         public void run() {
-                            App.settings.removeInstance(instance);
+                            InstanceManager.removeInstance(instance);
                             dialog.close();
                             App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("instance.deletedsuccessfully",
                                     instance.getName()));

@@ -24,6 +24,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
+import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.utils.FileUtils;
 
 import java.io.BufferedWriter;
@@ -218,5 +219,114 @@ public class InstanceManager {
 
     public static void addInstance(Instance instance) {
         Data.INSTANCES.add(instance);
+    }
+
+    public static void setInstanceUnplayable(Instance instance) {
+        instance.setUnplayable();
+        InstanceManager.saveInstances();
+        InstanceChangeManager.change();
+    }
+
+    /**
+     * Removes an instance from the Launcher
+     *
+     * @param instance The Instance to remove from the launcher.
+     */
+    public static void removeInstance(Instance instance) {
+        if (Data.INSTANCES.remove(instance)) {
+            FileUtils.delete(instance.getRootDirectory());
+            InstanceManager.saveInstances();
+            InstanceChangeManager.change();
+        }
+    }
+
+    /**
+     * Checks to see if there is already an instance with the name provided or not
+     *
+     * @param name The name of the instance to check for
+     * @return True if there is an instance with the same name already
+     */
+    public static boolean isInstance(String name) {
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", ""))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if there is an instance by the given name
+     *
+     * @param name name of the Instance to find
+     * @return True if the instance is found from the name
+     */
+    public static boolean isInstanceByName(String name) {
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if there is an instance by the given name
+     *
+     * @param name name of the Instance to find
+     * @return True if the instance is found from the name
+     */
+    public static boolean isInstanceBySafeName(String name) {
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getSafeName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Finds a Instance from the given name
+     *
+     * @param name name of the Instance to find
+     * @return Instance if the instance is found from the name
+     */
+    public static Instance getInstanceByName(String name) {
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getName().equalsIgnoreCase(name)) {
+                return instance;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds a Instance from the given name
+     *
+     * @param name name of the Instance to find
+     * @return Instance if the instance is found from the name
+     */
+    public static Instance getInstanceBySafeName(String name) {
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getSafeName().equalsIgnoreCase(name)) {
+                return instance;
+            }
+        }
+        return null;
+    }
+
+    public static void cloneInstance(Instance instance, String clonedName) {
+        Instance clonedInstance = (Instance) instance.clone();
+        if (clonedInstance == null) {
+            LogManager.error("Error occurred while cloning instance! Instance object couldn't be cloned!");
+        } else {
+            clonedInstance.setName(clonedName);
+
+            FileUtils.createDirectory(clonedInstance.getRootDirectory());
+            FileUtils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
+            Data.INSTANCES.add(clonedInstance);
+            InstanceManager.saveInstances();
+            InstanceChangeManager.change();
+        }
     }
 }
