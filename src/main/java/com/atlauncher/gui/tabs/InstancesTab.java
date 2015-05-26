@@ -24,6 +24,7 @@ import com.atlauncher.evnt.listener.InstanceChangeListener;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.managers.InstanceManager;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -131,7 +132,7 @@ public class InstancesTab extends JPanel implements Tab, InstanceChangeListener 
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for (Instance instance : App.settings.getInstancesSorted()) {
+        for (Instance instance : InstanceManager.getInstancesSorted()) {
             if (instance.canPlay()) {
                 if (keepFilters) {
                     boolean showInstance = true;

@@ -1198,11 +1198,13 @@ public class Settings {
             properties.setProperty("daysoflogstokeep", this.daysOfLogsToKeep + "");
             properties.setProperty("theme", this.theme);
             properties.setProperty("dateformat", this.dateFormat);
-            if (account != null) {
-                properties.setProperty("lastaccount", account.getUsername());
+
+            if (AccountManager.getActiveAccount() != null) {
+                properties.setProperty("lastaccount", AccountManager.getActiveAccount().getUsername());
             } else {
                 properties.setProperty("lastaccount", "");
             }
+
             properties.setProperty("addedpacks", PackManager.getSemiPublicPackCodesForProperties());
             properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
@@ -1414,24 +1416,6 @@ public class Settings {
         App.TRAY_MENU.setMinecraftLaunched(launched);
     }
 
-    public void setPackVisbility(Pack pack, boolean collapsed) {
-        if (pack != null && account != null && account.isReal()) {
-            if (collapsed) {
-                // Closed It
-                if (!account.getCollapsedPacks().contains(pack.getName())) {
-                    account.getCollapsedPacks().add(pack.getName());
-                }
-            } else {
-                // Opened It
-                if (account.getCollapsedPacks().contains(pack.getName())) {
-                    account.getCollapsedPacks().remove(pack.getName());
-                }
-            }
-            AccountManager.saveAccounts();
-            PackChangeManager.reload();
-        }
-    }
-
     public boolean isUsingMacApp() {
         return Utils.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
     }
@@ -1439,48 +1423,6 @@ public class Settings {
     public boolean isUsingNewMacApp() {
         return Files.exists(FileSystem.BASE_DIR.getParent().getParent().resolve("MacOS").resolve
                 ("universalJavaApplicationStub"));
-    }
-
-    public void setInstanceVisbility(Instance instance, boolean collapsed) {
-        if (instance != null && account.isReal()) {
-            if (collapsed) {
-                // Closed It
-                if (!account.getCollapsedInstances().contains(instance.getName())) {
-                    account.getCollapsedInstances().add(instance.getName());
-                }
-            } else {
-                // Opened It
-                if (account.getCollapsedInstances().contains(instance.getName())) {
-                    account.getCollapsedInstances().remove(instance.getName());
-                }
-            }
-            AccountManager.saveAccounts();
-            InstanceChangeManager.change();
-        }
-    }
-
-    /**
-     * Get the Instances available in the Launcher
-     *
-     * @return The Instances available in the Launcher
-     */
-    public List<Instance> getInstances() {
-        return Data.INSTANCES;
-    }
-
-    /**
-     * Get the Instances available in the Launcher sorted alphabetically
-     *
-     * @return The Instances available in the Launcher sorted alphabetically
-     */
-    public ArrayList<Instance> getInstancesSorted() {
-        ArrayList<Instance> instances = new ArrayList<Instance>(Data.INSTANCES);
-        Collections.sort(instances, new Comparator<Instance>() {
-            public int compare(Instance result1, Instance result2) {
-                return result1.getName().compareTo(result2.getName());
-            }
-        });
-        return instances;
     }
 
     public void setInstanceUnplayable(Instance instance) {

@@ -379,7 +379,7 @@ public class InstanceInstallerDialog extends JDialog {
                                         newInstance.setHash(version.getHash());
                                     }
 
-                                    App.settings.getInstances().add(newInstance);
+                                    InstanceManager.addInstance(newInstance);
 
                                 }
                                 InstanceManager.saveInstances();

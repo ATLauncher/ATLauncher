@@ -127,11 +127,13 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 App.settings.getConsole().setVisible(!App.settings.isConsoleVisible());
             }
         });
+
         openFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Utils.openExplorer(FileSystem.BASE_DIR);
             }
         });
+
         updateData.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common" + "" +
@@ -148,6 +150,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 dialog.start();
             }
         });
+
         username.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -157,12 +160,14 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 }
             }
         });
+
         ConsoleCloseManager.addListener(new ConsoleCloseListener() {
             @Override
             public void onConsoleClose() {
                 toggleConsole.setText(Language.INSTANCE.localize("console.show"));
             }
         });
+
         ConsoleOpenManager.addListener(new ConsoleOpenListener() {
             @Override
             public void onConsoleOpen() {

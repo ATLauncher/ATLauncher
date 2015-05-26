@@ -35,8 +35,31 @@ import java.io.ObjectInputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class InstanceManager {
+    public static List<Instance> getInstances() {
+        return Data.INSTANCES;
+    }
+
+    /**
+     * Get the Instances available in the Launcher sorted alphabetically
+     *
+     * @return The Instances available in the Launcher sorted alphabetically
+     */
+    public static List<Instance> getInstancesSorted() {
+        ArrayList<Instance> instances = new ArrayList<>(Data.INSTANCES);
+        Collections.sort(instances, new Comparator<Instance>() {
+            public int compare(Instance result1, Instance result2) {
+                return result1.getName().compareTo(result2.getName());
+            }
+        });
+        return instances;
+    }
+
     /**
      * Loads the user installed Instances
      */
@@ -191,5 +214,9 @@ public class InstanceManager {
         }
 
         LogManager.debug("Finished changing instances user locks to UUID's");
+    }
+
+    public static void addInstance(Instance instance) {
+        Data.INSTANCES.add(instance);
     }
 }

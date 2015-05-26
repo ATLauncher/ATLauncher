@@ -435,7 +435,7 @@ public class Account implements Serializable {
      */
     public List<String> getCollapsedInstances() {
         if (this.collapsedInstances == null) {
-            this.collapsedInstances = new ArrayList<String>();
+            this.collapsedInstances = new ArrayList<>();
         }
         return this.collapsedInstances;
     }

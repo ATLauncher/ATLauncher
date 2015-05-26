@@ -22,6 +22,8 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.manager.AccountChangeManager;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
@@ -141,5 +143,47 @@ public class AccountManager {
             }
         }
         LogManager.debug("Finished checking account UUID's");
+    }
+
+    public static void setPackVisbility(Pack pack, boolean collapsed) {
+        Account account = AccountManager.activeAccount;
+        
+        if (pack != null && account != null && account.isReal()) {
+            if (collapsed) {
+                // Closed It
+                if (!account.getCollapsedPacks().contains(pack.getName())) {
+                    account.getCollapsedPacks().add(pack.getName());
+                }
+            } else {
+                // Opened It
+                if (account.getCollapsedPacks().contains(pack.getName())) {
+                    account.getCollapsedPacks().remove(pack.getName());
+                }
+            }
+
+            AccountManager.saveAccounts();
+            PackChangeManager.reload();
+        }
+    }
+
+    public static void setInstanceVisbility(Instance instance, boolean collapsed) {
+        Account account = AccountManager.activeAccount;
+
+        if (instance != null && account.isReal()) {
+            if (collapsed) {
+                // Closed It
+                if (!account.getCollapsedInstances().contains(instance.getName())) {
+                    account.getCollapsedInstances().add(instance.getName());
+                }
+            } else {
+                // Opened It
+                if (account.getCollapsedInstances().contains(instance.getName())) {
+                    account.getCollapsedInstances().remove(instance.getName());
+                }
+            }
+
+            AccountManager.saveAccounts();
+            InstanceChangeManager.change();
+        }
     }
 }
