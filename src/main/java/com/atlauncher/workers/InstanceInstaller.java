@@ -928,24 +928,33 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
-    public void configurePack() {
-        // Download the configs zip file
+    /**
+     * This downloads the configs for this pack (if any) to the temporary directory.
+     */
+    private void downloadConfigs() {
         fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
-        Path configs = this.getTempDirectory().resolve("Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
-        Downloadable configsDownload = new Downloadable(path, null, configs, -1, true, this);
+        Downloadable configsDownload = new Downloadable(path, null, this.getTempDirectory().resolve("Configs.zip"),
+                -1, true, this);
 
         this.resetDownloadedBytes(0);
 
         try {
-            configsDownload.download(); // Download the file
+            configsDownload.download();
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
+    }
 
-        // Extract the configs zip file
+    /**
+     * This extracts the configs for this pack (if any) to the root directory.
+     */
+    private void extractConfigs() {
+        Path configs = this.getTempDirectory().resolve("Configs.zip");
+
         fireSubProgressUnknown();
         fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
+
         FileUtils.unzip(configs, this.getRootDirectory());
         FileUtils.delete(configs);
     }
@@ -953,6 +962,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public String getServerJar() {
         Mod forge = null; // The Forge Mod
         Mod mcpc = null; // The MCPC Mod
+
         for (Mod mod : selectedMods) {
             if (mod.type == ModType.FORGE) {
                 forge = mod;
@@ -960,12 +970,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 mcpc = mod;
             }
         }
+
         if (mcpc != null) {
             return mcpc.getFile();
         } else if (forge != null) {
             return forge.getFile();
         } else {
-            return "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar";
+            return this.getMinecraftJar().getFileName().toString();
         }
     }
 
@@ -1005,7 +1016,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.allMods;
     }
 
-    public boolean shouldCoruptInstance() {
+    public boolean shouldCorruptInstance() {
         return this.instanceIsCorrupt;
     }
 
@@ -1037,7 +1048,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public List<Mod> sortMods(List<Mod> original) {
-        List<Mod> mods = new ArrayList<Mod>(original);
+        List<Mod> mods = new ArrayList<>(original);
 
         for (Mod mod : original) {
             if (mod.optional) {
@@ -1150,16 +1161,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (this.jsonVersion == null) {
             return false;
         }
+
         if (this.jsonVersion.hasMessages()) {
             if (this.isReinstall && this.jsonVersion.getMessages().hasUpdateMessage() && this.jsonVersion.getMessages
                     ().showUpdateMessage(this.pack) != 0) {
-                LogManager.error("Instance Install Cancelled After Viewing Message!");
+                LogManager.error("Instance install cancelled after viewing update message!");
                 cancel(true);
+
                 return false;
             } else if (this.jsonVersion.getMessages().hasInstallMessage() && this.jsonVersion.getMessages()
                     .showInstallMessage(this.pack) != 0) {
-                LogManager.error("Instance Install Cancelled After Viewing Message!");
+                LogManager.error("Instance install cancelled after viewing install message!");
                 cancel(true);
+
                 return false;
             }
         }
@@ -1305,7 +1319,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (!this.jsonVersion.hasNoConfigs()) {
-            configurePack();
+            downloadConfigs();
+            extractConfigs();
         }
 
         // Copy over common configs if any

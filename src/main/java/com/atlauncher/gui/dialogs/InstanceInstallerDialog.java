@@ -317,7 +317,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     ("common.not") + " " + ((isReinstall) ? Language.INSTANCE.localize("common" + "" +
                                     ".reinstalled") : Language.INSTANCE.localize("common.installed"));
                             if (isReinstall) {
-                                if (shouldCoruptInstance()) {
+                                if (shouldCorruptInstance()) {
                                     InstanceManager.setInstanceUnplayable(instance);
                                 }
                             }
@@ -397,13 +397,13 @@ public class InstanceInstallerDialog extends JDialog {
                                     type = JOptionPane.ERROR_MESSAGE;
                                     text = pack.getName() + " " + version.getVersion() + " " + Language.INSTANCE
                                             .localize("common.wasnt") + " " + Language.INSTANCE.localize("common" + "" +
-                                            ".reinstalled") + "<br/><br/>" + (this.shouldCoruptInstance() ? Language
+                                            ".reinstalled") + "<br/><br/>" + (this.shouldCorruptInstance() ? Language
                                             .INSTANCE.localize("instance.nolongerplayable") : "") + "<br/><br/>" +
                                             Language.INSTANCE.localize("instance.checkerrorlogs") + "!";
                                     title = pack.getName() + " " + version.getVersion() + " " + Language.INSTANCE
                                             .localize("common.not") + " " + Language.INSTANCE.localize("common" + "" +
                                             ".reinstalled");
-                                    if (this.shouldCoruptInstance()) {
+                                    if (this.shouldCorruptInstance()) {
                                         InstanceManager.setInstanceUnplayable(instance);
                                     }
                                 } else {
