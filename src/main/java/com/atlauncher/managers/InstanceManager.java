@@ -25,6 +25,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
+import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.FileUtils;
 
 import java.io.BufferedWriter;
@@ -111,10 +112,9 @@ public class InstanceManager {
                             continue;
                         }
 
-                        byte[] bits = Files.readAllBytes(instanceJson);
                         Instance instance;
                         try {
-                            instance = Gsons.DEFAULT.fromJson(new String(bits), Instance.class);
+                            instance = new JsonFile(instanceJson).convert(Instance.class);
                         } catch (Exception e) {
                             LogManager.logStackTrace("Failed to load instance in the folder " + file.getFileName(), e);
                             continue;

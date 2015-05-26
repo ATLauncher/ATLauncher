@@ -20,19 +20,14 @@ package com.atlauncher.managers;
 
 import com.atlauncher.App;
 import com.atlauncher.Data;
-import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.utils.FileUtils;
+import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.Utils;
 import com.google.gson.reflect.TypeToken;
 
-import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -50,9 +45,8 @@ public class PackManager {
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
-            byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("packs.json"));
             Data.PACKS.clear();
-            Data.PACKS.addAll((List<Pack>) Gsons.DEFAULT.fromJson(new String(bits), type));
+            Data.PACKS.addAll((List<Pack>) JsonFile.of("packs.json", type));
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }

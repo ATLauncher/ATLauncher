@@ -35,6 +35,7 @@ import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.nio.JsonFile;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
@@ -58,7 +59,6 @@ import java.awt.Window;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -376,12 +376,11 @@ public class Settings {
         }
     }
 
-    private DirectoryStream.Filter logFilter() {
-        return new DirectoryStream.Filter() {
+    private DirectoryStream.Filter<Path> logFilter() {
+        return new DirectoryStream.Filter<Path>() {
             @Override
-            public boolean accept(Object o) throws IOException {
-                Path p = (Path) o;
-                return Files.isRegularFile(p) && p.startsWith(Constants.LAUNCHER_NAME + "-Log_") && p.endsWith(".log");
+            public boolean accept(Path o) throws IOException {
+                return Files.isRegularFile(o) && o.startsWith(Constants.LAUNCHER_NAME + "-Log_") && o.endsWith(".log");
             }
         };
     }
@@ -516,8 +515,7 @@ public class Settings {
 
     public boolean launcherHasUpdate() {
         try {
-            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(FileSystem.JSON.resolve("version" + "" +
-                    ".json").toFile()), LauncherVersion.class);
+            this.latestLauncherVersion = JsonFile.of("version.json", LauncherVersion.class);
         } catch (Exception e) {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);
         }
@@ -766,11 +764,10 @@ public class Settings {
         List<LauncherLibrary> libraries;
 
         try {
-            byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("libraries.json"));
             java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
             }.getType();
 
-            libraries = Gsons.DEFAULT.fromJson(new String(bits), type);
+            libraries = JsonFile.of("libraries.json", type);
         } catch (Exception e) {
             LogManager.logStackTrace(e);
             libraries = new LinkedList<>();
@@ -1321,9 +1318,8 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
-            byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("news.json"));
             Data.NEWS.clear();
-            Data.NEWS.addAll((List<News>) Gsons.DEFAULT.fromJson(new String(bits), type));
+            Data.NEWS.addAll((List<News>) JsonFile.of("news.json", type));
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
@@ -1341,8 +1337,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
             }.getType();
-            byte[] bits = Files.readAllBytes(FileSystem.JSON.resolve("minecraftversions.json"));
-            List<MinecraftVersion> versions = Gsons.DEFAULT.fromJson(new String(bits), type);
+            List<MinecraftVersion> versions = JsonFile.of("minecraftversions.json", type);
 
             for (MinecraftVersion version : versions) {
                 Data.MINECRAFT_VERSIONS.put(version.getVersion(), version);

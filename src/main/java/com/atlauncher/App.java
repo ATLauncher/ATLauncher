@@ -59,7 +59,6 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -171,9 +170,7 @@ public class App {
         Locale.setDefault(Locale.ENGLISH);
 
         // Prefer to use IPv4
-        System.setProperty("http.keepAlive", "false");
         System.setProperty("java.net.preferIPv4Stack", "true");
-        System.setProperty("http.keepAliveDuration", String.valueOf(TimeUnit.MINUTES.toMillis(1)));
 
         if (args != null) {
             for (String arg : args) {
