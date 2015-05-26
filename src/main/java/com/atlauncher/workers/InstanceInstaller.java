@@ -554,7 +554,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                 }
 
-                for (Delete del : this.version.getDeletes().getFiles()) {
+                for (Delete del : this.version.getDeletes().getFolders()) {
                     Path file = del.getFile(this.instance);
                     if (del.isValid() && Files.exists(file)) {
                         FileUtils.deleteDirectory(file);

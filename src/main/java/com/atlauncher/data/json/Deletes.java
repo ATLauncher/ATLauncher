@@ -19,12 +19,13 @@ package com.atlauncher.data.json;
 
 import com.atlauncher.annot.Json;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Json
 public class Deletes {
-    private List<Delete> files;
-    private List<Delete> folders;
+    private List<Delete> files = new ArrayList<>();
+    private List<Delete> folders = new ArrayList<>();
 
     public List<Delete> getFiles() {
         return this.files;
