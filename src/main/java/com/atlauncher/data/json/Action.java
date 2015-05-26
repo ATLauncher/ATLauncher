@@ -91,17 +91,21 @@ public class Action {
                 }
                 switch (this.type) {
                     case mods:
-                        FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods.resolve(saveAs));
+                        FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods.resolve
+                                (saveAs));
                         break;
                     case coremods:
                         if (instanceInstaller.packVersion.getMinecraftVersion().usesCoreMods()) {
-                            FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.coremods.resolve(saveAs));
+                            FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.coremods
+                                    .resolve(saveAs));
                         } else {
-                            FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods.resolve(saveAs));
+                            FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods.resolve
+                                    (saveAs));
                         }
                         break;
                     case jar:
-                        FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.jarmods.resolve(saveAs));
+                        FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.jarmods.resolve
+                                (saveAs));
                         instanceInstaller.addToJarOrder(this.saveAs);
                         break;
                     default:

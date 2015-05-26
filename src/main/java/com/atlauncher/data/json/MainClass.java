@@ -47,11 +47,11 @@ public class MainClass {
         return this.dependsGroup != null;
     }
 
-    public DependencyValidator dependencyValidator(){
+    public DependencyValidator dependencyValidator() {
         return new DependencyValidator(this.depends);
     }
 
-    public GroupValidator groupValidator(){
+    public GroupValidator groupValidator() {
         return new GroupValidator(this.dependsGroup);
     }
 }

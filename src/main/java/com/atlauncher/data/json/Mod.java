@@ -177,8 +177,9 @@ public final class Mod {
                 .getColour(this.color), this.description, false, false);
     }
 
-    public Downloadable generateDownloadable(InstanceInstaller installer){
-        return new Downloadable(this.getUrl(), this.md5, FileSystem.DOWNLOADS.resolve(this.getFile()), this.filesize, true, installer);
+    public Downloadable generateDownloadable(InstanceInstaller installer) {
+        return new Downloadable(this.getUrl(), this.md5, FileSystem.DOWNLOADS.resolve(this.getFile()), this.filesize,
+                true, installer);
     }
 
     private void downloadClient(InstanceInstaller installer, int attempt) throws Exception {

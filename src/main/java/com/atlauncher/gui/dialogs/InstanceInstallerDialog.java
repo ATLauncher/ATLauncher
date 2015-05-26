@@ -335,8 +335,8 @@ public class InstanceInstallerDialog extends JDialog {
                                         ("common.hasbeen") + " " + ((isReinstall) ? Language.INSTANCE.localize
                                         ("common.reinstalled") : Language.INSTANCE.localize("common.installed")) +
                                         "<br/><br/>" + ((isServer) ? Language.INSTANCE.localizeWithReplace("instance"
-                                        + ".finditserver", "<br/><br/>" + this.root) : Language
-                                        .INSTANCE.localize("instance.findit"));
+                                        + ".finditserver", "<br/><br/>" + this.root) : Language.INSTANCE.localize
+                                        ("instance.findit"));
                                 title = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                         .localize("common.installed");
                                 if (isReinstall) {
@@ -348,10 +348,12 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setPermgen(this.permgen);
                                     instance.setIsNewLaunchMethod(!this.packVersion.getMinecraftVersion().isLegacy());
                                     instance.setLibrariesNeeded(this.librariesNeeded);
-                                    instance.setMinecraftArguments(this.packVersion.getMinecraftVersion().getMojangVersion().getMinecraftArguments());
+                                    instance.setMinecraftArguments(this.packVersion.getMinecraftVersion()
+                                            .getMojangVersion().getMinecraftArguments());
                                     instance.setExtraArguments(this.extraArgs);
                                     instance.setMainClass(this.mainClass);
-                                    instance.setAssets(this.packVersion.getMinecraftVersion().getMojangVersion().getAssets());
+                                    instance.setAssets(this.packVersion.getMinecraftVersion().getMojangVersion()
+                                            .getAssets());
                                     if (packVersion.isDev()) {
                                         instance.setDevVersion();
                                         if (packVersion.getHash() != null) {
@@ -367,14 +369,15 @@ public class InstanceInstallerDialog extends JDialog {
 
                                 } else {
                                     Instance newInstance = new Instance(instanceNameField.getText(), pack.getName(),
-                                            pack, enableUserLock.isSelected(), version.getVersion(), packVersion.getMinecraftVersion().getVersion(),
-                                                                        this.memory, this.permgen,
-                                            this.installedMods, this.jarOrder, this.librariesNeeded,
-                                            this.extraArgs, this.packVersion.getMinecraftVersion().getMojangVersion().getMinecraftArguments(), this.mainClass,
-                                            this.packVersion.getMinecraftVersion().getMojangVersion().getAssets(), this.packVersion.isDev(),
-                                            !packVersion.getMinecraftVersion().isLegacy());
+                                            pack, enableUserLock.isSelected(), version.getVersion(), packVersion
+                                            .getMinecraftVersion().getVersion(), this.memory, this.permgen, this
+                                            .installedMods, this.jarOrder, this.librariesNeeded, this.extraArgs, this
+                                            .packVersion.getMinecraftVersion().getMojangVersion()
+                                            .getMinecraftArguments(), this.mainClass, this.packVersion
+                                            .getMinecraftVersion().getMojangVersion().getAssets(), this.packVersion
+                                            .isDev(), !packVersion.getMinecraftVersion().isLegacy());
 
-                                    if (packVersion.isDev() && (packVersion.getHash()!= null)) {
+                                    if (packVersion.isDev() && (packVersion.getHash() != null)) {
                                         newInstance.setHash(packVersion.getHash());
                                     }
 
@@ -397,8 +400,8 @@ public class InstanceInstallerDialog extends JDialog {
                                     type = JOptionPane.ERROR_MESSAGE;
                                     text = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                             .localize("common.wasnt") + " " + Language.INSTANCE.localize("common" + "" +
-                                            ".reinstalled") + "<br/><br/>" + (this.corrupt ? Language
-                                            .INSTANCE.localize("instance.nolongerplayable") : "") + "<br/><br/>" +
+                                            ".reinstalled") + "<br/><br/>" + (this.corrupt ? Language.INSTANCE
+                                            .localize("instance.nolongerplayable") : "") + "<br/><br/>" +
                                             Language.INSTANCE.localize("instance.checkerrorlogs") + "!";
                                     title = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                             .localize("common.not") + " " + Language.INSTANCE.localize("common" + "" +

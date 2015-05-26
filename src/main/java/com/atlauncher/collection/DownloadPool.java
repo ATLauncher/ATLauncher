@@ -1,3 +1,20 @@
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.atlauncher.collection;
 
 import com.atlauncher.App;
@@ -13,35 +30,38 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public final class DownloadPool
-extends LinkedList<Downloadable>{
+public final class DownloadPool extends LinkedList<Downloadable> {
     private final boolean wait;
 
-    public DownloadPool(boolean wait) {this.wait = wait;}
+    public DownloadPool(boolean wait) {
+        this.wait = wait;
+    }
 
-    public DownloadPool(){
+    public DownloadPool() {
         this(true);
     }
 
-    public void downloadAll(){
+    public void downloadAll() {
         ExecutorService executor = Utils.generateDownloadExecutor();
-        for(Downloadable dl : this){
+        for (Downloadable dl : this) {
             executor.execute(new Downloader(dl));
         }
         executor.shutdown();
-        while(!executor.isTerminated()){}
+        while (!executor.isTerminated()) {
+        }
     }
 
-    public void downloadAll(InstanceInstaller installer){
+    public void downloadAll(InstanceInstaller installer) {
         ExecutorService executor = Utils.generateDownloadExecutor();
-        for(Downloadable dl : this){
+        for (Downloadable dl : this) {
             executor.execute(new Installer(dl, installer));
         }
         executor.shutdown();
-        while(!executor.isTerminated()){}
+        while (!executor.isTerminated()) {
+        }
     }
 
-    public int totalSize(){
+    public int totalSize() {
         Future<Integer> sizeFuture = App.TASKPOOL.submit(new SizeCollector());
 
         try {
@@ -52,19 +72,19 @@ extends LinkedList<Downloadable>{
         }
     }
 
-    public DownloadPool downsize(){
+    public DownloadPool downsize() {
         DownloadPool pool = new DownloadPool(wait);
-        for(Downloadable dl : this){
-            if(dl.needToDownload()){
+        for (Downloadable dl : this) {
+            if (dl.needToDownload()) {
                 pool.add(dl);
             }
         }
         return pool;
     }
 
-    public boolean any(){
-        for(Downloadable dl : this){
-            if(dl.needToDownload()){
+    public boolean any() {
+        for (Downloadable dl : this) {
+            if (dl.needToDownload()) {
                 return true;
             }
         }
@@ -72,21 +92,18 @@ extends LinkedList<Downloadable>{
         return false;
     }
 
-    private final class SizeCollector
-    implements Callable<Integer>{
+    private final class SizeCollector implements Callable<Integer> {
         @Override
-        public Integer call()
-        throws Exception {
+        public Integer call() throws Exception {
             int size = 0;
-            for(Downloadable dl : DownloadPool.this){
+            for (Downloadable dl : DownloadPool.this) {
                 size += dl.getFilesize();
             }
             return size;
         }
     }
 
-    private final class Installer
-    implements Runnable{
+    private final class Installer implements Runnable {
         private final Downloadable dl;
         private final InstanceInstaller installer;
 
@@ -97,34 +114,33 @@ extends LinkedList<Downloadable>{
 
         @Override
         public void run() {
-            try{
-                if(this.dl.needToDownload()){
+            try {
+                if (this.dl.needToDownload()) {
                     installer.fireTask(Language.INSTANCE.localize("common.downloading") + this.dl.to.getFileName());
                     this.dl.download();
-                } else{
+                } else {
                     this.dl.copy();
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 LogManager.logStackTrace(e);
             }
         }
     }
 
-    private final class Downloader
-    implements Runnable{
+    private final class Downloader implements Runnable {
         private final Downloadable dl;
 
-        private Downloader(Downloadable dl){
+        private Downloader(Downloadable dl) {
             this.dl = dl;
         }
 
         @Override
         public void run() {
-            try{
-                if(this.dl.needToDownload()){
+            try {
+                if (this.dl.needToDownload()) {
                     this.dl.download();
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 LogManager.logStackTrace("Error trying to download " + this.dl.to.getFileName(), e);
             }
         }
