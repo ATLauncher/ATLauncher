@@ -22,6 +22,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.utils.FileUtils;
 
@@ -149,4 +150,46 @@ public class InstanceManager {
         }
     }
 
+    public static void changeUserLocks() {
+        LogManager.debug("Changing instances user locks to UUID's");
+
+        boolean wereChanges = false;
+
+        for (Instance instance : Data.INSTANCES) {
+            if (instance.getInstalledBy() != null) {
+                boolean found = false;
+
+                for (Account account : AccountManager.getAccounts()) {
+                    // This is the user who installed this so switch to their UUID
+                    if (account.getMinecraftUsername().equalsIgnoreCase(instance.getInstalledBy())) {
+                        found = true;
+                        wereChanges = true;
+
+                        instance.removeInstalledBy();
+
+                        // If the accounts UUID is null for whatever reason, don't set the lock
+                        if (!account.isUUIDNull()) {
+                            instance.setUserLock(account.getUUIDNoDashes());
+                        }
+                        break;
+                    }
+                }
+
+                // If there were no accounts with that username, we remove the lock and old installed by
+                if (!found) {
+                    wereChanges = true;
+
+                    instance.removeInstalledBy();
+                    instance.removeUserLock();
+                }
+            }
+        }
+
+        if (wereChanges) {
+            AccountManager.saveAccounts();
+            InstanceManager.saveInstances();
+        }
+
+        LogManager.debug("Finished changing instances user locks to UUID's");
+    }
 }

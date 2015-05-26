@@ -25,6 +25,7 @@ import com.atlauncher.data.Account;
 import com.atlauncher.evnt.manager.AccountChangeManager;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
+import com.atlauncher.utils.MojangAPIUtils;
 
 import java.io.EOFException;
 import java.io.FileInputStream;
@@ -111,5 +112,34 @@ public class AccountManager {
         InstanceChangeManager.change();
         AccountChangeManager.change();
         App.settings.saveProperties();
+    }
+
+    public static void checkForNameChanges() {
+        LogManager.info("Checking For Username Changes");
+
+        boolean somethingChanged = false;
+
+        for (Account account : Data.ACCOUNTS) {
+            if (account.checkForUsernameChange()) {
+                somethingChanged = true;
+            }
+        }
+
+        if (somethingChanged) {
+            AccountManager.saveAccounts();
+        }
+
+        LogManager.info("Checking For Username Changes Complete");
+    }
+
+    public static void checkUUIDs() {
+        LogManager.info("Checking account UUID's!");
+        for (Account account : Data.ACCOUNTS) {
+            if (account.isUUIDNull()) {
+                account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
+                AccountManager.saveAccounts();
+            }
+        }
+        LogManager.debug("Finished checking account UUID's");
     }
 }

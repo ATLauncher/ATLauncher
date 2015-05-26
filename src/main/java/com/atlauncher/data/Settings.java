@@ -221,11 +221,11 @@ public class Settings {
 
         checkResources(); // Check for new format of resources
 
-        checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
+        AccountManager.checkUUIDs(); // Check for accounts UUID's and add them if necessary
 
-        changeInstanceUserLocks(); // Changes any instances user locks to UUIDs if available
+        InstanceManager.changeUserLocks(); // Changes any instances user locks to UUIDs if available
 
-        checkAccountsForNameChanges(); // Check account for username changes
+        AccountManager.checkForNameChanges(); // Check account for username changes
 
         LogManager.debug("Checking for access to master server");
         OUTER:
@@ -295,24 +295,6 @@ public class Settings {
                 }
             });
         }
-    }
-
-    private void checkAccountsForNameChanges() {
-        LogManager.info("Checking For Username Changes");
-
-        boolean somethingChanged = false;
-
-        for (Account account : Data.ACCOUNTS) {
-            if (account.checkForUsernameChange()) {
-                somethingChanged = true;
-            }
-        }
-
-        if (somethingChanged) {
-            AccountManager.saveAccounts();
-        }
-
-        LogManager.info("Checking For Username Changes Complete");
     }
 
     public void checkForValidJavaPath(boolean save) {
@@ -469,61 +451,6 @@ public class Settings {
                 }
             };
         }
-    }
-
-    public void checkAccountUUIDs() {
-        LogManager.debug("Checking account UUID's");
-        LogManager.info("Checking account UUID's!");
-        for (Account account : Data.ACCOUNTS) {
-            if (account.isUUIDNull()) {
-                account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
-                AccountManager.saveAccounts();
-            }
-        }
-        LogManager.debug("Finished checking account UUID's");
-    }
-
-    public void changeInstanceUserLocks() {
-        LogManager.debug("Changing instances user locks to UUID's");
-
-        boolean wereChanges = false;
-
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getInstalledBy() != null) {
-                boolean found = false;
-
-                for (Account account : Data.ACCOUNTS) {
-                    // This is the user who installed this so switch to their UUID
-                    if (account.getMinecraftUsername().equalsIgnoreCase(instance.getInstalledBy())) {
-                        found = true;
-                        wereChanges = true;
-
-                        instance.removeInstalledBy();
-
-                        // If the accounts UUID is null for whatever reason, don't set the lock
-                        if (!account.isUUIDNull()) {
-                            instance.setUserLock(account.getUUIDNoDashes());
-                        }
-                        break;
-                    }
-                }
-
-                // If there were no accounts with that username, we remove the lock and old installed by
-                if (!found) {
-                    wereChanges = true;
-
-                    instance.removeInstalledBy();
-                    instance.removeUserLock();
-                }
-            }
-        }
-
-        if (wereChanges) {
-            AccountManager.saveAccounts();
-            InstanceManager.saveInstances();
-        }
-
-        LogManager.debug("Finished changing instances user locks to UUID's");
     }
 
     public void checkMojangStatus() {
