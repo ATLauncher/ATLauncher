@@ -859,9 +859,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (this.version.shouldCaseAllFiles()) {
             try {
-                if (this.server && this.versionMatch()) {
+                if (this.reinstall && this.versionMatch()) {
                     Files.walkFileTree(this.mods, new CaseFileVisitor(this.version.getCaseAllFiles(), this.instance
                             .getCustomMods(ModType.MODS)));
+                } else {
+                    Files.walkFileTree(this.mods, new CaseFileVisitor(this.version.getCaseAllFiles()));
                 }
             } catch (Exception e) {
                 LogManager.logStackTrace("Error casing files while install instance", e);
