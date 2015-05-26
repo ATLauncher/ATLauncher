@@ -211,7 +211,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     }
 
     /**
-     * Update the status icon to show the current Minecraft server status.
+     * Update the status icon to show the current Minecraft SERVER status.
      *
      * @param status The status of servers
      */

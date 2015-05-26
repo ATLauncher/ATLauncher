@@ -85,7 +85,7 @@ public final class ViewModsDialog extends JDialog {
         Collections.sort(mods, new Comparator<Mod>() {
             @Override
             public int compare(Mod o1, Mod o2) {
-                return o1.getName().compareToIgnoreCase(o2.getName());
+                return o1.name.compareToIgnoreCase(o2.name);
             }
         });
 
@@ -114,7 +114,7 @@ public final class ViewModsDialog extends JDialog {
 
             if (!this.searchField.getText().isEmpty()) {
                 if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE).matcher
-                        (card.mod.getName()).find()) {
+                        (card.mod.name).find()) {
 
                     show = false;
                 }

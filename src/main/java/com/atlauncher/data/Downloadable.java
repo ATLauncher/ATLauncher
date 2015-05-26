@@ -42,8 +42,11 @@ import java.util.concurrent.TimeUnit;
 
 public final class Downloadable {
     public static final int MAX_ATTEMPTS = 3;
-    public static final CacheControl CACHE_CONTROL = new CacheControl.Builder().noStore().noCache().maxAge(0,
-            TimeUnit.MILLISECONDS).build();
+    public static final CacheControl CACHE_CONTROL = new CacheControl.Builder()
+                                                             .noStore()
+                                                             .noCache()
+                                                             .maxAge(0, TimeUnit.MILLISECONDS)
+                                                             .build();
 
     public final String URL;
     public final int size;
@@ -79,7 +82,9 @@ public final class Downloadable {
     public Downloadable(String url, String hash, Path to, Path copyTo, int size, boolean atlauncher, boolean copy,
                         InstanceInstaller installer) {
         this.atlauncher = atlauncher;
-        this.URL = url;
+        this.URL = url.replace(".JAR", ".jar")
+                      .replace(".ZIP", ".zip")
+                      .replace(".LITEMOD", ".litemod");
         this.copy = copy;
         this.copyTo = copyTo;
 
@@ -91,9 +96,14 @@ public final class Downloadable {
                     break;
                 }
             }
-            this.url = this.server.getFileURL(url);
+            this.url = this.server.getFileURL(url)
+                                  .replace(".JAR", ".jar")
+                                  .replace(".ZIP", ".zip")
+                                  .replace(".LITEMOD", ".litemod");
         } else {
-            this.url = url;
+            this.url = url.replace(".JAR", ".jar")
+                    .replace(".ZIP", ".zip")
+                    .replace(".LITEMOD", ".litemod");
         }
 
         this.installer = installer;
@@ -294,7 +304,7 @@ public final class Downloadable {
                         LogManager.warn("Error downloading " + this.to.getFileName() + " from " + this.url + ". " +
                                 "Expected hash of " + expectedHash + " but got " + this.hash + " instead. Trying " +
                                 "another " +
-                                "server!");
+                                "SERVER!");
                         this.url = this.server.getFileURL(this.URL);
                     } else {
                         FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);

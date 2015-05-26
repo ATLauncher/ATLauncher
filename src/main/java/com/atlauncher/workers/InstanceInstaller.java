@@ -260,9 +260,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public Path getMinecraftJar() {
         if (isServer) {
             return this.getRootDirectory().resolve("minecraft_server." + this.version.getMinecraftVersion()
-                    .getVersion() + ".jar");
+                    .getVersion() + ".JAR");
         }
-        return this.getBinDirectory().resolve("minecraft.jar");
+        return this.getBinDirectory().resolve("minecraft.JAR");
     }
 
     public String getJarOrder() {
@@ -299,7 +299,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public Mod getModByName(String name) {
         for (Mod mod : allMods) {
-            if (mod.getName().equalsIgnoreCase(name)) {
+            if (mod.name.equalsIgnoreCase(name)) {
                 return mod;
             }
         }
@@ -312,7 +312,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (!modd.hasLinked()) {
                 continue;
             }
-            if (modd.getLinked().equalsIgnoreCase(mod.getName())) {
+            if (modd.linked.equalsIgnoreCase(mod.name)) {
                 linkedMods.add(modd);
             }
         }
@@ -325,7 +325,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (!modd.hasGroup()) {
                 continue;
             }
-            if (modd.getGroup().equalsIgnoreCase(mod.getGroup())) {
+            if (modd.group.equalsIgnoreCase(mod.group)) {
                 if (modd != mod) {
                     groupedMods.add(modd);
                 }
@@ -336,11 +336,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public List<Mod> getModsDependancies(Mod mod) {
         List<Mod> dependsMods = new ArrayList<Mod>();
-        for (String name : mod.getDepends()) {
+        for (String name : mod.depends) {
             inner:
             {
                 for (Mod modd : allMods) {
-                    if (modd.getName().equalsIgnoreCase(name)) {
+                    if (modd.name.equalsIgnoreCase(name)) {
                         dependsMods.add(modd);
                         break inner;
                     }
@@ -356,7 +356,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (!modd.hasDepends()) {
                 continue;
             }
-            if (modd.isADependancy(mod)) {
+            if (modd.isDependencyOf(mod)) {
                 dependedMods.add(modd);
             }
         }
@@ -368,7 +368,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (!modd.hasDepends()) {
                 continue;
             }
-            if (modd.isADependancy(mod)) {
+            if (modd.isDependencyOf(mod)) {
                 return true;
             }
         }
@@ -377,7 +377,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void makeDirectories() {
         if (isReinstall || isServer) {
-            // We're reinstalling or installing a server so delete these folders
+            // We're reinstalling or installing a SERVER so delete these folders
             if (Files.exists(this.getBinDirectory()) && Files.isDirectory(this.getBinDirectory())) {
                 FileUtils.deleteDirectory(this.getBinDirectory());
             }
@@ -387,13 +387,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
             if (instance != null && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion()
                     .getVersion()) && instance.hasCustomMods()) {
-                FileUtils.deleteSpecifiedFiles(this.getModsDirectory(), instance.getCustomMods(ModType.mods));
+                FileUtils.deleteSpecifiedFiles(this.getModsDirectory(), instance.getCustomMods(ModType.MODS));
                 if (this.version.getMinecraftVersion().usesCoreMods()) {
                     FileUtils.deleteSpecifiedFiles(this.getCoreModsDirectory(), instance.getCustomMods(ModType
-                            .coremods));
+                            .COREMODS));
                 }
                 if (isReinstall) {
-                    FileUtils.deleteSpecifiedFiles(this.getJarModsDirectory(), instance.getCustomMods(ModType.jar));
+                    FileUtils.deleteSpecifiedFiles(this.getJarModsDirectory(), instance.getCustomMods(ModType.JAR));
                 }
             } else {
                 FileUtils.deleteDirectory(this.getModsDirectory());
@@ -401,7 +401,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     FileUtils.deleteDirectory(this.getCoreModsDirectory());
                 }
                 if (isReinstall) {
-                    FileUtils.deleteDirectory(this.getJarModsDirectory()); // Only delete if it's not a server
+                    FileUtils.deleteDirectory(this.getJarModsDirectory()); // Only delete if it's not a SERVER
                 }
             }
             if (isReinstall) {
@@ -414,7 +414,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             } else {
                 if (Files.exists(this.getLibrariesDirectory()) && Files.isDirectory(this.getLibrariesDirectory())) {
-                    FileUtils.deleteDirectory(this.getLibrariesDirectory()); // Only delete if it's a server
+                    FileUtils.deleteDirectory(this.getLibrariesDirectory()); // Only delete if it's a SERVER
                 }
             }
             if (this.instance != null) {
@@ -459,9 +459,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         List<Downloadable> mods = new ArrayList<Downloadable>();
 
         for (Mod mod : this.selectedMods) {
-            if (mod.getDownload() == DownloadType.server) {
-                mods.add(new Downloadable(mod.getUrl(), mod.getMD5(), FileSystem.DOWNLOADS.resolve(mod.getFile()),
-                        mod.getFilesize(), true, this));
+            if (mod.download == DownloadType.SERVER) {
+                mods.add(new Downloadable(mod.getUrl(), mod.md5, FileSystem.DOWNLOADS.resolve(mod.getFile()),
+                        mod.filesize, true, this));
             }
         }
 
@@ -477,16 +477,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void installMods() {
         for (Mod mod : this.selectedMods) {
             if (!isCancelled()) {
-                fireTask(Language.INSTANCE.localize("common.installing") + " " + mod.getName());
+                fireTask(Language.INSTANCE.localize("common.installing") + " " + mod.name);
                 addPercent(this.selectedMods.size() / 40);
-                mod.install(this);
+                try{
+                    mod.install(this);
+                } catch(Exception e){
+                    LogManager.logStackTrace(e);
+                }
             }
         }
     }
 
     public boolean hasRecommendedMods() {
         for (Mod mod : allMods) {
-            if (mod.isRecommended()) {
+            if (mod.recommended) {
                 return true; // One of the mods is marked as recommended, so return true
             }
         }
@@ -498,7 +502,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (modd == mod || !modd.hasGroup()) {
                 continue;
             }
-            if (modd.getGroup().equalsIgnoreCase(mod.getGroup()) && modd.isRecommended()) {
+            if (modd.group.equalsIgnoreCase(mod.group) && modd.recommended) {
                 return false; // Another mod is recommended. Don't check anything
             }
         }
@@ -650,9 +654,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
-                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.isFilePattern() ? mod.getName
-                        () : mod.getFile()));
-                mod.download(this);
+                fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.filePattern ? mod.name : mod.getFile()));
+                try{
+                    mod.download(this);
+                } catch(Exception e){
+                    LogManager.logStackTrace(e);
+                }
                 fireSubProgress(-1); // Hide the subprogress bar
             }
         }
@@ -701,11 +708,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         boolean withFilename = false;
         if (isServer) {
             toCopy = FileSystem.JARS.resolve("minecraft_server." + this.version.getMinecraftVersion().getVersion() +
-                    ".jar");
+                    ".JAR");
             copyTo = this.getRootDirectory();
         } else {
-            toCopy = FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".jar");
-            copyTo = this.getBinDirectory().resolve("minecraft.jar");
+            toCopy = FileSystem.JARS.resolve(this.version.getMinecraftVersion().getVersion() + ".JAR");
+            copyTo = this.getBinDirectory().resolve("minecraft.JAR");
             withFilename = true;
         }
         if (Files.exists(toCopy)) {
@@ -731,7 +738,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (isReinstall && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion()
                     .getVersion())) {
                 Files.walkFileTree(dir, new CaseFileVisitor(this.jsonVersion.getCaseAllFiles(), instance
-                        .getCustomMods(ModType.mods)));
+                        .getCustomMods(ModType.MODS)));
             } else {
                 Files.walkFileTree(dir, new CaseFileVisitor(this.jsonVersion.getCaseAllFiles()));
             }
@@ -787,7 +794,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (library.hasDepends()) {
                 boolean found = false;
                 for (Mod mod : selectedMods) {
-                    if (library.getDepends().equalsIgnoreCase(mod.getName())) {
+                    if (library.getDepends().equalsIgnoreCase(mod.name)) {
                         found = true;
                         break;
                     }
@@ -798,7 +805,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else if (library.hasDependsGroup()) {
                 boolean found = false;
                 for (Mod mod : selectedMods) {
-                    if (library.getDependsGroup().equalsIgnoreCase(mod.getGroup())) {
+                    if (library.getDependsGroup().equalsIgnoreCase(mod.group)) {
                         found = true;
                         break;
                     }
@@ -809,7 +816,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
 
             if (!library.getUrl().startsWith("http://") && !library.getUrl().startsWith("https://")) {
-                library.setDownloadType(DownloadType.server);
+                library.setDownloadType(DownloadType.SERVER);
             }
 
             if (librariesNeeded == null) {
@@ -828,13 +835,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
 
             Path downloadTo = FileSystem.LIBRARIES.resolve(library.getFile());
-            if (library.getDownloadType() == DownloadType.server) {
+            if (library.getDownloadType() == DownloadType.SERVER) {
                 libraries.add(new Downloadable(library.getUrl(), library.getMD5(), downloadTo, library.getFilesize(),
                         true, this));
-            } else if (library.getDownloadType() == DownloadType.direct) {
+            } else if (library.getDownloadType() == DownloadType.DIRECT) {
                 libraries.add(new Downloadable(library.getUrl(), library.getMD5(), downloadTo, -1, false, this));
             } else {
-                LogManager.error("DownloadType for server library " + library.getFile() + " is invalid with a " +
+                LogManager.error("DownloadType for SERVER library " + library.getFile() + " is invalid with a " +
                         "value of " + library.getDownloadType());
                 this.cancel(true);
                 return null;
@@ -867,31 +874,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
-        // Add Minecraft.jar
+        // Add Minecraft.JAR
         if (isServer) {
             libraries.add(new Downloadable(this.getServerURL(), null, FileSystem.JARS.resolve("minecraft_server." +
-                    this.version.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
+                    this.version.getMinecraftVersion().getVersion() + ".JAR"), -1, false, this));
         } else {
             libraries.add(new Downloadable(this.getClientURL(), null, FileSystem.JARS.resolve(this.version
-                    .getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
+                    .getMinecraftVersion().getVersion() + ".JAR"), -1, false, this));
         }
         return libraries;
     }
 
     private String getClientURL() {
         return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version.getMinecraftVersion().getVersion() +
-                "/" + this.version.getMinecraftVersion().getVersion() + ".jar");
+                "/" + this.version.getMinecraftVersion().getVersion() + ".JAR");
     }
 
     private String getServerURL() {
         return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version.getMinecraftVersion().getVersion() +
-                "/minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar");
+                "/minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".JAR");
     }
 
     // TODO: Switch to NIO operations and possibly move to Utils/FileUtils (new class)
     public void deleteMetaInf() {
         Path inputFile = this.getMinecraftJar();
-        Path outputTmpFile = FileSystem.TMP.resolve(pack.getSafeName() + "-minecraft.jar");
+        Path outputTmpFile = FileSystem.TMP.resolve(pack.getSafeName() + "-minecraft.JAR");
         try {
             JarInputStream input = new JarInputStream(new FileInputStream(inputFile.toFile()));
             JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile.toFile()));
@@ -944,9 +951,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         Mod forge = null; // The Forge Mod
         Mod mcpc = null; // The MCPC Mod
         for (Mod mod : selectedMods) {
-            if (mod.getType() == ModType.forge) {
+            if (mod.type == ModType.FORGE) {
                 forge = mod;
-            } else if (mod.getType() == ModType.mcpc) {
+            } else if (mod.type == ModType.MCPC) {
                 mcpc = mod;
             }
         }
@@ -955,7 +962,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         } else if (forge != null) {
             return forge.getFile();
         } else {
-            return "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar";
+            return "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".JAR";
         }
     }
 
@@ -965,12 +972,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean hasJarMods() {
         for (Mod mod : selectedMods) {
-            if (!mod.installOnServer() && this.isServer) {
+            if (!mod.server && this.isServer) {
                 continue;
             }
-            if (mod.getType() == ModType.jar) {
+            if (mod.type == ModType.JAR) {
                 return true;
-            } else if (mod.getType() == ModType.decomp && mod.getDecompType() == com.atlauncher.data.json.DecompType
+            } else if (mod.type == ModType.DECOMP && mod.decompType == com.atlauncher.data.json.DecompType
                     .jar) {
                 return true;
             }
@@ -981,10 +988,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean hasForge() {
         for (Mod mod : selectedMods) {
-            if (!mod.installOnServer() && isServer) {
+            if (!mod.server && isServer) {
                 continue;
             }
-            if (mod.getType() == ModType.forge) {
+            if (mod.type == ModType.FORGE) {
                 return true;
             }
         }
@@ -1031,10 +1038,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         List<Mod> mods = new ArrayList<Mod>(original);
 
         for (Mod mod : original) {
-            if (mod.isOptional()) {
+            if (mod.optional) {
                 if (mod.hasLinked()) {
                     for (Mod mod1 : original) {
-                        if (mod1.getName().equalsIgnoreCase(mod.getLinked())) {
+                        if (mod1.name.equalsIgnoreCase(mod.linked)) {
                             mods.remove(mod);
                             int index = mods.indexOf(mod1) + 1;
                             mods.add(index, mod);
@@ -1048,7 +1055,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         List<Mod> modss = new ArrayList<Mod>();
 
         for (Mod mod : mods) {
-            if (!mod.isOptional()) {
+            if (!mod.optional) {
                 modss.add(mod); // Add all non optional mods
             }
         }
@@ -1162,7 +1169,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         boolean hasOptional = false;
         for (Mod mod : this.allMods) {
-            if (mod.isOptional()) {
+            if (mod.optional) {
                 hasOptional = true;
                 break;
             }
@@ -1196,8 +1203,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
-            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, mod
-                    .getType(), this.jsonVersion.getColour(mod.getColour()), mod.getDescription(), false, false));
+            this.modsInstalled.add(mod.generateDisableableMod(this, file));
         }
 
         if (this.isReinstall && instance.hasCustomMods() && instance.getMinecraftVersion().equalsIgnoreCase(version
@@ -1235,7 +1241,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         addPercent(5);
         if (this.isServer && this.hasJarMods()) {
-            fireTask(Language.INSTANCE.localize("server.extractingjar"));
+            fireTask(Language.INSTANCE.localize("SERVER.extractingjar"));
             fireSubProgressUnknown();
             FileUtils.unzip(getMinecraftJar(), getTempJarDirectory());
         }
@@ -1262,7 +1268,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             doCaseConversions(getModsDirectory());
         }
         if (isServer && hasJarMods()) {
-            fireTask(Language.INSTANCE.localize("server.zippingjar"));
+            fireTask(Language.INSTANCE.localize("SERVER.zippingjar"));
             fireSubProgressUnknown();
             FileUtils.zip(getTempJarDirectory(), getMinecraftJar());
         }
@@ -1345,7 +1351,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 String depends = this.jsonVersion.getMainClass().getDepends();
                 boolean found = false;
                 for (Mod mod : this.selectedMods) {
-                    if (mod.getName().equals(depends)) {
+                    if (mod.name.equals(depends)) {
                         found = true;
                         break;
                     }
@@ -1360,7 +1366,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     if (!mod.hasGroup()) {
                         continue; // No group, continue
                     }
-                    if (mod.getGroup().equals(depends)) {
+                    if (mod.group.equals(depends)) {
                         found = true;
                         break;
                     }
@@ -1384,7 +1390,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 String depends = this.jsonVersion.getExtraArguments().getDepends();
                 boolean found = false;
                 for (Mod mod : this.selectedMods) {
-                    if (mod.getName().equals(depends)) {
+                    if (mod.name.equals(depends)) {
                         found = true;
                         break;
                     }
@@ -1399,7 +1405,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     if (!mod.hasGroup()) {
                         continue; // No group, continue
                     }
-                    if (mod.getGroup().equals(depends)) {
+                    if (mod.group.equals(depends)) {
                         found = true;
                         break;
                     }

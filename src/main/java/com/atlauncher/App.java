@@ -226,7 +226,7 @@ public class App {
             if (files > 1) {
                 String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("I've detected that you may " +
-                        "not have installed this in the right location.<br/><br/>The exe or jar file should " +
+                        "not have installed this in the right location.<br/><br/>The exe or JAR file should " +
                         "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure " +
                         "that's what you've done?"), "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane
                         .ERROR_MESSAGE, null, options, options[0]);

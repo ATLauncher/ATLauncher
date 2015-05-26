@@ -192,7 +192,7 @@ public class Instance implements Cloneable {
      * @param memory the minimum RAM/memory as recommended by the pack developer/s
      * @param permgen the minimum PermGen/Metaspace as recommended by the pack developer/s
      * @param mods the mods installed in this Instance
-     * @param jarOrder the order that jar mods are loaded into the class path
+     * @param jarOrder the order that JAR mods are loaded into the class path
      * @param librariesNeeded the libraries needed to launch Minecraft
      * @param extraArguments the extra arguments for launching the pack
      * @param minecraftArguments the arguments needed by Minecraft to run
@@ -247,7 +247,7 @@ public class Instance implements Cloneable {
      * @param memory the minimum RAM/memory as recommended by the pack developer/s
      * @param permgen the minimum PermGen/Metaspace as recommended by the pack developer/s
      * @param mods the mods installed in this Instance
-     * @param jarOrder the order that jar mods are loaded into the class path
+     * @param jarOrder the order that JAR mods are loaded into the class path
      * @param librariesNeeded the libraries needed to launch Minecraft
      * @param extraArguments the extra arguments for launching the pack
      * @param minecraftArguments the arguments needed by Minecraft to run
@@ -310,9 +310,9 @@ public class Instance implements Cloneable {
     }
 
     /**
-     * Gets the order to load any jar mods into the class path when launching Minecraft.
+     * Gets the order to load any JAR mods into the class path when launching Minecraft.
      *
-     * @return comma separated list of filenames to jar mods in their correct loading order
+     * @return comma separated list of filenames to JAR mods in their correct loading order
      */
     public String getJarOrder() {
         return this.jarOrder;
@@ -667,9 +667,9 @@ public class Instance implements Cloneable {
     }
 
     /**
-     * Gets a File object for the jar mods directory of this Instance.
+     * Gets a File object for the JAR mods directory of this Instance.
      *
-     * @return File object for the jar mods directory of this Instance
+     * @return File object for the JAR mods directory of this Instance
      */
     public Path getJarModsDirectory() {
         return this.getRootDirectory().resolve("jarmods");
@@ -712,12 +712,12 @@ public class Instance implements Cloneable {
     }
 
     /**
-     * Gets a File object for the minecraft.jar of this Instance.
+     * Gets a File object for the minecraft.JAR of this Instance.
      *
-     * @return File object for the minecraft.jar of this Instance
+     * @return File object for the minecraft.JAR of this Instance
      */
     public Path getMinecraftJar() {
-        return this.getBinDirectory().resolve("minecraft.jar");
+        return this.getBinDirectory().resolve("minecraft.JAR");
     }
 
     /**
@@ -749,9 +749,9 @@ public class Instance implements Cloneable {
     }
 
     /**
-     * Checks if this Instance has installed jar mods.
+     * Checks if this Instance has installed JAR mods.
      *
-     * @return true if there are jar mods
+     * @return true if there are JAR mods
      */
     public boolean hasJarMods() {
         return this.jarOrder != null;

@@ -33,7 +33,7 @@ public abstract class BottomBar extends JPanel {
     private static final long serialVersionUID = -7488195680365431776L;
 
     protected final JButton nodeCraftIcon = new SMButton("/assets/image/NodeCraftIcon.png", "NodeCraft - Setup a " +
-            "Minecraft server with an ATL modpack in less than 60 seconds");
+            "Minecraft SERVER with an ATL modpack in less than 60 seconds");
     protected final JButton facebookIcon = new SMButton("/assets/image/FacebookIcon.png", "Facebook");
     protected final JButton githubIcon = new SMButton("/assets/image/GitHubIcon.png", "GitHub");
     protected final JButton twitterIcon = new SMButton("/assets/image/TwitterIcon.png", "Twitter");

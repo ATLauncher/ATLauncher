@@ -106,9 +106,9 @@ public class DisableableMod implements Serializable {
             }
 
             if (FileUtils.moveFile(this.getDisabledFilePath(instance), this.getFilePath(instance), true)) {
-                if (this.type == ModType.jar) {
+                if (this.type == ModType.JAR) {
                     Path inputFile = instance.getMinecraftJar();
-                    Path outputTmpFile = FileSystem.TMP.resolve(instance.getSafeName() + "-minecraft.jar");
+                    Path outputTmpFile = FileSystem.TMP.resolve(instance.getSafeName() + "-minecraft.JAR");
                     if (Utils.hasMetaInf(inputFile)) {
                         try {
                             JarInputStream input = new JarInputStream(new FileInputStream(inputFile.toFile()));
@@ -164,30 +164,30 @@ public class DisableableMod implements Serializable {
         Path dir = null;
 
         switch (this.type) {
-            case jar:
-            case forge:
-            case mcpc:
+            case JAR:
+            case FORGE:
+            case MCPC:
                 dir = instance.getJarModsDirectory();
                 break;
-            case texturepack:
+            case TEXTUREPACK:
                 dir = instance.getTexturePacksDirectory();
                 break;
-            case resourcepack:
+            case RESOURCEPACK:
                 dir = instance.getResourcePacksDirectory();
                 break;
-            case mods:
+            case MODS:
                 dir = instance.getModsDirectory();
                 break;
-            case ic2lib:
+            case IC2LIB:
                 dir = instance.getIC2LibDirectory();
                 break;
-            case denlib:
+            case DENLIB:
                 dir = instance.getDenLibDirectory();
                 break;
-            case coremods:
+            case COREMODS:
                 dir = instance.getCoreModsDirectory();
                 break;
-            case shaderpack:
+            case SHADERPACK:
                 dir = instance.getShaderPacksDirectory();
                 break;
             default:

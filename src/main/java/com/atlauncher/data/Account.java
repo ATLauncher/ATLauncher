@@ -441,7 +441,7 @@ public class Account implements Serializable {
     }
 
     /**
-     * Updates this Account's skin by redownloading the Minecraft skin from Mojang's skin server.
+     * Updates this Account's skin by redownloading the Minecraft skin from Mojang's skin SERVER.
      */
     public void updateSkin() {
         if (!this.skinUpdating) {

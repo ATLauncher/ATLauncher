@@ -48,7 +48,7 @@ public final class ModCard extends JPanel {
                 super.mouseClicked(e);
                 if (ModCard.this.mod.hasWebsite()) {
                     try {
-                        Utils.openBrowser(mod.getWebsite());
+                        Utils.openBrowser(mod.website);
                     } catch (Exception e1) {
                         e1.printStackTrace(System.err);
                     }
@@ -63,9 +63,8 @@ public final class ModCard extends JPanel {
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.WHITE);
-        g2.drawString(this.mod.getName(), 10, 10);
-        g2.setColor(this.mod.isOptional() ? Color.GREEN : Color.RED);
-        g2.drawString(this.mod.isOptional() ? "Optional" : "Required", g2.getFontMetrics().stringWidth(this.mod
-                .getName()) + g2.getFontMetrics().charWidth('M') * 2, 10);
+        g2.drawString(this.mod.name, 10, 10);
+        g2.setColor(this.mod.optional ? Color.GREEN : Color.RED);
+        g2.drawString(this.mod.optional ? "Optional" : "Required", g2.getFontMetrics().stringWidth(this.mod.name) + g2.getFontMetrics().charWidth('M') * 2, 10);
     }
 }

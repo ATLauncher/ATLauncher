@@ -49,7 +49,7 @@ public class Update {
                 path += "w";
             }
             arguments.add(path);
-            arguments.add("-jar");
+            arguments.add("-JAR");
             arguments.add(launcherPath);
             arguments.add("--updated=true");
         }

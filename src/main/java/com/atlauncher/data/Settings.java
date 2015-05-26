@@ -127,8 +127,8 @@ public class Settings {
     private String dateFormat; // The date format to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
     private boolean hideJava8Warning; // If the user has hidden the Java 8 warning
-    private boolean enableServerChecker; // If to enable server checker
-    private int serverCheckerWait; // Time to wait in minutes between checking server status
+    private boolean enableServerChecker; // If to enable SERVER checker
+    private int serverCheckerWait; // Time to wait in minutes between checking SERVER status
     // General backup settings
     private boolean autoBackup; // Whether backups are created on instance close
     private String lastSelectedSync; // The last service selected for syncing
@@ -155,8 +155,8 @@ public class Settings {
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, " +
             "" + "like Gecko) Chrome/28.0.1500.72 Safari/537.36";
-    private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
-    private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
+    private boolean minecraftLoginServerUp = false; // If the Minecraft Login SERVER is up
+    private boolean minecraftSessionServerUp = false; // If the Minecraft Session SERVER is up
     @SuppressWarnings("unused")
     private DropboxSync dropbox;
     private boolean languageLoaded = false;
@@ -182,7 +182,7 @@ public class Settings {
         findActiveServers(); // Find active servers
         loadServerProperty(false); // Get users Server preference
         if (hasUpdatedFiles()) {
-            downloadUpdatedFiles(); // Downloads updated files on the server
+            downloadUpdatedFiles(); // Downloads updated files on the SERVER
         }
 
         checkForLauncherUpdate();
@@ -227,20 +227,20 @@ public class Settings {
 
         checkAccountsForNameChanges(); // Check account for username changes
 
-        LogManager.debug("Checking for access to master server");
+        LogManager.debug("Checking for access to master SERVER");
         OUTER:
         for (Pack pack : Data.PACKS) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
                     if (server.getName().equals("Master Server (Testing Only)")) {
                         server.setUserSelectable(true);
-                        LogManager.debug("Access to master server granted");
+                        LogManager.debug("Access to master SERVER granted");
                         break OUTER; // Don't need to check anymore so break the outer loop
                     }
                 }
             }
         }
-        LogManager.debug("Finished checking for access to master server");
+        LogManager.debug("Finished checking for access to master SERVER");
 
         loadServerProperty(true); // Get users Server preference
 
@@ -409,36 +409,6 @@ public class Settings {
     }
 
     public void checkResources() {
-        /*LogManager.debug("Checking if using old format of resources");
-        File indexesDir = new File(this.resourcesDir, "indexes");
-        if (!indexesDir.exists() || !indexesDir.isDirectory()) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
-                    ".rearrangingresources"), 0, Language.INSTANCE.localize("settings.rearrangingresources"), null);
-            Thread thread = new Thread() {
-                public void run() {
-                    File indexesDir = new File(getResourcesDir(), "indexes");
-                    File objectsDir = new File(getResourcesDir(), "objects");
-                    File virtualDir = new File(getResourcesDir(), "virtual");
-                    File legacyDir = new File(virtualDir, "legacy");
-                    File tempDir = new File(getTempDir(), "assets");
-                    tempDir.mkdir();
-                    Utils.moveDirectory(getResourcesDir(), tempDir);
-                    indexesDir.mkdirs();
-                    objectsDir.mkdirs();
-                    virtualDir.mkdirs();
-                    legacyDir.mkdirs();
-                    Utils.moveDirectory(tempDir, legacyDir);
-                    Utils.delete(tempDir);
-                    Utils.spreadOutResourceFiles(legacyDir);
-                    dialog.close();
-                }
-            };
-            dialog.addThread(thread);
-            dialog.start();
-
-        }
-        LogManager.debug("Finished checking if using old format of resources");*/
-
         LogManager.debug("Checking if using old format of resources");
         Path indexes = FileSystem.RESOURCES.resolve("indexes");
         if (!Files.exists(indexes) || !Files.isDirectory(indexes)) {
@@ -598,7 +568,7 @@ public class Settings {
             if (path.contains(".exe")) {
                 target = "exe";
             } else {
-                target = "jar";
+                target = "JAR";
             }
 
             Path output = FileSystem.TMP.resolve(saveAs);
@@ -621,7 +591,7 @@ public class Settings {
             if (path.contains(".exe")) {
                 toget = "exe";
             } else {
-                toget = "jar";
+                toget = "JAR";
             }
             Path newFile = FileSystem.TMP.resolve(saveAs);
             LogManager.info("Downloading Launcher Update");
@@ -766,7 +736,7 @@ public class Settings {
             @Override
             public void run() {
                 if (hasUpdatedFiles()) {
-                    downloadUpdatedFiles(); // Downloads updated files on the server
+                    downloadUpdatedFiles(); // Downloads updated files on the SERVER
                 }
                 checkForLauncherUpdate();
                 loadNews(); // Load the news
@@ -901,10 +871,10 @@ public class Settings {
      * Load the users Server preference from file
      */
     public void loadServerProperty(boolean userSelectableOnly) {
-        LogManager.debug("Loading server to use");
+        LogManager.debug("Loading SERVER to use");
         try {
             this.properties.load(new FileInputStream(FileSystemData.PROPERTIES.toFile()));
-            String serv = this.properties.getProperty("server", "Auto");
+            String serv = this.properties.getProperty("SERVER", "Auto");
             if (this.isServerByName(serv)) {
                 if (!userSelectableOnly || server.isUserSelectable()) {
                     this.server = this.getServerByName(serv);
@@ -921,7 +891,7 @@ public class Settings {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
-        LogManager.debug("Finished loading server to use");
+        LogManager.debug("Finished loading SERVER to use");
     }
 
     /**
@@ -1168,7 +1138,7 @@ public class Settings {
             this.serverCheckerWait = Integer.parseInt(properties.getProperty("servercheckerwait", "5"));
             if (this.serverCheckerWait < 1 || this.serverCheckerWait > 30) {
                 // Server checker wait should be between 1 and 30
-                LogManager.warn("Tried to set server checker wait to " + this.serverCheckerWait + " which is not " +
+                LogManager.warn("Tried to set SERVER checker wait to " + this.serverCheckerWait + " which is not " +
                         "valid! Must be between 1 and 30. Setting back to default of 5!");
                 this.serverCheckerWait = 5;
             }
@@ -1240,7 +1210,7 @@ public class Settings {
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
             properties.setProperty("hidejava8warning", this.hideJava8Warning + "");
             properties.setProperty("language", Language.INSTANCE.getCurrent());
-            properties.setProperty("server", this.server.getName());
+            properties.setProperty("SERVER", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
             properties.setProperty("initialmemory", this.initialMemory + "");
             properties.setProperty("ram", this.maximumMemory + "");
@@ -1326,11 +1296,11 @@ public class Settings {
     }
 
     public boolean disableServerGetNext() {
-        this.server.disableServer(); // Disable the server
+        this.server.disableServer(); // Disable the SERVER
         for (Server server : this.servers) {
             if (!server.isDisabled() && server.isUserSelectable()) {
                 LogManager.warn("Server " + this.server.getName() + " Not Available! Switching To " + server.getName());
-                this.server = server; // Setup next available server
+                this.server = server; // Setup next available SERVER
                 return true;
             }
         }
@@ -1349,7 +1319,7 @@ public class Settings {
         for (Server server : this.servers) {
             if (!this.triedServers.contains(server) && !server.isDisabled()) {
                 LogManager.warn("Server " + this.server.getName() + " Not Available! Switching To " + server.getName());
-                this.server = server; // Setup next available server
+                this.server = server; // Setup next available SERVER
                 return true;
             }
         }
@@ -1762,7 +1732,7 @@ public class Settings {
      * Finds a Server from the given name
      *
      * @param name Name of the Server to find
-     * @return Server if the server is found from the name
+     * @return Server if the SERVER is found from the name
      */
     private Server getServerByName(String name) {
         for (Server server : servers) {
@@ -1799,7 +1769,7 @@ public class Settings {
     }
 
     /**
-     * Finds if a server is available
+     * Finds if a SERVER is available
      *
      * @param name The name of the Server
      * @return true if found, false if not
@@ -1829,9 +1799,9 @@ public class Settings {
     }
 
     /**
-     * Gets the URL for a file on the user selected server
+     * Gets the URL for a file on the user selected SERVER
      *
-     * @param filename Filename including directories on the server
+     * @param filename Filename including directories on the SERVER
      * @return URL of the file
      */
     public String getFileURL(String filename) {
@@ -1839,10 +1809,10 @@ public class Settings {
     }
 
     /**
-     * Gets the URL for a file on the master server
+     * Gets the URL for a file on the master SERVER
      *
-     * @param filename Filename including directories on the server
-     * @return URL of the file or null if no master server defined
+     * @param filename Filename including directories on the SERVER
+     * @return URL of the file or null if no master SERVER defined
      */
     public String getMasterFileURL(String filename) {
         for (Server server : this.servers) {
@@ -1918,7 +1888,7 @@ public class Settings {
     /**
      * Gets the users current active Server
      *
-     * @return The users set server
+     * @return The users set SERVER
      */
     public Server getServer() {
         return this.server;
@@ -1927,7 +1897,7 @@ public class Settings {
     /**
      * Sets the users current active Server
      *
-     * @param server The server to set to
+     * @param server The SERVER to set to
      */
     public void setServer(Server server) {
         this.server = server;
@@ -1937,7 +1907,7 @@ public class Settings {
     /**
      * Gets the users saved Server
      *
-     * @return The users saved server
+     * @return The users saved SERVER
      */
     public Server getOriginalServer() {
         return this.originalServer;
@@ -2340,7 +2310,7 @@ public class Settings {
                 jpath += "w";
             }
             arguments.add(jpath);
-            arguments.add("-jar");
+            arguments.add("-JAR");
             arguments.add(path);
         }
 

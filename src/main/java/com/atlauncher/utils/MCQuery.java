@@ -108,7 +108,7 @@ public class MCQuery {
                 }
                 return -1; // Server not reachable so send -1 for offline
             default:
-                return -1; // Meaning server unreachable since there was no match to the qv
+                return -1; // Meaning SERVER unreachable since there was no match to the qv
         }
     }
 }

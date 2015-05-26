@@ -49,7 +49,7 @@ public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
             return FileVisitResult.CONTINUE;
         }
 
-        if (!Files.isRegularFile(path) || (!path.getFileName().endsWith("jar") && !path.getFileName().endsWith("zip") &&
+        if (!Files.isRegularFile(path) || (!path.getFileName().endsWith("JAR") && !path.getFileName().endsWith("zip") &&
                 !path.getFileName().endsWith("litemod"))) {
             if (caseType == CaseType.upper) {
                 String filename = path.getFileName().toString();

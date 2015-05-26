@@ -23,7 +23,6 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.gui.components.ModsJCheckBox;
-import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
@@ -134,8 +133,8 @@ public class EditModsDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 FileChooserDialog fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
                         .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
-                        .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
-                        "CoreMods Mod", "Texture Pack", "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip",
+                        .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.JAR",
+                        "CoreMods Mod", "Texture Pack", "Resource Pack", "Shader Pack"}, new String[]{"JAR", "zip",
                         "litemod"});
                 ArrayList<File> files = fcd.getChosenFiles();
                 if (files != null && files.size() >= 1) {
@@ -144,17 +143,17 @@ public class EditModsDialog extends JDialog {
                         String typeTemp = fcd.getSelectorValue();
                         ModType type = null;
                         if (typeTemp.equalsIgnoreCase("Mods Folder")) {
-                            type = ModType.mods;
-                        } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
-                            type = ModType.jar;
+                            type = ModType.MODS;
+                        } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.JAR")) {
+                            type = ModType.JAR;
                         } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
-                            type = ModType.coremods;
+                            type = ModType.COREMODS;
                         } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
-                            type = ModType.texturepack;
+                            type = ModType.TEXTUREPACK;
                         } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
-                            type = ModType.resourcepack;
+                            type = ModType.RESOURCEPACK;
                         } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
-                            type = ModType.shaderpack;
+                            type = ModType.SHADERPACK;
                         }
                         if (type != null) {
                             DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(),

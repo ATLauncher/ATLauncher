@@ -48,4 +48,8 @@ public final class FileSystem {
     public static final Path SERVERS = BASE_DIR.resolve("Servers");
     public static final Path TMP = BASE_DIR.resolve("Temp");
     public static final Path FAILED_DOWNLOADS = BASE_DIR.resolve("FailedDownloads");
+
+    public static Path getDownloads(){
+        return App.settings.isUsingMacApp() ? USER_DOWNLOADS : DOWNLOADS;
+    }
 }

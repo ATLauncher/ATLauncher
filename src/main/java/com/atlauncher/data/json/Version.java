@@ -209,7 +209,7 @@ public class Version {
     public List<Mod> getClientInstallMods() {
         List<Mod> mods = new ArrayList<Mod>();
         for (Mod mod : this.mods) {
-            if (mod.installOnClient()) {
+            if (mod.client) {
                 mods.add(mod);
             }
         }
@@ -219,7 +219,7 @@ public class Version {
     public List<Mod> getServerInstallMods() {
         List<Mod> mods = new ArrayList<Mod>();
         for (Mod mod : this.mods) {
-            if (mod.installOnServer()) {
+            if (mod.server) {
                 mods.add(mod);
             }
         }
@@ -301,8 +301,8 @@ public class Version {
 
     public void compileColours() {
         for (Mod mod : this.mods) {
-            if (mod.hasColour()) {
-                mod.setCompiledColour(this.getColour(mod.getColour()));
+            if (mod.color != null) {
+                mod.setCompiledColor(this.getColour(mod.color));
             }
         }
     }

@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -48,6 +49,32 @@ import java.util.zip.ZipOutputStream;
 public class FileUtils {
     public static boolean moveFile(Path from, Path to) {
         return moveFile(from, to, false);
+    }
+
+    public static List<String> listFiles(Path dir)
+    throws Exception{
+        List<String> files = new LinkedList<>();
+
+        try(DirectoryStream<Path> stream = Files.newDirectoryStream(dir)){
+            for(Path p : stream){
+                files.add(p.getFileName().toString());
+            }
+        }
+
+        return files;
+    }
+
+    public static List<String> listFiles(Path dir, DirectoryStream.Filter<Path> filter)
+    throws Exception{
+        List<String> files = new LinkedList<>();
+
+        try(DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)){
+            for(Path p : stream){
+                files.add(p.getFileName().toString());
+            }
+        }
+
+        return files;
     }
 
     public static boolean moveFile(Path from, Path to, boolean withFilename) {
