@@ -37,7 +37,7 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.util.List;
 
-public class AccountManager {
+public class AccountManager{
     private static Account activeAccount = null;
 
     public static List<Account> getAccounts() {

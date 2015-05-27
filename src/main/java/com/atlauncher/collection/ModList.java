@@ -140,17 +140,9 @@ public final class ModList extends LinkedList<Mod> {
 
     public ModList depandencies(Mod mod) {
         ModList mods = new ModList();
-
-<<<<<<< HEAD
-        for(String name : mod.depends){
-            for(Mod modd : this){
-                if(modd.name.equals(name)){
-=======
         for (String name : mod.depends) {
-            inner:
             for (Mod modd : this) {
                 if (modd.name.equals(name)) {
->>>>>>> 52af8025f1779074f588db77f601f5449a2f3e82
                     mods.add(modd);
                     break;
                 }

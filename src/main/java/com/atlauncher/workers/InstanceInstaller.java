@@ -30,7 +30,6 @@ import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.data.json.Action;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.Delete;
@@ -41,10 +40,8 @@ import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.mojang.AssetIndex;
 import com.atlauncher.data.mojang.AssetObject;
-import com.atlauncher.data.mojang.DateTypeAdapter;
-import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
-import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.data.mojang.MojangConstants;
+import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.FileUtils;
@@ -52,15 +49,12 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.validator.DependencyValidator;
 import com.atlauncher.utils.validator.GroupValidator;
 import com.atlauncher.utils.walker.CaseFileVisitor;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import javax.swing.SwingWorker;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -69,10 +63,6 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
-    private static final Gson gson = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
-            .registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File.class, new
-                    FileTypeAdapter()).setPrettyPrinting().create();
-
     public final String name;
     public final String shareCode;
     public final boolean server;
@@ -96,10 +86,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public final Path ic2;
     public final Path denlib;
     public final Path plugins;
-    public Version version;
     public final PackVersion packVersion;
     public final Pack pack;
-    public ModList allMods;
     public final ModList selectedMods = new ModList();
     public final List<DisableableMod> installedMods = new LinkedList<>();
     public final List<String> forgeLibraries = new LinkedList<>();
@@ -119,6 +107,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     protected String extraArgs;
     protected String librariesNeeded;
     protected Instance instance;
+    public Version version;
+    public ModList allMods;
 
     public InstanceInstaller(String name, Pack pack, PackVersion version, boolean reinstall, String shareCode,
                              boolean server, boolean showModsChooser) {
@@ -423,7 +413,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void downloadResources() {
         this.fireTask(Language.INSTANCE.localize("instance.downloadingresources"));
         this.fireSubProgressUnknown();
-        DownloadPool pool = this.getResources();
+        DownloadPool pool = this.getResources().downsize();
         this.totalBytes = this.downloadedBytes = 0;
         Network.setupProgressClient(this);
         this.totalBytes = pool.totalSize();
@@ -456,7 +446,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void downloadLibraries() {
         this.fireTask(Language.INSTANCE.localize("instance.downloadinglibraries"));
         this.fireSubProgressUnknown();
-        DownloadPool pool = this.getLibraries();
+        DownloadPool pool = this.getLibraries().downsize();
         this.totalBytes = this.downloadedBytes = 0;
         this.totalBytes = pool.totalSize();
         this.fireSubProgress(0);
@@ -841,7 +831,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (!this.server && this.selectedMods.hasJarMod(this) && !this.hasForge()) {
-            System.out.println("Deleting META-INF");
             this.deleteMetaInf();
         }
 

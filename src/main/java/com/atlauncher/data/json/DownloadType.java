@@ -45,13 +45,7 @@ public enum DownloadType {
     },
     BROWSER() {
         @Override
-<<<<<<< HEAD
-        public void download(InstanceInstaller installer, Path to, Mod mod)
-        throws Exception {
-            System.out.println((mod.server ? mod.serverFile : ""));
-=======
         public void download(InstanceInstaller installer, Path to, Mod mod) throws Exception {
->>>>>>> 52af8025f1779074f588db77f601f5449a2f3e82
             Path dlFile = (mod.server ? FileSystem.USER_DOWNLOADS : FileSystem.DOWNLOADS).resolve((mod.server ? mod
                     .serverFile : mod.getFile()));
             if (Files.exists(dlFile)) {

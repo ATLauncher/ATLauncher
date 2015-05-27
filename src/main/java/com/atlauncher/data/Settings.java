@@ -157,7 +157,6 @@ public class Settings {
     // is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session
     // is up
-    @SuppressWarnings("unused")
     private DropboxSync dropbox;
     private boolean languageLoaded = false;
     private Timer checkingServersTimer = null; // Timer used for checking servers
@@ -676,28 +675,6 @@ public class Settings {
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
-
-<<<<<<< HEAD
-        App.TASKPOOL.execute(
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (hasUpdatedFiles()) {
-                                                downloadUpdatedFiles();
-                                            }
-                                            checkForLauncherUpdate();
-                                            loadNews(); // Load the news
-                                            reloadNewsPanel(); // Reload news panel
-                                            PackManager.loadPacks(); // Load the Packs available in the Launcher
-                                            loadUsers(); // Load the Testers and Allowed Players for the packs
-                                            InstanceManager.loadInstances(); // Load the users installed Instances
-                                            InstanceChangeManager.change();
-                                            dialog.setVisible(false); // Remove the dialog
-                                            dialog.dispose(); // Dispose the dialog
-                                        }
-                                    }
-        );
-=======
         App.TASKPOOL.execute(new Runnable() {
             @Override
             public void run() {
@@ -715,7 +692,6 @@ public class Settings {
                 dialog.dispose(); // Dispose the dialog
             }
         });
->>>>>>> 52af8025f1779074f588db77f601f5449a2f3e82
         dialog.setVisible(true);
     }
 
