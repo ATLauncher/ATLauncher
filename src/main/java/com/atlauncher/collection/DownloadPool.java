@@ -116,7 +116,8 @@ public final class DownloadPool extends LinkedList<Downloadable> {
         public void run() {
             try {
                 if (this.dl.needToDownload()) {
-                    installer.fireTask(Language.INSTANCE.localize("common.downloading") + this.dl.to.getFileName());
+                    installer.fireTask(Language.INSTANCE.localize("common.downloading") + " " + (this.dl.filename ==
+                            null ? this.dl.to.getFileName() : this.dl.filename));
                     this.dl.download();
                 } else {
                     this.dl.copy();

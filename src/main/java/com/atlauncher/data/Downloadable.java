@@ -51,6 +51,7 @@ public final class Downloadable {
     public final Path copyTo;
     public final boolean atlauncher;
     public final boolean copy;
+    public final String filename;
 
     private final InstanceInstaller installer;
     private final List<Server> servers = new LinkedList<>(App.settings.getServers());
@@ -61,27 +62,33 @@ public final class Downloadable {
     private Response response;
 
     public Downloadable(String url, boolean atlauncher) {
-        this(url, null, null, null, -1, atlauncher, false, null);
+        this(url, null, null, null, null, -1, atlauncher, false, null);
     }
 
     public Downloadable(String url, Path to) {
-        this(url, null, to, null, -1, false, false, null);
+        this(url, null, to, null, null, -1, false, false, null);
     }
 
     public Downloadable(String url, Path output, boolean atlauncher) {
-        this(url, null, output, null, -1, atlauncher, false, null);
+        this(url, null, output, null, null, -1, atlauncher, false, null);
     }
 
     public Downloadable(String url, String hash, Path to, int size, boolean atlauncher, InstanceInstaller installer) {
-        this(url, hash, to, null, size, atlauncher, false, installer);
+        this(url, hash, to, null, null, size, atlauncher, false, installer);
     }
 
-    public Downloadable(String url, String hash, Path to, Path copyTo, int size, boolean atlauncher, boolean copy,
+    public Downloadable(String url, String hash, Path to, String filename, int size, boolean atlauncher,
                         InstanceInstaller installer) {
+        this(url, hash, to, filename, null, size, atlauncher, false, installer);
+    }
+
+    public Downloadable(String url, String hash, Path to, String filename, Path copyTo, int size, boolean atlauncher,
+                        boolean copy, InstanceInstaller installer) {
         this.atlauncher = atlauncher;
         this.URL = url;
         this.copy = copy;
         this.copyTo = copyTo;
+        this.filename = filename;
 
         if (this.atlauncher) {
             this.server = App.settings.getServers().get(0);

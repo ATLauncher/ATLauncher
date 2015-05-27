@@ -385,7 +385,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
                 if (obj.needToDownload(file)) {
                     pool.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), obj.getHash(), file,
-                            (int) obj.getSize(), false, this));
+                            entry.getKey().substring(entry.getKey().lastIndexOf("/") + 1), (int) obj.getSize(),
+                            false, this));
                 } else {
                     Path virtualFile = virtual.resolve(entry.getKey());
                     if (index.isVirtual()) {
