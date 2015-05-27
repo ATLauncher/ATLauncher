@@ -15,13 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data;
+package com.atlauncher.data.version;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.mojang.MojangVersion;
 import com.google.gson.JsonIOException;

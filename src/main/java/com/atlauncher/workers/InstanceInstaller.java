@@ -30,7 +30,7 @@ import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.PackVersion;
+import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.data.json.Action;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.Delete;
@@ -399,7 +399,7 @@ extends SwingWorker<Boolean, Void>{
     private void downloadMods(ModList mods)
     throws Exception{
         this.fireSubProgressUnknown();
-        DownloadPool pool = mods.downloadPool(this);
+        DownloadPool pool = mods.downloadPool(this).downsize();
         this.totalBytes = this.downloadedBytes = 0;
         this.totalBytes = pool.totalSize();
         this.fireSubProgress(0);

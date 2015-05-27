@@ -29,7 +29,9 @@ extends LinkedList<Downloadable>{
             executor.execute(new Downloader(dl));
         }
         executor.shutdown();
-        while(!executor.isTerminated()){}
+        if(this.wait){
+            while(!executor.isTerminated()){}
+        }
     }
 
     public void downloadAll(InstanceInstaller installer){
@@ -38,7 +40,9 @@ extends LinkedList<Downloadable>{
             executor.execute(new Installer(dl, installer));
         }
         executor.shutdown();
-        while(!executor.isTerminated()){}
+        if(this.wait){
+            while(!executor.isTerminated()){}
+        }
     }
 
     public int totalSize(){
@@ -53,13 +57,14 @@ extends LinkedList<Downloadable>{
     }
 
     public DownloadPool downsize(){
-        DownloadPool pool = new DownloadPool(wait);
-        for(Downloadable dl : this){
-            if(dl.needToDownload()){
-                pool.add(dl);
-            }
+        Future<DownloadPool> poolFuture = App.TASKPOOL.submit(new Downsizer());
+
+        try{
+            return poolFuture.get();
+        } catch(Exception e){
+            LogManager.logStackTrace(e);
+            return new DownloadPool(this.wait);
         }
-        return pool;
     }
 
     public boolean any(){
@@ -70,6 +75,21 @@ extends LinkedList<Downloadable>{
         }
 
         return false;
+    }
+
+    private final class Downsizer
+    implements Callable<DownloadPool>{
+        @Override
+        public DownloadPool call()
+        throws Exception {
+            DownloadPool pool = new DownloadPool(DownloadPool.this.wait);
+            for(Downloadable dl : DownloadPool.this){
+                if(dl.needToDownload()){
+                    pool.add(dl);
+                }
+            }
+            return pool;
+        }
     }
 
     private final class SizeCollector

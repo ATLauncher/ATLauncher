@@ -48,6 +48,7 @@ public enum DownloadType {
         @Override
         public void download(InstanceInstaller installer, Path to, Mod mod)
         throws Exception {
+            System.out.println((mod.server ? mod.serverFile : ""));
             Path dlFile = (mod.server ? FileSystem.USER_DOWNLOADS : FileSystem.DOWNLOADS).resolve((mod.server ? mod
                     .serverFile : mod.getFile()));
             if (Files.exists(dlFile)) {

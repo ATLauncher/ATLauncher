@@ -27,6 +27,8 @@ import com.atlauncher.Network;
 import com.atlauncher.Update;
 import com.atlauncher.collection.DownloadPool;
 import com.atlauncher.data.json.LauncherLibrary;
+import com.atlauncher.data.version.LauncherVersion;
+import com.atlauncher.data.version.MinecraftVersion;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -61,7 +63,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -124,10 +125,8 @@ public class Settings {
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
     private boolean hideJava8Warning; // If the user has hidden the Java 8 warning
     private boolean enableServerChecker; // If to enable
-    // serverserverserverserverserverserverserverserverserverserverserverserver
     // checker
     private int serverCheckerWait; // Time to wait in minutes between checking
-    // serverserverserverserverserverserverserverserverserverserverserverserver
     // status
     // General backup settings
     private boolean autoBackup; // Whether backups are created on instance close
@@ -155,10 +154,8 @@ public class Settings {
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, " +
             "" + "like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login
-    // serverserverserverserverserverserverserverserverserverserverserverserver
     // is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session
-    // serverserverserverserverserverserverserverserverserverserverserverserver
     // is up
     @SuppressWarnings("unused")
     private DropboxSync dropbox;
@@ -560,7 +557,10 @@ public class Settings {
             LogManager.info("Downloading Launcher Update");
             Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + target, output, true);
             update.download();
-            this.runUpdate(path, output.toAbsolutePath().toString());
+            this.runUpdate(
+                                  path, output.toAbsolutePath()
+                                              .toString()
+            );
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
@@ -678,23 +678,25 @@ public class Settings {
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
 
-        App.TASKPOOL.execute(new Runnable() {
-            @Override
-            public void run() {
-                if(hasUpdatedFiles()){
-                    downloadUpdatedFiles();
-                }
-                checkForLauncherUpdate();
-                loadNews(); // Load the news
-                reloadNewsPanel(); // Reload news panel
-                PackManager.loadPacks(); // Load the Packs available in the Launcher
-                loadUsers(); // Load the Testers and Allowed Players for the packs
-                InstanceManager.loadInstances(); // Load the users installed Instances
-                InstanceChangeManager.change();
-                dialog.setVisible(false); // Remove the dialog
-                dialog.dispose(); // Dispose the dialog
-            }
-        });
+        App.TASKPOOL.execute(
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (hasUpdatedFiles()) {
+                                                downloadUpdatedFiles();
+                                            }
+                                            checkForLauncherUpdate();
+                                            loadNews(); // Load the news
+                                            reloadNewsPanel(); // Reload news panel
+                                            PackManager.loadPacks(); // Load the Packs available in the Launcher
+                                            loadUsers(); // Load the Testers and Allowed Players for the packs
+                                            InstanceManager.loadInstances(); // Load the users installed Instances
+                                            InstanceChangeManager.change();
+                                            dialog.setVisible(false); // Remove the dialog
+                                            dialog.dispose(); // Dispose the dialog
+                                        }
+                                    }
+        );
         dialog.setVisible(true);
     }
 
@@ -850,7 +852,7 @@ public class Settings {
         }
 
         try {
-            this.properties.load(new FileInputStream(FileSystemData.PROPERTIES.toFile()));
+            this.properties.load(Files.newInputStream(FileSystemData.PROPERTIES));
 
             this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
 
@@ -1351,9 +1353,8 @@ public class Settings {
 
         try {
             if (Files.exists(FileSystemData.CHECKING_SERVERS)) {
-                byte[] bits = Files.readAllBytes(FileSystemData.CHECKING_SERVERS);
-                Data.CHECKING_SERVERS.addAll((List<MinecraftServer>) Gsons.DEFAULT.fromJson(new String(bits),
-                        MinecraftServer.LIST_TYPE));
+                JsonFile file = new JsonFile(FileSystemData.CHECKING_SERVERS);
+                Data.CHECKING_SERVERS.addAll((List<MinecraftServer>) file.convert(MinecraftServer.LIST_TYPE));
             }
         } catch (Exception e) {
             LogManager.logStackTrace(e);
@@ -1635,7 +1636,7 @@ public class Settings {
         try {
             Language.INSTANCE.load(language);
         } catch (Exception ex) {
-            ex.printStackTrace(System.err);
+            LogManager.logStackTrace(ex);
         }
     }
 
@@ -1993,18 +1994,24 @@ public class Settings {
         }
         if (this.proxy == null) {
             Type type;
-            if (this.proxyType.equals("HTTP")) {
-                type = Proxy.Type.HTTP;
-            } else if (this.proxyType.equals("SOCKS")) {
-                type = Proxy.Type.SOCKS;
-            } else if (this.proxyType.equals("DIRECT")) {
-                type = Proxy.Type.DIRECT;
-            } else {
-                // Oh noes, problem!
-                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support " +
-                        "disabled!");
-                this.enableProxy = false;
-                return null;
+            switch (this.proxyType) {
+                case "HTTP":
+                    type = Type.HTTP;
+                    break;
+                case "SOCKS":
+                    type = Type.SOCKS;
+                    break;
+                case "DIRECT":
+                    type = Type.DIRECT;
+                    break;
+                default:
+                    // Oh noes, problem!
+                    LogManager.warn(
+                                           "Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support " +
+                                                   "disabled!"
+                    );
+                    this.enableProxy = false;
+                    return null;
             }
             this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
         }
@@ -2017,18 +2024,24 @@ public class Settings {
         }
         if (this.proxy == null) {
             Type type;
-            if (this.proxyType.equals("HTTP")) {
-                type = Proxy.Type.HTTP;
-            } else if (this.proxyType.equals("SOCKS")) {
-                type = Proxy.Type.SOCKS;
-            } else if (this.proxyType.equals("DIRECT")) {
-                type = Proxy.Type.DIRECT;
-            } else {
-                // Oh noes, problem!
-                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support " +
-                        "disabled!");
-                this.enableProxy = false;
-                return Proxy.NO_PROXY;
+            switch (this.proxyType) {
+                case "HTTP":
+                    type = Type.HTTP;
+                    break;
+                case "SOCKS":
+                    type = Type.SOCKS;
+                    break;
+                case "DIRECT":
+                    type = Type.DIRECT;
+                    break;
+                default:
+                    // Oh noes, problem!
+                    LogManager.warn(
+                                           "Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support " +
+                                                   "disabled!"
+                    );
+                    this.enableProxy = false;
+                    return Proxy.NO_PROXY;
             }
             this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
         }
@@ -2045,8 +2058,6 @@ public class Settings {
         try {
             path = thisFile.getCanonicalPath();
             path = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            LogManager.logStackTrace(e);
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }

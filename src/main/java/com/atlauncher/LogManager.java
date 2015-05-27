@@ -80,7 +80,7 @@ public final class LogManager {
     }
 
     public static void logStackTrace(Exception exception) {
-        exception.printStackTrace();
+        exception.printStackTrace(System.err);
 
         LogManager.error(exception.getMessage());
 

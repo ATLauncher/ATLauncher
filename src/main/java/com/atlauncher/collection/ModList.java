@@ -126,11 +126,10 @@ extends LinkedList<Mod>{
         ModList mods = new ModList();
 
         for(String name : mod.depends){
-            inner:
             for(Mod modd : this){
                 if(modd.name.equals(name)){
                     mods.add(modd);
-                    break inner;
+                    break;
                 }
             }
         }

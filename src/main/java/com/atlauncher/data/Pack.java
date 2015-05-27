@@ -17,11 +17,11 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.Version;
+import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;

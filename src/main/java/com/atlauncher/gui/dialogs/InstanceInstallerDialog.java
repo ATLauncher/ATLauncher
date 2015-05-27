@@ -22,7 +22,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.PackVersion;
+import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.FileUtils;
@@ -324,9 +324,7 @@ public class InstanceInstallerDialog extends JDialog {
                         } else {
                             try {
                                 success = get();
-                            } catch (InterruptedException e) {
-                                LogManager.logStackTrace(e);
-                            } catch (ExecutionException e) {
+                            } catch (InterruptedException | ExecutionException e) {
                                 LogManager.logStackTrace(e);
                             }
                             if (success) {
@@ -351,7 +349,11 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setMinecraftArguments(this.packVersion.getMinecraftVersion().getMojangVersion().getMinecraftArguments());
                                     instance.setExtraArguments(this.extraArgs);
                                     instance.setMainClass(this.mainClass);
-                                    instance.setAssets(this.packVersion.getMinecraftVersion().getMojangVersion().getAssets());
+                                    instance.setAssets(
+                                                              this.packVersion.getMinecraftVersion()
+                                                                              .getMojangVersion()
+                                                                              .getAssets()
+                                    );
                                     if (packVersion.isDev()) {
                                         instance.setDevVersion();
                                         if (packVersion.getHash() != null) {
@@ -433,7 +435,7 @@ public class InstanceInstallerDialog extends JDialog {
                 instanceInstaller.addPropertyChangeListener(new PropertyChangeListener() {
 
                     public void propertyChange(PropertyChangeEvent evt) {
-                        if ("progress" == evt.getPropertyName()) {
+                        if ("progress".equals(evt.getPropertyName())) {
                             if (progressBar.isIndeterminate()) {
                                 progressBar.setIndeterminate(false);
                             }
@@ -442,7 +444,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 progress = 100;
                             }
                             progressBar.setValue(progress);
-                        } else if ("subprogress" == evt.getPropertyName()) {
+                        } else if ("subprogress".equals(evt.getPropertyName())) {
                             if (!subProgressBar.isVisible()) {
                                 subProgressBar.setVisible(true);
                             }
@@ -475,7 +477,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 }
                             }
                             subProgressBar.setValue(progress);
-                        } else if ("subprogressint" == evt.getPropertyName()) {
+                        } else if ("subprogressint".equals(evt.getPropertyName())) {
                             if (subProgressBar.isStringPainted()) {
                                 subProgressBar.setStringPainted(false);
                             }
@@ -485,7 +487,7 @@ public class InstanceInstallerDialog extends JDialog {
                             if (!subProgressBar.isIndeterminate()) {
                                 subProgressBar.setIndeterminate(true);
                             }
-                        } else if ("doing" == evt.getPropertyName()) {
+                        } else if ("doing".equals(evt.getPropertyName())) {
                             String doingText = (String) evt.getNewValue();
                             doing.setText(doingText);
                         }
