@@ -333,8 +333,8 @@ public class InstanceInstallerDialog extends JDialog {
                                         ("common.hasbeen") + " " + ((isReinstall) ? Language.INSTANCE.localize
                                         ("common.reinstalled") : Language.INSTANCE.localize("common.installed")) +
                                         "<br/><br/>" + ((isServer) ? Language.INSTANCE.localizeWithReplace("instance"
-                                        + ".finditserver", "<br/><br/>" + this.root) : Language
-                                        .INSTANCE.localize("instance.findit"));
+                                        + ".finditserver", "<br/><br/>" + this.root) : Language.INSTANCE.localize
+                                        ("instance.findit"));
                                 title = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                         .localize("common.installed");
                                 if (isReinstall) {
@@ -346,14 +346,20 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setPermgen(this.permgen);
                                     instance.setIsNewLaunchMethod(!this.packVersion.getMinecraftVersion().isLegacy());
                                     instance.setLibrariesNeeded(this.librariesNeeded);
-                                    instance.setMinecraftArguments(this.packVersion.getMinecraftVersion().getMojangVersion().getMinecraftArguments());
+                                    instance.setMinecraftArguments(this.packVersion.getMinecraftVersion()
+                                            .getMojangVersion().getMinecraftArguments());
                                     instance.setExtraArguments(this.extraArgs);
                                     instance.setMainClass(this.mainClass);
+<<<<<<< HEAD
                                     instance.setAssets(
                                                               this.packVersion.getMinecraftVersion()
                                                                               .getMojangVersion()
                                                                               .getAssets()
                                     );
+=======
+                                    instance.setAssets(this.packVersion.getMinecraftVersion().getMojangVersion()
+                                            .getAssets());
+>>>>>>> 52af8025f1779074f588db77f601f5449a2f3e82
                                     if (packVersion.isDev()) {
                                         instance.setDevVersion();
                                         if (packVersion.getHash() != null) {
@@ -369,14 +375,15 @@ public class InstanceInstallerDialog extends JDialog {
 
                                 } else {
                                     Instance newInstance = new Instance(instanceNameField.getText(), pack.getName(),
-                                            pack, enableUserLock.isSelected(), version.getVersion(), packVersion.getMinecraftVersion().getVersion(),
-                                                                        this.memory, this.permgen,
-                                            this.installedMods, this.jarOrder, this.librariesNeeded,
-                                            this.extraArgs, this.packVersion.getMinecraftVersion().getMojangVersion().getMinecraftArguments(), this.mainClass,
-                                            this.packVersion.getMinecraftVersion().getMojangVersion().getAssets(), this.packVersion.isDev(),
-                                            !packVersion.getMinecraftVersion().isLegacy());
+                                            pack, enableUserLock.isSelected(), version.getVersion(), packVersion
+                                            .getMinecraftVersion().getVersion(), this.memory, this.permgen, this
+                                            .installedMods, this.jarOrder, this.librariesNeeded, this.extraArgs, this
+                                            .packVersion.getMinecraftVersion().getMojangVersion()
+                                            .getMinecraftArguments(), this.mainClass, this.packVersion
+                                            .getMinecraftVersion().getMojangVersion().getAssets(), this.packVersion
+                                            .isDev(), !packVersion.getMinecraftVersion().isLegacy());
 
-                                    if (packVersion.isDev() && (packVersion.getHash()!= null)) {
+                                    if (packVersion.isDev() && (packVersion.getHash() != null)) {
                                         newInstance.setHash(packVersion.getHash());
                                     }
 
@@ -399,8 +406,8 @@ public class InstanceInstallerDialog extends JDialog {
                                     type = JOptionPane.ERROR_MESSAGE;
                                     text = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                             .localize("common.wasnt") + " " + Language.INSTANCE.localize("common" + "" +
-                                            ".reinstalled") + "<br/><br/>" + (this.corrupt ? Language
-                                            .INSTANCE.localize("instance.nolongerplayable") : "") + "<br/><br/>" +
+                                            ".reinstalled") + "<br/><br/>" + (this.corrupt ? Language.INSTANCE
+                                            .localize("instance.nolongerplayable") : "") + "<br/><br/>" +
                                             Language.INSTANCE.localize("instance.checkerrorlogs") + "!";
                                     title = pack.getName() + " " + packVersion.getVersion() + " " + Language.INSTANCE
                                             .localize("common.not") + " " + Language.INSTANCE.localize("common" + "" +
@@ -432,6 +439,7 @@ public class InstanceInstallerDialog extends JDialog {
                     }
 
                 };
+
                 instanceInstaller.addPropertyChangeListener(new PropertyChangeListener() {
 
                     public void propertyChange(PropertyChangeEvent evt) {
@@ -446,6 +454,7 @@ public class InstanceInstallerDialog extends JDialog {
                             progressBar.setValue(progress);
                         } else if ("subprogress".equals(evt.getPropertyName())) {
                             if (!subProgressBar.isVisible()) {
+                                System.out.println("Showing sub progress bar!");
                                 subProgressBar.setVisible(true);
                             }
                             if (subProgressBar.isIndeterminate()) {
@@ -467,6 +476,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 if (subProgressBar.isStringPainted()) {
                                     subProgressBar.setStringPainted(false);
                                 }
+                                System.out.println("Hiding sub progress bar!");
                                 subProgressBar.setVisible(false);
                             } else {
                                 if (!subProgressBar.isStringPainted()) {
@@ -485,23 +495,26 @@ public class InstanceInstallerDialog extends JDialog {
                                 subProgressBar.setVisible(true);
                             }
                             if (!subProgressBar.isIndeterminate()) {
+                                System.out.println("Setting sub progress bar indeterminate!");
                                 subProgressBar.setIndeterminate(true);
                             }
                         } else if ("doing".equals(evt.getPropertyName())) {
                             String doingText = (String) evt.getNewValue();
                             doing.setText(doingText);
                         }
-
                     }
                 });
+
                 dialog.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent e) {
                         instanceInstaller.cancel(true);
                     }
                 });
+
                 if (isReinstall) {
                     instanceInstaller.setInstance(instance);
                 }
+
                 instanceInstaller.execute();
                 dispose();
                 dialog.setVisible(true);

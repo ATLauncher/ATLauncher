@@ -68,14 +68,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
-public class InstanceInstaller
-extends SwingWorker<Boolean, Void>{
-    private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapterFactory(new EnumTypeAdapterFactory())
-            .registerTypeAdapter(Date.class, new DateTypeAdapter())
-            .registerTypeAdapter(File.class, new FileTypeAdapter())
-            .setPrettyPrinting()
-            .create();
+public class InstanceInstaller extends SwingWorker<Boolean, Void> {
+    private static final Gson gson = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
+            .registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File.class, new
+                    FileTypeAdapter()).setPrettyPrinting().create();
 
     public final String name;
     public final String shareCode;
@@ -100,10 +96,10 @@ extends SwingWorker<Boolean, Void>{
     public final Path ic2;
     public final Path denlib;
     public final Path plugins;
-    public final Version version;
+    public Version version;
     public final PackVersion packVersion;
     public final Pack pack;
-    public final ModList allMods;
+    public ModList allMods;
     public final ModList selectedMods = new ModList();
     public final List<DisableableMod> installedMods = new LinkedList<>();
     public final List<String> forgeLibraries = new LinkedList<>();
@@ -124,20 +120,19 @@ extends SwingWorker<Boolean, Void>{
     protected String librariesNeeded;
     protected Instance instance;
 
-    public InstanceInstaller(String name, Pack pack, PackVersion version, boolean reinstall, String shareCode, boolean server, boolean showModsChooser){
+    public InstanceInstaller(String name, Pack pack, PackVersion version, boolean reinstall, String shareCode,
+                             boolean server, boolean showModsChooser) {
         this.name = name;
+        this.pack = pack;
+        this.packVersion = version;
+        this.reinstall = reinstall;
         this.shareCode = shareCode;
         this.server = server;
-        this.reinstall = reinstall;
         this.showModsChooser = showModsChooser;
-        this.version = pack.getJsonVersion(version.getVersion());
-        this.packVersion = version;
-        this.pack = pack;
-        this.allMods = (server ? this.version.getMods().server() : this.version.getMods().client()).sort();
+
         this.tmpDir = FileSystem.TMP.resolve(this.pack.getSafeName() + "_" + this.packVersion.getSafeVersion());
-        this.root = (this.server ?
-                             FileSystem.SERVERS.resolve(this.pack.getSafeName() + "_" + this.packVersion.getSafeVersion()) :
-                             FileSystem.INSTANCES.resolve(this.name.replaceAll("[^A-Za-z0-9]", "")));
+        this.root = (this.server ? FileSystem.SERVERS.resolve(this.pack.getSafeName() + "_" + this.packVersion
+                .getSafeVersion()) : FileSystem.INSTANCES.resolve(this.name.replaceAll("[^A-Za-z0-9]", "")));
         this.mods = root.resolve("mods");
         this.coremods = root.resolve("coremods");
         this.resourcepacks = root.resolve("resourcepacks");
@@ -156,11 +151,11 @@ extends SwingWorker<Boolean, Void>{
         this.denlib = this.mods.resolve("denlib");
     }
 
-    public Instance getInstance(){
+    public Instance getInstance() {
         return this.instance;
     }
 
-    public void addDownloadedBytes(int bytes){
+    public void addDownloadedBytes(int bytes) {
         this.downloadedBytes += bytes;
         this.updateProgressBar();
     }
@@ -191,33 +186,33 @@ extends SwingWorker<Boolean, Void>{
         this.firePropertyChange("subprogress", null, info);
     }
 
-    public void setTexturePacksExtracted(){
+    public void setTexturePacksExtracted() {
         this.extractedTexturePack = true;
     }
 
-    public void setResourcePacksExtracted(){
+    public void setResourcePacksExtracted() {
         this.extractedResourcePack = true;
     }
 
-    public void addToJarOrder(String file){
-        if(this.jarOrder == null){
+    public void addToJarOrder(String file) {
+        if (this.jarOrder == null) {
             this.jarOrder = file;
-        } else{
-            if(this.packVersion.getMinecraftVersion().isLegacy()){
+        } else {
+            if (this.packVersion.getMinecraftVersion().isLegacy()) {
                 this.jarOrder = this.jarOrder + "," + file;
-            } else{
+            } else {
                 this.jarOrder = file + "," + this.jarOrder;
             }
         }
     }
 
-    public boolean isOnlyRecommendedInGroup(Mod mod){
-        for(Mod modd : this.allMods){
-            if(modd == mod || !modd.hasGroup()){
+    public boolean isOnlyRecommendedInGroup(Mod mod) {
+        for (Mod modd : this.allMods) {
+            if (modd == mod || !modd.hasGroup()) {
                 continue;
             }
 
-            if(modd.group.equalsIgnoreCase(mod.group) && modd.recommended){
+            if (modd.group.equalsIgnoreCase(mod.group) && modd.recommended) {
                 return false;
             }
         }
@@ -225,75 +220,74 @@ extends SwingWorker<Boolean, Void>{
         return true;
     }
 
-    private Path getMinecraftJar(){
-        if(this.server){
-            return this.root.resolve(
-                                            "minecraft_server." + this.packVersion.getMinecraftVersion()
-                                                                                  .getVersion() + ".jar"
-            );
-        } else{
+    private Path getMinecraftJar() {
+        if (this.server) {
+            return this.root.resolve("minecraft_server." + this.packVersion.getMinecraftVersion().getVersion() + "" +
+                    ".jar");
+        } else {
             return this.bin.resolve("minecraft.jar");
         }
     }
 
-    private String getServerJar(){
+    private String getServerJar() {
         Mod forge = this.selectedMods.getByType(ModType.FORGE);
         Mod mcpc = this.selectedMods.getByType(ModType.MCPC);
 
-        if(mcpc != null) {
+        if (mcpc != null) {
             return mcpc.getFile();
-        } else if(forge != null){
+        } else if (forge != null) {
             return forge.getFile();
-        } else{
+        } else {
             return this.getMinecraftJar().getFileName().toString();
         }
     }
 
-    public Path getTempJarDirectory(){
+    public Path getTempJarDirectory() {
         return FileSystem.TMP.resolve(this.pack.getSafeName() + "_" + this.packVersion.getSafeVersion() + "_JarTemp");
     }
 
-    public Path getTempActionsDirectory(){
-        return FileSystem.TMP.resolve(this.pack.getSafeName() + "_" + this.packVersion.getSafeVersion() + "_ActionsTemp");
+    public Path getTempActionsDirectory() {
+        return FileSystem.TMP.resolve(this.pack.getSafeName() + "_" + this.packVersion.getSafeVersion() +
+                "_ActionsTemp");
     }
 
-    public Path getTempResourcePacksDirectory(){
+    public Path getTempResourcePacksDirectory() {
         return FileSystem.TMP.resolve(this.pack.getSafeName() + "_" + this.packVersion.getSafeVersion() + "_RPTemp");
     }
 
-    public Path getTempTexturePacksDirectory(){
+    public Path getTempTexturePacksDirectory() {
         return FileSystem.TMP.resolve(this.pack.getSafeName() + "_" + this.packVersion.getSafeVersion() + "_TPTemp");
     }
 
-    private DownloadPool getLibraries(){
+    private DownloadPool getLibraries() {
         DownloadPool pool = new DownloadPool();
         List<String> libraryNamesAdded = new LinkedList<>();
 
-        for(Library lib : this.version.getLibraries()){
-            if(lib.hasDepends()){
-                if(!lib.dependencyValidator().find(this.selectedMods)){
+        for (Library lib : this.version.getLibraries()) {
+            if (lib.hasDepends()) {
+                if (!lib.dependencyValidator().find(this.selectedMods)) {
                     continue;
                 }
-            } else if(lib.hasDependsGroup()){
-                if(!lib.groupValidator().find(this.selectedMods)){
+            } else if (lib.hasDependsGroup()) {
+                if (!lib.groupValidator().find(this.selectedMods)) {
                     continue;
                 }
             }
 
-            if(!lib.getUrl().startsWith("http://") && !lib.getUrl().startsWith("https://")){
+            if (!lib.getUrl().startsWith("http://") && !lib.getUrl().startsWith("https://")) {
                 lib.setDownloadType(DownloadType.SERVER);
             }
 
-            if(this.librariesNeeded == null){
+            if (this.librariesNeeded == null) {
                 this.librariesNeeded = lib.getFile();
-            } else{
+            } else {
                 this.librariesNeeded += "," + lib.getFile();
             }
 
             this.forgeLibraries.add(lib.getFile());
 
-            if(this.server){
-                if(!lib.forServer()){
+            if (this.server) {
+                if (!lib.forServer()) {
                     continue;
                 }
 
@@ -301,36 +295,39 @@ extends SwingWorker<Boolean, Void>{
             }
 
             Path to = FileSystem.LIBRARIES.resolve(lib.getFile());
-            if(lib.getDownloadType() == DownloadType.SERVER){
+            if (lib.getDownloadType() == DownloadType.SERVER) {
                 pool.add(new Downloadable(lib.getUrl(), lib.getMD5(), to, lib.getFilesize(), true, this));
-            } else if(lib.getDownloadType() == DownloadType.DIRECT){
+            } else if (lib.getDownloadType() == DownloadType.DIRECT) {
                 pool.add(new Downloadable(lib.getUrl(), lib.getMD5(), to, -1, false, this));
-            } else{
-                LogManager.error("DownloadType for server library " + lib.getFile() + " is invalid with value of " + lib.getDownloadType());
+            } else {
+                LogManager.error("DownloadType for server library " + lib.getFile() + " is invalid with value of " +
+                        lib.getDownloadType());
                 this.cancel(true);
                 return null;
             }
 
-            if(lib.getFile().contains("-")){
+            if (lib.getFile().contains("-")) {
                 libraryNamesAdded.add(lib.getFile().substring(0, lib.getFile().lastIndexOf("-")));
-            } else{
+            } else {
                 libraryNamesAdded.add(lib.getFile());
             }
         }
 
-        if(!this.server){
-            for(com.atlauncher.data.mojang.Library lib : this.packVersion.getMinecraftVersion().getMojangVersion().getLibraries()){
-                if(lib.shouldInstall()){
+        if (!this.server) {
+            for (com.atlauncher.data.mojang.Library lib : this.packVersion.getMinecraftVersion().getMojangVersion()
+                    .getLibraries()) {
+                if (lib.shouldInstall()) {
                     String name = lib.getFilePath().getFileName().toString();
-                    if(libraryNamesAdded.contains(name.substring(0, name.lastIndexOf("-")))){
-                        LogManager.debug("Not adding library " + lib.getName() + " as it's been overwritten already by the packs libraries");
+                    if (libraryNamesAdded.contains(name.substring(0, name.lastIndexOf("-")))) {
+                        LogManager.debug("Not adding library " + lib.getName() + " as it's been overwritten already " +
+                                "by the packs libraries");
                         continue;
                     }
 
-                    if(!lib.shouldExtract()){
-                        if(librariesNeeded == null){
+                    if (!lib.shouldExtract()) {
+                        if (librariesNeeded == null) {
                             this.librariesNeeded = name;
-                        } else{
+                        } else {
                             this.librariesNeeded += "," + name;
                         }
                     }
@@ -340,10 +337,12 @@ extends SwingWorker<Boolean, Void>{
             }
         }
 
-        if(this.server){
-            pool.add(new Downloadable(this.getServerURL(), null, FileSystem.JARS.resolve("minecraft_server." + this.packVersion.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
-        } else{
-            pool.add(new Downloadable(this.getClientURL(), null, FileSystem.JARS.resolve(this.packVersion.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
+        if (this.server) {
+            pool.add(new Downloadable(this.getServerURL(), null, FileSystem.JARS.resolve("minecraft_server." + this
+                    .packVersion.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
+        } else {
+            pool.add(new Downloadable(this.getClientURL(), null, FileSystem.JARS.resolve(this.packVersion
+                    .getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
         }
 
         return pool;
@@ -351,53 +350,59 @@ extends SwingWorker<Boolean, Void>{
 
     private String getClientURL() {
         return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.packVersion.getMinecraftVersion().getVersion() +
-                                                            "/" + this.packVersion.getMinecraftVersion().getVersion() + ".jar");
+                "/" + this.packVersion.getMinecraftVersion().getVersion() + ".jar");
     }
 
     private String getServerURL() {
         return MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.packVersion.getMinecraftVersion().getVersion() +
-                                                            "/minecraft_server." + this.packVersion.getMinecraftVersion().getVersion() + ".jar");
+                "/minecraft_server." + this.packVersion.getMinecraftVersion().getVersion() + ".jar");
     }
 
-    private DownloadPool getResources(){
+    private DownloadPool getResources() {
         DownloadPool pool = new DownloadPool();
 
         String assetVersion = this.packVersion.getMinecraftVersion().getMojangVersion().getAssets();
         Path virtual = FileSystem.RESOURCES_VIRTUAL.resolve(assetVersion);
         Path indexFile = FileSystem.RESOURCES_INDEXES.resolve(assetVersion + ".json");
 
-        try{
-            new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + ".json"), null,
-                             indexFile, -1, false, this).download();
+        Downloadable dl = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + "" +
+                ".json"), Utils.getMD5(indexFile), indexFile, -1, false, this);
+
+        try {
+            if (dl.needToDownload()) {
+                dl.download();
+            }
+
             AssetIndex index = new JsonFile(indexFile).convert(AssetIndex.class);
-            if(!index.isVirtual() && !Files.exists(virtual)){
+            if (!index.isVirtual() && !Files.exists(virtual)) {
                 FileUtils.createDirectory(virtual);
             }
 
-            for(Map.Entry<String, AssetObject> entry : index.getObjects().entrySet()){
+            for (Map.Entry<String, AssetObject> entry : index.getObjects().entrySet()) {
                 AssetObject obj = entry.getValue();
                 String filename = obj.getHash().substring(0, 2) + "/" + obj.getHash();
                 Path file = FileSystem.RESOURCES_OBJECTS.resolve(filename);
 
-                if(obj.needToDownload(file)){
-                    pool.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), obj.getHash(), file, (int) obj.getSize(), false, this));
-                } else{
+                if (obj.needToDownload(file)) {
+                    pool.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), obj.getHash(), file,
+                            entry.getKey().substring(entry.getKey().lastIndexOf("/") + 1), (int) obj.getSize(),
+                            false, this));
+                } else {
                     Path virtualFile = virtual.resolve(entry.getKey());
-                    if(index.isVirtual()){
+                    if (index.isVirtual()) {
                         FileUtils.createDirectory(virtualFile.getParent());
                         FileUtils.copyFile(file, virtualFile, true);
                     }
                 }
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             LogManager.logStackTrace("Error processing resources for Minecraft", e);
         }
 
         return pool;
     }
 
-    private void downloadMods(ModList mods)
-    throws Exception{
+    private void downloadMods(ModList mods) throws Exception {
         this.fireSubProgressUnknown();
         DownloadPool pool = mods.downloadPool(this).downsize();
         this.totalBytes = this.downloadedBytes = 0;
@@ -405,16 +410,17 @@ extends SwingWorker<Boolean, Void>{
         this.fireSubProgress(0);
         pool.downloadAll();
         this.fireSubProgress(-1);
-        for(Mod mod : mods){
-            if(!this.isCancelled()){
-                this.fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.filePattern ? mod.name : mod.getFile()));
+        for (Mod mod : mods) {
+            if (!this.isCancelled()) {
+                this.fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.filePattern ? mod.name :
+                        mod.getFile()));
                 mod.download(this);
                 this.fireSubProgress(-1);
             }
         }
     }
 
-    private void downloadResources(){
+    private void downloadResources() {
         this.fireTask(Language.INSTANCE.localize("instance.downloadingresources"));
         this.fireSubProgressUnknown();
         DownloadPool pool = this.getResources();
@@ -426,19 +432,20 @@ extends SwingWorker<Boolean, Void>{
         this.fireSubProgress(-1);
     }
 
-    private void downloadConfigs(){
+    private void downloadConfigs() {
         this.fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
-        String path = "packs/" + this.pack.getSafeName() + "/versions/" + this.packVersion.getVersion() + "/Configs.zip";
+        String path = "packs/" + this.pack.getSafeName() + "/versions/" + this.packVersion.getVersion() + "/Configs" +
+                ".zip";
         Downloadable dl = new Downloadable(path, null, this.tmpDir.resolve("Configs.zip"), -1, true, this);
 
-        try{
+        try {
             dl.download();
-        } catch(Exception e){
+        } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
     }
 
-    private void extractConfigs(){
+    private void extractConfigs() {
         Path configs = this.tmpDir.resolve("Configs.zip");
         this.fireSubProgressUnknown();
         this.fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
@@ -446,7 +453,7 @@ extends SwingWorker<Boolean, Void>{
         FileUtils.delete(configs);
     }
 
-    private void downloadLibraries(){
+    private void downloadLibraries() {
         this.fireTask(Language.INSTANCE.localize("instance.downloadinglibraries"));
         this.fireSubProgressUnknown();
         DownloadPool pool = this.getLibraries();
@@ -457,171 +464,165 @@ extends SwingWorker<Boolean, Void>{
         this.fireSubProgress(-1);
     }
 
-    private void setExtraArgs(){
-        if(this.version.hasExtraArguments()){
-            if(!this.version.getExtraArguments().hasDepends() && !this.version.getExtraArguments().hasDependsGroup()){
+    private void setExtraArgs() {
+        if (this.version.hasExtraArguments()) {
+            if (!this.version.getExtraArguments().hasDepends() && !this.version.getExtraArguments().hasDependsGroup()) {
                 this.extraArgs = this.version.getExtraArguments().getArguments();
-            } else if(this.version.getExtraArguments().hasDepends()){
-                if(this.version.getExtraArguments().dependencyValidator().find(this.selectedMods)){
+            } else if (this.version.getExtraArguments().hasDepends()) {
+                if (this.version.getExtraArguments().dependencyValidator().find(this.selectedMods)) {
                     this.extraArgs = this.version.getExtraArguments().getArguments();
                 }
-            } else if(this.version.getExtraArguments().hasDependsGroup()){
-                if(this.version.getExtraArguments().groupValidator().find(this.selectedMods)){
+            } else if (this.version.getExtraArguments().hasDependsGroup()) {
+                if (this.version.getExtraArguments().groupValidator().find(this.selectedMods)) {
                     this.extraArgs = this.version.getExtraArguments().getArguments();
                 }
             }
         }
     }
 
-    private void setMainClass(){
-        if(this.version.hasMainClass()){
-            if(!this.version.getMainClass().hasDepends() && !this.version.getMainClass().hasDependsGroup()){
+    private void setMainClass() {
+        if (this.version.hasMainClass()) {
+            if (!this.version.getMainClass().hasDepends() && !this.version.getMainClass().hasDependsGroup()) {
                 this.mainClass = this.version.getMainClass().getMainClass();
-            } else if(this.version.getMainClass().hasDepends()){
+            } else if (this.version.getMainClass().hasDepends()) {
                 DependencyValidator depChecker = this.version.getMainClass().dependencyValidator();
-                if(depChecker.find(this.selectedMods)){
+                if (depChecker.find(this.selectedMods)) {
                     this.mainClass = this.version.getMainClass().getMainClass();
                 }
-            } else if(this.version.getMainClass().hasDependsGroup()){
+            } else if (this.version.getMainClass().hasDependsGroup()) {
                 GroupValidator groupValidator = this.version.getMainClass().groupValidator();
-                if(groupValidator.find(this.selectedMods)){
+                if (groupValidator.find(this.selectedMods)) {
                     this.mainClass = this.version.getMainClass().getMainClass();
                 }
             }
         }
 
-        if(this.mainClass == null){
+        if (this.mainClass == null) {
             this.mainClass = this.packVersion.getMinecraftVersion().getMojangVersion().getMainClass();
         }
     }
 
-    private void makeDirectories(){
-        if(this.reinstall || this.server){
-            if(Files.exists(this.bin) && Files.isDirectory(this.bin)){
+    private void makeDirectories() {
+        if (this.reinstall || this.server) {
+            if (Files.exists(this.bin) && Files.isDirectory(this.bin)) {
                 FileUtils.deleteDirectory(this.bin);
             }
 
-            if(Files.exists(this.configs) && Files.isDirectory(this.configs)){
+            if (Files.exists(this.configs) && Files.isDirectory(this.configs)) {
                 FileUtils.deleteDirectory(this.configs);
             }
 
-            if(this.instance != null && this.versionMatch() && this.instance.hasCustomMods()){
+            if (this.instance != null && this.versionMatch() && this.instance.hasCustomMods()) {
                 FileUtils.deleteSpecifiedFiles(this.mods, this.instance.getCustomMods(ModType.MODS));
-                if(this.packVersion.getMinecraftVersion().usesCoreMods()){
+                if (this.packVersion.getMinecraftVersion().usesCoreMods()) {
                     FileUtils.deleteSpecifiedFiles(this.coremods, this.instance.getCustomMods(ModType.COREMODS));
                 }
-                if(this.reinstall){
+                if (this.reinstall) {
                     FileUtils.deleteSpecifiedFiles(this.jarmods, this.instance.getCustomMods(ModType.JAR));
                 }
-            } else{
+            } else {
                 FileUtils.deleteDirectory(this.mods);
-                if(this.packVersion.getMinecraftVersion().usesCoreMods()){
+                if (this.packVersion.getMinecraftVersion().usesCoreMods()) {
                     FileUtils.deleteDirectory(this.coremods);
                 }
-                if(this.reinstall){
+                if (this.reinstall) {
                     FileUtils.deleteDirectory(this.jarmods);
                 }
             }
 
-            if(this.reinstall){
+            if (this.reinstall) {
                 Path pack = this.texturepacks.resolve("TexturePack.zip");
-                if(Files.exists(pack)){
+                if (Files.exists(pack)) {
                     FileUtils.delete(pack);
                 }
 
                 pack = this.resourcepacks.resolve("ResourcePack.zip");
-                if(Files.exists(pack)){
+                if (Files.exists(pack)) {
                     FileUtils.delete(pack);
                 }
-            } else{
-                if(Files.exists(this.libraries) && Files.isDirectory(this.libraries)){
+            } else {
+                if (Files.exists(this.libraries) && Files.isDirectory(this.libraries)) {
                     FileUtils.deleteDirectory(this.libraries);
                 }
             }
 
-            if(this.instance != null){
-                if(this.version.hasDeletes()){
-                    for(Delete del : this.version.getDeletes().getFiles()){
-                        Path file = del.getFile(this.instance);
-                        if(del.isValid() && Files.exists(file)){
-                            FileUtils.delete(file);
-                        }
+            if (this.instance != null && this.version.hasDeletes()) {
+                for (Delete del : this.version.getDeletes().getFiles()) {
+                    Path file = del.getFile(this.instance);
+                    if (del.isValid() && Files.exists(file)) {
+                        FileUtils.delete(file);
                     }
+                }
 
-                    for(Delete del : this.version.getDeletes().getFiles()){
-                        Path file = del.getFile(this.instance);
-                        if(del.isValid() && Files.exists(file)){
-                            FileUtils.deleteDirectory(file);
-                        }
+                for (Delete del : this.version.getDeletes().getFolders()) {
+                    Path file = del.getFile(this.instance);
+                    if (del.isValid() && Files.exists(file)) {
+                        FileUtils.deleteDirectory(file);
                     }
                 }
             }
 
             Path[] dirs;
-            if(this.server){
-                dirs = new Path[]{
-                    this.root, this.mods, this.libraries
-                };
-            } else{
-                dirs = new Path[]{
-                    this.root, this.mods, this.disabledmods,
-                    this.jarmods, this.bin, this.natives
-                };
+            if (this.server) {
+                dirs = new Path[]{this.root, this.mods, this.libraries};
+            } else {
+                dirs = new Path[]{this.root, this.mods, this.disabledmods, this.jarmods, this.bin, this.natives};
             }
 
-            for(Path p : dirs){
+            for (Path p : dirs) {
                 FileUtils.createDirectory(p);
             }
 
-            if(this.packVersion.getMinecraftVersion().usesCoreMods()){
+            if (this.packVersion.getMinecraftVersion().usesCoreMods()) {
                 FileUtils.createDirectory(this.coremods);
             }
         }
     }
 
-    private boolean versionMatch(){
-        return this.instance.getMinecraftVersion().equalsIgnoreCase(this.packVersion.getMinecraftVersion().getVersion());
+    private boolean versionMatch() {
+        return this.instance.getMinecraftVersion().equalsIgnoreCase(this.packVersion.getMinecraftVersion().getVersion
+                ());
     }
 
-    private void fireSubProgress(int perc){
-        if(perc > 100){
+    private void fireSubProgress(int perc) {
+        if (perc > 100) {
             perc = 100;
         }
 
         this.firePropertyChange("subprogress", null, perc);
     }
 
-    private void addPercent(int perc){
+    private void addPercent(int perc) {
         this.percent = this.percent + perc;
-        if(this.percent > 100){
+        if (this.percent > 100) {
             this.percent = 100;
         }
         this.fireProgress(this.percent);
     }
 
-    private void fireProgress(int perc){
-        if(perc > 100){
+    private void fireProgress(int perc) {
+        if (perc > 100) {
             perc = 100;
         }
 
         this.firePropertyChange("progress", null, perc);
     }
 
-    public void fireSubProgressUnknown(){
+    public void fireSubProgressUnknown() {
         this.firePropertyChange("subprogressint", null, null);
     }
 
-    public void fireTask(String name){
+    public void fireTask(String name) {
         this.firePropertyChange("doing", null, name);
     }
 
-    private boolean hasForge(){
-        for(Mod mod : this.selectedMods){
-            if(!mod.server && this.server){
+    private boolean hasForge() {
+        for (Mod mod : this.selectedMods) {
+            if (!mod.server && this.server) {
                 continue;
             }
 
-            if(mod.type == ModType.FORGE){
+            if (mod.type == ModType.FORGE) {
                 return true;
             }
         }
@@ -629,42 +630,45 @@ extends SwingWorker<Boolean, Void>{
         return false;
     }
 
-    private void installMods(){
-        for(Mod mod : this.selectedMods){
-            if(!this.isCancelled()){
+    private void installMods() {
+        for (Mod mod : this.selectedMods) {
+            if (!this.isCancelled()) {
                 this.fireTask(Language.INSTANCE.localize("common.installing") + " " + mod.name);
                 this.addPercent(this.selectedMods.size() / 40);
 
-                try{
+                try {
                     mod.install(this);
-                } catch(Exception e){
+                } catch (Exception e) {
                     LogManager.logStackTrace(e);
                 }
             }
         }
     }
 
-    private void organizeLibraries(){
+    private void organizeLibraries() {
         List<String> libraryNamesAdded = new LinkedList<>();
         this.fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
         this.fireSubProgressUnknown();
-        if(!this.server){
-            for(String lib : this.forgeLibraries){
+        if (!this.server) {
+            for (String lib : this.forgeLibraries) {
                 Path library = FileSystem.LIBRARIES.resolve(lib);
-                if(Files.exists(library)){
+                if (Files.exists(library)) {
                     FileUtils.copyFile(library, this.bin);
-                } else{
+                } else {
                     LogManager.error("Cannot install instance because the library file " + lib + " wasn't found");
                     this.cancel(true);
                     return;
                 }
 
-                libraryNamesAdded.add(library.getFileName().toString().substring(0, library.getFileName().toString().lastIndexOf("-")));
+                libraryNamesAdded.add(library.getFileName().toString().substring(0, library.getFileName().toString()
+                        .lastIndexOf("-")));
             }
 
-            for(com.atlauncher.data.mojang.Library lib : this.packVersion.getMinecraftVersion().getMojangVersion().getLibraries()){
-                if(lib.shouldInstall()){
-                    if (libraryNamesAdded.contains(lib.getFilePath().getFileName().toString().substring(0, lib.getFilePath().getFileName().toString().lastIndexOf("-")))) {
+            for (com.atlauncher.data.mojang.Library lib : this.packVersion.getMinecraftVersion().getMojangVersion()
+                    .getLibraries()) {
+                if (lib.shouldInstall()) {
+                    if (libraryNamesAdded.contains(lib.getFilePath().getFileName().toString().substring(0, lib
+                            .getFilePath().getFileName().toString().lastIndexOf("-")))) {
                         continue;
                     }
                     if (Files.exists(lib.getFilePath())) {
@@ -674,8 +678,8 @@ extends SwingWorker<Boolean, Void>{
                             FileUtils.copyFile(lib.getFilePath(), this.bin);
                         }
                     } else {
-                        LogManager.error("Cannot install instance because the library file " + lib.getFilePath()
-                                                 + " wasn't found!");
+                        LogManager.error("Cannot install instance because the library file " + lib.getFilePath() + " " +
+                                "wasn't found!");
                         this.cancel(true);
                         return;
                     }
@@ -685,18 +689,19 @@ extends SwingWorker<Boolean, Void>{
 
         Path from, to;
         boolean withFileName = false;
-        if(this.server){
-            from = FileSystem.JARS.resolve("minecraft_server." + this.packVersion.getMinecraftVersion().getVersion() + ".jar");
+        if (this.server) {
+            from = FileSystem.JARS.resolve("minecraft_server." + this.packVersion.getMinecraftVersion().getVersion()
+                    + ".jar");
             to = this.root;
-        } else{
+        } else {
             from = FileSystem.JARS.resolve(this.packVersion.getMinecraftVersion().getVersion() + ".jar");
             to = this.bin.resolve("minecraft.jar");
             withFileName = true;
         }
 
-        if(Files.exists(from)){
+        if (Files.exists(from)) {
             FileUtils.copyFile(from, to, withFileName);
-        } else{
+        } else {
             LogManager.error("Cannot install instance because the library file " + from + " wasn't found");
             this.cancel(true);
             return;
@@ -705,27 +710,27 @@ extends SwingWorker<Boolean, Void>{
         this.fireSubProgress(-1);
     }
 
-    private void deleteMetaInf(){
+    private void deleteMetaInf() {
         Path input = this.getMinecraftJar();
         Path output = FileSystem.TMP.resolve(this.pack.getSafeName() + "-minecraft.jar");
-        try(JarInputStream jis = new JarInputStream(Files.newInputStream(input));
-            JarOutputStream jos = new JarOutputStream(Files.newOutputStream(output))){
+        try (JarInputStream jis = new JarInputStream(Files.newInputStream(input));
+             JarOutputStream jos = new JarOutputStream(Files.newOutputStream(output))) {
 
             JarEntry entry;
-            while((entry = jis.getNextJarEntry()) != null){
-                if(entry.getName().contains("META-INF")){
+            while ((entry = jis.getNextJarEntry()) != null) {
+                if (entry.getName().contains("META-INF")) {
                     continue;
                 }
 
                 jos.putNextEntry(entry);
                 byte[] bits = new byte[1024];
                 int len;
-                while((len = jis.read(bits, 0, 1024)) != -1){
+                while ((len = jis.read(bits, 0, 1024)) != -1) {
                     jos.write(bits, 0, len);
                 }
                 jos.closeEntry();
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
 
@@ -734,14 +739,18 @@ extends SwingWorker<Boolean, Void>{
     }
 
     @Override
-    protected Boolean doInBackground()
-    throws Exception {
-        if(this.version.hasMessages()){
-            if(this.reinstall && this.version.getMessages().hasUpdateMessage() && this.version.getMessages().showUpdateMessage(this.pack) != 0){
+    protected Boolean doInBackground() throws Exception {
+        this.version = pack.getJsonVersion(this.packVersion.getVersion());
+        this.allMods = (server ? this.version.getMods().server() : this.version.getMods().client()).sort();
+
+        if (this.version.hasMessages()) {
+            if (this.reinstall && this.version.getMessages().hasUpdateMessage() && this.version.getMessages()
+                    .showUpdateMessage(this.pack) != 0) {
                 LogManager.error("Instance install canceled after viewing update message");
                 this.cancel(true);
                 return Boolean.FALSE;
-            } else if(this.version.getMessages().hasInstallMessage() && this.version.getMessages().showInstallMessage(this.pack) != 0){
+            } else if (this.version.getMessages().hasInstallMessage() && this.version.getMessages()
+                    .showInstallMessage(this.pack) != 0) {
                 LogManager.error("Instance install canceled after viewing install message");
                 this.cancel(true);
                 return Boolean.FALSE;
@@ -752,17 +761,17 @@ extends SwingWorker<Boolean, Void>{
 
         boolean hasOptional = this.allMods.hasOptional();
 
-        if(this.allMods.size() != 0 && hasOptional){
+        if (this.allMods.size() != 0 && hasOptional) {
             ModsChooser modsChooser = new ModsChooser(this);
-            if(this.shareCode != null){
+            if (this.shareCode != null) {
                 modsChooser.applyShareCode(this.shareCode);
             }
 
-            if(this.showModsChooser){
+            if (this.showModsChooser) {
                 modsChooser.setVisible(true);
             }
 
-            if(modsChooser.wasClosed()){
+            if (modsChooser.wasClosed()) {
                 this.cancel(true);
                 return Boolean.FALSE;
             }
@@ -770,23 +779,24 @@ extends SwingWorker<Boolean, Void>{
             this.selectedMods.as(modsChooser.getSelected());
         }
 
-        if(!hasOptional){
+        if (!hasOptional) {
             this.selectedMods.as(this.allMods);
         }
 
-        for(Mod mod : this.selectedMods){
+        for (Mod mod : this.selectedMods) {
             String file = mod.getFile();
-            if(this.version.getCaseAllFiles() == CaseType.upper){
+            if (this.version.getCaseAllFiles() == CaseType.upper) {
                 file = file.substring(0, file.lastIndexOf(".")).toUpperCase() + file.substring(file.lastIndexOf("."));
-            } else if(this.version.getCaseAllFiles() == CaseType.lower){
+            } else if (this.version.getCaseAllFiles() == CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
 
             this.installedMods.add(mod.generateDisableableMod(this, file));
         }
 
-        if(this.reinstall && this.instance.hasCustomMods() && this.instance.getMinecraftVersion().equalsIgnoreCase(this.packVersion.getMinecraftVersion().getVersion())){
-            for(DisableableMod mod : this.instance.getCustomDisableableMods()){
+        if (this.reinstall && this.instance.hasCustomMods() && this.instance.getMinecraftVersion().equalsIgnoreCase
+                (this.packVersion.getMinecraftVersion().getVersion())) {
+            for (DisableableMod mod : this.instance.getCustomDisableableMods()) {
                 this.installedMods.add(mod);
             }
         }
@@ -798,25 +808,25 @@ extends SwingWorker<Boolean, Void>{
         this.setMainClass();
         this.setExtraArgs();
 
-        if(this.packVersion.getMinecraftVersion().hasResources()){
+        if (this.packVersion.getMinecraftVersion().hasResources()) {
             this.downloadResources();
-            if(this.isCancelled()){
+            if (this.isCancelled()) {
                 return Boolean.FALSE;
             }
         }
 
         this.downloadLibraries();
-        if(this.isCancelled()){
+        if (this.isCancelled()) {
             return Boolean.FALSE;
         }
 
         this.organizeLibraries();
-        if(this.isCancelled()){
+        if (this.isCancelled()) {
             return Boolean.FALSE;
         }
 
-        if(this.server){
-            for(Path p : this.serverLibraries){
+        if (this.server) {
+            for (Path p : this.serverLibraries) {
                 FileUtils.createDirectory(p);
                 FileUtils.copyFile(FileSystem.LIBRARIES.resolve(p.getFileName()), p, true);
             }
@@ -824,107 +834,104 @@ extends SwingWorker<Boolean, Void>{
 
         this.addPercent(5);
 
-        if(this.server && this.selectedMods.hasJarMod(this)){
+        if (this.server && this.selectedMods.hasJarMod(this)) {
             this.fireTask(Language.INSTANCE.localize("server.extractingjar"));
             this.fireSubProgressUnknown();
             FileUtils.unzip(this.getTempJarDirectory(), this.getMinecraftJar());
         }
 
-        if(!this.server && this.selectedMods.hasJarMod(this) && !this.hasForge()){
+        if (!this.server && this.selectedMods.hasJarMod(this) && !this.hasForge()) {
             System.out.println("Deleting META-INF");
             this.deleteMetaInf();
         }
 
         this.addPercent(5);
-        if(this.selectedMods.size() != 0){
+        if (this.selectedMods.size() != 0) {
             this.addPercent(40);
             this.fireTask(Language.INSTANCE.localize("instance.downloadingmods"));
             this.downloadMods(this.selectedMods);
-            if(this.isCancelled()){
+            if (this.isCancelled()) {
                 return Boolean.FALSE;
             }
             this.addPercent(40);
             this.installMods();
-        } else{
+        } else {
             this.addPercent(80);
         }
 
-        if(this.isCancelled()){
+        if (this.isCancelled()) {
             return Boolean.FALSE;
         }
 
-        if(this.version.shouldCaseAllFiles()){
-            try{
-                if(this.server && this.versionMatch()){
-                    Files.walkFileTree(this.mods, new CaseFileVisitor(this.version.getCaseAllFiles(), this.instance.getCustomMods(ModType.MODS)));
+        if (this.version.shouldCaseAllFiles()) {
+            try {
+                if (this.reinstall && this.versionMatch()) {
+                    Files.walkFileTree(this.mods, new CaseFileVisitor(this.version.getCaseAllFiles(), this.instance
+                            .getCustomMods(ModType.MODS)));
+                } else {
+                    Files.walkFileTree(this.mods, new CaseFileVisitor(this.version.getCaseAllFiles()));
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 LogManager.logStackTrace("Error casing files while install instance", e);
             }
         }
 
-        if(this.server && this.selectedMods.hasJarMod(this)){
+        if (this.server && this.selectedMods.hasJarMod(this)) {
             this.fireTask(Language.INSTANCE.localize("server.zippingjar"));
             this.fireSubProgressUnknown();
             FileUtils.zip(this.getTempJarDirectory(), this.getMinecraftJar());
         }
 
-        if(this.extractedTexturePack){
+        if (this.extractedTexturePack) {
             this.fireTask(Language.INSTANCE.localize("instance.zippingtexturepackfiles"));
             this.fireSubProgressUnknown();
-            if(!Files.exists(this.texturepacks)){
+            if (!Files.exists(this.texturepacks)) {
                 FileUtils.createDirectory(this.texturepacks);
             }
             FileUtils.zip(this.getTempTexturePacksDirectory(), this.texturepacks);
         }
 
-        if(this.extractedResourcePack){
+        if (this.extractedResourcePack) {
             this.fireTask(Language.INSTANCE.localize("instance.zippingresourcepackfiles"));
             this.fireSubProgressUnknown();
-            if(!Files.exists(this.resourcepacks)){
+            if (!Files.exists(this.resourcepacks)) {
                 FileUtils.createDirectory(this.resourcepacks);
             }
             FileUtils.zip(this.getTempResourcePacksDirectory(), this.resourcepacks);
         }
 
-        if(this.isCancelled()){
+        if (this.isCancelled()) {
             return Boolean.FALSE;
         }
 
-        if(this.version.hasActions()){
-            for(Action action : this.version.getActions()){
+        if (this.version.hasActions()) {
+            for (Action action : this.version.getActions()) {
                 action.execute(this);
             }
         }
 
-        if(this.isCancelled()){
+        if (this.isCancelled()) {
             return Boolean.FALSE;
         }
 
-        if(!this.version.hasNoConfigs()){
+        if (!this.version.hasNoConfigs()) {
             this.downloadConfigs();
             this.extractConfigs();
         }
 
-        if(FileSystem.COMMON.toFile().listFiles().length != 0){
+        if (FileSystem.COMMON.toFile().listFiles().length != 0) {
             FileUtils.copyDirectory(FileSystem.COMMON, this.root);
         }
 
         BackupMethods.restore(this);
 
-        if(this.server){
+        if (this.server) {
             File batFile = this.root.resolve("LaunchServer.bat").toFile();
             File shFile = this.root.resolve("LaunchServer.sh").toFile();
-            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.bat").toFile(),
-                              batFile,
-                              "%%SERVERJAR%%",
-                              getServerJar()
-            );
-            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.sh").toFile(),
-                              shFile,
-                              "%%SERVERJAR%%",
-                              getServerJar()
-            );
+            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.bat").toFile(), batFile, "%%SERVERJAR%%",
+                    getServerJar());
+            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.sh").toFile(), shFile, "%%SERVERJAR%%",
+                    getServerJar());
             batFile.setExecutable(true);
             shFile.setExecutable(true);
         }
@@ -937,7 +944,7 @@ extends SwingWorker<Boolean, Void>{
 
         try {
             APIResponse response = Gsons.DEFAULT.fromJson(Utils.sendGetAPICall("pack/" + this.pack.getSafeName() + "/" +
-                                                                                       version.getVersion() + "/share-code/" + code), APIResponse.class);
+                    version.getVersion() + "/share-code/" + code), APIResponse.class);
             if (!response.wasError()) {
                 shareCodeData = response.getDataAsString();
             }

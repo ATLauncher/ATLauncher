@@ -39,11 +39,11 @@ public class ExtraArguments {
         return this.dependsGroup;
     }
 
-    public GroupValidator groupValidator(){
+    public GroupValidator groupValidator() {
         return new GroupValidator(this.dependsGroup);
     }
 
-    public DependencyValidator dependencyValidator(){
+    public DependencyValidator dependencyValidator() {
         return new DependencyValidator(this.depends);
     }
 

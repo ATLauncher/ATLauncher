@@ -19,13 +19,22 @@ package com.atlauncher.data.json;
 
 import com.atlauncher.annot.Json;
 
+<<<<<<< HEAD
 import java.util.LinkedList;
+=======
+import java.util.ArrayList;
+>>>>>>> 52af8025f1779074f588db77f601f5449a2f3e82
 import java.util.List;
 
 @Json
 public class Deletes {
+<<<<<<< HEAD
     private List<Delete> files = new LinkedList<>();
     private List<Delete> folders = new LinkedList<>();
+=======
+    private List<Delete> files = new ArrayList<>();
+    private List<Delete> folders = new ArrayList<>();
+>>>>>>> 52af8025f1779074f588db77f601f5449a2f3e82
 
     public List<Delete> getFiles() {
         return this.files;

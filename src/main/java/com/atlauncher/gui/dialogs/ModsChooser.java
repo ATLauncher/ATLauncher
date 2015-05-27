@@ -276,8 +276,7 @@ public class ModsChooser extends JDialog {
                     checkBox.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            if (finalCheckBox.isSelected() && installer.version.hasWarningMessage(mod
-                                    .warning)) {
+                            if (finalCheckBox.isSelected() && installer.version.hasWarningMessage(mod.warning)) {
                                 String message = installer.version.getWarningMessage(mod.warning);
 
                                 if (message != null) {
@@ -502,14 +501,14 @@ public class ModsChooser extends JDialog {
         }
     }
 
-    public ModList getSelected(){
-        if(this.wasClosed){
+    public ModList getSelected() {
+        if (this.wasClosed) {
             return null;
         }
 
         ModList mods = new ModList();
-        for(ModsJCheckBox check : this.modCheckboxes){
-            if(check.isSelected()){
+        for (ModsJCheckBox check : this.modCheckboxes) {
+            if (check.isSelected()) {
                 mods.add(check.getMod());
             }
         }

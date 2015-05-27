@@ -48,6 +48,6 @@ public class DownloadableFile {
         }
 
         return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name, this.getSHA1(), path,
-                null, this.size, true, false, null);
+                null, null, this.size, true, false, null);
     }
 }

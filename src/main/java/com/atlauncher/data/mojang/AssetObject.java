@@ -46,7 +46,7 @@ public class AssetObject {
         try {
             size = Files.size(path);
         } catch (IOException e) {
-            LogManager.logStackTrace("Error getting filesize from " + path, e);
+            LogManager.logStackTrace("Error getting file size from " + path, e);
         }
 
         return (size != this.size) || (!this.hash.equalsIgnoreCase(Utils.getSHA1(path)));

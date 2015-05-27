@@ -36,8 +36,7 @@ import java.util.List;
 public enum DownloadType {
     SERVER() {
         @Override
-        public void download(InstanceInstaller installer, Path to, Mod mod)
-        throws Exception{
+        public void download(InstanceInstaller installer, Path to, Mod mod) throws Exception {
             Downloadable dl = mod.generateDownloadable(to, installer, true);
             if (dl.needToDownload()) {
                 dl.download();
@@ -46,9 +45,13 @@ public enum DownloadType {
     },
     BROWSER() {
         @Override
+<<<<<<< HEAD
         public void download(InstanceInstaller installer, Path to, Mod mod)
         throws Exception {
             System.out.println((mod.server ? mod.serverFile : ""));
+=======
+        public void download(InstanceInstaller installer, Path to, Mod mod) throws Exception {
+>>>>>>> 52af8025f1779074f588db77f601f5449a2f3e82
             Path dlFile = (mod.server ? FileSystem.USER_DOWNLOADS : FileSystem.DOWNLOADS).resolve((mod.server ? mod
                     .serverFile : mod.getFile()));
             if (Files.exists(dlFile)) {
@@ -86,13 +89,13 @@ public enum DownloadType {
                             .INSTANCE.localizeWithReplace("instance.browseropened", (mod.serverFile == null ? (mod
                                     .filePattern ? mod.name : mod.getFile()) : (mod.filePattern ? mod.name : mod
                                     .serverFile))) + "<br/><br/>" +
-                                            Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                            (App.settings.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod
-                                                    .filePattern ? FileSystem.DOWNLOADS : FileSystem.DOWNLOADS + " " +
-                                                    "or<br/>" + FileSystem.USER_DOWNLOADS))), Language.INSTANCE
-                            .localize("common.downloading") + " " + (mod.serverFile == null ? (mod.filePattern ? mod
-                            .name : mod.getFile()) : (mod.filePattern ? mod.name : mod.serverFile)), JOptionPane
-                            .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                            Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                            (App.settings.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod.filePattern ? FileSystem
+                                    .DOWNLOADS : FileSystem.DOWNLOADS + " " +
+                                    "or<br/>" + FileSystem.USER_DOWNLOADS))), Language.INSTANCE.localize("common" +
+                            ".downloading") + " " + (mod.serverFile == null ? (mod.filePattern ? mod.name : mod
+                            .getFile()) : (mod.filePattern ? mod.name : mod.serverFile)), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
                     if (ret == JOptionPane.CLOSED_OPTION) {
                         installer.cancel(true);
@@ -151,8 +154,7 @@ public enum DownloadType {
     },
     DIRECT() {
         @Override
-        public void download(InstanceInstaller installer, Path to, Mod mod)
-        throws Exception{
+        public void download(InstanceInstaller installer, Path to, Mod mod) throws Exception {
             Downloadable dl = mod.generateDownloadable(to, installer, false);
             if (dl.needToDownload()) {
                 dl.download();
