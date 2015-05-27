@@ -96,10 +96,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public final Path ic2;
     public final Path denlib;
     public final Path plugins;
-    public final Version version;
+    public Version version;
     public final PackVersion packVersion;
     public final Pack pack;
-    public final ModList allMods;
+    public ModList allMods;
     public final ModList selectedMods = new ModList();
     public final List<DisableableMod> installedMods = new LinkedList<>();
     public final List<String> forgeLibraries = new LinkedList<>();
@@ -123,14 +123,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public InstanceInstaller(String name, Pack pack, PackVersion version, boolean reinstall, String shareCode,
                              boolean server, boolean showModsChooser) {
         this.name = name;
+        this.pack = pack;
+        this.packVersion = version;
+        this.reinstall = reinstall;
         this.shareCode = shareCode;
         this.server = server;
-        this.reinstall = reinstall;
         this.showModsChooser = showModsChooser;
-        this.version = pack.getJsonVersion(version.getVersion());
-        this.packVersion = version;
-        this.pack = pack;
-        this.allMods = (server ? this.version.getMods().server() : this.version.getMods().client()).sort();
+
         this.tmpDir = FileSystem.TMP.resolve(this.pack.getSafeName() + "_" + this.packVersion.getSafeVersion());
         this.root = (this.server ? FileSystem.SERVERS.resolve(this.pack.getSafeName() + "_" + this.packVersion
                 .getSafeVersion()) : FileSystem.INSTANCES.resolve(this.name.replaceAll("[^A-Za-z0-9]", "")));
@@ -740,6 +739,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     @Override
     protected Boolean doInBackground() throws Exception {
+        this.version = pack.getJsonVersion(this.packVersion.getVersion());
+        this.allMods = (server ? this.version.getMods().server() : this.version.getMods().client()).sort();
+
         if (this.version.hasMessages()) {
             if (this.reinstall && this.version.getMessages().hasUpdateMessage() && this.version.getMessages()
                     .showUpdateMessage(this.pack) != 0) {

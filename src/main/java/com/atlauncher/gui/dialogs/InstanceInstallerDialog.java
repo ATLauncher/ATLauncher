@@ -433,6 +433,7 @@ public class InstanceInstallerDialog extends JDialog {
                     }
 
                 };
+
                 instanceInstaller.addPropertyChangeListener(new PropertyChangeListener() {
 
                     public void propertyChange(PropertyChangeEvent evt) {
@@ -495,14 +496,17 @@ public class InstanceInstallerDialog extends JDialog {
 
                     }
                 });
+
                 dialog.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent e) {
                         instanceInstaller.cancel(true);
                     }
                 });
+
                 if (isReinstall) {
                     instanceInstaller.setInstance(instance);
                 }
+
                 instanceInstaller.execute();
                 dispose();
                 dialog.setVisible(true);
