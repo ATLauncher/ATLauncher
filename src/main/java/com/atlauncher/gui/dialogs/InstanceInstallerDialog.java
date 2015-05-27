@@ -350,16 +350,8 @@ public class InstanceInstallerDialog extends JDialog {
                                             .getMojangVersion().getMinecraftArguments());
                                     instance.setExtraArguments(this.extraArgs);
                                     instance.setMainClass(this.mainClass);
-<<<<<<< HEAD
-                                    instance.setAssets(
-                                                              this.packVersion.getMinecraftVersion()
-                                                                              .getMojangVersion()
-                                                                              .getAssets()
-                                    );
-=======
                                     instance.setAssets(this.packVersion.getMinecraftVersion().getMojangVersion()
                                             .getAssets());
->>>>>>> 52af8025f1779074f588db77f601f5449a2f3e82
                                     if (packVersion.isDev()) {
                                         instance.setDevVersion();
                                         if (packVersion.getHash() != null) {
