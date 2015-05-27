@@ -317,13 +317,13 @@ public class Settings {
         if (this.enableServerChecker) {
             this.checkingServersTimer = new Timer();
             this.checkingServersTimer.scheduleAtFixedRate(new TimerTask() {
-                        @Override
-                        public void run() {
-                            for (MinecraftServer server : checkingServers) {
-                                server.checkServer();
-                            }
-                        }
-                    }, 0, this.getServerCheckerWaitInMilliseconds());
+                @Override
+                public void run() {
+                    for (MinecraftServer server : checkingServers) {
+                        server.checkServer();
+                    }
+                }
+            }, 0, this.getServerCheckerWaitInMilliseconds());
         }
     }
 
@@ -554,10 +554,7 @@ public class Settings {
             LogManager.info("Downloading Launcher Update");
             Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + target, output, true);
             update.download();
-            this.runUpdate(
-                                  path, output.toAbsolutePath()
-                                              .toString()
-            );
+            this.runUpdate(path, output.toAbsolutePath().toString());
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
@@ -732,26 +729,26 @@ public class Settings {
             ExecutorService executor = Utils.generateDownloadExecutor();
             for (final LauncherLibrary lib : libraries) {
                 executor.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Downloadable dl = lib.getDownloadable();
-                                    if (dl.needToDownload()) {
-                                        dl.download();
-                                    }
-                                    Path path = lib.getFilePath();
-                                    if (lib.shouldAutoLoad() && !Utils.addToClasspath(path)) {
-                                        LogManager.error("Couldn't add " + path + " to the classpath!");
-                                        if (lib.shouldExitOnFail()) {
-                                            LogManager.error("Library is necessary so launcher will exit!");
-                                            System.exit(1);
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    LogManager.logStackTrace("Error downloading library " + lib.getName(), e);
+                    @Override
+                    public void run() {
+                        try {
+                            Downloadable dl = lib.getDownloadable();
+                            if (dl.needToDownload()) {
+                                dl.download();
+                            }
+                            Path path = lib.getFilePath();
+                            if (lib.shouldAutoLoad() && !Utils.addToClasspath(path)) {
+                                LogManager.error("Couldn't add " + path + " to the classpath!");
+                                if (lib.shouldExitOnFail()) {
+                                    LogManager.error("Library is necessary so launcher will exit!");
+                                    System.exit(1);
                                 }
                             }
-                        });
+                        } catch (Exception e) {
+                            LogManager.logStackTrace("Error downloading library " + lib.getName(), e);
+                        }
+                    }
+                });
             }
             executor.shutdown();
             while (!executor.isTerminated()) {
@@ -2001,10 +1998,9 @@ public class Settings {
                     break;
                 default:
                     // Oh noes, problem!
-                    LogManager.warn(
-                                           "Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support " +
-                                                   "disabled!"
-                    );
+                    LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy " +
+                            "support " +
+                                    "disabled!");
                     this.enableProxy = false;
                     return null;
             }
@@ -2031,10 +2027,9 @@ public class Settings {
                     break;
                 default:
                     // Oh noes, problem!
-                    LogManager.warn(
-                                           "Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support " +
-                                                   "disabled!"
-                    );
+                    LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy " +
+                            "support " +
+                                    "disabled!");
                     this.enableProxy = false;
                     return Proxy.NO_PROXY;
             }

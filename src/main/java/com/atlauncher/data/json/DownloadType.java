@@ -83,13 +83,13 @@ public enum DownloadType {
                             .INSTANCE.localizeWithReplace("instance.browseropened", (mod.serverFile == null ? (mod
                                     .filePattern ? mod.name : mod.getFile()) : (mod.filePattern ? mod.name : mod
                                     .serverFile))) + "<br/><br/>" +
-                            Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                            (App.settings.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod.filePattern ? FileSystem
-                                    .DOWNLOADS : FileSystem.DOWNLOADS + " " +
-                                    "or<br/>" + FileSystem.USER_DOWNLOADS))), Language.INSTANCE.localize("common" +
-                            ".downloading") + " " + (mod.serverFile == null ? (mod.filePattern ? mod.name : mod
-                            .getFile()) : (mod.filePattern ? mod.name : mod.serverFile)), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                                    Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                    (App.settings.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod.filePattern ?
+                                            FileSystem.DOWNLOADS : FileSystem.DOWNLOADS + " " +
+                                            "or<br/>" + FileSystem.USER_DOWNLOADS))), Language.INSTANCE.localize
+                            ("common" + ".downloading") + " " + (mod.serverFile == null ? (mod.filePattern ? mod.name
+                            : mod.getFile()) : (mod.filePattern ? mod.name : mod.serverFile)), JOptionPane
+                            .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
                     if (ret == JOptionPane.CLOSED_OPTION) {
                         installer.cancel(true);
