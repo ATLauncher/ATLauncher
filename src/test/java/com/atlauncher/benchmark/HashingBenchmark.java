@@ -31,28 +31,21 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 
 
-public class HashingBenchmark{
-    public static void main(String... args)
-    throws Exception {
-        Options opts = new OptionsBuilder()
-                               .include(HashingBenchmark.class.getSimpleName())
-                               .forks(1)
-                               .addProfiler(StackProfiler.class)
-                               .build();
+public class HashingBenchmark {
+    public static void main(String... args) throws Exception {
+        Options opts = new OptionsBuilder().include(HashingBenchmark.class.getSimpleName()).forks(1).addProfiler
+                (StackProfiler.class).build();
         new Runner(opts).run();
     }
 
     @Benchmark
-    public void custom()
-    throws Exception{
+    public void custom() throws Exception {
         com.atlauncher.utils.Hashing.md5(FileSystemData.PROPERTIES).toString();
     }
 
     @Benchmark
-    public void guava()
-    throws Exception {
-        Files.hash(FileSystemData.PROPERTIES.toFile(), Hashing.md5())
-             .toString();
+    public void guava() throws Exception {
+        Files.hash(FileSystemData.PROPERTIES.toFile(), Hashing.md5()).toString();
     }
 
     @Benchmark
@@ -61,8 +54,7 @@ public class HashingBenchmark{
     }
 
     @Benchmark
-    public void java()
-    throws Exception {
+    public void java() throws Exception {
         try (InputStream stream = java.nio.file.Files.newInputStream(FileSystemData.PROPERTIES)) {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             byte[] buffer = new byte[1024];

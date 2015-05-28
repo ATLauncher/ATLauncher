@@ -28,7 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-public class UtilsTest {
+public class HashingTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -40,7 +40,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void testGetMD5() {
+    public void testMD5() {
         Path testFile = this.testStorage.resolve("TestMD5.txt");
 
         byte[] bytes = {'T', 'e', 's', 't'};
@@ -52,16 +52,16 @@ public class UtilsTest {
             Assert.fail();
         }
 
-        Assert.assertEquals("0cbc6611f5540bd0809a388dc95a615b", Utils.getMD5("Test"));
+        Assert.assertEquals("0cbc6611f5540bd0809a388dc95a615b", Hashing.md5("Test").toString());
 
         Assert.assertTrue(Files.exists(testFile));
         Assert.assertTrue(Files.isRegularFile(testFile));
 
-        Assert.assertEquals("0cbc6611f5540bd0809a388dc95a615b", Utils.getMD5(testFile));
+        Assert.assertEquals("0cbc6611f5540bd0809a388dc95a615b", Hashing.md5(testFile).toString());
     }
 
     @Test
-    public void testGetSHA1() {
+    public void testSHA1() {
         Path testFile = this.testStorage.resolve("TestSHA1.txt");
 
         byte[] bytes = {'T', 'e', 's', 't'};
@@ -73,9 +73,11 @@ public class UtilsTest {
             Assert.fail();
         }
 
+        Assert.assertEquals("640ab2bae07bedc4c163f679a746f7ab7fb5d1fa", Hashing.sha1("Test").toString());
+
         Assert.assertTrue(Files.exists(testFile));
         Assert.assertTrue(Files.isRegularFile(testFile));
 
-        Assert.assertEquals("640ab2bae07bedc4c163f679a746f7ab7fb5d1fa", Utils.getSHA1(testFile));
+        Assert.assertEquals("640ab2bae07bedc4c163f679a746f7ab7fb5d1fa", Hashing.sha1(testFile).toString());
     }
 }
