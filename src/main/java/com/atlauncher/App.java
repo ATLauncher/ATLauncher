@@ -96,15 +96,6 @@ public class App {
     public static boolean useGzipForDownloads = true;
 
     /**
-     * This allows skipping the Minecraft version downloading which grabs all the Minecraft versions from Mojang so the
-     * launcher can know ahead of time what Minecraft versions there are and how to install them. Can be turned on to
-     * skip the downloading with the below command line argument.
-     * <p/>
-     * --skip-minecraft-version-downloads
-     */
-    public static boolean skipMinecraftVersionDownloads = false;
-
-    /**
      * This allows skipping the system tray intergation so that the launcher doesn't even try to show the icon and menu
      * etc, in the users system tray. It can be skipped with the below command line argument.
      * <p/>
@@ -206,10 +197,6 @@ public class App {
                     useGzipForDownloads = false;
                     LogManager.debug("GZip has been turned off for downloads! Don't ask for support with this " +
                             "disabled!", true);
-                } else if (parts[0].equalsIgnoreCase("--skip-minecraft-version-downloads")) {
-                    skipMinecraftVersionDownloads = true;
-                    LogManager.debug("Skipping Minecraft version downloads! This may cause issues, only use it as " +
-                            "directed by" + Constants.LAUNCHER_NAME + " staff!", true);
                 } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
                     skipTrayIntegration = true;
                     LogManager.debug("Skipping tray integration!", true);

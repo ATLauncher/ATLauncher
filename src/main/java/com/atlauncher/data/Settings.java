@@ -78,7 +78,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -1280,6 +1279,10 @@ public class Settings {
     private void loadMinecraftVersions() {
         LogManager.debug("Loading Minecraft versions");
 
+        if (Files.exists(FileSystem.CONFIGS.resolve("Versions"))) {
+            FileUtils.deleteDirectory(FileSystem.CONFIGS.resolve("Versions"));
+        }
+
         Data.MINECRAFT_VERSIONS.clear();
         try {
             java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
@@ -1292,21 +1295,7 @@ public class Settings {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
-
-
-        LogManager.info("[Background] Checking Minecraft Versions Started");
-        ExecutorService executor = Utils.generateDownloadExecutor();
-        for (final Entry<String, MinecraftVersion> entry : Data.MINECRAFT_VERSIONS.entrySet()) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    entry.getValue().loadVersion();
-                }
-            });
-        }
-        LogManager.info("[Background] Checking Minecraft Versions Complete");
-        executor.shutdown();
-        LogManager.debug("Finished loading Minecraft versions");
+        LogManager.debug("Finished Loading Minecraft versions");
     }
 
     /**
