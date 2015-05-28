@@ -45,6 +45,7 @@ import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.validator.DependencyValidator;
 import com.atlauncher.utils.validator.GroupValidator;
@@ -212,8 +213,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private Path getMinecraftJar() {
         if (this.server) {
-            return this.root.resolve("minecraft_server." + this.packVersion.getMinecraftVersion().getVersion() + "" +
-                    ".jar");
+            return this.root.resolve(
+                                            "minecraft_server." + this.packVersion.getMinecraftVersion()
+                                                                                  .getVersion() + "" +
+                                                    ".jar"
+            );
         } else {
             return this.bin.resolve("minecraft.jar");
         }
@@ -356,7 +360,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         Path indexFile = FileSystem.RESOURCES_INDEXES.resolve(assetVersion + ".json");
 
         Downloadable dl = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + "" +
-                ".json"), Utils.getMD5(indexFile), indexFile, -1, false, this);
+                ".json"), Hashing.md5(indexFile).toString(), indexFile, -1, false, this);
 
         try {
             if (dl.needToDownload()) {

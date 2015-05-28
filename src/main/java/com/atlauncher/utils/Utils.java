@@ -26,7 +26,6 @@ import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.utils.walker.ClearDirVisitor;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.tukaani.xz.XZInputStream;
 
 import javax.crypto.BadPaddingException;
@@ -49,7 +48,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -81,8 +79,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -559,121 +555,8 @@ public class Utils {
         return result;
     }
 
-    /**
-     * Gets the m d5.
-     *
-     * @param file the file
-     * @return the m d5
-     */
-    public static String getMD5(File file) {
-        if (!file.exists()) {
-            LogManager.error("Cannot get MD5 of " + file.getAbsolutePath() + " as it doesn't exist");
-            return "0"; // File doesn't exists so MD5 is nothing
-        }
-        StringBuffer sb = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            FileInputStream fis = new FileInputStream(file);
-
-            byte[] dataBytes = new byte[1024];
-
-            int nread = 0;
-            while ((nread = fis.read(dataBytes)) != -1) {
-                md.update(dataBytes, 0, nread);
-            }
-
-            byte[] mdbytes = md.digest();
-
-            sb = new StringBuffer();
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-
-            if (fis != null) {
-                fis.close();
-            }
-        } catch (NoSuchAlgorithmException e) {
-            LogManager.logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            LogManager.logStackTrace(e);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-        return sb.toString();
-    }
-
-    public static String getMD5(Path path) {
-        try {
-            if (!Files.exists(path)) {
-                return "";
-            }
-
-            byte[] bits = Files.readAllBytes(path);
-            return DigestUtils.md5Hex(bits);
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-            return "";
-        }
-    }
-
     public static ExecutorService generateDownloadExecutor() {
         return Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
-    }
-
-    public static String getSHA1(Path path) {
-        if (!Files.exists(path)) {
-            LogManager.error("Cannot get SHA-1 hash of " + path + " as it doesn't exist");
-            return "0"; // File doesn't exists so MD5 is nothing
-        }
-
-        FileInputStream fis = null;
-        String sha1 = "0";
-
-        try {
-            fis = new FileInputStream(path.toFile());
-            sha1 = DigestUtils.sha1Hex(fis);
-        } catch (IOException e) {
-            LogManager.logStackTrace("Error getting SHA-1 of file " + path, e);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ignored) {
-                }
-            }
-        }
-
-        return sha1;
-    }
-
-    /**
-     * Gets the m d5.
-     *
-     * @param string the string
-     * @return the m d5
-     */
-    public static String getMD5(String string) {
-        if (string == null) {
-            LogManager.error("Cannot get MD5 of null");
-            return "0"; // String null so return 0
-        }
-        StringBuffer sb = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] bytesOfMessage = string.getBytes("UTF-8");
-            byte[] mdbytes = md.digest(bytesOfMessage);
-
-            // convert the byte to hex format method 1
-            sb = new StringBuffer();
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-        } catch (NoSuchAlgorithmException e) {
-            LogManager.logStackTrace(e);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-        return sb.toString();
     }
 
     /**
@@ -693,7 +576,7 @@ public class Utils {
                 if (Files.isDirectory(file)) {
                     spreadOutResourceFiles(file);
                 } else {
-                    String hash = Utils.getSHA1(p);
+                    String hash = Hashing.sha1(p).toString();
                     Path save = FileSystem.RESOURCES.resolve("assets").resolve(hash.substring(0, 2) + File.separator
                             + hash);
                     FileUtils.createDirectory(save);
@@ -1672,7 +1555,7 @@ public class Utils {
             returnStr = (returnStr == null ? "NotARandomKeyYes" : returnStr);
         }
 
-        return getMD5(returnStr);
+        return Hashing.md5(returnStr).toString();
     }
 
     /**

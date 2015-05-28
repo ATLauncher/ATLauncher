@@ -25,7 +25,7 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.nio.JsonFile;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.Hashing;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.Collections;
@@ -167,7 +167,7 @@ public class PackManager {
 
     public static boolean canViewSemiPublicPackByCode(String packCode) {
         for (String code : PackManager.semiPublicPackCodes) {
-            if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
+            if (Hashing.md5(code).toString().equalsIgnoreCase(packCode)) {
                 return true;
             }
         }
@@ -190,7 +190,7 @@ public class PackManager {
     }
 
     public static boolean semiPublicPackExistsFromCode(String packCode) {
-        String packCodeMD5 = Utils.getMD5(packCode);
+        String packCodeMD5 = Hashing.md5(packCode).toString();
         for (Pack pack : PackManager.getPacks()) {
             if (pack.isSemiPublic()) {
                 if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
@@ -202,7 +202,7 @@ public class PackManager {
     }
 
     public static Pack getSemiPublicPackByCode(String packCode) {
-        String packCodeMD5 = Utils.getMD5(packCode);
+        String packCodeMD5 = Hashing.md5(packCode).toString();
         for (Pack pack : PackManager.getPacks()) {
             if (pack.isSemiPublic()) {
                 if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
@@ -215,7 +215,7 @@ public class PackManager {
     }
 
     public static boolean addSemiPublicPack(String packCode) {
-        String packCodeMD5 = Utils.getMD5(packCode);
+        String packCodeMD5 = Hashing.md5(packCode).toString();
         for (Pack pack : PackManager.getPacks()) {
             if (pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(packCodeMD5)) {
                 if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
@@ -234,7 +234,7 @@ public class PackManager {
 
     public static void removeSemiPublicPack(String packCode) {
         for (String code : PackManager.semiPublicPackCodes) {
-            if (Utils.getMD5(code).equalsIgnoreCase(packCode) && PackManager.semiPublicPackCodes.contains(code)) {
+            if (Hashing.md5(code).toString().equalsIgnoreCase(packCode) && PackManager.semiPublicPackCodes.contains(code)) {
                 PackManager.semiPublicPackCodes.remove(code);
                 App.settings.saveProperties();
                 PackChangeManager.change();

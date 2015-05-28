@@ -23,6 +23,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.squareup.okhttp.CacheControl;
@@ -187,9 +188,9 @@ public final class Downloadable {
 
         if (Files.exists(this.to)) {
             if (this.md5()) {
-                return !Utils.getMD5(this.to).equalsIgnoreCase(this.getHash());
+                return !Hashing.md5(this.to).toString().equalsIgnoreCase(this.getHash());
             } else {
-                return !Utils.getSHA1(this.to).equalsIgnoreCase(this.getHash());
+                return !Hashing.sha1(this.to).toString().equalsIgnoreCase(this.getHash());
             }
         }
 
@@ -237,9 +238,9 @@ public final class Downloadable {
             String fileHash = "0";
             if (Files.exists(this.to)) {
                 if (this.md5()) {
-                    fileHash = Utils.getMD5(this.to);
+                    fileHash = Hashing.md5(this.to).toString();
                 } else {
-                    fileHash = Utils.getSHA1(this.to);
+                    fileHash = Hashing.sha1(this.to).toString();
                 }
             }
 
@@ -324,9 +325,9 @@ public final class Downloadable {
                 String fileHash2 = "0";
                 if (Files.exists(this.copyTo)) {
                     if (this.md5()) {
-                        fileHash2 = Utils.getMD5(this.to);
+                        fileHash2 = Hashing.md5(this.to).toString();
                     } else {
-                        fileHash2 = Utils.getSHA1(this.to);
+                        fileHash2 = Hashing.sha1(this.to).toString();
                     }
                 }
 

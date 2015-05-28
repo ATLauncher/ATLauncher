@@ -46,26 +46,27 @@ public enum DownloadType {
     BROWSER() {
         @Override
         public void download(InstanceInstaller installer, Path to, Mod mod) throws Exception {
-            Path dlFile = (mod.server ? FileSystem.USER_DOWNLOADS : FileSystem.DOWNLOADS).resolve((mod.server ? mod
-                    .serverFile : mod.getFile()));
+            Path dlFile = (mod.server ? FileSystem.USER_DOWNLOADS : FileSystem.DOWNLOADS).resolve((mod.server ? (mod.serverFile != null ? mod.serverFile : mod.getFile()) : mod.getFile()));
             if (Files.exists(dlFile)) {
                 FileUtils.moveFile(dlFile, to, true);
             }
 
-            if (mod.fileCheck.equalsIgnoreCase("before") && mod.filePattern) {
-                List<String> files = FileUtils.listFiles(FileSystem.getDownloads(), this.getFilter(mod));
-                if (files.size() == 1) {
-                    to = FileSystem.getDownloads().resolve(files.get(0));
-                } else if (files.size() > 1) {
-                    for (int i = 0; i < files.size(); i++) {
-                        if (mod.filePreference.equalsIgnoreCase("first") && i == 0) {
-                            to = FileSystem.getDownloads().resolve(files.get(i));
-                            break;
-                        }
+            if(mod.fileCheck != null){
+                if (mod.fileCheck.equalsIgnoreCase("before") && mod.filePattern) {
+                    List<String> files = FileUtils.listFiles(FileSystem.getDownloads(), this.getFilter(mod));
+                    if (files.size() == 1) {
+                        to = FileSystem.getDownloads().resolve(files.get(0));
+                    } else if (files.size() > 1) {
+                        for (int i = 0; i < files.size(); i++) {
+                            if (mod.filePreference.equalsIgnoreCase("first") && i == 0) {
+                                to = FileSystem.getDownloads().resolve(files.get(i));
+                                break;
+                            }
 
-                        if (mod.filePreference.equalsIgnoreCase("last") && (i + 1) == files.size()) {
-                            to = FileSystem.getDownloads().resolve(files.get(i));
-                            break;
+                            if (mod.filePreference.equalsIgnoreCase("last") && (i + 1) == files.size()) {
+                                to = FileSystem.getDownloads().resolve(files.get(i));
+                                break;
+                            }
                         }
                     }
                 }

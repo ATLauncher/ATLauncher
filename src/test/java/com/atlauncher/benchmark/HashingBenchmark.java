@@ -5,6 +5,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
@@ -19,14 +20,21 @@ public class HashingBenchmark{
         Options opts = new OptionsBuilder()
                 .include(HashingBenchmark.class.getSimpleName())
                 .forks(1)
+                .addProfiler(StackProfiler.class)
                 .build();
         new Runner(opts).run();
     }
 
     @Benchmark
+    public void custom()
+    throws Exception{
+        com.atlauncher.utils.Hashing.md5(FileSystemData.PROPERTIES).toString();
+    }
+
+    @Benchmark
     public void guava()
     throws Exception{
-        Files.hash(FileSystemData.PROPERTIES.toFile(), Hashing.md5());
+        Files.hash(FileSystemData.PROPERTIES.toFile(), Hashing.md5()).toString();
     }
 
     @Benchmark
@@ -47,7 +55,10 @@ public class HashingBenchmark{
             }
             StringBuilder builder = new StringBuilder();
             for(byte b : buffer){
-                builder.append(Integer.toString((b & 0xFF) + 0x100, 16).substring(1));
+                builder.append(
+                                      Integer.toString((b & 0xFF) + 0x100, 16)
+                                             .substring(1)
+                );
             }
         }
     }

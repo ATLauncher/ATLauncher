@@ -23,7 +23,7 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.workers.InstanceInstaller;
 
 import java.awt.Color;
@@ -186,7 +186,7 @@ public final class Mod {
         Path fileLoc = FileSystem.DOWNLOADS.resolve(this.getFile());
         if (Files.exists(fileLoc)) {
             if (this.hasMD5()) {
-                if (Utils.getMD5(fileLoc).equalsIgnoreCase(this.md5)) {
+                if (Hashing.md5(fileLoc).toString().equalsIgnoreCase(this.md5)) {
                     return;
                 } else {
                     FileUtils.delete(fileLoc);
@@ -206,7 +206,7 @@ public final class Mod {
 
         this.download.download(installer, fileLoc, this);
 
-        if (this.hasMD5() && !Utils.getMD5(fileLoc).equalsIgnoreCase(this.md5)) {
+        if (this.hasMD5() && !Hashing.md5(fileLoc).toString().equalsIgnoreCase(this.md5)) {
             if (attempt < MAX_ATTEMPTS) {
                 FileUtils.delete(fileLoc);
                 this.downloadClient(installer, attempt + 1);
@@ -221,7 +221,7 @@ public final class Mod {
         Path fileLoc = FileSystem.DOWNLOADS.resolve(this.serverFile);
         if (Files.exists(fileLoc)) {
             if (this.serverMD5 != null && !this.serverMD5.isEmpty()) {
-                if (Utils.getMD5(fileLoc).equalsIgnoreCase(this.serverMD5)) {
+                if (Hashing.md5(fileLoc).toString().equalsIgnoreCase(this.serverMD5)) {
                     return;
                 } else {
                     FileUtils.delete(fileLoc);

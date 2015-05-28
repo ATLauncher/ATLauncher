@@ -27,11 +27,8 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.manager.AccountChangeManager;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
 import com.atlauncher.evnt.manager.PackChangeManager;
-import com.atlauncher.utils.MojangAPIUtils;
 
 import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
@@ -81,8 +78,7 @@ public class AccountManager{
         Data.ACCOUNTS.clear();
 
         if (Files.exists(FileSystemData.USER_DATA)) {
-            try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(FileSystemData.USER_DATA.toFile())
-            )) {
+            try (ObjectInputStream oin = new ObjectInputStream(Files.newInputStream(FileSystemData.USER_DATA))){
                 Object obj;
                 while ((obj = oin.readObject()) != null) {
                     if (obj instanceof Account) {
@@ -100,7 +96,7 @@ public class AccountManager{
     }
 
     public static void saveAccounts() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FileSystemData.USER_DATA.toFile()))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(FileSystemData.USER_DATA))) {
             for (Account acc : Data.ACCOUNTS) {
                 oos.writeObject(acc);
             }
@@ -142,35 +138,6 @@ public class AccountManager{
         InstanceChangeManager.change();
         AccountChangeManager.change();
         App.settings.saveProperties();
-    }
-
-    public static void checkForNameChanges() {
-        LogManager.info("Checking For Username Changes");
-
-        boolean somethingChanged = false;
-
-        for (Account account : Data.ACCOUNTS) {
-            if (account.checkForUsernameChange()) {
-                somethingChanged = true;
-            }
-        }
-
-        if (somethingChanged) {
-            AccountManager.saveAccounts();
-        }
-
-        LogManager.info("Checking For Username Changes Complete");
-    }
-
-    public static void checkUUIDs() {
-        LogManager.info("Checking account UUID's!");
-        for (Account account : Data.ACCOUNTS) {
-            if (account.isUUIDNull()) {
-                account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
-                AccountManager.saveAccounts();
-            }
-        }
-        LogManager.debug("Finished checking account UUID's");
     }
 
     public static void setPackVisbility(Pack pack, boolean collapsed) {
