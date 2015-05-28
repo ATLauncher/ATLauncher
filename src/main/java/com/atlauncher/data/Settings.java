@@ -2000,7 +2000,7 @@ public class Settings {
                     // Oh noes, problem!
                     LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy " +
                             "support " +
-                                    "disabled!");
+                            "disabled!");
                     this.enableProxy = false;
                     return null;
             }
@@ -2029,7 +2029,7 @@ public class Settings {
                     // Oh noes, problem!
                     LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy " +
                             "support " +
-                                    "disabled!");
+                            "disabled!");
                     this.enableProxy = false;
                     return Proxy.NO_PROXY;
             }
