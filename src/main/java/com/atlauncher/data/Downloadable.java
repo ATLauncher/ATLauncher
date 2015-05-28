@@ -148,8 +148,6 @@ public final class Downloadable {
     }
 
     private String getHashFromURL() throws IOException {
-        BenchmarkManager.start(this.url);
-        System.out.println("Getting hash from " + this.url);
         this.execute();
         String etag = this.response.header("ETag");
         if (etag == null) {
@@ -164,8 +162,6 @@ public final class Downloadable {
             etag = etag.substring(1, etag.length() - 1);
         }
 
-        System.out.println("Got a hash of " + etag + " from " + this.url);
-        BenchmarkManager.stop(this.url);
         return etag.matches("[A-Za-z0-9]{32}") ? etag : "-";
     }
 
