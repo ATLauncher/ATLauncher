@@ -47,7 +47,7 @@ public final class DownloadPool extends LinkedList<Downloadable> {
             executor.execute(new Downloader(dl));
         }
         executor.shutdown();
-        if(this.wait) {
+        if (this.wait) {
             while (!executor.isTerminated()) {
             }
         }
@@ -59,7 +59,7 @@ public final class DownloadPool extends LinkedList<Downloadable> {
             executor.execute(new Installer(dl, installer));
         }
         executor.shutdown();
-        if(this.wait) {
+        if (this.wait) {
             while (!executor.isTerminated()) {
             }
         }
@@ -76,12 +76,12 @@ public final class DownloadPool extends LinkedList<Downloadable> {
         }
     }
 
-    public DownloadPool downsize(){
+    public DownloadPool downsize() {
         Future<DownloadPool> poolFuture = App.TASKPOOL.submit(new Downsizer());
 
-        try{
+        try {
             return poolFuture.get();
-        } catch(Exception e) {
+        } catch (Exception e) {
             LogManager.logStackTrace(e);
             return new DownloadPool(this.wait);
         }
@@ -97,23 +97,32 @@ public final class DownloadPool extends LinkedList<Downloadable> {
         return false;
     }
 
-    private final class Downsizer
-    implements Callable<DownloadPool>{
+    private final class Downsizer implements Callable<DownloadPool> {
         @Override
-        public DownloadPool call()
-        throws Exception {
-            DownloadPool pool = new DownloadPool(DownloadPool.this.wait);
-            for(Downloadable dl : DownloadPool.this){
-                if(dl.needToDownload()){
-                    pool.add(dl);
-                }
+        public DownloadPool call() throws Exception {
+            final DownloadPool pool = new DownloadPool(DownloadPool.this.wait);
+
+            ExecutorService executor = Utils.generateDownloadExecutor();
+            for (final Downloadable dl : DownloadPool.this) {
+                executor.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dl.needToDownload()) {
+                            pool.add(dl);
+                        }
+                    }
+                });
             }
+
+            executor.shutdown();
+            while (!executor.isTerminated()) {
+            }
+
             return pool;
         }
     }
 
-    private final class SizeCollector
-    implements Callable<Integer> {
+    private final class SizeCollector implements Callable<Integer> {
         @Override
         public Integer call() throws Exception {
             int size = 0;
@@ -124,8 +133,7 @@ public final class DownloadPool extends LinkedList<Downloadable> {
         }
     }
 
-    private final class Installer
-    implements Runnable {
+    private final class Installer implements Runnable {
         private final Downloadable dl;
         private final InstanceInstaller installer;
 
@@ -150,8 +158,7 @@ public final class DownloadPool extends LinkedList<Downloadable> {
         }
     }
 
-    private final class Downloader
-    implements Runnable {
+    private final class Downloader implements Runnable {
         private final Downloadable dl;
 
         private Downloader(Downloadable dl) {

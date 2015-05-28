@@ -446,7 +446,6 @@ public class InstanceInstallerDialog extends JDialog {
                             progressBar.setValue(progress);
                         } else if ("subprogress".equals(evt.getPropertyName())) {
                             if (!subProgressBar.isVisible()) {
-                                System.out.println("Showing sub progress bar!");
                                 subProgressBar.setVisible(true);
                             }
                             if (subProgressBar.isIndeterminate()) {
@@ -468,7 +467,6 @@ public class InstanceInstallerDialog extends JDialog {
                                 if (subProgressBar.isStringPainted()) {
                                     subProgressBar.setStringPainted(false);
                                 }
-                                System.out.println("Hiding sub progress bar!");
                                 subProgressBar.setVisible(false);
                             } else {
                                 if (!subProgressBar.isStringPainted()) {
@@ -487,7 +485,6 @@ public class InstanceInstallerDialog extends JDialog {
                                 subProgressBar.setVisible(true);
                             }
                             if (!subProgressBar.isIndeterminate()) {
-                                System.out.println("Setting sub progress bar indeterminate!");
                                 subProgressBar.setIndeterminate(true);
                             }
                         } else if ("doing".equals(evt.getPropertyName())) {
