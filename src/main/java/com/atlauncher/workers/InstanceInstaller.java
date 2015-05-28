@@ -427,7 +427,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void downloadConfigs() {
+        this.totalBytes = this.downloadedBytes = 0;
+        this.fireSubProgressUnknown();
+
         this.fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
+
         String path = "packs/" + this.pack.getSafeName() + "/versions/" + this.packVersion.getVersion() + "/Configs" +
                 ".zip";
         Downloadable dl = new Downloadable(path, null, this.tmpDir.resolve("Configs.zip"), -1, true, this);

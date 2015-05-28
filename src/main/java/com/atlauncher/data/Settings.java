@@ -37,6 +37,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.MinecraftVersionManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.nio.JsonFile;
 import com.atlauncher.thread.LoggingThread;
@@ -78,7 +79,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -195,7 +195,7 @@ public class Settings {
 
         this.languageLoaded = true; // Languages are now loaded
 
-        loadMinecraftVersions(); // Load info about the different Minecraft versions
+        MinecraftVersionManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
 
         PackManager.loadPacks(); // Load the Packs available in the Launcher
 
@@ -1275,41 +1275,6 @@ public class Settings {
     }
 
     /**
-     * Loads info about the different Minecraft versions
-     */
-    private void loadMinecraftVersions() {
-        LogManager.debug("Loading Minecraft versions");
-
-        Data.MINECRAFT_VERSIONS.clear();
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
-            }.getType();
-            List<MinecraftVersion> versions = JsonFile.of("minecraftversions.json", type);
-
-            for (MinecraftVersion version : versions) {
-                Data.MINECRAFT_VERSIONS.put(version.getVersion(), version);
-            }
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-        }
-
-
-        LogManager.info("[Background] Checking Minecraft Versions Started");
-        ExecutorService executor = Utils.generateDownloadExecutor();
-        for (final Entry<String, MinecraftVersion> entry : Data.MINECRAFT_VERSIONS.entrySet()) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    entry.getValue().loadVersion();
-                }
-            });
-        }
-        LogManager.info("[Background] Checking Minecraft Versions Complete");
-        executor.shutdown();
-        LogManager.debug("Finished loading Minecraft versions");
-    }
-
-    /**
      * Loads the Testers and Allowed Players for the packs in the Launcher
      */
     private void loadUsers() {
@@ -1398,13 +1363,6 @@ public class Settings {
     public boolean isUsingNewMacApp() {
         return Files.exists(FileSystem.BASE_DIR.getParent().getParent().resolve("MacOS").resolve
                 ("universalJavaApplicationStub"));
-    }
-
-    public MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
-        if (Data.MINECRAFT_VERSIONS.containsKey(version)) {
-            return Data.MINECRAFT_VERSIONS.get(version);
-        }
-        throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
     }
 
     private DirectoryStream.Filter<Path> languagesFilter() {
@@ -2000,7 +1958,7 @@ public class Settings {
                     // Oh noes, problem!
                     LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy " +
                             "support " +
-                                    "disabled!");
+                            "disabled!");
                     this.enableProxy = false;
                     return null;
             }
@@ -2029,7 +1987,7 @@ public class Settings {
                     // Oh noes, problem!
                     LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy " +
                             "support " +
-                                    "disabled!");
+                            "disabled!");
                     this.enableProxy = false;
                     return Proxy.NO_PROXY;
             }

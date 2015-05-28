@@ -22,6 +22,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
+import com.atlauncher.managers.BenchmarkManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
@@ -147,6 +148,8 @@ public final class Downloadable {
     }
 
     private String getHashFromURL() throws IOException {
+        BenchmarkManager.start(this.url);
+        System.out.println("Getting hash from " + this.url);
         this.execute();
         String etag = this.response.header("ETag");
         if (etag == null) {
@@ -161,6 +164,8 @@ public final class Downloadable {
             etag = etag.substring(1, etag.length() - 1);
         }
 
+        System.out.println("Got a hash of " + etag + " from " + this.url);
+        BenchmarkManager.stop(this.url);
         return etag.matches("[A-Za-z0-9]{32}") ? etag : "-";
     }
 

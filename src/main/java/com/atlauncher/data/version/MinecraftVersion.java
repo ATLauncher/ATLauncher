@@ -39,29 +39,7 @@ public class MinecraftVersion {
     private boolean legacy;
     private boolean coremods;
     private boolean resources;
-    private MojangVersion mojangVersion;
-
-    public void loadVersion() {
-        Path versionFile = FileSystem.VERSIONS.resolve(this.version + ".json");
-
-        if (!App.skipMinecraftVersionDownloads) {
-            Downloadable download = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version +
-                    "/" + this.version + ".json"), versionFile, false);
-            if (download.needToDownload()) {
-                try {
-                    download.download();
-                } catch (Exception e) {
-                    LogManager.logStackTrace(e);
-                }
-            }
-        }
-
-        try {
-            mojangVersion = Gsons.DEFAULT_ALT.fromJson(new FileReader(versionFile.toFile()), MojangVersion.class);
-        } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
-            LogManager.logStackTrace(e);
-        }
-    }
+    private MojangVersion json;
 
     public boolean canCreateServer() {
         return this.server;
@@ -72,7 +50,7 @@ public class MinecraftVersion {
     }
 
     public MojangVersion getMojangVersion() {
-        return this.mojangVersion;
+        return this.json;
     }
 
     public boolean isLegacy() {

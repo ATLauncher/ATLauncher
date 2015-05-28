@@ -15,7 +15,6 @@ So if you wish to submit any Pull Requests, please follow these coding standards
 + Please don't do large commits. My preference is a single commit for a single fix/addition rather than bundled up commits.
 + Please use final where possible.
 + Please make sure all files contain the GNU GPLv3 license at the top of the file.
-+ Please use brackets
 
 ### Styling Guidelines
 
