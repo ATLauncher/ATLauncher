@@ -52,12 +52,12 @@ public class UtilsTest {
             Assert.fail();
         }
 
-        Assert.assertEquals("0cbc6611f5540bd0809a388dc95a615b", Utils.getMD5("Test"));
+        Assert.assertEquals("0cbc6611f5540bd0809a388dc95a615b", Hashing.md5("Test").toString());
 
         Assert.assertTrue(Files.exists(testFile));
         Assert.assertTrue(Files.isRegularFile(testFile));
 
-        Assert.assertEquals("0cbc6611f5540bd0809a388dc95a615b", Utils.getMD5(testFile));
+        Assert.assertEquals("0cbc6611f5540bd0809a388dc95a615b", Hashing.md5(testFile).toString());
     }
 
     @Test
@@ -76,6 +76,6 @@ public class UtilsTest {
         Assert.assertTrue(Files.exists(testFile));
         Assert.assertTrue(Files.isRegularFile(testFile));
 
-        Assert.assertEquals("640ab2bae07bedc4c163f679a746f7ab7fb5d1fa", Utils.getSHA1(testFile));
+        Assert.assertEquals("640ab2bae07bedc4c163f679a746f7ab7fb5d1fa", Hashing.sha1(testFile).toString());
     }
 }
