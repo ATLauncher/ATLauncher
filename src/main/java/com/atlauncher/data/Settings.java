@@ -37,6 +37,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.MinecraftVersionManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.nio.JsonFile;
 import com.atlauncher.thread.LoggingThread;
@@ -194,7 +195,7 @@ public class Settings {
 
         this.languageLoaded = true; // Languages are now loaded
 
-        loadMinecraftVersions(); // Load info about the different Minecraft versions
+        MinecraftVersionManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
 
         PackManager.loadPacks(); // Load the Packs available in the Launcher
 
@@ -1274,31 +1275,6 @@ public class Settings {
     }
 
     /**
-     * Loads info about the different Minecraft versions
-     */
-    private void loadMinecraftVersions() {
-        LogManager.debug("Loading Minecraft versions");
-
-        if (Files.exists(FileSystem.CONFIGS.resolve("Versions"))) {
-            FileUtils.deleteDirectory(FileSystem.CONFIGS.resolve("Versions"));
-        }
-
-        Data.MINECRAFT_VERSIONS.clear();
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
-            }.getType();
-            List<MinecraftVersion> versions = JsonFile.of("minecraftversions.json", type);
-
-            for (MinecraftVersion version : versions) {
-                Data.MINECRAFT_VERSIONS.put(version.getVersion(), version);
-            }
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-        }
-        LogManager.debug("Finished Loading Minecraft versions");
-    }
-
-    /**
      * Loads the Testers and Allowed Players for the packs in the Launcher
      */
     private void loadUsers() {
@@ -1387,13 +1363,6 @@ public class Settings {
     public boolean isUsingNewMacApp() {
         return Files.exists(FileSystem.BASE_DIR.getParent().getParent().resolve("MacOS").resolve
                 ("universalJavaApplicationStub"));
-    }
-
-    public MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
-        if (Data.MINECRAFT_VERSIONS.containsKey(version)) {
-            return Data.MINECRAFT_VERSIONS.get(version);
-        }
-        throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
     }
 
     private DirectoryStream.Filter<Path> languagesFilter() {

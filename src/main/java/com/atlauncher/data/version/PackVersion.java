@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data.version;
 
-import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.managers.MinecraftVersionManager;
 
 public class PackVersion {
     private String version;
@@ -40,10 +40,10 @@ public class PackVersion {
 
     public void setMinecraftVesion() {
         try {
-            this.minecraftVersion = App.settings.getMinecraftVersion(this.minecraft);
+            this.minecraftVersion = MinecraftVersionManager.getMinecraftVersion(this.minecraft);
         } catch (InvalidMinecraftVersion e) {
             this.minecraftVersion = null;
-            LogManager.logStackTrace(e);
+            LogManager.logStackTrace("Invalid Minecraft version " + this.minecraft, e);
         }
     }
 
