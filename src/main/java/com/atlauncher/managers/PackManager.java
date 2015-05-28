@@ -234,7 +234,8 @@ public class PackManager {
 
     public static void removeSemiPublicPack(String packCode) {
         for (String code : PackManager.semiPublicPackCodes) {
-            if (Hashing.md5(code).toString().equalsIgnoreCase(packCode) && PackManager.semiPublicPackCodes.contains(code)) {
+            if (Hashing.md5(code).toString().equalsIgnoreCase(packCode) && PackManager.semiPublicPackCodes.contains
+                    (code)) {
                 PackManager.semiPublicPackCodes.remove(code);
                 App.settings.saveProperties();
                 PackChangeManager.change();

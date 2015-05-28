@@ -78,7 +78,7 @@ public class AccountManager {
         Data.ACCOUNTS.clear();
 
         if (Files.exists(FileSystemData.USER_DATA)) {
-            try (ObjectInputStream oin = new ObjectInputStream(Files.newInputStream(FileSystemData.USER_DATA))){
+            try (ObjectInputStream oin = new ObjectInputStream(Files.newInputStream(FileSystemData.USER_DATA))) {
                 Object obj;
                 while ((obj = oin.readObject()) != null) {
                     if (obj instanceof Account) {

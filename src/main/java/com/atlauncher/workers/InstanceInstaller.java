@@ -213,11 +213,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private Path getMinecraftJar() {
         if (this.server) {
-            return this.root.resolve(
-                                            "minecraft_server." + this.packVersion.getMinecraftVersion()
-                                                                                  .getVersion() + "" +
-                                                    ".jar"
-            );
+            return this.root.resolve("minecraft_server." + this.packVersion.getMinecraftVersion().getVersion() + "" +
+                            ".jar");
         } else {
             return this.bin.resolve("minecraft.jar");
         }

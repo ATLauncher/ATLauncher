@@ -1,3 +1,20 @@
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.atlauncher.utils;
 
 import com.atlauncher.LogManager;
@@ -14,148 +31,139 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public final class Hashing{
+public final class Hashing {
     private static final char[] hex = "0123456789abcdef".toCharArray();
 
-    public static HashCode md5(Path file){
-        if(!Files.exists(file)){
+    public static HashCode md5(Path file) {
+        if (!Files.exists(file)) {
             return new HashCode(new byte[0]);
         }
 
-        try(Hasher hasher = new MD5Hasher(Files.newInputStream(file))){
+        try (Hasher hasher = new MD5Hasher(Files.newInputStream(file))) {
             return hasher.hash();
-        } catch(Exception e){
+        } catch (Exception e) {
             LogManager.logStackTrace("Error hashing (MD5) file " + file.getFileName(), e);
             return new HashCode(new byte[0]);
         }
     }
 
-    public static HashCode md5(String str){
-        if(str == null || str.isEmpty()){
+    public static HashCode md5(String str) {
+        if (str == null || str.isEmpty()) {
             return new HashCode(new byte[0]);
         }
 
-        try(Hasher hasher = new MD5Hasher(new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8)))){
+        try (Hasher hasher = new MD5Hasher(new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8)))) {
             return hasher.hash();
-        } catch(Exception e){
+        } catch (Exception e) {
             LogManager.logStackTrace("Error hashing (MD5) string " + str, e);
             return new HashCode(new byte[0]);
         }
     }
 
-    public static HashCode sha1(Path file){
-        if(!Files.exists(file)){
+    public static HashCode sha1(Path file) {
+        if (!Files.exists(file)) {
             return new HashCode(new byte[0]);
         }
 
-        try(Hasher hasher = new SHA1Hasher(Files.newInputStream(file))){
+        try (Hasher hasher = new SHA1Hasher(Files.newInputStream(file))) {
             return hasher.hash();
-        } catch(Exception e){
+        } catch (Exception e) {
             LogManager.logStackTrace("Error hashing (SHA-1) file " + file.getFileName(), e);
             return new HashCode(new byte[0]);
         }
     }
 
-    public static HashCode sha1(String str){
-        if(str == null || str.isEmpty()){
+    public static HashCode sha1(String str) {
+        if (str == null || str.isEmpty()) {
             return new HashCode(new byte[0]);
         }
 
-        try(Hasher hasher = new SHA1Hasher(new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8)))){
+        try (Hasher hasher = new SHA1Hasher(new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8)))) {
             return hasher.hash();
-        } catch(Exception e){
+        } catch (Exception e) {
             LogManager.logStackTrace("Error hashing (SHA-1) string " + str, e);
             return new HashCode(new byte[0]);
         }
     }
 
-    private interface Hasher
-    extends Closeable{
+    private interface Hasher extends Closeable {
         public HashCode hash();
     }
 
-    private static final class SHA1Hasher
-    implements Hasher{
+    private static final class SHA1Hasher implements Hasher {
         private final InputStream is;
         private final MessageDigest digest;
 
-        private SHA1Hasher(InputStream is)
-        throws NoSuchAlgorithmException{
+        private SHA1Hasher(InputStream is) throws NoSuchAlgorithmException {
             this.is = is;
             this.digest = MessageDigest.getInstance("SHA-1");
         }
 
         @Override
         public HashCode hash() {
-            try(ByteArrayOutputStream bos = new ByteArrayOutputStream()){
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
                 byte[] buffer = new byte[8192];
                 int len;
-                while((len = this.is.read(buffer, 0, 8192)) != -1){
+                while ((len = this.is.read(buffer, 0, 8192)) != -1) {
                     bos.write(buffer, 0, len);
                 }
 
                 return new HashCode(this.digest.digest(bos.toByteArray()));
-            } catch(Exception e){
+            } catch (Exception e) {
                 LogManager.logStackTrace("Error hashing (MD5)", e);
                 return null;
             }
         }
 
         @Override
-        public void close()
-        throws IOException {
+        public void close() throws IOException {
             this.is.close();
         }
     }
 
-    private static final class MD5Hasher
-    implements Hasher{
+    private static final class MD5Hasher implements Hasher {
         private final InputStream is;
         private final MessageDigest digest;
 
-        private MD5Hasher(InputStream is)
-        throws NoSuchAlgorithmException{
+        private MD5Hasher(InputStream is) throws NoSuchAlgorithmException {
             this.is = is;
             this.digest = MessageDigest.getInstance("MD5");
         }
 
         @Override
         public HashCode hash() {
-            try(ByteArrayOutputStream bos = new ByteArrayOutputStream()){
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
                 byte[] buffer = new byte[8192];
                 int len;
-                while((len = this.is.read(buffer, 0, 8192)) != -1){
+                while ((len = this.is.read(buffer, 0, 8192)) != -1) {
                     bos.write(buffer, 0, len);
                 }
 
                 return new HashCode(this.digest.digest(bos.toByteArray()));
-            } catch(Exception e){
+            } catch (Exception e) {
                 LogManager.logStackTrace("Error hashing (MD5)", e);
                 return null;
             }
         }
 
         @Override
-        public void close()
-        throws IOException {
+        public void close() throws IOException {
             this.is.close();
         }
     }
 
-    public static final class HashCode
-    implements Serializable{
+    public static final class HashCode implements Serializable {
         private final byte[] bits;
 
-        private HashCode(byte[] bits){
+        private HashCode(byte[] bits) {
             this.bits = bits;
         }
 
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(2 * this.bits.length);
-            for(byte b : this.bits){
-                sb.append(hex[(b >> 4) & 0xF])
-                  .append(hex[b & 0xF]);
+            for (byte b : this.bits) {
+                sb.append(hex[(b >> 4) & 0xF]).append(hex[b & 0xF]);
             }
             return sb.toString();
         }

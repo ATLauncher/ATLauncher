@@ -46,12 +46,13 @@ public enum DownloadType {
     BROWSER() {
         @Override
         public void download(InstanceInstaller installer, Path to, Mod mod) throws Exception {
-            Path dlFile = (mod.server ? FileSystem.USER_DOWNLOADS : FileSystem.DOWNLOADS).resolve((mod.server ? (mod.serverFile != null ? mod.serverFile : mod.getFile()) : mod.getFile()));
+            Path dlFile = (mod.server ? FileSystem.USER_DOWNLOADS : FileSystem.DOWNLOADS).resolve((mod.server ? (mod
+                    .serverFile != null ? mod.serverFile : mod.getFile()) : mod.getFile()));
             if (Files.exists(dlFile)) {
                 FileUtils.moveFile(dlFile, to, true);
             }
 
-            if(mod.fileCheck != null){
+            if (mod.fileCheck != null) {
                 if (mod.fileCheck.equalsIgnoreCase("before") && mod.filePattern) {
                     List<String> files = FileUtils.listFiles(FileSystem.getDownloads(), this.getFilter(mod));
                     if (files.size() == 1) {
@@ -84,13 +85,13 @@ public enum DownloadType {
                             .INSTANCE.localizeWithReplace("instance.browseropened", (mod.serverFile == null ? (mod
                                     .filePattern ? mod.name : mod.getFile()) : (mod.filePattern ? mod.name : mod
                                     .serverFile))) + "<br/><br/>" +
-                                    Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                    (App.settings.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod.filePattern ?
-                                            FileSystem.DOWNLOADS : FileSystem.DOWNLOADS + " " +
-                                            "or<br/>" + FileSystem.USER_DOWNLOADS))), Language.INSTANCE.localize
-                            ("common" + ".downloading") + " " + (mod.serverFile == null ? (mod.filePattern ? mod.name
-                            : mod.getFile()) : (mod.filePattern ? mod.name : mod.serverFile)), JOptionPane
-                            .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                            Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                            (App.settings.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod.filePattern ? FileSystem
+                                    .DOWNLOADS : FileSystem.DOWNLOADS + " " +
+                                    "or<br/>" + FileSystem.USER_DOWNLOADS))), Language.INSTANCE.localize("common" + "" +
+                            ".downloading") + " " + (mod.serverFile == null ? (mod.filePattern ? mod.name : mod
+                            .getFile()) : (mod.filePattern ? mod.name : mod.serverFile)), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
                     if (ret == JOptionPane.CLOSED_OPTION) {
                         installer.cancel(true);

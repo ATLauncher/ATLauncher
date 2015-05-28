@@ -28,7 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-public class UtilsTest {
+public class HashingTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -40,7 +40,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void testGetMD5() {
+    public void testMD5() {
         Path testFile = this.testStorage.resolve("TestMD5.txt");
 
         byte[] bytes = {'T', 'e', 's', 't'};
@@ -61,7 +61,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void testGetSHA1() {
+    public void testSHA1() {
         Path testFile = this.testStorage.resolve("TestSHA1.txt");
 
         byte[] bytes = {'T', 'e', 's', 't'};
@@ -72,6 +72,8 @@ public class UtilsTest {
             e.printStackTrace();
             Assert.fail();
         }
+
+        Assert.assertEquals("640ab2bae07bedc4c163f679a746f7ab7fb5d1fa", Hashing.sha1("Test").toString());
 
         Assert.assertTrue(Files.exists(testFile));
         Assert.assertTrue(Files.isRegularFile(testFile));
