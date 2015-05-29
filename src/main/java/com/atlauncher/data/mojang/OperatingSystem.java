@@ -44,5 +44,4 @@ public enum OperatingSystem {
     public static String getVersion() {
         return System.getProperty("os.version");
     }
-
 }

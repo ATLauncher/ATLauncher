@@ -49,6 +49,6 @@ public class AssetObject {
             LogManager.logStackTrace("Error getting file size from " + path, e);
         }
 
-        return (size != this.size) || (!this.hash.equalsIgnoreCase(Hashing.sha1(path).toString()));
+        return (size != this.size) || (!Hashing.HashCode.fromString(this.hash).equals(Hashing.sha1(path)));
     }
 }

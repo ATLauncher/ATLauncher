@@ -188,9 +188,9 @@ public final class Downloadable {
 
         if (Files.exists(this.to)) {
             if (this.md5()) {
-                return !Hashing.md5(this.to).toString().equalsIgnoreCase(this.getHash());
+                return !Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
             } else {
-                return !Hashing.sha1(this.to).toString().equalsIgnoreCase(this.getHash());
+                return !Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
             }
         }
 
@@ -235,16 +235,15 @@ public final class Downloadable {
 
     private boolean downloadRec(int attempt) {
         if (attempt <= MAX_ATTEMPTS) {
-            String fileHash = "0";
-            if (Files.exists(this.to)) {
-                if (this.md5()) {
-                    fileHash = Hashing.md5(this.to).toString();
-                } else {
-                    fileHash = Hashing.sha1(this.to).toString();
+            Hashing.HashCode fileHash = Hashing.HashCode.EMPTY;
+            if(Files.exists(this.to)){
+                if(this.md5()){
+                    fileHash = Hashing.md5(this.to);
+                } else{
+                    fileHash = Hashing.sha1(this.to);
                 }
             }
-
-            if (fileHash.equalsIgnoreCase(this.getHash())) {
+            if (fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
                 return true;
             }
 
@@ -254,6 +253,7 @@ public final class Downloadable {
 
             this.downloadDirect();
         }
+
         return this.downloadRec(attempt + 1);
     }
 
@@ -291,8 +291,8 @@ public final class Downloadable {
             FileUtils.createDirectory(this.to.getParent());
         }
 
-        String expectedHash = this.getHash().trim();
-        if (expectedHash.equalsIgnoreCase("-")) {
+        Hashing.HashCode expected = Hashing.HashCode.fromString(this.getHash());
+        if (expected.equals(Hashing.HashCode.EMPTY)) {
             this.downloadDirect();
         } else {
             boolean finished = this.downloadRec(1);
@@ -300,7 +300,7 @@ public final class Downloadable {
                 if (this.atlauncher) {
                     if (this.getNextServer()) {
                         LogManager.warn("Error downloading " + this.to.getFileName() + " from " + this.url + ". " +
-                                "Expected hash of " + expectedHash + " but got " + this.hash + " instead. Trying " +
+                                "Expected hash of " + expected.toString() + " but got " + this.hash + " instead. Trying " +
                                 "another server!");
                         this.url = this.server.getFileURL(this.URL);
                     } else {
@@ -315,24 +315,24 @@ public final class Downloadable {
                 } else {
                     FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected" +
-                            " hash of " + expectedHash + " but got " + this.hash + " instead. Copied to " +
+                            " hash of " + expected.toString() + " but got " + this.hash + " instead. Copied to " +
                             "FailedDownloads folder & cancelling install!");
                     if (this.installer != null) {
                         this.installer.cancel(true);
                     }
                 }
             } else if (this.copyTo != null && this.copy) {
-                String fileHash2 = "0";
-                if (Files.exists(this.copyTo)) {
-                    if (this.md5()) {
-                        fileHash2 = Hashing.md5(this.to).toString();
-                    } else {
-                        fileHash2 = Hashing.sha1(this.to).toString();
+                Hashing.HashCode fileHash2 = Hashing.HashCode.EMPTY;
+                if(Files.exists(this.copyTo)){
+                    if(this.md5()){
+                        fileHash2 = Hashing.md5(this.to);
+                    } else{
+                        fileHash2 = Hashing.sha1(this.to);
                     }
                 }
 
-                if (!fileHash2.trim().equalsIgnoreCase(expectedHash)) {
-                    if (Files.exists(this.copyTo)) {
+                if(!fileHash2.equals(expected)){
+                    if(Files.exists(this.copyTo)){
                         FileUtils.delete(this.copyTo);
                     }
 

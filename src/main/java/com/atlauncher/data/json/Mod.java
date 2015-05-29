@@ -37,8 +37,8 @@ public final class Mod {
     public final String name;
     public final String version;
     public final String url;
-    public final String md5;
-    public final String serverMD5;
+    public final Hashing.HashCode md5;
+    public final Hashing.HashCode serverMD5;
     public final String donation;
     public final String website;
     public final String description;
@@ -74,7 +74,7 @@ public final class Mod {
 
     private Color compiledColor;
 
-    public Mod(String name, String version, String url, String md5, String serverMD5, String donation, String
+    public Mod(String name, String version, String url, Hashing.HashCode md5, Hashing.HashCode serverMD5, String donation, String
             website, String description, String file, String serverUrl, String serverFile, String filePrefix, String
             decompFile, String group, String linked, String filePreference, String color, String fileCheck, String
             warning, String[] depends, String[] authors, boolean client, boolean optional, boolean server, boolean
@@ -133,7 +133,7 @@ public final class Mod {
     }
 
     public boolean hasMD5() {
-        return this.md5 != null && !this.md5.isEmpty();
+        return !this.md5.equals(Hashing.HashCode.EMPTY);
     }
 
     public boolean hasWebsite() {
@@ -178,7 +178,7 @@ public final class Mod {
     }
 
     public Downloadable generateDownloadable(InstanceInstaller installer) {
-        return new Downloadable(this.getUrl(), this.md5, FileSystem.DOWNLOADS.resolve(this.getFile()), this.filesize,
+        return new Downloadable(this.getUrl(), this.md5.toString(), FileSystem.DOWNLOADS.resolve(this.getFile()), this.filesize,
                 true, installer);
     }
 
@@ -186,7 +186,7 @@ public final class Mod {
         Path fileLoc = FileSystem.DOWNLOADS.resolve(this.getFile());
         if (Files.exists(fileLoc)) {
             if (this.hasMD5()) {
-                if (Hashing.md5(fileLoc).toString().equalsIgnoreCase(this.md5)) {
+                if (Hashing.md5(fileLoc).equals(this.md5)) {
                     return;
                 } else {
                     FileUtils.delete(fileLoc);
@@ -206,7 +206,7 @@ public final class Mod {
 
         this.download.download(installer, fileLoc, this);
 
-        if (this.hasMD5() && !Hashing.md5(fileLoc).toString().equalsIgnoreCase(this.md5)) {
+        if (this.hasMD5() && !Hashing.md5(fileLoc).equals(this.md5)) {
             if (attempt < MAX_ATTEMPTS) {
                 FileUtils.delete(fileLoc);
                 this.downloadClient(installer, attempt + 1);
@@ -220,8 +220,8 @@ public final class Mod {
     private void downloadServer(InstanceInstaller installer, int attempt) throws Exception {
         Path fileLoc = FileSystem.DOWNLOADS.resolve(this.serverFile);
         if (Files.exists(fileLoc)) {
-            if (this.serverMD5 != null && !this.serverMD5.isEmpty()) {
-                if (Hashing.md5(fileLoc).toString().equalsIgnoreCase(this.serverMD5)) {
+            if (this.serverMD5 != null && !this.serverMD5.equals(Hashing.HashCode.EMPTY)) {
+                if (Hashing.md5(fileLoc).equals(this.serverMD5)) {
                     return;
                 } else {
                     FileUtils.delete(fileLoc);
@@ -235,7 +235,7 @@ public final class Mod {
             this.serverDownload.download(installer, fileLoc, this);
         } else {
             try {
-                Downloadable dl = new Downloadable(this.serverUrl, this.serverMD5, fileLoc, -1, this.serverDownload
+                Downloadable dl = new Downloadable(this.serverUrl, this.serverMD5.toString(), fileLoc, -1, this.serverDownload
                         == DownloadType.SERVER, installer);
                 if (dl.needToDownload()) {
                     dl.download();
@@ -245,7 +245,7 @@ public final class Mod {
             }
         }
 
-        if (this.serverMD5 != null && !this.serverMD5.isEmpty()) {
+        if (this.serverMD5 != null && !this.serverMD5.equals(Hashing.HashCode.EMPTY)) {
             if (attempt < MAX_ATTEMPTS) {
                 FileUtils.delete(fileLoc);
                 this.downloadServer(installer, attempt + 1);
@@ -257,7 +257,7 @@ public final class Mod {
     }
 
     protected Downloadable generateDownloadable(Path to, InstanceInstaller installer, boolean server) {
-        return new Downloadable(this.getUrl(), this.md5, to, -1, server, installer);
+        return new Downloadable(this.getUrl(), this.md5.toString(), to, -1, server, installer);
     }
 
     public void download(InstanceInstaller installer) throws Exception {

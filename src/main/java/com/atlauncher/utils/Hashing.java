@@ -36,53 +36,53 @@ public final class Hashing {
 
     public static HashCode md5(Path file) {
         if (!Files.exists(file)) {
-            return new HashCode(new byte[0]);
+            return HashCode.EMPTY;
         }
 
         try (Hasher hasher = new MD5Hasher(Files.newInputStream(file))) {
             return hasher.hash();
         } catch (Exception e) {
             LogManager.logStackTrace("Error hashing (MD5) file " + file.getFileName(), e);
-            return new HashCode(new byte[0]);
+            return HashCode.EMPTY;
         }
     }
 
     public static HashCode md5(String str) {
         if (str == null || str.isEmpty()) {
-            return new HashCode(new byte[0]);
+            return HashCode.EMPTY;
         }
 
         try (Hasher hasher = new MD5Hasher(new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8)))) {
             return hasher.hash();
         } catch (Exception e) {
             LogManager.logStackTrace("Error hashing (MD5) string " + str, e);
-            return new HashCode(new byte[0]);
+            return HashCode.EMPTY;
         }
     }
 
     public static HashCode sha1(Path file) {
         if (!Files.exists(file)) {
-            return new HashCode(new byte[0]);
+            return HashCode.EMPTY;
         }
 
         try (Hasher hasher = new SHA1Hasher(Files.newInputStream(file))) {
             return hasher.hash();
         } catch (Exception e) {
             LogManager.logStackTrace("Error hashing (SHA-1) file " + file.getFileName(), e);
-            return new HashCode(new byte[0]);
+            return HashCode.EMPTY;
         }
     }
 
     public static HashCode sha1(String str) {
         if (str == null || str.isEmpty()) {
-            return new HashCode(new byte[0]);
+            return HashCode.EMPTY;
         }
 
         try (Hasher hasher = new SHA1Hasher(new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8)))) {
             return hasher.hash();
         } catch (Exception e) {
             LogManager.logStackTrace("Error hashing (SHA-1) string " + str, e);
-            return new HashCode(new byte[0]);
+            return HashCode.EMPTY;
         }
     }
 
@@ -152,11 +152,110 @@ public final class Hashing {
         }
     }
 
-    public static final class HashCode implements Serializable {
+    public static final class HashCode
+    implements Serializable,
+               Cloneable{
+        public static final HashCode EMPTY = new HashCode(new byte[]{0});
+
+        public static HashCode fromString(String str){
+            if(str == null || str.isEmpty()){
+                return EMPTY;
+            }
+
+            if(!(str.length() >= 2)){
+                return EMPTY;
+            }
+
+            if(!(str.length() % 2 == 0)){
+                return EMPTY;
+            }
+
+            byte[] bits = new byte[str.length() / 2];
+            for(int i = 0; i < str.length(); i += 2){
+                int ch1 = decode(str.charAt(i)) << 4;
+                int ch2 = decode(str.charAt(i + 1));
+                bits[i / 2] = (byte) (ch1 + ch2);
+            }
+
+            return new HashCode(bits);
+        }
+
+        private static int decode(char c){
+            if(c >= '0' && c <= '9'){
+                return c - '0';
+            }
+
+            if(c >= 'a' && c <= 'f'){
+                return c - 'a' + 10;
+            }
+
+            throw new IllegalStateException("Illegal hex character: " + c);
+        }
+
         private final byte[] bits;
 
         private HashCode(byte[] bits) {
             this.bits = bits;
+        }
+
+        public int asInt(){
+            if(this.bits.length >= 4){
+                throw new IllegalStateException("HashCode#asInt() requires >= 4 bytes, it only has " + this.bits.length);
+            }
+
+            return (this.bits[0] & 0xFF)
+                    | ((this.bits[1] & 0xFF) << 8)
+                    | ((this.bits[2] & 0xFF) << 16)
+                    | ((this.bits[3] & 0xFF) << 24);
+        }
+
+        public int bits(){
+            return this.bits.length * 8;
+        }
+
+        public boolean hasSameBits(HashCode code){
+            if(this.bits.length != code.bits.length){
+                return false;
+            }
+
+            boolean equal = true;
+            for(int i = 0; i < this.bits.length; i++){
+                equal &= (this.bits[i] == code.bits[i]);
+            }
+
+            return equal;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof HashCode){
+                HashCode code = (HashCode) obj;
+                return this.bits() == code.bits() && this.hasSameBits(code);
+            }
+
+            return false;
+        }
+
+        @Override
+        protected Object clone()
+        throws CloneNotSupportedException {
+            byte[] bits = new byte[this.bits.length];
+            System.arraycopy(bits, 0, this.bits, 0, this.bits.length);
+            return new HashCode(bits);
+        }
+
+        @Override
+        public int hashCode() {
+            if(this.bits() >= 32){
+                return this.asInt();
+            }
+
+            int val = (this.bits[0] & 0xFF);
+            for(int i = 1; i < this.bits.length; i++){
+                val |= ((this.bits[i] & 0xFF) << (i * 8));
+            }
+
+            return val;
         }
 
         @Override
