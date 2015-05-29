@@ -22,6 +22,8 @@ import com.atlauncher.Gsons;
 import com.google.gson.Gson;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
@@ -67,10 +69,14 @@ public final class JsonFile {
     }
 
     public <T> T convert(Gson gson, Class<T> tClass) throws Exception {
-        return gson.fromJson(new String(Files.readAllBytes(this.p)), tClass);
+        try(InputStream stream = Files.newInputStream(this.p)){
+            return gson.fromJson(new InputStreamReader(stream), tClass);
+        }
     }
 
     public <T> T convert(Gson gson, Type t) throws Exception {
-        return gson.fromJson(new String(Files.readAllBytes(this.p)), t);
+        try(InputStream stream = Files.newInputStream(this.p)){
+            return gson.fromJson(new InputStreamReader(stream), t);
+        }
     }
 }
