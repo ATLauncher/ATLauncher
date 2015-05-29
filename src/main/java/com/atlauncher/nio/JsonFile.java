@@ -59,10 +59,10 @@ public final class JsonFile {
     }
 
     public <T> T convert(Class<T> tClass) throws Exception {
-        return Gsons.DEFAULT.fromJson(new InputStreamReader(Files.newInputStream(this.p)), tClass);
+        return Gsons.DEFAULT.fromJson(new String(Files.readAllBytes(this.p)), tClass);
     }
 
     public <T> T convert(Type t) throws Exception {
-        return Gsons.DEFAULT.fromJson(new InputStreamReader(Files.newInputStream(this.p)), t);
+        return Gsons.DEFAULT.fromJson(new String(Files.readAllBytes(this.p)), t);
     }
 }
