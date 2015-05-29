@@ -116,32 +116,29 @@ public class Settings {
     private String proxyType; // The type of proxy (socks, http)
     private int concurrentConnections; // Number of concurrent connections to open when downloading
     private int daysOfLogsToKeep; // Number of days of logs to keep
-    private Account account; // Account using the Launcher
     private Proxy proxy = null; // The proxy object if any
     private String theme; // The theme to use
     private String dateFormat; // The date format to use
-    private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
-    private boolean hideJava8Warning; // If the user has hidden the Java 8 warning
-    private boolean enableServerChecker; // If to enable
-    // checker
-    private int serverCheckerWait; // Time to wait in minutes between checking
-    // status
+    private boolean enableServerChecker; // If to enable server checker
+    private int serverCheckerWait; // Time to wait in minutes between checking server status
+
     // General backup settings
     private boolean autoBackup; // Whether backups are created on instance close
     private String lastSelectedSync; // The last service selected for syncing
     private boolean notifyBackup; // Whether to notify the user on successful backup or restore
+
     // Dropbox settings
     private String dropboxFolderLocation; // Location of dropbox if defined by user
-    // Packs, Instances and Accounts
+
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
-    private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
-    private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
+    private List<MinecraftServer> checkingServers = new ArrayList<>();
+
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
     private LauncherConsole console; // The Launcher's Console
-    private List<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
-    private List<Server> triedServers = new ArrayList<Server>(); // Servers tried to connect to
+    private List<Server> servers = new ArrayList<>(); // Servers for the Launcher
+    private List<Server> triedServers = new ArrayList<>(); // Servers tried to connect to
     private NewsTab newsPanel; // The news panel
     private boolean hadPasswordDialog = false; // If the user has seen the password dialog
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
@@ -149,8 +146,6 @@ public class Settings {
     private Process minecraftProcess = null; // The process minecraft is running on
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
-    private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, " +
-            "" + "like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login
     // is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session
@@ -248,24 +243,6 @@ public class Settings {
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
                 System.exit(0);
-            }
-        }
-
-        if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
-            LogManager.warn("You're using an old unsupported version of Java (Java 6 or older)!");
-            String[] options = {Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common" +
-                    ".ok"), Language.INSTANCE.localize("instance" + "" +
-                    ".dontremindmeagain")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("settings.unsupportedjava", "<br/><br/>")), Language.INSTANCE
-                    .localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                    .ERROR_MESSAGE, null, options, options[0]);
-            if (ret == 0) {
-                Utils.openBrowser("http://atl.pw/java7download");
-                System.exit(0);
-            } else if (ret == 2) {
-                this.hideOldJavaWarning = true;
-                this.saveProperties();
             }
         }
 
@@ -931,10 +908,6 @@ public class Settings {
 
             this.hadPasswordDialog = Boolean.parseBoolean(properties.getProperty("hadpassworddialog", "false"));
 
-            this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty("hideoldjavawarning", "false"));
-
-            this.hideJava8Warning = Boolean.parseBoolean(properties.getProperty("hidejava8warning", "false"));
-
             String lang = properties.getProperty("language", "English");
             if (!isLanguageByName(lang)) {
                 LogManager.warn("Invalid language " + lang + ". Defaulting to English!");
@@ -1133,8 +1106,6 @@ public class Settings {
         try {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("hadpassworddialog", "true");
-            properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
-            properties.setProperty("hidejava8warning", this.hideJava8Warning + "");
             properties.setProperty("language", Language.INSTANCE.getCurrent());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
@@ -1995,7 +1966,8 @@ public class Settings {
     }
 
     public String getUserAgent() {
-        return this.userAgent + Constants.LAUNCHER_NAME + "/" + Constants.VERSION;
+        return "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 " +
+                "Safari/537.36 " + Constants.LAUNCHER_NAME + "/" + Constants.VERSION;
     }
 
     public void restartLauncher() {
