@@ -22,7 +22,7 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.Update;
 import com.atlauncher.collection.DownloadPool;

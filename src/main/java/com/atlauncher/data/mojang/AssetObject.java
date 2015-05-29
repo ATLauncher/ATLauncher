@@ -17,7 +17,7 @@
  */
 package com.atlauncher.data.mojang;
 
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Hashing;
 
 import java.io.IOException;

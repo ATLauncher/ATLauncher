@@ -20,7 +20,6 @@ package com.atlauncher.managers;
 
 import com.atlauncher.App;
 import com.atlauncher.Data;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.exceptions.InvalidPack;

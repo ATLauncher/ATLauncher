@@ -19,7 +19,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.FileUtils;

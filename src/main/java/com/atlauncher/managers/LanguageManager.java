@@ -18,7 +18,6 @@
 package com.atlauncher.managers;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;

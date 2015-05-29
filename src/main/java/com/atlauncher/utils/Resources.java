@@ -19,7 +19,7 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.exceptions.ChunkyException;
 
 import javax.swing.text.html.StyleSheet;

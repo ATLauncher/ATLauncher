@@ -17,7 +17,7 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.io.ByteArrayInputStream;
 import com.atlauncher.io.ByteArrayOutputStream;
 

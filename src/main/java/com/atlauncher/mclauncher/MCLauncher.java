@@ -19,7 +19,7 @@ package com.atlauncher.mclauncher;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;

@@ -17,20 +17,8 @@
  */
 package com.atlauncher.data.version;
 
-import com.atlauncher.App;
-import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
-import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.mojang.MojangVersion;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.nio.file.Path;
 
 @Json
 public class MinecraftVersion {

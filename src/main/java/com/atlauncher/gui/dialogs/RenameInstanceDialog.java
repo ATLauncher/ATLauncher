@@ -18,11 +18,10 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.manager.InstanceChangeManager;
-import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;

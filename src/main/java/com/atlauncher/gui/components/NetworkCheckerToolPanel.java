@@ -19,7 +19,7 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;

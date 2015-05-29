@@ -18,7 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;

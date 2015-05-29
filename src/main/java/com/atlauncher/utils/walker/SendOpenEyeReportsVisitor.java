@@ -18,7 +18,7 @@
 package com.atlauncher.utils.walker;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.utils.FileUtils;

@@ -18,7 +18,7 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;

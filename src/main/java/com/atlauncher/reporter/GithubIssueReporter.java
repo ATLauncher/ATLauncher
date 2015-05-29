@@ -20,7 +20,7 @@ package com.atlauncher.reporter;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.Utils;

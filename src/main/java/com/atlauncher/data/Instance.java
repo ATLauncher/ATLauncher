@@ -20,7 +20,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;

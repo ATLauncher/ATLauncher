@@ -17,8 +17,7 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.managers.PackManager;

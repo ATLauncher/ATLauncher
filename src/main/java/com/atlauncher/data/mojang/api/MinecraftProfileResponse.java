@@ -17,7 +17,7 @@
  */
 package com.atlauncher.data.mojang.api;
 
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.annot.Json;
 
 import java.io.IOException;

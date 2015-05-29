@@ -19,7 +19,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -21,7 +21,7 @@ package com.atlauncher.gui.card;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;

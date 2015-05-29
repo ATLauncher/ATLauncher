@@ -19,7 +19,6 @@ package com.atlauncher.managers;
 
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Settings;
 import com.atlauncher.nio.JsonFile;
 

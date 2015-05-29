@@ -19,7 +19,7 @@ package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.collection.ModList;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Mod;

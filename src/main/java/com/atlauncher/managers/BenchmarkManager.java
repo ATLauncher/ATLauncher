@@ -17,8 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import com.atlauncher.LogManager;
-
 import java.util.HashMap;
 import java.util.Map;
 

@@ -17,7 +17,7 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;

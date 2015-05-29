@@ -18,6 +18,8 @@
 
 package com.atlauncher;
 
+import com.atlauncher.managers.LogManager;
+
 public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread t, Throwable e) {

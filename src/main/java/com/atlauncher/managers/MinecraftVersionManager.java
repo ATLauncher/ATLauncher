@@ -19,7 +19,6 @@ package com.atlauncher.managers;
 
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.version.MinecraftVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.nio.JsonFile;

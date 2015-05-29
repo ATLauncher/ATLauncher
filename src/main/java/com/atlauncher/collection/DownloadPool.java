@@ -18,7 +18,7 @@
 package com.atlauncher.collection;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
