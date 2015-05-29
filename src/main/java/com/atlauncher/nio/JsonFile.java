@@ -19,9 +19,9 @@ package com.atlauncher.nio;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.google.gson.Gson;
 
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
@@ -59,10 +59,18 @@ public final class JsonFile {
     }
 
     public <T> T convert(Class<T> tClass) throws Exception {
-        return Gsons.DEFAULT.fromJson(new String(Files.readAllBytes(this.p)), tClass);
+        return convert(Gsons.DEFAULT, tClass);
     }
 
     public <T> T convert(Type t) throws Exception {
-        return Gsons.DEFAULT.fromJson(new String(Files.readAllBytes(this.p)), t);
+        return convert(Gsons.DEFAULT, t);
+    }
+
+    public <T> T convert(Gson gson, Class<T> tClass) throws Exception {
+        return gson.fromJson(new String(Files.readAllBytes(this.p)), tClass);
+    }
+
+    public <T> T convert(Gson gson, Type t) throws Exception {
+        return gson.fromJson(new String(Files.readAllBytes(this.p)), t);
     }
 }

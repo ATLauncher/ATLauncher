@@ -19,6 +19,7 @@ package com.atlauncher;
 
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.OldSettings;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
@@ -29,6 +30,7 @@ import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.managers.BenchmarkManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
@@ -133,7 +135,7 @@ public class App {
      *
      * @TODO This should probably be switched to be less large and have less responsibility.
      */
-    public static Settings settings;
+    public static OldSettings settings;
 
     /**
      * This is the theme used by the launcher. By default it uses the default theme until the theme can be created and
@@ -223,8 +225,11 @@ public class App {
             }
         }
 
+        // Load in the settings
+        SettingsManager.loadSettings();
+
         // Setup the Settings and wait for it to finish.
-        settings = new Settings();
+        settings = new OldSettings();
 
         if (settings.isUsingMacApp() && !settings.isUsingNewMacApp()) {
             String[] options = {"Download"};

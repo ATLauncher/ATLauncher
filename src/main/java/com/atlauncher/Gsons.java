@@ -19,20 +19,38 @@
 package com.atlauncher;
 
 import com.atlauncher.adapter.ColorTypeAdapter;
+import com.atlauncher.data.Server;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 
 import java.awt.Color;
 import java.io.File;
+import java.net.Proxy;
 import java.util.Date;
 
 public final class Gsons {
     public static final Gson DEFAULT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
             .setPrettyPrinting().create();
+
+    // Used for the settings, set to exclude any Server or Proxy types
+    public static final Gson SETTINGS = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
+            .setPrettyPrinting().setExclusionStrategies(new ExclusionStrategy() {
+        @Override
+        public boolean shouldSkipField(FieldAttributes fieldAttributes) {
+            return false;
+        }
+
+        @Override
+        public boolean shouldSkipClass(Class<?> aClass) {
+            return aClass.getDeclaringClass() == Server.class || aClass.getDeclaringClass() == Proxy.class;
+        }
+    }).create();
 
     public static final Gson THEMES = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new
             ColorTypeAdapter()).create();
