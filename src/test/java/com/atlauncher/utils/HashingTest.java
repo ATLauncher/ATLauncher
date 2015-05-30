@@ -26,6 +26,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 public class HashingTest {
@@ -37,6 +38,29 @@ public class HashingTest {
     @Before
     public void setUp() throws Exception {
         testStorage = temporaryFolder.newFolder("ATLauncherTests").toPath();
+    }
+
+    @Test
+    public void testObjectHashing(){
+        Hashing.HashCode code = Hashing.md5(Paths.get(System.getProperty("user.dir"), "Desktop"));
+        Hashing.HashCode code1 = Hashing.md5(Paths.get(System.getProperty("user.dir"), "Desktop"));
+
+        System.out.println(code == code1);
+        System.out.println(code.equals(code1));
+
+        Assert.assertEquals(code, code1);
+    }
+
+    @Test
+    public void testComparison(){
+        Hashing.HashCode code = new Hashing.HashCode("0cbc6611f5540bd0809a388dc95a615b");
+        Hashing.HashCode code1 = Hashing.HashCode.fromString("0cbc6611f5540bd0809a388dc95a615b");
+
+        System.out.println(code);
+        System.out.println(code1);
+
+        System.out.println(code.intern() == code1);
+        System.out.println(code.equals(code1));
     }
 
     @Test

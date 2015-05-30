@@ -25,26 +25,29 @@ import com.atlauncher.managers.LogManager;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.ref.SoftReference;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 public final class Hashing {
     private static final char[] hex = "0123456789abcdef".toCharArray();
-    private static final Caching.Cache<Object, HashCode> hashcodes = Caching.newLRU();
+    private static final SoftReference<Caching.Cache<Object, HashCode>> hashcodes = new SoftReference<>(Caching.<Object, HashCode>newLRU());
 
     public static HashCode md5(Path file) {
         try{
-            HashCode code = hashcodes.get(file);
+            HashCode code = hashcodes.get().get(file);
             if(code != null){
                 return code;
             }
 
             code = md5Internal(file);
-            hashcodes.put(file, code);
+            hashcodes.get().put(file, code);
             return code;
         } catch(Exception e){
             LogManager.logStackTrace("Error hashing (MD5) file " + file.getFileName(), e);
@@ -78,18 +81,53 @@ public final class Hashing {
         }
     }
 
+    private static HashCode md5Internal(Object obj){
+        if(obj == null){
+            return HashCode.EMPTY;
+        }
+
+        try(ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos)){
+
+            oos.writeObject(obj);
+            oos.flush();
+
+            try(Hasher hasher = new MD5Hasher(new ByteArrayInputStream(bos.toByteArray()))){
+                return hasher.hash();
+            }
+        } catch(Exception e){
+            LogManager.logStackTrace("Error hashing (MD5) object " + obj.getClass(), e);
+            return HashCode.EMPTY;
+        }
+    }
+
     public static HashCode md5(String str) {
         try{
-            HashCode code = hashcodes.get(str);
+            HashCode code = hashcodes.get().get(str);
             if(code != null){
                 return code;
             }
             code = md5Internal(str);
-            hashcodes.put(str, code);
+            hashcodes.get().put(str, code);
             return code;
         } catch(Exception e){
             LogManager.logStackTrace("Error hashing (MD5) string " + str, e);
             return md5Internal(str);
+        }
+    }
+
+    public static HashCode md5(Object obj){
+        try{
+            HashCode code = hashcodes.get().get(obj);
+            if(code != null){
+                return code;
+            }
+            code = md5Internal(obj);
+            hashcodes.get().put(obj, code);
+            return code;
+        } catch(Exception e){
+            LogManager.logStackTrace("Error hashing (MD5) obj " + obj.getClass(), e);
+            return md5Internal(obj);
         }
     }
 
@@ -188,18 +226,18 @@ public final class Hashing {
     public static final class HashCode
     implements Serializable,
                Cloneable{
-        private static final Caching.Cache<String, HashCode> hashescache = Caching.newLRU();
+        private static final SoftReference<Caching.Cache<String, HashCode>> hashescache = new SoftReference<>(Caching.<String, HashCode>newLRU());
 
         public static final HashCode EMPTY = new HashCode(new byte[]{0});
 
         public static HashCode fromString(String str){
             try{
-                HashCode code = hashescache.get(str);
+                HashCode code = hashescache.get().get(str);
                 if(code != null){
                     return code;
                 }
                 code = fromStringInternal(str);
-                hashescache.put(str, code);
+                hashescache.get().put(str, code);
                 return code;
             } catch(Exception e){
                 return fromStringInternal(str);
@@ -229,6 +267,17 @@ public final class Hashing {
             return new HashCode(bits);
         }
 
+        private static byte[] decode(String str){
+            byte[] bits = new byte[str.length() / 2];
+            for(int i = 0; i < str.length(); i += 2){
+                int ch1 = decode(str.charAt(i)) << 4;
+                int ch2 = decode(str.charAt(i + 1));
+                bits[i / 2] = (byte) (ch1 + ch2);
+            }
+
+            return bits;
+        }
+
         private static int decode(char c){
             if(c >= '0' && c <= '9'){
                 return c - '0';
@@ -243,8 +292,22 @@ public final class Hashing {
 
         private final byte[] bits;
 
-        public HashCode(byte[] bits) {
+        private HashCode(byte[] bits) {
             this.bits = bits;
+        }
+
+        public HashCode(String hash){
+            this(decode(hash));
+        }
+
+        public HashCode intern(){
+            for(Map.Entry<String, HashCode> code : hashescache.get()){
+                if(code.getValue().equals(this)){
+                    return code.getValue();
+                }
+            }
+
+            return this;
         }
 
         public int asInt(){
@@ -260,6 +323,10 @@ public final class Hashing {
 
         public int bits(){
             return this.bits.length * 8;
+        }
+
+        public byte[] bytes(){
+            return this.bits;
         }
 
         public boolean hasSameBits(HashCode code){

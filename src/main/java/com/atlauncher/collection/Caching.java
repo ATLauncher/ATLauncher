@@ -1,5 +1,6 @@
 package com.atlauncher.collection;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -8,7 +9,8 @@ public final class Caching{
 
     private Caching(){}
 
-    public static interface Cache<K, V>{
+    public static interface Cache<K, V>
+    extends Iterable<Map.Entry<K, V>>{
         public V get(K key);
         public V put(K key, V value);
         public int size();
@@ -32,6 +34,11 @@ public final class Caching{
         @Override
         protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
             return this.size() > this.cap;
+        }
+
+        @Override
+        public Iterator<Map.Entry<K, V>> iterator() {
+            return this.entrySet().iterator();
         }
     }
 }
