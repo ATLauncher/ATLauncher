@@ -34,7 +34,7 @@ import java.security.NoSuchAlgorithmException;
 
 public final class Hashing {
     private static final char[] hex = "0123456789abcdef".toCharArray();
-    private static final Caching.LRUCache<Object, HashCode> hashcodes = Caching.newLRU();
+    private static final Caching.Cache<Object, HashCode> hashcodes = Caching.newLRU();
 
     public static HashCode md5(Path file) {
         try{
@@ -188,7 +188,7 @@ public final class Hashing {
     public static final class HashCode
     implements Serializable,
                Cloneable{
-        private static final Caching.LRUCache<String, HashCode> hashescache = Caching.newLRU();
+        private static final Caching.Cache<String, HashCode> hashescache = Caching.newLRU();
 
         public static final HashCode EMPTY = new HashCode(new byte[]{0});
 

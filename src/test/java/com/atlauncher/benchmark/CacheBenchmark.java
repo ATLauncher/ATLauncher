@@ -16,7 +16,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 @State(Scope.Thread)
 public class CacheBenchmark {
     private Cache<String, Integer> guavaCache;
-    private Caching.LRUCache<String, Integer> myCache;
+    private Caching.Cache<String, Integer> myCache;
 
     public static void main(String... args)
     throws Exception{
@@ -31,7 +31,7 @@ public class CacheBenchmark {
     @Test
     public void testMine(){
         System.out.println("----- Mine -----");
-        Caching.LRUCache<Integer, String> cache = Caching.newLRU();
+        Caching.Cache<Integer, String> cache = Caching.newLRU();
         for(int i = 0; i < 127; i++){
             cache.put(i, "Hello, " + i);
         }
@@ -63,21 +63,21 @@ public class CacheBenchmark {
     }
 
     @Benchmark
-    public void guavaA(){
+    public void guavaAPut(){
         for(int i = 0; i < 127; i++){
             this.guavaCache.put("Hello, " + i, i);
         }
     }
 
     @Benchmark
-    public void guavaB(){
+    public void guavaBGet(){
         for(int i = 0; i < 127; i++){
             this.guavaCache.getIfPresent("Hello, " + i);
         }
     }
 
     @Benchmark
-    public void myA(){
+    public void myAPut(){
         for(int i = 0; i < 127; i++){
             this.myCache.put("Hello, " + i, i);
         }

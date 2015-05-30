@@ -8,17 +8,24 @@ public final class Caching{
 
     private Caching(){}
 
-    public static <K, V> LRUCache<K, V> newLRU(){
+    public static interface Cache<K, V>{
+        public V get(K key);
+        public V put(K key, V value);
+        public int size();
+    }
+
+    public static <K, V> Cache<K, V> newLRU(){
         return new LRUCache<>(MAX_SIZE);
     }
 
 
-    public static final class LRUCache<K, V>
-    extends LinkedHashMap<K, V>{
+    private static final class LRUCache<K, V>
+    extends LinkedHashMap<K, V>
+    implements Cache<K, V>{
         private final int cap;
 
         private LRUCache(int cap){
-            super(cap + 1, 1.0F, true);
+            super(cap + 1, 0.75F, true);
             this.cap= cap;
         }
 
