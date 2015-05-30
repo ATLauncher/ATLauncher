@@ -30,7 +30,11 @@ extends SimpleFileVisitor<Path>{
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
     throws IOException {
-        Path dest = this.fs.getPath(this.dir.relativize(file).toString());
+        String name = this.dir.relativize(file).toString();
+        if(name.endsWith("aux_class")){
+            name = "aux.class";
+        }
+        Path dest = this.fs.getPath(name);
         Files.copy(file, dest, StandardCopyOption.REPLACE_EXISTING);
         return FileVisitResult.CONTINUE;
     }

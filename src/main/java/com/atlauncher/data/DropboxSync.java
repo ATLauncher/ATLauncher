@@ -22,6 +22,7 @@ import com.atlauncher.App;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.utils.Base64;
+import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
@@ -118,7 +119,11 @@ public class DropboxSync extends SyncAbstract {
                     ".message" + ".backupexists", backupName), Language.INSTANCE.localize("backup.message" + "" +
                     ".backupexists.title"), JOptionPane.ERROR_MESSAGE);
         } else {
-            FileUtils.zip(worldData.toPath(), backup);
+            try {
+                CompressionUtils.zip(worldData.toPath(), backup);
+            } catch (IOException e) {
+                LogManager.logStackTrace("Error compressing " + worldData, e);
+            }
 
             if (App.settings.getNotifyBackup()) {
                 JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("backup" + "" +

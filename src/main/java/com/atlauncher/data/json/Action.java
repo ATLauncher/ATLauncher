@@ -18,9 +18,12 @@
 package com.atlauncher.data.json;
 
 import com.atlauncher.annot.Json;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -91,21 +94,33 @@ public class Action {
                 }
                 switch (this.type) {
                     case mods:
-                        FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods.resolve
-                                (saveAs));
+                        try {
+                            CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods.resolve(saveAs));
+                        } catch (IOException e) {
+                            LogManager.logStackTrace(e);
+                        }
                         break;
                     case coremods:
                         if (instanceInstaller.packVersion.getMinecraftVersion().usesCoreMods()) {
-                            FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.coremods
-                                    .resolve(saveAs));
+                            try {
+                                CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.coremods.resolve(saveAs));
+                            } catch (IOException e) {
+                                LogManager.logStackTrace(e);
+                            }
                         } else {
-                            FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods.resolve
-                                    (saveAs));
+                            try {
+                                CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods.resolve(saveAs));
+                            } catch (IOException e) {
+                                LogManager.logStackTrace(e);
+                            }
                         }
                         break;
                     case jar:
-                        FileUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.jarmods.resolve
-                                (saveAs));
+                        try {
+                            CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.jarmods.resolve(saveAs));
+                        } catch (IOException e) {
+                            LogManager.logStackTrace(e);
+                        }
                         instanceInstaller.addToJarOrder(this.saveAs);
                         break;
                     default:

@@ -63,12 +63,14 @@ public class ByteArrayOutputStream extends OutputStream {
         this.buf = Arrays.copyOf(this.buf, newCapacity);
     }
 
+    @Override
     public void write(int b) {
         this.ensureCapacity(this.count + 1);
         this.buf[this.count] = (byte) b;
         ++this.count;
     }
 
+    @Override
     public void write(byte[] b, int off, int len) {
         if (off >= 0 && off <= b.length && len >= 0 && off + len - b.length <= 0) {
             this.ensureCapacity(this.count + len);
@@ -79,14 +81,6 @@ public class ByteArrayOutputStream extends OutputStream {
         }
     }
 
-    public void writeTo(OutputStream out) throws IOException {
-        out.write(this.buf, 0, this.count);
-    }
-
-    public void reset() {
-        this.count = 0;
-    }
-
     public byte[] toByteArray() {
         return Arrays.copyOf(this.buf, this.count);
     }
@@ -95,6 +89,7 @@ public class ByteArrayOutputStream extends OutputStream {
         return this.count;
     }
 
+    @Override
     public String toString() {
         return new String(this.buf, 0, this.count);
     }
@@ -103,6 +98,7 @@ public class ByteArrayOutputStream extends OutputStream {
         return new String(this.buf, 0, this.count, charsetName);
     }
 
+    @Override
     public void close() throws IOException {
     }
 }

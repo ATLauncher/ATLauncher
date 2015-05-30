@@ -44,6 +44,7 @@ import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.nio.JsonFile;
+import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
@@ -873,7 +874,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (this.server && this.selectedMods.hasJarMod(this)) {
             this.fireTask(Language.INSTANCE.localize("server.zippingjar"));
             this.fireSubProgressUnknown();
-            FileUtils.zip(this.getTempJarDirectory(), this.getMinecraftJar());
+            CompressionUtils.zip(this.getTempJarDirectory(), this.getMinecraftJar());
         }
 
         if (this.extractedTexturePack) {
@@ -882,7 +883,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (!Files.exists(this.texturepacks)) {
                 FileUtils.createDirectory(this.texturepacks);
             }
-            FileUtils.zip(this.getTempTexturePacksDirectory(), this.texturepacks);
+            CompressionUtils.zip(this.getTempTexturePacksDirectory(), this.texturepacks);
         }
 
         if (this.extractedResourcePack) {
@@ -891,7 +892,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (!Files.exists(this.resourcepacks)) {
                 FileUtils.createDirectory(this.resourcepacks);
             }
-            FileUtils.zip(this.getTempResourcePacksDirectory(), this.resourcepacks);
+            CompressionUtils.zip(this.getTempResourcePacksDirectory(), this.resourcepacks);
         }
 
         if (this.isCancelled()) {

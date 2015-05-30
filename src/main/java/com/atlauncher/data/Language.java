@@ -64,7 +64,7 @@ public enum Language {
         return INSTANCE.current;
     }
 
-    public synchronized void load(String lang) throws IOException {
+    public void load(String lang) throws IOException {
         if (!this.langs.containsKey(lang)) {
             Properties props = new Properties();
             Path langFile = FileSystem.LANGUAGES.resolve(lang.toLowerCase() + ".lang");
@@ -83,7 +83,7 @@ public enum Language {
         this.current = lang;
     }
 
-    public synchronized void reload(String lang) throws IOException {
+    public void reload(String lang) throws IOException {
         if (this.langs.containsKey(lang)) {
             this.langs.remove(lang);
         }
@@ -91,7 +91,7 @@ public enum Language {
         this.load(lang);
     }
 
-    public synchronized String localize(String lang, String tag) {
+    public String localize(String lang, String tag) {
         if (this.langs.containsKey(lang)) {
             Properties props = this.langs.get(lang);
             if (props.containsKey(tag)) {
@@ -108,15 +108,15 @@ public enum Language {
         }
     }
 
-    public synchronized String localize(String tag) {
+    public String localize(String tag) {
         return this.localize(this.current, tag);
     }
 
-    public synchronized String localizeWithReplace(String tag, String replaceWith) {
+    public String localizeWithReplace(String tag, String replaceWith) {
         return this.localize(this.current, tag).replace("%s", replaceWith);
     }
 
-    public synchronized String getCurrent() {
+    public String getCurrent() {
         return this.current;
     }
 }

@@ -36,6 +36,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -304,7 +305,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                     String time = timestamp.toString().replaceAll("[^0-9]", "_");
                                     String filename = instance.getSafeName() + "-" + time.substring(0, time
                                             .lastIndexOf("_")) + ".zip";
-                                    FileUtils.zip(instance.getSavesDirectory(), FileSystem.BACKUPS.resolve(filename));
+                                    try {
+                                        CompressionUtils.zip(instance.getSavesDirectory(), FileSystem.BACKUPS.resolve(filename));
+                                    } catch (IOException e1) {
+                                        LogManager.logStackTrace("Error backing up " + instance.getName(), e1);
+                                    }
                                     dialog.dispose();
                                     App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("backup.backupcomplete", " " +
                                             "" + filename));

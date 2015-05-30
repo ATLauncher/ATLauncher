@@ -20,6 +20,7 @@ package com.atlauncher.data.json;
 import com.atlauncher.FileSystem;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -284,7 +285,7 @@ public enum ModType {
                             installer.addToJarOrder(mod.decompFile);
                         } else {
                             Path newFile = installer.jarmods.resolve(mod.getSafeName() + ".zip");
-                            FileUtils.zip(tmpDecompFile, newFile);
+                            CompressionUtils.zip(tmpDecompFile, newFile);
                             installer.addToJarOrder(mod.getSafeName() + ".zip");
                         }
                         break;
