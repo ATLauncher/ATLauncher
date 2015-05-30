@@ -275,7 +275,7 @@ public class FileUtils {
                 if (entry.getName().endsWith("aux.class")) {
                     entryName = "aux_class";
                 }
-                if (extractRule != null && extractRule.shouldExclude(entryName)) {
+                if (extractRule != null && extractRule.exclude.contains(entryName)) {
                     continue;
                 }
                 if (entry.isDirectory()) {

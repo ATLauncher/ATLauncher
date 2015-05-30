@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Library {
-
     private String name;
     private Map<OperatingSystem, String> natives;
     private List<Rule> rules;

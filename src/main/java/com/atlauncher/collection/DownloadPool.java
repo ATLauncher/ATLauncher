@@ -17,18 +17,14 @@
  */
 package com.atlauncher.collection;
 
-import com.atlauncher.App;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 import java.util.LinkedList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 public final class DownloadPool extends LinkedList<Downloadable> {
     private final boolean wait;
@@ -66,25 +62,25 @@ public final class DownloadPool extends LinkedList<Downloadable> {
     }
 
     public int totalSize() {
-        Future<Integer> sizeFuture = App.TASKPOOL.submit(new SizeCollector());
-
-        try {
-            return sizeFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
-            LogManager.logStackTrace(e);
-            return 0;
+        int size = 0;
+        for(Downloadable dl : this){
+            if(dl.needToDownload()){
+                size += dl.getFilesize();
+            }
         }
+        return size;
     }
 
     public DownloadPool downsize() {
-        Future<DownloadPool> poolFuture = App.TASKPOOL.submit(new Downsizer());
+        DownloadPool pool = new DownloadPool();
 
-        try {
-            return poolFuture.get();
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-            return new DownloadPool(this.wait);
+        for(Downloadable dl : this){
+            if(dl.needToDownload()){
+                pool.add(dl);
+            }
         }
+
+        return pool;
     }
 
     public boolean any() {
@@ -95,42 +91,6 @@ public final class DownloadPool extends LinkedList<Downloadable> {
         }
 
         return false;
-    }
-
-    private final class Downsizer implements Callable<DownloadPool> {
-        @Override
-        public DownloadPool call() throws Exception {
-            final DownloadPool pool = new DownloadPool(DownloadPool.this.wait);
-
-            ExecutorService executor = Utils.generateDownloadExecutor();
-            for (final Downloadable dl : DownloadPool.this) {
-                executor.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dl.needToDownload()) {
-                            pool.add(dl);
-                        }
-                    }
-                });
-            }
-
-            executor.shutdown();
-            while (!executor.isTerminated()) {
-            }
-
-            return pool;
-        }
-    }
-
-    private final class SizeCollector implements Callable<Integer> {
-        @Override
-        public Integer call() throws Exception {
-            int size = 0;
-            for (Downloadable dl : DownloadPool.this) {
-                size += dl.getFilesize();
-            }
-            return size;
-        }
     }
 
     private final class Installer implements Runnable {

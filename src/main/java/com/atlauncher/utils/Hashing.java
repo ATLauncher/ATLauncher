@@ -17,9 +17,10 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.managers.LogManager;
+import com.atlauncher.collection.Caching;
 import com.atlauncher.io.ByteArrayInputStream;
 import com.atlauncher.io.ByteArrayOutputStream;
+import com.atlauncher.managers.LogManager;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,8 +34,25 @@ import java.security.NoSuchAlgorithmException;
 
 public final class Hashing {
     private static final char[] hex = "0123456789abcdef".toCharArray();
+    private static final Caching.LRUCache<Object, HashCode> hashcodes = Caching.newLRU();
 
     public static HashCode md5(Path file) {
+        try{
+            HashCode code = hashcodes.get(file);
+            if(code != null){
+                return code;
+            }
+
+            code = md5Internal(file);
+            hashcodes.put(file, code);
+            return code;
+        } catch(Exception e){
+            LogManager.logStackTrace("Error hashing (MD5) file " + file.getFileName(), e);
+            return md5Internal(file);
+        }
+    }
+
+    private static HashCode md5Internal(Path file){
         if (!Files.exists(file)) {
             return HashCode.EMPTY;
         }
@@ -47,7 +65,7 @@ public final class Hashing {
         }
     }
 
-    public static HashCode md5(String str) {
+    private static HashCode md5Internal(String str){
         if (str == null || str.isEmpty()) {
             return HashCode.EMPTY;
         }
@@ -57,6 +75,21 @@ public final class Hashing {
         } catch (Exception e) {
             LogManager.logStackTrace("Error hashing (MD5) string " + str, e);
             return HashCode.EMPTY;
+        }
+    }
+
+    public static HashCode md5(String str) {
+        try{
+            HashCode code = hashcodes.get(str);
+            if(code != null){
+                return code;
+            }
+            code = md5Internal(str);
+            hashcodes.put(str, code);
+            return code;
+        } catch(Exception e){
+            LogManager.logStackTrace("Error hashing (MD5) string " + str, e);
+            return md5Internal(str);
         }
     }
 
@@ -155,9 +188,25 @@ public final class Hashing {
     public static final class HashCode
     implements Serializable,
                Cloneable{
+        private static final Caching.LRUCache<String, HashCode> hashescache = Caching.newLRU();
+
         public static final HashCode EMPTY = new HashCode(new byte[]{0});
 
         public static HashCode fromString(String str){
+            try{
+                HashCode code = hashescache.get(str);
+                if(code != null){
+                    return code;
+                }
+                code = fromStringInternal(str);
+                hashescache.put(str, code);
+                return code;
+            } catch(Exception e){
+                return fromStringInternal(str);
+            }
+        }
+
+        private static HashCode fromStringInternal(String str){
             if(str == null || str.isEmpty()){
                 return EMPTY;
             }
@@ -194,7 +243,7 @@ public final class Hashing {
 
         private final byte[] bits;
 
-        private HashCode(byte[] bits) {
+        public HashCode(byte[] bits) {
             this.bits = bits;
         }
 
