@@ -42,8 +42,19 @@ public class HashingTest {
 
     @Test
     public void testObjectHashing() {
-        Hashing.HashCode code = Hashing.md5(Paths.get(System.getProperty("user.dir"), "Desktop"));
-        Hashing.HashCode code1 = Hashing.md5(Paths.get(System.getProperty("user.dir"), "Desktop"));
+        Path testFile = this.testStorage.resolve("TestMD5.txt");
+
+        byte[] bytes = {'T', 'e', 's', 't'};
+
+        try {
+            Files.write(testFile, bytes, StandardOpenOption.CREATE_NEW);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        Hashing.HashCode code = Hashing.md5(testFile);
+        Hashing.HashCode code1 = Hashing.md5(testFile);
 
         Assert.assertEquals(code, code1);
         Assert.assertTrue(code.equals(code1));
@@ -54,11 +65,9 @@ public class HashingTest {
         Hashing.HashCode code = new Hashing.HashCode("0cbc6611f5540bd0809a388dc95a615b");
         Hashing.HashCode code1 = Hashing.HashCode.fromString("0cbc6611f5540bd0809a388dc95a615b");
 
-        System.out.println(code);
-        System.out.println(code1);
-
-        System.out.println(code.intern() == code1);
-        System.out.println(code.equals(code1));
+        Assert.assertEquals(code, code1);
+        Assert.assertEquals(code.intern(), code1);
+        Assert.assertTrue(code.equals(code1));
     }
 
     @Test
@@ -80,6 +89,26 @@ public class HashingTest {
         Assert.assertTrue(Files.isRegularFile(testFile));
 
         Assert.assertEquals("0cbc6611f5540bd0809a388dc95a615b", Hashing.md5(testFile).toString());
+
+        byte[] bytes2 = {'T', 'e', 's', 't', '2'};
+
+        try {
+            Files.delete(testFile);
+
+            Assert.assertFalse(Files.exists(testFile));
+
+            Files.write(testFile, bytes2, StandardOpenOption.CREATE_NEW);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        Assert.assertEquals("c454552d52d55d3ef56408742887362b", Hashing.md5("Test2").toString());
+
+        Assert.assertTrue(Files.exists(testFile));
+        Assert.assertTrue(Files.isRegularFile(testFile));
+
+        Assert.assertEquals("c454552d52d55d3ef56408742887362b", Hashing.md5(testFile).toString());
     }
 
     @Test
@@ -101,5 +130,25 @@ public class HashingTest {
         Assert.assertTrue(Files.isRegularFile(testFile));
 
         Assert.assertEquals("640ab2bae07bedc4c163f679a746f7ab7fb5d1fa", Hashing.sha1(testFile).toString());
+
+        byte[] bytes2 = {'T', 'e', 's', 't', '2'};
+
+        try {
+            Files.delete(testFile);
+
+            Assert.assertFalse(Files.exists(testFile));
+
+            Files.write(testFile, bytes2, StandardOpenOption.CREATE_NEW);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        Assert.assertEquals("2b84f621c0fd4ba8bd514c5c43ab9a897c8c014e", Hashing.sha1("Test2").toString());
+
+        Assert.assertTrue(Files.exists(testFile));
+        Assert.assertTrue(Files.isRegularFile(testFile));
+
+        Assert.assertEquals("2b84f621c0fd4ba8bd514c5c43ab9a897c8c014e", Hashing.sha1(testFile).toString());
     }
 }

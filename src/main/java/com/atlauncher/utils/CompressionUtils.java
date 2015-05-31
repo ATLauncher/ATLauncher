@@ -51,7 +51,7 @@ public final class CompressionUtils {
         }
 
         if (!Files.isDirectory(dir)) {
-            throw new IllegalStateException("File " + dir.toString() + " isnt a directory");
+            throw new IllegalStateException("File " + dir + " isn't a directory!");
         }
 
         try (FileSystem zipfs = createZipFileSystem(zip, true)) {
