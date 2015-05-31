@@ -22,7 +22,8 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.profile.StackProfiler;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
@@ -30,17 +31,27 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.io.InputStream;
 import java.security.MessageDigest;
 
-
+@State(Scope.Thread)
 public class HashingBenchmark {
     public static void main(String... args) throws Exception {
-        Options opts = new OptionsBuilder().include(HashingBenchmark.class.getSimpleName()).forks(1).addProfiler
-                (StackProfiler.class).build();
+        Options opts = new OptionsBuilder()
+                               .include(HashingBenchmark.class.getSimpleName())
+                               .forks(1)
+                               //.addProfiler(StackProfiler.class)
+                               //.addProfiler(GCProfiler.class)
+                               .build();
         new Runner(opts).run();
     }
 
     @Benchmark
     public void custom() throws Exception {
         com.atlauncher.utils.Hashing.md5(FileSystemData.PROPERTIES).toString();
+    }
+
+    @Benchmark
+    public void customUncached()
+    throws Exception{
+        new com.atlauncher.utils.Hashing.HashCode(FileSystemData.PROPERTIES).toString();
     }
 
     @Benchmark
@@ -60,7 +71,7 @@ public class HashingBenchmark {
             byte[] buffer = new byte[1024];
             int len;
             while ((len = stream.read(buffer, 0, 1024)) != -1) {
-                digest.digest(buffer, 0, len);
+                digest.update(buffer, 0, len);
             }
             StringBuilder builder = new StringBuilder();
             for (byte b : buffer) {

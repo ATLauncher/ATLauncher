@@ -217,6 +217,21 @@ public final class Hashing {
             }
         }
 
+        private byte[] hashInternal(){
+            try(ByteArrayOutputStream bos = new ByteArrayOutputStream()){
+                byte[] buffer = new byte[8192];
+                int len;
+                while((len = this.is.read(buffer, 0, 8192)) != -1){
+                    bos.write(buffer, 0, len);
+                }
+
+                return this.digest.digest(bos.toByteArray());
+            } catch(Exception e){
+                LogManager.logStackTrace("Error hashing (MD5)", e);
+                return new byte[0];
+            }
+        }
+
         @Override
         public void close() throws IOException {
             this.is.close();
@@ -228,7 +243,7 @@ public final class Hashing {
                Cloneable{
         private static final SoftReference<Caching.Cache<String, HashCode>> hashescache = new SoftReference<>(Caching.<String, HashCode>newLRU());
 
-        public static final HashCode EMPTY = new HashCode(new byte[]{0});
+        public static final HashCode EMPTY = new HashCode(new byte[0]);
 
         public static HashCode fromString(String str){
             try{
@@ -298,6 +313,14 @@ public final class Hashing {
 
         public HashCode(String hash){
             this(decode(hash));
+        }
+
+        public HashCode(Path file){
+            try(MD5Hasher hasher = new MD5Hasher(Files.newInputStream(file))){
+                this.bits = hasher.hashInternal();
+            } catch(Exception e){
+                throw new RuntimeException(e);
+            }
         }
 
         public HashCode intern(){
