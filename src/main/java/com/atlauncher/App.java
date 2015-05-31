@@ -135,7 +135,7 @@ public class App {
      *
      * @TODO This should probably be switched to be less large and have less responsibility.
      */
-    public static OldSettings settings;
+    public static OldSettings settings = null;
 
     /**
      * This is the theme used by the launcher. By default it uses the default theme until the theme can be created and
