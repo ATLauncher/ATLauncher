@@ -20,11 +20,11 @@ package com.atlauncher.utils;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.walker.ClearDirVisitor;
 import org.tukaani.xz.XZInputStream;
 
@@ -38,6 +38,7 @@ import javax.swing.ImageIcon;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
@@ -1619,6 +1620,10 @@ public class Utils {
             }
             throw new IOException("Error, could not add URL to system classloader");
         }
+    }
+
+    public static boolean isHeadless() {
+        return GraphicsEnvironment.isHeadless();
     }
 
 }

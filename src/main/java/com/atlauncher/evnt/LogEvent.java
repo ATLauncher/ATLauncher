@@ -20,8 +20,8 @@ package com.atlauncher.evnt;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.gui.components.Console;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.writer.LogEventWriter;
 

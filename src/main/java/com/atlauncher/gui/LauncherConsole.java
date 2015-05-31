@@ -26,6 +26,7 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JFrame;

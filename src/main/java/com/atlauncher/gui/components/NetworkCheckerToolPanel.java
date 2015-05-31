@@ -19,7 +19,6 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
@@ -27,6 +26,7 @@ import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;

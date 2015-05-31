@@ -19,7 +19,6 @@ package com.atlauncher.workers;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.backup.BackupMethods;
 import com.atlauncher.collection.DownloadPool;
@@ -43,6 +42,7 @@ import com.atlauncher.data.mojang.AssetObject;
 import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.gui.dialogs.ModsChooser;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
@@ -215,7 +215,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private Path getMinecraftJar() {
         if (this.server) {
             return this.root.resolve("minecraft_server." + this.packVersion.getMinecraftVersion().getVersion() + "" +
-                            ".jar");
+                    ".jar");
         } else {
             return this.bin.resolve("minecraft.jar");
         }

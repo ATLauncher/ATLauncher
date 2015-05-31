@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.LogManager;
 
 import java.io.IOException;
 import java.net.Proxy;

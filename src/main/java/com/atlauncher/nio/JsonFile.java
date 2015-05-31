@@ -69,13 +69,13 @@ public final class JsonFile {
     }
 
     public <T> T convert(Gson gson, Class<T> tClass) throws Exception {
-        try(InputStream stream = Files.newInputStream(this.p)){
+        try (InputStream stream = Files.newInputStream(this.p)) {
             return gson.fromJson(new InputStreamReader(stream), tClass);
         }
     }
 
     public <T> T convert(Gson gson, Type t) throws Exception {
-        try(InputStream stream = Files.newInputStream(this.p)){
+        try (InputStream stream = Files.newInputStream(this.p)) {
             return gson.fromJson(new InputStreamReader(stream), t);
         }
     }
