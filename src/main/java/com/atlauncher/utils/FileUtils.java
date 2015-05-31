@@ -17,8 +17,8 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.mojang.ExtractRule;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.walker.ClearDirVisitor;
 import com.atlauncher.utils.walker.CopyDirVisitor;
 import com.atlauncher.utils.walker.DeleteDirVisitor;

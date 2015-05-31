@@ -18,10 +18,10 @@
 package com.atlauncher.data.json;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.workers.InstanceInstaller;
@@ -74,13 +74,13 @@ public final class Mod {
 
     private Color compiledColor;
 
-    public Mod(String name, String version, String url, Hashing.HashCode md5, Hashing.HashCode serverMD5, String donation, String
-            website, String description, String file, String serverUrl, String serverFile, String filePrefix, String
-            decompFile, String group, String linked, String filePreference, String color, String fileCheck, String
-            warning, String[] depends, String[] authors, boolean client, boolean optional, boolean server, boolean
-            recommended, boolean hidden, boolean library, boolean filePattern, Boolean serverOptional, int filesize,
-               DownloadType download, DownloadType serverDownload, ModType type, ModType serverType, ExtractToType
-                       extractTo, DecompType decompType, boolean selected) {
+    public Mod(String name, String version, String url, Hashing.HashCode md5, Hashing.HashCode serverMD5, String
+            donation, String website, String description, String file, String serverUrl, String serverFile, String
+            filePrefix, String decompFile, String group, String linked, String filePreference, String color, String
+            fileCheck, String warning, String[] depends, String[] authors, boolean client, boolean optional, boolean
+            server, boolean recommended, boolean hidden, boolean library, boolean filePattern, Boolean
+            serverOptional, int filesize, DownloadType download, DownloadType serverDownload, ModType type, ModType
+            serverType, ExtractToType extractTo, DecompType decompType, boolean selected) {
         this.name = name;
         this.version = version;
         this.url = url;
@@ -178,8 +178,8 @@ public final class Mod {
     }
 
     public Downloadable generateDownloadable(InstanceInstaller installer) {
-        return new Downloadable(this.getUrl(), this.md5.toString(), FileSystem.DOWNLOADS.resolve(this.getFile()), this.filesize,
-                true, installer);
+        return new Downloadable(this.getUrl(), this.md5.toString(), FileSystem.DOWNLOADS.resolve(this.getFile()),
+                this.filesize, true, installer);
     }
 
     private void downloadClient(InstanceInstaller installer, int attempt) throws Exception {
@@ -235,8 +235,8 @@ public final class Mod {
             this.serverDownload.download(installer, fileLoc, this);
         } else {
             try {
-                Downloadable dl = new Downloadable(this.serverUrl, this.serverMD5.toString(), fileLoc, -1, this.serverDownload
-                        == DownloadType.SERVER, installer);
+                Downloadable dl = new Downloadable(this.serverUrl, this.serverMD5.toString(), fileLoc, -1, this
+                        .serverDownload == DownloadType.SERVER, installer);
                 if (dl.needToDownload()) {
                     dl.download();
                 }

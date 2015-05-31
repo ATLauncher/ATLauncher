@@ -18,7 +18,6 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.version.PackVersion;
@@ -35,6 +34,7 @@ import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 

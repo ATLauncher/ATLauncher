@@ -19,8 +19,8 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.exceptions.ChunkyException;
+import com.atlauncher.managers.LogManager;
 
 import javax.swing.text.html.StyleSheet;
 import java.awt.Font;

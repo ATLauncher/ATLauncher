@@ -21,7 +21,6 @@ package com.atlauncher.gui.card;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
@@ -36,6 +35,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
@@ -306,7 +306,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                     String filename = instance.getSafeName() + "-" + time.substring(0, time
                                             .lastIndexOf("_")) + ".zip";
                                     try {
-                                        CompressionUtils.zip(instance.getSavesDirectory(), FileSystem.BACKUPS.resolve(filename));
+                                        CompressionUtils.zip(instance.getSavesDirectory(), FileSystem.BACKUPS.resolve
+                                                (filename));
                                     } catch (IOException e1) {
                                         LogManager.logStackTrace("Error backing up " + instance.getName(), e1);
                                     }
@@ -351,9 +352,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 String clonedName = JOptionPane.showInputDialog(App.settings.getParent(), Language.INSTANCE.localize
                         ("instance.cloneenter"), Language.INSTANCE.localize("instance" + "" +
                         ".clonetitle"), JOptionPane.INFORMATION_MESSAGE);
-                if (clonedName != null && clonedName.length() >= 1 && InstanceManager.getInstanceByName(clonedName) ==
-                        null && InstanceManager.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
-                        && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
+                if (clonedName != null && clonedName.length() >= 1 && InstanceManager.getInstanceByName(clonedName)
+                        == null && InstanceManager.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", ""))
+                        == null && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
 
                     final String newName = clonedName;
                     final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("instance" + "" +
@@ -429,8 +430,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 String[] optionss = {Language.INSTANCE.localize("common.ok")};
                                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize
                                         ("instance.cantupdate"), Language.INSTANCE.localize("instance" + "" +
-                                                ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                                        .ERROR_MESSAGE, null, optionss, optionss[0]);
+                                        ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                                        null, optionss, optionss[0]);
                             } else {
                                 new InstanceInstallerDialog(instance, true, false, null, null, true);
                             }

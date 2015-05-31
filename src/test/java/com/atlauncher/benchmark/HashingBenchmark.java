@@ -31,12 +31,10 @@ import java.security.MessageDigest;
 
 public class HashingBenchmark {
     public static void main(String... args) throws Exception {
-        Options opts = new OptionsBuilder()
-                               .include(HashingBenchmark.class.getSimpleName())
-                               .forks(1)
-                               //.addProfiler(StackProfiler.class)
-                               //.addProfiler(GCProfiler.class)
-                               .build();
+        Options opts = new OptionsBuilder().include(HashingBenchmark.class.getSimpleName()).forks(1)
+                //.addProfiler(StackProfiler.class)
+                //.addProfiler(GCProfiler.class)
+                .build();
         new Runner(opts).run();
     }
 
@@ -48,8 +46,7 @@ public class HashingBenchmark {
     }
 
     @Benchmark
-    public void customUncached()
-    throws Exception{
+    public void customUncached() throws Exception {
         new com.atlauncher.utils.Hashing.HashCode(FileSystemData.PROPERTIES).toString();
     }
 
@@ -60,7 +57,7 @@ public class HashingBenchmark {
 
     @Benchmark
     public void commons() throws Exception {
-        try(InputStream stream = java.nio.file.Files.newInputStream(FileSystemData.PROPERTIES)){
+        try (InputStream stream = java.nio.file.Files.newInputStream(FileSystemData.PROPERTIES)) {
             DigestUtils.md5Hex(stream);
         }
     }

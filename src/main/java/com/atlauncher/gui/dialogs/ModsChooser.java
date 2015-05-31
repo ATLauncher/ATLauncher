@@ -19,11 +19,11 @@ package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.collection.ModList;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;

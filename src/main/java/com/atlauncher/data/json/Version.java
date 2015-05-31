@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data.json;
 
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.collection.ModList;
+import com.atlauncher.managers.LogManager;
 
 import java.awt.Color;
 import java.util.ArrayList;

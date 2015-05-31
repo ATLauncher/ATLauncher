@@ -37,10 +37,8 @@ import java.net.Proxy;
 import java.util.Date;
 
 public final class Gsons {
-    public static final Gson DEFAULT = new GsonBuilder()
-            .registerTypeAdapterFactory(new EnumTypeAdapterFactory())
-            .registerTypeAdapter(Hashing.HashCode.class, new HashCodeAdapter())
-            .setPrettyPrinting().create();
+    public static final Gson DEFAULT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
+            .registerTypeAdapter(Hashing.HashCode.class, new HashCodeAdapter()).setPrettyPrinting().create();
 
     // Used for the settings, set to exclude any Server or Proxy types
     public static final Gson SETTINGS = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
@@ -55,8 +53,7 @@ public final class Gsons {
 
     public static final JsonParser PARSER = new JsonParser();
 
-    private static final class SettingsExclusionStrategy
-    implements ExclusionStrategy {
+    private static final class SettingsExclusionStrategy implements ExclusionStrategy {
         @Override
         public boolean shouldSkipField(FieldAttributes fieldAttributes) {
             return false;
@@ -64,8 +61,7 @@ public final class Gsons {
 
         @Override
         public boolean shouldSkipClass(Class<?> aClass) {
-            return aClass.getDeclaringClass() == Server.class
-                || aClass.getDeclaringClass() == Proxy.class;
+            return aClass.getDeclaringClass() == Server.class || aClass.getDeclaringClass() == Proxy.class;
         }
     }
 }

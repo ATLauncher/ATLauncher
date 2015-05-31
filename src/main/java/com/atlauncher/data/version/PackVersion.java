@@ -17,8 +17,8 @@
  */
 package com.atlauncher.data.version;
 
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftVersionManager;
 
 public class PackVersion {

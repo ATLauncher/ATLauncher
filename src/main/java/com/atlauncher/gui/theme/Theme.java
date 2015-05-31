@@ -17,8 +17,8 @@
  */
 package com.atlauncher.gui.theme;
 
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Constants;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
 

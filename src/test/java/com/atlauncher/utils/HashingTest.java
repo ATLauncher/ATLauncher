@@ -41,18 +41,16 @@ public class HashingTest {
     }
 
     @Test
-    public void testObjectHashing(){
+    public void testObjectHashing() {
         Hashing.HashCode code = Hashing.md5(Paths.get(System.getProperty("user.dir"), "Desktop"));
         Hashing.HashCode code1 = Hashing.md5(Paths.get(System.getProperty("user.dir"), "Desktop"));
 
-        System.out.println(code == code1);
-        System.out.println(code.equals(code1));
-
         Assert.assertEquals(code, code1);
+        Assert.assertTrue(code.equals(code1));
     }
 
     @Test
-    public void testComparison(){
+    public void testComparison() {
         Hashing.HashCode code = new Hashing.HashCode("0cbc6611f5540bd0809a388dc95a615b");
         Hashing.HashCode code1 = Hashing.HashCode.fromString("0cbc6611f5540bd0809a388dc95a615b");
 

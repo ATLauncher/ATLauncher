@@ -18,7 +18,6 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -27,6 +26,7 @@ import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JFrame;

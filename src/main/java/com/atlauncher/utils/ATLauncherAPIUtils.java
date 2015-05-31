@@ -17,9 +17,9 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.mojang.OperatingSystem;
+import com.atlauncher.managers.LogManager;
 
 import java.io.IOException;
 import java.util.HashMap;

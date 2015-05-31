@@ -19,11 +19,11 @@ package com.atlauncher.mclauncher;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.mojang.PropertyMapSerializer;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

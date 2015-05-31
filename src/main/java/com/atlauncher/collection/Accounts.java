@@ -17,9 +17,9 @@
  */
 package com.atlauncher.collection;
 
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.MojangAPIUtils;
 
 import java.util.LinkedList;

@@ -95,7 +95,8 @@ public class Action {
                 switch (this.type) {
                     case mods:
                         try {
-                            CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods.resolve(saveAs));
+                            CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods
+                                    .resolve(saveAs));
                         } catch (IOException e) {
                             LogManager.logStackTrace(e);
                         }
@@ -103,13 +104,15 @@ public class Action {
                     case coremods:
                         if (instanceInstaller.packVersion.getMinecraftVersion().usesCoreMods()) {
                             try {
-                                CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.coremods.resolve(saveAs));
+                                CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
+                                        .coremods.resolve(saveAs));
                             } catch (IOException e) {
                                 LogManager.logStackTrace(e);
                             }
                         } else {
                             try {
-                                CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods.resolve(saveAs));
+                                CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
+                                        .mods.resolve(saveAs));
                             } catch (IOException e) {
                                 LogManager.logStackTrace(e);
                             }
@@ -117,7 +120,8 @@ public class Action {
                         break;
                     case jar:
                         try {
-                            CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.jarmods.resolve(saveAs));
+                            CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
+                                    .jarmods.resolve(saveAs));
                         } catch (IOException e) {
                             LogManager.logStackTrace(e);
                         }

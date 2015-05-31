@@ -236,10 +236,10 @@ public final class Downloadable {
     private boolean downloadRec(int attempt) {
         if (attempt <= MAX_ATTEMPTS) {
             Hashing.HashCode fileHash = Hashing.HashCode.EMPTY;
-            if(Files.exists(this.to)){
-                if(this.md5()){
+            if (Files.exists(this.to)) {
+                if (this.md5()) {
                     fileHash = Hashing.md5(this.to);
-                } else{
+                } else {
                     fileHash = Hashing.sha1(this.to);
                 }
             }
@@ -300,7 +300,8 @@ public final class Downloadable {
                 if (this.atlauncher) {
                     if (this.getNextServer()) {
                         LogManager.warn("Error downloading " + this.to.getFileName() + " from " + this.url + ". " +
-                                "Expected hash of " + expected.toString() + " but got " + this.hash + " instead. Trying " +
+                                "Expected hash of " + expected.toString() + " but got " + this.hash + " instead. " +
+                                "Trying " +
                                 "another server!");
                         this.url = this.server.getFileURL(this.URL);
                     } else {
@@ -323,16 +324,16 @@ public final class Downloadable {
                 }
             } else if (this.copyTo != null && this.copy) {
                 Hashing.HashCode fileHash2 = Hashing.HashCode.EMPTY;
-                if(Files.exists(this.copyTo)){
-                    if(this.md5()){
+                if (Files.exists(this.copyTo)) {
+                    if (this.md5()) {
                         fileHash2 = Hashing.md5(this.to);
-                    } else{
+                    } else {
                         fileHash2 = Hashing.sha1(this.to);
                     }
                 }
 
-                if(!fileHash2.equals(expected)){
-                    if(Files.exists(this.copyTo)){
+                if (!fileHash2.equals(expected)) {
+                    if (Files.exists(this.copyTo)) {
                         FileUtils.delete(this.copyTo);
                     }
 

@@ -63,8 +63,8 @@ public final class DownloadPool extends LinkedList<Downloadable> {
 
     public int totalSize() {
         int size = 0;
-        for(Downloadable dl : this){
-            if(dl.needToDownload()){
+        for (Downloadable dl : this) {
+            if (dl.needToDownload()) {
                 size += dl.getFilesize();
             }
         }
@@ -74,8 +74,8 @@ public final class DownloadPool extends LinkedList<Downloadable> {
     public DownloadPool downsize() {
         DownloadPool pool = new DownloadPool();
 
-        for(Downloadable dl : this){
-            if(dl.needToDownload()){
+        for (Downloadable dl : this) {
+            if (dl.needToDownload()) {
                 pool.add(dl);
             }
         }
