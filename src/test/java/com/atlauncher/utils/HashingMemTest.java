@@ -1,7 +1,6 @@
-package com.atlauncher;
+package com.atlauncher.utils;
 
 import com.atlauncher.collection.Caching;
-import com.atlauncher.utils.Hashing;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,6 +15,8 @@ public final class HashingMemTest{
     @Test
     public void test()
     throws Exception{
+        System.out.println("Doing 4 iterations, creating " + Caching.MAX_SIZE + " objects");
+
         long start = this.runtime.totalMemory() - this.runtime.freeMemory();
         System.out.println("Before " + ((start / 1024) / 1024) + "MB");
         for(int i = 0; i < Caching.MAX_SIZE; i++){

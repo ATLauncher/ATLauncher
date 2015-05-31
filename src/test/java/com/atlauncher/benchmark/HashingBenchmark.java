@@ -22,8 +22,6 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
@@ -31,7 +29,6 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.io.InputStream;
 import java.security.MessageDigest;
 
-@State(Scope.Thread)
 public class HashingBenchmark {
     public static void main(String... args) throws Exception {
         Options opts = new OptionsBuilder()
@@ -42,6 +39,8 @@ public class HashingBenchmark {
                                .build();
         new Runner(opts).run();
     }
+
+    private static final char[] hex = "0123456789abcdef".toCharArray();
 
     @Benchmark
     public void custom() throws Exception {
@@ -61,7 +60,9 @@ public class HashingBenchmark {
 
     @Benchmark
     public void commons() throws Exception {
-        DigestUtils.md5Hex(java.nio.file.Files.readAllBytes(FileSystemData.PROPERTIES));
+        try(InputStream stream = java.nio.file.Files.newInputStream(FileSystemData.PROPERTIES)){
+            DigestUtils.md5Hex(stream);
+        }
     }
 
     @Benchmark
@@ -73,10 +74,13 @@ public class HashingBenchmark {
             while ((len = stream.read(buffer, 0, 1024)) != -1) {
                 digest.update(buffer, 0, len);
             }
-            StringBuilder builder = new StringBuilder();
-            for (byte b : buffer) {
-                builder.append(Integer.toString((b & 0xFF) + 0x100, 16).substring(1));
+            byte[] bits = digest.digest();
+
+            StringBuilder sb = new StringBuilder(2 * bits.length);
+            for (byte b : bits) {
+                sb.append(hex[(b >> 4) & 0xF]).append(hex[b & 0xF]);
             }
+            sb.toString();
         }
     }
 }

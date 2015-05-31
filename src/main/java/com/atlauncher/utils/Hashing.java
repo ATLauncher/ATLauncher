@@ -334,7 +334,7 @@ public final class Hashing {
         }
 
         public int asInt(){
-            if(this.bits.length >= 4){
+            if(!(this.bits.length >= 4)){
                 throw new IllegalStateException("HashCode#asInt() requires >= 4 bytes, it only has " + this.bits.length);
             }
 

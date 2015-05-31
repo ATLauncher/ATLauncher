@@ -20,6 +20,10 @@ public final class Caching{
         return new LRUCache<>(MAX_SIZE);
     }
 
+    public static <K, V> Cache<K, V> newLRU(int size){
+        return new LRUCache<>(size);
+    }
+
     private static final class LRUCache<K, V>
     extends LinkedHashMap<K, V>
     implements Cache<K, V>{
