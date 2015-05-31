@@ -21,7 +21,7 @@ package com.atlauncher.managers;
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.manager.PackChangeManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.Hashing;
@@ -50,8 +50,7 @@ public class PackManager {
             LogManager.logStackTrace(e);
         }
 
-        PackChangeManager.change();
-
+        EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(false));
         LogManager.debug("Finished loading packs");
     }
 
@@ -223,7 +222,7 @@ public class PackManager {
                     }
                     PackManager.semiPublicPackCodes.add(packCode);
                     App.settings.saveProperties();
-                    PackChangeManager.change();
+                    EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(false));
                     return true;
                 }
             }
@@ -237,7 +236,7 @@ public class PackManager {
                     (code)) {
                 PackManager.semiPublicPackCodes.remove(code);
                 App.settings.saveProperties();
-                PackChangeManager.change();
+                EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(false));
             }
         }
     }

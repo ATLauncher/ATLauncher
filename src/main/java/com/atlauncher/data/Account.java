@@ -20,10 +20,10 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
 import com.atlauncher.data.mojang.api.ProfileTexture;
-import com.atlauncher.evnt.manager.AccountChangeManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
@@ -482,7 +482,7 @@ public class Account implements Serializable {
                         } catch (IOException e) {
                             LogManager.logStackTrace(e);
                         }
-                        AccountChangeManager.change();
+                        EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
                     }
                     dialog.close();
                 }

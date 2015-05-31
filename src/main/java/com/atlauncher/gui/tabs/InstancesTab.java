@@ -17,11 +17,10 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.InstanceChangeListener;
-import com.atlauncher.evnt.manager.InstanceChangeManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.managers.InstanceManager;
@@ -46,7 +45,7 @@ import java.util.regex.Pattern;
 /**
  * TODO: Rewrite this for better loading
  */
-public class InstancesTab extends JPanel implements Tab, InstanceChangeListener {
+public class InstancesTab extends JPanel implements Tab {
     private static final long serialVersionUID = -969812552965390610L;
     private JPanel topPanel;
     private JButton clearButton;
@@ -64,9 +63,7 @@ public class InstancesTab extends JPanel implements Tab, InstanceChangeListener 
 
     public InstancesTab() {
         setLayout(new BorderLayout());
-
-        InstanceChangeManager.addListener(this);
-
+        EventHandler.EVENT_BUS.subscribe(this);
         loadContent(false);
     }
 
@@ -192,8 +189,8 @@ public class InstancesTab extends JPanel implements Tab, InstanceChangeListener 
         return Language.INSTANCE.localize("tabs.instances");
     }
 
-    @Override
-    public void onInstancesChanged() {
+    @Subscribe
+    private void onInstancesChanged(EventHandler.InstancesChangeEvent e){
         this.reload();
     }
 }

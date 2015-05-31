@@ -25,7 +25,6 @@ import com.atlauncher.managers.LogManager;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
 import java.nio.charset.StandardCharsets;
@@ -36,26 +35,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 public final class Hashing {
-    private static final char[] hex = "0123456789abcdef".toCharArray();
-    private static final SoftReference<Caching.Cache<Object, HashCode>> hashcodes = new SoftReference<>(Caching.<Object, HashCode>newLRU());
+    private static final SoftReference<Caching.Cache<String, HashCode>> hashcodes = new SoftReference<>(Caching.<String, HashCode>newLRU());
 
-    public static HashCode md5(Path file) {
-        try{
-            HashCode code = hashcodes.get().get(file);
-            if(code != null){
-                return code;
-            }
-
-            code = md5Internal(file);
-            hashcodes.get().put(file, code);
-            return code;
-        } catch(Exception e){
-            LogManager.logStackTrace("Error hashing (MD5) file " + file.getFileName(), e);
-            return md5Internal(file);
-        }
-    }
-
-    private static HashCode md5Internal(Path file){
+    public static HashCode md5(Path file){
         if (!Files.exists(file)) {
             return HashCode.EMPTY;
         }
@@ -81,26 +63,6 @@ public final class Hashing {
         }
     }
 
-    private static HashCode md5Internal(Object obj){
-        if(obj == null){
-            return HashCode.EMPTY;
-        }
-
-        try(ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(bos)){
-
-            oos.writeObject(obj);
-            oos.flush();
-
-            try(Hasher hasher = new MD5Hasher(new ByteArrayInputStream(bos.toByteArray()))){
-                return hasher.hash();
-            }
-        } catch(Exception e){
-            LogManager.logStackTrace("Error hashing (MD5) object " + obj.getClass(), e);
-            return HashCode.EMPTY;
-        }
-    }
-
     public static HashCode md5(String str) {
         try{
             HashCode code = hashcodes.get().get(str);
@@ -113,21 +75,6 @@ public final class Hashing {
         } catch(Exception e){
             LogManager.logStackTrace("Error hashing (MD5) string " + str, e);
             return md5Internal(str);
-        }
-    }
-
-    public static HashCode md5(Object obj){
-        try{
-            HashCode code = hashcodes.get().get(obj);
-            if(code != null){
-                return code;
-            }
-            code = md5Internal(obj);
-            hashcodes.get().put(obj, code);
-            return code;
-        } catch(Exception e){
-            LogManager.logStackTrace("Error hashing (MD5) obj " + obj.getClass(), e);
-            return md5Internal(obj);
         }
     }
 
@@ -203,32 +150,16 @@ public final class Hashing {
 
         @Override
         public HashCode hash() {
-            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-                byte[] buffer = new byte[8192];
-                int len;
-                while ((len = this.is.read(buffer, 0, 8192)) != -1) {
-                    bos.write(buffer, 0, len);
+            try{
+                byte[] buffer = new byte[1024];
+                for(int read = this.is.read(buffer, 0, 1024); read > -1; read = this.is.read(buffer, 0, 1024)){
+                    this.digest.update(buffer, 0, read);
                 }
 
-                return new HashCode(this.digest.digest(bos.toByteArray()));
-            } catch (Exception e) {
-                LogManager.logStackTrace("Error hashing (MD5)", e);
-                return null;
-            }
-        }
-
-        private byte[] hashInternal(){
-            try(ByteArrayOutputStream bos = new ByteArrayOutputStream()){
-                byte[] buffer = new byte[8192];
-                int len;
-                while((len = this.is.read(buffer, 0, 8192)) != -1){
-                    bos.write(buffer, 0, len);
-                }
-
-                return this.digest.digest(bos.toByteArray());
+                return new HashCode(this.digest.digest());
             } catch(Exception e){
                 LogManager.logStackTrace("Error hashing (MD5)", e);
-                return new byte[0];
+                return HashCode.EMPTY;
             }
         }
 
@@ -241,6 +172,7 @@ public final class Hashing {
     public static final class HashCode
     implements Serializable,
                Cloneable{
+        private static final char[] hex = "0123456789abcdef".toCharArray();
         private static final SoftReference<Caching.Cache<String, HashCode>> hashescache = new SoftReference<>(Caching.<String, HashCode>newLRU());
 
         public static final HashCode EMPTY = new HashCode(new byte[0]);
@@ -313,14 +245,6 @@ public final class Hashing {
 
         public HashCode(String hash){
             this(decode(hash));
-        }
-
-        public HashCode(Path file){
-            try(MD5Hasher hasher = new MD5Hasher(Files.newInputStream(file))){
-                this.bits = hasher.hashInternal();
-            } catch(Exception e){
-                throw new RuntimeException(e);
-            }
         }
 
         public HashCode intern(){

@@ -18,12 +18,11 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.ConsoleCloseManager;
-import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
@@ -80,9 +79,9 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
     public void setVisible(boolean flag) {
         super.setVisible(flag);
         if (flag) {
-            ConsoleOpenManager.post();
+            EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.ConsoleOpenEvent.class));
         } else {
-            ConsoleCloseManager.post();
+            EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.ConsoleCloseEvent.class));
         }
     }
 

@@ -23,9 +23,7 @@ import com.atlauncher.FileSystemData;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.manager.AccountChangeManager;
-import com.atlauncher.evnt.manager.InstanceChangeManager;
-import com.atlauncher.evnt.manager.PackChangeManager;
+import com.atlauncher.evnt.EventHandler;
 
 import java.io.EOFException;
 import java.io.ObjectInputStream;
@@ -111,7 +109,7 @@ public class AccountManager {
 
         Data.ACCOUNTS.remove(account);
         saveAccounts();
-        AccountChangeManager.change();
+        EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
     }
 
     /**
@@ -133,9 +131,9 @@ public class AccountManager {
             }
         }
 
-        PackChangeManager.reload();
-        InstanceChangeManager.change();
-        AccountChangeManager.change();
+        EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
+        EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
+        EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
         App.settings.saveProperties();
     }
 
@@ -156,7 +154,7 @@ public class AccountManager {
             }
 
             AccountManager.saveAccounts();
-            PackChangeManager.reload();
+            EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
         }
     }
 
@@ -177,7 +175,7 @@ public class AccountManager {
             }
 
             AccountManager.saveAccounts();
-            InstanceChangeManager.change();
+            EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
         }
     }
 }

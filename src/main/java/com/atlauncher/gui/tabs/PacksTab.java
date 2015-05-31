@@ -18,14 +18,12 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.listener.PackChangeListener;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.listener.TabChangeListener;
-import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
@@ -52,7 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public final class PacksTab extends JPanel implements Tab, RelocalizationListener, PackChangeListener {
+public final class PacksTab extends JPanel implements Tab, RelocalizationListener{
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -80,20 +78,11 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.add(this.bottomPanel, BorderLayout.SOUTH);
 
         RelocalizationManager.addListener(this);
-        PackChangeManager.addListener(this);
 
         this.setupTopPanel();
         this.preload();
 
-        TabChangeManager.addListener(new TabChangeListener() {
-            @Override
-            public void on() {
-                searchField.setText("");
-                serversBox.setSelected(false);
-                privateBox.setSelected(false);
-                searchDescBox.setSelected(false);
-            }
-        });
+        EventHandler.EVENT_BUS.subscribe(this);
 
         this.collapseAllButton.addActionListener(new ActionListener() {
             @Override
@@ -156,6 +145,14 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                 reload();
             }
         });
+    }
+
+    @Subscribe
+    private void onTabChange(EventHandler.TabChangeEvent e){
+        searchField.setText("");
+        serversBox.setSelected(false);
+        privateBox.setSelected(false);
+        searchDescBox.setSelected(false);
     }
 
     private void setupTopPanel() {
@@ -283,13 +280,12 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         searchDescBox.setText(Language.INSTANCE.localize("pack.searchdescription"));
     }
 
-    @Override
-    public void onPacksChanged() {
-        this.refresh();
-    }
-
-    @Override
-    public void onPacksNeedToBeReloaded() {
-        this.reload();
+    @Subscribe
+    private void onPacksChange(EventHandler.PacksChangeEvent e){
+        if(e.reload){
+            this.reload();
+        } else{
+            this.refresh();
+        }
     }
 }

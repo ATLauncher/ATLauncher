@@ -44,24 +44,18 @@ public class HashingBenchmark {
 
     @Benchmark
     public void custom() throws Exception {
-        com.atlauncher.utils.Hashing.md5(FileSystemData.PROPERTIES).toString();
-    }
-
-    @Benchmark
-    public void customUncached()
-    throws Exception{
-        new com.atlauncher.utils.Hashing.HashCode(FileSystemData.PROPERTIES).toString();
+        com.atlauncher.utils.Hashing.md5(FileSystemData.PROPERTIES);
     }
 
     @Benchmark
     public void guava() throws Exception {
-        Files.hash(FileSystemData.PROPERTIES.toFile(), Hashing.md5()).toString();
+        Files.hash(FileSystemData.PROPERTIES.toFile(), Hashing.md5());
     }
 
     @Benchmark
     public void commons() throws Exception {
         try(InputStream stream = java.nio.file.Files.newInputStream(FileSystemData.PROPERTIES)){
-            DigestUtils.md5Hex(stream);
+            DigestUtils.md5(stream);
         }
     }
 
@@ -74,13 +68,7 @@ public class HashingBenchmark {
             while ((len = stream.read(buffer, 0, 1024)) != -1) {
                 digest.update(buffer, 0, len);
             }
-            byte[] bits = digest.digest();
-
-            StringBuilder sb = new StringBuilder(2 * bits.length);
-            for (byte b : bits) {
-                sb.append(hex[(b >> 4) & 0xF]).append(hex[b & 0xF]);
-            }
-            sb.toString();
+            digest.digest();
         }
     }
 }

@@ -22,7 +22,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
-import com.atlauncher.evnt.manager.InstanceChangeManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.FileUtils;
 
@@ -186,7 +186,7 @@ public class InstanceManager {
     public static void setInstanceUnplayable(Instance instance) {
         instance.setUnplayable();
         InstanceManager.saveInstances();
-        InstanceChangeManager.change();
+        EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
     }
 
     /**
@@ -198,7 +198,7 @@ public class InstanceManager {
         if (Data.INSTANCES.remove(instance)) {
             FileUtils.delete(instance.getRootDirectory());
             InstanceManager.saveInstances();
-            InstanceChangeManager.change();
+            EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
         }
     }
 
@@ -288,7 +288,7 @@ public class InstanceManager {
             FileUtils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
             Data.INSTANCES.add(clonedInstance);
             InstanceManager.saveInstances();
-            InstanceChangeManager.change();
+            EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
         }
     }
 }

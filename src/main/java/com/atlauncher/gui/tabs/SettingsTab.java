@@ -19,8 +19,8 @@ package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.PackChangeManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
@@ -28,7 +28,6 @@ import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
-import com.atlauncher.managers.PackManager;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -93,7 +92,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                         RelocalizationManager.post();
                     }
                     if (reloadPacksPanel) {
-                        PackChangeManager.reload();
+                        EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
                     }
                     if (restartServerChecker) {
                         App.settings.startCheckingServers();

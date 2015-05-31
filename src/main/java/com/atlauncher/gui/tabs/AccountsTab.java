@@ -18,13 +18,13 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.LoginResponse;
-import com.atlauncher.evnt.manager.AccountChangeManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
 
@@ -335,7 +335,7 @@ public class AccountsTab extends JPanel implements Tab {
                             JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 }
                 response.save();
-                AccountChangeManager.change();
+                EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
                 accountsComboBox.removeAllItems();
                 accountsComboBox.addItem(fillerAccount);
                 for (Account accountt : AccountManager.getAccounts()) {

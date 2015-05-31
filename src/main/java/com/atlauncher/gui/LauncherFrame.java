@@ -18,13 +18,12 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.version.PackVersion;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
@@ -35,6 +34,7 @@ import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
@@ -180,7 +180,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                     updateTitle(tabName);
                 }
 
-                TabChangeManager.post();
+                EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.TabChangeEvent.class));
             }
         });
         tabbedPane.setBackground(App.THEME.getTabBackgroundColor());

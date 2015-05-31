@@ -22,19 +22,18 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Gsons;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.Update;
 import com.atlauncher.collection.DownloadPool;
 import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.data.version.LauncherVersion;
-import com.atlauncher.evnt.manager.InstanceChangeManager;
-import com.atlauncher.evnt.manager.PackChangeManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftVersionManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.nio.JsonFile;
@@ -659,7 +658,7 @@ public class OldSettings {
                 PackManager.loadPacks(); // Load the Packs available in the Launcher
                 loadUsers(); // Load the Testers and Allowed Players for the packs
                 InstanceManager.loadInstances(); // Load the users installed Instances
-                InstanceChangeManager.change();
+                EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
                 dialog.setVisible(false); // Remove the dialog
                 dialog.dispose(); // Dispose the dialog
             }
@@ -1391,8 +1390,8 @@ public class OldSettings {
         Downloadable download = new Downloadable("ping", true);
         String test = download.toString();
         if (test != null && test.equalsIgnoreCase("pong")) {
-            PackChangeManager.reload();
-            InstanceChangeManager.change();
+            EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
+            EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
         } else {
             this.offlineMode = true;
         }

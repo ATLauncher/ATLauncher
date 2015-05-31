@@ -19,16 +19,12 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
-import com.atlauncher.evnt.listener.AccountChangeListener;
-import com.atlauncher.evnt.listener.ConsoleCloseListener;
-import com.atlauncher.evnt.listener.ConsoleOpenListener;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.AccountChangeManager;
-import com.atlauncher.evnt.manager.ConsoleCloseManager;
-import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.CustomLineBorder;
@@ -59,7 +55,7 @@ import java.awt.event.ItemListener;
  */
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar implements RelocalizationListener, AccountChangeListener {
+public class LauncherBottomBar extends BottomBar implements RelocalizationListener{
     private final JButton submitError = new JButton("Submit Bug");
     private JPanel leftSide;
     private JPanel middle;
@@ -115,7 +111,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
         RelocalizationManager.addListener(this);
-        AccountChangeManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
     }
 
     /**
@@ -128,40 +124,52 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             }
         });
 
-        openFolder.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Utils.openExplorer(FileSystem.BASE_DIR);
-            }
-        });
+        openFolder.addActionListener(
+                                            new ActionListener() {
+                                                public void actionPerformed(ActionEvent e) {
+                                                    Utils.openExplorer(FileSystem.BASE_DIR);
+                                                }
+                                            }
+        );
 
-        updateData.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common" + "" +
-                        ".checkingforupdates"), 0, Language.INSTANCE.localize("common.checkingforupdates"),
-                        "Aborting" + " Update Check!");
-                dialog.addThread(new Thread() {
-                    public void run() {
-                        if (App.settings.hasUpdatedFiles()) {
-                            App.settings.reloadLauncherData();
-                        }
-                        dialog.close();
-                    }
-                });
-                dialog.start();
-            }
-        });
+        updateData.addActionListener(
+                                            new ActionListener() {
+                                                public void actionPerformed(ActionEvent e) {
+                                                    final ProgressDialog dialog = new ProgressDialog(
+                                                                                                            Language.INSTANCE.localize(
+                                                                                                                                              "common" + "" +
+                                                                                                                                                      ".checkingforupdates"
+                                                                                                            ), 0, Language.INSTANCE.localize("common.checkingforupdates"),
+                                                                                                            "Aborting" + " Update Check!"
+                                                    );
+                                                    dialog.addThread(
+                                                                            new Thread() {
+                                                                                public void run() {
+                                                                                    if (App.settings.hasUpdatedFiles()) {
+                                                                                        App.settings.reloadLauncherData();
+                                                                                    }
+                                                                                    dialog.close();
+                                                                                }
+                                                                            }
+                                                    );
+                                                    dialog.start();
+                                                }
+                                            }
+        );
 
-        username.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    if (!dontSave) {
-                        AccountManager.switchAccount((Account) username.getSelectedItem());
-                    }
-                }
-            }
-        });
+        username.addItemListener(
+                                        new ItemListener() {
+                                            public void itemStateChanged(ItemEvent e) {
+                                                if (e.getStateChange() == ItemEvent.SELECTED) {
+                                                    if (!dontSave) {
+                                                        AccountManager.switchAccount((Account) username.getSelectedItem());
+                                                    }
+                                                }
+                                            }
+                                        }
+        );
 
-        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
+/*        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
             @Override
             public void onConsoleClose() {
                 toggleConsole.setText(Language.INSTANCE.localize("console.show"));
@@ -173,7 +181,17 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             public void onConsoleOpen() {
                 toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
             }
-        });
+        });*/
+    }
+
+    @Subscribe
+    private void onConsoleOpen(EventHandler.ConsoleOpenEvent e){
+        this.toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
+    }
+
+    @Subscribe
+    private void onConsoleClosed(EventHandler.ConsoleCloseEvent e){
+        this.toggleConsole.setText(Language.INSTANCE.localize("console.show"));
     }
 
     /**
@@ -254,8 +272,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         this.openFolder.setText(Language.INSTANCE.localize("common.openfolder"));
     }
 
-    @Override
-    public void onAccountsChanged() {
+    @Subscribe
+    private void onAccountsChanged(EventHandler.AccountsChangeEvent e) {
         dontSave = true;
         username.removeAllItems();
         username.addItem(fillerAccount);
