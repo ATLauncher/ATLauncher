@@ -44,7 +44,6 @@ public class CompressionUtilsTest {
         testStorage = temporaryFolder.newFolder("ATLauncherTests").toPath();
     }
 
-
     @Test
     public void testZip() {
         Path testFolder = this.testStorage.resolve("TestZip");

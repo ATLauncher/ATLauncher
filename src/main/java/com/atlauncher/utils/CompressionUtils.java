@@ -17,7 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.walker.UnzipVisitor;
 import com.atlauncher.utils.walker.ZipVisitor;
 
@@ -37,7 +36,6 @@ public final class CompressionUtils {
         }
 
         if (Files.notExists(dest)) {
-            LogManager.warn(dest.toString() + " doesn't exist, Creating");
             FileUtils.createDirectory(dest);
         }
 

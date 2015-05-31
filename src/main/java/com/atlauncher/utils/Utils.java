@@ -38,6 +38,7 @@ import javax.swing.ImageIcon;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
@@ -1619,6 +1620,10 @@ public class Utils {
             }
             throw new IOException("Error, could not add URL to system classloader");
         }
+    }
+
+    public static boolean isHeadless() {
+        return GraphicsEnvironment.isHeadless();
     }
 
 }
