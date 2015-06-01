@@ -29,9 +29,7 @@ public final class InjectorTest {
     private static final class BasicModule extends Module {
         @Override
         protected void configure() {
-<<<<<<< HEAD
             this.bind(EventHandler.AccountsChangeEvent.class).asSingleton();
-=======
             this.bind(Injection.class).toInstance(new InjectionImpl());
         }
     }
@@ -44,7 +42,6 @@ public final class InjectorTest {
         @Override
         public String get() {
             return "Hello World";
->>>>>>> d5668d728bd2e4f78372fd7fe85658eaef9efcde
         }
     }
 }
