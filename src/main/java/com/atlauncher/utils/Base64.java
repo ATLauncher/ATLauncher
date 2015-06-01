@@ -505,7 +505,7 @@ public class Base64 {
      * @param srcOffset   the index where conversion begins
      * @param numSigBytes the number of significant bytes in your array
      * @param destination the array to hold the conversion
-     * @param destOffset  the index where output will be put
+     * @param destOffset  the index where output will be publish
      * @return the <var>destination</var> array
      * @since 1.3
      */
@@ -979,7 +979,7 @@ public class Base64 {
      * @param source      the array to convert
      * @param srcOffset   the index where conversion begins
      * @param destination the array to hold the conversion
-     * @param destOffset  the index where output will be put
+     * @param destOffset  the index where output will be publish
      * @param options     alphabet type is pulled from this (standard, url-safe, ordered)
      * @return the number of decoded bytes converted
      * @throws NullPointerException     if source or destination arrays are null
