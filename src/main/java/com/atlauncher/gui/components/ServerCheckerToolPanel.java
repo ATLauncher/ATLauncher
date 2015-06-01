@@ -18,9 +18,9 @@
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -31,7 +31,7 @@ import javax.swing.border.BevelBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
+public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener{
     /**
      * Auto generated serial.
      */
@@ -49,7 +49,7 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
         setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        SettingsManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
         this.checkLaunchButtonEnabled();
     }
 
@@ -64,8 +64,8 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
         }
     }
 
-    @Override
-    public void onSettingsSaved() {
+    @Subscribe
+    public void onSettingsSaved(EventHandler.SettingsChangeEvent e) {
         this.checkLaunchButtonEnabled();
     }
 }

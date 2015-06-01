@@ -21,11 +21,11 @@ package com.atlauncher.gui.card;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.BackupDialog;
@@ -81,7 +81,7 @@ import java.util.Date;
  *
  * @author Ryan
  */
-public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
+public class InstanceCard extends CollapsiblePanel{
     private final JSplitPane splitter = new JSplitPane();
     private final Instance instance;
     private final JPanel rightPanel = new JPanel();
@@ -131,14 +131,18 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         this.rightPanel.setLayout(new BorderLayout());
         this.rightPanel.setPreferredSize(new Dimension(this.rightPanel.getPreferredSize().width, 180));
-        this.rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
-                .HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.rightPanel.add(
+                                   new JScrollPane(
+                                                          this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
+                                                                                                                           .HORIZONTAL_SCROLLBAR_NEVER
+                                   ), BorderLayout.CENTER
+        );
         this.rightPanel.add(as, BorderLayout.SOUTH);
 
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(this.splitter, BorderLayout.CENTER);
 
-        RelocalizationManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
 
         if (!instance.hasUpdate()) {
             this.updateButton.setVisible(false);
@@ -577,8 +581,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         });
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         this.playButton.setText(Language.INSTANCE.localize("common.play"));
         this.reinstallButton.setText(Language.INSTANCE.localize("common.reinstall"));
         this.updateButton.setText(Language.INSTANCE.localize("common.update"));

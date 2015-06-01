@@ -18,10 +18,10 @@
 package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -47,7 +47,7 @@ import java.awt.event.ActionListener;
  *
  * @author Ryan
  */
-public class PackCard extends CollapsiblePanel implements RelocalizationListener {
+public class PackCard extends CollapsiblePanel{
     private static final long serialVersionUID = -2617283435728223314L;
     private final JTextArea descArea = new JTextArea();
     private final JButton newInstanceButton = new JButton(Language.INSTANCE.localize("common.newinstance"));
@@ -62,7 +62,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
     public PackCard(final Pack pack) {
         super(pack);
-        RelocalizationManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
         this.pack = pack;
 
         this.splitter.setLeftComponent(new PackImagePanel(pack));
@@ -183,8 +183,8 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         });
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         this.newInstanceButton.setText(Language.INSTANCE.localize("common.newinstance"));
         this.createServerButton.setText(Language.INSTANCE.localize("common.createserver"));
         this.supportButton.setText(Language.INSTANCE.localize("common.support"));

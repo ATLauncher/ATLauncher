@@ -1,6 +1,6 @@
 package com.atlauncher.utils;
 
-import com.atlauncher.evnt.listener.ProgressListener;
+import com.atlauncher.listener.ProgressListener;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.ResponseBody;
 import okio.Buffer;
@@ -12,7 +12,6 @@ import okio.Source;
 import java.io.IOException;
 
 public class ProgressResponseBody extends ResponseBody {
-
     private final ResponseBody responseBody;
     private final ProgressListener progressListener;
     private BufferedSource bufferedSource;
@@ -42,7 +41,6 @@ public class ProgressResponseBody extends ResponseBody {
 
     private Source source(Source source) {
         return new ForwardingSource(source) {
-
             @Override
             public long read(Buffer sink, long byteCount) throws IOException {
                 long bytesRead = super.read(sink, byteCount);

@@ -15,9 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package com.atlauncher.listener;
 
-package com.atlauncher.evnt.listener;
-
-public interface ReskinListener {
-    public void onReskin();
+public interface ProgressListener {
+    void update(long bytesRead, long contentLength, boolean done);
 }

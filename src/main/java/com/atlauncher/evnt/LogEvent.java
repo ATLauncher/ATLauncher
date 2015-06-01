@@ -31,6 +31,7 @@ import java.io.IOException;
 public final class LogEvent {
     public static final int CONSOLE = 0xA;
     public static final int FILE = 0xB;
+
     public final LogType type;
     public final String body;
     public final int meta;

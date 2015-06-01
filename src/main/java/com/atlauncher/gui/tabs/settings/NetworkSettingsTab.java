@@ -18,10 +18,10 @@
 package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
@@ -38,7 +38,7 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 
 @SuppressWarnings("serial")
-public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
+public class NetworkSettingsTab extends AbstractSettingsTab{
     private JLabelWithHover downloadServerLabel;
     private JComboBox<Server> server;
 
@@ -58,7 +58,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JComboBox<String> proxyType;
 
     public NetworkSettingsTab() {
-        RelocalizationManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
         // Download Server
         gbc.gridx = 0;
         gbc.gridy++;
@@ -280,8 +280,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         return Language.INSTANCE.localize("settings.networktab");
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         this.downloadServerLabel.setText(Language.INSTANCE.localize("settings.downloadserver") + ":");
         this.downloadServerLabel.setToolTipText(Language.INSTANCE.localize("settings.downloadserverhelp"));
 

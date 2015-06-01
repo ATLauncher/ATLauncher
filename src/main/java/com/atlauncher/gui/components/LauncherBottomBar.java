@@ -24,8 +24,6 @@ import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
 import com.atlauncher.evnt.EventHandler;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
@@ -55,7 +53,7 @@ import java.awt.event.ItemListener;
  */
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar implements RelocalizationListener{
+public class LauncherBottomBar extends BottomBar{
     private final JButton submitError = new JButton("Submit Bug");
     private JPanel leftSide;
     private JPanel middle;
@@ -110,7 +108,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
-        RelocalizationManager.addListener(this);
         EventHandler.EVENT_BUS.subscribe(this);
     }
 
@@ -261,8 +258,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         if (App.settings.getConsole().isVisible()) {
             toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
         } else {

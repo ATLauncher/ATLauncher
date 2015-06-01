@@ -18,12 +18,11 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.evnt.EventHandler;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
@@ -50,7 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public final class LauncherFrame extends JFrame implements RelocalizationListener {
+public final class LauncherFrame extends JFrame{
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;
@@ -84,6 +83,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         LogManager.info("Setting up Tabs");
         setupTabs(); // Setup the JTabbedPane
         LogManager.info("Finished Setting up Tabs");
+        EventHandler.EVENT_BUS.subscribe(this);
 
         this.add(tabbedPane, BorderLayout.CENTER);
         this.add(bottomBar, BorderLayout.SOUTH);
@@ -92,9 +92,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             LogManager.info("Showing Launcher");
             setVisible(true);
         }
-
-        RelocalizationManager.addListener(this);
-
         App.TASKPOOL.execute(new Runnable() {
             public void run() {
                 App.settings.checkMojangStatus(); // Check Minecraft status
@@ -194,8 +191,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         bottomBar = new LauncherBottomBar();
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

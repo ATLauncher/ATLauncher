@@ -17,7 +17,7 @@
  */
 package com.atlauncher;
 
-import com.atlauncher.evnt.listener.ProgressListener;
+import com.atlauncher.listener.ProgressListener;
 import com.atlauncher.utils.ProgressResponseBody;
 import com.atlauncher.workers.InstanceInstaller;
 import com.squareup.okhttp.Interceptor;

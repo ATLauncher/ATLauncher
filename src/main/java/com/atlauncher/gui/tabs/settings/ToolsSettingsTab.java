@@ -18,9 +18,9 @@
 package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
@@ -32,7 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class ToolsSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
+public class ToolsSettingsTab extends AbstractSettingsTab{
     private JLabelWithHover enableServerCheckerLabel;
     private JCheckBox enableServerChecker;
 
@@ -40,7 +40,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
     private JTextField serverCheckerWait;
 
     public ToolsSettingsTab() {
-        RelocalizationManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
         // Enable Server Checker
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -118,8 +118,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         return Language.INSTANCE.localize("tabs.tools");
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         this.enableServerCheckerLabel.setText(Language.INSTANCE.localize("settings.serverchecker") + "?");
         this.enableServerCheckerLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
                 ".servercheckerhelp", "<br/>" + "</html>"));

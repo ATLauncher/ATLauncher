@@ -18,12 +18,10 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
-import com.atlauncher.evnt.EventHandler;
-import com.atlauncher.managers.LogManager;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.managers.LogManager;
@@ -43,8 +41,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener {
-
+public class LauncherConsole extends JFrame{
     private static final long serialVersionUID = -3538990021922025818L;
     public Console console;
     private JScrollPane scrollPane;
@@ -73,7 +70,8 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
                 .HORIZONTAL_SCROLLBAR_NEVER);
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
-        RelocalizationManager.addListener(this);
+
+        EventHandler.EVENT_BUS.subscribe(this);
     }
 
     @Override
@@ -138,8 +136,8 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         console.setText(null);
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         copy.setText(Language.INSTANCE.localize("common.copy"));
         bottomBar.setupLanguage();
     }

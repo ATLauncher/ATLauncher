@@ -19,12 +19,12 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
-import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
+public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener{
     /**
      * Auto generated serial.
      */
@@ -59,8 +59,9 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
         setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        SettingsManager.addListener(this);
         this.checkLaunchButtonEnabled();
+
+        EventHandler.EVENT_BUS.subscribe(this);
     }
 
     private void checkLaunchButtonEnabled() {
@@ -188,8 +189,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
         }
     }
 
-    @Override
-    public void onSettingsSaved() {
+    @Subscribe
+    public void onSettingsSaved(EventHandler.SettingsChangeEvent e) {
         this.checkLaunchButtonEnabled();
     }
 }

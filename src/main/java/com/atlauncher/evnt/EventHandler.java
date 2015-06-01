@@ -37,6 +37,7 @@ public final class EventHandler{
     // Changes
     public static final class AccountsChangeEvent implements Event{}
     public static final class InstancesChangeEvent implements Event{}
+    public static final class SettingsChangeEvent implements Event{}
 
     public static final class PacksChangeEvent implements Event{
         public final boolean reload;
@@ -50,10 +51,7 @@ public final class EventHandler{
     public static final class ConsoleCloseEvent implements Event{}
     public static final class ConsoleOpenEvent implements Event{}
 
-    // Minecraft
-    public static final class MinecraftLaunchEvent implements Event{}
-    public static final class MinecraftLandEvent implements Event{}
-
     // Misc
     public static final class TabChangeEvent implements Event{}
+    public static final class RelocalizationEvent implements Event{}
 }

@@ -18,11 +18,9 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
@@ -39,7 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
+public class SettingsTab extends JPanel implements Tab{
 
     private final GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
     private final JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
@@ -53,8 +51,8 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private JButton saveButton = new JButton(Language.INSTANCE.localize("common.save"));
 
     public SettingsTab() {
-        RelocalizationManager.addListener(this);
         setLayout(new BorderLayout());
+        EventHandler.EVENT_BUS.subscribe(this);
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         tabbedPane.setBackground(App.THEME.getBaseColor());
@@ -87,9 +85,9 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     loggingSettingsTab.save();
                     toolsSettingsTab.save();
                     App.settings.saveProperties();
-                    SettingsManager.post();
+                    EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.SettingsChangeEvent.class));
                     if (reloadLocalizationTable) {
-                        RelocalizationManager.post();
+                        EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.RelocalizationEvent.class));
                     }
                     if (reloadPacksPanel) {
                         EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
@@ -111,8 +109,8 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         return Language.INSTANCE.localize("tabs.settings");
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

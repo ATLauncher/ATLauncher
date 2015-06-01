@@ -22,8 +22,6 @@ import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.EventHandler;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
@@ -50,7 +48,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public final class PacksTab extends JPanel implements Tab, RelocalizationListener{
+public final class PacksTab extends JPanel implements Tab{
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -76,8 +74,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.add(scrollPane, BorderLayout.CENTER);
         this.add(this.topPanel, BorderLayout.NORTH);
         this.add(this.bottomPanel, BorderLayout.SOUTH);
-
-        RelocalizationManager.addListener(this);
 
         this.setupTopPanel();
         this.preload();
@@ -269,8 +265,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         return Language.INSTANCE.localize("tabs.packs");
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         addButton.setText(Language.INSTANCE.localize("pack.addpack"));
         clearButton.setText(Language.INSTANCE.localize("common.clear"));
         expandAllButton.setText(Language.INSTANCE.localize("pack.expandall"));
