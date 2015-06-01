@@ -210,7 +210,6 @@ public final class Hashing {
     public static final class HashCode
     implements Serializable,
                Cloneable{
-        private static final char[] hex = "0123456789abcdef".toCharArray();
         private static final SoftReference<Caching.Cache<String, HashCode>> hashescache = new SoftReference<>(Caching.<String, HashCode>newLRU());
 
         public static final HashCode EMPTY = new HashCode(new byte[0]);

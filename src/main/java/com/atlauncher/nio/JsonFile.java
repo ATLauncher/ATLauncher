@@ -46,8 +46,13 @@ public final class JsonFile {
 
     private final Path p;
 
-    public JsonFile(Path p) throws FileNotFoundException {
-        if (!Files.exists(p)) {
+    public JsonFile(Path p)
+    throws FileNotFoundException{
+        this(p, false);
+    }
+
+    public JsonFile(Path p, boolean write) throws FileNotFoundException {
+        if (!Files.exists(p) && !write) {
             throw new FileNotFoundException("File " + p + " wasn't found");
         }
 

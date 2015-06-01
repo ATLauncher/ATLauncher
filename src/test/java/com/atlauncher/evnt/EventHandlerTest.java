@@ -1,7 +1,7 @@
 package com.atlauncher.evnt;
 
-import com.atlauncher.annot.Subscribe;
 import com.atlauncher.MemorySpy;
+import com.atlauncher.annot.Subscribe;
 import org.junit.Test;
 
 public class EventHandlerTest {

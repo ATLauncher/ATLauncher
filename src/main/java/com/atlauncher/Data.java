@@ -23,7 +23,6 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.data.News;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.Settings;
 import com.atlauncher.data.version.MinecraftVersion;
 
 import java.util.HashMap;

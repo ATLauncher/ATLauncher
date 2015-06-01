@@ -17,7 +17,6 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
 import com.atlauncher.managers.AccountManager;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 

@@ -18,7 +18,6 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.OrderedRunner;
-import com.atlauncher.anno.ExecutionOrder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;

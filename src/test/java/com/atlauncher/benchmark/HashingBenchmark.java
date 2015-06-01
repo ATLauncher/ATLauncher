@@ -42,16 +42,7 @@ public class HashingBenchmark {
 
     @Benchmark
     public void custom() throws Exception {
-<<<<<<< HEAD:src/test/java/com/atlauncher/benchmark/HashingBenchmark.java
-        com.atlauncher.utils.Hashing.md5(FileSystemData.PROPERTIES);
-=======
         com.atlauncher.utils.Hashing.md5(FileSystemData.PROPERTIES).toString();
-    }
-
-    @Benchmark
-    public void customUncached() throws Exception {
-        new com.atlauncher.utils.Hashing.HashCode(FileSystemData.PROPERTIES).toString();
->>>>>>> 800dbd06fa76023e8065a2a667315525e85bbdac:src/benchmark/HashingBenchmark.java
     }
 
     @Benchmark
@@ -61,13 +52,8 @@ public class HashingBenchmark {
 
     @Benchmark
     public void commons() throws Exception {
-<<<<<<< HEAD:src/test/java/com/atlauncher/benchmark/HashingBenchmark.java
-        try(InputStream stream = java.nio.file.Files.newInputStream(FileSystemData.PROPERTIES)){
-            DigestUtils.md5(stream);
-=======
         try (InputStream stream = java.nio.file.Files.newInputStream(FileSystemData.PROPERTIES)) {
             DigestUtils.md5Hex(stream);
->>>>>>> 800dbd06fa76023e8065a2a667315525e85bbdac:src/benchmark/HashingBenchmark.java
         }
     }
 

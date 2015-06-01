@@ -25,6 +25,14 @@ import com.atlauncher.nio.JsonFile;
 public class SettingsManager {
     private static Settings settings;
 
+    static{
+        try{
+            Runtime.getRuntime().addShutdownHook(new SettingsSaver());
+        } catch(Exception e){
+            e.printStackTrace(System.err);
+        }
+    }
+
     public static void loadSettings() {
         try {
             SettingsManager.settings = new JsonFile(FileSystemData.SETTINGS).convert(Gsons.SETTINGS, Settings.class);
@@ -40,9 +48,17 @@ public class SettingsManager {
 
     public static void saveSettings() {
         try {
-            new JsonFile(FileSystemData.SETTINGS).write(SettingsManager.settings);
+            new JsonFile(FileSystemData.SETTINGS, true).write(SettingsManager.settings);
         } catch (Exception e) {
             LogManager.logStackTrace("Error saving settings file!", e);
+        }
+    }
+
+    private static final class SettingsSaver
+    extends Thread{
+        @Override
+        public void run(){
+            saveSettings();
         }
     }
 }
