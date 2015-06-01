@@ -20,6 +20,8 @@ package com.atlauncher.injector;
 import com.atlauncher.evnt.EventHandler;
 import org.junit.Test;
 
+import javax.inject.Singleton;
+
 public final class InjectorTest {
     @Test
     public void testGetInstance() throws Exception {
@@ -38,6 +40,7 @@ public final class InjectorTest {
         public String get();
     }
 
+    @Singleton
     private static final class InjectionImpl implements Injection {
         @Override
         public String get() {

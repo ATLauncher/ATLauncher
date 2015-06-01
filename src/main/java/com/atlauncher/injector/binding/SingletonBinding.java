@@ -37,12 +37,8 @@ public final class SingletonBinding<T> implements Binding<T> {
     @Override
     @SuppressWarnings("unchecked")
     public T get() {
-        if (instance == UNINITIALIZED) {
-            synchronized (this) {
-                if (instance == UNINITIALIZED) {
-                    instance = this.delegate.get();
-                }
-            }
+        if (this.instance == UNINITIALIZED) {
+            this.instance = this.delegate.get();
         }
 
         return (T) this.instance;
