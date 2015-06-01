@@ -21,11 +21,14 @@ import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.OldSettings;
 import com.atlauncher.data.Pack;
+import com.atlauncher.evnt.EventModule;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.injector.Injector;
+import com.atlauncher.injector.InjectorFactory;
 import com.atlauncher.managers.BenchmarkManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
@@ -34,6 +37,8 @@ import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
@@ -72,6 +77,8 @@ public class App {
      * The taskpool used to quickly add in tasks to do in the background.
      */
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
+
+    public static final Injector INJECTOR = InjectorFactory.createInjector(new EventModule());
 
     /**
      * The instance of toaster to show popups in the bottom right.
@@ -165,60 +172,57 @@ public class App {
         // Prefer to use IPv4
         System.setProperty("java.net.preferIPv4Stack", "true");
 
-        if (args != null) {
-            for (String arg : args) {
-                String[] parts = arg.split("=");
-                if (parts[0].equalsIgnoreCase("--launch")) {
-                    autoLaunch = parts[1];
-                } else if (parts[0].equalsIgnoreCase("--updated")) {
-                    wasUpdated = true;
-                } else if (parts[0].equalsIgnoreCase("--debug")) {
-                    LogManager.showDebug = true;
-                    LogManager.debugLevel = 1;
-                    LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
-                            + "user data!");
-                } else if (parts[0].equalsIgnoreCase("--debug-level") && parts.length == 2) {
-                    int debugLevel;
+        OptionParser parser = new OptionParser();
+        parser.accepts("launch").withRequiredArg().ofType(String.class);
+        parser.accepts("updated").withRequiredArg().ofType(Boolean.class);
+        parser.accepts("debug").withRequiredArg().ofType(Boolean.class);
+        parser.accepts("debug-level").withRequiredArg().ofType(Integer.class);
+        parser.accepts("use-gzip").withRequiredArg().ofType(Boolean.class);
+        parser.accepts("skip-tray-integration").withRequiredArg().ofType(Boolean.class);
+        parser.accepts("force-offline-mode").withRequiredArg().ofType(Boolean.class);
 
-                    try {
-                        debugLevel = Integer.parseInt(parts[1]);
-                    } catch (NumberFormatException e) {
-                        LogManager.error("Error converting given debug level string to an integer. The specified " +
-                                "debug level given was '" + parts[1] + "'");
-                        continue;
-                    }
+        OptionSet options = parser.parse(args);
+        autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
+        wasUpdated = options.has("updated") ? (Boolean) options.valueOf("updated") : false;
 
-                    if (debugLevel < 1 || debugLevel > 3) {
-                        LogManager.error("Invalid debug level of '" + parts[1] + "' given!");
-                        continue;
-                    }
+        if(options.has("debug")){
+            LogManager.showDebug = (Boolean) options.valueOf("debug");
+            LogManager.debugLevel = 1;
+            LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
+                                     + "user data!");
+        }
 
-                    LogManager.debugLevel = debugLevel;
-                    LogManager.debug("Debug level has been set to " + debugLevel + "!");
-                } else if (parts[0].equalsIgnoreCase("--usegzip") && parts[1].equalsIgnoreCase("false")) {
-                    useGzipForDownloads = false;
-                    LogManager.debug("GZip has been turned off for downloads! Don't ask for support with this " +
-                            "disabled!", true);
-                } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
-                    skipTrayIntegration = true;
-                    LogManager.debug("Skipping tray integration!", true);
-                } else if (parts[0].equalsIgnoreCase("--force-offline-mode")) {
-                    forceOfflineMode = true;
-                    LogManager.debug("Forcing offline mode!", true);
-                }
-            }
+        if(options.has("debug-level")){
+            LogManager.debugLevel = (Integer) options.valueOf("debug-level");
+            LogManager.debug("Debug level has been set to " + options.valueOf("debug-level")+ "!");
+        }
+
+        useGzipForDownloads = options.has("use-gzip") ? (Boolean) options.valueOf("use-gzip") : true;
+        if(!useGzipForDownloads){
+            LogManager.debug("GZip has been turned off for downloads! Don't ask for support with this " +
+                                     "disabled!", true);
+        }
+
+        skipTrayIntegration = options.has("skip-tray-integration") ? (Boolean) options.valueOf("skip-tray-integration") : false;
+        if(skipTrayIntegration){
+            LogManager.debug("Skipping tray integration!", true);
+        }
+
+        forceOfflineMode = options.has("force-offline-mode") ? (Boolean) options.valueOf("force-offline-mode") : false;
+        if(forceOfflineMode){
+            LogManager.debug("Forcing offline mode!", true);
         }
 
         File config = FileSystem.CONFIGS.toFile();
         if (!config.exists()) {
             int files = config.getParentFile().list().length;
             if (files > 1) {
-                String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
+                String[] opt = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("I've detected that you may " +
                         "not have installed this in the right location.<br/><br/>The exe or JAR file should " +
                         "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure " +
                         "that's what you've done?"), "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane
-                        .ERROR_MESSAGE, null, options, options[0]);
+                        .ERROR_MESSAGE, null, opt, opt[0]);
                 if (ret != 0) {
                     System.exit(0);
                 }
@@ -232,13 +236,13 @@ public class App {
         settings = new OldSettings();
 
         if (settings.isUsingMacApp() && !settings.isUsingNewMacApp()) {
-            String[] options = {"Download"};
+            String[] opt = {"Download"};
 
             JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("You're using an old version of the" +
                     " ATLauncher Mac OSX app.<br/><br/>Please download the new Mac OSX app from below to " +
                     "keep playing!<br/><br/>Your instances and data will be transferred once the new app " +
                     "is launcher.<br/><br/>Sorry for any inconvenience caused!"), "Error", JOptionPane
-                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, opt, opt[0]);
 
             Utils.openBrowser("https://atl.pw/oldosxapp");
             System.exit(0);

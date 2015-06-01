@@ -1,35 +1,12 @@
 package com.atlauncher.evnt;
 
-import com.atlauncher.collection.Caching;
-import com.atlauncher.managers.LogManager;
-
-import java.lang.reflect.Constructor;
+import com.atlauncher.App;
 
 public final class EventHandler{
-    private static final Caching.Cache<Class<?>, Event> eventCache = Caching.newLRU();
-
     public static final EventBus EVENT_BUS = new EventBus();
 
     public static <T extends Event> Event get(Class<T> tClass){
-        Event e = eventCache.get(tClass);
-        if(e != null){
-            return e;
-        }
-
-        e = createEvent(tClass);
-        eventCache.put(tClass, e);
-        return e;
-    }
-
-    public static <T extends Event> Event createEvent(Class<T> tClass, Object... args){
-        try{
-            Constructor<T> tConstructor = tClass.getDeclaredConstructor();
-            tConstructor.setAccessible(true);
-            return tConstructor.newInstance(args);
-        } catch(Exception e){
-            LogManager.logStackTrace(e);
-            return null;
-        }
+        return App.INJECTOR.getInstance(tClass);
     }
 
     private interface Event{}

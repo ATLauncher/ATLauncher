@@ -23,7 +23,7 @@ import com.atlauncher.data.Settings;
 import com.atlauncher.nio.JsonFile;
 
 public class SettingsManager {
-    private static Settings settings;
+    private static volatile Settings settings;
 
     static{
         try{
@@ -36,10 +36,18 @@ public class SettingsManager {
     public static void loadSettings() {
         try {
             SettingsManager.settings = new JsonFile(FileSystemData.SETTINGS).convert(Gsons.SETTINGS, Settings.class);
+            if(SettingsManager.settings == null){
+                SettingsManager.settings = new Settings();
+                SettingsManager.settings.loadDefaults();
+            }
         } catch (Exception e) {
             SettingsManager.settings = new Settings();
             SettingsManager.settings.loadDefaults();
             LogManager.logStackTrace("Error loading settings file!", e);
+        }
+
+        if(SettingsManager.settings == null){
+            throw new NullPointerException("Settings");
         }
 
         // Validates all the settings to make sure they're valid and deals with converting (such as strings to value)

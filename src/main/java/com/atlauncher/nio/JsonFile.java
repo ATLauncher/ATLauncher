@@ -60,7 +60,7 @@ public final class JsonFile {
     }
 
     public void write(Object obj) throws Exception {
-        try (OutputStream os = Files.newOutputStream(this.p, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)) {
+        try (OutputStream os = Files.newOutputStream(this.p, StandardOpenOption.WRITE)) {
             Gsons.DEFAULT.toJson(obj, new OutputStreamWriter(os));
         }
     }
@@ -76,6 +76,9 @@ public final class JsonFile {
     public <T> T convert(Gson gson, Class<T> tClass) throws Exception {
         try (InputStream stream = Files.newInputStream(this.p)) {
             return gson.fromJson(new InputStreamReader(stream), tClass);
+        } catch(Exception e){
+            e.printStackTrace(System.err);
+            return null;
         }
     }
 
