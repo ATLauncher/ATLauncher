@@ -49,7 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public final class LauncherFrame extends JFrame{
+public final class LauncherFrame extends JFrame {
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;

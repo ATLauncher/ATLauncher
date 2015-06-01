@@ -89,10 +89,10 @@ public final class LogManager {
         }
     }
 
-    public static void logStackTrace(Throwable t){
+    public static void logStackTrace(Throwable t) {
         t.printStackTrace(System.err);
         LogManager.error(t.getMessage());
-        for(StackTraceElement e : t.getStackTrace()){
+        for (StackTraceElement e : t.getStackTrace()) {
             LogManager.error(e.toString());
         }
     }

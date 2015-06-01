@@ -188,14 +188,14 @@ public final class Hashing {
 
         @Override
         public HashCode hash() {
-            try{
+            try {
                 byte[] buffer = new byte[1024];
-                for(int read = this.is.read(buffer, 0, 1024); read > -1; read = this.is.read(buffer, 0, 1024)){
+                for (int read = this.is.read(buffer, 0, 1024); read > -1; read = this.is.read(buffer, 0, 1024)) {
                     this.digest.update(buffer, 0, read);
                 }
 
                 return new HashCode(this.digest.digest());
-            } catch(Exception e){
+            } catch (Exception e) {
                 LogManager.logStackTrace("Error hashing (MD5)", e);
                 return HashCode.EMPTY;
             }
@@ -207,10 +207,9 @@ public final class Hashing {
         }
     }
 
-    public static final class HashCode
-    implements Serializable,
-               Cloneable{
-        private static final SoftReference<Caching.Cache<String, HashCode>> hashescache = new SoftReference<>(Caching.<String, HashCode>newLRU());
+    public static final class HashCode implements Serializable, Cloneable {
+        private static final SoftReference<Caching.Cache<String, HashCode>> hashescache = new SoftReference<>(Caching
+                .<String, HashCode>newLRU());
 
         public static final HashCode EMPTY = new HashCode(new byte[0]);
 
@@ -284,9 +283,9 @@ public final class Hashing {
             this(decode(hash));
         }
 
-        public HashCode intern(){
-            for(Map.Entry<String, HashCode> code : hashescache.get()){
-                if(code.getValue().equals(this)){
+        public HashCode intern() {
+            for (Map.Entry<String, HashCode> code : hashescache.get()) {
+                if (code.getValue().equals(this)) {
                     return code.getValue();
                 }
             }

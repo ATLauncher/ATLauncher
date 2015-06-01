@@ -37,7 +37,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ConsoleBottomBar extends BottomBar{
+public class ConsoleBottomBar extends BottomBar {
 
     private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 10));
 

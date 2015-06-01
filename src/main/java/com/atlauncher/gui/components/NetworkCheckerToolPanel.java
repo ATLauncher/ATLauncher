@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener{
+public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener {
     /**
      * Auto generated serial.
      */

@@ -34,7 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class LoggingSettingsTab extends AbstractSettingsTab{
+public class LoggingSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover forgeLoggingLevelLabel;
     private JComboBox<String> forgeLoggingLevel;
 

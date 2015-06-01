@@ -47,7 +47,7 @@ import java.awt.event.ActionListener;
  *
  * @author Ryan
  */
-public class PackCard extends CollapsiblePanel{
+public class PackCard extends CollapsiblePanel {
     private static final long serialVersionUID = -2617283435728223314L;
     private final JTextArea descArea = new JTextArea();
     private final JButton newInstanceButton = new JButton(Language.INSTANCE.localize("common.newinstance"));

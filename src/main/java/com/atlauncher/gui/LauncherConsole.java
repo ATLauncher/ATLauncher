@@ -41,7 +41,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LauncherConsole extends JFrame{
+public class LauncherConsole extends JFrame {
     private static final long serialVersionUID = -3538990021922025818L;
     public Console console;
     private JScrollPane scrollPane;

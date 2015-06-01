@@ -48,7 +48,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public final class PacksTab extends JPanel implements Tab{
+public final class PacksTab extends JPanel implements Tab {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -144,7 +144,7 @@ public final class PacksTab extends JPanel implements Tab{
     }
 
     @Subscribe
-    private void onTabChange(EventHandler.TabChangeEvent e){
+    private void onTabChange(EventHandler.TabChangeEvent e) {
         searchField.setText("");
         serversBox.setSelected(false);
         privateBox.setSelected(false);
@@ -277,10 +277,10 @@ public final class PacksTab extends JPanel implements Tab{
     }
 
     @Subscribe
-    private void onPacksChange(EventHandler.PacksChangeEvent e){
-        if(e.reload){
+    private void onPacksChange(EventHandler.PacksChangeEvent e) {
+        if (e.reload) {
             this.reload();
-        } else{
+        } else {
             this.refresh();
         }
     }

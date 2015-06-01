@@ -32,7 +32,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 
 @SuppressWarnings("serial")
-public class GeneralSettingsTab extends AbstractSettingsTab{
+public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover languageLabel;
     private JComboBox<String> language;
     private JLabelWithHover themeLabel;

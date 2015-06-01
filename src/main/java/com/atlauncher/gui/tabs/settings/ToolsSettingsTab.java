@@ -32,7 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class ToolsSettingsTab extends AbstractSettingsTab{
+public class ToolsSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover enableServerCheckerLabel;
     private JCheckBox enableServerChecker;
 

@@ -31,7 +31,7 @@ import javax.swing.border.BevelBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener{
+public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener {
     /**
      * Auto generated serial.
      */

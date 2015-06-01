@@ -46,8 +46,7 @@ public final class JsonFile {
 
     private final Path p;
 
-    public JsonFile(Path p)
-    throws FileNotFoundException{
+    public JsonFile(Path p) throws FileNotFoundException {
         this(p, false);
     }
 
