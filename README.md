@@ -1,7 +1,7 @@
 ATLauncher
 ====================================
 
-[![Build Status](https://build.atlcdn.net/buildStatus/icon?job=ATLauncher 3.3.0.0)](https://build.atlcdn.net/job/ATLauncher/)
+[![Build Status](https://build.atlcdn.net/buildStatus/icon?job=ATLauncher 3.3.0.0)](https://build.atlcdn.net/job/ATLauncher%203.3.0.0/)
 
 ### What is it?
 
