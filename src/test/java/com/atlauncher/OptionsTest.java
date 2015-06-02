@@ -19,10 +19,8 @@ package com.atlauncher;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.junit.Assert;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public final class OptionsTest {
     @Test
@@ -38,9 +36,10 @@ public final class OptionsTest {
 
         OptionSet options = parser.parse("--force-offline-mode=true", "--launch=ResonantRise",
                 "--skip-tray-integration=true", "--debug-level=3");
-        assertTrue(options.has("force-offline-mode"));
-        assertEquals(true, options.valueOf("force-offline-mode"));
-        assertEquals("ResonantRise", options.valueOf("launch"));
-        assertEquals(3, options.valueOf("debug-level"));
+
+        Assert.assertTrue(options.has("force-offline-mode"));
+        Assert.assertEquals(true, options.valueOf("force-offline-mode"));
+        Assert.assertEquals("ResonantRise", options.valueOf("launch"));
+        Assert.assertEquals(3, options.valueOf("debug-level"));
     }
 }
