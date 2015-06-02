@@ -481,6 +481,16 @@ public class Utils {
         }
     }
 
+    public static int getMaximumSafeRam() {
+        if (!Utils.is64Bit()) {
+            return 1024;
+        }
+
+        int halfRam = (Utils.getMaximumRam() / 1000) * 512;
+
+        return (halfRam >= 4096 ? 4096 : halfRam);
+    }
+
     /**
      * Returns the safe amount of maximum ram available to Java. This is set to half of the total maximum ram available
      * to Java in order to not allocate too much and leave enough RAM for the OS and other application

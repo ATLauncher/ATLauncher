@@ -18,12 +18,20 @@
 package com.atlauncher.data;
 
 import com.atlauncher.annot.Json;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.ServerManager;
+import com.atlauncher.utils.Utils;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 @Json
 public class Settings {
@@ -57,7 +65,7 @@ public class Settings {
     private boolean enablePackTags = false;
     private String proxyHost; // The proxies host
     private int proxyPort; // The proxies port
-    private String proxyType; // The type of proxy (socks, http)
+    private Proxy.Type proxyType; // The type of proxy (socks, http)
     private int concurrentConnections; // Number of concurrent connections to open when downloading
     private int daysOfLogsToKeep; // Number of days of logs to keep
     private String theme; // The theme to use
@@ -77,20 +85,88 @@ public class Settings {
     private boolean firstTimeRun; // If this is the first time the Launcher has been run
     private boolean offlineMode; // If offline mode is enabled
 
+    private String lastAccount;
+    private String addedPacks;
+
     private static final String[] VALID_FORGE_LOGGING_LEVELS = {"SEVERE", "WARNING", "INFO", "CONFIG", "FINE",
             "FINER", "FINEST"};
 
     public void loadDefaults() {
+        this.server = "Auto";
+
         this.hadPasswordDialog = false;
         this.firstTimeRun = true;
         this.language = "English";
         this.forgeLoggingLevel = "INFO";
+        this.initialMemory = 256;
+        this.maximumMemory = Utils.getMaximumSafeRam();
+        this.permGen = (Utils.is64Bit() ? 256 : 128);
+        this.windowWidth = 854;
+        this.windowHeight = 480;
+        this.usingCustomJavaPath = false;
+        this.javaParamaters = "";
+        this.maximiseMinecraft = false;
+        this.saveCustomMods = true;
+        this.advancedBackup = false;
+        this.sortPacksAlphabetically = false;
+        this.keepLauncherOpen = true;
+        this.enableConsole = true;
+        this.enablePackTags = false;
+        this.enableTrayIcon = true;
+        this.enableLeaderboards = false;
+        this.enableLogs = true;
+        this.enableServerChecker = false;
+        this.enableOpenEyeReporting = true;
+
+        this.enableProxy = false;
+        this.proxyHost = "";
+        this.proxyPort = 0;
+        this.proxyType = Proxy.Type.DIRECT;
+
+        this.serverCheckerWait = 5;
+        this.concurrentConnections = 8;
+        this.daysOfLogsToKeep = 7;
+
+        this.theme = Constants.LAUNCHER_NAME;
+
+        this.dateFormat = "dd/M/yyy";
+
+        this.lastAccount = "";
+
+        this.addedPacks = "";
+
+        this.autoBackup = false;
+        this.notifyBackup = true;
+        this.dropboxFolderLocation = "";
     }
 
     public void validate() {
         loadLanguage();
-
+        loadServer();
         checkForgeLoggingLevel();
+        checkMemory();
+        checkWindowSize();
+        checkProxy();
+        checkServerCheckerWait();
+        checkConcurrentConnections();
+        checkDaysOfLogsToKeep();
+        checkDateFormat();
+        checkLastAccount();
+        addAddedPacks();
+    }
+
+    private void loadServer() {
+        if (this.server == null || !ServerManager.isServerByName(this.server)) {
+            if (this.server != null) {
+                LogManager.warn("Server " + this.server + " is invalid");
+            }
+
+            this.server = "Auto";
+        }
+
+        if (ServerManager.isServerByName(this.server)) {
+            this.selectedServer = ServerManager.getServerByName(this.server);
+        }
     }
 
     public void loadLanguage() {
@@ -111,5 +187,119 @@ public class Settings {
             LogManager.warn("Invalid Forge logging level " + this.forgeLoggingLevel + ". Defaulting to INFO!");
             this.forgeLoggingLevel = "INFO";
         }
+    }
+
+    private void checkMemory() {
+        if (this.maximumMemory > Utils.getMaximumRam()) {
+            LogManager.warn("Tried to allocate " + this.maximumMemory + "MB for maximum memory but only " + Utils
+                    .getMaximumRam() + "MB is available to use!");
+
+            // User tried to allocate too much ram, set it back to half, capped at 4GB
+            this.maximumMemory = Utils.getMaximumSafeRam();
+        }
+
+        if (this.initialMemory > Utils.getMaximumRam()) {
+            LogManager.warn("Tried to allocate " + this.initialMemory + "MB for initial memory but only " + Utils
+                    .getMaximumRam() + "MB is available to use!");
+
+            this.initialMemory = 256; // User tried to allocate too much initial memory, set it back to 256MB
+        }
+
+        if (this.initialMemory > this.maximumMemory) {
+            LogManager.warn("Tried to allocate " + this.initialMemory + "MB for initial memory but maximum ram is " +
+                    this.maximumMemory + "MB which is less!");
+
+            this.initialMemory = 256; // User tried to allocate more initial memory than maximum, set it back to 256MB
+        }
+    }
+
+    private void checkWindowSize() {
+        if (this.windowWidth > Utils.getMaximumWindowWidth()) {
+            LogManager.warn("Tried to set window width to " + this.windowWidth + " pixels but the maximum is " +
+                    Utils.getMaximumWindowWidth() + " pixels!");
+            this.windowWidth = Utils.getMaximumWindowWidth(); // User tried to make screen size wider than they have
+        }
+
+        if (this.windowHeight > Utils.getMaximumWindowHeight()) {
+            LogManager.warn("Tried to set window height to " + this.windowHeight + " pixels but the maximum is " +
+                    Utils.getMaximumWindowHeight() + " pixels!");
+            this.windowHeight = Utils.getMaximumWindowHeight(); // User tried to make screen size taller than they have
+        }
+    }
+
+    private void checkProxy() {
+        if (this.enableProxy) {
+            if (this.proxyPort <= 0 || this.proxyPort > 65535) {
+                // Proxy port is invalid so disable proxy
+                LogManager.warn("Tried to set proxy port to " + this.proxyPort + " which is not a valid port! " +
+                        "Proxy support disabled!");
+
+                this.enableProxy = false;
+                this.proxy = null;
+            }
+
+            this.proxy = new Proxy(this.proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort));
+        }
+    }
+
+    private void checkServerCheckerWait() {
+        if (this.serverCheckerWait < 1 || this.serverCheckerWait > 30) {
+            // Server checker wait should be between 1 and 30
+            LogManager.warn("Tried to set server checker wait to " + this.serverCheckerWait + " which is not " +
+                    "valid! Must be between 1 and 30. Setting back to default of 5!");
+
+            this.serverCheckerWait = 5;
+        }
+    }
+
+    private void checkConcurrentConnections() {
+        if (this.concurrentConnections < 1) {
+            // Concurrent connections should be more than or equal to 1
+            LogManager.warn("Tried to set the number of concurrent connections to " + this.concurrentConnections + " " +
+                    "which is not valid! Must be 1 or more. Setting back to default of 8!");
+
+            this.concurrentConnections = 8;
+        }
+    }
+
+    private void checkDaysOfLogsToKeep() {
+        if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
+            // Days of logs to keep should be 1 or more but less than 30
+            LogManager.warn("Tried to set the number of days worth of logs to keep to " + this.daysOfLogsToKeep +
+                    " which is not valid! Must be between 1 and 30 inclusive. Setting back to default of 7!");
+
+            this.daysOfLogsToKeep = 7;
+        }
+    }
+
+    private void checkDateFormat() {
+        if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
+                !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
+            LogManager.warn("Tried to set the date format to " + this.dateFormat + " which is not valid! Setting " +
+                    "back to default of dd/M/yyy!");
+
+            this.dateFormat = "dd/M/yyy";
+        }
+    }
+
+    private void checkLastAccount() {
+        if (!this.lastAccount.isEmpty()) {
+            // Set the account. If it's null, that's okay, it uses that to signify nobody logged in
+            AccountManager.setActiveAccount(AccountManager.getAccountByName(this.lastAccount));
+        }
+    }
+
+    private void addAddedPacks() {
+        List<String> semiPublicPackCodes = new LinkedList<>();
+
+        if (!this.addedPacks.isEmpty()) {
+            if (this.addedPacks.contains(",")) {
+                Collections.addAll(semiPublicPackCodes, this.addedPacks.split(","));
+            } else {
+                semiPublicPackCodes.add(this.addedPacks);
+            }
+        }
+
+        PackManager.setSemiPublicPackCodes(semiPublicPackCodes);
     }
 }

@@ -22,6 +22,8 @@ import com.atlauncher.Gsons;
 import com.atlauncher.data.Settings;
 import com.atlauncher.nio.JsonFile;
 
+import java.io.FileNotFoundException;
+
 public class SettingsManager {
     private static volatile Settings settings;
 
@@ -36,18 +38,14 @@ public class SettingsManager {
     public static void loadSettings() {
         try {
             SettingsManager.settings = new JsonFile(FileSystemData.SETTINGS).convert(Gsons.SETTINGS, Settings.class);
+        } catch (FileNotFoundException ignored) {
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error loading settings file!", e);
+        } finally {
             if (SettingsManager.settings == null) {
                 SettingsManager.settings = new Settings();
                 SettingsManager.settings.loadDefaults();
             }
-        } catch (Exception e) {
-            SettingsManager.settings = new Settings();
-            SettingsManager.settings.loadDefaults();
-            LogManager.logStackTrace("Error loading settings file!", e);
-        }
-
-        if (SettingsManager.settings == null) {
-            throw new NullPointerException("Settings");
         }
 
         // Validates all the settings to make sure they're valid and deals with converting (such as strings to value)
@@ -65,7 +63,7 @@ public class SettingsManager {
     private static final class SettingsSaver extends Thread {
         @Override
         public void run() {
-            saveSettings();
+            SettingsManager.saveSettings();
         }
     }
 }

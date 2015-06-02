@@ -36,6 +36,7 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftVersionManager;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.nio.JsonFile;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
@@ -781,15 +782,15 @@ public class OldSettings {
         try {
             this.properties.load(new FileInputStream(FileSystemData.PROPERTIES.toFile()));
             String serv = this.properties.getProperty("server", "Auto");
-            if (this.isServerByName(serv)) {
+            if (ServerManager.isServerByName(serv)) {
                 if (!userSelectableOnly || server.isUserSelectable()) {
-                    this.server = this.getServerByName(serv);
+                    this.server = ServerManager.getServerByName(serv);
                     this.originalServer = this.server;
                 }
 
                 if (this.server == null) {
                     LogManager.warn("Server " + serv + " is invalid");
-                    this.server = this.getServerByName("Auto");
+                    this.server = ServerManager.getServerByName("Auto");
                     this.originalServer = this.server;
 
                 }
@@ -924,8 +925,6 @@ public class OldSettings {
                 LogManager.warn("Invalid Forge Logging level " + this.forgeLoggingLevel + ". Defaulting to INFO!");
                 this.forgeLoggingLevel = "INFO";
             }
-
-            // DONE UP TO HERE
 
             if (Utils.is64Bit()) {
                 int halfRam = (Utils.getMaximumRam() / 1000) * 512;
@@ -1423,21 +1422,6 @@ public class OldSettings {
     }
 
     /**
-     * Finds a Server from the given name
-     *
-     * @param name Name of the Server to find
-     * @return Server if the server is found from the name
-     */
-    private Server getServerByName(String name) {
-        for (Server server : servers) {
-            if (server.getName().equalsIgnoreCase(name)) {
-                return server;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Finds if a language is available
      *
      * @param name The name of the Language
@@ -1445,21 +1429,6 @@ public class OldSettings {
      */
     public boolean isLanguageByName(String name) {
         return this.getLanguages().contains(name.toLowerCase());
-    }
-
-    /**
-     * Finds if a server is available
-     *
-     * @param name The name of the Server
-     * @return true if found, false if not
-     */
-    public boolean isServerByName(String name) {
-        for (Server server : servers) {
-            if (server.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
