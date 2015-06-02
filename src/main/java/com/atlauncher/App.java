@@ -297,11 +297,10 @@ public class App {
                     Constants.VERSION);
             try {
                 Class util = Class.forName("com.apple.eawt.Application");
-                Method getApplication = util.getMethod("getApplication", new Class[0]);
+                Method getApplication = util.getDeclaredMethod("getApplication");
                 Object application = getApplication.invoke(util);
-                Class params[] = new Class[1];
-                params[0] = Image.class;
-                Method setDockIconImage = util.getMethod("setDockIconImage", params);
+                Class params[] = new Class[]{Image.class};
+                Method setDockIconImage = util.getDeclaredMethod("setDockIconImage", params);
                 setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
