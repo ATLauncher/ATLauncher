@@ -190,7 +190,7 @@ public class InstancesTab extends JPanel implements Tab {
     }
 
     @Subscribe
-    private void onInstancesChanged(EventHandler.InstancesChangeEvent e){
+    private void onInstancesChanged(EventHandler.InstancesChangeEvent e) {
         this.reload();
     }
 }

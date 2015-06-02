@@ -38,7 +38,7 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 
 @SuppressWarnings("serial")
-public class NetworkSettingsTab extends AbstractSettingsTab{
+public class NetworkSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover downloadServerLabel;
     private JComboBox<Server> server;
 

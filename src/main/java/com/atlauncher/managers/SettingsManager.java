@@ -25,10 +25,10 @@ import com.atlauncher.nio.JsonFile;
 public class SettingsManager {
     private static Settings settings;
 
-    static{
-        try{
+    static {
+        try {
             Runtime.getRuntime().addShutdownHook(new SettingsSaver());
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace(System.err);
         }
     }
@@ -54,10 +54,9 @@ public class SettingsManager {
         }
     }
 
-    private static final class SettingsSaver
-    extends Thread{
+    private static final class SettingsSaver extends Thread {
         @Override
-        public void run(){
+        public void run() {
             saveSettings();
         }
     }

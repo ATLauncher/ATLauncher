@@ -53,7 +53,7 @@ import java.awt.event.ItemListener;
  */
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar{
+public class LauncherBottomBar extends BottomBar {
     private final JButton submitError = new JButton("Submit Bug");
     private JPanel leftSide;
     private JPanel middle;
@@ -121,50 +121,38 @@ public class LauncherBottomBar extends BottomBar{
             }
         });
 
-        openFolder.addActionListener(
-                                            new ActionListener() {
-                                                public void actionPerformed(ActionEvent e) {
-                                                    Utils.openExplorer(FileSystem.BASE_DIR);
-                                                }
-                                            }
-        );
+        openFolder.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        Utils.openExplorer(FileSystem.BASE_DIR);
+                    }
+                });
 
-        updateData.addActionListener(
-                                            new ActionListener() {
-                                                public void actionPerformed(ActionEvent e) {
-                                                    final ProgressDialog dialog = new ProgressDialog(
-                                                                                                            Language.INSTANCE.localize(
-                                                                                                                                              "common" + "" +
-                                                                                                                                                      ".checkingforupdates"
-                                                                                                            ), 0, Language.INSTANCE.localize("common.checkingforupdates"),
-                                                                                                            "Aborting" + " Update Check!"
-                                                    );
-                                                    dialog.addThread(
-                                                                            new Thread() {
-                                                                                public void run() {
-                                                                                    if (App.settings.hasUpdatedFiles()) {
-                                                                                        App.settings.reloadLauncherData();
-                                                                                    }
-                                                                                    dialog.close();
-                                                                                }
-                                                                            }
-                                                    );
-                                                    dialog.start();
-                                                }
-                                            }
-        );
-
-        username.addItemListener(
-                                        new ItemListener() {
-                                            public void itemStateChanged(ItemEvent e) {
-                                                if (e.getStateChange() == ItemEvent.SELECTED) {
-                                                    if (!dontSave) {
-                                                        AccountManager.switchAccount((Account) username.getSelectedItem());
-                                                    }
-                                                }
-                                            }
+        updateData.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common" + "" +
+                                        ".checkingforupdates"), 0, Language.INSTANCE.localize("common" +
+                                ".checkingforupdates"), "Aborting" + " Update Check!");
+                        dialog.addThread(new Thread() {
+                                    public void run() {
+                                        if (App.settings.hasUpdatedFiles()) {
+                                            App.settings.reloadLauncherData();
                                         }
-        );
+                                        dialog.close();
+                                    }
+                                });
+                        dialog.start();
+                    }
+                });
+
+        username.addItemListener(new ItemListener() {
+                    public void itemStateChanged(ItemEvent e) {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            if (!dontSave) {
+                                AccountManager.switchAccount((Account) username.getSelectedItem());
+                            }
+                        }
+                    }
+                });
 
 /*        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
             @Override
@@ -182,12 +170,12 @@ public class LauncherBottomBar extends BottomBar{
     }
 
     @Subscribe
-    private void onConsoleOpen(EventHandler.ConsoleOpenEvent e){
+    private void onConsoleOpen(EventHandler.ConsoleOpenEvent e) {
         this.toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
     }
 
     @Subscribe
-    private void onConsoleClosed(EventHandler.ConsoleCloseEvent e){
+    private void onConsoleClosed(EventHandler.ConsoleCloseEvent e) {
         this.toggleConsole.setText(Language.INSTANCE.localize("console.show"));
     }
 

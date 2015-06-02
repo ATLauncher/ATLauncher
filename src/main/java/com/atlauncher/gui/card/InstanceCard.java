@@ -81,7 +81,7 @@ import java.util.Date;
  *
  * @author Ryan
  */
-public class InstanceCard extends CollapsiblePanel{
+public class InstanceCard extends CollapsiblePanel {
     private final JSplitPane splitter = new JSplitPane();
     private final Instance instance;
     private final JPanel rightPanel = new JPanel();
@@ -131,12 +131,8 @@ public class InstanceCard extends CollapsiblePanel{
 
         this.rightPanel.setLayout(new BorderLayout());
         this.rightPanel.setPreferredSize(new Dimension(this.rightPanel.getPreferredSize().width, 180));
-        this.rightPanel.add(
-                                   new JScrollPane(
-                                                          this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
-                                                                                                                           .HORIZONTAL_SCROLLBAR_NEVER
-                                   ), BorderLayout.CENTER
-        );
+        this.rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
+                .HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         this.rightPanel.add(as, BorderLayout.SOUTH);
 
         this.getContentPane().setLayout(new BorderLayout());
@@ -434,8 +430,8 @@ public class InstanceCard extends CollapsiblePanel{
                                 String[] optionss = {Language.INSTANCE.localize("common.ok")};
                                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize
                                         ("instance.cantupdate"), Language.INSTANCE.localize("instance" + "" +
-                                        ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                                        null, optionss, optionss[0]);
+                                                ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                        .ERROR_MESSAGE, null, optionss, optionss[0]);
                             } else {
                                 new InstanceInstallerDialog(instance, true, false, null, null, true);
                             }

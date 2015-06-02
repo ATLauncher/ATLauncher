@@ -30,7 +30,7 @@ import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public final class TrayMenu extends JPopupMenu{
+public final class TrayMenu extends JPopupMenu {
     private final JMenuItem killMCButton = new JMenuItem();
     private final JMenuItem tcButton = new JMenuItem();
     private final JMenuItem quitButton = new JMenuItem();
@@ -83,23 +83,21 @@ public final class TrayMenu extends JPopupMenu{
                 App.settings.getConsole().setVisible(!App.settings.getConsole().isVisible());
             }
         });
-        this.quitButton.addActionListener(
-                                                 new ActionListener() {
-                                                     @Override
-                                                     public void actionPerformed(ActionEvent e) {
-                                                         System.exit(0);
-                                                     }
-                                                 }
-        );
+        this.quitButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.exit(0);
+                    }
+                });
     }
 
     @Subscribe
-    private void onConsoleClose(EventHandler.ConsoleCloseEvent e){
+    private void onConsoleClose(EventHandler.ConsoleCloseEvent e) {
         this.tcButton.setText(Language.INSTANCE.localize("console.show"));
     }
 
     @Subscribe
-    private void onConsoleOpen(EventHandler.ConsoleOpenEvent e){
+    private void onConsoleOpen(EventHandler.ConsoleOpenEvent e) {
         this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
     }
 

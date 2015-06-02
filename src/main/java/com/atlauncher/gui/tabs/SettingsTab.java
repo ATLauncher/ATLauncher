@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public class SettingsTab extends JPanel implements Tab{
+public class SettingsTab extends JPanel implements Tab {
 
     private final GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
     private final JavaSettingsTab javaSettingsTab = new JavaSettingsTab();

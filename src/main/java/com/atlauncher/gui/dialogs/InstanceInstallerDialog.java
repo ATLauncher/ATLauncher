@@ -383,7 +383,8 @@ public class InstanceInstallerDialog extends JDialog {
 
                                 }
                                 InstanceManager.saveInstances();
-                                EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
+                                EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent
+                                        .class));
                                 if (pack.isLoggingEnabled() && App.settings.enableLogs() && !packVersion.isDev()) {
                                     if (isServer) {
                                         pack.addServerInstall(packVersion.getVersion());

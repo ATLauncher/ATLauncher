@@ -1,3 +1,20 @@
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013 ATLauncher
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.atlauncher.evnt;
 
 import com.atlauncher.annot.Subscribe;
@@ -16,7 +33,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
-public final class EventBus{
+public final class EventBus {
     private static final AtomicLong count = new AtomicLong(0);
 
     private final ThreadGroup group;
@@ -24,7 +41,7 @@ public final class EventBus{
     private final BlockingQueue<EBSubscriptionHandler> killQueue = new LinkedBlockingQueue<>();
     private final ExecutorService executor = Executors.newCachedThreadPool(new EBThreadFactory());
 
-    public EventBus(){
+    public EventBus() {
         this.group = new ThreadGroup("ATLauncher-EventBus-" + count.getAndIncrement());
 
         Thread killQueueThread = new Thread(this.group, new EBKillQueueRunner(), "KillQueue-Thread");
@@ -32,96 +49,95 @@ public final class EventBus{
         killQueueThread.start();
     }
 
-    public void publish(Object e){
+    public void publish(Object e) {
         final List<EBSubscriptionCallable> list = new LinkedList<>();
-        for(EBSubscriptionHandler handler : handlers){
-            if(!handler.matches(e)){
+        for (EBSubscriptionHandler handler : handlers) {
+            if (!handler.matches(e)) {
                 continue;
             }
 
             list.add(new EBSubscriptionCallable(handler, e));
         }
 
-        try{
+        try {
             executor.invokeAll(list);
-        } catch(Exception ex){
+        } catch (Exception ex) {
             LogManager.logStackTrace(ex);
             ex.printStackTrace(System.err);
         }
     }
 
-    public void unsubscribe(Object obj){
+    public void unsubscribe(Object obj) {
         List<EBSubscriptionHandler> kills = new LinkedList<>();
-        for(EBSubscriptionHandler handler : this.handlers){
+        for (EBSubscriptionHandler handler : this.handlers) {
             Object sub = handler.getSubscriber();
-            if(sub == null || obj == sub){
+            if (sub == null || obj == sub) {
                 kills.add(handler);
             }
         }
 
-        for(EBSubscriptionHandler kill : kills){
+        for (EBSubscriptionHandler kill : kills) {
             handlers.remove(kill);
         }
     }
 
-    public void subscribe(final Object obj){
-        try{
+    public void subscribe(final Object obj) {
+        try {
             executor.execute(new EBAnnotatedMethodCollector(obj));
-        } catch(Exception e){
+        } catch (Exception e) {
             LogManager.logStackTrace(e);
             e.printStackTrace(System.err);
             throw new RuntimeException(e);
         }
     }
 
-    private final class EBAnnotatedMethodCollector
-    implements Runnable{
+    private final class EBAnnotatedMethodCollector implements Runnable {
         private final Object obj;
 
-        private EBAnnotatedMethodCollector(Object obj){
+        private EBAnnotatedMethodCollector(Object obj) {
             this.obj = obj;
         }
 
         @Override
         public void run() {
-            try{
+            try {
                 boolean subbed = false;
-                for(EBSubscriptionHandler handler : handlers){
+                for (EBSubscriptionHandler handler : handlers) {
                     Object sub = handler.getSubscriber();
-                    if(sub == null){
-                        try{
+                    if (sub == null) {
+                        try {
                             killQueue.add(handler);
-                        } catch(Exception e){
+                        } catch (Exception e) {
                             LogManager.logStackTrace(e);
                         }
 
                         continue;
                     }
 
-                    if(obj == sub){
+                    if (obj == sub) {
                         subbed = true;
                     }
                 }
 
-                if(subbed){
+                if (subbed) {
                     return;
                 }
 
-                for(Method m : obj.getClass().getDeclaredMethods()){
+                for (Method m : obj.getClass().getDeclaredMethods()) {
                     Subscribe sub = m.getAnnotation(Subscribe.class);
-                    if(sub == null){
+                    if (sub == null) {
                         continue;
                     }
 
                     Class<?>[] params = m.getParameterTypes();
-                    if(params.length != 1){
+                    if (params.length != 1) {
                         throw new EBSubscriptionException(obj.getClass(), m);
                     }
 
                     EBSubscriptionHandler handler = new EBSubscriptionHandler(params[0], m, obj);
                     handlers.add(handler);
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace(System.err);
                 LogManager.logStackTrace(e);
                 throw new RuntimeException(e);
@@ -129,26 +145,24 @@ public final class EventBus{
         }
     }
 
-    private final class EBKillQueueRunner
-    implements Runnable{
+    private final class EBKillQueueRunner implements Runnable {
         @Override
         public void run() {
-            try{
-                while(true){
+            try {
+                while (true) {
                     EBSubscriptionHandler handler = killQueue.take();
-                    if(handler.getSubscriber() == null){
+                    if (handler.getSubscriber() == null) {
                         handlers.remove(handler);
                     }
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 LogManager.logStackTrace(e);
                 throw new RuntimeException(e);
             }
         }
     }
 
-    private final class EBSubscriptionCallable
-    implements Callable<Void> {
+    private final class EBSubscriptionCallable implements Callable<Void> {
         private final EBSubscriptionHandler handler;
         private final Object event;
 
@@ -158,19 +172,18 @@ public final class EventBus{
         }
 
         @Override
-        public Void call()
-        throws Exception {
-            try{
+        public Void call() throws Exception {
+            try {
                 Object sub = this.handler.getSubscriber();
-                if(sub == null){
+                if (sub == null) {
                     killQueue.add(this.handler);
                     return null;
                 }
 
                 this.handler.invoke.invoke(sub, this.event);
-            } catch(Exception e){
+            } catch (Exception e) {
                 Throwable cause = e;
-                while(cause.getCause() != null){
+                while (cause.getCause() != null) {
                     cause = cause.getCause();
                 }
 
@@ -182,14 +195,13 @@ public final class EventBus{
         }
     }
 
-    private final class EBSubscriptionException
-    extends Exception{
-        public EBSubscriptionException(Class<?> holder, Method invokeable){
+    private final class EBSubscriptionException extends Exception {
+        public EBSubscriptionException(Class<?> holder, Method invokeable) {
             super("Method " + holder.getSimpleName() + "#" + invokeable.getName() + " requires 1 Parameter");
         }
     }
 
-    private final class EBSubscriptionHandler{
+    private final class EBSubscriptionHandler {
         private final Class<?> eClass;
         private final Method invoke;
         private final WeakReference<Object> subscriber;
@@ -201,22 +213,21 @@ public final class EventBus{
             this.subscriber = new WeakReference<>(subscriber);
         }
 
-        public boolean matches(Object obj){
+        public boolean matches(Object obj) {
             return obj.getClass().equals(this.eClass);
         }
 
-        public Object getSubscriber(){
+        public Object getSubscriber() {
             return this.subscriber.get();
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             return this.getSubscriber().getClass().getSimpleName() + "#" + this.invoke.getName();
         }
     }
 
-    private final class EBThreadFactory
-    implements ThreadFactory {
+    private final class EBThreadFactory implements ThreadFactory {
         private final AtomicLong count = new AtomicLong(0);
 
         @Override
