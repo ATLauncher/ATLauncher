@@ -18,11 +18,11 @@
 package com.atlauncher.managers;
 
 import com.atlauncher.FileSystemData;
-import com.atlauncher.Gsons;
 import com.atlauncher.data.Settings;
 import com.atlauncher.nio.JsonFile;
 
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
 
 public class SettingsManager {
     private static volatile Settings settings;
@@ -36,9 +36,12 @@ public class SettingsManager {
     }
 
     public static void loadSettings() {
+        boolean newFile = false;
+
         try {
             SettingsManager.settings = new JsonFile(FileSystemData.SETTINGS).convert(Settings.class);
         } catch (FileNotFoundException ignored) {
+            newFile = true;
         } catch (Exception e) {
             LogManager.logStackTrace("Error loading settings file!", e);
         } finally {
@@ -51,12 +54,17 @@ public class SettingsManager {
         // Validates all the settings to make sure they're valid and deals with converting (such as strings to value)
         settings.validate();
 
-        SettingsManager.saveSettings();
+        if (newFile) {
+            SettingsManager.saveSettings();
+        }
     }
 
     public static void saveSettings() {
-        System.out.println("Saving settings to " + FileSystemData.SETTINGS);
         try {
+            if (Files.notExists(FileSystemData.SETTINGS)) {
+                Files.createFile(FileSystemData.SETTINGS);
+            }
+
             new JsonFile(FileSystemData.SETTINGS, true).write(SettingsManager.settings);
         } catch (Exception e) {
             LogManager.logStackTrace("Error saving settings file!", e);
