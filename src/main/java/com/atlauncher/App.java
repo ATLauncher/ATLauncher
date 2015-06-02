@@ -185,31 +185,32 @@ public class App {
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
         wasUpdated = options.has("updated") ? (Boolean) options.valueOf("updated") : false;
 
-        if(options.has("debug")){
+        if (options.has("debug")) {
             LogManager.showDebug = (Boolean) options.valueOf("debug");
             LogManager.debugLevel = 1;
-            LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
-                                     + "user data!");
+            LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of " + "user " +
+                    "data!");
         }
 
-        if(options.has("debug-level")){
+        if (options.has("debug-level")) {
             LogManager.debugLevel = (Integer) options.valueOf("debug-level");
-            LogManager.debug("Debug level has been set to " + options.valueOf("debug-level")+ "!");
+            LogManager.debug("Debug level has been set to " + options.valueOf("debug-level") + "!");
         }
 
         useGzipForDownloads = options.has("use-gzip") ? (Boolean) options.valueOf("use-gzip") : true;
-        if(!useGzipForDownloads){
+        if (!useGzipForDownloads) {
             LogManager.debug("GZip has been turned off for downloads! Don't ask for support with this " +
-                                     "disabled!", true);
+                    "disabled!", true);
         }
 
-        skipTrayIntegration = options.has("skip-tray-integration") ? (Boolean) options.valueOf("skip-tray-integration") : false;
-        if(skipTrayIntegration){
+        skipTrayIntegration = options.has("skip-tray-integration") ? (Boolean) options.valueOf
+                ("skip-tray-integration") : false;
+        if (skipTrayIntegration) {
             LogManager.debug("Skipping tray integration!", true);
         }
 
         forceOfflineMode = options.has("force-offline-mode") ? (Boolean) options.valueOf("force-offline-mode") : false;
-        if(forceOfflineMode){
+        if (forceOfflineMode) {
             LogManager.debug("Forcing offline mode!", true);
         }
 
