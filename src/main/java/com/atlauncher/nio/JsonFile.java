@@ -62,11 +62,14 @@ public final class JsonFile {
         write(Gsons.DEFAULT, obj);
     }
 
-    // This be broke!!!!
     public void write(Gson gson, Object obj) throws Exception {
-        try (OutputStream os = Files.newOutputStream(this.path, StandardOpenOption.WRITE)) {
-            gson.toJson(obj, new OutputStreamWriter(os));
-        }
+        OutputStream os = Files.newOutputStream(this.path, StandardOpenOption.WRITE);
+        OutputStreamWriter osw = new OutputStreamWriter(os);
+
+        gson.toJson(obj, osw);
+
+        osw.close();
+        os.close();
     }
 
     public <T> T convert(Class<T> tClass) throws Exception {
