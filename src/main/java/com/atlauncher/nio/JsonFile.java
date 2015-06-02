@@ -36,34 +36,35 @@ public final class JsonFile {
         return create(name).convert(tClass);
     }
 
-    public static <T> T of(String name, Type t) throws Exception {
-        return create(name).convert(t);
+    public static <T> T of(String name, Type type) throws Exception {
+        return create(name).convert(type);
     }
 
     public static JsonFile create(String name) throws Exception {
         return new JsonFile(FileSystem.JSON.resolve(name));
     }
 
-    private final Path p;
+    private final Path path;
 
-    public JsonFile(Path p) throws FileNotFoundException {
-        this(p, false);
+    public JsonFile(Path path) throws FileNotFoundException {
+        this(path, false);
     }
 
-    public JsonFile(Path p, boolean write) throws FileNotFoundException {
-        if (!Files.exists(p) && !write) {
-            throw new FileNotFoundException("File " + p + " wasn't found");
+    public JsonFile(Path path, boolean write) throws FileNotFoundException {
+        if (!Files.exists(path) && !write) {
+            throw new FileNotFoundException("File " + path + " wasn't found");
         }
 
-        this.p = p;
+        this.path = path;
     }
 
     public void write(Object obj) throws Exception {
         write(Gsons.DEFAULT, obj);
     }
 
+    // This be broke!!!!
     public void write(Gson gson, Object obj) throws Exception {
-        try (OutputStream os = Files.newOutputStream(this.p, StandardOpenOption.WRITE)) {
+        try (OutputStream os = Files.newOutputStream(this.path, StandardOpenOption.WRITE)) {
             gson.toJson(obj, new OutputStreamWriter(os));
         }
     }
@@ -72,12 +73,12 @@ public final class JsonFile {
         return convert(Gsons.DEFAULT, tClass);
     }
 
-    public <T> T convert(Type t) throws Exception {
-        return convert(Gsons.DEFAULT, t);
+    public <T> T convert(Type type) throws Exception {
+        return convert(Gsons.DEFAULT, type);
     }
 
     public <T> T convert(Gson gson, Class<T> tClass) throws Exception {
-        try (InputStream stream = Files.newInputStream(this.p)) {
+        try (InputStream stream = Files.newInputStream(this.path)) {
             return gson.fromJson(new InputStreamReader(stream), tClass);
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -85,9 +86,9 @@ public final class JsonFile {
         }
     }
 
-    public <T> T convert(Gson gson, Type t) throws Exception {
-        try (InputStream stream = Files.newInputStream(this.p)) {
-            return gson.fromJson(new InputStreamReader(stream), t);
+    public <T> T convert(Gson gson, Type type) throws Exception {
+        try (InputStream stream = Files.newInputStream(this.path)) {
+            return gson.fromJson(new InputStreamReader(stream), type);
         }
     }
 }
