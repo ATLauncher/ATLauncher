@@ -40,10 +40,6 @@ public final class Gsons {
     public static final Gson DEFAULT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
             .registerTypeAdapter(Hashing.HashCode.class, new HashCodeAdapter()).setPrettyPrinting().create();
 
-    // Used for the settings, set to exclude any Server or Proxy types
-    public static final Gson SETTINGS = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
-            .setPrettyPrinting().setExclusionStrategies(new SettingsExclusionStrategy()).create();
-
     public static final Gson THEMES = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new
             ColorTypeAdapter()).create();
 
@@ -52,16 +48,4 @@ public final class Gsons {
                     FileTypeAdapter()).create();
 
     public static final JsonParser PARSER = new JsonParser();
-
-    private static final class SettingsExclusionStrategy implements ExclusionStrategy {
-        @Override
-        public boolean shouldSkipField(FieldAttributes fieldAttributes) {
-            return false;
-        }
-
-        @Override
-        public boolean shouldSkipClass(Class<?> aClass) {
-            return aClass.getDeclaringClass() == Server.class || aClass.getDeclaringClass() == Proxy.class;
-        }
-    }
 }

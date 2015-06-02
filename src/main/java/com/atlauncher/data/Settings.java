@@ -36,8 +36,8 @@ import java.util.List;
 @Json
 public class Settings {
     // Non Gsonable fields
-    private Server selectedServer = null;
-    private Proxy proxy = null;
+    private transient Server selectedServer = null;
+    private transient Proxy proxy = null;
 
     // Gsonable fields
     private String server;

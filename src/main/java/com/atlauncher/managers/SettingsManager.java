@@ -37,7 +37,7 @@ public class SettingsManager {
 
     public static void loadSettings() {
         try {
-            SettingsManager.settings = new JsonFile(FileSystemData.SETTINGS).convert(Gsons.SETTINGS, Settings.class);
+            SettingsManager.settings = new JsonFile(FileSystemData.SETTINGS).convert(Settings.class);
         } catch (FileNotFoundException ignored) {
         } catch (Exception e) {
             LogManager.logStackTrace("Error loading settings file!", e);
@@ -50,9 +50,12 @@ public class SettingsManager {
 
         // Validates all the settings to make sure they're valid and deals with converting (such as strings to value)
         settings.validate();
+
+        SettingsManager.saveSettings();
     }
 
     public static void saveSettings() {
+        System.out.println("Saving settings to " + FileSystemData.SETTINGS);
         try {
             new JsonFile(FileSystemData.SETTINGS, true).write(SettingsManager.settings);
         } catch (Exception e) {
