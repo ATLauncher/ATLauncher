@@ -19,7 +19,7 @@ package com.atlauncher.evnt;
 
 import com.atlauncher.App;
 
-public final class EventHandler{
+public final class EventHandler {
     public static final EventBus EVENT_BUS = new EventBus();
 
     public static <T extends Event> Event get(Class<T> tClass) {

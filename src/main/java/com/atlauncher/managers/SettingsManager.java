@@ -36,7 +36,7 @@ public class SettingsManager {
     public static void loadSettings() {
         try {
             SettingsManager.settings = new JsonFile(FileSystemData.SETTINGS).convert(Gsons.SETTINGS, Settings.class);
-            if(SettingsManager.settings == null){
+            if (SettingsManager.settings == null) {
                 SettingsManager.settings = new Settings();
                 SettingsManager.settings.loadDefaults();
             }
@@ -46,7 +46,7 @@ public class SettingsManager {
             LogManager.logStackTrace("Error loading settings file!", e);
         }
 
-        if(SettingsManager.settings == null){
+        if (SettingsManager.settings == null) {
             throw new NullPointerException("Settings");
         }
 
