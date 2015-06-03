@@ -9,7 +9,7 @@ ATLauncher is a Launcher for Minecraft which integrates multiple different ModPa
 
 ### The ATLauncher team
 
-* [RyanTheAllmighty](https://github.com/RyanTheAllmighty) [Twitter](https://twitter.com/RyanAllmighty1) - Project lead/owner
+* [RyanTheAllmighty](https://github.com/RyanTheAllmighty) - [Twitter](https://twitter.com/RyanAllmighty1) - Project lead/owner
 
 ### Links
 
