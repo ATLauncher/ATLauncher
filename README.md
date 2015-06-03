@@ -7,23 +7,30 @@ ATLauncher
 
 ATLauncher is a Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install ModPacks easily and quickly.
 
+### The ATLauncher team
+
+* [RyanTheAllmighty](https://github.com/RyanTheAllmighty) [Twitter](https://twitter.com/RyanAllmighty1) - Project lead/owner
 
 ### Links
-[ATLauncher Website](https://www.atlauncher.com)
 
-[ATLauncher Facebook](http://www.facebook.com/ATLauncher)
-
-[ATLauncher Reddit](http://www.reddit.com/r/ATLauncher)
-
-[ATLauncher Twitter](http://twitter.com/ATLauncher)
+* Facebook: https://www.facebook.com/ATLauncher
+* Forums: https://forums.atlauncher.com
+* IRC channel: #ATLauncher on EsperNet
+* Reddit: http://www.reddit.com/r/ATLauncher
+* Twitter: https://twitter.com/ATLauncher
+* Website: https://www.atlauncher.com
 
 ### Coding Standards & Styling Guidelines
 
-Please see the STYLE.md file for coding standards and style guidelines.
+Please see the [STYLE.md](STYLE.md) file for coding standards and style guidelines.
+
+### Contributing to ATLauncher
+
+If you wish to contribute to ATLauncher in any way, take a look at [CONTRIBUTE.md](CONTRIBUTE.md)
 
 ### Testing
 
-Please see the TESTING.md file for information on how we write tests.
+Please see the [TESTING.md](TESTING.md) file for information on how we write tests.
 
 ### Building
 
