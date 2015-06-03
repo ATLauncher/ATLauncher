@@ -51,6 +51,10 @@ public class SettingsManager {
             }
         }
 
+        if (Files.exists(FileSystemData.PROPERTIES)) {
+            SettingsManager.settings.migrateProperties();
+        }
+
         // Validates all the settings to make sure they're valid and deals with converting (such as strings to value)
         settings.validate();
 

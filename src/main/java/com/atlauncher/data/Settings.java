@@ -17,21 +17,25 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.FileSystemData;
 import com.atlauncher.annot.Json;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.ServerManager;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 @Json
 public class Settings {
@@ -138,6 +142,100 @@ public class Settings {
         this.autoBackup = false;
         this.notifyBackup = true;
         this.dropboxFolderLocation = "";
+    }
+
+    public void migrateProperties() {
+        Properties properties = new Properties();
+
+        try {
+            properties.load(Files.newInputStream(FileSystemData.PROPERTIES));
+
+            this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
+            this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
+            this.enablePackTags = Boolean.parseBoolean(properties.getProperty("enablepacktags", "false"));
+            this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "true"));
+            this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
+
+            if (!properties.containsKey("usingcustomjavapath")) {
+                this.usingCustomJavaPath = false;
+            } else {
+                this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty("usingcustomjavapath", "false"));
+                if (this.usingCustomJavaPath) {
+                    this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+                }
+            }
+
+            this.enableProxy = Boolean.parseBoolean(properties.getProperty("enableproxy", "false"));
+
+            if (this.enableProxy) {
+                this.proxyHost = properties.getProperty("proxyhost", null);
+
+                this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", "0"));
+
+                String proxyType = properties.getProperty("proxytype", "");
+                if (!proxyType.equals("SOCKS") && !proxyType.equals("HTTP") && !proxyType.equals("DIRECT")) {
+                    this.enableProxy = false;
+                } else {
+                    this.proxyType = Proxy.Type.valueOf(proxyType);
+                }
+            }
+
+            this.concurrentConnections = Integer.parseInt(properties.getProperty("concurrentconnections", "8"));
+            this.daysOfLogsToKeep = Integer.parseInt(properties.getProperty("daysoflogstokeep", "7"));
+            this.server = properties.getProperty("server", "Auto");
+
+            this.firstTimeRun = Boolean.parseBoolean(properties.getProperty("firsttimerun", "true"));
+
+            this.hadPasswordDialog = Boolean.parseBoolean(properties.getProperty("hadpassworddialog", "false"));
+
+            this.language = properties.getProperty("language", "English");
+
+            this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
+            this.maximumMemory = Integer.parseInt(properties.getProperty("ram", Utils.getSafeMaximumRam() + ""));
+            this.initialMemory = Integer.parseInt(properties.getProperty("initialmemory", "256"));
+            this.permGen = Integer.parseInt(properties.getProperty("permGen", (Utils.is64Bit() ? "256" : "128")));
+            this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
+            this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
+
+            this.javaParamaters = properties.getProperty("javaparameters", "");
+
+            this.maximiseMinecraft = Boolean.parseBoolean(properties.getProperty("maximiseminecraft", "false"));
+
+            this.saveCustomMods = Boolean.parseBoolean(properties.getProperty("savecustommods", "true"));
+
+            this.advancedBackup = Boolean.parseBoolean(properties.getProperty("advancedbackup", "false"));
+
+            this.sortPacksAlphabetically = Boolean.parseBoolean(properties.getProperty("sortpacksalphabetically",
+                    "false"));
+
+            this.keepLauncherOpen = Boolean.parseBoolean(properties.getProperty("keeplauncheropen", "true"));
+
+            this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "true"));
+
+            this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
+
+            this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty("enableleaderboards", "false"));
+
+            this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
+
+            this.enableServerChecker = Boolean.parseBoolean(properties.getProperty("enableserverchecker", "false"));
+
+            this.enableOpenEyeReporting = Boolean.parseBoolean(properties.getProperty("enableopeneyereporting",
+                    "true"));
+
+            this.serverCheckerWait = Integer.parseInt(properties.getProperty("servercheckerwait", "5"));
+
+            this.lastAccount = properties.getProperty("lastaccount", "");
+            this.addedPacks = properties.getProperty("addedpacks", null);
+
+            this.autoBackup = Boolean.parseBoolean(properties.getProperty("autobackup", "false"));
+            this.notifyBackup = Boolean.parseBoolean(properties.getProperty("notifybackup", "true"));
+            this.dropboxFolderLocation = properties.getProperty("dropboxlocation", "");
+
+            FileUtils.delete(FileSystemData.PROPERTIES);
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error migrating existing settings!", e);
+        }
     }
 
     public void validate() {
