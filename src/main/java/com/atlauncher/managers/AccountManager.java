@@ -50,7 +50,7 @@ public class AccountManager {
      * @param account the account to be active, or null if none
      */
     public static void setActiveAccount(Account account) {
-        if (AccountManager.activeAccount != null && account.isActive()) {
+        if (AccountManager.activeAccount != null && AccountManager.activeAccount.isActive()) {
             AccountManager.activeAccount.setActive(false);
         }
 
