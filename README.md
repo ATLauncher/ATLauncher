@@ -26,7 +26,7 @@ Please see the [STYLE.md](STYLE.md) file for coding standards and style guidelin
 
 ### Contributing to ATLauncher
 
-If you wish to contribute to ATLauncher in any way, take a look at [CONTRIBUTE.md](CONTRIBUTE.md)
+If you wish to contribute to ATLauncher in any way, take a look at [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ### Testing
 
