@@ -299,97 +299,10 @@ public class OldSettings {
         return new DirectoryStream.Filter<Path>() {
             @Override
             public boolean accept(Path o) throws IOException {
-                return Files.isRegularFile(o) && o.startsWith(Constants.LAUNCHER_NAME + "-Log_") && o.endsWith(".log");
+                return Files.isRegularFile(o) && o.getFileName().toString().startsWith(Constants.LAUNCHER_NAME +
+                        "-Log_") && o.getFileName().toString().endsWith(".log");
             }
         };
-    }
-
-    public void checkResources() {
-        LogManager.debug("Checking if using old format of resources");
-        Path indexes = FileSystem.RESOURCES.resolve("indexes");
-        if (!Files.exists(indexes) || !Files.isDirectory(indexes)) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
-                    ".rearrangingresources"), 0, Language.INSTANCE.localize("settings.rearrangingresources"), null);
-            Thread t = new Thread() {
-                @Override
-                public void run() {
-                    Path indexes = FileSystem.RESOURCES.resolve("indexes");
-                    Path virtual = FileSystem.RESOURCES.resolve("virtual");
-                    Path objects = FileSystem.RESOURCES.resolve("objects");
-
-                    Path tmp = FileSystem.TMP.resolve("assets");
-                    Path legacy = virtual.resolve("legacy");
-
-                    try {
-                        FileUtils.createDirectory(tmp);
-                        FileUtils.moveDirectory(FileSystem.RESOURCES, tmp);
-                        FileUtils.createDirectory(indexes);
-                        FileUtils.createDirectory(objects);
-                        FileUtils.createDirectory(virtual);
-                        FileUtils.createDirectory(legacy);
-                        FileUtils.moveDirectory(tmp, legacy);
-                        FileUtils.deleteDirectory(tmp);
-                    } catch (Exception e) {
-                        LogManager.logStackTrace(e);
-                    }
-                }
-            };
-        }
-    }
-
-    public void checkAccountUUIDs() {
-        LogManager.debug("Checking account UUID's");
-        LogManager.info("Checking account UUID's!");
-        for (Account account : Data.ACCOUNTS) {
-            if (account.isUUIDNull()) {
-                account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
-                AccountManager.saveAccounts();
-            }
-        }
-        LogManager.debug("Finished checking account UUID's");
-    }
-
-    public void changeInstanceUserLocks() {
-        LogManager.debug("Changing instances user locks to UUID's");
-
-        boolean wereChanges = false;
-
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getInstalledBy() != null) {
-                boolean found = false;
-
-                for (Account account : Data.ACCOUNTS) {
-                    // This is the user who installed this so switch to their UUID
-                    if (account.getMinecraftUsername().equalsIgnoreCase(instance.getInstalledBy())) {
-                        found = true;
-                        wereChanges = true;
-
-                        instance.removeInstalledBy();
-
-                        // If the accounts UUID is null for whatever reason, don't set the lock
-                        if (!account.isUUIDNull()) {
-                            instance.setUserLock(account.getUUIDNoDashes());
-                        }
-                        break;
-                    }
-                }
-
-                // If there were no accounts with that username, we remove the lock and old installed by
-                if (!found) {
-                    wereChanges = true;
-
-                    instance.removeInstalledBy();
-                    instance.removeUserLock();
-                }
-            }
-        }
-
-        if (wereChanges) {
-            AccountManager.saveAccounts();
-            InstanceManager.saveInstances();
-        }
-
-        LogManager.debug("Finished changing instances user locks to UUID's");
     }
 
     public void checkMojangStatus() {
