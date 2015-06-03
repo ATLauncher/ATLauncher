@@ -80,26 +80,19 @@ import java.util.concurrent.ExecutorService;
  * @author Ryan
  */
 public class OldSettings {
-    // Users Settings
-    private Server server; // Server to use for the Launcher
-
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<MinecraftServer> checkingServers = new ArrayList<>();
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private LauncherConsole console; // The Launcher's Console
-    private List<Server> servers = new ArrayList<>(); // Servers for the Launcher
-    private List<Server> triedServers = new ArrayList<>(); // Servers tried to connect to
     private NewsTab newsPanel; // The news panel
     private boolean offlineMode = false; // If offline mode is enabled
     private Process minecraftProcess = null; // The process minecraft is running on
-    private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
     private DropboxSync dropbox;
-    private boolean languageLoaded = false;
     private Timer checkingServersTimer = null; // Timer used for checking servers
 
     public OldSettings() {
@@ -130,8 +123,6 @@ public class OldSettings {
 
         loadNews(); // Load the news
 
-        this.languageLoaded = true; // Languages are now loaded
-
         MinecraftVersionManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
 
         PackManager.loadPacks(); // Load the Packs available in the Launcher
@@ -156,7 +147,7 @@ public class OldSettings {
         OUTER:
         for (Pack pack : Data.PACKS) {
             if (pack.isTester()) {
-                for (Server server : this.servers) {
+                for (Server server : Constants.SERVERS) {
                     if (server.getName().equals("Master Server (Testing Only)")) {
                         server.setUserSelectable(true);
                         LogManager.debug("Access to master server granted");
@@ -858,12 +849,15 @@ public class OldSettings {
     }
 
     public void checkOnlineStatus() {
-        for (Server server : servers) {
+        for (Server server : Constants.SERVERS) {
             server.enableServer();
         }
+
         this.offlineMode = false;
+
         Downloadable download = new Downloadable("ping", true);
         String test = download.toString();
+
         if (test != null && test.equalsIgnoreCase("pong")) {
             EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
             EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
