@@ -1642,4 +1642,19 @@ public class Utils {
         return GraphicsEnvironment.isHeadless();
     }
 
+    /**
+     * Gets the logs file filter.
+     *
+     * @return the logs file filter
+     */
+    public static FilenameFilter getLogsFileFilter() {
+        return new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                File file = new File(dir, name);
+                return file.isFile() && name.startsWith(Constants.LAUNCHER_NAME + "-Log_") && name.endsWith(".log");
+            }
+        };
+    }
+
 }

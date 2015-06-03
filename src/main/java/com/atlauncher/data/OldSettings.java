@@ -65,7 +65,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -141,7 +144,7 @@ public class OldSettings {
 
         console.setupLanguage(); // Setup language on the console
 
-        clearAllLogs(); // Clear all the old logs out
+        clearOldLogs(); // Clear all the old logs out
 
         AccountManager.checkUUIDs(); // Check for accounts UUID's and add them if necessary
 
@@ -246,6 +249,38 @@ public class OldSettings {
                 AccountManager.saveAccounts();
             }
         }
+    }
+
+    public void clearOldLogs() {
+        App.TASKPOOL.execute(new Runnable() {
+            @Override
+            public void run() {
+                LogManager.debug("Clearing out old logs");
+
+                Date toDeleteAfter = new Date();
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(toDeleteAfter);
+                calendar.add(Calendar.DATE, -(SettingsManager.getDaysOfLogsToKeep()));
+                toDeleteAfter = calendar.getTime();
+
+                for (File file : FileSystem.LOGS.toFile().listFiles(Utils.getLogsFileFilter())) {
+                    try {
+                        Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace
+                                (Constants.LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
+
+                        if (date.before(toDeleteAfter)) {
+                            FileUtils.delete(file.toPath());
+                            LogManager.debug("Deleting log file " + file.getName());
+                        }
+                    } catch (java.text.ParseException e) {
+                        LogManager.error("Invalid log file " + file.getName());
+                    }
+                }
+
+                LogManager.debug("Finished clearing out old logs");
+            }
+        });
     }
 
     public void clearAllLogs() {
