@@ -18,14 +18,18 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
 import com.atlauncher.data.mojang.api.ProfileTexture;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Authentication;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
@@ -49,8 +53,9 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -133,11 +138,11 @@ public class Account implements Serializable {
     /**
      * Constructor for a real user Account.
      *
-     * @param username          The name of the Account
-     * @param password          The password of the Account
+     * @param username The name of the Account
+     * @param password The password of the Account
      * @param minecraftUsername The Minecraft username of the Account
-     * @param uuid              The UUID of the Account
-     * @param remember          If this Account's password should be remembered or not
+     * @param uuid The UUID of the Account
+     * @param remember If this Account's password should be remembered or not
      */
     public Account(String username, String password, String minecraftUsername, String uuid, boolean remember) {
         this.username = username;
@@ -176,8 +181,7 @@ public class Account implements Serializable {
     public ImageIcon getMinecraftHead() {
         File file = null;
         if (this.isReal()) {
-            file = new File(App.settings.getSkinsDir(), (this.isUUIDNull() ? "default" : this.getUUIDNoDashes()) +
-                    ".png");
+            file = FileSystem.SKINS.resolve((this.isUUIDNull() ? "default" : this.getUUIDNoDashes()) + ".png").toFile();
             if (!file.exists()) {
                 this.updateSkin(); // Download/update the users skin
             }
@@ -185,14 +189,14 @@ public class Account implements Serializable {
 
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
-            file = new File(App.settings.getSkinsDir(), "default.png");
+            file = FileSystem.SKINS.resolve("default.png").toFile();
         }
 
         BufferedImage image = null;
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
 
         BufferedImage main = image.getSubimage(8, 8, 8, 8);
@@ -216,7 +220,7 @@ public class Account implements Serializable {
     public ImageIcon getMinecraftSkin() {
         File file = null;
         if (this.isReal()) {
-            file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
+            file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
             if (!file.exists()) {
                 this.updateSkin(); // Download/update the users skin
             }
@@ -224,14 +228,14 @@ public class Account implements Serializable {
 
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
-            file = new File(App.settings.getSkinsDir(), "default.png");
+            file = FileSystem.SKINS.resolve("default.png").toFile();
         }
 
         BufferedImage image = null;
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
 
         BufferedImage head = image.getSubimage(8, 8, 8, 8);
@@ -431,7 +435,7 @@ public class Account implements Serializable {
      */
     public List<String> getCollapsedInstances() {
         if (this.collapsedInstances == null) {
-            this.collapsedInstances = new ArrayList<String>();
+            this.collapsedInstances = new ArrayList<>();
         }
         return this.collapsedInstances;
     }
@@ -442,7 +446,8 @@ public class Account implements Serializable {
     public void updateSkin() {
         if (!this.skinUpdating) {
             this.skinUpdating = true;
-            final File file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
+            final Path path = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png");
+
             LogManager.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
                     ".downloadingskin"), 0, Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin",
@@ -453,32 +458,31 @@ public class Account implements Serializable {
                     String skinURL = getSkinURL();
                     if (skinURL == null) {
                         LogManager.error("Couldn't download skin because the url found was NULL");
-                        if (!file.exists()) {
+                        if (!Files.exists(path)) {
                             // Only copy over the default skin if there is no skin for the user
-                            Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                            FileUtils.copyFile(FileSystem.SKINS.resolve("default.png"), path, true);
                         }
                     } else {
                         try {
                             HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
                             if (conn.getResponseCode() == 200) {
-                                if (file.exists()) {
-                                    Utils.delete(file);
+                                if (Files.exists(path)) {
+                                    FileUtils.delete(path);
                                 }
-                                Downloadable skin = new Downloadable(skinURL, file, null, null, false);
-                                skin.download(false);
+
+                                Downloadable skin = new Downloadable(skinURL, path, false);
+                                skin.download();
                                 dialog.setReturnValue(true);
                             } else {
-                                if (!file.exists()) {
+                                if (!Files.exists(path)) {
                                     // Only copy over the default skin if there is no skin for the user
-                                    Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                                    FileUtils.copyFile(FileSystem.SKINS.resolve("default.png"), path, true);
                                 }
                             }
-                        } catch (MalformedURLException e) {
-                            App.settings.logStackTrace(e);
                         } catch (IOException e) {
-                            App.settings.logStackTrace(e);
+                            LogManager.logStackTrace(e);
                         }
-                        App.settings.reloadAccounts();
+                        EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
                     }
                     dialog.close();
                 }
@@ -487,8 +491,8 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
-                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
@@ -526,7 +530,7 @@ public class Account implements Serializable {
             }
             reader.close();
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             response = null;
         }
 
@@ -601,7 +605,7 @@ public class Account implements Serializable {
 
     public void saveStore(Map<String, Object> store) {
         this.store = store;
-        App.settings.saveAccounts();
+        AccountManager.saveAccounts();
     }
 
     // TODO: Change to use Mojang authlib
@@ -617,7 +621,7 @@ public class Account implements Serializable {
             if (this.hasAccessToken()) {
                 LogManager.error("Access token is NOT valid! Will attempt to get another one!");
                 this.setAccessToken(null);
-                App.settings.saveAccounts();
+                AccountManager.saveAccounts();
             }
 
             if (!this.isRemembered()) {
@@ -647,7 +651,7 @@ public class Account implements Serializable {
             LogManager.error(response.getErrorMessage());
             String[] options = {Language.INSTANCE.localize("common.ok")};
             JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
-                            .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())),
+                    .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())),
                     Language.INSTANCE.localize("instance" + ".errorloggingintitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
@@ -662,7 +666,7 @@ public class Account implements Serializable {
             this.setAccessToken(response.getAuth().getAuthenticatedToken());
             this.setUUID(response.getAuth().getSelectedProfile().getId().toString());
             response.save();
-            App.settings.saveAccounts();
+            AccountManager.saveAccounts();
         }
 
         return response;

@@ -1,7 +1,7 @@
 ATLauncher
 ====================================
 
-[![Build Status](https://build.atlcdn.net/buildStatus/icon?job=ATLauncher)](https://build.atlcdn.net/job/ATLauncher/)
+[![Build Status](https://build.atlcdn.net/buildStatus/icon?job=ATLauncher 3.3.0.0)](https://build.atlcdn.net/job/ATLauncher%203.3.0.0/)
 
 ### What is it?
 
@@ -17,10 +17,13 @@ ATLauncher is a Launcher for Minecraft which integrates multiple different ModPa
 
 [ATLauncher Twitter](http://twitter.com/ATLauncher)
 
-
 ### Coding Standards & Styling Guidelines
 
 Please see the STYLE.md file for coding standards and style guidelines.
+
+### Testing
+
+Please see the TESTING.md file for information on how we write tests.
 
 ### Building
 
@@ -51,6 +54,8 @@ C:\Program Files (x86)\Launch4j
 To get started with the code and plug in your own data, you need to create a src/main/java/com/atlauncher/data/Constants.java file. Below is a starter to get you going:
 
     package com.atlauncher.data;
+    
+    import com.atlauncher.data.version.LauncherVersion;
 
     public class Constants {
 

@@ -18,9 +18,10 @@
 package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
@@ -31,7 +32,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 
 @SuppressWarnings("serial")
-public class GeneralSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
+public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover languageLabel;
     private JComboBox<String> language;
     private JLabelWithHover themeLabel;
@@ -54,7 +55,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JCheckBox enablePackTags;
 
     public GeneralSettingsTab() {
-        RelocalizationManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
         // Language
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -97,7 +98,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<String>();
-        for (String themee : App.settings.getThemesDir().list(Utils.getThemesFileFilter())) {
+        for (String themee : FileSystem.THEMES.toFile().list(Utils.getThemesFileFilter())) {
             theme.addItem(themee.replace(".zip", ""));
         }
         theme.setSelectedItem(App.settings.getTheme());
@@ -269,8 +270,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         return Language.INSTANCE.localize("settings.generaltab");
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         this.languageLabel.setText(Language.INSTANCE.localize("settings.language") + ":");
         this.languageLabel.setToolTipText(Language.INSTANCE.localize("settings.languagehelp"));
 

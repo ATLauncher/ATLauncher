@@ -17,8 +17,8 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -82,15 +82,15 @@ public class AddPackDialog extends JDialog {
         saveButton = new JButton(Language.INSTANCE.localize("common.save"));
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.semiPublicPackExistsFromCode(packCode.getText())) {
-                    if (App.settings.addPack(packCode.getText())) {
+                if (PackManager.semiPublicPackExistsFromCode(packCode.getText())) {
+                    if (PackManager.addSemiPublicPack(packCode.getText())) {
                         JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
                                         ".packaddedmessage"), Language.INSTANCE.localize("pack.packadded"),
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                        ".packalreadyaddedmessage"), Language.INSTANCE.localize("pack" +
-                                ".packalreadyadded"), JOptionPane.ERROR_MESSAGE);
+                                ".packalreadyaddedmessage"), Language.INSTANCE.localize("pack" + ".packalreadyadded")
+                                , JOptionPane.ERROR_MESSAGE);
                     }
                     setVisible(false);
                     dispose();

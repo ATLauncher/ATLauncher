@@ -50,8 +50,8 @@ public abstract class SyncAbstract {
      * This is called when a world needs to be backed up.
      *
      * @param backupName The name of the backup
-     * @param worldData  The folder of the world
-     * @param instance   The instance for the world
+     * @param worldData The folder of the world
+     * @param instance The instance for the world
      */
     public abstract void backupWorld(String backupName, File worldData, Instance instance);
 
@@ -68,7 +68,7 @@ public abstract class SyncAbstract {
      * This method is called from a new thread
      *
      * @param backupName The name of the backup to restore
-     * @param instance   The instance that the save should be restored to
+     * @param instance The instance that the save should be restored to
      */
     public abstract void restoreBackup(String backupName, Instance instance);
 

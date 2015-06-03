@@ -60,6 +60,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -105,19 +107,18 @@ public class BackupDialog extends JDialog implements ActionListener {
                 } else {
                     backupList.setListData(list.toArray(new String[list.size()]));
                 }
-                list = new ArrayList<String>();
-                if (instance.getSavesDirectory().exists()) {
-                    if (instance.getSavesDirectory().exists()) {
-                        File[] files = instance.getSavesDirectory().listFiles();
-                        if (files != null) {
-                            for (File file : files) {
-                                if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
-                                    list.add(file.getName());
-                                }
+                list = new ArrayList<>();
+                if (Files.exists(instance.getSavesDirectory())) {
+                    File[] files = instance.getSavesDirectory().toFile().listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
+                                list.add(file.getName());
                             }
                         }
                     }
                 }
+
                 if (list.size() == 0) {
                     worldList.setListData(new String[0]);
                 } else {
@@ -131,20 +132,18 @@ public class BackupDialog extends JDialog implements ActionListener {
 
     private JPanel createBackupPanel() {
         List<String> worldData = new ArrayList<String>();
-        if (instance.getSavesDirectory().exists()) {
-            if (instance.getSavesDirectory().exists()) {
-                File[] files = instance.getSavesDirectory().listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
-                            worldData.add(file.getName());
-                        }
+        if (Files.exists(instance.getSavesDirectory())) {
+            File[] files = instance.getSavesDirectory().toFile().listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
+                        worldData.add(file.getName());
                     }
                 }
             }
         }
 
-        worldList = new JList(worldData.toArray(new String[worldData.size()]));
+        worldList = new JList<>(worldData.toArray(new String[worldData.size()]));
         worldList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         worldList.setLayoutOrientation(JList.VERTICAL_WRAP);
         worldList.setVisibleRowCount(-1);
@@ -265,9 +264,10 @@ public class BackupDialog extends JDialog implements ActionListener {
                     JOptionPane.QUESTION_MESSAGE);
             if (backupName != null) {
                 for (Map.Entry<String, SyncAbstract> entry : SyncAbstract.syncList.entrySet()) {
-                    File worldData = new File(instance.getSavesDirectory(), worldToBackup);
-                    if (worldData.exists()) {
-                        entry.getValue().backupWorld(backupName, worldData, instance);
+                    Path worldData = instance.getSavesDirectory().resolve(worldToBackup);
+
+                    if (Files.exists(worldData)) {
+                        entry.getValue().backupWorld(backupName, worldData.toFile(), instance);
                     } else {
                         JOptionPane.showMessageDialog(this, Language.INSTANCE.localize("backup.message" + "" +
                                 ".backupfailed.missingdirectory"), Language.INSTANCE.localize("backup.message" + "" +

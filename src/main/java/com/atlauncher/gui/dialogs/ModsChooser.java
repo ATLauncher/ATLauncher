@@ -19,10 +19,11 @@ package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
+import com.atlauncher.collection.ModList;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
@@ -145,7 +146,7 @@ public class ModsChooser extends JDialog {
 
         selectAllButton = new JButton();
 
-        if (installer.hasRecommendedMods()) {
+        if (installer.allMods.hasRecommended()) {
             selectAllButton.setText(Language.INSTANCE.localize("instance.selectrecommended"));
         } else {
             selectAllButton.setText(Language.INSTANCE.localize("instance.selectall"));
@@ -154,15 +155,14 @@ public class ModsChooser extends JDialog {
         selectAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
-                    if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod().isOptional())) {
-                        if (check.getMod().isRecommended()) {
+                    if ((installer.server ? check.getMod().isServerOptional() : check.getMod().optional)) {
+                        if (check.getMod().recommended) {
                             if (check.getMod().hasGroup()) {
-                                if (check.getMod().isRecommended() && installer.isOnlyRecommendedInGroup(check.getMod
-                                        ())) {
+                                if (check.getMod().recommended && installer.isOnlyRecommendedInGroup(check.getMod())) {
                                     check.setSelected(true);
                                     check.setEnabled(true);
                                     sortOutMods(check);
-                                } else if (installer.hasRecommendedMods()) {
+                                } else if (installer.allMods.hasRecommended()) {
                                     check.setSelected(false);
                                 }
                             } else {
@@ -183,7 +183,7 @@ public class ModsChooser extends JDialog {
         clearAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (ModsJCheckBox check : modCheckboxes) {
-                    if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod().isOptional())) {
+                    if ((installer.server ? check.getMod().isServerOptional() : check.getMod().optional)) {
                         check.setSelected(false);
                         List<Mod> linkedMods = modsToChange(check.getMod());
                         for (Mod mod : linkedMods) {
@@ -211,40 +211,40 @@ public class ModsChooser extends JDialog {
         int count1 = 0;
         int count2 = 0;
 
-        for (int i = 0; i < installer.getMods().size(); ) {
+        for (int i = 0; i < installer.allMods.size(); ) {
             boolean skip = false;
-            final Mod mod = installer.getMods().get(i);
-            if (installer.isServer() && !mod.installOnServer()) {
+            final Mod mod = installer.allMods.get(i);
+            if (installer.server && !mod.server) {
                 continue;
             }
             ModsJCheckBox checkBox = null;
-            if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
+            if ((installer.server ? mod.isServerOptional() : mod.optional)) {
                 if (!skip) {
                     checkBox = new ModsJCheckBox(mod);
                     checkBox.setEnabled(true);
                     if (!mod.hasLinked()) {
                         checkBox.setBounds(0, (count1 * 20), checkBox.getPreferredSize().width, 20);
                     } else {
-                        Mod linkedMod = installer.getModByName(mod.getLinked());
+                        Mod linkedMod = installer.allMods.byName(mod.linked);
                         if (linkedMod == null) {
-                            LogManager.error("The mod " + mod.getName() + " tried to reference a linked mod " + mod
-                                    .getLinked() + " which doesn't exist!");
+                            LogManager.error("The mod " + mod.name + " tried to reference a linked mod " + mod.linked
+                                    + " which doesn't exist!");
                             installer.cancel(true);
                             return;
                         }
-                        if ((installer.isServer() ? linkedMod.isServerOptional() : linkedMod.isOptional())) {
+                        if ((installer.server ? linkedMod.isServerOptional() : linkedMod.optional)) {
                             checkBox.setEnabled(false);
                             checkBox.setBounds(20, (count1 * 20), checkBox.getPreferredSize().width, 20);
                         } else {
                             checkBox.setBounds(0, (count1 * 20), checkBox.getPreferredSize().width, 20);
                         }
-                        if (mod.isSelected()) {
+                        if (mod.selected) {
                             checkBox.setEnabled(true);
                             checkBox.setSelected(true);
-                            if (!linkedMod.isSelected()) {
+                            if (!linkedMod.selected) {
                                 boolean needToEnableChildren = false;
                                 for (ModsJCheckBox checkbox : modCheckboxes) {
-                                    if (checkbox.getMod().getName().equalsIgnoreCase(mod.getLinked())) {
+                                    if (checkbox.getMod().name.equalsIgnoreCase(mod.linked)) {
                                         checkbox.setSelected(true); // Select the checkbox
                                         needToEnableChildren = true;
                                         break;
@@ -252,19 +252,19 @@ public class ModsChooser extends JDialog {
                                 }
                                 if (needToEnableChildren) {
                                     for (ModsJCheckBox checkbox : modCheckboxes) {
-                                        if (checkbox.getMod().getLinked().equalsIgnoreCase(mod.getLinked())) {
+                                        if (checkbox.getMod().linked.equalsIgnoreCase(mod.linked)) {
                                             checkbox.setEnabled(true);
                                         }
                                     }
                                 }
                             }
                         } else {
-                            if (linkedMod.isSelected()) {
+                            if (linkedMod.selected) {
                                 checkBox.setEnabled(true);
                             }
                         }
                     }
-                    if (mod.isHidden() || mod.isLibrary()) {
+                    if (mod.hidden || mod.library) {
                         checkBox.setVisible(false);
                     } else {
                         count1++;
@@ -276,9 +276,8 @@ public class ModsChooser extends JDialog {
                     checkBox.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            if (finalCheckBox.isSelected() && installer.getJsonVersion().hasWarningMessage(mod
-                                    .getWarning())) {
-                                String message = installer.getJsonVersion().getWarningMessage(mod.getWarning());
+                            if (finalCheckBox.isSelected() && installer.version.hasWarningMessage(mod.warning)) {
+                                String message = installer.version.getWarningMessage(mod.warning);
 
                                 if (message != null) {
                                     String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE
@@ -303,21 +302,21 @@ public class ModsChooser extends JDialog {
                 checkBox.setSelected(true);
                 checkBox.setEnabled(false);
 
-                if (mod.isHidden() || mod.isLibrary()) {
+                if (mod.hidden || mod.library) {
                     checkBox.setVisible(false);
                 } else {
                     count2++;
                 }
             }
-            if (installer.isReinstall()) {
-                if (installer.wasModInstalled(mod.getName())) {
-                    if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
+            if (installer.reinstall) {
+                if (installer.getInstance() != null && installer.getInstance().wasModInstalled(mod.name)) {
+                    if ((installer.server ? mod.isServerOptional() : mod.optional)) {
                         checkBox.setSelected(true);
                         checkBox.setEnabled(true);
                     }
                 }
             } else {
-                if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional()) && mod.isSelected()) {
+                if ((installer.server ? mod.isServerOptional() : mod.optional) && mod.selected) {
                     checkBox.setSelected(true);
                     checkBox.setEnabled(true);
                 }
@@ -335,7 +334,7 @@ public class ModsChooser extends JDialog {
         }
         for (int i = 0; i < modCheckboxes.size(); i++) {
             ModsJCheckBox checkBox = modCheckboxes.get(i);
-            if ((installer.isServer() ? checkBox.getMod().isServerOptional() : checkBox.getMod().isOptional())) {
+            if ((installer.server ? checkBox.getMod().isServerOptional() : checkBox.getMod().optional)) {
                 checkBoxPanel1.add(checkBox);
             } else {
                 checkBoxPanel2.add(checkBox);
@@ -391,14 +390,14 @@ public class ModsChooser extends JDialog {
             }
 
             for (ModsJCheckBox checkbox : this.modCheckboxes) {
-                if (!checkbox.getMod().isOptional()) {
+                if (!checkbox.getMod().optional) {
                     continue;
                 }
 
                 boolean found = false;
 
                 for (Map<String, String> mod : optionalMods) {
-                    if (mod.get("name").equalsIgnoreCase(checkbox.getMod().getName())) {
+                    if (mod.get("name").equalsIgnoreCase(checkbox.getMod().name)) {
                         found = true;
                         break;
                     }
@@ -415,23 +414,23 @@ public class ModsChooser extends JDialog {
     }
 
     private List<Mod> modsToChange(Mod mod) {
-        return installer.getLinkedMods(mod);
+        return installer.allMods.linked(mod);
     }
 
     private List<Mod> modsInGroup(Mod mod) {
-        return installer.getGroupedMods(mod);
+        return installer.allMods.grouped(mod);
     }
 
     private List<Mod> modsDependancies(Mod mod) {
-        return installer.getModsDependancies(mod);
+        return installer.allMods.depandencies(mod);
     }
 
     private List<Mod> dependedMods(Mod mod) {
-        return installer.dependedMods(mod);
+        return installer.allMods.dependencies(mod);
     }
 
     private boolean hasADependancy(Mod mod) {
-        return installer.hasADependancy(mod);
+        return installer.allMods.hasDependency(mod);
     }
 
     public void sortOutMods(ModsJCheckBox a) {
@@ -449,6 +448,7 @@ public class ModsChooser extends JDialog {
                 for (Mod mod : groupMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
+                            System.out.println("Test");
                             check.setSelected(false);
                         }
                     }
@@ -469,6 +469,7 @@ public class ModsChooser extends JDialog {
             for (Mod mod : linkedMods) {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if (check.getMod() == mod) {
+                        System.out.println("Test2");
                         check.setEnabled(false);
                         check.setSelected(false);
                     }
@@ -479,6 +480,7 @@ public class ModsChooser extends JDialog {
                 for (Mod mod : dependedMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
+                            System.out.println("Test3");
                             check.setSelected(false);
                         }
                     }
@@ -488,7 +490,8 @@ public class ModsChooser extends JDialog {
                 for (Mod mod : dependsMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
-                            if (check.getMod().isLibrary()) {
+                            if (check.getMod().library) {
+                                System.out.print("Test4");
                                 check.setSelected(false);
                             }
                         }
@@ -498,16 +501,18 @@ public class ModsChooser extends JDialog {
         }
     }
 
-    public List<Mod> getSelectedMods() {
-        if (wasClosed) {
+    public ModList getSelected() {
+        if (this.wasClosed) {
             return null;
         }
-        List<Mod> mods = new ArrayList<Mod>();
-        for (ModsJCheckBox check : modCheckboxes) {
+
+        ModList mods = new ModList();
+        for (ModsJCheckBox check : this.modCheckboxes) {
             if (check.isSelected()) {
                 mods.add(check.getMod());
             }
         }
+
         return mods;
     }
 

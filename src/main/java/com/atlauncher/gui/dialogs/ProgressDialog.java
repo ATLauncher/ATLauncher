@@ -18,8 +18,8 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Language;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JDialog;

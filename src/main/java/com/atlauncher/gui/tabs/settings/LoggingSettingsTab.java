@@ -18,9 +18,9 @@
 package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
@@ -34,7 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class LoggingSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
+public class LoggingSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover forgeLoggingLevelLabel;
     private JComboBox<String> forgeLoggingLevel;
 
@@ -52,7 +52,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JCheckBox enableOpenEyeReporting;
 
     public LoggingSettingsTab() {
-        RelocalizationManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
         // Forge Logging Level
         gbc.gridx = 0;
         gbc.gridy++;
@@ -189,8 +189,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         return Language.INSTANCE.localize("settings.loggingtab");
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         this.forgeLoggingLevelLabel.setText(Language.INSTANCE.localize("settings" + ".forgelogginglevel") + ":");
         this.forgeLoggingLevelLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
                 ".forgelogginglevelhelp", "<br/><br/>") + "</html>");

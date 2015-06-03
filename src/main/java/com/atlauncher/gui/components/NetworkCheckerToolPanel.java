@@ -18,14 +18,16 @@
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.FileSystem;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
-import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -35,9 +37,11 @@ import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
+public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener {
     /**
      * Auto generated serial.
      */
@@ -55,8 +59,9 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
         setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        SettingsManager.addListener(this);
         this.checkLaunchButtonEnabled();
+
+        EventHandler.EVENT_BUS.subscribe(this);
     }
 
     private void checkLaunchButtonEnabled() {
@@ -99,33 +104,53 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                     // Response Code Test
                     for (Server server : App.settings.getServers()) {
-                        Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"), false);
-                        results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server
-                                .getHost(), download.getResponseCode()));
-                        dialog.doneTask();
+                        try {
+                            Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"),
+                                    false);
+                            results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server
+                                    .getHost(), download.code()));
+                            dialog.doneTask();
+                        } catch (Exception e) {
+                            LogManager.logStackTrace(e);
+                        }
                     }
 
                     // Ping Pong Test
                     for (Server server : App.settings.getServers()) {
                         Downloadable download = new Downloadable(server.getFileURL("ping"), false);
                         results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n", server
-                                .getHost(), download.getContents()));
+                                .getHost(), download.toString()));
                         dialog.doneTask();
                     }
 
                     // Speed Test
                     for (Server server : App.settings.getServers()) {
-                        File file = new File(App.settings.getTempDir(), "20MB.test");
-                        if (file.exists()) {
-                            Utils.delete(file);
+                        Path file = FileSystem.TMP.resolve("20MB.test");
+
+                        if (Files.exists(file)) {
+                            FileUtils.delete(file);
                         }
+
                         long started = System.currentTimeMillis();
 
-                        Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
-                        download.download(false);
+                        try {
+                            Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
+                            download.download();
+                        } catch (Exception e) {
+                            LogManager.logStackTrace(e);
+                        }
+
+                        long size = 0;
+
+                        try {
+                            size = Files.size(file);
+                        } catch (IOException e1) {
+                            LogManager.logStackTrace("Error getting file size of " + file + " while running network" +
+                                    " checker!", e1);
+                        }
 
                         long timeTaken = System.currentTimeMillis() - started;
-                        float bps = file.length() / (timeTaken / 1000);
+                        float bps = size / (timeTaken / 1000);
                         float kbps = bps / 1024;
                         float mbps = kbps / 1024;
                         String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f "
@@ -164,8 +189,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
         }
     }
 
-    @Override
-    public void onSettingsSaved() {
+    @Subscribe
+    public void onSettingsSaved(EventHandler.SettingsChangeEvent e) {
         this.checkLaunchButtonEnabled();
     }
 }

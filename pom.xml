@@ -6,7 +6,7 @@
     <groupId>com.atlauncher</groupId>
     <artifactId>atlauncher</artifactId>
     <name>ATLauncher</name>
-    <version>3.2.3.2</version>
+    <version>3.3.0.0</version>
     <organization>
         <name>ATLauncher</name>
         <url>http://www.github.com/ATLauncher/</url>
@@ -19,7 +19,7 @@
     <url>https://www.atlauncher.com</url>
 
     <properties>
-        <project.jdk.version>1.6</project.jdk.version>
+        <project.jdk.version>1.7</project.jdk.version>
         <mainclass>com.atlauncher.App</mainclass>
     </properties>
 
@@ -42,51 +42,81 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-zip</artifactId>
+            <version>1.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>1.5.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>1.5.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>2.4.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.2.4</version>
+            <version>2.3.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
+            <groupId>org.tukaani</groupId>
+            <artifactId>xz</artifactId>
+            <version>1.5</version>
             <scope>compile</scope>
         </dependency>
-		<dependency>
-			<groupId>org.tukaani</groupId>
-			<artifactId>xz</artifactId>
-			<version>1.5</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.mojang</groupId>
-			<artifactId>authlib</artifactId>
-			<version>1.5.17</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>2.0-beta9</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.0-beta9</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>17.0</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>net.sf.jopt-simple</groupId>
+            <artifactId>jopt-simple</artifactId>
+            <version>4.9-beta-1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>1.5.17</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.0-beta9</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.0-beta9</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>17.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -154,7 +184,7 @@
                                 <preCp>anything</preCp>
                             </classPath>
                             <jre>
-                                <minVersion>1.6.0</minVersion>
+                                <minVersion>1.7.0</minVersion>
                             </jre>
                             <icon>src/main/resources/assets/image/Icon.ico</icon>
                         </configuration>
@@ -175,33 +205,64 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <chmod
-                                        file="${project.build.directory}/${project.name}-${project.version}.jar"
-                                        perm="ugo+rwx"/>
+                                <taskdef name="osxbundler" classpathref="maven.plugin.classpath"
+                                         classname="net.sourceforge.jarbundler.JarBundler"/>
 
-                                <mkdir dir="${project.build.directory}/${project.name}.app"/>
-                                <copy todir="${project.build.directory}/${project.name}.app">
-                                    <fileset dir="${basedir}/macapp" includes="**"/>
-                                </copy>
-                                <copy
-                                        file="${project.build.directory}/${project.name}-${project.version}.jar"
-                                        tofile="${project.build.directory}/${project.name}.app/Contents/Resources/Java/${project.name}.jar"/>
-                                <copy file="${basedir}/src/main/resources/assets/image/Icon.icns"
-                                      tofile="${project.build.directory}/${project.name}.app/Contents/Resources/Icon.icns"/>
-                                <replace
-                                        file="${project.build.directory}/${project.name}.app/Contents/Info.plist"
-                                        token="%VERSION%" value="${project.version}"/>
+                                <copy file="${project.build.directory}/${project.name}-${project.version}.jar"
+                                      tofile="${project.build.directory}/${project.name}.jar"/>
 
-                                <zip
-                                        destfile="${project.build.directory}/${project.name}-${project.version}.zip">
+                                <osxbundler dir="${project.basedir}/target/"
+                                            name="${project.name}"
+                                            mainclass="${mainclass}"
+                                            jar="${project.build.directory}/${project.name}.jar"
+                                            shortname="${project.name}"
+                                            icon="${project.basedir}/src/main/resources/assets/image/Icon.icns"
+                                            stubfile="${project.basedir}/src/main/resources/osxapp/universalJavaApplicationStub"
+                                            useJavaXKey="true"
+                                            jvmversion="1.7+"
+                                            workingdirectory="$APP_PACKAGE/Contents/Resources/Java">
+                                </osxbundler>
+
+                                <zip destfile="${project.build.directory}/${project.name}-${project.version}.zip">
                                     <zipfileset dir="${project.build.directory}/"
                                                 includes="${project.name}.app/**"
-                                                excludes="${project.name}.app/Contents/MacOS/JavaApplicationStub"/>
+                                                excludes="${project.name}.app/Contents/MacOS/universalJavaApplicationStub"/>
                                     <zipfileset dir="${project.build.directory}/"
-                                                includes="${project.name}.app/Contents/MacOS/JavaApplicationStub"
+                                                includes="${project.name}.app/Contents/MacOS/universalJavaApplicationStub"
                                                 filemode="755"/>
                                 </zip>
-                                <delete dir="{project.build.directory}/${project.name}.app"/>
+
+                                <delete file="${project.build.directory}/${project.name}.jar"/>
+                                <delete dir="${project.build.directory}/${project.name}.app"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>JarBundler</groupId>
+                        <artifactId>net.sourceforge.jarbundler</artifactId>
+                        <version>2.4.0</version>
+                        <scope>system</scope>
+                        <systemPath>${project.basedir}/src/main/resources/osxapp/jarbundler-2.4.0.jar</systemPath>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <chmod file="${project.build.directory}/${project.name}-${project.version}.jar"
+                                       perm="ugo+rwx"/>
                             </target>
                         </configuration>
                         <goals>

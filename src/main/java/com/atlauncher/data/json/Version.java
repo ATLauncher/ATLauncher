@@ -17,8 +17,9 @@
  */
 package com.atlauncher.data.json;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.collection.ModList;
+import com.atlauncher.managers.LogManager;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class Version {
     /**
      * A list of mods to be installed with this version.
      */
-    private List<Mod> mods;
+    private ModList mods;
 
     /**
      * A list of actions to perform on this version.
@@ -115,7 +116,7 @@ public class Version {
     public Version() {
         this.libraries = new ArrayList<Library>();
         this.colours = new HashMap<String, String>();
-        this.mods = new ArrayList<Mod>();
+        this.mods = new ModList();
         this.actions = new ArrayList<Action>();
     }
 
@@ -170,12 +171,16 @@ public class Version {
         return this.mainClass != null && this.mainClass.getMainClass() != null;
     }
 
+    public boolean hasExtraArguments() {
+        return this.extraArguments != null && this.extraArguments.getArguments() != null;
+    }
+
     public ExtraArguments getExtraArguments() {
         return this.extraArguments;
     }
 
-    public boolean hasExtraArguments() {
-        return this.extraArguments != null && this.extraArguments.getArguments() != null;
+    public boolean hasDeletes() {
+        return this.deletes != null;
     }
 
     public Deletes getDeletes() {
@@ -198,28 +203,8 @@ public class Version {
         return this.colours;
     }
 
-    public List<Mod> getMods() {
+    public ModList getMods() {
         return this.mods;
-    }
-
-    public List<Mod> getClientInstallMods() {
-        List<Mod> mods = new ArrayList<Mod>();
-        for (Mod mod : this.mods) {
-            if (mod.installOnClient()) {
-                mods.add(mod);
-            }
-        }
-        return mods;
-    }
-
-    public List<Mod> getServerInstallMods() {
-        List<Mod> mods = new ArrayList<Mod>();
-        for (Mod mod : this.mods) {
-            if (mod.installOnServer()) {
-                mods.add(mod);
-            }
-        }
-        return mods;
     }
 
     public List<Action> getActions() {
@@ -297,8 +282,8 @@ public class Version {
 
     public void compileColours() {
         for (Mod mod : this.mods) {
-            if (mod.hasColour()) {
-                mod.setCompiledColour(this.getColour(mod.getColour()));
+            if (mod.color != null) {
+                mod.setCompiledColor(this.getColour(mod.color));
             }
         }
     }

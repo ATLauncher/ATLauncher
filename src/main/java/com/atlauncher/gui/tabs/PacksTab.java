@@ -18,16 +18,15 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.listener.TabChangeListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.TabChangeManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddPackDialog;
+import com.atlauncher.managers.PackManager;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -49,7 +48,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public final class PacksTab extends JPanel implements Tab, RelocalizationListener {
+public final class PacksTab extends JPanel implements Tab {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -76,20 +75,10 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.add(this.topPanel, BorderLayout.NORTH);
         this.add(this.bottomPanel, BorderLayout.SOUTH);
 
-        RelocalizationManager.addListener(this);
-
         this.setupTopPanel();
         this.preload();
 
-        TabChangeManager.addListener(new TabChangeListener() {
-            @Override
-            public void on() {
-                searchField.setText("");
-                serversBox.setSelected(false);
-                privateBox.setSelected(false);
-                searchDescBox.setSelected(false);
-            }
-        });
+        EventHandler.EVENT_BUS.subscribe(this);
 
         this.collapseAllButton.addActionListener(new ActionListener() {
             @Override
@@ -154,6 +143,14 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         });
     }
 
+    @Subscribe
+    private void onTabChange(EventHandler.TabChangeEvent e) {
+        searchField.setText("");
+        serversBox.setSelected(false);
+        privateBox.setSelected(false);
+        searchDescBox.setSelected(false);
+    }
+
     private void setupTopPanel() {
         this.topPanel.add(this.addButton);
         this.topPanel.add(this.clearButton);
@@ -173,8 +170,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
 
-        List<Pack> packs = App.settings.sortPacksAlphabetically() ? App.settings.getPacksSortedAlphabetically() : App
-                .settings.getPacksSortedPositionally();
+        List<Pack> packs = App.settings.sortPacksAlphabetically() ? PackManager.getPacksSortedAlphabetically() :
+                PackManager.getPacksSortedPositionally();
 
         int count = 0;
         for (Pack pack : packs) {
@@ -268,8 +265,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         return Language.INSTANCE.localize("tabs.packs");
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         addButton.setText(Language.INSTANCE.localize("pack.addpack"));
         clearButton.setText(Language.INSTANCE.localize("common.clear"));
         expandAllButton.setText(Language.INSTANCE.localize("pack.expandall"));
@@ -277,5 +274,14 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         serversBox.setText(Language.INSTANCE.localize("pack.cancreateserver"));
         privateBox.setText(Language.INSTANCE.localize("pack.privatepacksonly"));
         searchDescBox.setText(Language.INSTANCE.localize("pack.searchdescription"));
+    }
+
+    @Subscribe
+    private void onPacksChange(EventHandler.PacksChangeEvent e) {
+        if (e.reload) {
+            this.reload();
+        } else {
+            this.refresh();
+        }
     }
 }

@@ -18,10 +18,13 @@
 package com.atlauncher.data.json;
 
 import com.atlauncher.annot.Json;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.CompressionUtils;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 @Json
@@ -62,7 +65,7 @@ public class Action {
     public void convertMods(InstanceInstaller instanceInstaller) {
         Mod toAdd = null;
         for (String name : this.mod) {
-            toAdd = instanceInstaller.getModByName(name);
+            toAdd = instanceInstaller.allMods.byName(name);
             if (toAdd != null) {
                 addMod(toAdd);
             }
@@ -76,35 +79,52 @@ public class Action {
     }
 
     public void execute(InstanceInstaller instanceInstaller) {
-        if ((instanceInstaller.isServer() && !server) || (!instanceInstaller.isServer() && !client)) {
+        if ((instanceInstaller.server && !server) || (!instanceInstaller.server && !client)) {
             return;
         }
         convertMods(instanceInstaller);
-        Utils.deleteContents(instanceInstaller.getTempActionsDirectory());
+        FileUtils.deleteContents(instanceInstaller.getTempActionsDirectory());
         instanceInstaller.fireTask("Executing Action");
         instanceInstaller.fireSubProgressUnknown();
         if (this.action == TheAction.createZip) {
             if (mod.size() >= 2) {
                 for (Mod mod : this.mods) {
-                    Utils.unzip(mod.getInstalledFile(instanceInstaller), instanceInstaller.getTempActionsDirectory());
+                    FileUtils.unzip(mod.getInstalledFile(instanceInstaller), instanceInstaller
+                            .getTempActionsDirectory());
                 }
                 switch (this.type) {
                     case mods:
-                        Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                .getModsDirectory(), saveAs));
+                        try {
+                            CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller.mods
+                                    .resolve(saveAs));
+                        } catch (IOException e) {
+                            LogManager.logStackTrace(e);
+                        }
                         break;
                     case coremods:
-                        if (instanceInstaller.getVersion().getMinecraftVersion().usesCoreMods()) {
-                            Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                    .getCoreModsDirectory(), saveAs));
+                        if (instanceInstaller.packVersion.getMinecraftVersion().usesCoreMods()) {
+                            try {
+                                CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
+                                        .coremods.resolve(saveAs));
+                            } catch (IOException e) {
+                                LogManager.logStackTrace(e);
+                            }
                         } else {
-                            Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                    .getModsDirectory(), saveAs));
+                            try {
+                                CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
+                                        .mods.resolve(saveAs));
+                            } catch (IOException e) {
+                                LogManager.logStackTrace(e);
+                            }
                         }
                         break;
                     case jar:
-                        Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                .getJarModsDirectory(), saveAs));
+                        try {
+                            CompressionUtils.zip(instanceInstaller.getTempActionsDirectory(), instanceInstaller
+                                    .jarmods.resolve(saveAs));
+                        } catch (IOException e) {
+                            LogManager.logStackTrace(e);
+                        }
                         instanceInstaller.addToJarOrder(this.saveAs);
                         break;
                     default:
@@ -113,14 +133,15 @@ public class Action {
             }
         } else if (this.action == TheAction.rename) {
             if (mods.size() == 1) {
-                File from = mods.get(0).getInstalledFile(instanceInstaller);
-                File to = new File(from.getParentFile(), saveAs);
-                Utils.moveFile(from, to, true);
+                Path from = mods.get(0).getInstalledFile(instanceInstaller);
+                Path to = from.getParent().resolve(saveAs);
+                FileUtils.moveFile(from, to, true);
             }
         }
+
         if (this.after == ActionAfter.delete) {
             for (Mod mod : this.mods) {
-                Utils.delete(mod.getInstalledFile(instanceInstaller));
+                FileUtils.delete(mod.getInstalledFile(instanceInstaller));
             }
         }
     }

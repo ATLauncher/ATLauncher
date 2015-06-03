@@ -19,16 +19,26 @@ package com.atlauncher;
 
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.OldSettings;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.Settings;
+import com.atlauncher.evnt.EventModule;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.injector.Injector;
+import com.atlauncher.injector.InjectorFactory;
+import com.atlauncher.managers.BenchmarkManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.Toaster;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
@@ -50,6 +60,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
@@ -66,6 +77,8 @@ public class App {
      * The taskpool used to quickly add in tasks to do in the background.
      */
     public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
+
+    public static final Injector INJECTOR = InjectorFactory.createInjector(new EventModule());
 
     /**
      * The instance of toaster to show popups in the bottom right.
@@ -90,15 +103,6 @@ public class App {
      * --usegzip=false
      */
     public static boolean useGzipForDownloads = true;
-
-    /**
-     * This allows skipping the Minecraft version downloading which grabs all the Minecraft versions from Mojang so the
-     * launcher can know ahead of time what Minecraft versions there are and how to install them. Can be turned on to
-     * skip the downloading with the below command line argument.
-     * <p/>
-     * --skip-minecraft-version-downloads
-     */
-    public static boolean skipMinecraftVersionDownloads = false;
 
     /**
      * This allows skipping the system tray intergation so that the launcher doesn't even try to show the icon and menu
@@ -138,7 +142,7 @@ public class App {
      *
      * @TODO This should probably be switched to be less large and have less responsibility.
      */
-    public static Settings settings;
+    public static OldSettings settings = null;
 
     /**
      * This is the theme used by the launcher. By default it uses the default theme until the theme can be created and
@@ -161,78 +165,89 @@ public class App {
      * @param args all the arguments passed in from the command line
      */
     public static void main(String[] args) {
+        BenchmarkManager.start();
         // Set English as the default locale. CodeChickenLib(?) has some issues when not using this on some systems.
         Locale.setDefault(Locale.ENGLISH);
 
         // Prefer to use IPv4
         System.setProperty("java.net.preferIPv4Stack", "true");
 
-        if (args != null) {
-            for (String arg : args) {
-                String[] parts = arg.split("=");
-                if (parts[0].equalsIgnoreCase("--launch")) {
-                    autoLaunch = parts[1];
-                } else if (parts[0].equalsIgnoreCase("--updated")) {
-                    wasUpdated = true;
-                } else if (parts[0].equalsIgnoreCase("--debug")) {
-                    LogManager.showDebug = true;
-                    LogManager.debugLevel = 1;
-                    LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
-                            + "user data!");
-                } else if (parts[0].equalsIgnoreCase("--debug-level") && parts.length == 2) {
-                    int debugLevel;
+        OptionParser parser = new OptionParser();
+        parser.accepts("launch").withRequiredArg().ofType(String.class);
+        parser.accepts("updated").withRequiredArg().ofType(Boolean.class);
+        parser.accepts("debug").withRequiredArg().ofType(Boolean.class);
+        parser.accepts("debug-level").withRequiredArg().ofType(Integer.class);
+        parser.accepts("use-gzip").withRequiredArg().ofType(Boolean.class);
+        parser.accepts("skip-tray-integration").withRequiredArg().ofType(Boolean.class);
+        parser.accepts("force-offline-mode").withRequiredArg().ofType(Boolean.class);
 
-                    try {
-                        debugLevel = Integer.parseInt(parts[1]);
-                    } catch (NumberFormatException e) {
-                        LogManager.error("Error converting given debug level string to an integer. The specified " +
-                                "debug level given was '" + parts[1] + "'");
-                        continue;
-                    }
+        OptionSet options = parser.parse(args);
+        autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
+        wasUpdated = options.has("updated") ? (Boolean) options.valueOf("updated") : false;
 
-                    if (debugLevel < 1 || debugLevel > 3) {
-                        LogManager.error("Invalid debug level of '" + parts[1] + "' given!");
-                        continue;
-                    }
-
-                    LogManager.debugLevel = debugLevel;
-                    LogManager.debug("Debug level has been set to " + debugLevel + "!");
-                } else if (parts[0].equalsIgnoreCase("--usegzip") && parts[1].equalsIgnoreCase("false")) {
-                    useGzipForDownloads = false;
-                    LogManager.debug("GZip has been turned off for downloads! Don't ask for support with this " +
-                            "disabled!", true);
-                } else if (parts[0].equalsIgnoreCase("--skip-minecraft-version-downloads")) {
-                    skipMinecraftVersionDownloads = true;
-                    LogManager.debug("Skipping Minecraft version downloads! This may cause issues, only use it as " +
-                            "directed by" + Constants.LAUNCHER_NAME + " staff!", true);
-                } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
-                    skipTrayIntegration = true;
-                    LogManager.debug("Skipping tray integration!", true);
-                } else if (parts[0].equalsIgnoreCase("--force-offline-mode")) {
-                    forceOfflineMode = true;
-                    LogManager.debug("Forcing offline mode!", true);
-                }
-            }
+        if (options.has("debug")) {
+            LogManager.showDebug = (Boolean) options.valueOf("debug");
+            LogManager.debugLevel = 1;
+            LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of " + "user " +
+                    "data!");
         }
 
-        File config = new File(Utils.getCoreGracefully(), "Configs");
+        if (options.has("debug-level")) {
+            LogManager.debugLevel = (Integer) options.valueOf("debug-level");
+            LogManager.debug("Debug level has been set to " + options.valueOf("debug-level") + "!");
+        }
+
+        useGzipForDownloads = options.has("use-gzip") ? (Boolean) options.valueOf("use-gzip") : true;
+        if (!useGzipForDownloads) {
+            LogManager.debug("GZip has been turned off for downloads! Don't ask for support with this " +
+                    "disabled!", true);
+        }
+
+        skipTrayIntegration = options.has("skip-tray-integration") ? (Boolean) options.valueOf
+                ("skip-tray-integration") : false;
+        if (skipTrayIntegration) {
+            LogManager.debug("Skipping tray integration!", true);
+        }
+
+        forceOfflineMode = options.has("force-offline-mode") ? (Boolean) options.valueOf("force-offline-mode") : false;
+        if (forceOfflineMode) {
+            LogManager.debug("Forcing offline mode!", true);
+        }
+
+        File config = FileSystem.CONFIGS.toFile();
         if (!config.exists()) {
             int files = config.getParentFile().list().length;
             if (files > 1) {
-                String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
+                String[] opt = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("I've detected that you may " +
-                        "not have installed this in the right location.<br/><br/>The exe or jar file should " +
+                        "not have installed this in the right location.<br/><br/>The exe or JAR file should " +
                         "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure " +
                         "that's what you've done?"), "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane
-                        .ERROR_MESSAGE, null, options, options[0]);
+                        .ERROR_MESSAGE, null, opt, opt[0]);
                 if (ret != 0) {
                     System.exit(0);
                 }
             }
         }
 
+        // Load in the settings
+        SettingsManager.loadSettings();
+
         // Setup the Settings and wait for it to finish.
-        settings = new Settings();
+        settings = new OldSettings();
+
+        if (settings.isUsingMacApp() && !settings.isUsingNewMacApp()) {
+            String[] opt = {"Download"};
+
+            JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("You're using an old version of the" +
+                    " ATLauncher Mac OSX app.<br/><br/>Please download the new Mac OSX app from below to " +
+                    "keep playing!<br/><br/>Your instances and data will be transferred once the new app " +
+                    "is launcher.<br/><br/>Sorry for any inconvenience caused!"), "Error", JOptionPane
+                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, opt, opt[0]);
+
+            Utils.openBrowser("https://atl.pw/oldosxapp");
+            System.exit(0);
+        }
 
         final SplashScreen ss = new SplashScreen();
 
@@ -255,7 +270,7 @@ public class App {
                 // Try to enable the tray icon.
                 trySystemTrayIntegration();
             } catch (Exception e) {
-                settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
 
@@ -267,20 +282,12 @@ public class App {
             LogManager.warn("Custom Java Path Set!");
 
             settings.checkForValidJavaPath(false);
-        } else if (settings.isUsingMacApp()) {
-            // If the user is using the Mac Application, then we forcibly set the java path if they have none set.
-
-            File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
-            if (oracleJava.exists() && oracleJava.canExecute()) {
-                settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
-                LogManager.warn("Launcher Forced Custom Java Path Set!");
-            }
         }
 
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
         LogManager.info("Java Path: " + settings.getJavaPath());
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
-        LogManager.info("Launcher Directory: " + settings.getBaseDir());
+        LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR.toString());
         LogManager.info("Using Theme: " + THEME);
 
         // Now for some Mac specific stuff, mainly just setting the name of the application and icon.
@@ -290,11 +297,10 @@ public class App {
                     Constants.VERSION);
             try {
                 Class util = Class.forName("com.apple.eawt.Application");
-                Method getApplication = util.getMethod("getApplication", new Class[0]);
+                Method getApplication = util.getDeclaredMethod("getApplication");
                 Object application = getApplication.invoke(util);
-                Class params[] = new Class[1];
-                params[0] = Image.class;
-                Method setDockIconImage = util.getMethod("setDockIconImage", params);
+                Class params[] = new Class[]{Image.class};
+                Method setDockIconImage = util.getDeclaredMethod("setDockIconImage", params);
                 setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
@@ -317,8 +323,8 @@ public class App {
 
         boolean open = true;
 
-        if (autoLaunch != null && settings.isInstanceBySafeName(autoLaunch)) {
-            Instance instance = settings.getInstanceBySafeName(autoLaunch);
+        if (autoLaunch != null && InstanceManager.isInstanceBySafeName(autoLaunch)) {
+            Instance instance = InstanceManager.getInstanceBySafeName(autoLaunch);
             LogManager.info("Opening Instance " + instance.getName());
             if (instance.launch()) {
                 open = false;
@@ -332,8 +338,8 @@ public class App {
         ss.close();
 
         if (packCodeToAdd != null) {
-            if (settings.addPack(packCodeToAdd)) {
-                Pack packAdded = settings.getSemiPublicPackByCode(packCodeToAdd);
+            if (PackManager.addSemiPublicPack(packCodeToAdd)) {
+                Pack packAdded = PackManager.getSemiPublicPackByCode(packCodeToAdd);
                 if (packAdded != null) {
                     LogManager.info("The pack " + packAdded.getName() + " was automatically added to the launcher!");
                 } else {
@@ -344,6 +350,8 @@ public class App {
             }
         }
 
+        BenchmarkManager.stop();
+
         new LauncherFrame(open); // Open the Launcher
     }
 
@@ -351,12 +359,12 @@ public class App {
      * Loads the theme and applies the theme's settings to the look and feel.
      */
     public static void loadTheme() {
-        File themeFile = settings.getThemeFile();
+        Path themeFile = settings.getThemeFile();
         if (themeFile != null) {
             try {
                 InputStream stream = null;
 
-                ZipFile zipFile = new ZipFile(themeFile);
+                ZipFile zipFile = new ZipFile(themeFile.toFile());
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
                 while (entries.hasMoreElements()) {
@@ -465,7 +473,7 @@ public class App {
             props.load(new FileInputStream(f));
 
             props.setProperty("java_version", Utils.getJavaVersion());
-            props.setProperty("location", App.settings.getBaseDir().toString());
+            props.setProperty("location", FileSystem.BASE_DIR.toString());
             props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
                     .getPath()).getAbsolutePath());
 

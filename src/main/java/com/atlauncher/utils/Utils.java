@@ -18,13 +18,14 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.walker.ClearDirVisitor;
 import org.tukaani.xz.XZInputStream;
 
 import javax.crypto.BadPaddingException;
@@ -37,20 +38,17 @@ import javax.swing.ImageIcon;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -58,9 +56,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
@@ -75,18 +71,22 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
+import java.util.EnumSet;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
@@ -95,9 +95,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 public class Utils {
+    public static EnumSet<StandardOpenOption> WRITE = EnumSet.of(StandardOpenOption.CREATE_NEW, StandardOpenOption
+            .WRITE);
+    public static EnumSet<StandardOpenOption> READ = EnumSet.of(StandardOpenOption.READ);
+
     public static String error(Throwable t) {
         StringBuilder builder = new StringBuilder();
 
@@ -121,32 +124,25 @@ public class Utils {
      */
     public static ImageIcon getIconImage(String path) {
         try {
-            File themeFile = App.settings.getThemeFile();
-
-            if (themeFile != null) {
+            Path theme = App.settings.getThemeFile();
+            if (theme != null) {
                 InputStream stream = null;
+                try (ZipFile zip = new ZipFile(theme.toFile())) {
+                    Enumeration<? extends ZipEntry> entries = zip.entries();
+                    while (entries.hasMoreElements()) {
+                        ZipEntry entry = entries.nextElement();
+                        if (entry.getName().equals("image/" + path.substring(path.lastIndexOf("/") + 1))) {
+                            stream = zip.getInputStream(entry);
+                            break;
+                        }
+                    }
 
-                ZipFile zipFile = new ZipFile(themeFile);
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().equals("image/" + path.substring(path.lastIndexOf('/') + 1))) {
-                        stream = zipFile.getInputStream(entry);
-                        break;
+                    if (stream != null) {
+                        BufferedImage image = ImageIO.read(stream);
+                        stream.close();
+                        return new ImageIcon(image);
                     }
                 }
-
-                if (stream != null) {
-                    BufferedImage image = ImageIO.read(stream);
-
-                    stream.close();
-                    zipFile.close();
-
-                    return new ImageIcon(image);
-                }
-
-                zipFile.close();
             }
 
             URL url = System.class.getResource(path);
@@ -163,17 +159,17 @@ public class Utils {
         }
     }
 
-    public static File getCoreGracefully() {
+    public static Path getCoreGracefully() {
         if (Utils.isLinux()) {
             try {
-                return new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()
-                        .getSchemeSpecificPart()).getParentFile();
+                return Paths.get(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()
+                        .getSchemeSpecificPart()).getParent();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
-                return new File(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
+                return Paths.get(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
             }
         } else {
-            return new File(System.getProperty("user.dir"));
+            return Paths.get(System.getProperty("user.dir"));
         }
     }
 
@@ -182,7 +178,8 @@ public class Utils {
             case WINDOWS:
                 return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
             case OSX:
-                return new File(System.getProperty("user.home"), "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
+                return new File(System.getProperty("user.home"), "/Library/Application Support/." + Constants
+                        .LAUNCHER_NAME.toLowerCase());
             default:
                 return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
         }
@@ -201,6 +198,15 @@ public class Utils {
         }
 
         return new ImageIcon(file.getAbsolutePath());
+    }
+
+    public static ImageIcon getIconImage(Path p) {
+        if (!Files.exists(p)) {
+            LogManager.error("Unable to load file " + p);
+            return null;
+        }
+
+        return new ImageIcon(p.toAbsolutePath().toString());
     }
 
     /**
@@ -229,32 +235,25 @@ public class Utils {
                 name = name + ".png";
             }
 
-            File themeFile = App.settings.getThemeFile();
-
-            if (themeFile != null) {
+            Path theme = App.settings.getThemeFile();
+            if (theme != null) {
                 InputStream stream = null;
+                try (ZipFile zip = new ZipFile(theme.toFile())) {
+                    Enumeration<? extends ZipEntry> entries = zip.entries();
+                    while (entries.hasMoreElements()) {
+                        ZipEntry entry = entries.nextElement();
+                        if (entry.getName().equals("image/" + name.substring(name.lastIndexOf("/") + 1))) {
+                            stream = zip.getInputStream(entry);
+                            break;
+                        }
+                    }
 
-                ZipFile zipFile = new ZipFile(themeFile);
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().equals("image/" + name.substring(name.lastIndexOf('/') + 1))) {
-                        stream = zipFile.getInputStream(entry);
-                        break;
+                    if (stream != null) {
+                        BufferedImage image = ImageIO.read(stream);
+                        stream.close();
+                        return image;
                     }
                 }
-
-                if (stream != null) {
-                    BufferedImage image = ImageIO.read(stream);
-
-                    stream.close();
-                    zipFile.close();
-
-                    return image;
-                }
-
-                zipFile.close();
             }
 
             InputStream stream = App.class.getResourceAsStream(name);
@@ -271,16 +270,18 @@ public class Utils {
     }
 
     /**
-     * Open explorer.
-     *
-     * @param file the file
+     * @deprecated user openExplorer(Path)
      */
     public static void openExplorer(File file) {
+        Utils.openExplorer(file.toPath());
+    }
+
+    public static void openExplorer(Path path) {
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().open(file);
+                Desktop.getDesktop().open(path.toFile());
             } catch (Exception e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
     }
@@ -296,7 +297,7 @@ public class Utils {
                 Desktop.getDesktop().browse(new URI(URL));
             } catch (Exception e) {
                 LogManager.error("Failed to open link " + URL + " in browser!");
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
     }
@@ -312,7 +313,7 @@ public class Utils {
                 Desktop.getDesktop().browse(URL.toURI());
             } catch (Exception e) {
                 LogManager.error("Failed to open link " + URL + " in browser!");
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
     }
@@ -448,15 +449,15 @@ public class Utils {
                 ram = 1024;
             }
         } catch (SecurityException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (NoSuchMethodException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IllegalArgumentException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IllegalAccessException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (InvocationTargetException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return ram;
     }
@@ -478,6 +479,16 @@ public class Utils {
         } else {
             return maxRam;
         }
+    }
+
+    public static int getMaximumSafeRam() {
+        if (!Utils.is64Bit()) {
+            return 1024;
+        }
+
+        int halfRam = (Utils.getMaximumRam() / 1000) * 512;
+
+        return (halfRam >= 4096 ? 4096 : halfRam);
     }
 
     /**
@@ -525,7 +536,7 @@ public class Utils {
      * Upload paste.
      *
      * @param title the title
-     * @param log   the log
+     * @param log the log
      * @return the string
      */
     public static String uploadPaste(String title, String log) {
@@ -550,576 +561,41 @@ public class Utils {
             writer.close();
             reader.close();
         } catch (IOException e1) {
-            App.settings.logStackTrace(e1);
+            LogManager.logStackTrace(e1);
         }
         return result;
     }
 
-    /**
-     * Gets the m d5.
-     *
-     * @param file the file
-     * @return the m d5
-     */
-    public static String getMD5(File file) {
-        if (!file.exists()) {
-            LogManager.error("Cannot get MD5 of " + file.getAbsolutePath() + " as it doesn't exist");
-            return "0"; // File doesn't exists so MD5 is nothing
-        }
-        StringBuffer sb = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            FileInputStream fis = new FileInputStream(file);
-
-            byte[] dataBytes = new byte[1024];
-
-            int nread = 0;
-            while ((nread = fis.read(dataBytes)) != -1) {
-                md.update(dataBytes, 0, nread);
-            }
-
-            byte[] mdbytes = md.digest();
-
-            sb = new StringBuffer();
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-
-            if (fis != null) {
-                fis.close();
-            }
-        } catch (NoSuchAlgorithmException e) {
-            App.settings.logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Gets the SH a1.
-     *
-     * @param file the file
-     * @return the SH a1
-     */
-    public static String getSHA1(File file) {
-        if (!file.exists()) {
-            LogManager.error("Cannot get SHA-1 hash of " + file.getAbsolutePath() + " as it doesn't exist");
-            return "0"; // File doesn't exists so MD5 is nothing
-        }
-        StringBuffer sb = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            FileInputStream fis = new FileInputStream(file);
-
-            byte[] dataBytes = new byte[1024];
-
-            int nread = 0;
-            while ((nread = fis.read(dataBytes)) != -1) {
-                md.update(dataBytes, 0, nread);
-            }
-
-            byte[] mdbytes = md.digest();
-
-            sb = new StringBuffer();
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-
-            if (fis != null) {
-                fis.close();
-            }
-        } catch (NoSuchAlgorithmException e) {
-            App.settings.logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Gets the m d5.
-     *
-     * @param string the string
-     * @return the m d5
-     */
-    public static String getMD5(String string) {
-        if (string == null) {
-            LogManager.error("Cannot get MD5 of null");
-            return "0"; // String null so return 0
-        }
-        StringBuffer sb = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] bytesOfMessage = string.getBytes("UTF-8");
-            byte[] mdbytes = md.digest(bytesOfMessage);
-
-            // convert the byte to hex format method 1
-            sb = new StringBuffer();
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-        } catch (NoSuchAlgorithmException e) {
-            App.settings.logStackTrace(e);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Move file.
-     *
-     * @param from         the from
-     * @param to           the to
-     * @param withFilename the with filename
-     * @return true, if successful
-     */
-    public static boolean moveFile(File from, File to, boolean withFilename) {
-        if (copyFile(from, to, withFilename)) {
-            delete(from);
-            return true;
-        } else {
-            LogManager.error("Couldn't move file " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
-            return false;
-        }
-    }
-
-    /**
-     * Copy file.
-     *
-     * @param from the from
-     * @param to   the to
-     * @return true, if successful
-     */
-    public static boolean copyFile(File from, File to) {
-        return copyFile(from, to, false);
-    }
-
-    /**
-     * Copy file.
-     *
-     * @param from         the from
-     * @param to           the to
-     * @param withFilename the with filename
-     * @return true, if successful
-     */
-    public static boolean copyFile(File from, File to, boolean withFilename) {
-        if (!from.isFile()) {
-            LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as" +
-                    " it isn't a file");
-        }
-        if (!from.exists()) {
-            LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as" +
-                    " it doesn't exist");
-            return false;
-        }
-        if (!withFilename) {
-            to = new File(to, from.getName());
-        }
-        if (to.exists()) {
-            to.delete();
-        }
-
-        try {
-            to.createNewFile();
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-            return false;
-        }
-
-        FileChannel source = null;
-        FileChannel destination = null;
-
-        try {
-            source = new FileInputStream(from).getChannel();
-            destination = new FileOutputStream(to).getChannel();
-            destination.transferFrom(source, 0, source.size());
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-            return false;
-        } finally {
-            try {
-                if (source != null) {
-                    source.close();
-                }
-                if (destination != null) {
-                    destination.close();
-                }
-            } catch (IOException e) {
-                App.settings.logStackTrace(e);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean safeCopy(File from, File to) throws IOException {
-        if (to.exists()) {
-            to.delete();
-        }
-
-        InputStream is = null;
-        OutputStream os = null;
-
-        try {
-            is = new FileInputStream(from);
-            os = new FileOutputStream(to);
-
-            byte[] buff = new byte[1024];
-            int len;
-            while ((len = is.read(buff)) > 0) {
-                os.write(buff, 0, len);
-            }
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-
-            if (os != null) {
-                os.close();
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Move directory.
-     *
-     * @param sourceLocation the source location
-     * @param targetLocation the target location
-     * @return true, if successful
-     */
-    public static boolean moveDirectory(File sourceLocation, File targetLocation) {
-        if (copyDirectory(sourceLocation, targetLocation)) {
-            delete(sourceLocation);
-            return true;
-        } else {
-            LogManager.error("Couldn't move directory " + sourceLocation.getAbsolutePath() + " to " + targetLocation
-                    .getAbsolutePath());
-            return false;
-        }
-    }
-
-    /**
-     * Copy directory.
-     *
-     * @param sourceLocation the source location
-     * @param targetLocation the target location
-     * @return true, if successful
-     */
-    public static boolean copyDirectory(File sourceLocation, File targetLocation) {
-        return copyDirectory(sourceLocation, targetLocation, false);
-    }
-
-    /**
-     * Copy directory.
-     *
-     * @param sourceLocation the source location
-     * @param targetLocation the target location
-     * @param copyFolder     the copy folder
-     * @return true, if successful
-     */
-    public static boolean copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
-        if (copyFolder) {
-            targetLocation = new File(targetLocation, sourceLocation.getName());
-        }
-        try {
-            if (sourceLocation.isDirectory()) {
-                if (!targetLocation.exists()) {
-                    targetLocation.mkdirs();
-                }
-
-                String[] children = sourceLocation.list();
-                for (int i = 0; i < children.length; i++) {
-                    copyDirectory(new File(sourceLocation, children[i]), new File(targetLocation, children[i]));
-                }
-            } else {
-
-                InputStream in = new FileInputStream(sourceLocation);
-                OutputStream out = new FileOutputStream(targetLocation);
-
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                in.close();
-                out.close();
-            }
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Unzip.
-     *
-     * @param in  the in
-     * @param out the out
-     */
-    public static void unzip(File in, File out) {
-        unzip(in, out, null);
-    }
-
-    /**
-     * Unzip.
-     *
-     * @param in          the in
-     * @param out         the out
-     * @param extractRule the extract rule
-     */
-    public static void unzip(File in, File out, ExtractRule extractRule) {
-        try {
-            ZipFile zipFile = null;
-            if (!out.exists()) {
-                out.mkdirs();
-            }
-            zipFile = new ZipFile(in);
-            Enumeration<?> e = zipFile.entries();
-            while (e.hasMoreElements()) {
-                ZipEntry entry = (ZipEntry) e.nextElement();
-                String entryName = entry.getName();
-                if (entry.getName().endsWith("aux.class")) {
-                    entryName = "aux_class";
-                }
-                if (extractRule != null && extractRule.shouldExclude(entryName)) {
-                    continue;
-                }
-                if (entry.isDirectory()) {
-                    File folder = new File(out, entryName);
-                    folder.mkdirs();
-                }
-                File destinationFilePath = new File(out, entryName);
-                destinationFilePath.getParentFile().mkdirs();
-                if (!entry.isDirectory() && !entry.getName().equals(".minecraft")) {
-                    BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
-                    int b;
-                    byte buffer[] = new byte[1024];
-                    FileOutputStream fos = new FileOutputStream(destinationFilePath);
-                    BufferedOutputStream bos = new BufferedOutputStream(fos, 1024);
-                    while ((b = bis.read(buffer, 0, 1024)) != -1) {
-                        bos.write(buffer, 0, b);
-                    }
-                    bos.flush();
-                    bos.close();
-                    bis.close();
-                }
-            }
-            zipFile.close();
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
+    public static ExecutorService generateDownloadExecutor() {
+        return Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
     }
 
     /**
      * Clean temp directory.
      */
     public static void cleanTempDirectory() {
-        File file = App.settings.getTempDir();
-        String[] myFiles;
-        if (file.isDirectory()) {
-            myFiles = file.list();
-            for (int i = 0; i < myFiles.length; i++) {
-                new File(file, myFiles[i]).delete();
-            }
-        }
-    }
-
-    /**
-     * Delete.
-     *
-     * @param file the file
-     */
-    public static void delete(File file) {
-        if (!file.exists()) {
-            return;
-        }
-        if (file.isDirectory()) {
-            if (file.listFiles() != null) {
-                for (File c : file.listFiles()) {
-                    delete(c);
-                }
-            }
-        }
-
-        if (isSymlink(file)) {
-            LogManager.error("Not deleting the " + (file.isFile() ? "file" : "folder") + file.getAbsolutePath() +
-                    "as it's a symlink");
-            return;
-        }
-
-        if (!file.delete()) {
-            LogManager.error((file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath() + " couldn't be " +
-                    "deleted");
-        }
-    }
-
-    public static boolean isSymlink(File file) {
         try {
-            if (file == null) {
-                throw new NullPointerException("File must not be null");
-            }
-
-            File canon;
-
-            if (file.getParent() == null) {
-                canon = file;
-            } else {
-                File canonDir = null;
-
-                canonDir = file.getParentFile().getCanonicalFile();
-
-                canon = new File(canonDir, file.getName());
-            }
-
-            return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
+            Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    /**
-     * Delete.
-     *
-     * @param file the file
-     */
-    public static void deleteWithFilter(File file, final List<String> filesToIgnore) {
-        FilenameFilter ffFilter = new FilenameFilter() {
-
-            @Override
-            public boolean accept(File dir, String name) {
-                return !filesToIgnore.contains(name);
-            }
-        };
-        for (File aFile : file.listFiles(ffFilter)) {
-            Utils.delete(aFile);
+            LogManager.logStackTrace("Error trying to clean the temp directory", e);
         }
     }
 
-    /**
-     * Spread out resource files.
-     *
-     * @param dir the dir
-     */
-    public static void spreadOutResourceFiles(File dir) {
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                spreadOutResourceFiles(file);
-            } else {
-                String hash = getSHA1(file);
-                File saveTo = new File(App.settings.getObjectsAssetsDir(), hash.substring(0, 2) + File.separator +
-                        hash);
-                saveTo.mkdirs();
-                copyFile(file, saveTo, true);
-            }
-        }
-    }
-
-    /**
-     * Delete contents.
-     *
-     * @param file the file
-     */
-    public static void deleteContents(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files == null) {
-                // No contents in this folder so there are no files to delete
-                return;
-            }
-            for (File c : files) {
-                delete(c);
-            }
-        }
-    }
-
-    /**
-     * Zip.
-     *
-     * @param in  the in
-     * @param out the out
-     */
-    public static void zip(File in, File out) {
-        try {
-            URI base = in.toURI();
-            Deque<File> queue = new LinkedList<File>();
-            queue.push(in);
-            OutputStream stream = new FileOutputStream(out);
-            Closeable res = stream;
-            ZipOutputStream zout = null;
-            try {
-                zout = new ZipOutputStream(stream);
-                res = zout;
-                while (!queue.isEmpty()) {
-                    in = queue.pop();
-                    for (File kid : in.listFiles()) {
-                        String name = base.relativize(kid.toURI()).getPath();
-                        if (name.endsWith("aux_class")) {
-                            name = "aux.class";
-                        }
-                        if (kid.isDirectory()) {
-                            queue.push(kid);
-                            name = name.endsWith("/") ? name : name + "/";
-                            zout.putNextEntry(new ZipEntry(name));
-                        } else {
-                            zout.putNextEntry(new ZipEntry(name));
-                            copy(kid, zout);
-                            zout.closeEntry();
-                        }
-                    }
-                }
-            } finally {
-                res.close();
-                if (zout != null) {
-                    zout.close();
+    public static void spreadOutResourceFiles(Path p) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(p)) {
+            for (Path file : stream) {
+                if (Files.isDirectory(file)) {
+                    spreadOutResourceFiles(file);
+                } else {
+                    String hash = Hashing.sha1(p).toString();
+                    Path save = FileSystem.RESOURCES.resolve("assets").resolve(hash.substring(0, 2) + File.separator
+                            + hash);
+                    FileUtils.createDirectory(save);
+                    Files.copy(file, save, StandardCopyOption.REPLACE_EXISTING);
                 }
             }
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        }
-    }
-
-    /**
-     * Copy.
-     *
-     * @param in  the in
-     * @param out the out
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private static void copy(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[1024];
-        while (true) {
-            int readCount = in.read(buffer);
-            if (readCount < 0) {
-                break;
-            }
-            out.write(buffer, 0, readCount);
-        }
-    }
-
-    /**
-     * Copy.
-     *
-     * @param file the file
-     * @param out  the out
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private static void copy(File file, OutputStream out) throws IOException {
-        InputStream in = new FileInputStream(file);
-        try {
-            copy(in, out);
-        } finally {
-            in.close();
+        } catch (Exception e) {
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -1139,7 +615,7 @@ public class Utils {
             byte[] encVal = c.doFinal(Data.getBytes());
             encryptedValue = Base64.encodeBytes(encVal);
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return encryptedValue;
     }
@@ -1167,7 +643,7 @@ public class Utils {
         } catch (IllegalBlockSizeException e) {
             return Utils.decryptOld(encryptedData);
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return decryptedValue;
     }
@@ -1206,10 +682,10 @@ public class Utils {
     /**
      * Replace text.
      *
-     * @param originalFile    the original file
+     * @param originalFile the original file
      * @param destinationFile the destination file
-     * @param replaceThis     the replace this
-     * @param withThis        the with this
+     * @param replaceThis the replace this
+     * @param withThis the with this
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static void replaceText(File originalFile, File destinationFile, String replaceThis, String withThis)
@@ -1240,7 +716,7 @@ public class Utils {
      *
      * @param urll the urll
      * @param text the text
-     * @param key  the key
+     * @param key the key
      * @return the string
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -1349,15 +825,16 @@ public class Utils {
     }
 
     /**
-     * Checks for meta inf.
-     *
-     * @param minecraftJar the minecraft jar
-     * @return true, if successful
+     * @deprecated use hasMetainf(Path)
      */
     public static boolean hasMetaInf(File minecraftJar) {
+        return Utils.hasMetaInf(minecraftJar.toPath());
+    }
+
+    public static boolean hasMetaInf(Path minecraftJar) {
         JarInputStream input = null;
         try {
-            input = new JarInputStream(new FileInputStream(minecraftJar));
+            input = new JarInputStream(new FileInputStream(minecraftJar.toFile()));
             JarEntry entry;
             boolean found = false;
             while ((entry = input.getNextJarEntry()) != null) {
@@ -1367,32 +844,17 @@ public class Utils {
             }
             return found;
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    App.settings.logStackTrace("Unable to close input stream", e);
+                    LogManager.logStackTrace("Unable to close input stream", e);
                 }
             }
         }
         return false;
-    }
-
-    /**
-     * Gets the logs file filter.
-     *
-     * @return the logs file filter
-     */
-    public static FilenameFilter getLogsFileFilter() {
-        return new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                File file = new File(dir, name);
-                return file.isFile() && name.startsWith(Constants.LAUNCHER_NAME + "-Log_") && name.endsWith(".log");
-            }
-        };
     }
 
     /**
@@ -1446,13 +908,13 @@ public class Utils {
                     }
                 }
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close process input stream reader", e);
+                        LogManager.logStackTrace("Cannot close process input stream reader", e);
                     }
                 }
             }
@@ -1498,15 +960,15 @@ public class Utils {
                     return version >= 7;
                 }
             } catch (NumberFormatException e) {
-                App.settings.logStackTrace("Cannot get number from the ouput of java -version", e);
+                LogManager.logStackTrace("Cannot get number from the ouput of java -version", e);
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close input stream reader", e);
+                        LogManager.logStackTrace("Cannot close input stream reader", e);
                     }
                 }
             }
@@ -1539,13 +1001,13 @@ public class Utils {
                 String line = br.readLine(); // Read first line only
                 return line.contains("\"1.8");
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close input stream reader", e);
+                        LogManager.logStackTrace("Cannot close input stream reader", e);
                     }
                 }
             }
@@ -1578,13 +1040,13 @@ public class Utils {
                 String line = br.readLine(); // Read first line only
                 return line.contains("\"1.9");
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close input stream reader", e);
+                        LogManager.logStackTrace("Cannot close input stream reader", e);
                     }
                 }
             }
@@ -1612,19 +1074,29 @@ public class Utils {
     }
 
     /**
+     * @deprecated use sendOpenEyeReport
+     */
+    public static OpenEyeReportResponse sendOpenEyePendingReport(File report) {
+        return Utils.sendOpenEyePendingReport(report.toPath());
+    }
+
+    /**
      * Sends a pending crash report generated by OpenEye and retrieves and returns it's response to display to the
      * user.
      *
-     * @param report a {@link File} object of the pending crash report to send the contents of
+     * @param report a {@link Path} object of the pending crash report to send the contents of
      * @return the response received from OpenEye about the crash that was sent which is of {@link
      * OpenEyeReportResponse} type
      */
-    public static OpenEyeReportResponse sendOpenEyePendingReport(File report) {
+    public static OpenEyeReportResponse sendOpenEyePendingReport(Path report) {
         StringBuilder response = null;
-        String request = Utils.getFileContents(report);
-        if (request == null) {
-            LogManager.error("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath() + "'. Pending " +
-                    "report sending failed!");
+        String request;
+
+        try {
+            request = new String(Files.readAllBytes(report));
+        } catch (IOException e) {
+            LogManager.logStackTrace("OpenEye: Couldn't read contents of file '" + report + "'. Pending  report " +
+                    "sending failed!", e);
             return null;
         }
 
@@ -1648,7 +1120,7 @@ public class Utils {
             writer.flush();
             writer.close();
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             return null; // Report not sent
         }
 
@@ -1664,7 +1136,7 @@ public class Utils {
                 response.append('\r');
             }
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             return null; // Report sent, but no response
         } finally {
             try {
@@ -1672,7 +1144,7 @@ public class Utils {
                     reader.close();
                 }
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
 
@@ -1705,14 +1177,14 @@ public class Utils {
             }
             contents = sb.toString();
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             try {
                 if (br != null) {
                     br.close();
                 }
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
         return contents;
@@ -1721,7 +1193,7 @@ public class Utils {
     /**
      * This splits up a string into a multi lined string by adding a separator at every space after a given count.
      *
-     * @param string        the string to split up
+     * @param string the string to split up
      * @param maxLineLength the number of characters minimum to have per line
      * @param lineSeparator the string to place when a new line should be placed
      * @return the new multi lined string
@@ -1842,7 +1314,7 @@ public class Utils {
             pingStats = response.toString();
 
         } catch (IOException e) {
-            App.settings.logStackTrace("IOException while running ping on host " + host, e);
+            LogManager.logStackTrace("IOException while running ping on host " + host, e);
         }
 
         return pingStats;
@@ -1874,7 +1346,7 @@ public class Utils {
             route = response.toString();
 
         } catch (IOException e) {
-            App.settings.logStackTrace("IOException while running traceRoute on host " + host, e);
+            LogManager.logStackTrace("IOException while running traceRoute on host " + host, e);
         }
 
         return route;
@@ -1964,41 +1436,19 @@ public class Utils {
         return new Object[]{type, message};
     }
 
-    public static byte[] readFile(File file) {
-        byte[] bytes = null;
-        RandomAccessFile f = null;
-        try {
-            f = new RandomAccessFile(file, "r");
-            bytes = new byte[(int) f.length()];
-            f.read(bytes);
-        } catch (IOException e) {
-            App.settings.logStackTrace(e);
-        } finally {
-            if (f != null) {
-                try {
-                    f.close();
-                } catch (IOException e) {
-                    App.settings.logStackTrace(e);
-                }
-            }
-        }
-        return bytes;
-    }
-
-    public static void unXZPackFile(File xzFile, File packFile, File outputFile) {
+    public static void unXZPackFile(Path xzFile, Path packFile, Path outputFile) {
         unXZFile(xzFile, packFile);
         unpackFile(packFile, outputFile);
     }
 
-    public static void unXZFile(File input, File output) {
+    public static void unXZFile(Path input, Path output) {
         FileInputStream fis = null;
         FileOutputStream fos = null;
-        BufferedInputStream bis = null;
         XZInputStream xzis = null;
         try {
-            fis = new FileInputStream(input);
+            fis = new FileInputStream(input.toFile());
             xzis = new XZInputStream(fis);
-            fos = new FileOutputStream(output);
+            fos = new FileOutputStream(output.toFile());
 
             final byte[] buffer = new byte[8192];
             int n = 0;
@@ -2007,14 +1457,11 @@ public class Utils {
             }
 
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             try {
                 if (fis != null) {
                     fis.close();
-                }
-                if (bis != null) {
-                    bis.close();
                 }
                 if (fos != null) {
                     fos.close();
@@ -2023,7 +1470,7 @@ public class Utils {
                     xzis.close();
                 }
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
     }
@@ -2031,15 +1478,21 @@ public class Utils {
     /*
      * From: http://atl.pw/1
      */
-    public static void unpackFile(File input, File output) {
-        if (output.exists()) {
-            Utils.delete(output);
+    public static void unpackFile(Path input, Path output) {
+        if (Files.exists(output)) {
+            FileUtils.delete(output);
         }
 
-        byte[] decompressed = readFile(input);
+        byte[] decompressed = null;
+
+        try {
+            decompressed = Files.readAllBytes(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (decompressed == null) {
-            LogManager.error("unpackFile: While reading in " + input.getName() + " the file returned null");
+            LogManager.error("unpackFile: While reading in " + input + " the file returned null");
             return;
         }
 
@@ -2054,7 +1507,7 @@ public class Utils {
                 0xFF) << 16) | ((decompressed[x - 5] & 0xFF) << 24);
         byte[] checksums = Arrays.copyOfRange(decompressed, decompressed.length - len - 8, decompressed.length - 8);
         try {
-            FileOutputStream jarBytes = new FileOutputStream(output);
+            FileOutputStream jarBytes = new FileOutputStream(output.toFile());
             JarOutputStream jos = new JarOutputStream(jarBytes);
 
             Pack200.newUnpacker().unpack(new ByteArrayInputStream(decompressed), jos);
@@ -2066,7 +1519,7 @@ public class Utils {
             jos.close();
             jarBytes.close();
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -2108,29 +1561,39 @@ public class Utils {
                 }
             }
         } catch (Exception e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             returnStr = (returnStr == null ? "NotARandomKeyYes" : returnStr);
         }
 
-        return getMD5(returnStr);
+        return Hashing.md5(returnStr).toString();
+    }
+
+    /**
+     * @deprecated use addToClasspath(Path)
+     */
+    public static boolean addToClasspath(File file) {
+        return Utils.addToClasspath(file.toPath());
     }
 
     /**
      * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
      */
-    public static boolean addToClasspath(File file) {
-        LogManager.info("Loading external library " + file.getName() + " to classpath");
+    public static boolean addToClasspath(Path path) {
+        LogManager.info("Loading external library " + path.getFileName() + " to classpath!");
+
         try {
-            if (file.exists()) {
-                addURL(file.toURI().toURL());
+            if (Files.exists(path)) {
+                addURL(path.toUri().toURL());
             } else {
-                LogManager.error("Error loading AuthLib");
+                LogManager.error("Error loading " + path.getFileName() + " to classpath as it doesn't exist!");
+                return false;
             }
         } catch (Throwable t) {
             if (t.getMessage() != null) {
                 LogManager.error(t.getMessage());
             }
+
             return false;
         }
 
@@ -2144,7 +1607,7 @@ public class Utils {
             App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
             App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
         } catch (ClassNotFoundException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             return false;
         }
 
@@ -2168,4 +1631,9 @@ public class Utils {
             throw new IOException("Error, could not add URL to system classloader");
         }
     }
+
+    public static boolean isHeadless() {
+        return GraphicsEnvironment.isHeadless();
+    }
+
 }

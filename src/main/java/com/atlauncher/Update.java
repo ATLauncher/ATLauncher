@@ -17,10 +17,13 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +31,11 @@ public class Update {
     public static void main(String[] args) {
         String launcherPath = args[0];
         String temporaryUpdatePath = args[1];
-        File launcher = new File(launcherPath);
-        File temporaryUpdate = new File(temporaryUpdatePath);
-        Utils.copyFile(temporaryUpdate, launcher.getParentFile());
+        Path launcher = Paths.get(launcherPath);
+        Path temporaryUpdate = Paths.get(temporaryUpdatePath);
+        FileUtils.copyFile(temporaryUpdate, launcher.getParent());
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
 
         if (Utils.isMac() && new File(new File(System.getProperty("user.dir")).getParentFile().getParentFile(),
                 "MacOS").exists()) {

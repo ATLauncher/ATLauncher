@@ -18,11 +18,11 @@
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.EventHandler;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.HTMLUtils;
 
@@ -37,7 +37,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
+public class ConsoleBottomBar extends BottomBar {
 
     private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 10));
 
@@ -58,7 +58,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
 
         this.add(this.leftSide, BorderLayout.WEST);
 
-        RelocalizationManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
     }
 
     /**
@@ -121,11 +121,14 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     }
 
     public void setupLanguage() {
-        this.onRelocalization();
+        clearButton.setText(Language.INSTANCE.localize("console.clear"));
+        copyLogButton.setText(Language.INSTANCE.localize("console.copy"));
+        uploadLogButton.setText(Language.INSTANCE.localize("console.upload"));
+        killMinecraftButton.setText(Language.INSTANCE.localize("console.kill"));
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         clearButton.setText(Language.INSTANCE.localize("console.clear"));
         copyLogButton.setText(Language.INSTANCE.localize("console.copy"));
         uploadLogButton.setText(Language.INSTANCE.localize("console.upload"));

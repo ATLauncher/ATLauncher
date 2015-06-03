@@ -18,11 +18,13 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
 
@@ -97,7 +99,7 @@ public class AccountsTab extends JPanel implements Tab {
 
         accountsComboBox = new JComboBox<Account>();
         accountsComboBox.addItem(fillerAccount);
-        for (Account account : App.settings.getAccounts()) {
+        for (Account account : AccountManager.getAccounts()) {
             accountsComboBox.addItem(account);
         }
         accountsComboBox.setSelectedIndex(0);
@@ -224,10 +226,10 @@ public class AccountsTab extends JPanel implements Tab {
                             .localizeWithReplace("account.deletesure", usernameField.getText()), Language.INSTANCE
                             .localize("account.delete"), JOptionPane.YES_NO_OPTION);
                     if (res == JOptionPane.YES_OPTION) {
-                        App.settings.removeAccount(account);
+                        AccountManager.removeAccount(account);
                         accountsComboBox.removeAllItems();
                         accountsComboBox.addItem(fillerAccount);
-                        for (Account accountt : App.settings.getAccounts()) {
+                        for (Account accountt : AccountManager.getAccounts()) {
                             accountsComboBox.addItem(accountt);
                         }
                         accountsComboBox.setSelectedIndex(0);
@@ -273,18 +275,18 @@ public class AccountsTab extends JPanel implements Tab {
         if (App.settings.isInOfflineMode()) {
             String[] options = {Language.INSTANCE.localize("common.ok")};
             JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                    ".offlinemode"), Language.INSTANCE.localize("common.offline"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                            ".offlinemode"), Language.INSTANCE.localize("common.offline"), JOptionPane
+                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
         } else {
             Account account;
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             boolean remember = rememberField.isSelected();
-            if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
+            if (AccountManager.getAccountByName(username) != null && accountsComboBox.getSelectedIndex() == 0) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                        ".exists"), Language.INSTANCE.localize("account.notadded"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                ".exists"), Language.INSTANCE.localize("account.notadded"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 return;
             }
 
@@ -315,7 +317,7 @@ public class AccountsTab extends JPanel implements Tab {
                             ("account.addedswitch"), Language.INSTANCE.localize("account.added"), JOptionPane
                             .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                     if (ret == 0) {
-                        App.settings.switchAccount(account);
+                        AccountManager.switchAccount(account);
                     }
                 } else {
                     account = (Account) accountsComboBox.getSelectedItem();
@@ -329,14 +331,14 @@ public class AccountsTab extends JPanel implements Tab {
                     LogManager.info("Edited Account " + account);
                     String[] options = {Language.INSTANCE.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                                    ".editeddone"), Language.INSTANCE.localize("account.edited"), JOptionPane
-                            .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                            ".editeddone"), Language.INSTANCE.localize("account.edited"), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 }
                 response.save();
-                App.settings.reloadAccounts();
+                EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
                 accountsComboBox.removeAllItems();
                 accountsComboBox.addItem(fillerAccount);
-                for (Account accountt : App.settings.getAccounts()) {
+                for (Account accountt : AccountManager.getAccounts()) {
                     accountsComboBox.addItem(accountt);
                 }
                 accountsComboBox.setSelectedItem(account);
@@ -345,7 +347,7 @@ public class AccountsTab extends JPanel implements Tab {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
                         .localize("account.incorrect") +
-                                "<br/><br/>" + response.getErrorMessage()), Language.INSTANCE.localize("account" +
+                        "<br/><br/>" + response.getErrorMessage()), Language.INSTANCE.localize("account" + "" +
                         ".notadded"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
         }

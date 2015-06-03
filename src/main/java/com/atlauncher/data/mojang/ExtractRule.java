@@ -20,19 +20,5 @@ package com.atlauncher.data.mojang;
 import java.util.List;
 
 public class ExtractRule {
-
-    private List<String> exclude;
-
-    public boolean shouldExclude(String filename) {
-        if (exclude == null) {
-            return false;
-        }
-        for (String name : exclude) {
-            if (filename.startsWith(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    public List<String> exclude;
 }

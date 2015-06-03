@@ -18,6 +18,9 @@
 package com.atlauncher.data.json;
 
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.Instance;
+
+import java.nio.file.Path;
 
 @Json
 public class Delete {
@@ -30,5 +33,16 @@ public class Delete {
 
     public String getTarget() {
         return this.target;
+    }
+
+    public boolean isValid() {
+        return !this.base.equalsIgnoreCase("root") || !(this.target.startsWith("world") || this.target.startsWith
+                ("DIM") || this.target.startsWith("saves") || this.target.startsWith("instance.json") || this.target
+                .contains("./") || this.target.contains(".\\") || this.target.contains("~/") || this.target.contains
+                ("~\\"));
+    }
+
+    public Path getFile(Instance instance) {
+        return instance.getRootDirectory().resolve(this.target.replace("%s%", "/"));
     }
 }

@@ -21,7 +21,10 @@ import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
+import com.atlauncher.data.json.ModType;
 import com.atlauncher.gui.components.ModsJCheckBox;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -138,24 +141,24 @@ public class EditModsDialog extends JDialog {
                     boolean reload = false;
                     for (File file : files) {
                         String typeTemp = fcd.getSelectorValue();
-                        com.atlauncher.data.Type type = null;
+                        ModType type = null;
                         if (typeTemp.equalsIgnoreCase("Mods Folder")) {
-                            type = com.atlauncher.data.Type.mods;
+                            type = ModType.MODS;
                         } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
-                            type = com.atlauncher.data.Type.jar;
+                            type = ModType.JAR;
                         } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
-                            type = com.atlauncher.data.Type.coremods;
+                            type = ModType.COREMODS;
                         } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
-                            type = com.atlauncher.data.Type.texturepack;
+                            type = ModType.TEXTUREPACK;
                         } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
-                            type = com.atlauncher.data.Type.resourcepack;
+                            type = ModType.RESOURCEPACK;
                         } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
-                            type = com.atlauncher.data.Type.shaderpack;
+                            type = ModType.SHADERPACK;
                         }
                         if (type != null) {
                             DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(),
                                     type, null, null, true, true);
-                            if (Utils.copyFile(file, instance.getDisabledModsDirectory())) {
+                            if (FileUtils.copyFile(file.toPath(), instance.getDisabledModsDirectory())) {
                                 instance.getInstalledMods().add(mod);
                                 disabledMods.add(new ModsJCheckBox(mod));
                                 reload = true;
@@ -219,11 +222,11 @@ public class EditModsDialog extends JDialog {
 
             checkBox = new ModsJCheckBox(mod);
             if (mod.isDisabled()) {
-                checkBox.setBounds(0, (dCount * 20), nameSize + 23, 20);
+                checkBox.setBounds(0, (dCount * 20), checkBox.getPreferredSize().width, 20);
                 disabledMods.add(checkBox);
                 dCount++;
             } else {
-                checkBox.setBounds(0, (eCount * 20), nameSize + 23, 20);
+                checkBox.setBounds(0, (eCount * 20), checkBox.getPreferredSize().width, 20);
                 enabledMods.add(checkBox);
                 eCount++;
             }
@@ -279,7 +282,7 @@ public class EditModsDialog extends JDialog {
     }
 
     private void reloadPanels() {
-        App.settings.saveInstances();
+        InstanceManager.saveInstances();
         enabledModsPanel.removeAll();
         disabledModsPanel.removeAll();
         loadMods();

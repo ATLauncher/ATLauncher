@@ -17,7 +17,7 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
@@ -97,8 +97,7 @@ public class NewsTab extends JPanel implements Tab {
      * Reloads the panel with updated news.
      */
     public void reload() {
-        this.NEWS_PANE.setText("");
-        this.NEWS_PANE.setText(App.settings.getNewsHTML());
+        this.NEWS_PANE.setText(Data.NEWS.toString());
         this.NEWS_PANE.setCaretPosition(0);
     }
 

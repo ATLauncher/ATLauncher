@@ -18,13 +18,11 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.PackVersion;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.TabChangeManager;
+import com.atlauncher.data.version.PackVersion;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
@@ -34,6 +32,9 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JFrame;
@@ -48,7 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public final class LauncherFrame extends JFrame implements RelocalizationListener {
+public final class LauncherFrame extends JFrame {
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab packsTab;
@@ -82,6 +83,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         LogManager.info("Setting up Tabs");
         setupTabs(); // Setup the JTabbedPane
         LogManager.info("Finished Setting up Tabs");
+        EventHandler.EVENT_BUS.subscribe(this);
 
         this.add(tabbedPane, BorderLayout.CENTER);
         this.add(bottomBar, BorderLayout.SOUTH);
@@ -90,9 +92,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             LogManager.info("Showing Launcher");
             setVisible(true);
         }
-
-        RelocalizationManager.addListener(this);
-
         App.TASKPOOL.execute(new Runnable() {
             public void run() {
                 App.settings.checkMojangStatus(); // Check Minecraft status
@@ -101,14 +100,15 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         });
 
         if (App.packToInstall != null) {
-            Pack pack = App.settings.getPackBySafeName(App.packToInstall);
+            Pack pack = PackManager.getPackBySafeName(App.packToInstall);
 
-            if (pack != null && pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(pack.getCode())) {
+            if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
                 LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the " +
                         "pack added to the launcher!");
             } else {
-                if (App.settings.isInOfflineMode() || App.settings.getAccount() == null || pack == null) {
-                    LogManager.error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
+                if (App.settings.isInOfflineMode() || AccountManager.getActiveAccount() == null || pack == null) {
+                    LogManager.error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) +
+                            "!");
                 } else {
                     new InstanceInstallerDialog(pack);
                 }
@@ -119,9 +119,9 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             if (parts.length != 4) {
                 LogManager.error("Error automatically installing pack from share code!");
             } else {
-                Pack pack = App.settings.getPackBySafeName(parts[0]);
+                Pack pack = PackManager.getPackBySafeName(parts[0]);
 
-                if (pack != null && pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(pack.getCode())) {
+                if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
                     LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the " +
                             "pack added to the launcher!");
                 } else {
@@ -156,9 +156,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         newsTab = new NewsTab();
         App.settings.setNewsPanel(newsTab);
         packsTab = new PacksTab();
-        App.settings.setPacksPanel(packsTab);
         instancesTab = new InstancesTab();
-        App.settings.setInstancesPanel(instancesTab);
         accountsTab = new AccountsTab();
         toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
@@ -174,12 +172,12 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             public void stateChanged(ChangeEvent e) {
                 String tabName = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
                 if (tabbedPane.getSelectedIndex() == 1) {
-                    updateTitle("Packs - " + App.settings.getPackInstallableCount());
+                    updateTitle("Packs - " + PackManager.getInstallableCount());
                 } else {
                     updateTitle(tabName);
                 }
 
-                TabChangeManager.post();
+                EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.TabChangeEvent.class));
             }
         });
         tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
@@ -191,11 +189,10 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
      */
     private void setupBottomBar() {
         bottomBar = new LauncherBottomBar();
-        App.settings.setBottomBar(bottomBar);
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

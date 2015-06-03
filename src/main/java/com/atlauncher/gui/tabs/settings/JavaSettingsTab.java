@@ -18,9 +18,9 @@
 package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
@@ -41,7 +41,7 @@ import java.awt.event.ItemListener;
 import java.io.File;
 
 @SuppressWarnings("serial")
-public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
+public class JavaSettingsTab extends AbstractSettingsTab {
     private final String[] MEMORY_OPTIONS = Utils.getMemoryOptions();
     private JLabelWithHover initialMemoryLabel;
     private JComboBox<String> initialMemory;
@@ -72,7 +72,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private JCheckBox saveCustomMods;
 
     public JavaSettingsTab() {
-        RelocalizationManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
         // Initial Memory Settings
         gbc.gridx = 0;
         gbc.gridy++;
@@ -371,8 +371,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         return Language.INSTANCE.localize("settings.javatab");
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         this.initialMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE
                 .localize("settings.32bitmemorywarning"), 80, "<br/>") + "</html>");
 

@@ -17,7 +17,7 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
+import com.atlauncher.managers.AccountManager;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
 public class LoginResponse {
@@ -91,7 +91,7 @@ public class LoginResponse {
     }
 
     public void save() {
-        Account account = App.settings.getAccountByName(this.username);
+        Account account = AccountManager.getAccountByName(this.username);
 
         if (account != null) {
             account.saveStore(this.auth.saveForStorage());

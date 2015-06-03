@@ -17,11 +17,13 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.managers.InstanceManager;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -61,6 +63,7 @@ public class InstancesTab extends JPanel implements Tab {
 
     public InstancesTab() {
         setLayout(new BorderLayout());
+        EventHandler.EVENT_BUS.subscribe(this);
         loadContent(false);
     }
 
@@ -126,7 +129,7 @@ public class InstancesTab extends JPanel implements Tab {
         gbc.fill = GridBagConstraints.BOTH;
 
         int count = 0;
-        for (Instance instance : App.settings.getInstancesSorted()) {
+        for (Instance instance : InstanceManager.getInstancesSorted()) {
             if (instance.canPlay()) {
                 if (keepFilters) {
                     boolean showInstance = true;
@@ -184,5 +187,10 @@ public class InstancesTab extends JPanel implements Tab {
     @Override
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.instances");
+    }
+
+    @Subscribe
+    private void onInstancesChanged(EventHandler.InstancesChangeEvent e) {
+        this.reload();
     }
 }

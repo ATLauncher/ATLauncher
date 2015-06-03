@@ -18,13 +18,9 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.ConsoleCloseListener;
-import com.atlauncher.evnt.listener.ConsoleOpenListener;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.ConsoleCloseManager;
-import com.atlauncher.evnt.manager.ConsoleOpenManager;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.utils.HTMLUtils;
 
 import javax.swing.JMenuItem;
@@ -34,9 +30,7 @@ import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public final class TrayMenu extends JPopupMenu implements RelocalizationListener, ConsoleCloseListener,
-        ConsoleOpenListener {
-
+public final class TrayMenu extends JPopupMenu {
     private final JMenuItem killMCButton = new JMenuItem();
     private final JMenuItem tcButton = new JMenuItem();
     private final JMenuItem quitButton = new JMenuItem();
@@ -57,9 +51,7 @@ public final class TrayMenu extends JPopupMenu implements RelocalizationListener
         this.addSeparator();
         this.add(this.quitButton);
 
-        ConsoleCloseManager.addListener(this);
-        ConsoleOpenManager.addListener(this);
-        RelocalizationManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
 
         this.addActionListeners();
     }
@@ -74,8 +66,8 @@ public final class TrayMenu extends JPopupMenu implements RelocalizationListener
                         if (App.settings.isMinecraftLaunched()) {
                             int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils
                                     .centerParagraph(Language.INSTANCE.localizeWithReplace("console" + "" +
-                                    ".killsure", "<br/><br/>")), Language.INSTANCE.localize("console" + ".kill"),
-                                    JOptionPane.YES_NO_OPTION);
+                                    ".killsure", "<br/><br/>")), Language.INSTANCE.localize("console" + "" +
+                                    ".kill"), JOptionPane.YES_NO_OPTION);
 
                             if (ret == JOptionPane.YES_OPTION) {
                                 App.settings.killMinecraft();
@@ -92,34 +84,40 @@ public final class TrayMenu extends JPopupMenu implements RelocalizationListener
             }
         });
         this.quitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.exit(0);
+                    }
+                });
+    }
+
+    @Subscribe
+    private void onConsoleClose(EventHandler.ConsoleCloseEvent e) {
+        this.tcButton.setText(Language.INSTANCE.localize("console.show"));
+    }
+
+    @Subscribe
+    private void onConsoleOpen(EventHandler.ConsoleOpenEvent e) {
+        this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
     }
 
     public void localize() {
         this.tcButton.setEnabled(true);
-        this.onRelocalization();
+        this.killMCButton.setText(Language.INSTANCE.localize("console.kill"));
+        this.quitButton.setText(Language.INSTANCE.localize("common.quit"));
+        if (App.settings.getConsole().isVisible()) {
+            this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
+        } else {
+            this.tcButton.setText(Language.INSTANCE.localize("console.show"));
+        }
     }
 
     public void setMinecraftLaunched(boolean l) {
         this.killMCButton.setEnabled(l);
     }
 
-    @Override
-    public void onConsoleClose() {
-        this.tcButton.setText(Language.INSTANCE.localize("console.show"));
-    }
-
-    @Override
-    public void onConsoleOpen() {
-        this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
-    }
-
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
         this.killMCButton.setText(Language.INSTANCE.localize("console.kill"));
         this.quitButton.setText(Language.INSTANCE.localize("common.quit"));
         if (App.settings.getConsole().isVisible()) {

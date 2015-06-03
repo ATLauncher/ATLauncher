@@ -15,22 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.atlauncher.data;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.FileSystem;
+import com.atlauncher.managers.LogManager;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 public enum Language {
-    INSTANCE, Language;
+    INSTANCE;
 
     private final Map<String, Properties> langs = new HashMap<String, Properties>();
     private volatile String current;
@@ -44,7 +46,7 @@ public enum Language {
     }
 
     public static String[] available() {
-        File[] files = App.settings.getLanguagesDir().listFiles(new FilenameFilter() {
+        File[] files = FileSystem.LANGUAGES.toFile().listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".lang");
@@ -62,15 +64,17 @@ public enum Language {
         return INSTANCE.current;
     }
 
-    public synchronized void load(String lang) throws IOException {
+    public void load(String lang) throws IOException {
         if (!this.langs.containsKey(lang)) {
             Properties props = new Properties();
-            File langFile = new File(App.settings.getLanguagesDir(), lang.toLowerCase() + ".lang");
-            if (!langFile.exists()) {
-                LogManager.error("Language file " + langFile.getName() + " doesn't exist! Defaulting it inbuilt one!");
+            Path langFile = FileSystem.LANGUAGES.resolve(lang.toLowerCase() + ".lang");
+
+            if (!Files.exists(langFile)) {
+                LogManager.error("Language file " + langFile.getFileName() + " doesn't exist! Defaulting it inbuilt " +
+                        "one!");
                 props.load(App.class.getResourceAsStream("/assets/lang/english.lang"));
             } else {
-                props.load(new FileInputStream(langFile));
+                props.load(new FileInputStream(langFile.toFile()));
             }
             this.langs.put(lang, props);
             LogManager.info("Loading Language: " + lang);
@@ -79,7 +83,7 @@ public enum Language {
         this.current = lang;
     }
 
-    public synchronized void reload(String lang) throws IOException {
+    public void reload(String lang) throws IOException {
         if (this.langs.containsKey(lang)) {
             this.langs.remove(lang);
         }
@@ -87,7 +91,7 @@ public enum Language {
         this.load(lang);
     }
 
-    public synchronized String localize(String lang, String tag) {
+    public String localize(String lang, String tag) {
         if (this.langs.containsKey(lang)) {
             Properties props = this.langs.get(lang);
             if (props.containsKey(tag)) {
@@ -104,15 +108,15 @@ public enum Language {
         }
     }
 
-    public synchronized String localize(String tag) {
+    public String localize(String tag) {
         return this.localize(this.current, tag);
     }
 
-    public synchronized String localizeWithReplace(String tag, String replaceWith) {
+    public String localizeWithReplace(String tag, String replaceWith) {
         return this.localize(this.current, tag).replace("%s", replaceWith);
     }
 
-    public synchronized String getCurrent() {
+    public String getCurrent() {
         return this.current;
     }
 }
