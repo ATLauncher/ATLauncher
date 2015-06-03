@@ -17,7 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.data.Account;
@@ -49,7 +48,17 @@ public class AccountManager {
      * @param account the account to be active, or null if none
      */
     public static void setActiveAccount(Account account) {
+        if (AccountManager.activeAccount != null && account.isActive()) {
+            AccountManager.activeAccount.setActive(false);
+        }
+
         AccountManager.activeAccount = account;
+
+        if (account != null && !account.isActive()) {
+            account.setActive(true);
+        }
+
+        AccountManager.saveAccounts();
     }
 
 
@@ -89,6 +98,13 @@ public class AccountManager {
             }
         }
 
+        for (Account account : Data.ACCOUNTS) {
+            if (account.isActive()) {
+                AccountManager.setActiveAccount(account);
+                break;
+            }
+        }
+
         LogManager.debug("Finished loading accounts");
     }
 
@@ -120,21 +136,20 @@ public class AccountManager {
     public static void switchAccount(Account account) {
         if (account == null) {
             LogManager.info("Logging out of account");
-            AccountManager.activeAccount = null;
+            AccountManager.setActiveAccount(null);
         } else {
             if (account.isReal()) {
                 LogManager.info("Changed account to " + account);
-                AccountManager.activeAccount = account;
+                AccountManager.setActiveAccount(account);
             } else {
                 LogManager.info("Logging out of account");
-                AccountManager.activeAccount = null;
+                AccountManager.setActiveAccount(null);
             }
         }
 
         EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
-        SettingsManager.saveSettings();
     }
 
     public static void setPackVisbility(Pack pack, boolean collapsed) {

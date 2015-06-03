@@ -89,7 +89,6 @@ public class Settings {
     public boolean firstTimeRun; // If this is the first time the Launcher has been run
     public boolean offlineMode; // If offline mode is enabled
 
-    public String lastAccount;
     public String addedPacks;
 
     private static final String[] VALID_FORGE_LOGGING_LEVELS = {"SEVERE", "WARNING", "INFO", "CONFIG", "FINE",
@@ -135,8 +134,6 @@ public class Settings {
         this.theme = Constants.LAUNCHER_NAME;
 
         this.dateFormat = "dd/M/yyy";
-
-        this.lastAccount = "";
 
         this.addedPacks = "";
 
@@ -227,7 +224,9 @@ public class Settings {
 
             this.serverCheckerWait = Integer.parseInt(properties.getProperty("servercheckerwait", "5"));
 
-            this.lastAccount = properties.getProperty("lastaccount", "");
+            // Migrates the last active account. It's okay if it's null, means nobody
+            AccountManager.setActiveAccount(AccountManager.getAccountByName(properties.getProperty("lastaccount", "")));
+
             this.addedPacks = properties.getProperty("addedpacks", null);
 
             this.autoBackup = Boolean.parseBoolean(properties.getProperty("autobackup", "false"));
@@ -252,7 +251,6 @@ public class Settings {
         checkConcurrentConnections();
         checkDaysOfLogsToKeep();
         checkDateFormat();
-        checkLastAccount();
         addAddedPacks();
     }
 
@@ -399,13 +397,6 @@ public class Settings {
                     "back to default of dd/M/yyy!");
 
             this.dateFormat = "dd/M/yyy";
-        }
-    }
-
-    private void checkLastAccount() {
-        if (!this.lastAccount.isEmpty()) {
-            // Set the account. If it's null, that's okay, it uses that to signify nobody logged in
-            AccountManager.setActiveAccount(AccountManager.getAccountByName(this.lastAccount));
         }
     }
 

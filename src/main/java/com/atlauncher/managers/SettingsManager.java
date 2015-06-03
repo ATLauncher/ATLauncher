@@ -20,6 +20,7 @@ package com.atlauncher.managers;
 import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Network;
+import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 import com.atlauncher.data.Settings;
