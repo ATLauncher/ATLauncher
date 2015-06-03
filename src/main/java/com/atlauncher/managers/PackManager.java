@@ -221,7 +221,7 @@ public class PackManager {
                         return false;
                     }
                     PackManager.semiPublicPackCodes.add(packCode);
-                    App.settings.saveProperties();
+                    SettingsManager.saveSettings();
                     EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(false));
                     return true;
                 }
@@ -235,7 +235,7 @@ public class PackManager {
             if (Hashing.md5(code).toString().equalsIgnoreCase(packCode) && PackManager.semiPublicPackCodes.contains
                     (code)) {
                 PackManager.semiPublicPackCodes.remove(code);
-                App.settings.saveProperties();
+                SettingsManager.saveSettings();
                 EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(false));
             }
         }

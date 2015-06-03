@@ -20,7 +20,16 @@ package com.atlauncher.managers;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Server;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ServerManager {
+    private static final List<Server> SERVERS = Arrays.asList(Constants.SERVERS);
+
+    public static List<Server> getServers() {
+        return ServerManager.SERVERS;
+    }
+
     /**
      * Finds if a server is available
      *
@@ -48,6 +57,32 @@ public class ServerManager {
                 return server;
             }
         }
+        return null;
+    }
+
+    /**
+     * Gets the URL for a file on the user selected server
+     *
+     * @param filename Filename including directories on the server
+     * @return URL of the file
+     */
+    public static String getFileURL(String filename) {
+        return SettingsManager.getActiveServer().getFileURL(filename);
+    }
+
+    /**
+     * Gets the URL for a file on the master serverserverserverserver
+     *
+     * @param filename Filename including directories on the serverserverserverserver
+     * @return URL of the file or null if no master server defined
+     */
+    public static String getMasterFileURL(String filename) {
+        for (Server server : ServerManager.SERVERS) {
+            if (server.isMaster()) {
+                return server.getFileURL(filename);
+            }
+        }
+
         return null;
     }
 }

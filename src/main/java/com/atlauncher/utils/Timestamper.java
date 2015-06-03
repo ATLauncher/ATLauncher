@@ -18,12 +18,13 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
+import com.atlauncher.managers.SettingsManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public final class Timestamper {
-    private static final SimpleDateFormat format = new SimpleDateFormat(App.settings.getDateFormat() + " HH:mm:ss a");
+    private static final SimpleDateFormat format = new SimpleDateFormat(SettingsManager.getDateFormat() + " HH:mm:ss a");
 
     public static String now() {
         return format.format(new Date());
@@ -34,6 +35,6 @@ public final class Timestamper {
     }
 
     public static void updateDateFormat() {
-        format.applyLocalizedPattern(App.settings.getDateFormat() + " HH:mm:ss a");
+        format.applyLocalizedPattern(SettingsManager.getDateFormat() + " HH:mm:ss a");
     }
 }

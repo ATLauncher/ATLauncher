@@ -22,6 +22,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
@@ -37,7 +38,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -55,7 +55,7 @@ public final class Downloadable {
     public final String filename;
 
     private final InstanceInstaller installer;
-    private final List<Server> servers = new LinkedList<>(App.settings.getServers());
+    private final List<Server> servers = ServerManager.getServers();
 
     private String url;
     private String hash;
@@ -92,14 +92,7 @@ public final class Downloadable {
         this.filename = filename;
 
         if (this.atlauncher) {
-            this.server = App.settings.getServers().get(0);
-            for (Server server : this.servers) {
-                if (server.getName().equals(App.settings.getServer().getName())) {
-                    this.server = server;
-                    break;
-                }
-            }
-            this.url = this.server.getFileURL(url);
+            this.url = ServerManager.getFileURL(url);
         } else {
             this.url = url;
         }
@@ -301,14 +294,13 @@ public final class Downloadable {
                     if (this.getNextServer()) {
                         LogManager.warn("Error downloading " + this.to.getFileName() + " from " + this.url + ". " +
                                 "Expected hash of " + expected.toString() + " but got " + this.hash + " instead. " +
-                                "Trying " +
-                                "another server!");
+                                "Trying another server!");
                         this.url = this.server.getFileURL(this.URL);
                     } else {
                         FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                         LogManager.error("Failed to download file " + this.to.getFileName() + " from all " +
-                                Constants.LAUNCHER_NAME +
-                                "servers. Copied to FailedDownloads Folder. Cancelling install!");
+                                Constants.LAUNCHER_NAME + " servers. Copied to FailedDownloads Folder. Cancelling " +
+                                "install!");
                         if (this.installer != null) {
                             this.installer.cancel(true);
                         }
@@ -341,8 +333,6 @@ public final class Downloadable {
                     FileUtils.copyFile(this.to, this.copyTo, true);
                 }
             }
-
-            App.settings.clearTriedServers();
         }
 
         if (oldPath != null && Files.exists(oldPath)) {

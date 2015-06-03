@@ -24,6 +24,8 @@ import com.atlauncher.data.Server;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.ServerManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JCheckBox;
@@ -71,13 +73,13 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        server = new JComboBox<Server>();
-        for (Server serverr : App.settings.getServers()) {
+        server = new JComboBox<>();
+        for (Server serverr : ServerManager.getServers()) {
             if (serverr.isUserSelectable()) {
                 server.addItem(serverr);
             }
         }
-        server.setSelectedItem(App.settings.getOriginalServer());
+        server.setSelectedItem(SettingsManager.getActiveServer());
         add(server, gbc);
 
         // Concurrent Connection Settings
@@ -95,7 +97,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         concurrentConnections = new JTextField(4);
-        concurrentConnections.setText(App.settings.getConcurrentConnections() + "");
+        concurrentConnections.setText(SettingsManager.getConcurrentConnections() + "");
         add(concurrentConnections, gbc);
 
         // Enable Proxy
@@ -112,7 +114,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableProxy = new JCheckBox();
-        if (App.settings.getEnableProxy()) {
+        if (SettingsManager.getEnableProxy()) {
             enableProxy.setSelected(true);
         }
         enableProxy.addActionListener(new ActionListener() {
@@ -145,7 +147,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyHost = new JTextField(20);
-        proxyHost.setText(App.settings.getProxyHost());
+        proxyHost.setText(SettingsManager.getProxyHost());
         if (!enableProxy.isSelected()) {
             proxyHost.setEnabled(false);
         }
@@ -164,7 +166,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyPort = new JTextField(4);
-        proxyPort.setText((App.settings.getProxyPort() == 0 ? "" : App.settings.getProxyPort()) + "");
+        proxyPort.setText((SettingsManager.getProxyPort() == 0 ? "" : SettingsManager.getProxyPort()) + "");
         if (!enableProxy.isSelected()) {
             proxyPort.setEnabled(false);
         }
@@ -182,11 +184,11 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        proxyType = new JComboBox<String>();
+        proxyType = new JComboBox<>();
         proxyType.addItem("HTTP");
         proxyType.addItem("SOCKS");
         proxyType.addItem("DIRECT");
-        proxyType.setSelectedItem(App.settings.getProxyType());
+        proxyType.setSelectedItem(SettingsManager.getProxyType());
         if (!enableProxy.isSelected()) {
             proxyType.setEnabled(false);
         }
@@ -263,15 +265,15 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
     }
 
     public void save() {
-        App.settings.setServer((Server) server.getSelectedItem());
-        App.settings.setConcurrentConnections(Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]",
+        SettingsManager.setServer((Server) server.getSelectedItem());
+        SettingsManager.setConcurrentConnections(Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]",
                 "")));
-        App.settings.setEnableProxy(enableProxy.isSelected());
+        SettingsManager.setEnableProxy(enableProxy.isSelected());
         if (enableProxy.isSelected()) {
-            App.settings.setProxyHost(proxyHost.getText());
-            App.settings.setProxyPort(Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")));
-            App.settings.setProxyType(((String) proxyType.getSelectedItem()));
-            App.settings.configureProxy();
+            SettingsManager.setProxyHost(proxyHost.getText());
+            SettingsManager.setProxyPort(Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")));
+            SettingsManager.setProxyType(((String) proxyType.getSelectedItem()));
+            SettingsManager.configureProxy();
         }
     }
 

@@ -17,13 +17,13 @@
  */
 package com.atlauncher.mclauncher;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.mojang.PropertyMapSerializer;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -103,7 +103,7 @@ public class MCLauncher {
 
         List<String> arguments = new ArrayList<String>();
 
-        String path = App.settings.getJavaPath() + File.separator + "bin" + File.separator + "java";
+        String path = SettingsManager.getJavaPath() + File.separator + "bin" + File.separator + "java";
         if (Utils.isWindows()) {
             path += "w";
         }
@@ -115,25 +115,26 @@ public class MCLauncher {
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
-        if (App.settings.getJavaParameters().isEmpty()) {
+        if (SettingsManager.getJavaParameters().isEmpty()) {
             // Mojang launcher defaults if user has no custom java arguments
             arguments.add("-XX:+UseConcMarkSweepGC");
             arguments.add("-XX:+CMSIncrementalMode");
             arguments.add("-XX:-UseAdaptiveSizePolicy");
         }
 
-        arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
+        arguments.add("-Xms" + SettingsManager.getInitialMemory() + "M");
 
-        if (App.settings.getMaximumMemory() < instance.getMemory()) {
+        if (SettingsManager.getMaximumMemory() < instance.getMemory()) {
             if ((Utils.getMaximumRam() / 2) < instance.getMemory()) {
-                arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
+                arguments.add("-Xmx" + SettingsManager.getMaximumMemory() + "M");
             } else {
                 arguments.add("-Xmx" + instance.getMemory() + "M");
             }
         } else {
-            arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
+            arguments.add("-Xmx" + SettingsManager.getMaximumMemory() + "M");
         }
-        if (App.settings.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
+        if (SettingsManager.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen
+                ()) {
             if (Utils.isJava8() || Utils.isJava9()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
@@ -141,9 +142,9 @@ public class MCLauncher {
             }
         } else {
             if (Utils.isJava8() || Utils.isJava9()) {
-                arguments.add("-XX:MetaspaceSize=" + App.settings.getPermGen() + "M");
+                arguments.add("-XX:MetaspaceSize=" + SettingsManager.getPermGen() + "M");
             } else {
-                arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
+                arguments.add("-XX:PermSize=" + SettingsManager.getPermGen() + "M");
             }
         }
 
@@ -157,7 +158,7 @@ public class MCLauncher {
             System.out.println("Okay you can look again, you saw NOTHING!");
         }
 
-        arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
+        arguments.add("-Dfml.log.level=" + SettingsManager.getForgeLoggingLevel());
 
         if (Utils.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
@@ -165,8 +166,8 @@ public class MCLauncher {
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
-        if (!App.settings.getJavaParameters().isEmpty()) {
-            for (String arg : App.settings.getJavaParameters().split(" ")) {
+        if (!SettingsManager.getJavaParameters().isEmpty()) {
+            for (String arg : SettingsManager.getJavaParameters().split(" ")) {
                 if (!arg.isEmpty()) {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {
@@ -228,12 +229,12 @@ public class MCLauncher {
             arguments.add("--gameDir=" + instance.getRootDirectory());
             arguments.add("--assetsDir=" + FileSystem.RESOURCES);
         }
-        if (App.settings.startMinecraftMaximised()) {
+        if (SettingsManager.startMinecraftMaximised()) {
             arguments.add("--width=" + Utils.getMaximumWindowWidth());
             arguments.add("--height=" + Utils.getMaximumWindowHeight());
         } else {
-            arguments.add("--width=" + App.settings.getWindowWidth());
-            arguments.add("--height=" + App.settings.getWindowHeight());
+            arguments.add("--width=" + SettingsManager.getWindowWidth());
+            arguments.add("--height=" + SettingsManager.getWindowHeight());
         }
         if (instance.hasExtraArguments()) {
             String args = instance.getExtraArguments();

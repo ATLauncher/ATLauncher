@@ -25,6 +25,7 @@ import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -385,7 +386,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 InstanceManager.saveInstances();
                                 EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent
                                         .class));
-                                if (pack.isLoggingEnabled() && App.settings.enableLogs() && !packVersion.isDev()) {
+                                if (pack.isLoggingEnabled() && SettingsManager.enableLogs() && !packVersion.isDev()) {
                                     if (isServer) {
                                         pack.addServerInstall(packVersion.getVersion());
                                     } else if (isUpdate) {

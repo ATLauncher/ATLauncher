@@ -40,57 +40,57 @@ import java.util.Properties;
 @Json
 public class Settings {
     // Non Gsonable fields
-    private transient Server selectedServer = null;
-    private transient Proxy proxy = null;
+    public transient Server selectedServer = null;
+    public transient Proxy proxy = null;
 
     // Gsonable fields
-    private String server;
-    private String forgeLoggingLevel;
-    private String language = "English";
-    private int initialMemory; // Initial RAM to use when launching Minecraft
-    private int maximumMemory; // Maximum RAM to use when launching Minecraft
-    private int permGen; // PermGenSize to use when launching Minecraft in MB
-    private int windowWidth; // Width of the Minecraft window
-    private int windowHeight; // Height of the Minecraft window
-    private boolean maximiseMinecraft; // If Minecraft should start maximised
-    private boolean saveCustomMods; // If custom mods should be saved between updates/reinstalls
-    private boolean usingCustomJavaPath; // If the user is using a custom java path
-    private String javaPath; // Users path to Java
-    private String javaParamaters; // Extra Java paramaters when launching Minecraft
-    private boolean advancedBackup; // If advanced backup is enabled
-    private boolean sortPacksAlphabetically; // If to sort packs default alphabetically
-    private boolean keepLauncherOpen; // If we should close the Launcher after Minecraft has closed
-    private boolean enableConsole; // If to show the console by default
-    private boolean enableTrayIcon; // If to enable tray icon
-    private boolean enableLeaderboards; // If to enable the leaderboards
-    private boolean enableLogs; // If to enable logs
-    private boolean enableOpenEyeReporting; // If to enable OpenEye reporting
-    private boolean enableProxy = false; // If proxy is in use
-    private boolean enablePackTags = false;
-    private String proxyHost; // The proxies host
-    private int proxyPort; // The proxies port
-    private Proxy.Type proxyType; // The type of proxy (socks, http)
-    private int concurrentConnections; // Number of concurrent connections to open when downloading
-    private int daysOfLogsToKeep; // Number of days of logs to keep
-    private String theme; // The theme to use
-    private String dateFormat; // The date format to use
-    private boolean enableServerChecker; // If to enable server checker
-    private int serverCheckerWait; // Time to wait in minutes between checking server status
+    public String server;
+    public String forgeLoggingLevel;
+    public String language = "English";
+    public int initialMemory; // Initial RAM to use when launching Minecraft
+    public int maximumMemory; // Maximum RAM to use when launching Minecraft
+    public int permGen; // PermGenSize to use when launching Minecraft in MB
+    public int windowWidth; // Width of the Minecraft window
+    public int windowHeight; // Height of the Minecraft window
+    public boolean maximiseMinecraft; // If Minecraft should start maximised
+    public boolean saveCustomMods; // If custom mods should be saved between updates/reinstalls
+    public boolean usingCustomJavaPath; // If the user is using a custom java path
+    public String javaPath; // Users path to Java
+    public String javaParamaters; // Extra Java paramaters when launching Minecraft
+    public boolean advancedBackup; // If advanced backup is enabled
+    public boolean sortPacksAlphabetically; // If to sort packs default alphabetically
+    public boolean keepLauncherOpen; // If we should close the Launcher after Minecraft has closed
+    public boolean enableConsole; // If to show the console by default
+    public boolean enableTrayIcon; // If to enable tray icon
+    public boolean enableLeaderboards; // If to enable the leaderboards
+    public boolean enableLogs; // If to enable logs
+    public boolean enableOpenEyeReporting; // If to enable OpenEye reporting
+    public boolean enableProxy = false; // If proxy is in use
+    public boolean enablePackTags = false;
+    public String proxyHost; // The proxies host
+    public int proxyPort; // The proxies port
+    public Proxy.Type proxyType; // The type of proxy (socks, http)
+    public int concurrentConnections; // Number of concurrent connections to open when downloading
+    public int daysOfLogsToKeep; // Number of days of logs to keep
+    public String theme; // The theme to use
+    public String dateFormat; // The date format to use
+    public boolean enableServerChecker; // If to enable server checker
+    public int serverCheckerWait; // Time to wait in minutes between checking server status
 
     // General backup settings
-    private boolean autoBackup; // Whether backups are created on instance close
-    private String lastSelectedSync; // The last service selected for syncing
-    private boolean notifyBackup; // Whether to notify the user on successful backup or restore
+    public boolean autoBackup; // Whether backups are created on instance close
+    public String lastSelectedSync; // The last service selected for syncing
+    public boolean notifyBackup; // Whether to notify the user on successful backup or restore
 
     // Dropbox settings
-    private String dropboxFolderLocation; // Location of dropbox if defined by user
+    public String dropboxFolderLocation; // Location of dropbox if defined by user
 
-    private boolean hadPasswordDialog; // If the user has seen the password dialog
-    private boolean firstTimeRun; // If this is the first time the Launcher has been run
-    private boolean offlineMode; // If offline mode is enabled
+    public boolean hadPasswordDialog; // If the user has seen the password dialog
+    public boolean firstTimeRun; // If this is the first time the Launcher has been run
+    public boolean offlineMode; // If offline mode is enabled
 
-    private String lastAccount;
-    private String addedPacks;
+    public String lastAccount;
+    public String addedPacks;
 
     private static final String[] VALID_FORGE_LOGGING_LEVELS = {"SEVERE", "WARNING", "INFO", "CONFIG", "FINE",
             "FINER", "FINEST"};
@@ -108,6 +108,7 @@ public class Settings {
         this.windowWidth = 854;
         this.windowHeight = 480;
         this.usingCustomJavaPath = false;
+        this.javaPath = Utils.getJavaHome();
         this.javaParamaters = "";
         this.maximiseMinecraft = false;
         this.saveCustomMods = true;
@@ -158,6 +159,7 @@ public class Settings {
 
             if (!properties.containsKey("usingcustomjavapath")) {
                 this.usingCustomJavaPath = false;
+                this.javaPath = Utils.getJavaHome();
             } else {
                 this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty("usingcustomjavapath", "false"));
                 if (this.usingCustomJavaPath) {
@@ -241,6 +243,7 @@ public class Settings {
     public void validate() {
         loadLanguage();
         loadServer();
+        checkJavaPath();
         checkForgeLoggingLevel();
         checkMemory();
         checkWindowSize();
@@ -264,6 +267,23 @@ public class Settings {
 
         if (ServerManager.isServerByName(this.server)) {
             this.selectedServer = ServerManager.getServerByName(this.server);
+        }
+    }
+
+    private void checkJavaPath() {
+        if (this.javaPath == null || this.javaPath.isEmpty()) {
+            this.javaPath = Utils.getJavaHome();
+            this.usingCustomJavaPath = false;
+        }
+
+        if (!Utils.isValidJavaPath(this.javaPath)) {
+            LogManager.error("Invalid Java path! Resetting to default!");
+            this.javaPath = Utils.getJavaHome();
+            this.usingCustomJavaPath = false;
+        }
+
+        if (this.usingCustomJavaPath) {
+            LogManager.warn("Custom Java Path Set!");
         }
     }
 
@@ -329,14 +349,16 @@ public class Settings {
         if (this.enableProxy) {
             if (this.proxyPort <= 0 || this.proxyPort > 65535) {
                 // Proxy port is invalid so disable proxy
-                LogManager.warn("Tried to set proxy port to " + this.proxyPort + " which is not a valid port! " +
+                LogManager.warn("Tried to set proxy port to " + this.proxyPort + " which isn't a valid port! " +
                         "Proxy support disabled!");
 
                 this.enableProxy = false;
-                this.proxy = null;
+                this.proxy = Proxy.NO_PROXY;
             }
 
             this.proxy = new Proxy(this.proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort));
+        } else {
+            this.proxy = Proxy.NO_PROXY;
         }
     }
 

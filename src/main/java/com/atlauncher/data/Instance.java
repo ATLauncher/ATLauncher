@@ -26,6 +26,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.FileUtils;
@@ -1084,7 +1085,7 @@ public class Instance implements Cloneable {
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
-            if ((App.settings.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
+            if ((SettingsManager.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
                 String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
                         .INSTANCE.localizeWithReplace("instance.insufficientram", "<b>" + this.memory + "</b> " +
@@ -1096,7 +1097,7 @@ public class Instance implements Cloneable {
                     return false;
                 }
             }
-            if (App.settings.getPermGen() < this.permgen) {
+            if (SettingsManager.getPermGen() < this.permgen) {
                 String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
                         .INSTANCE.localizeWithReplace("instance.insufficientpermgen", "<b>" + this.permgen + "</b> " +
@@ -1136,7 +1137,7 @@ public class Instance implements Cloneable {
                         }
                         // Create a note of worlds for auto backup if enabled
                         HashMap<String, Long> preWorldList = new HashMap<String, Long>();
-                        if (App.settings.isAdvancedBackupsEnabled() && App.settings.getAutoBackup()) {
+                        if (SettingsManager.isAdvancedBackupsEnabled() && SettingsManager.getAutoBackup()) {
                             if (Files.exists(Instance.this.getSavesDirectory())) {
                                 File[] files = Instance.this.getSavesDirectory().toFile().listFiles();
                                 if (files != null) {
@@ -1159,7 +1160,7 @@ public class Instance implements Cloneable {
                             process = LegacyMCLauncher.launch(account, Instance.this, session);
                         }
 
-                        if (!App.settings.keepLauncherOpen() && !App.settings.enableLogs()) {
+                        if (!SettingsManager.keepLauncherOpen() && !SettingsManager.enableLogs()) {
                             System.exit(0);
                         }
 
@@ -1182,7 +1183,7 @@ public class Instance implements Cloneable {
                             LogManager.minecraft(line);
                         }
                         App.settings.hideKillMinecraft();
-                        if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
+                        if (App.settings.getParent() != null && SettingsManager.keepLauncherOpen()) {
                             App.settings.getParent().setVisible(true);
                         }
                         long end = System.currentTimeMillis();
@@ -1195,20 +1196,20 @@ public class Instance implements Cloneable {
                         } catch (IllegalThreadStateException e) {
                             process.destroy(); // Kill the process
                         }
-                        if (!App.settings.keepLauncherOpen()) {
+                        if (!SettingsManager.keepLauncherOpen()) {
                             App.settings.getConsole().setVisible(false); // Hide the console to pretend we've closed
                         }
                         if (exitValue != 0) {
                             // Submit any pending crash reports from Open Eye if need to since we
                             // exited abnormally
-                            if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
+                            if (SettingsManager.enableLogs() && SettingsManager.enableOpenEyeReporting()) {
                                 App.TASKPOOL.submit(new Runnable() {
                                     public void run() {
                                         sendOpenEyePendingReports();
                                     }
                                 });
                             }
-                        } else if (App.settings.isAdvancedBackupsEnabled() && App.settings.getAutoBackup()) {
+                        } else if (SettingsManager.isAdvancedBackupsEnabled() && SettingsManager.getAutoBackup()) {
                             // Begin backup
                             if (Files.exists(Instance.this.getSavesDirectory())) {
                                 File[] files = Instance.this.getSavesDirectory().toFile().listFiles();
@@ -1218,7 +1219,7 @@ public class Instance implements Cloneable {
                                             if (preWorldList.containsKey(file.getName())) {
                                                 // Only backup if file changed
                                                 if (!(preWorldList.get(file.getName()) == file.lastModified())) {
-                                                    SyncAbstract sync = SyncAbstract.syncList.get(App.settings
+                                                    SyncAbstract sync = SyncAbstract.syncList.get(SettingsManager
                                                             .getLastSelectedSync());
                                                     sync.backupWorld(file.getName() + String.valueOf(file
                                                             .lastModified()), file, Instance.this);
@@ -1226,7 +1227,7 @@ public class Instance implements Cloneable {
                                             }
                                             // Or backup if a new file is found
                                             else {
-                                                SyncAbstract sync = SyncAbstract.syncList.get(App.settings
+                                                SyncAbstract sync = SyncAbstract.syncList.get(SettingsManager
                                                         .getLastSelectedSync());
                                                 sync.backupWorld(file.getName() + String.valueOf(file.lastModified())
                                                         .replace(":", ""), file, Instance.this);
@@ -1239,7 +1240,7 @@ public class Instance implements Cloneable {
 
                         App.settings.setMinecraftLaunched(false);
                         if (!App.settings.isInOfflineMode()) {
-                            if (isLeaderboardsEnabled() && isLoggingEnabled() && !isDev() && App.settings.enableLogs
+                            if (isLeaderboardsEnabled() && isLoggingEnabled() && !isDev() && SettingsManager.enableLogs
                                     ()) {
                                 final int timePlayed = (int) (end - start) / 1000;
                                 if (timePlayed > 0) {
@@ -1250,11 +1251,11 @@ public class Instance implements Cloneable {
                                     });
                                 }
                             }
-                            if (App.settings.keepLauncherOpen() && App.settings.hasUpdatedFiles()) {
+                            if (SettingsManager.keepLauncherOpen() && App.settings.hasUpdatedFiles()) {
                                 App.settings.reloadLauncherData();
                             }
                         }
-                        if (!App.settings.keepLauncherOpen()) {
+                        if (!SettingsManager.keepLauncherOpen()) {
                             System.exit(0);
                         }
                     } catch (IOException e1) {
@@ -1286,7 +1287,7 @@ public class Instance implements Cloneable {
     public String addTimePlayed(int time, String version) {
         Map<String, Object> request = new HashMap<String, Object>();
 
-        if (App.settings.enableLeaderboards()) {
+        if (SettingsManager.enableLeaderboards()) {
             request.put("username", AccountManager.getActiveAccount().getMinecraftUsername());
         } else {
             request.put("username", null);

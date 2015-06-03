@@ -21,6 +21,7 @@ package com.atlauncher.utils;
 import com.atlauncher.App;
 import com.atlauncher.exceptions.ChunkyException;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
 
 import javax.swing.text.html.StyleSheet;
 import java.awt.Font;
@@ -67,7 +68,7 @@ public final class Resources {
             } else {
                 StyleSheet sheet = new StyleSheet();
 
-                Path theme = App.settings.getThemeFile();
+                Path theme = SettingsManager.getThemeFile();
                 if (theme != null) {
                     InputStream stream = null;
                     try (ZipFile zip = new ZipFile(theme.toFile())) {
@@ -122,7 +123,7 @@ public final class Resources {
                 } else {
                     URL url = System.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
-                        Path theme = App.settings.getThemeFile();
+                        Path theme = SettingsManager.getThemeFile();
                         if (theme != null) {
                             InputStream stream = null;
                             try (ZipFile zip = new ZipFile(theme.toFile())) {

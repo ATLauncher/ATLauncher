@@ -22,6 +22,7 @@ import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -54,7 +55,7 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
     }
 
     private void checkLaunchButtonEnabled() {
-        LAUNCH_BUTTON.setEnabled(App.settings.enableServerChecker());
+        LAUNCH_BUTTON.setEnabled(SettingsManager.enableServerChecker());
     }
 
     @Override

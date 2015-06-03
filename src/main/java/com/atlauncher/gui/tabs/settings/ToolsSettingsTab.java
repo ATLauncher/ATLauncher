@@ -22,6 +22,7 @@ import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JCheckBox;
@@ -55,7 +56,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableServerChecker = new JCheckBox();
-        if (App.settings.enableServerChecker()) {
+        if (SettingsManager.enableServerChecker()) {
             enableServerChecker.setSelected(true);
         }
         enableServerChecker.addActionListener(new ActionListener() {
@@ -85,8 +86,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         serverCheckerWait = new JTextField(4);
-        serverCheckerWait.setText(App.settings.getServerCheckerWait() + "");
-        if (!App.settings.enableServerChecker()) {
+        serverCheckerWait.setText(SettingsManager.getServerCheckerWait() + "");
+        if (!SettingsManager.enableServerChecker()) {
             serverCheckerWait.setEnabled(false);
         }
         add(serverCheckerWait, gbc);
@@ -104,13 +105,13 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
     }
 
     public boolean needToRestartServerChecker() {
-        return ((enableServerChecker.isSelected() != App.settings.enableServerChecker()) || (App.settings
+        return ((enableServerChecker.isSelected() != SettingsManager.enableServerChecker()) || (SettingsManager
                 .getServerCheckerWait() != Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", ""))));
     }
 
     public void save() {
-        App.settings.setEnableServerChecker(enableServerChecker.isSelected());
-        App.settings.setServerCheckerWait(Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")));
+        SettingsManager.setEnableServerChecker(enableServerChecker.isSelected());
+        SettingsManager.setServerCheckerWait(Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")));
     }
 
     @Override

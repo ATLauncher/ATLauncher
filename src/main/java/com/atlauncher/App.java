@@ -265,7 +265,7 @@ public class App {
         // Load the console, making sure it's after the theme and L&F has been loaded otherwise bad results may occur.
         settings.loadConsole();
 
-        if (settings.enableTrayIcon() && !skipTrayIntegration) {
+        if (SettingsManager.enableTrayIcon() && !skipTrayIntegration) {
             try {
                 // Try to enable the tray icon.
                 trySystemTrayIntegration();
@@ -277,15 +277,8 @@ public class App {
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
         LogManager.info("Operating System: " + System.getProperty("os.name"));
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
-
-        if (settings.isUsingCustomJavaPath()) {
-            LogManager.warn("Custom Java Path Set!");
-
-            settings.checkForValidJavaPath(false);
-        }
-
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
-        LogManager.info("Java Path: " + settings.getJavaPath());
+        LogManager.info("Java Path: " + SettingsManager.getJavaPath());
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
         LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR.toString());
         LogManager.info("Using Theme: " + THEME);
@@ -307,7 +300,7 @@ public class App {
             }
         }
 
-        if (settings.enableConsole()) {
+        if (SettingsManager.enableConsole()) {
             // Show the console if enabled.
             settings.getConsole().setVisible(true);
         }
@@ -316,7 +309,7 @@ public class App {
         settings.loadEverything(); // Loads everything that needs to be loaded
         LogManager.info("Launcher finished loading everything");
 
-        if (settings.isFirstTimeRun()) {
+        if (SettingsManager.isFirstTimeRun()) {
             LogManager.warn("Launcher not setup. Loading Setup Dialog");
             new SetupDialog();
         }
@@ -359,7 +352,7 @@ public class App {
      * Loads the theme and applies the theme's settings to the look and feel.
      */
     public static void loadTheme() {
-        Path themeFile = settings.getThemeFile();
+        Path themeFile = SettingsManager.getThemeFile();
         if (themeFile != null) {
             try {
                 InputStream stream = null;

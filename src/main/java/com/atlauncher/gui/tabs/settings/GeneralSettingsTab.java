@@ -23,6 +23,7 @@ import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JCheckBox;
@@ -101,7 +102,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         for (String themee : FileSystem.THEMES.toFile().list(Utils.getThemesFileFilter())) {
             theme.addItem(themee.replace(".zip", ""));
         }
-        theme.setSelectedItem(App.settings.getTheme());
+        theme.setSelectedItem(SettingsManager.getTheme());
 
         add(theme, gbc);
 
@@ -124,7 +125,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         dateFormat.addItem("dd/M/yyy");
         dateFormat.addItem("M/dd/yyy");
         dateFormat.addItem("yyy/M/dd");
-        dateFormat.setSelectedItem(App.settings.getDateFormat());
+        dateFormat.setSelectedItem(SettingsManager.getDateFormat());
 
         add(dateFormat, gbc);
 
@@ -143,7 +144,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         advancedBackup = new JCheckBox();
-        if (App.settings.isAdvancedBackupsEnabled()) {
+        if (SettingsManager.isAdvancedBackupsEnabled()) {
             advancedBackup.setSelected(true);
         }
         add(advancedBackup, gbc);
@@ -163,7 +164,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         sortPacksAlphabetically = new JCheckBox();
-        if (App.settings.sortPacksAlphabetically()) {
+        if (SettingsManager.sortPacksAlphabetically()) {
             sortPacksAlphabetically.setSelected(true);
         }
         add(sortPacksAlphabetically, gbc);
@@ -182,7 +183,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         keepLauncherOpen = new JCheckBox();
-        if (App.settings.keepLauncherOpen()) {
+        if (SettingsManager.keepLauncherOpen()) {
             keepLauncherOpen.setSelected(true);
         }
         add(keepLauncherOpen, gbc);
@@ -201,7 +202,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableConsole = new JCheckBox();
-        if (App.settings.enableConsole()) {
+        if (SettingsManager.enableConsole()) {
             enableConsole.setSelected(true);
         }
         add(enableConsole, gbc);
@@ -220,7 +221,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableTrayIcon = new JCheckBox();
-        if (App.settings.enableTrayIcon()) {
+        if (SettingsManager.enableTrayIcon()) {
             enableTrayIcon.setSelected(true);
         }
         add(enableTrayIcon, gbc);
@@ -237,16 +238,16 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enablePackTags = new JCheckBox();
-        enablePackTags.setSelected(App.settings.enabledPackTags());
+        enablePackTags.setSelected(SettingsManager.enabledPackTags());
         add(enablePackTags, gbc);
     }
 
     public boolean needToReloadTheme() {
-        return !((String) theme.getSelectedItem()).equalsIgnoreCase(App.settings.getTheme());
+        return !((String) theme.getSelectedItem()).equalsIgnoreCase(SettingsManager.getTheme());
     }
 
     public boolean needToReloadPacksPanel() {
-        return sortPacksAlphabetically.isSelected() != App.settings.sortPacksAlphabetically();
+        return sortPacksAlphabetically.isSelected() != SettingsManager.sortPacksAlphabetically();
     }
 
     public boolean reloadLocalizationTable() {
@@ -254,15 +255,15 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     }
 
     public void save() {
-        App.settings.setLanguage((String) language.getSelectedItem());
-        App.settings.setTheme((String) theme.getSelectedItem());
-        App.settings.setDateFormat((String) dateFormat.getSelectedItem());
-        App.settings.setAdvancedBackups(advancedBackup.isSelected());
-        App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
-        App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
-        App.settings.setEnableConsole(enableConsole.isSelected());
-        App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
-        App.settings.setPackTags(enablePackTags.isSelected());
+        SettingsManager.setLanguage((String) language.getSelectedItem());
+        SettingsManager.setTheme((String) theme.getSelectedItem());
+        SettingsManager.setDateFormat((String) dateFormat.getSelectedItem());
+        SettingsManager.setAdvancedBackups(advancedBackup.isSelected());
+        SettingsManager.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
+        SettingsManager.setKeepLauncherOpen(keepLauncherOpen.isSelected());
+        SettingsManager.setEnableConsole(enableConsole.isSelected());
+        SettingsManager.setEnableTrayIcon(enableTrayIcon.isSelected());
+        SettingsManager.setPackTags(enablePackTags.isSelected());
     }
 
     @Override

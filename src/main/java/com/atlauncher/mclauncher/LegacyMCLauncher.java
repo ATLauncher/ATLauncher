@@ -25,6 +25,7 @@ import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
 import java.applet.Applet;
@@ -102,7 +103,7 @@ public class LegacyMCLauncher {
 
         List<String> arguments = new ArrayList<>();
 
-        String path = App.settings.getJavaPath() + File.separator + "bin" + File.separator + "java";
+        String path = SettingsManager.getJavaPath() + File.separator + "bin" + File.separator + "java";
         if (Utils.isWindows()) {
             path += "w";
         }
@@ -114,25 +115,25 @@ public class LegacyMCLauncher {
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
-        if (App.settings.getJavaParameters().isEmpty()) {
+        if (SettingsManager.getJavaParameters().isEmpty()) {
             // Mojang launcher defaults if user has no custom java arguments
             arguments.add("-XX:+UseConcMarkSweepGC");
             arguments.add("-XX:+CMSIncrementalMode");
             arguments.add("-XX:-UseAdaptiveSizePolicy");
         }
 
-        arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
+        arguments.add("-Xms" + SettingsManager.getInitialMemory() + "M");
 
-        if (App.settings.getMaximumMemory() < instance.getMemory()) {
+        if (SettingsManager.getMaximumMemory() < instance.getMemory()) {
             if ((Utils.getMaximumRam() / 2) < instance.getMemory()) {
-                arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
+                arguments.add("-Xmx" + SettingsManager.getMaximumMemory() + "M");
             } else {
                 arguments.add("-Xmx" + instance.getMemory() + "M");
             }
         } else {
-            arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
+            arguments.add("-Xmx" + SettingsManager.getMaximumMemory() + "M");
         }
-        if (App.settings.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
+        if (SettingsManager.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
             if (Utils.isJava8()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
@@ -140,15 +141,15 @@ public class LegacyMCLauncher {
             }
         } else {
             if (Utils.isJava8()) {
-                arguments.add("-XX:MetaspaceSize=" + App.settings.getPermGen() + "M");
+                arguments.add("-XX:MetaspaceSize=" + SettingsManager.getPermGen() + "M");
             } else {
-                arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
+                arguments.add("-XX:PermSize=" + SettingsManager.getPermGen() + "M");
             }
         }
 
         arguments.add("-Duser.language=en");
         arguments.add("-Duser.country=US");
-        arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
+        arguments.add("-Dfml.log.level=" + SettingsManager.getForgeLoggingLevel());
 
         if (Utils.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
@@ -156,8 +157,8 @@ public class LegacyMCLauncher {
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
-        if (!App.settings.getJavaParameters().isEmpty()) {
-            for (String arg : App.settings.getJavaParameters().split(" ")) {
+        if (!SettingsManager.getJavaParameters().isEmpty()) {
+            for (String arg : SettingsManager.getJavaParameters().split(" ")) {
                 if (!arg.isEmpty()) {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {
@@ -199,9 +200,9 @@ public class LegacyMCLauncher {
         arguments.add(account.getMinecraftUsername()); // Username
         arguments.add(sess.getAuth().getAuthenticatedToken()); // Session
         arguments.add(instance.getName()); // Instance Name
-        arguments.add(App.settings.getWindowWidth() + ""); // Window Width
-        arguments.add(App.settings.getWindowHeight() + ""); // Window Height
-        if (App.settings.startMinecraftMaximised()) {
+        arguments.add(SettingsManager.getWindowWidth() + ""); // Window Width
+        arguments.add(SettingsManager.getWindowHeight() + ""); // Window Height
+        if (SettingsManager.startMinecraftMaximised()) {
             arguments.add("true"); // Maximised
         } else {
             arguments.add("false"); // Not Maximised

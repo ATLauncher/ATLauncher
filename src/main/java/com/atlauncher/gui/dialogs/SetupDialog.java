@@ -20,6 +20,7 @@ package com.atlauncher.gui.dialogs;
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -104,9 +105,9 @@ public class SetupDialog extends JDialog {
         saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.setLanguage((String) language.getSelectedItem());
-                App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
-                App.settings.saveProperties();
+                SettingsManager.setLanguage((String) language.getSelectedItem());
+                SettingsManager.setEnableLeaderboards(enableLeaderboards.isSelected());
+                SettingsManager.saveSettings();
                 setVisible(false);
                 dispose();
             }

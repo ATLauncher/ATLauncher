@@ -22,6 +22,7 @@ import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -105,7 +106,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         for (String option : MEMORY_OPTIONS) {
             initialMemory.addItem(option);
         }
-        initialMemory.setSelectedItem(App.settings.getInitialMemory() + " MB");
+        initialMemory.setSelectedItem(SettingsManager.getInitialMemory() + " MB");
         initialMemory.addItemListener(new ItemListener() {
 
             @Override
@@ -153,7 +154,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         for (String option : MEMORY_OPTIONS) {
             maximumMemory.addItem(option);
         }
-        maximumMemory.setSelectedItem(App.settings.getMaximumMemory() + " MB");
+        maximumMemory.setSelectedItem(SettingsManager.getMaximumMemory() + " MB");
         maximumMemory.addItemListener(new ItemListener() {
 
             @Override
@@ -183,7 +184,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         permGen = new JTextField(4);
-        permGen.setText(App.settings.getPermGen() + "");
+        permGen.setText(SettingsManager.getPermGen() + "");
         add(permGen, gbc);
 
         // Window Size
@@ -202,9 +203,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         windowSizePanel = new JPanel();
         windowSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         widthField = new JTextField(4);
-        widthField.setText(App.settings.getWindowWidth() + "");
+        widthField.setText(SettingsManager.getWindowWidth() + "");
         heightField = new JTextField(4);
-        heightField.setText(App.settings.getWindowHeight() + "");
+        heightField.setText(SettingsManager.getWindowHeight() + "");
         commonScreenSizes = new JComboBox<String>();
         commonScreenSizes.addItem("Select An Option");
         commonScreenSizes.addItem("854x480");
@@ -253,7 +254,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaPathPanel = new JPanel();
         javaPathPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         javaPath = new JTextField(20);
-        javaPath.setText(App.settings.getJavaPath());
+        javaPath.setText(SettingsManager.getJavaPath());
         javaPathResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
         javaPathResetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -281,7 +282,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaParametersPanel = new JPanel();
         javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         javaParameters = new JTextField(20);
-        javaParameters.setText(App.settings.getJavaParameters());
+        javaParameters.setText(SettingsManager.getJavaParameters());
         javaParametersResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
         javaParametersResetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -307,7 +308,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         startMinecraftMaximised = new JCheckBox();
-        if (App.settings.startMinecraftMaximised()) {
+        if (SettingsManager.startMinecraftMaximised()) {
             startMinecraftMaximised.setSelected(true);
         }
         add(startMinecraftMaximised, gbc);
@@ -326,7 +327,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         saveCustomMods = new JCheckBox();
-        if (App.settings.saveCustomMods()) {
+        if (SettingsManager.saveCustomMods()) {
             saveCustomMods.setSelected(true);
         }
         add(saveCustomMods, gbc);
@@ -355,15 +356,15 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     }
 
     public void save() {
-        App.settings.setInitialMemory(Integer.parseInt(((String) initialMemory.getSelectedItem()).replace(" MB", "")));
-        App.settings.setMaximumMemory(Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", "")));
-        App.settings.setPermGen(Integer.parseInt(permGen.getText().replaceAll("[^0-9]", "")));
-        App.settings.setWindowWidth(Integer.parseInt(widthField.getText().replaceAll("[^0-9]", "")));
-        App.settings.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll("[^0-9]", "")));
-        App.settings.setJavaPath(javaPath.getText());
-        App.settings.setJavaParameters(javaParameters.getText());
-        App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
-        App.settings.setSaveCustomMods(saveCustomMods.isSelected());
+        SettingsManager.setInitialMemory(Integer.parseInt(((String) initialMemory.getSelectedItem()).replace(" MB", "")));
+        SettingsManager.setMaximumMemory(Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", "")));
+        SettingsManager.setPermGen(Integer.parseInt(permGen.getText().replaceAll("[^0-9]", "")));
+        SettingsManager.setWindowWidth(Integer.parseInt(widthField.getText().replaceAll("[^0-9]", "")));
+        SettingsManager.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll("[^0-9]", "")));
+        SettingsManager.setJavaPath(javaPath.getText());
+        SettingsManager.setJavaParameters(javaParameters.getText());
+        SettingsManager.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
+        SettingsManager.setSaveCustomMods(saveCustomMods.isSelected());
     }
 
     @Override

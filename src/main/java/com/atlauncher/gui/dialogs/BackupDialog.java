@@ -24,6 +24,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.data.SyncAbstract;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -76,7 +77,7 @@ public class BackupDialog extends JDialog implements ActionListener {
     private final JButton deleteButton = new JButton(Language.INSTANCE.localize("common.delete"));
     private JList worldList;
     private JList backupList;
-    private SyncAbstract selectedSync = SyncAbstract.syncList.get(App.settings.getLastSelectedSync());
+    private SyncAbstract selectedSync = SyncAbstract.syncList.get(SettingsManager.getLastSelectedSync());
 
     public BackupDialog(Instance inst) {
         super(App.settings.getParent(), Language.INSTANCE.localize("backup.dialog.title"));
@@ -296,7 +297,7 @@ public class BackupDialog extends JDialog implements ActionListener {
         } else if (e.getSource() instanceof JComboBox) {
             String selection = (String) ((JComboBox) e.getSource()).getSelectedItem();
             selectedSync = SyncAbstract.syncList.get(selection);
-            App.settings.setLastSelectedSync(selection);
+            SettingsManager.setLastSelectedSync(selection);
             List<String> list = selectedSync.getBackupsForInstance(instance);
             backupList.setListData(list.toArray(new String[list.size()]));
         }
@@ -341,11 +342,11 @@ public class BackupDialog extends JDialog implements ActionListener {
                 }
             };
             autoBackup.setToolTipText(Language.INSTANCE.localize("backup.label.autobackup.tooltip"));
-            autoBackup.setSelected(App.settings.getAutoBackup());
+            autoBackup.setSelected(SettingsManager.getAutoBackup());
             autoBackup.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
-                    App.settings.setAutoBackup(e.getStateChange() == ItemEvent.SELECTED);
+                    SettingsManager.setAutoBackup(e.getStateChange() == ItemEvent.SELECTED);
                 }
             });
             panel.add(autoBackup, getGBCForField());
@@ -371,11 +372,11 @@ public class BackupDialog extends JDialog implements ActionListener {
                 }
             };
             notify.setToolTipText(Language.INSTANCE.localize("backup.label.notify.tooltip"));
-            notify.setSelected(App.settings.getNotifyBackup());
+            notify.setSelected(SettingsManager.getNotifyBackup());
             notify.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
-                    App.settings.setNotifyBackup(e.getStateChange() == ItemEvent.SELECTED);
+                    SettingsManager.setNotifyBackup(e.getStateChange() == ItemEvent.SELECTED);
                 }
             });
             panel.add(notify, getGBCForField());

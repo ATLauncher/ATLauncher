@@ -25,6 +25,8 @@ import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.ServerManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.walker.ClearDirVisitor;
 import org.tukaani.xz.XZInputStream;
 
@@ -124,7 +126,7 @@ public class Utils {
      */
     public static ImageIcon getIconImage(String path) {
         try {
-            Path theme = App.settings.getThemeFile();
+            Path theme = SettingsManager.getThemeFile();
             if (theme != null) {
                 InputStream stream = null;
                 try (ZipFile zip = new ZipFile(theme.toFile())) {
@@ -235,7 +237,7 @@ public class Utils {
                 name = name + ".png";
             }
 
-            Path theme = App.settings.getThemeFile();
+            Path theme = SettingsManager.getThemeFile();
             if (theme != null) {
                 InputStream stream = null;
                 try (ZipFile zip = new ZipFile(theme.toFile())) {
@@ -567,7 +569,7 @@ public class Utils {
     }
 
     public static ExecutorService generateDownloadExecutor() {
-        return Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+        return Executors.newFixedThreadPool(SettingsManager.getConcurrentConnections());
     }
 
     /**
@@ -881,8 +883,8 @@ public class Utils {
      * @return the actual java version
      */
     public static String getActualJavaVersion() {
-        if (App.settings.isUsingCustomJavaPath()) {
-            File folder = new File(App.settings.getJavaPath(), "bin/");
+        if (SettingsManager.isUsingCustomJavaPath()) {
+            File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
             arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
             arguments.add("-version");
@@ -925,14 +927,18 @@ public class Utils {
         }
     }
 
+    public static boolean isValidJavaPath(String path) {
+        return Files.exists(Paths.get(path).resolve("bin").resolve("java" + (Utils.isWindows() ? ".exe" : "")));
+    }
+
     /**
      * Checks if the user is using Java 7 or above
      *
      * @return true if the user is using Java 7 or above else false
      */
     public static boolean isJava7OrAbove(boolean checkCustomPath) {
-        if (App.settings.isUsingCustomJavaPath() && checkCustomPath) {
-            File folder = new File(App.settings.getJavaPath(), "bin/");
+        if (SettingsManager.isUsingCustomJavaPath() && checkCustomPath) {
+            File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
             arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
             arguments.add("-version");
@@ -984,8 +990,8 @@ public class Utils {
      * @return true, if is java8
      */
     public static boolean isJava8() {
-        if (App.settings.isUsingCustomJavaPath()) {
-            File folder = new File(App.settings.getJavaPath(), "bin/");
+        if (SettingsManager.isUsingCustomJavaPath()) {
+            File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
             arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
             arguments.add("-version");
@@ -1023,8 +1029,8 @@ public class Utils {
      * @return true, if is java9
      */
     public static boolean isJava9() {
-        if (App.settings.isUsingCustomJavaPath()) {
-            File folder = new File(App.settings.getJavaPath(), "bin/");
+        if (SettingsManager.isUsingCustomJavaPath()) {
+            File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
             arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
             arguments.add("-version");
@@ -1226,7 +1232,7 @@ public class Utils {
     public static boolean testProxy(Proxy proxy) {
         try {
             HttpURLConnection connection;
-            URL url = new URL(App.settings.getFileURL("ping"));
+            URL url = new URL(ServerManager.getFileURL("ping"));
             connection = (HttpURLConnection) url.openConnection(proxy);
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);

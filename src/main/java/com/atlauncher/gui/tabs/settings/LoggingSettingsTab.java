@@ -22,6 +22,7 @@ import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JCheckBox;
@@ -74,7 +75,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         forgeLoggingLevel.addItem("FINE");
         forgeLoggingLevel.addItem("FINER");
         forgeLoggingLevel.addItem("FINEST");
-        forgeLoggingLevel.setSelectedItem(App.settings.getForgeLoggingLevel());
+        forgeLoggingLevel.setSelectedItem(SettingsManager.getForgeLoggingLevel());
         add(forgeLoggingLevel, gbc);
 
         // Days of logs to keep
@@ -87,13 +88,13 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
                 HELP_ICON, Language.INSTANCE.localize("settings.daysoflogstokeephelp"));
         add(daysOfLogsToKeepLabel, gbc);
 
-        daysOfLogsToKeepModel = new SpinnerNumberModel(App.settings.getDaysOfLogsToKeep(), 1, 30, 1);
+        daysOfLogsToKeepModel = new SpinnerNumberModel(SettingsManager.getDaysOfLogsToKeep(), 1, 30, 1);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         daysOfLogsToKeep = new JSpinner(daysOfLogsToKeepModel);
-        daysOfLogsToKeep.setValue(App.settings.getDaysOfLogsToKeep());
+        daysOfLogsToKeep.setValue(SettingsManager.getDaysOfLogsToKeep());
         add(daysOfLogsToKeep, gbc);
 
         // Enable Leaderboards
@@ -110,10 +111,10 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLeaderboards = new JCheckBox();
-        if (App.settings.enableLeaderboards()) {
+        if (SettingsManager.enableLeaderboards()) {
             enableLeaderboards.setSelected(true);
         }
-        if (!App.settings.enableLogs()) {
+        if (!SettingsManager.enableLogs()) {
             enableLeaderboards.setEnabled(false);
         }
         add(enableLeaderboards, gbc);
@@ -147,7 +148,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
                 }
             }
         });
-        if (App.settings.enableLogs()) {
+        if (SettingsManager.enableLogs()) {
             enableLogs.setSelected(true);
         }
         add(enableLogs, gbc);
@@ -167,21 +168,21 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableOpenEyeReporting = new JCheckBox();
-        if (!App.settings.enableLogs()) {
+        if (!SettingsManager.enableLogs()) {
             enableOpenEyeReporting.setEnabled(false);
         }
-        if (App.settings.enableOpenEyeReporting()) {
+        if (SettingsManager.enableOpenEyeReporting()) {
             enableOpenEyeReporting.setSelected(true);
         }
         add(enableOpenEyeReporting, gbc);
     }
 
     public void save() {
-        App.settings.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
-        App.settings.setDaysOfLogsToKeep((Integer) daysOfLogsToKeep.getValue());
-        App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
-        App.settings.setEnableLogs(enableLogs.isSelected());
-        App.settings.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());
+        SettingsManager.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
+        SettingsManager.setDaysOfLogsToKeep((Integer) daysOfLogsToKeep.getValue());
+        SettingsManager.setEnableLeaderboards(enableLeaderboards.isSelected());
+        SettingsManager.setEnableLogs(enableLogs.isSelected());
+        SettingsManager.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());
     }
 
     @Override

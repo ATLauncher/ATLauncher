@@ -26,6 +26,7 @@ import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
+import com.atlauncher.managers.SettingsManager;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -84,7 +85,7 @@ public class SettingsTab extends JPanel implements Tab {
                     networkSettingsTab.save();
                     loggingSettingsTab.save();
                     toolsSettingsTab.save();
-                    App.settings.saveProperties();
+                    SettingsManager.saveSettings();
                     EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.SettingsChangeEvent.class));
                     if (reloadLocalizationTable) {
                         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.RelocalizationEvent.class));

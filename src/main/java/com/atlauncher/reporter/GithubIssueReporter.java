@@ -22,6 +22,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.Utils;
 
@@ -34,7 +35,7 @@ public final class GithubIssueReporter {
     }
 
     public static void submit(String title, String body) throws Exception {
-        if (App.settings != null && App.settings.enableLogs()) {
+        if (App.settings != null && SettingsManager.enableLogs()) {
             body = body + "\n\n" + times('-', 50) + "\n" + "Here is my log: " + App.TASKPOOL.submit(new PasteUpload()
             ).get();
             Map<String, Object> request = new HashMap<String, Object>();

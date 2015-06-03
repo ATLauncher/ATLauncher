@@ -21,6 +21,7 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
@@ -55,8 +56,8 @@ public class DropboxSync extends SyncAbstract {
 
     public DropboxSync() {
         super("Dropbox");
-        if (App.settings.getDropboxLocation().length() > 1) {
-            dropboxLocation = Paths.get(App.settings.getDropboxLocation());
+        if (SettingsManager.getDropboxLocation().length() > 1) {
+            dropboxLocation = Paths.get(SettingsManager.getDropboxLocation());
         }
     }
 
@@ -125,7 +126,7 @@ public class DropboxSync extends SyncAbstract {
                 LogManager.logStackTrace("Error compressing " + worldData, e);
             }
 
-            if (App.settings.getNotifyBackup()) {
+            if (SettingsManager.getNotifyBackup()) {
                 JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("backup" + "" +
                         ".complete"), Language.INSTANCE.localize("backup.complete"), JOptionPane.INFORMATION_MESSAGE);
             }
@@ -173,7 +174,7 @@ public class DropboxSync extends SyncAbstract {
                     target);
         }
 
-        if (App.settings.getNotifyBackup()) {
+        if (SettingsManager.getNotifyBackup()) {
             JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("backup.message" + "" +
                             ".restoresuccess"), Language.INSTANCE.localize("backup.message.restoresuccess.title"),
                     JOptionPane.INFORMATION_MESSAGE);
@@ -231,7 +232,7 @@ public class DropboxSync extends SyncAbstract {
                     File selectedFolder = fileChooser.getSelectedFile();
                     LogManager.info("User selected folder " + selectedFolder);
                     dropboxLocation = selectedFolder.toPath();
-                    App.settings.setDropboxLocation(dropboxLocation.toString());
+                    SettingsManager.setDropboxLocation(dropboxLocation.toString());
                     dispose();
                 } else {
                     dropboxLocation = null;

@@ -134,7 +134,7 @@ public class AccountManager {
         EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
-        App.settings.saveProperties();
+        SettingsManager.saveSettings();
     }
 
     public static void setPackVisbility(Pack pack, boolean collapsed) {

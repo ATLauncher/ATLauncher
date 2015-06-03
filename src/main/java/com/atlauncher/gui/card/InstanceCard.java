@@ -36,6 +36,7 @@ import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
@@ -267,7 +268,7 @@ public class InstanceCard extends CollapsiblePanel {
         this.backupButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.isAdvancedBackupsEnabled()) {
+                if (SettingsManager.isAdvancedBackupsEnabled()) {
                     new BackupDialog(instance).setVisible(true);
                 } else {
                     if (Files.exists(instance.getSavesDirectory())) {

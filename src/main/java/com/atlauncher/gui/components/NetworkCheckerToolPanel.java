@@ -27,6 +27,8 @@ import com.atlauncher.data.Server;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.ServerManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -65,29 +67,29 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     }
 
     private void checkLaunchButtonEnabled() {
-        LAUNCH_BUTTON.setEnabled(App.settings.enableLogs());
+        LAUNCH_BUTTON.setEnabled(SettingsManager.enableLogs());
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common" + ".no")};
         int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Utils
-                .splitMultilinedString(Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup", App
-                        .settings.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>")), Language.INSTANCE
+                .splitMultilinedString(Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup",
+                        ServerManager.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>")), Language.INSTANCE
                 .localize("tools.networkchecker"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                 options, options[0]);
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"), App
-                    .settings.getServers().size(), Language.INSTANCE.localize("tools.networkchecker" + "" +
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"),
+                    ServerManager.getServers().size(), Language.INSTANCE.localize("tools.networkchecker" + "" +
                     ".running"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread() {
                 @Override
                 public void run() {
-                    dialog.setTotalTasksToDo(App.settings.getServers().size() * 5);
+                    dialog.setTotalTasksToDo(ServerManager.getServers().size() * 5);
                     StringBuilder results = new StringBuilder();
 
                     // Ping Test
-                    for (Server server : App.settings.getServers()) {
+                    for (Server server : ServerManager.getServers()) {
                         if (server.getHost().contains(":")) {
                             dialog.doneTask();
                             continue;
@@ -103,7 +105,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                     }
 
                     // Response Code Test
-                    for (Server server : App.settings.getServers()) {
+                    for (Server server : ServerManager.getServers()) {
                         try {
                             Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"),
                                     false);
@@ -116,7 +118,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                     }
 
                     // Ping Pong Test
-                    for (Server server : App.settings.getServers()) {
+                    for (Server server : ServerManager.getServers()) {
                         Downloadable download = new Downloadable(server.getFileURL("ping"), false);
                         results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n", server
                                 .getHost(), download.toString()));
@@ -124,7 +126,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                     }
 
                     // Speed Test
-                    for (Server server : App.settings.getServers()) {
+                    for (Server server : ServerManager.getServers()) {
                         Path file = FileSystem.TMP.resolve("20MB.test");
 
                         if (Files.exists(file)) {

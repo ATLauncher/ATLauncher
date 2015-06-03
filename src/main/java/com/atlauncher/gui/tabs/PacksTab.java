@@ -27,6 +27,7 @@ import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddPackDialog;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.SettingsManager;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -170,7 +171,7 @@ public final class PacksTab extends JPanel implements Tab {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
 
-        List<Pack> packs = App.settings.sortPacksAlphabetically() ? PackManager.getPacksSortedAlphabetically() :
+        List<Pack> packs = SettingsManager.sortPacksAlphabetically() ? PackManager.getPacksSortedAlphabetically() :
                 PackManager.getPacksSortedPositionally();
 
         int count = 0;
