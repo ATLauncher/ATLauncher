@@ -28,7 +28,6 @@ import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.data.version.LauncherVersion;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
@@ -41,7 +40,6 @@ import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.ClearDirVisitor;
 import com.google.gson.JsonArray;
@@ -292,6 +290,14 @@ public class OldSettings {
             }
         } catch (Exception e) {
             LogManager.logStackTrace(e);
+        }
+    }
+
+    public void clearDownloads() {
+        try {
+            Files.walkFileTree(FileSystem.DOWNLOADS, new ClearDirVisitor());
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error while clearing downloads with tool!", e);
         }
     }
 
