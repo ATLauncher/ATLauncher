@@ -46,7 +46,7 @@ public class Settings {
     // Gsonable fields
     public String server;
     public String forgeLoggingLevel;
-    public String language = "English";
+    public String language = "en";
     public int initialMemory; // Initial RAM to use when launching Minecraft
     public int maximumMemory; // Maximum RAM to use when launching Minecraft
     public int permGen; // PermGenSize to use when launching Minecraft in MB
@@ -286,9 +286,17 @@ public class Settings {
     }
 
     public void loadLanguage() {
+        if (this.language.equalsIgnoreCase("English")) {
+            this.language = "en";
+        }
+        
+        if (this.language.equalsIgnoreCase("French")) {
+            this.language = "fr";
+        }
+
         if (!LanguageManager.isLanguageByName(this.language)) {
             LogManager.warn("Invalid language " + this.language + ". Defaulting to English!");
-            this.language = "English";
+            this.language = "en";
         }
 
         try {

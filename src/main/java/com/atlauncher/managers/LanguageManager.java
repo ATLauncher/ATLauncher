@@ -17,7 +17,13 @@
  */
 package com.atlauncher.managers;
 
+import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
+import com.atlauncher.FileSystemData;
+import com.atlauncher.data.Language;
+import com.atlauncher.data.Pack;
+import com.atlauncher.nio.JsonFile;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -25,14 +31,28 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 public class LanguageManager {
+    private static Language language;
+
     private static final DirectoryStream.Filter FILTER = new DirectoryStream.Filter<Path>() {
         @Override
-        public boolean accept(Path o) throws IOException {
-            return Files.isRegularFile(o) && o.toString().endsWith(".lang");
+        public boolean accept(Path path) throws IOException {
+            return Files.isRegularFile(path) && path.toString().endsWith(".json");
         }
     };
+
+    public static void loadLanguages() {
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<Language>>() {
+            }.getType();
+            Data.LANGUAGES.clear();
+            Data.LANGUAGES.addAll((List<Language>) JsonFile.of("newlanguages.json", type));
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error loading langauges!", e);
+        }
+    }
 
     /**
      * Finds if a language is available

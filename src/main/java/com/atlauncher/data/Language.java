@@ -17,29 +17,27 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.nio.JsonFile;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public enum Language {
     INSTANCE;
 
-    private final Map<String, Properties> langs = new HashMap<String, Properties>();
+    private final Map<String, Map<String, String>> langs = new HashMap<>();
     private volatile String current;
 
     private Language() {
         try {
-            this.load("English");
+            this.load("en");
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
@@ -49,7 +47,7 @@ public enum Language {
         File[] files = FileSystem.LANGUAGES.toFile().listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith(".lang");
+                return name.endsWith(".json");
             }
         });
         String[] langs = new String[files.length];
@@ -66,18 +64,29 @@ public enum Language {
 
     public void load(String lang) throws IOException {
         if (!this.langs.containsKey(lang)) {
-            Properties props = new Properties();
-            Path langFile = FileSystem.LANGUAGES.resolve(lang.toLowerCase() + ".lang");
+            Map<String, String> trans = new HashMap<>();
+            java.lang.reflect.Type type = new TypeToken<Map<String, String>>() {
+            }.getType();
 
-            if (!Files.exists(langFile)) {
-                LogManager.error("Language file " + langFile.getFileName() + " doesn't exist! Defaulting it inbuilt " +
-                        "one!");
-                props.load(App.class.getResourceAsStream("/assets/lang/english.lang"));
-            } else {
-                props.load(new FileInputStream(langFile.toFile()));
+            Path langFile = FileSystem.LANGUAGES.resolve(lang.toLowerCase() + ".json");
+
+            //            if (!Files.exists(langFile)) {
+            //                LogManager.error("Language file " + langFile.getFileName() + " doesn't exist!
+            // Defaulting it inbuilt " +
+            //                        "one!");
+            //                props.load(App.class.getResourceAsStream("/assets/lang/english.json"));
+            //            } else {
+            //                props.load(new FileInputStream(langFile.toFile()));
+            //            }
+
+            try {
+                trans.putAll((Map<String, String>) new JsonFile(langFile).convert(type));
+            } catch (Exception e) {
+                LogManager.logStackTrace("Error loading language file " + langFile, e);
             }
-            this.langs.put(lang, props);
-            LogManager.info("Loading Language: " + lang);
+
+            this.langs.put(lang, trans);
+            LogManager.info("Loaded Language: " + lang);
         }
 
         this.current = lang;
@@ -93,18 +102,18 @@ public enum Language {
 
     public String localize(String lang, String tag) {
         if (this.langs.containsKey(lang)) {
-            Properties props = this.langs.get(lang);
-            if (props.containsKey(tag)) {
-                return props.getProperty(tag, tag);
+            Map<String, String> trans = this.langs.get(lang);
+            if (trans.containsKey(tag)) {
+                return trans.get(tag);
             } else {
                 if (lang.equalsIgnoreCase("English")) {
                     return "Unknown language key " + tag;
                 } else {
-                    return this.localize("English", tag);
+                    return this.localize("en", tag);
                 }
             }
         } else {
-            return this.localize("English", tag);
+            return this.localize("en", tag);
         }
     }
 
