@@ -7,11 +7,6 @@ ATLauncher
 
 ATLauncher is a Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install ModPacks easily and quickly.
 
-### The ATLauncher team
-
-* [RyanTheAllmighty](https://github.com/RyanTheAllmighty) - [Twitter](https://twitter.com/RyanAllmighty1) - Project lead/owner
-* [Laceh](https:///github.com/s0cks) - [Twitter](https://twitter.com/Asyncronous100)
-
 ### Links
 
 * Facebook: https://www.facebook.com/ATLauncher
