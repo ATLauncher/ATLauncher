@@ -143,11 +143,11 @@ public class OldSettings {
 
         clearAllLogs(); // Clear all the old logs out
 
-        Data.ACCOUNTS.checkUUIDs(); // Check for accounts UUID's and add them if necessary
+        AccountManager.checkUUIDs(); // Check for accounts UUID's and add them if necessary
 
         InstanceManager.changeUserLocks(); // Changes any instances user locks to UUIDs if available
 
-        Data.ACCOUNTS.checkForNameChanges(); // Check account for username changes
+        AccountManager.checkForNameChanges(); // Check account for username changes
 
         LogManager.debug("Checking for access to master server");
         OUTER:
