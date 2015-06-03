@@ -137,8 +137,6 @@ public class OldSettings {
 
         InstanceManager.loadInstances(); // Load the users installed Instances
 
-        AccountManager.loadAccounts(); // Load the saved Accounts
-
         loadCheckingServers(); // Load the saved servers we're checking with the tool
 
         console.setupLanguage(); // Setup language on the console

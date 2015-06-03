@@ -29,6 +29,7 @@ import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.injector.Injector;
 import com.atlauncher.injector.InjectorFactory;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.BenchmarkManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
@@ -230,7 +231,8 @@ public class App {
             }
         }
 
-        // Load in the settings
+        // Load in the accounts and settings
+        AccountManager.loadAccounts();
         SettingsManager.loadSettings();
 
         // Setup the Settings and wait for it to finish.
