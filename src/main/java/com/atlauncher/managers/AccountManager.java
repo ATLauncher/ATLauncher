@@ -24,6 +24,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.utils.MojangAPIUtils;
+import com.atlauncher.utils.Utils;
 
 import java.io.EOFException;
 import java.io.ObjectInputStream;
@@ -197,29 +198,40 @@ public class AccountManager {
 
     public static void checkUUIDs() {
         LogManager.debug("Checking account UUIDs");
+
         for (Account account : Data.ACCOUNTS) {
             if (account.isUUIDNull()) {
                 account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
             }
         }
+
         AccountManager.saveAccounts();
         LogManager.debug("Done checking account UUIDs");
     }
 
     public static void checkForNameChanges() {
-        LogManager.info("Checking for username changes");
-        boolean changed = false;
-        for (Account acc : Data.ACCOUNTS) {
-            if (acc.checkForUsernameChange()) {
-                changed = true;
-                break;
+        Runnable r = new Runnable() {
+            public void run() {
+                LogManager.info("Checking for username changes");
+
+                boolean changed = false;
+
+                for (Account acc : Data.ACCOUNTS) {
+                    if (acc.checkForUsernameChange()) {
+                        changed = true;
+                        break;
+                    }
+                }
+
+                if (changed) {
+                    AccountManager.saveAccounts();
+                    EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
+                }
+
+                LogManager.info("Checking for username changes complete");
             }
-        }
+        };
 
-        if (changed) {
-            AccountManager.saveAccounts();
-        }
-
-        LogManager.info("Checking for username changes complete");
+        new Thread(r).start();
     }
 }
