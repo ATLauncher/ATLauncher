@@ -488,11 +488,16 @@ public class OldSettings {
 
     private void downloadUpdatedFiles() {
         LogManager.info("Downloading launcher files");
+
         DownloadPool pool = this.getLauncherFiles();
+
         if (pool != null) {
             pool.downloadAll();
         }
+
         LogManager.info("Finished downloading launcher files");
+
+        LanguageManager.loadLanguages();
     }
 
     public void reloadLauncherData() {
@@ -508,7 +513,6 @@ public class OldSettings {
             public void run() {
                 if (hasUpdatedFiles()) {
                     downloadUpdatedFiles();
-                    LanguageManager.loadLanguages();
                 }
                 checkForLauncherUpdate();
                 loadNews(); // Load the news

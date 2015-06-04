@@ -17,22 +17,41 @@
  */
 package com.atlauncher.managers;
 
+import com.atlauncher.App;
 import com.atlauncher.Data;
+import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.data.Language;
 import com.atlauncher.nio.JsonFile;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public class LanguageManager {
     private static Language language;
 
     public static void loadLanguages() {
+        Path file = FileSystem.JSON.resolve("newlanguages.json");
+
         try {
             java.lang.reflect.Type type = new TypeToken<List<Language>>() {
             }.getType();
+
             Data.LANGUAGES.clear();
-            Data.LANGUAGES.addAll((List<Language>) JsonFile.of("newlanguages.json", type));
+
+
+            if (Files.exists(file)) {
+                Data.LANGUAGES.addAll((List<Language>) new JsonFile(file).convert(type));
+            } else {
+                try (InputStreamReader isr = new InputStreamReader(App.class.getResourceAsStream
+                        ("/assets/lang/newlanguages.json"))) {
+                    Data.LANGUAGES.addAll((List<Language>) Gsons.DEFAULT.fromJson(isr, type));
+                } catch (Exception ignored) {
+                }
+            }
 
             LanguageManager.setLanguage(SettingsManager.getLanguage());
         } catch (Exception e) {

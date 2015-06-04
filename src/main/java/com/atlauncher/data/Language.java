@@ -17,11 +17,14 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.nio.JsonFile;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -36,18 +39,22 @@ public class Language {
     public void load() {
         Path path = FileSystem.LANGUAGES.resolve(this.code + ".json");
 
-        if (!Files.exists(path)) {
-            LogManager.error("Error loading language " + this.name + " as there is no json file with translations!");
-            return;
-        }
-
-
         java.lang.reflect.Type type = new TypeToken<Map<String, String>>() {
         }.getType();
 
         try {
             this.store.clear();
-            this.store.putAll((Map<String, String>) new JsonFile(path).convert(type));
+
+            if (Files.exists(path)) {
+                this.store.putAll((Map<String, String>) new JsonFile(path).convert(type));
+            } else {
+                try (InputStreamReader isr = new InputStreamReader(App.class.getResourceAsStream("/assets/lang/" +
+                        this.code + ".json"))) {
+                    this.store.putAll((Map<String, String>) Gsons.DEFAULT.fromJson(isr, type));
+                } catch (Exception ignored) {
+                }
+            }
+
         } catch (Exception e) {
             LogManager.logStackTrace("Error loading language translations for " + this.name + "!", e);
         }
