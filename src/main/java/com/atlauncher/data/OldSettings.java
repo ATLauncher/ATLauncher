@@ -132,8 +132,6 @@ public class OldSettings {
 
         loadCheckingServers(); // Load the saved servers we're checking with the tool
 
-        console.setupLanguage(); // Setup language on the console
-
         clearOldLogs(); // Clear all the old logs out
 
         AccountManager.checkUUIDs(); // Check for accounts UUID's and add them if necessary

@@ -41,10 +41,10 @@ public class ConsoleBottomBar extends BottomBar {
 
     private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 10));
 
-    private final JButton clearButton = new JButton("Clear");
-    private final JButton copyLogButton = new JButton("Copy Log");
-    private final JButton uploadLogButton = new JButton("Upload Log");
-    private final JButton killMinecraftButton = new JButton("Kill Minecraft");
+    private final JButton clearButton = new JButton(LanguageManager.localize("console.clear"));
+    private final JButton copyLogButton = new JButton(LanguageManager.localize("console.copy"));
+    private final JButton uploadLogButton = new JButton(LanguageManager.localize("console.upload"));
+    private final JButton killMinecraftButton = new JButton(LanguageManager.localize("console.kill"));
 
     public ConsoleBottomBar() {
         this.addActionListeners(); // Setup Action Listeners
@@ -119,13 +119,6 @@ public class ConsoleBottomBar extends BottomBar {
 
     public void hideKillMinecraft() {
         killMinecraftButton.setVisible(false);
-    }
-
-    public void setupLanguage() {
-        clearButton.setText(LanguageManager.localize("console.clear"));
-        copyLogButton.setText(LanguageManager.localize("console.copy"));
-        uploadLogButton.setText(LanguageManager.localize("console.upload"));
-        killMinecraftButton.setText(LanguageManager.localize("console.kill"));
     }
 
     @Subscribe

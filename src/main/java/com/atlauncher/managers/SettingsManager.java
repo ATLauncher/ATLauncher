@@ -20,7 +20,6 @@ package com.atlauncher.managers;
 import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Network;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 import com.atlauncher.data.Settings;
 import com.atlauncher.nio.JsonFile;
@@ -73,6 +72,10 @@ public class SettingsManager {
 
     public static void saveSettings() {
         try {
+            if (Files.notExists(FileSystem.CONFIGS)) {
+                Files.createDirectory(FileSystem.CONFIGS);
+            }
+
             if (Files.notExists(FileSystemData.SETTINGS)) {
                 Files.createFile(FileSystemData.SETTINGS);
             }
