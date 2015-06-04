@@ -19,6 +19,7 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -46,7 +47,19 @@ public class DownloadClearerToolPanel extends AbstractToolPanel implements Actio
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == LAUNCH_BUTTON) {
-            App.settings.clearDownloads();
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.downloadclearer"), 0,
+                    Language.INSTANCE.localize("tools.downloadclearer.clearing"), "Downloads clearer process stopped!");
+
+            dialog.addThread(new Thread() {
+                @Override
+                public void run() {
+                    dialog.setReturnValue(false);
+                    App.settings.clearDownloads();
+                    dialog.close();
+                }
+            });
+
+            dialog.start();
         }
     }
 }

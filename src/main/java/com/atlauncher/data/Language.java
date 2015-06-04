@@ -106,7 +106,7 @@ public enum Language {
             if (trans.containsKey(tag)) {
                 return trans.get(tag);
             } else {
-                if (lang.equalsIgnoreCase("English")) {
+                if (lang.equalsIgnoreCase("en")) {
                     return "Unknown language key " + tag;
                 } else {
                     return this.localize("en", tag);

@@ -19,6 +19,7 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -51,7 +52,20 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == LAUNCH_BUTTON) {
-            App.settings.clearAllLogs();
+
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.logclearer"), 0,
+                    Language.INSTANCE.localize("tools.logclearer.clearing"), "Log clearer process stopped!");
+
+            dialog.addThread(new Thread() {
+                @Override
+                public void run() {
+                    dialog.setReturnValue(false);
+                    App.settings.clearAllLogs();
+                    dialog.close();
+                }
+            });
+
+            dialog.start();
         }
     }
 }
