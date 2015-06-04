@@ -34,14 +34,6 @@ import java.nio.file.Path;
 public class SettingsManager {
     private static volatile Settings settings;
 
-    static {
-        try {
-            Runtime.getRuntime().addShutdownHook(new SettingsSaver());
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        }
-    }
-
     public static void loadSettings() {
         boolean newFile = false;
 
@@ -452,12 +444,5 @@ public class SettingsManager {
 
     public static String getLanguage() {
         return SettingsManager.settings.language;
-    }
-
-    private static final class SettingsSaver extends Thread {
-        @Override
-        public void run() {
-            SettingsManager.saveSettings();
-        }
     }
 }
