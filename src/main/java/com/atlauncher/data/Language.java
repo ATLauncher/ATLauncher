@@ -22,110 +22,55 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.nio.JsonFile;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Language {
-    INSTANCE;
+public class Language {
+    private final Map<String, String> store = new HashMap<>();
 
-    private final Map<String, Map<String, String>> langs = new HashMap<>();
-    private volatile String current;
+    private String name;
+    private String code;
 
-    private Language() {
+    public void load() {
+        Path path = FileSystem.LANGUAGES.resolve(this.code + ".json");
+
+        if (!Files.exists(path)) {
+            LogManager.error("Error loading language " + this.name + " as there is no json file with translations!");
+            return;
+        }
+
+
+        java.lang.reflect.Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
+
         try {
-            this.load("en");
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
+            this.store.clear();
+            this.store.putAll((Map<String, String>) new JsonFile(path).convert(type));
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error loading language translations for " + this.name + "!", e);
         }
     }
 
-    public static String[] available() {
-        File[] files = FileSystem.LANGUAGES.toFile().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".json");
-            }
-        });
-        String[] langs = new String[files.length];
-        for (int i = 0; i < files.length; i++) {
-            langs[i] = files[i].getName().substring(0, 1).toUpperCase() + files[i].getName().substring(1, files[i]
-                    .getName().lastIndexOf("."));
-        }
-        return langs;
+    public String getName() {
+        return this.name;
     }
 
-    public static synchronized String current() {
-        return INSTANCE.current;
+    public String getCode() {
+        return this.code;
     }
 
-    public void load(String lang) throws IOException {
-        if (!this.langs.containsKey(lang)) {
-            Map<String, String> trans = new HashMap<>();
-            java.lang.reflect.Type type = new TypeToken<Map<String, String>>() {
-            }.getType();
-
-            Path langFile = FileSystem.LANGUAGES.resolve(lang.toLowerCase() + ".json");
-
-            //            if (!Files.exists(langFile)) {
-            //                LogManager.error("Language file " + langFile.getFileName() + " doesn't exist!
-            // Defaulting it inbuilt " +
-            //                        "one!");
-            //                props.load(App.class.getResourceAsStream("/assets/lang/english.json"));
-            //            } else {
-            //                props.load(new FileInputStream(langFile.toFile()));
-            //            }
-
-            try {
-                trans.putAll((Map<String, String>) new JsonFile(langFile).convert(type));
-            } catch (Exception e) {
-                LogManager.logStackTrace("Error loading language file " + langFile, e);
-            }
-
-            this.langs.put(lang, trans);
-            LogManager.info("Loaded Language: " + lang);
+    public String getKey(String key) {
+        if (this.store.containsKey(key)) {
+            return this.store.get(key);
         }
 
-        this.current = lang;
+        return null;
     }
 
-    public void reload(String lang) throws IOException {
-        if (this.langs.containsKey(lang)) {
-            this.langs.remove(lang);
-        }
-
-        this.load(lang);
-    }
-
-    public String localize(String lang, String tag) {
-        if (this.langs.containsKey(lang)) {
-            Map<String, String> trans = this.langs.get(lang);
-            if (trans.containsKey(tag)) {
-                return trans.get(tag);
-            } else {
-                if (lang.equalsIgnoreCase("en")) {
-                    return "Unknown language key " + tag;
-                } else {
-                    return this.localize("en", tag);
-                }
-            }
-        } else {
-            return this.localize("en", tag);
-        }
-    }
-
-    public String localize(String tag) {
-        return this.localize(this.current, tag);
-    }
-
-    public String localizeWithReplace(String tag, String replaceWith) {
-        return this.localize(this.current, tag).replace("%s", replaceWith);
-    }
-
-    public String getCurrent() {
-        return this.current;
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

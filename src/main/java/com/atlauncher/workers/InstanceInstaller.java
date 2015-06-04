@@ -27,7 +27,6 @@ import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.json.Action;
 import com.atlauncher.data.json.CaseType;
@@ -42,6 +41,7 @@ import com.atlauncher.data.mojang.AssetObject;
 import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.gui.dialogs.ModsChooser;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.CompressionUtils;
@@ -404,7 +404,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.fireSubProgress(-1);
         for (Mod mod : mods) {
             if (!this.isCancelled()) {
-                this.fireTask(Language.INSTANCE.localize("common.downloading") + " " + (mod.filePattern ? mod.name :
+                this.fireTask(LanguageManager.localize("common.downloading") + " " + (mod.filePattern ? mod.name :
                         mod.getFile()));
                 mod.download(this);
                 this.fireSubProgress(-1);
@@ -413,7 +413,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void downloadResources() {
-        this.fireTask(Language.INSTANCE.localize("instance.downloadingresources"));
+        this.fireTask(LanguageManager.localize("instance.downloadingresources"));
         this.fireSubProgressUnknown();
         DownloadPool pool = this.getResources().downsize();
         this.totalBytes = this.downloadedBytes = 0;
@@ -428,7 +428,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.totalBytes = this.downloadedBytes = 0;
         this.fireSubProgressUnknown();
 
-        this.fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
+        this.fireTask(LanguageManager.localize("instance.downloadingconfigs"));
 
         String path = "packs/" + this.pack.getSafeName() + "/versions/" + this.packVersion.getVersion() + "/Configs" +
                 ".zip";
@@ -444,13 +444,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void extractConfigs() {
         Path configs = this.tmpDir.resolve("Configs.zip");
         this.fireSubProgressUnknown();
-        this.fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
+        this.fireTask(LanguageManager.localize("instance.extractingconfigs"));
         FileUtils.unzip(configs, this.root);
         FileUtils.delete(configs);
     }
 
     private void downloadLibraries() {
-        this.fireTask(Language.INSTANCE.localize("instance.downloadinglibraries"));
+        this.fireTask(LanguageManager.localize("instance.downloadinglibraries"));
         this.fireSubProgressUnknown();
         DownloadPool pool = this.getLibraries().downsize();
         this.totalBytes = this.downloadedBytes = 0;
@@ -629,7 +629,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void installMods() {
         for (Mod mod : this.selectedMods) {
             if (!this.isCancelled()) {
-                this.fireTask(Language.INSTANCE.localize("common.installing") + " " + mod.name);
+                this.fireTask(LanguageManager.localize("common.installing") + " " + mod.name);
                 this.addPercent(this.selectedMods.size() / 40);
 
                 try {
@@ -643,7 +643,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void organizeLibraries() {
         List<String> libraryNamesAdded = new LinkedList<>();
-        this.fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
+        this.fireTask(LanguageManager.localize("instance.organisinglibraries"));
         this.fireSubProgressUnknown();
         if (!this.server) {
             for (String lib : this.forgeLibraries) {
@@ -831,7 +831,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.addPercent(5);
 
         if (this.server && this.selectedMods.hasJarMod(this)) {
-            this.fireTask(Language.INSTANCE.localize("server.extractingjar"));
+            this.fireTask(LanguageManager.localize("server.extractingjar"));
             this.fireSubProgressUnknown();
             FileUtils.unzip(this.getTempJarDirectory(), this.getMinecraftJar());
         }
@@ -843,7 +843,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.addPercent(5);
         if (this.selectedMods.size() != 0) {
             this.addPercent(40);
-            this.fireTask(Language.INSTANCE.localize("instance.downloadingmods"));
+            this.fireTask(LanguageManager.localize("instance.downloadingmods"));
             this.downloadMods(this.selectedMods);
             if (this.isCancelled()) {
                 return Boolean.FALSE;
@@ -872,13 +872,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (this.server && this.selectedMods.hasJarMod(this)) {
-            this.fireTask(Language.INSTANCE.localize("server.zippingjar"));
+            this.fireTask(LanguageManager.localize("server.zippingjar"));
             this.fireSubProgressUnknown();
             CompressionUtils.zip(this.getTempJarDirectory(), this.getMinecraftJar());
         }
 
         if (this.extractedTexturePack) {
-            this.fireTask(Language.INSTANCE.localize("instance.zippingtexturepackfiles"));
+            this.fireTask(LanguageManager.localize("instance.zippingtexturepackfiles"));
             this.fireSubProgressUnknown();
             if (!Files.exists(this.texturepacks)) {
                 FileUtils.createDirectory(this.texturepacks);
@@ -887,7 +887,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (this.extractedResourcePack) {
-            this.fireTask(Language.INSTANCE.localize("instance.zippingresourcepackfiles"));
+            this.fireTask(LanguageManager.localize("instance.zippingresourcepackfiles"));
             this.fireSubProgressUnknown();
             if (!Files.exists(this.resourcepacks)) {
                 FileUtils.createDirectory(this.resourcepacks);

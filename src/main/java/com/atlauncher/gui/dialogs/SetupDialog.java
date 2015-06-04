@@ -17,9 +17,10 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
@@ -49,7 +50,7 @@ public class SetupDialog extends JDialog {
     private JPanel bottom;
 
     private JLabel languageLabel;
-    private JComboBox<String> language;
+    private JComboBox<Language> language;
 
     private JLabel enableLeaderboardsLabel;
     private JCheckBox enableLeaderboards;
@@ -83,8 +84,8 @@ public class SetupDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<String>(Language.available());
-        language.setSelectedItem(Language.current());
+        language = new JComboBox<>(Data.LANGUAGES.toArray(new Language[Data.LANGUAGES.size()]));
+        language.setSelectedItem(LanguageManager.getLanguage());
         middle.add(language, gbc);
 
         gbc.gridx = 0;
@@ -105,7 +106,7 @@ public class SetupDialog extends JDialog {
         saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                SettingsManager.setLanguage((String) language.getSelectedItem());
+                SettingsManager.setLanguage(((Language) language.getSelectedItem()).getCode());
                 SettingsManager.setEnableLeaderboards(enableLeaderboards.isSelected());
                 SettingsManager.saveSettings();
                 setVisible(false);

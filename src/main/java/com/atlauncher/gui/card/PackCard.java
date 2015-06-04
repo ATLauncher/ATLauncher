@@ -19,7 +19,6 @@ package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.CollapsiblePanel;
@@ -27,6 +26,7 @@ import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
@@ -50,12 +50,12 @@ import java.awt.event.ActionListener;
 public class PackCard extends CollapsiblePanel {
     private static final long serialVersionUID = -2617283435728223314L;
     private final JTextArea descArea = new JTextArea();
-    private final JButton newInstanceButton = new JButton(Language.INSTANCE.localize("common.newinstance"));
-    private final JButton createServerButton = new JButton(Language.INSTANCE.localize("common.createserver"));
-    private final JButton supportButton = new JButton(Language.INSTANCE.localize("common.support"));
-    private final JButton websiteButton = new JButton(Language.INSTANCE.localize("common.website"));
-    private final JButton modsButton = new JButton(Language.INSTANCE.localize("pack.viewmods"));
-    private final JButton removePackButton = new JButton(Language.INSTANCE.localize("pack.removepack"));
+    private final JButton newInstanceButton = new JButton(LanguageManager.localize("common.newinstance"));
+    private final JButton createServerButton = new JButton(LanguageManager.localize("common.createserver"));
+    private final JButton supportButton = new JButton(LanguageManager.localize("common.support"));
+    private final JButton websiteButton = new JButton(LanguageManager.localize("common.website"));
+    private final JButton modsButton = new JButton(LanguageManager.localize("pack.viewmods"));
+    private final JButton removePackButton = new JButton(LanguageManager.localize("pack.removepack"));
     private final JPanel actionsPanel = new JPanel(new BorderLayout());
     private final JSplitPane splitter = new JSplitPane();
     private final Pack pack;
@@ -119,15 +119,15 @@ public class PackCard extends CollapsiblePanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
-                    String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" + "" +
-                            ".offlinenewinstance"), Language.INSTANCE.localize("common.offline"), JOptionPane
+                    String[] options = {LanguageManager.localize("common.ok")};
+                    JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("pack" + "" +
+                            ".offlinenewinstance"), LanguageManager.localize("common.offline"), JOptionPane
                             .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (AccountManager.getActiveAccount() == null) {
-                        String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
-                                + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                        String[] options = {LanguageManager.localize("common.ok")};
+                        JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("instance" +
+                                        ".cannotcreate"), LanguageManager.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack);
@@ -139,15 +139,15 @@ public class PackCard extends CollapsiblePanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
-                    String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" + "" +
-                                    ".offlinecreateserver"), Language.INSTANCE.localize("common.offline"),
+                    String[] options = {LanguageManager.localize("common.ok")};
+                    JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("pack" + "" +
+                                    ".offlinecreateserver"), LanguageManager.localize("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (AccountManager.getActiveAccount() == null) {
-                        String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
-                                + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
+                        String[] options = {LanguageManager.localize("common.ok")};
+                        JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("instance" +
+                                        ".cannotcreate"), LanguageManager.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack, true);
@@ -185,11 +185,11 @@ public class PackCard extends CollapsiblePanel {
 
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        this.newInstanceButton.setText(Language.INSTANCE.localize("common.newinstance"));
-        this.createServerButton.setText(Language.INSTANCE.localize("common.createserver"));
-        this.supportButton.setText(Language.INSTANCE.localize("common.support"));
-        this.websiteButton.setText(Language.INSTANCE.localize("common.website"));
-        this.modsButton.setText(Language.INSTANCE.localize("pack.viewmods"));
-        this.removePackButton.setText(Language.INSTANCE.localize("pack.removepack"));
+        this.newInstanceButton.setText(LanguageManager.localize("common.newinstance"));
+        this.createServerButton.setText(LanguageManager.localize("common.createserver"));
+        this.supportButton.setText(LanguageManager.localize("common.support"));
+        this.websiteButton.setText(LanguageManager.localize("common.website"));
+        this.modsButton.setText(LanguageManager.localize("pack.viewmods"));
+        this.removePackButton.setText(LanguageManager.localize("pack.removepack"));
     }
 }

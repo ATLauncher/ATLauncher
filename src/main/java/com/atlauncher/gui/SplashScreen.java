@@ -17,7 +17,7 @@
  */
 package com.atlauncher.gui;
 
-import com.atlauncher.data.Language;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JMenuItem;
@@ -69,7 +69,7 @@ public class SplashScreen extends JWindow {
      * The context menu which is shows on right click for the splash screen image, giving a force quit option.
      */
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem FORCE_QUIT = new JMenuItem(Language.INSTANCE.localize("common.forcequit"));
+        private final JMenuItem FORCE_QUIT = new JMenuItem(LanguageManager.localize("common.forcequit"));
 
         public ContextMenu() {
             super();

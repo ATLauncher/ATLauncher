@@ -19,13 +19,13 @@ package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.SettingsManager;
 
 import javax.swing.JButton;
@@ -49,7 +49,7 @@ public class SettingsTab extends JPanel implements Tab {
             .networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab});
     private JTabbedPane tabbedPane;
     private JPanel bottomPanel;
-    private JButton saveButton = new JButton(Language.INSTANCE.localize("common.save"));
+    private JButton saveButton = new JButton(LanguageManager.localize("common.save"));
 
     public SettingsTab() {
         setLayout(new BorderLayout());
@@ -107,7 +107,7 @@ public class SettingsTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.settings");
+        return LanguageManager.localize("tabs.settings");
     }
 
     @Subscribe
@@ -115,7 +115,7 @@ public class SettingsTab extends JPanel implements Tab {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
-        this.saveButton.setText(Language.INSTANCE.localize("common.save"));
+        this.saveButton.setText(LanguageManager.localize("common.save"));
     }
 
 }

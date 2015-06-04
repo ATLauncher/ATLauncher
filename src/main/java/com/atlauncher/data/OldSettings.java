@@ -31,6 +31,7 @@ import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftVersionManager;
 import com.atlauncher.managers.PackManager;
@@ -158,9 +159,10 @@ public class OldSettings {
 
         if (Utils.isWindows() && SettingsManager.getJavaPath().contains("x86")) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
-            String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
+            String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                            (LanguageManager.localizeWithReplace("settings.running32bit", "<br/><br/>")),
+                    LanguageManager.localize
                     ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 0) {
@@ -221,11 +223,13 @@ public class OldSettings {
         }
 
         if (matches) {
-            String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
+            String[] options = {LanguageManager.localize("common.ok"), LanguageManager.localize("account" + "" +
                     ".removepasswords")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
-                    ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                            (LanguageManager.localizeWithReplace("account.securitywarning", "<br/>")),
+                    LanguageManager.localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                            .ERROR_MESSAGE, null,
                     options, options[0]);
 
             if (ret == 1) {
@@ -489,14 +493,6 @@ public class OldSettings {
             pool.downloadAll();
         }
         LogManager.info("Finished downloading launcher files");
-
-        if (Language.INSTANCE.getCurrent() != null) {
-            try {
-                Language.INSTANCE.reload(Language.INSTANCE.getCurrent());
-            } catch (IOException e) {
-                LogManager.logStackTrace("Couldn't reload language " + Language.INSTANCE.getCurrent(), e);
-            }
-        }
     }
 
     public void reloadLauncherData() {
@@ -512,6 +508,7 @@ public class OldSettings {
             public void run() {
                 if (hasUpdatedFiles()) {
                     downloadUpdatedFiles();
+                    LanguageManager.loadLanguages();
                 }
                 checkForLauncherUpdate();
                 loadNews(); // Load the news

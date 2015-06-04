@@ -20,7 +20,6 @@ package com.atlauncher.data;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.annot.Json;
 import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.ServerManager;
@@ -292,17 +291,6 @@ public class Settings {
         
         if (this.language.equalsIgnoreCase("French")) {
             this.language = "fr";
-        }
-
-        if (!LanguageManager.isLanguageByName(this.language)) {
-            LogManager.warn("Invalid language " + this.language + ". Defaulting to English!");
-            this.language = "en";
-        }
-
-        try {
-            Language.INSTANCE.load(this.language);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

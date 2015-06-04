@@ -19,11 +19,11 @@ package com.atlauncher.gui.tabs;
 
 import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LanguageManager;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -71,7 +71,7 @@ public class InstancesTab extends JPanel implements Tab {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        clearButton = new JButton(Language.INSTANCE.localize("common.clear"));
+        clearButton = new JButton(LanguageManager.localize("common.clear"));
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchBox.setText("");
@@ -94,7 +94,7 @@ public class InstancesTab extends JPanel implements Tab {
         });
         topPanel.add(searchBox);
 
-        searchButton = new JButton(Language.INSTANCE.localize("common.search"));
+        searchButton = new JButton(LanguageManager.localize("common.search"));
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 reload();
@@ -111,7 +111,7 @@ public class InstancesTab extends JPanel implements Tab {
         });
         topPanel.add(hasUpdate);
 
-        hasUpdateLabel = new JLabel(Language.INSTANCE.localize("instance.hasupdate"));
+        hasUpdateLabel = new JLabel(LanguageManager.localize("instance.hasupdate"));
         topPanel.add(hasUpdateLabel);
 
         add(topPanel, BorderLayout.NORTH);
@@ -160,7 +160,7 @@ public class InstancesTab extends JPanel implements Tab {
             }
         }
         if (count == 0) {
-            panel.add(new NilCard(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n")), gbc);
+            panel.add(new NilCard(LanguageManager.localizeWithReplace("instance.nodisplay", "\n\n")), gbc);
         }
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -186,7 +186,7 @@ public class InstancesTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.instances");
+        return LanguageManager.localize("tabs.instances");
     }
 
     @Subscribe

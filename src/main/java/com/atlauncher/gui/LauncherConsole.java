@@ -20,10 +20,10 @@ package com.atlauncher.gui;
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
@@ -127,7 +127,7 @@ public class LauncherConsole extends JFrame {
 
     public void setupLanguage() {
         LogManager.debug("Setting up language for console");
-        copy.setText(Language.INSTANCE.localize("common.copy"));
+        copy.setText(LanguageManager.localize("common.copy"));
         bottomBar.setupLanguage();
         LogManager.debug("Finished setting up language for console");
     }
@@ -138,7 +138,7 @@ public class LauncherConsole extends JFrame {
 
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        copy.setText(Language.INSTANCE.localize("common.copy"));
+        copy.setText(LanguageManager.localize("common.copy"));
         bottomBar.setupLanguage();
     }
 }

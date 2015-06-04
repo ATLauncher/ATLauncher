@@ -20,7 +20,6 @@ package com.atlauncher.managers;
 import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Network;
-import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 import com.atlauncher.data.Settings;
@@ -440,17 +439,16 @@ public class SettingsManager {
 
     public static void setLanguage(String language) {
         SettingsManager.settings.language = language;
-
-        try {
-            Language.INSTANCE.load(language);
-        } catch (Exception ex) {
-            LogManager.logStackTrace(ex);
-        }
+        LanguageManager.setLanguage(language);
     }
 
     public static void configureProxy() {
         Network.CLIENT.setProxy(SettingsManager.getProxy());
         Network.PROGRESS_CLIENT.setProxy(SettingsManager.getProxy());
+    }
+
+    public static String getLanguage() {
+        return SettingsManager.settings.language;
     }
 
     private static final class SettingsSaver extends Thread {

@@ -19,8 +19,8 @@ package com.atlauncher.gui;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.HTMLUtils;
 
 import javax.swing.JMenuItem;
@@ -65,8 +65,8 @@ public final class TrayMenu extends JPopupMenu {
                     public void run() {
                         if (App.settings.isMinecraftLaunched()) {
                             int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils
-                                    .centerParagraph(Language.INSTANCE.localizeWithReplace("console" + "" +
-                                    ".killsure", "<br/><br/>")), Language.INSTANCE.localize("console" + "" +
+                                    .centerParagraph(LanguageManager.localizeWithReplace("console" + "" +
+                                    ".killsure", "<br/><br/>")), LanguageManager.localize("console" + "" +
                                     ".kill"), JOptionPane.YES_NO_OPTION);
 
                             if (ret == JOptionPane.YES_OPTION) {
@@ -93,22 +93,22 @@ public final class TrayMenu extends JPopupMenu {
 
     @Subscribe
     private void onConsoleClose(EventHandler.ConsoleCloseEvent e) {
-        this.tcButton.setText(Language.INSTANCE.localize("console.show"));
+        this.tcButton.setText(LanguageManager.localize("console.show"));
     }
 
     @Subscribe
     private void onConsoleOpen(EventHandler.ConsoleOpenEvent e) {
-        this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
+        this.tcButton.setText(LanguageManager.localize("console.hide"));
     }
 
     public void localize() {
         this.tcButton.setEnabled(true);
-        this.killMCButton.setText(Language.INSTANCE.localize("console.kill"));
-        this.quitButton.setText(Language.INSTANCE.localize("common.quit"));
+        this.killMCButton.setText(LanguageManager.localize("console.kill"));
+        this.quitButton.setText(LanguageManager.localize("common.quit"));
         if (App.settings.getConsole().isVisible()) {
-            this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
+            this.tcButton.setText(LanguageManager.localize("console.hide"));
         } else {
-            this.tcButton.setText(Language.INSTANCE.localize("console.show"));
+            this.tcButton.setText(LanguageManager.localize("console.show"));
         }
     }
 
@@ -118,12 +118,12 @@ public final class TrayMenu extends JPopupMenu {
 
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        this.killMCButton.setText(Language.INSTANCE.localize("console.kill"));
-        this.quitButton.setText(Language.INSTANCE.localize("common.quit"));
+        this.killMCButton.setText(LanguageManager.localize("console.kill"));
+        this.quitButton.setText(LanguageManager.localize("common.quit"));
         if (App.settings.getConsole().isVisible()) {
-            this.tcButton.setText(Language.INSTANCE.localize("console.hide"));
+            this.tcButton.setText(LanguageManager.localize("console.hide"));
         } else {
-            this.tcButton.setText(Language.INSTANCE.localize("console.show"));
+            this.tcButton.setText(LanguageManager.localize("console.show"));
         }
     }
 }

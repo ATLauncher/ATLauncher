@@ -17,11 +17,10 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
@@ -59,8 +58,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        forgeLoggingLevelLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.forgelogginglevel") + ":",
-                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.forgelogginglevelhelp",
+        forgeLoggingLevelLabel = new JLabelWithHover(LanguageManager.localize("settings.forgelogginglevel") + ":",
+                HELP_ICON, "<html>" + LanguageManager.localizeWithReplace("settings.forgelogginglevelhelp",
                 "<br/><br/>") + "</html>");
         add(forgeLoggingLevelLabel, gbc);
 
@@ -84,8 +83,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        daysOfLogsToKeepLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.daysoflogstokeep") + ":",
-                HELP_ICON, Language.INSTANCE.localize("settings.daysoflogstokeephelp"));
+        daysOfLogsToKeepLabel = new JLabelWithHover(LanguageManager.localize("settings.daysoflogstokeep") + ":",
+                HELP_ICON, LanguageManager.localize("settings.daysoflogstokeephelp"));
         add(daysOfLogsToKeepLabel, gbc);
 
         daysOfLogsToKeepModel = new SpinnerNumberModel(SettingsManager.getDaysOfLogsToKeep(), 1, 30, 1);
@@ -103,8 +102,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLeaderboardsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.leaderboards") + "?",
-                HELP_ICON, Language.INSTANCE.localize("settings.leaderboardshelp"));
+        enableLeaderboardsLabel = new JLabelWithHover(LanguageManager.localize("settings.leaderboards") + "?",
+                HELP_ICON, LanguageManager.localize("settings.leaderboardshelp"));
         add(enableLeaderboardsLabel, gbc);
 
         gbc.gridx++;
@@ -125,8 +124,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLoggingLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.logging") + "?", HELP_ICON,
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.logginghelp", "<br/>" + "</html>"));
+        enableLoggingLabel = new JLabelWithHover(LanguageManager.localize("settings.logging") + "?", HELP_ICON,
+                "<html>" + LanguageManager.localizeWithReplace("settings.logginghelp", "<br/>" + "</html>"));
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
@@ -159,8 +158,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableOpenEyeReportingLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.openeye") + "?",
-                HELP_ICON, "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings" + "" +
+        enableOpenEyeReportingLabel = new JLabelWithHover(LanguageManager.localize("settings.openeye") + "?",
+                HELP_ICON, "<html>" + Utils.splitMultilinedString(LanguageManager.localize("settings" + "" +
                 ".openeyehelp"), 80, "<br/>") + "</html>");
         add(enableOpenEyeReportingLabel, gbc);
 
@@ -187,27 +186,27 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("settings.loggingtab");
+        return LanguageManager.localize("settings.loggingtab");
     }
 
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        this.forgeLoggingLevelLabel.setText(Language.INSTANCE.localize("settings" + ".forgelogginglevel") + ":");
-        this.forgeLoggingLevelLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
+        this.forgeLoggingLevelLabel.setText(LanguageManager.localize("settings" + ".forgelogginglevel") + ":");
+        this.forgeLoggingLevelLabel.setToolTipText("<html>" + LanguageManager.localizeWithReplace("settings" + "" +
                 ".forgelogginglevelhelp", "<br/><br/>") + "</html>");
 
-        this.daysOfLogsToKeepLabel.setText(Language.INSTANCE.localize("settings.daysoflogstokeep") + "?");
-        this.daysOfLogsToKeepLabel.setToolTipText(Language.INSTANCE.localize("settings.daysoflogstokeephelp"));
+        this.daysOfLogsToKeepLabel.setText(LanguageManager.localize("settings.daysoflogstokeep") + "?");
+        this.daysOfLogsToKeepLabel.setToolTipText(LanguageManager.localize("settings.daysoflogstokeephelp"));
 
-        this.enableLeaderboardsLabel.setText(Language.INSTANCE.localize("settings.leaderboards") + "?");
-        this.enableLeaderboardsLabel.setToolTipText(Language.INSTANCE.localize("settings.leaderboardshelp"));
+        this.enableLeaderboardsLabel.setText(LanguageManager.localize("settings.leaderboards") + "?");
+        this.enableLeaderboardsLabel.setToolTipText(LanguageManager.localize("settings.leaderboardshelp"));
 
-        this.enableLoggingLabel.setText(Language.INSTANCE.localize("settings.logging") + "?");
-        this.enableLoggingLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
+        this.enableLoggingLabel.setText(LanguageManager.localize("settings.logging") + "?");
+        this.enableLoggingLabel.setToolTipText("<html>" + LanguageManager.localizeWithReplace("settings" + "" +
                 ".logginghelp", "<br/>" + "</html>"));
 
-        this.enableOpenEyeReportingLabel.setText(Language.INSTANCE.localize("settings.openeye") + "?");
-        this.enableOpenEyeReportingLabel.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE
+        this.enableOpenEyeReportingLabel.setText(LanguageManager.localize("settings.openeye") + "?");
+        this.enableOpenEyeReportingLabel.setToolTipText("<html>" + Utils.splitMultilinedString(LanguageManager
                 .localize("settings.openeyehelp"), 80, "<br/>") + "</html>");
     }
 }

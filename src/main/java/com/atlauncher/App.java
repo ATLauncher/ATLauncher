@@ -32,6 +32,7 @@ import com.atlauncher.injector.InjectorFactory;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.BenchmarkManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.SettingsManager;
@@ -231,9 +232,10 @@ public class App {
             }
         }
 
-        // Load in the accounts and settings
+        // Load in the accounts, settings and languages
         AccountManager.loadAccounts();
         SettingsManager.loadSettings();
+        LanguageManager.loadLanguages();
 
         // Setup the Settings and wait for it to finish.
         settings = new OldSettings();

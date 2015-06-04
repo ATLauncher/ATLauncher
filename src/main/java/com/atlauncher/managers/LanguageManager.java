@@ -18,30 +18,14 @@
 package com.atlauncher.managers;
 
 import com.atlauncher.Data;
-import com.atlauncher.FileSystem;
-import com.atlauncher.FileSystemData;
 import com.atlauncher.data.Language;
-import com.atlauncher.data.Pack;
 import com.atlauncher.nio.JsonFile;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 public class LanguageManager {
     private static Language language;
-
-    private static final DirectoryStream.Filter FILTER = new DirectoryStream.Filter<Path>() {
-        @Override
-        public boolean accept(Path path) throws IOException {
-            return Files.isRegularFile(path) && path.toString().endsWith(".json");
-        }
-    };
 
     public static void loadLanguages() {
         try {
@@ -49,33 +33,59 @@ public class LanguageManager {
             }.getType();
             Data.LANGUAGES.clear();
             Data.LANGUAGES.addAll((List<Language>) JsonFile.of("newlanguages.json", type));
+
+            LanguageManager.setLanguage(SettingsManager.getLanguage());
         } catch (Exception e) {
-            LogManager.logStackTrace("Error loading langauges!", e);
+            LogManager.logStackTrace("Error loading languages!", e);
         }
     }
 
-    /**
-     * Finds if a language is available
-     *
-     * @param name The name of the Language
-     * @return true if found, false if not
-     */
-    public static boolean isLanguageByName(String name) {
-        return LanguageManager.getLanguages().contains(name.toLowerCase());
+    public static Language getLanguage() {
+        return LanguageManager.language;
     }
 
-    public static List<String> getLanguages() {
-        List<String> langs = new LinkedList<>();
-
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LANGUAGES, LanguageManager.FILTER)) {
-            for (Path file : stream) {
-                String name = file.getFileName().toString();
-                langs.add(name.substring(0, name.lastIndexOf(".")));
+    public static Language getLanguage(String code) {
+        for (Language lang : Data.LANGUAGES) {
+            if (lang.getCode().equalsIgnoreCase(code)) {
+                return lang;
             }
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
         }
 
-        return langs;
+        return null;
+    }
+
+    public static void setLanguage(String code) {
+        LanguageManager.language = LanguageManager.getLanguage(code);
+
+        if (LanguageManager.language == null) {
+            LogManager.error("No language with the code " + code + " exists! Loading English!");
+            LanguageManager.setLanguage("en");
+        } else {
+            LanguageManager.language.load();
+            LogManager.info("Loaded language " + LanguageManager.language.getName());
+        }
+    }
+
+    public static String localize(String key) {
+        String ret = LanguageManager.language.getKey(key);
+
+        if (ret == null) {
+            Language en = LanguageManager.getLanguage("en");
+
+            if (en != null) {
+                ret = en.getKey(key);
+            }
+        }
+
+        // If we're still null then there is no translation with the given key
+        if (ret == null) {
+            ret = "Unknown key " + key;
+        }
+
+        return ret;
+    }
+
+    public static String localizeWithReplace(String key, String replaceWith) {
+        return LanguageManager.localize(key).replace("%s", replaceWith);
     }
 }

@@ -18,7 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
@@ -90,13 +90,13 @@ public class ProgressDialog extends JDialog {
     public void setTotalTasksToDo(int tasksToDo) {
         this.tasksToDo = tasksToDo;
         this.tasksDone = 0;
-        this.progressBar.setString("0/" + this.tasksToDo + " " + Language.INSTANCE.localize("common.tasksdone"));
+        this.progressBar.setString("0/" + this.tasksToDo + " " + LanguageManager.localize("common.tasksdone"));
         this.progressBar.setStringPainted(true);
         this.progressBar.setMaximum(this.tasksToDo);
     }
 
     public void doneTask() {
-        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " " + Language.INSTANCE.localize("common" + "" +
+        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " " + LanguageManager.localize("common" + "" +
                 ".tasksdone"));
         this.progressBar.setValue(this.tasksDone);
     }

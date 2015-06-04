@@ -20,10 +20,10 @@ package com.atlauncher.gui.dialogs;
 import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
@@ -57,8 +57,8 @@ public class EditModsDialog extends JDialog {
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
     public EditModsDialog(final Instance instance) {
-        super(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("instance.editingmods", instance
-                .getName()), ModalityType.APPLICATION_MODAL);
+        super(App.settings.getParent(), LanguageManager.localizeWithReplace("instance.editingmods", instance.getName
+                ()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
         setSize(550, 450);
         setLocationRelativeTo(App.settings.getParent());
@@ -90,11 +90,11 @@ public class EditModsDialog extends JDialog {
         labels.setEnabled(false);
         split.setRightComponent(labels);
 
-        topLabelLeft = new JLabel(Language.INSTANCE.localize("instance.enabledmods"));
+        topLabelLeft = new JLabel(LanguageManager.localize("instance.enabledmods"));
         topLabelLeft.setHorizontalAlignment(SwingConstants.CENTER);
         labels.setLeftComponent(topLabelLeft);
 
-        topLabelRight = new JLabel(Language.INSTANCE.localize("instance.disabledmods"));
+        topLabelRight = new JLabel(LanguageManager.localize("instance.disabledmods"));
         topLabelRight.setHorizontalAlignment(SwingConstants.CENTER);
         labels.setRightComponent(topLabelRight);
 
@@ -128,11 +128,11 @@ public class EditModsDialog extends JDialog {
         bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
 
-        addButton = new JButton(Language.INSTANCE.localize("instance.addmod"));
+        addButton = new JButton(LanguageManager.localize("instance.addmod"));
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                FileChooserDialog fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
-                        .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
+                FileChooserDialog fcd = new FileChooserDialog(LanguageManager.localize("instance.addmod"),
+                        LanguageManager.localize("common.mod"), LanguageManager.localize("common.add"), LanguageManager
                         .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
                         "CoreMods Mod", "Texture Pack", "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip",
                         "litemod"});
@@ -173,7 +173,7 @@ public class EditModsDialog extends JDialog {
         });
         bottomPanel.add(addButton);
 
-        enableButton = new JButton(Language.INSTANCE.localize("instance.enablemod"));
+        enableButton = new JButton(LanguageManager.localize("instance.enablemod"));
         enableButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 enableMods();
@@ -181,7 +181,7 @@ public class EditModsDialog extends JDialog {
         });
         bottomPanel.add(enableButton);
 
-        disableButton = new JButton(Language.INSTANCE.localize("instance.disablemod"));
+        disableButton = new JButton(LanguageManager.localize("instance.disablemod"));
         disableButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 disableMods();
@@ -189,7 +189,7 @@ public class EditModsDialog extends JDialog {
         });
         bottomPanel.add(disableButton);
 
-        removeButton = new JButton(Language.INSTANCE.localize("instance.removemod"));
+        removeButton = new JButton(LanguageManager.localize("instance.removemod"));
         removeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 removeMods();
@@ -197,7 +197,7 @@ public class EditModsDialog extends JDialog {
         });
         bottomPanel.add(removeButton);
 
-        closeButton = new JButton(Language.INSTANCE.localize("common.close"));
+        closeButton = new JButton(LanguageManager.localize("common.close"));
         closeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();

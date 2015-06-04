@@ -22,10 +22,10 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.managers.SettingsManager;
@@ -49,10 +49,10 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
      */
     private static final long serialVersionUID = 4811953376698111667L;
 
-    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.networkchecker"));
+    private final JLabel TITLE_LABEL = new JLabel(LanguageManager.localize("tools.networkchecker"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
-            .INSTANCE.localize("tools.networkchecker.info"), 60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString
+            (LanguageManager.localize("tools.networkchecker.info"), 60, "<br>")));
 
     public NetworkCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -72,15 +72,16 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common" + ".no")};
+        String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common" + ".no")};
         int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Utils
-                .splitMultilinedString(Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup",
-                        ServerManager.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>")), Language.INSTANCE
+                        .splitMultilinedString(LanguageManager.localizeWithReplace("tools.networkcheckerpopup",
+                                ServerManager.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>")),
+                LanguageManager
                 .localize("tools.networkchecker"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                 options, options[0]);
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"),
-                    ServerManager.getServers().size(), Language.INSTANCE.localize("tools.networkchecker" + "" +
+            final ProgressDialog dialog = new ProgressDialog(LanguageManager.localize("tools.networkchecker"),
+                    ServerManager.getServers().size(), LanguageManager.localize("tools.networkchecker" + "" +
                     ".running"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread() {
                 @Override
@@ -182,9 +183,9 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 LogManager.error("Network Test failed to run!");
             } else {
                 LogManager.info("Network Test ran and submitted to " + Constants.LAUNCHER_NAME + "!");
-                String[] options2 = {Language.INSTANCE.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
-                        .localizeWithReplace("tools.networkheckercomplete", "<br/><br/>")), Language.INSTANCE
+                String[] options2 = {LanguageManager.localize("common.ok")};
+                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(LanguageManager
+                        .localizeWithReplace("tools.networkheckercomplete", "<br/><br/>")), LanguageManager
                         .localize("tools" + ".networkchecker"), JOptionPane.DEFAULT_OPTION, JOptionPane
                         .INFORMATION_MESSAGE, null, options2, options2[0]);
             }

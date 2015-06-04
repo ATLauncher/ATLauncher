@@ -27,6 +27,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.FileUtils;
@@ -454,8 +455,8 @@ public class Account implements Serializable {
             final Path path = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png");
 
             LogManager.info("Downloading skin for " + this.minecraftUsername);
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
-                    ".downloadingskin"), 0, Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin",
+            final ProgressDialog dialog = new ProgressDialog(LanguageManager.localize("account" + "" +
+                    ".downloadingskin"), 0, LanguageManager.localizeWithReplace("account.downloadingminecraftskin",
                     this.minecraftUsername), "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             dialog.addThread(new Thread() {
                 public void run() {
@@ -494,9 +495,9 @@ public class Account implements Serializable {
             });
             dialog.start();
             if (!(Boolean) dialog.getReturnValue()) {
-                String[] options = {Language.INSTANCE.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                                ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
+                String[] options = {LanguageManager.localize("common.ok")};
+                JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("account" + "" +
+                        ".skinerror"), LanguageManager.localize("common.error"), JOptionPane
                         .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
@@ -632,13 +633,13 @@ public class Account implements Serializable {
             if (!this.isRemembered()) {
                 JPanel panel = new JPanel();
                 panel.setLayout(new BorderLayout());
-                JLabel passwordLabel = new JLabel(Language.INSTANCE.localizeWithReplace("instance.enterpassword",
+                JLabel passwordLabel = new JLabel(LanguageManager.localizeWithReplace("instance.enterpassword",
                         this.getMinecraftUsername()));
 
                 JPasswordField passwordField = new JPasswordField();
                 panel.add(passwordLabel, BorderLayout.NORTH);
                 panel.add(passwordField, BorderLayout.CENTER);
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel, Language.INSTANCE.localize
+                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel, LanguageManager.localize
                         ("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
                 if (ret == JOptionPane.OK_OPTION) {
                     this.setPassword(new String(passwordField.getPassword()));
@@ -654,10 +655,11 @@ public class Account implements Serializable {
 
         if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());
-            String[] options = {Language.INSTANCE.localize("common.ok")};
-            JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
-                    .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())),
-                    Language.INSTANCE.localize("instance" + ".errorloggingintitle"), JOptionPane.DEFAULT_OPTION,
+            String[] options = {LanguageManager.localize("common.ok")};
+            JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(LanguageManager
+                            .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage()
+                            )), LanguageManager.localize("instance" + ".errorloggingintitle"), JOptionPane
+                            .DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
             return null;

@@ -18,8 +18,8 @@
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -30,10 +30,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class DownloadClearerToolPanel extends AbstractToolPanel implements ActionListener {
-    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.downloadclearer"));
+    private final JLabel TITLE_LABEL = new JLabel(LanguageManager.localize("tools.downloadclearer"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
-            .INSTANCE.localize("tools.downloadclearer.info"), 60, "<br>").replace("%s", "<br/><br/>")));
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString
+            (LanguageManager.localize("tools.downloadclearer.info"), 60, "<br>").replace("%s", "<br/><br/>")));
 
     public DownloadClearerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -47,8 +47,8 @@ public class DownloadClearerToolPanel extends AbstractToolPanel implements Actio
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == LAUNCH_BUTTON) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.downloadclearer"), 0,
-                    Language.INSTANCE.localize("tools.downloadclearer.clearing"), "Downloads clearer process stopped!");
+            final ProgressDialog dialog = new ProgressDialog(LanguageManager.localize("tools.downloadclearer"), 0,
+                    LanguageManager.localize("tools.downloadclearer.clearing"), "Downloads clearer process stopped!");
 
             dialog.addThread(new Thread() {
                 @Override

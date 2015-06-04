@@ -18,8 +18,8 @@
 package com.atlauncher.gui.card;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.ImagePanel;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -47,10 +47,10 @@ public class NilCard extends JPanel {
         super(new BorderLayout());
 
         if (Utils.isMac()) {
-            this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"), TitledBorder
+            this.setBorder(new TitledBorder(null, LanguageManager.localize("common.nothingtoshow"), TitledBorder
                     .DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
         } else {
-            this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"), TitledBorder
+            this.setBorder(new TitledBorder(null, LanguageManager.localize("common.nothingtoshow"), TitledBorder
                     .DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
         }
 

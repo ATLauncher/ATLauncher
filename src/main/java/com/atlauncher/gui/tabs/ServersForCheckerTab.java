@@ -18,9 +18,9 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.gui.dialogs.AddEditServerForCheckerDialog;
+import com.atlauncher.managers.LanguageManager;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -46,8 +46,8 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
     private static final long serialVersionUID = 3385411077046354453L;
 
     private final JPopupMenu CONTEXT_MENU = new JPopupMenu();
-    private final JMenuItem EDIT_BUTTON = new JMenuItem(Language.INSTANCE.localize("common.edit"));
-    private final JMenuItem DELETE_BUTTON = new JMenuItem(Language.INSTANCE.localize("common.delete"));
+    private final JMenuItem EDIT_BUTTON = new JMenuItem(LanguageManager.localize("common.edit"));
+    private final JMenuItem DELETE_BUTTON = new JMenuItem(LanguageManager.localize("common.delete"));
 
     private DefaultListModel<MinecraftServer> listModel;
     private JList serverList;
