@@ -382,6 +382,7 @@ public class SettingsManager {
 
     public static Path getThemeFile() {
         Path theme = FileSystem.THEMES.resolve(SettingsManager.settings.theme + ".zip");
+
         if (Files.exists(theme)) {
             return theme;
         } else {

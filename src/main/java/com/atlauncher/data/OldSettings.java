@@ -57,7 +57,6 @@ import java.awt.FlowLayout;
 import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -84,7 +83,6 @@ public class OldSettings {
 
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
-    private LauncherConsole console; // The Launcher's Console
     private NewsTab newsPanel; // The news panel
     private boolean offlineMode = false; // If offline mode is enabled
     private Process minecraftProcess = null; // The process minecraft is running on
@@ -93,16 +91,6 @@ public class OldSettings {
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
     private DropboxSync dropbox;
     private Timer checkingServersTimer = null; // Timer used for checking servers
-
-    public OldSettings() {
-        checkFolders(); // Checks the setup of the folders and makes sure they're there
-        clearTempDir(); // Cleans all files in the Temp Dir
-    }
-
-    public void loadConsole() {
-        console = new LauncherConsole();
-        LogManager.start();
-    }
 
     public void loadEverything() {
         if (App.forceOfflineMode) {
@@ -593,38 +581,6 @@ public class OldSettings {
     }
 
     /**
-     * Checks the directory to make sure all the necessary folders are there
-     */
-    private void checkFolders() {
-        try {
-            for (Field field : FileSystem.class.getDeclaredFields()) {
-                Path p = (Path) field.get(null);
-                if (!Files.exists(p)) {
-                    FileUtils.createDirectory(p);
-                }
-
-                if (!Files.isDirectory(p)) {
-                    Files.delete(p);
-                    FileUtils.createDirectory(p);
-                }
-            }
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-        }
-    }
-
-    /**
-     * Deletes all files in the Temp directory
-     */
-    public void clearTempDir() {
-        try {
-            Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
-        } catch (IOException e) {
-            LogManager.logStackTrace("Error clearing temp directory at " + FileSystem.TMP, e);
-        }
-    }
-
-    /**
      * Sets the main parent JFrame reference for the Launcher
      *
      * @param parent The Launcher main JFrame
@@ -736,25 +692,7 @@ public class OldSettings {
 
     public void setMinecraftLaunched(boolean launched) {
         this.minecraftLaunched = launched;
-        App.TRAY_MENU.setMinecraftLaunched(launched);
-    }
-
-    public boolean isUsingMacApp() {
-        return Utils.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
-    }
-
-    public boolean isUsingNewMacApp() {
-        return Files.exists(FileSystem.BASE_DIR.getParent().getParent().resolve("MacOS").resolve
-                ("universalJavaApplicationStub"));
-    }
-
-    private DirectoryStream.Filter<Path> languagesFilter() {
-        return new DirectoryStream.Filter<Path>() {
-            @Override
-            public boolean accept(Path o) throws IOException {
-                return Files.isRegularFile(o) && o.toString().endsWith(".lang");
-            }
-        };
+        App.trayMenu.setMinecraftLaunched(launched);
     }
 
     /**
@@ -815,7 +753,7 @@ public class OldSettings {
      * @return true if the console is visible, false if it's been hidden
      */
     public boolean isConsoleVisible() {
-        return this.console.isVisible();
+        return App.console.isVisible();
     }
 
     /**
@@ -824,24 +762,24 @@ public class OldSettings {
      * @return The Launcher's Console instance
      */
     public LauncherConsole getConsole() {
-        return this.console;
+        return App.console;
     }
 
     public void clearConsole() {
-        this.console.clearConsole();
+        App.console.clearConsole();
     }
 
     public String getLog() {
-        return this.console.getLog();
+        return App.console.getLog();
     }
 
     public void showKillMinecraft(Process minecraft) {
         this.minecraftProcess = minecraft;
-        this.console.showKillMinecraft();
+        App.console.showKillMinecraft();
     }
 
     public void hideKillMinecraft() {
-        this.console.hideKillMinecraft();
+        App.console.hideKillMinecraft();
     }
 
     public void killMinecraft() {
@@ -875,7 +813,6 @@ public class OldSettings {
             arguments.add("open");
             arguments.add("-n");
             arguments.add(FileSystem.BASE_DIR.getParent().getParent().toString());
-
         } else {
             String jpath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             if (Utils.isWindows()) {
@@ -895,5 +832,20 @@ public class OldSettings {
             e.printStackTrace();
         }
         System.exit(0);
+    }
+
+    public boolean isUsingMacApp() {
+        return Utils.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
+    }
+
+    /**
+     * Deletes all files in the Temp directory
+     */
+    public void clearTempDir() {
+        try {
+            Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error clearing temp directory at " + FileSystem.TMP, e);
+        }
     }
 }

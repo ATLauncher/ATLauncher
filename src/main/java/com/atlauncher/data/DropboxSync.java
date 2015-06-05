@@ -180,6 +180,7 @@ public class DropboxSync extends SyncAbstract {
                             ".restoresuccess"), LanguageManager.localize("backup.message.restoresuccess.title"),
                     JOptionPane.INFORMATION_MESSAGE);
         }
+
         App.settings.clearTempDir();
     }
 

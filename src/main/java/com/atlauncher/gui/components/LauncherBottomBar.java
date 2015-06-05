@@ -117,7 +117,7 @@ public class LauncherBottomBar extends BottomBar {
     private void setupListeners() {
         toggleConsole.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().setVisible(!App.settings.isConsoleVisible());
+                App.console.setVisible(!App.console.isVisible());
             }
         });
 
@@ -248,7 +248,7 @@ public class LauncherBottomBar extends BottomBar {
 
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        if (App.settings.getConsole().isVisible()) {
+        if (App.console.isVisible()) {
             toggleConsole.setText(LanguageManager.localize("console.hide"));
         } else {
             toggleConsole.setText(LanguageManager.localize("console.show"));

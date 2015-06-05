@@ -51,7 +51,7 @@ public final class LogEvent {
 
     public void post(LogEventWriter writer) {
         if ((this.meta & CONSOLE) == CONSOLE) {
-            Console c = App.settings.getConsole().console;
+            Console c = App.console.console;
             c.setColor(this.type.color()).setBold(true).write("[" + Timestamper.now() + "] ");
             c.setColor(App.THEME.getConsoleTextColor()).setBold(false).write(this.body);
         }

@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.FileSystemData;
 import com.atlauncher.annot.Json;
+import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
