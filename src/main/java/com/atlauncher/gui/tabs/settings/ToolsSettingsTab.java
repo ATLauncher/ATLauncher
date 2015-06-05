@@ -96,7 +96,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
     public boolean isValidServerCheckerWait() {
         if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1 || Integer.parseInt
                 (serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), LanguageManager.localize("settings" + "" +
+            JOptionPane.showMessageDialog(App.frame, LanguageManager.localize("settings" + "" +
                     ".servercheckerwaitinvalid"), LanguageManager.localize("settings.help"), JOptionPane
                     .PLAIN_MESSAGE);
             return false;

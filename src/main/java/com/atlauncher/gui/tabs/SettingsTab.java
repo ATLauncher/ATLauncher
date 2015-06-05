@@ -27,6 +27,7 @@ import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.SettingsManager;
+import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -80,25 +81,32 @@ public class SettingsTab extends JPanel implements Tab {
                     boolean reloadLocalizationTable = generalSettingsTab.reloadLocalizationTable();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                     boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
+
                     generalSettingsTab.save();
                     javaSettingsTab.save();
                     networkSettingsTab.save();
                     loggingSettingsTab.save();
                     toolsSettingsTab.save();
                     SettingsManager.saveSettings();
+
                     EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.SettingsChangeEvent.class));
+
                     if (reloadLocalizationTable) {
                         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.RelocalizationEvent.class));
                     }
+
                     if (reloadPacksPanel) {
                         EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
                     }
+
                     if (restartServerChecker) {
                         App.settings.startCheckingServers();
                     }
+
                     if (reloadTheme) {
-                        App.settings.restartLauncher();
+                        Utils.restartLauncher();
                     }
+
                     App.TOASTER.pop("Settings Saved");
                 }
             }

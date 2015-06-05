@@ -1080,7 +1080,7 @@ public class Instance implements Cloneable {
         final Account account = AccountManager.getActiveAccount();
         if (account == null) {
             String[] options = {LanguageManager.localize("common.ok")};
-            JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("instance.noaccount"),
+            JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance.noaccount"),
                     LanguageManager.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
                             .ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
@@ -1088,7 +1088,7 @@ public class Instance implements Cloneable {
         } else {
             if ((SettingsManager.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
                 String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
                                 (LanguageManager.localizeWithReplace("instance.insufficientram", "<b>" + this.memory
                                         + "</b> " +
                                 "MB<br/><br/>")), LanguageManager.localize("instance.insufficientramtitle"),
@@ -1101,7 +1101,7 @@ public class Instance implements Cloneable {
             }
             if (SettingsManager.getPermGen() < this.permgen) {
                 String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
                                 (LanguageManager.localizeWithReplace("instance.insufficientpermgen", "<b>" + this
                                         .permgen + "</b> " + "MB<br/><br/>")), LanguageManager.localize("instance" +
                                 ".insufficientpermgentitle"),
@@ -1135,8 +1135,8 @@ public class Instance implements Cloneable {
                 public void run() {
                     try {
                         long start = System.currentTimeMillis();
-                        if (App.settings.getParent() != null) {
-                            App.settings.getParent().setVisible(false);
+                        if (App.frame != null) {
+                            App.frame.setVisible(false);
                         }
                         // Create a note of worlds for auto backup if enabled
                         HashMap<String, Long> preWorldList = new HashMap<String, Long>();
@@ -1186,8 +1186,8 @@ public class Instance implements Cloneable {
                             LogManager.minecraft(line);
                         }
                         App.settings.hideKillMinecraft();
-                        if (App.settings.getParent() != null && SettingsManager.keepLauncherOpen()) {
-                            App.settings.getParent().setVisible(true);
+                        if (App.frame != null && SettingsManager.keepLauncherOpen()) {
+                            App.frame.setVisible(true);
                         }
                         long end = System.currentTimeMillis();
                         if (App.settings.isInOfflineMode() && !App.forceOfflineMode) {

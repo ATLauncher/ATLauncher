@@ -120,13 +120,13 @@ public class PackCard extends CollapsiblePanel {
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
                     String[] options = {LanguageManager.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("pack" + "" +
+                    JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("pack" + "" +
                             ".offlinenewinstance"), LanguageManager.localize("common.offline"), JOptionPane
                             .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (AccountManager.getActiveAccount() == null) {
                         String[] options = {LanguageManager.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("instance" +
+                        JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" +
                                         ".cannotcreate"), LanguageManager.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
@@ -140,13 +140,13 @@ public class PackCard extends CollapsiblePanel {
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
                     String[] options = {LanguageManager.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("pack" + "" +
+                    JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("pack" + "" +
                                     ".offlinecreateserver"), LanguageManager.localize("common.offline"),
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (AccountManager.getActiveAccount() == null) {
                         String[] options = {LanguageManager.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("instance" +
+                        JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" +
                                         ".cannotcreate"), LanguageManager.localize("instance.noaccountselected"),
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {

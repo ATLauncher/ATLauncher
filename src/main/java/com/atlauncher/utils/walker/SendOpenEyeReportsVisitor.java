@@ -50,7 +50,7 @@ public final class SendOpenEyeReportsVisitor extends SimpleFileVisitor<Path> {
             if (response.hasNote()) {
                 String[] options = {LanguageManager.localize("common.opencrashreport"), LanguageManager.localize
                         ("common.ok")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
                                 (LanguageManager.localizeWithReplace("instance.openeyereport1", "<br/><br/>") +
                                 response.getNoteDisplay() + LanguageManager.localize("instance" + "" +
                                 ".openeyereport2")), LanguageManager.localize("instance.aboutyourcrash"),

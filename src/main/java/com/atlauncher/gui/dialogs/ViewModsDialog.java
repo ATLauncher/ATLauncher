@@ -49,7 +49,7 @@ public final class ViewModsDialog extends JDialog {
     private final List<ModCard> cards = new LinkedList<ModCard>();
 
     public ViewModsDialog(Pack pack) {
-        super(App.settings.getParent(), LanguageManager.localizeWithReplace("pack.mods", pack.getName()),
+        super(App.frame, LanguageManager.localizeWithReplace("pack.mods", pack.getName()),
                 ModalityType.APPLICATION_MODAL);
         this.pack = pack;
 
@@ -97,7 +97,7 @@ public final class ViewModsDialog extends JDialog {
         }
 
         this.pack();
-        this.setLocationRelativeTo(App.settings.getParent());
+        this.setLocationRelativeTo(App.frame);
     }
 
     private void reload() {

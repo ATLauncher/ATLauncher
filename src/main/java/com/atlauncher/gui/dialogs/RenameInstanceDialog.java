@@ -92,7 +92,7 @@ public class RenameInstanceDialog extends JDialog {
                             ("instance.alreadyinstance", instanceName.getText()), LanguageManager.localize("common"
                             + ".error"), JOptionPane.ERROR_MESSAGE);
                 } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                    JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(LanguageManager
+                    JOptionPane.showMessageDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
                             .localize("common.error") + "<br/><br/>" + LanguageManager.localizeWithReplace("instance" +
                             ".invalidname", instanceName.getText())), LanguageManager.localize("common" +
                             ".error"), JOptionPane.ERROR_MESSAGE);

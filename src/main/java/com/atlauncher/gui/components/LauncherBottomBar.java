@@ -25,7 +25,6 @@ import com.atlauncher.data.Status;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.CustomLineBorder;
-import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LanguageManager;
@@ -54,7 +53,6 @@ import java.awt.event.ItemListener;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar {
-    private final JButton submitError = new JButton("Submit Bug");
     private JPanel leftSide;
     private JPanel middle;
     private Account fillerAccount;
@@ -67,18 +65,6 @@ public class LauncherBottomBar extends BottomBar {
     private JLabel statusIcon;
 
     public LauncherBottomBar() {
-        submitError.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        new GithubIssueReporterDialog(null).setVisible(true);
-                    }
-                });
-            }
-        });
-
         leftSide = new JPanel();
         leftSide.setLayout(new GridBagLayout());
         middle = new JPanel();
@@ -183,7 +169,7 @@ public class LauncherBottomBar extends BottomBar {
      * Creates the JButton's for use in the bar
      */
     private void createButtons() {
-        if (App.settings.isConsoleVisible()) {
+        if (App.console.isVisible()) {
             toggleConsole = new JButton(LanguageManager.localize("console.hide"));
         } else {
             toggleConsole = new JButton(LanguageManager.localize("console.show"));

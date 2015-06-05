@@ -17,6 +17,9 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.FileSystem;
+
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -65,5 +68,9 @@ public enum OS {
             default:
                 return Paths.get(System.getenv("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
         }
+    }
+
+    public static boolean isUsingMacApp() {
+        return OS.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
     }
 }

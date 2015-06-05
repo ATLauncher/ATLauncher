@@ -42,7 +42,7 @@ public class ProgressDialog extends JDialog {
     private int tasksDone;
 
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.frame, ModalityType.APPLICATION_MODAL);
         this.labelText = initLabelText;
         this.max = initMax;
         this.closedLogMessage = initClosedLogMessage;
@@ -50,7 +50,7 @@ public class ProgressDialog extends JDialog {
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setSize(300, 80);
         setTitle(title);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.frame);
         setLayout(new BorderLayout());
         setResizable(false);
         progressBar = new JProgressBar();

@@ -154,11 +154,11 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addEditButton) {
             if (serverName.getText().isEmpty() || serverHost.getText().isEmpty() || serverPort.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(App.settings.getParent(), LanguageManager.localize("tools" + "" +
+                JOptionPane.showMessageDialog(App.frame, LanguageManager.localize("tools" + "" +
                                 ".serverchecker.notallfields"), LanguageManager.localize("common.error"),
                         JOptionPane.ERROR_MESSAGE);
             } else if (!isValidPort()) {
-                JOptionPane.showMessageDialog(App.settings.getParent(), LanguageManager.localize("settings" + "" +
+                JOptionPane.showMessageDialog(App.frame, LanguageManager.localize("settings" + "" +
                         ".proxyportinvalid"), LanguageManager.localize("common.error"), JOptionPane.ERROR_MESSAGE);
             } else {
                 String name = serverName.getText();
@@ -183,7 +183,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                 }
 
                 if (qv == null) {
-                    JOptionPane.showMessageDialog(App.settings.getParent(), LanguageManager.localize("tools" + "" +
+                    JOptionPane.showMessageDialog(App.frame, LanguageManager.localize("tools" + "" +
                                     ".serverchecker.couldntconnect"), LanguageManager.localize("common.error"),
                             JOptionPane.ERROR_MESSAGE);
                 } else {

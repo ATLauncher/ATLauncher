@@ -93,7 +93,7 @@ public class InstanceInstallerDialog extends JDialog {
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer, final PackVersion
             autoInstallVersion, final String shareCode, final boolean showModsChooser) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.frame, ModalityType.APPLICATION_MODAL);
 
         this.autoInstallVersion = autoInstallVersion;
         this.shareCode = shareCode;
@@ -113,7 +113,7 @@ public class InstanceInstallerDialog extends JDialog {
             setTitle(LanguageManager.localize("common.reinstalling") + " " + instance.getName());
         }
         setSize(400, 225);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.frame);
         setLayout(new BorderLayout());
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -241,7 +241,8 @@ public class InstanceInstallerDialog extends JDialog {
                 if (!isReinstall && !isServer && InstanceManager.isInstance(instanceNameField.getText())) {
                     instance = InstanceManager.getInstanceByName(instanceNameField.getText());
                     if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
-                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph(LanguageManager.localize("common.error") +
+                        int ret = JOptionPane.showConfirmDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
+                                .localize("common.error") +
                                 "<br/><br/>" + LanguageManager.localizeWithReplace("instance" + "" +
                                 ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>")), LanguageManager
                                 .localize("common.error"), JOptionPane.ERROR_MESSAGE);
@@ -253,7 +254,7 @@ public class InstanceInstallerDialog extends JDialog {
                             return;
                         }
                     } else {
-                        JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                        JOptionPane.showMessageDialog(App.frame, HTMLUtils.centerParagraph
                                 (LanguageManager.localize("common.error") +
                                 "<br/><br/>" + LanguageManager.localizeWithReplace("instance" + "" +
                                 ".alreadyinstance", instanceNameField.getText() + "<br/><br/>")), LanguageManager
@@ -262,18 +263,18 @@ public class InstanceInstallerDialog extends JDialog {
                     }
                 } else if (!isReinstall && !isServer && instanceNameField.getText().replaceAll("[^A-Za-z0-9]", "")
                         .length() == 0) {
-                    JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(LanguageManager
+                    JOptionPane.showMessageDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
                             .localize("common.error") + "<br/><br/>" + LanguageManager.localizeWithReplace("instance" +
                             ".invalidname", instanceNameField.getText())), LanguageManager.localize
                             ("common.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
-                final JDialog dialog = new JDialog(App.settings.getParent(), ((isReinstall) ? LanguageManager
+                final JDialog dialog = new JDialog(App.frame, ((isReinstall) ? LanguageManager
                         .localize("common.reinstalling") : LanguageManager.localize("common.installing")) + " " +
                         pack.getName() + " " + version.getVersion() + ((isServer) ? " " + LanguageManager.localize
                         ("common.server") : ""), ModalityType.DOCUMENT_MODAL);
-                dialog.setLocationRelativeTo(App.settings.getParent());
+                dialog.setLocationRelativeTo(App.frame);
                 dialog.setSize(300, 100);
                 dialog.setResizable(false);
 
@@ -425,7 +426,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                         Utils.cleanTempDirectory();
 
-                        JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(text),
+                        JOptionPane.showMessageDialog(App.frame, HTMLUtils.centerParagraph(text),
                                 title, type);
                     }
 

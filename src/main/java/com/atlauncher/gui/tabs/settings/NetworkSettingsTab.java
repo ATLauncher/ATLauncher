@@ -197,7 +197,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
 
     public boolean isValidConcurrentConnections() {
         if (Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")) < 1) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), LanguageManager.localize("settings" + "" +
+            JOptionPane.showMessageDialog(App.frame, LanguageManager.localize("settings" + "" +
                             ".concurrentconnectionsinvalid"), LanguageManager.localize("settings.help"),
                     JOptionPane.PLAIN_MESSAGE);
             return false;
@@ -211,7 +211,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         }
         if (proxyPort.getText().isEmpty() || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) < 1 ||
                 Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) > 65535) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), LanguageManager.localize("settings" + "" +
+            JOptionPane.showMessageDialog(App.frame, LanguageManager.localize("settings" + "" +
                     ".proxyportinvalid"), LanguageManager.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
@@ -256,7 +256,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         }
 
         if (!(Boolean) dialog.getReturnValue()) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), LanguageManager.localize("settings" + "" +
+            JOptionPane.showMessageDialog(App.frame, LanguageManager.localize("settings" + "" +
                     ".proxycannotconnect"), LanguageManager.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }

@@ -238,7 +238,7 @@ public final class PacksTab extends JPanel implements Tab {
             }
         }
 
-        ((LauncherFrame) App.settings.getParent()).updateTitle("Packs - " + count);
+        ((LauncherFrame) App.frame).updateTitle("Packs - " + count);
 
         if (count == 0) {
             this.contentPanel.add(new NilCard(LanguageManager.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);

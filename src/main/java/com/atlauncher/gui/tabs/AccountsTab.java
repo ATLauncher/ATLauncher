@@ -188,8 +188,9 @@ public class AccountsTab extends JPanel implements Tab {
                 if (rememberField.isSelected()) {
                     String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common"
                             + ".no")};
-                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(LanguageManager.localizeWithReplace("account" + "" +
-                                    ".rememberpasswordwarning", "<br/><br/>")), LanguageManager.localize("account"
+                    int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
+                                    .localizeWithReplace("account" + "" +
+                                            ".rememberpasswordwarning", "<br/><br/>")), LanguageManager.localize("account"
                             + ".securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                             options, options[0]);
                     if (ret != 0) {
@@ -221,7 +222,8 @@ public class AccountsTab extends JPanel implements Tab {
                     rememberField.setSelected(false);
                 } else {
                     Account account = (Account) accountsComboBox.getSelectedItem();
-                    int res = JOptionPane.showConfirmDialog(App.settings.getParent(), LanguageManager.localizeWithReplace("account.deletesure", usernameField.getText()), LanguageManager
+                    int res = JOptionPane.showConfirmDialog(App.frame, LanguageManager.localizeWithReplace("account" +
+                            ".deletesure", usernameField.getText()), LanguageManager
 
                             .localize("account.delete"), JOptionPane.YES_NO_OPTION);
                     if (res == JOptionPane.YES_OPTION) {
@@ -273,7 +275,7 @@ public class AccountsTab extends JPanel implements Tab {
     private void leftButtonActions() {
         if (App.settings.isInOfflineMode()) {
             String[] options = {LanguageManager.localize("common.ok")};
-            JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("account" + "" +
+            JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("account" + "" +
                     ".offlinemode"), LanguageManager.localize("common.offline"), JOptionPane
                     .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
         } else {
@@ -283,7 +285,7 @@ public class AccountsTab extends JPanel implements Tab {
             boolean remember = rememberField.isSelected();
             if (AccountManager.getAccountByName(username) != null && accountsComboBox.getSelectedIndex() == 0) {
                 String[] options = {LanguageManager.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("account" + "" +
+                JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("account" + "" +
                         ".exists"), LanguageManager.localize("account.notadded"), JOptionPane
                         .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 return;
@@ -308,11 +310,11 @@ public class AccountsTab extends JPanel implements Tab {
                 if (accountsComboBox.getSelectedIndex() == 0) {
                     account = new Account(username, password, response.getAuth().getSelectedProfile().getName(),
                             response.getAuth().getSelectedProfile().getId().toString(), remember);
-                    App.settings.addAccount(account);
+                    AccountManager.addAccount(account);
                     LogManager.info("Added Account " + account);
                     String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common"
                             + ".no")};
-                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize
+                    int ret = JOptionPane.showOptionDialog(App.frame, LanguageManager.localize
                             ("account.addedswitch"), LanguageManager.localize("account.added"), JOptionPane
                             .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                     if (ret == 0) {
@@ -329,7 +331,7 @@ public class AccountsTab extends JPanel implements Tab {
                     account.setRemember(remember);
                     LogManager.info("Edited Account " + account);
                     String[] options = {LanguageManager.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("account" + "" +
+                    JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("account" + "" +
                                     ".editeddone"), LanguageManager.localize("account.edited"), JOptionPane
                                     .DEFAULT_OPTION,
                             JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
@@ -345,7 +347,7 @@ public class AccountsTab extends JPanel implements Tab {
             } else {
                 LogManager.error(response.getErrorMessage());
                 String[] options = {LanguageManager.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(LanguageManager
+                JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
                         .localize("account.incorrect") +
                         "<br/><br/>" + response.getErrorMessage()), LanguageManager.localize("account" + "" +
                         ".notadded"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);

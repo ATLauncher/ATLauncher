@@ -115,7 +115,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                     int selectedRam = Integer.parseInt(((String) initialMemory.getSelectedItem()).replace(" MB", ""));
                     int maxRam = Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", ""));
                     if (selectedRam > maxRam) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + LanguageManager
+                        JOptionPane.showMessageDialog(App.frame, "<html>" + LanguageManager
                                 .localizeWithReplace("settings.initialmemorytoohigh", "<br/><br/>") + "</html>",
                                 LanguageManager.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
                         initialMemory.setSelectedItem("256 MB");
@@ -162,7 +162,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     int selectedRam = Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", ""));
                     if (selectedRam > 4096) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + LanguageManager
+                        JOptionPane.showMessageDialog(App.frame, "<html>" + LanguageManager
                                 .localizeWithReplace("settings.toomuchramallocated", "<br/><br/>") + "</html>",
                                 LanguageManager.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
                     }
@@ -335,7 +335,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     public boolean isValidJavaPath() {
         File jPath = new File(javaPath.getText(), "bin");
         if (!jPath.exists()) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + LanguageManager.localizeWithReplace
+            JOptionPane.showMessageDialog(App.frame, "<html>" + LanguageManager.localizeWithReplace
                     ("settings.javapathincorrect", "<br/><br/>") + "</html>", LanguageManager.localize("settings" +
                     ".help"), JOptionPane.PLAIN_MESSAGE);
             return false;
@@ -346,7 +346,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     public boolean isValidJavaParamaters() {
         if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx") || javaParameters
                 .getText().contains("-XX:PermSize") || javaParameters.getText().contains("-XX:MetaspaceSize")) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + LanguageManager.localizeWithReplace
+            JOptionPane.showMessageDialog(App.frame, "<html>" + LanguageManager.localizeWithReplace
                     ("settings.javaparametersincorrect", "<br/><br/>") + "</html>", LanguageManager.localize
                     ("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;

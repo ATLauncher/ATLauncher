@@ -20,9 +20,10 @@ package com.atlauncher.utils;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.Network;
+import com.atlauncher.Update;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.OS;
-import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.managers.LogManager;
@@ -73,6 +74,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
@@ -665,7 +667,7 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
         connection.setRequestProperty("Pragma", "no-cache");
@@ -703,7 +705,7 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
@@ -740,7 +742,7 @@ public class Utils {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
@@ -1172,7 +1174,7 @@ public class Utils {
             connection = (HttpURLConnection) url.openConnection(proxy);
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);
-            connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+            connection.setRequestProperty("User-Agent", Network.USER_AGENT);
             connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
             connection.setRequestProperty("Expires", "0");
             connection.setRequestProperty("Pragma", "no-cache");
@@ -1509,13 +1511,6 @@ public class Utils {
     }
 
     /**
-     * @deprecated use addToClasspath(Path)
-     */
-    public static boolean addToClasspath(File file) {
-        return Utils.addToClasspath(file.toPath());
-    }
-
-    /**
      * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
      */
     public static boolean addToClasspath(Path path) {
@@ -1525,7 +1520,7 @@ public class Utils {
             if (Files.exists(path)) {
                 addURL(path.toUri().toURL());
             } else {
-                LogManager.error("Error loading " + path.getFileName() + " to classpath as it doesn't exist!");
+                LogManager.error("Error loading " + path + " to classpath as it doesn't exist!");
                 return false;
             }
         } catch (Throwable t) {
@@ -1541,10 +1536,10 @@ public class Utils {
 
     public static boolean checkAuthLibLoaded() {
         try {
-            App.settings.getClass().forName("com.mojang.authlib.exceptions.AuthenticationException");
-            App.settings.getClass().forName("com.mojang.authlib.Agent");
-            App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
-            App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
+            App.class.forName("com.mojang.authlib.exceptions.AuthenticationException");
+            App.class.forName("com.mojang.authlib.Agent");
+            App.class.forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
+            App.class.forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
         } catch (ClassNotFoundException e) {
             LogManager.logStackTrace(e);
             return false;
@@ -1557,7 +1552,7 @@ public class Utils {
      * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
      */
     public static void addURL(URL u) throws IOException {
-        URLClassLoader sysloader = (URLClassLoader) App.settings.getClass().getClassLoader();
+        URLClassLoader sysloader = (URLClassLoader) App.class.getClassLoader();
         Class sysclass = URLClassLoader.class;
         try {
             Method method = sysclass.getDeclaredMethod("addURL", URL.class);
@@ -1590,4 +1585,40 @@ public class Utils {
         };
     }
 
+    public static void restartLauncher() {
+        File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        String path = null;
+        try {
+            path = thisFile.getCanonicalPath();
+            path = URLDecoder.decode(path, "UTF-8");
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        List<String> arguments = new ArrayList<>();
+
+        if (OS.isUsingMacApp()) {
+            arguments.add("open");
+            arguments.add("-n");
+            arguments.add(FileSystem.BASE_DIR.getParent().getParent().toString());
+        } else {
+            String jpath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+            if (OS.isWindows()) {
+                jpath += "w";
+            }
+            arguments.add(jpath);
+            arguments.add("-jar");
+            arguments.add(path);
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(arguments);
+
+        try {
+            processBuilder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
+    }
 }

@@ -70,7 +70,7 @@ public final class TrayMenu extends JPopupMenu {
                     @Override
                     public void run() {
                         if (App.settings.isMinecraftLaunched()) {
-                            int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils
+                            int ret = JOptionPane.showConfirmDialog(App.frame, HTMLUtils
                                     .centerParagraph(LanguageManager.localizeWithReplace("console" + "" +
                                     ".killsure", "<br/><br/>")), LanguageManager.localize("console" + "" +
                                     ".kill"), JOptionPane.YES_NO_OPTION);

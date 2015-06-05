@@ -496,7 +496,7 @@ public class Account implements Serializable {
             dialog.start();
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {LanguageManager.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), LanguageManager.localize("account" + "" +
+                JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("account" + "" +
                         ".skinerror"), LanguageManager.localize("common.error"), JOptionPane
                         .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
@@ -639,7 +639,7 @@ public class Account implements Serializable {
                 JPasswordField passwordField = new JPasswordField();
                 panel.add(passwordLabel, BorderLayout.NORTH);
                 panel.add(passwordField, BorderLayout.CENTER);
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel, LanguageManager.localize
+                int ret = JOptionPane.showConfirmDialog(App.frame, panel, LanguageManager.localize
                         ("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
                 if (ret == JOptionPane.OK_OPTION) {
                     this.setPassword(new String(passwordField.getPassword()));
@@ -656,7 +656,7 @@ public class Account implements Serializable {
         if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());
             String[] options = {LanguageManager.localize("common.ok")};
-            JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(LanguageManager
+            JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
                             .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage()
                             )), LanguageManager.localize("instance" + ".errorloggingintitle"), JOptionPane
                             .DEFAULT_OPTION,

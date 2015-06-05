@@ -57,11 +57,11 @@ public class EditModsDialog extends JDialog {
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
     public EditModsDialog(final Instance instance) {
-        super(App.settings.getParent(), LanguageManager.localizeWithReplace("instance.editingmods", instance.getName
+        super(App.frame, LanguageManager.localizeWithReplace("instance.editingmods", instance.getName
                 ()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
         setSize(550, 450);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.frame);
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

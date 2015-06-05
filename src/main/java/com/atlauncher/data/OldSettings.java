@@ -37,36 +37,28 @@ import com.atlauncher.managers.MinecraftVersionManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.nio.JsonFile;
-import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.walker.ClearDirVisitor;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
-import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -82,7 +74,6 @@ public class OldSettings {
     private List<MinecraftServer> checkingServers = new ArrayList<>();
 
     // Launcher Settings
-    private JFrame parent; // Parent JFrame of the actual Launcher
     private NewsTab newsPanel; // The news panel
     private boolean offlineMode = false; // If offline mode is enabled
     private Process minecraftProcess = null; // The process minecraft is running on
@@ -120,7 +111,7 @@ public class OldSettings {
 
         loadCheckingServers(); // Load the saved servers we're checking with the tool
 
-        clearOldLogs(); // Clear all the old logs out
+        FileUtils.clearOldLogs(); // Clear all the old logs out
 
         AccountManager.checkUUIDs(); // Check for accounts UUID's and add them if necessary
 
@@ -146,7 +137,7 @@ public class OldSettings {
         if (OS.isWindows() && SettingsManager.getJavaPath().contains("x86")) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+            int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
                             (LanguageManager.localizeWithReplace("settings.running32bit", "<br/><br/>")),
                     LanguageManager.localize
                     ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
@@ -212,7 +203,7 @@ public class OldSettings {
             String[] options = {LanguageManager.localize("common.ok"), LanguageManager.localize("account" + "" +
                     ".removepasswords")};
 
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+            int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
                             (LanguageManager.localizeWithReplace("account.securitywarning", "<br/>")),
                     LanguageManager.localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
                             .ERROR_MESSAGE, null,
@@ -228,77 +219,6 @@ public class OldSettings {
                 AccountManager.saveAccounts();
             }
         }
-    }
-
-    public void clearOldLogs() {
-        App.TASKPOOL.execute(new Runnable() {
-            @Override
-            public void run() {
-                LogManager.debug("Clearing out old logs");
-
-                Date toDeleteAfter = new Date();
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(toDeleteAfter);
-                calendar.add(Calendar.DATE, -(SettingsManager.getDaysOfLogsToKeep()));
-                toDeleteAfter = calendar.getTime();
-
-                for (File file : FileSystem.LOGS.toFile().listFiles(Utils.getLogsFileFilter())) {
-                    try {
-                        Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace
-                                (Constants.LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
-
-                        if (date.before(toDeleteAfter)) {
-                            FileUtils.delete(file.toPath());
-                            LogManager.debug("Deleting log file " + file.getName());
-                        }
-                    } catch (java.text.ParseException e) {
-                        LogManager.error("Invalid log file " + file.getName());
-                    }
-                }
-
-                LogManager.debug("Finished clearing out old logs");
-            }
-        });
-    }
-
-    public void clearAllLogs() {
-        try {
-            for (int i = 0; i < 3; i++) {
-                Path p = FileSystem.BASE_DIR.resolve(Constants.LAUNCHER_NAME + "-Log-" + i + ".txt");
-                Files.deleteIfExists(p);
-            }
-
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LOGS, this.logFilter())) {
-                for (Path file : stream) {
-                    if (file.getFileName().toString().equals(LoggingThread.filename)) {
-                        continue;
-                    }
-
-                    Files.deleteIfExists(file);
-                }
-            }
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-        }
-    }
-
-    public void clearDownloads() {
-        try {
-            Files.walkFileTree(FileSystem.DOWNLOADS, new ClearDirVisitor());
-        } catch (IOException e) {
-            LogManager.logStackTrace("Error while clearing downloads with tool!", e);
-        }
-    }
-
-    private DirectoryStream.Filter<Path> logFilter() {
-        return new DirectoryStream.Filter<Path>() {
-            @Override
-            public boolean accept(Path o) throws IOException {
-                return Files.isRegularFile(o) && o.getFileName().toString().startsWith(Constants.LAUNCHER_NAME +
-                        "-Log_") && o.getFileName().toString().endsWith(".log");
-            }
-        };
     }
 
     public void checkMojangStatus() {
@@ -487,10 +407,10 @@ public class OldSettings {
     }
 
     public void reloadLauncherData() {
-        final JDialog dialog = new JDialog(this.parent, ModalityType.APPLICATION_MODAL);
+        final JDialog dialog = new JDialog(App.frame, ModalityType.APPLICATION_MODAL);
         dialog.setSize(300, 100);
         dialog.setTitle("Updating Launcher");
-        dialog.setLocationRelativeTo(App.settings.getParent());
+        dialog.setLocationRelativeTo(App.frame);
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
@@ -522,7 +442,7 @@ public class OldSettings {
                 downloadUpdate(); // Update the Launcher
             } else {
                 String[] options = {"Ok"};
-                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph("Update failed. " +
+                JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph("Update failed. " +
                                 "Please click Ok to close " + "the launcher and open up the downloads " +
                                 "page.<br/><br/>Download " + "the update and replace the old " + Constants
                         .LAUNCHER_NAME + " " +
@@ -578,19 +498,6 @@ public class OldSettings {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
-    }
-
-    /**
-     * Sets the main parent JFrame reference for the Launcher
-     *
-     * @param parent The Launcher main JFrame
-     */
-    public void setParentFrame(JFrame parent) {
-        this.parent = parent;
-    }
-
-    public void addAccount(Account account) {
-        Data.ACCOUNTS.add(account);
     }
 
     public void addCheckingServer(MinecraftServer server) {
@@ -723,15 +630,6 @@ public class OldSettings {
     }
 
     /**
-     * Returns the JFrame reference of the main Launcher
-     *
-     * @return Main JFrame of the Launcher
-     */
-    public Window getParent() {
-        return this.parent;
-    }
-
-    /**
      * Sets the panel used for News
      *
      * @param newsPanel News Panel
@@ -789,63 +687,6 @@ public class OldSettings {
             this.minecraftProcess = null;
         } else {
             LogManager.error("Cannot kill Minecraft as there is no instance open!");
-        }
-    }
-
-    public String getUserAgent() {
-        return "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 " +
-                "Safari/537.36 " + Constants.LAUNCHER_NAME + "/" + Constants.VERSION;
-    }
-
-    public void restartLauncher() {
-        File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        String path = null;
-        try {
-            path = thisFile.getCanonicalPath();
-            path = URLDecoder.decode(path, "UTF-8");
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-
-        List<String> arguments = new ArrayList<String>();
-
-        if (this.isUsingMacApp()) {
-            arguments.add("open");
-            arguments.add("-n");
-            arguments.add(FileSystem.BASE_DIR.getParent().getParent().toString());
-        } else {
-            String jpath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-            if (OS.isWindows()) {
-                jpath += "w";
-            }
-            arguments.add(jpath);
-            arguments.add("-jar");
-            arguments.add(path);
-        }
-
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(arguments);
-
-        try {
-            processBuilder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.exit(0);
-    }
-
-    public boolean isUsingMacApp() {
-        return OS.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
-    }
-
-    /**
-     * Deletes all files in the Temp directory
-     */
-    public void clearTempDir() {
-        try {
-            Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
-        } catch (IOException e) {
-            LogManager.logStackTrace("Error clearing temp directory at " + FileSystem.TMP, e);
         }
     }
 }

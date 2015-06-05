@@ -73,7 +73,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     @Override
     public void actionPerformed(ActionEvent e) {
         String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common" + ".no")};
-        int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Utils
+        int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(Utils
                         .splitMultilinedString(LanguageManager.localizeWithReplace("tools.networkcheckerpopup",
                                 ServerManager.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>")),
                 LanguageManager
@@ -184,7 +184,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             } else {
                 LogManager.info("Network Test ran and submitted to " + Constants.LAUNCHER_NAME + "!");
                 String[] options2 = {LanguageManager.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(LanguageManager
+                JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
                         .localizeWithReplace("tools.networkheckercomplete", "<br/><br/>")), LanguageManager
                         .localize("tools" + ".networkchecker"), JOptionPane.DEFAULT_OPTION, JOptionPane
                         .INFORMATION_MESSAGE, null, options2, options2[0]);

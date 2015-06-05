@@ -59,11 +59,11 @@ public class ModsChooser extends JDialog {
     private boolean wasClosed = false;
 
     public ModsChooser(InstanceInstaller installerr) {
-        super(App.settings.getParent(), LanguageManager.localize("instance.selectmods"), ModalityType
+        super(App.frame, LanguageManager.localize("instance.selectmods"), ModalityType
                 .APPLICATION_MODAL);
         this.installer = installerr;
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.frame);
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -282,7 +282,7 @@ public class ModsChooser extends JDialog {
                                 if (message != null) {
                                     String[] options = {LanguageManager.localize("common.yes"), LanguageManager
                                             .localize("common.no")};
-                                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html>" +
+                                    int ret = JOptionPane.showOptionDialog(App.frame, "<html>" +
                                                     message + "<br/>" +
                                                     LanguageManager.localize("instance.warningsure") + "</html>",
                                             LanguageManager.localize("instance.warning"), JOptionPane

@@ -67,7 +67,7 @@ public class ConsoleBottomBar extends BottomBar {
     private void addActionListeners() {
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.clearConsole();
+                App.console.clearConsole();
                 LogManager.info("Console Cleared");
             }
         });
@@ -75,7 +75,7 @@ public class ConsoleBottomBar extends BottomBar {
             public void actionPerformed(ActionEvent e) {
                 App.TOASTER.pop("Copied Log to clipboard");
                 LogManager.info("Copied Log to clipboard");
-                StringSelection text = new StringSelection(App.settings.getLog());
+                StringSelection text = new StringSelection(App.console.getLog());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);
             }
@@ -101,7 +101,7 @@ public class ConsoleBottomBar extends BottomBar {
         });
         killMinecraftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                int ret = JOptionPane.showConfirmDialog(App.frame, HTMLUtils.centerParagraph
                         (LanguageManager.localizeWithReplace("console.killsure", "<br/><br/>")), LanguageManager
                         .localize
                         ("console.kill"), JOptionPane.YES_NO_OPTION);

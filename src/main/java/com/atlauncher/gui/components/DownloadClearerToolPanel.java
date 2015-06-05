@@ -20,6 +20,7 @@ package com.atlauncher.gui.components;
 import com.atlauncher.App;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -54,7 +55,7 @@ public class DownloadClearerToolPanel extends AbstractToolPanel implements Actio
                 @Override
                 public void run() {
                     dialog.setReturnValue(false);
-                    App.settings.clearDownloads();
+                    FileUtils.clearDownloads();
                     dialog.close();
                 }
             });

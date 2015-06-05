@@ -80,12 +80,12 @@ public class BackupDialog extends JDialog implements ActionListener {
     private SyncAbstract selectedSync = SyncAbstract.syncList.get(SettingsManager.getLastSelectedSync());
 
     public BackupDialog(Instance inst) {
-        super(App.settings.getParent(), LanguageManager.localize("backup.dialog.title"));
+        super(App.frame, LanguageManager.localize("backup.dialog.title"));
 
         instance = inst;
 
         setSize(320, 420);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.frame);
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

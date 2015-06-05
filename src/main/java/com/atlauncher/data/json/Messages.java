@@ -53,7 +53,7 @@ public class Messages {
                 }
             }
         });
-        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, LanguageManager.localize("common" + "" +
+        return JOptionPane.showOptionDialog(App.frame, ep, LanguageManager.localize("common" + "" +
                         ".installing") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
                 .WARNING_MESSAGE, null, options, options[0]);
     }
@@ -78,7 +78,7 @@ public class Messages {
                 }
             }
         });
-        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, LanguageManager.localize("common" + "" +
+        return JOptionPane.showOptionDialog(App.frame, ep, LanguageManager.localize("common" + "" +
                         ".reinstalling") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
                 .WARNING_MESSAGE, null, options, options[0]);
     }

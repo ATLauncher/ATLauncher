@@ -67,7 +67,6 @@ public final class LauncherFrame extends JFrame {
         LogManager.info("Made By Bob*");
         LogManager.info("*(Not Actually)");
 
-        App.settings.setParentFrame(this);
         setSize(new Dimension(1000, 615));
         setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION);
         setLocationRelativeTo(null);

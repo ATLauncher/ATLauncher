@@ -20,6 +20,7 @@ package com.atlauncher.data.json;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.OS;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
@@ -81,13 +82,13 @@ public enum DownloadType {
                     }
                     String[] options = new String[]{LanguageManager.localize("common.openfolder"), LanguageManager
                             .localize("instance.ivedownloaded")};
-                    ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
+                    ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
                                     (LanguageManager.localizeWithReplace("instance.browseropened", (mod.serverFile ==
                                             null ? (mod
                                     .filePattern ? mod.name : mod.getFile()) : (mod.filePattern ? mod.name : mod
                                     .serverFile))) + "<br/><br/>" +
                                     LanguageManager.localize("instance.pleasesave") + "<br/><br/>" +
-                            (App.settings.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod.filePattern ? FileSystem
+                                            (OS.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod.filePattern ? FileSystem
                                     .DOWNLOADS : FileSystem.DOWNLOADS + " " +
                                     "or<br/>" + FileSystem.USER_DOWNLOADS))), LanguageManager.localize("common" + "" +
                             ".downloading") + " " + (mod.serverFile == null ? (mod.filePattern ? mod.name : mod

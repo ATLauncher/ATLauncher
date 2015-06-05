@@ -17,6 +17,7 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.data.OS;
 import com.atlauncher.utils.Utils;
 
 import java.nio.file.Path;
@@ -48,6 +49,6 @@ public final class FileSystem {
     public static final Path FAILED_DOWNLOADS = BASE_DIR.resolve("FailedDownloads");
 
     public static Path getDownloads() {
-        return App.settings.isUsingMacApp() ? USER_DOWNLOADS : DOWNLOADS;
+        return OS.isUsingMacApp() ? USER_DOWNLOADS : DOWNLOADS;
     }
 }

@@ -24,7 +24,6 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.utils.MojangAPIUtils;
-import com.atlauncher.utils.Utils;
 
 import java.io.EOFException;
 import java.io.ObjectInputStream;
@@ -233,5 +232,9 @@ public class AccountManager {
         };
 
         new Thread(r).start();
+    }
+
+    public static void addAccount(Account account) {
+        Data.ACCOUNTS.add(account);
     }
 }
