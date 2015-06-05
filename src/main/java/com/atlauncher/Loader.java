@@ -19,6 +19,7 @@ package com.atlauncher;
 
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.SplashScreen;
@@ -181,7 +182,7 @@ public class Loader {
         ToolTipManager.sharedInstance().setInitialDelay(50);
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
 
-        if (Utils.isMac()) {
+        if (OS.isMac()) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
             im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
             im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
@@ -196,7 +197,7 @@ public class Loader {
     }
 
     public boolean isUsingMacApp() {
-        return Utils.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
+        return OS.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
     }
 
     public boolean isUsingNewMacApp() {
@@ -331,7 +332,7 @@ public class Loader {
 
     public void logInformation() {
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
-        LogManager.info("Operating System: " + System.getProperty("os.name"));
+        LogManager.info("Operating System: " + OS.getName());
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
         LogManager.info("Java Path: " + SettingsManager.getJavaPath());
@@ -341,7 +342,7 @@ public class Loader {
     }
 
     public void setupOSXSpecificStuff() {
-        if (Utils.isMac()) {
+        if (OS.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", Constants.LAUNCHER_NAME + " " +
                     Constants.VERSION);

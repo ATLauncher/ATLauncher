@@ -17,13 +17,13 @@
  */
 package com.atlauncher.mclauncher;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Update;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.OS;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
@@ -104,12 +104,12 @@ public class LegacyMCLauncher {
         List<String> arguments = new ArrayList<>();
 
         String path = SettingsManager.getJavaPath() + File.separator + "bin" + File.separator + "java";
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             path += "w";
         }
         arguments.add(path);
 
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             arguments.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
         }
 
@@ -151,7 +151,7 @@ public class LegacyMCLauncher {
         arguments.add("-Duser.country=US");
         arguments.add("-Dfml.log.level=" + SettingsManager.getForgeLoggingLevel());
 
-        if (Utils.isMac()) {
+        if (OS.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
             arguments.add("-Xdock:icon=" + FileSystem.IMAGES.resolve("OldMinecraftIcon.png"));
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");

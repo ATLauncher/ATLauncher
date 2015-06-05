@@ -21,6 +21,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.mojang.PropertyMapSerializer;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.SettingsManager;
@@ -104,12 +105,12 @@ public class MCLauncher {
         List<String> arguments = new ArrayList<String>();
 
         String path = SettingsManager.getJavaPath() + File.separator + "bin" + File.separator + "java";
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             path += "w";
         }
         arguments.add(path);
 
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             arguments.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
         }
 
@@ -160,7 +161,7 @@ public class MCLauncher {
 
         arguments.add("-Dfml.log.level=" + SettingsManager.getForgeLoggingLevel());
 
-        if (Utils.isMac()) {
+        if (OS.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
             arguments.add("-Xdock:icon=" + instance.getAssetsDir().resolve("icons").resolve("minecraft.icns"));
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");

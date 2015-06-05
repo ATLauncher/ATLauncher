@@ -143,7 +143,7 @@ public class OldSettings {
         }
         LogManager.debug("Finished checking for access to master server");
 
-        if (Utils.isWindows() && SettingsManager.getJavaPath().contains("x86")) {
+        if (OS.isWindows() && SettingsManager.getJavaPath().contains("x86")) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
@@ -412,7 +412,7 @@ public class OldSettings {
         List<String> arguments = new ArrayList<String>();
 
         String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             path += "w";
         }
         arguments.add(path);
@@ -815,7 +815,7 @@ public class OldSettings {
             arguments.add(FileSystem.BASE_DIR.getParent().getParent().toString());
         } else {
             String jpath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-            if (Utils.isWindows()) {
+            if (OS.isWindows()) {
                 jpath += "w";
             }
             arguments.add(jpath);
@@ -835,7 +835,7 @@ public class OldSettings {
     }
 
     public boolean isUsingMacApp() {
-        return Utils.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
+        return OS.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
     }
 
     /**

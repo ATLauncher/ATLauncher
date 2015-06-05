@@ -19,6 +19,7 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.Pack;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.Utils;
@@ -236,7 +237,7 @@ public class CollapsiblePanel extends JPanel {
 
         // Use the same font as that used in the titled border font
         Font font;
-        if (Utils.isMac()) {
+        if (OS.isMac()) {
             font = new Font("SansSerif", Font.BOLD, 14);
         } else {
             font = new Font("SansSerif", Font.BOLD, 15);

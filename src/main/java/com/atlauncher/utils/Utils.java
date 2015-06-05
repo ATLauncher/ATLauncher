@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
@@ -162,7 +163,7 @@ public class Utils {
     }
 
     public static Path getCoreGracefully() {
-        if (Utils.isLinux()) {
+        if (OS.isLinux()) {
             try {
                 return Paths.get(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()
                         .getSchemeSpecificPart()).getParent();
@@ -217,7 +218,7 @@ public class Utils {
      * @return the font
      */
     public static Font getFont() {
-        if (isMac()) {
+        if (OS.isMac()) {
             return new Font("SansSerif", Font.PLAIN, 11);
         } else {
             return new Font("SansSerif", Font.PLAIN, 12);
@@ -321,32 +322,6 @@ public class Utils {
     }
 
     /**
-     * Os slash.
-     *
-     * @return the string
-     */
-    public static String osSlash() {
-        if (isWindows()) {
-            return "\\";
-        } else {
-            return "/";
-        }
-    }
-
-    /**
-     * Os delimiter.
-     *
-     * @return the string
-     */
-    public static String osDelimiter() {
-        if (isWindows()) {
-            return ";";
-        } else {
-            return ":";
-        }
-    }
-
-    /**
      * Gets the java home.
      *
      * @return the java home
@@ -362,33 +337,6 @@ public class Utils {
      */
     public static String getJavaVersion() {
         return System.getProperty("java.runtime.version");
-    }
-
-    /**
-     * Checks if is windows.
-     *
-     * @return true, if is windows
-     */
-    public static boolean isWindows() {
-        return OperatingSystem.getOS() == OperatingSystem.WINDOWS;
-    }
-
-    /**
-     * Checks if is mac.
-     *
-     * @return true, if is mac
-     */
-    public static boolean isMac() {
-        return OperatingSystem.getOS() == OperatingSystem.OSX;
-    }
-
-    /**
-     * Checks if is linux.
-     *
-     * @return true, if is linux
-     */
-    public static boolean isLinux() {
-        return OperatingSystem.getOS() == OperatingSystem.LINUX;
     }
 
     /**
@@ -886,7 +834,7 @@ public class Utils {
         if (SettingsManager.isUsingCustomJavaPath()) {
             File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add(folder + File.separator + "java" + (OS.isWindows() ? ".exe" : ""));
             arguments.add("-version");
             ProcessBuilder processBuilder = new ProcessBuilder(arguments);
             processBuilder.directory(folder);
@@ -928,7 +876,7 @@ public class Utils {
     }
 
     public static boolean isValidJavaPath(String path) {
-        return Files.exists(Paths.get(path).resolve("bin").resolve("java" + (Utils.isWindows() ? ".exe" : "")));
+        return Files.exists(Paths.get(path).resolve("bin").resolve("java" + (OS.isWindows() ? ".exe" : "")));
     }
 
     /**
@@ -940,7 +888,7 @@ public class Utils {
         if (SettingsManager.isUsingCustomJavaPath() && checkCustomPath) {
             File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add(folder + File.separator + "java" + (OS.isWindows() ? ".exe" : ""));
             arguments.add("-version");
             ProcessBuilder processBuilder = new ProcessBuilder(arguments);
             processBuilder.directory(folder);
@@ -993,7 +941,7 @@ public class Utils {
         if (SettingsManager.isUsingCustomJavaPath()) {
             File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add(folder + File.separator + "java" + (OS.isWindows() ? ".exe" : ""));
             arguments.add("-version");
             ProcessBuilder processBuilder = new ProcessBuilder(arguments);
             processBuilder.directory(folder);
@@ -1032,7 +980,7 @@ public class Utils {
         if (SettingsManager.isUsingCustomJavaPath()) {
             File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add(folder + File.separator + "java" + (OS.isWindows() ? ".exe" : ""));
             arguments.add("-version");
             ProcessBuilder processBuilder = new ProcessBuilder(arguments);
             processBuilder.directory(folder);
@@ -1222,7 +1170,7 @@ public class Utils {
     }
 
     public static Float getBaseFontSize() {
-        if (isMac()) {
+        if (OS.isMac()) {
             return (float) 11;
         } else {
             return (float) 12;
@@ -1297,7 +1245,7 @@ public class Utils {
         try {
             InetAddress address = InetAddress.getByName(host);
             Process traceRoute;
-            if (Utils.isWindows()) {
+            if (OS.isWindows()) {
                 traceRoute = Runtime.getRuntime().exec("ping -n 10 " + address.getHostAddress());
             } else {
                 traceRoute = Runtime.getRuntime().exec("ping -c 10 " + address.getHostAddress());
@@ -1329,7 +1277,7 @@ public class Utils {
         try {
             InetAddress address = InetAddress.getByName(host);
             Process traceRoute;
-            if (Utils.isWindows()) {
+            if (OS.isWindows()) {
                 traceRoute = Runtime.getRuntime().exec("tracert " + address.getHostAddress());
             } else {
                 traceRoute = Runtime.getRuntime().exec("traceroute " + address.getHostAddress());

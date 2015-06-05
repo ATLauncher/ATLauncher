@@ -66,7 +66,7 @@ public class DropboxSync extends SyncAbstract {
         File dropboxData = null;
 
         // host.db sometimes disappears for some reason
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             dropboxData = new File(System.getProperty("user.home"), "/AppData/Roaming/Dropbox/host.db");
         } else {
             dropboxData = new File(System.getProperty("user.home"), "/.dropbox/host.db");
