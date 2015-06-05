@@ -283,18 +283,18 @@ public class Loader {
      */
     public void integrate() {
         try {
-            if (!Utils.getOSStorageDir().exists()) {
-                Utils.getOSStorageDir().mkdirs();
+            if (Files.notExists(OS.storagePath())) {
+                Files.createDirectories(OS.storagePath());
             }
 
-            File f = new File(Utils.getOSStorageDir(), "atlauncher.conf");
+            Path config = OS.storagePath().resolve("atlauncher.conf");
 
-            if (!f.exists()) {
-                f.createNewFile();
+            if (Files.notExists(config)) {
+                Files.createFile(config);
             }
 
             Properties props = new Properties();
-            props.load(new FileInputStream(f));
+            props.load(new FileInputStream(config.toFile()));
 
             props.setProperty("java_version", Utils.getJavaVersion());
             props.setProperty("location", FileSystem.BASE_DIR.toString());
@@ -310,7 +310,7 @@ public class Loader {
             App.packShareCodeToInstall = props.getProperty("pack_share_code_to_install", null);
             props.remove("pack_share_code_to_install");
 
-            props.store(new FileOutputStream(f), "");
+            props.store(new FileOutputStream(config.toFile()), "");
         } catch (IOException e) {
             e.printStackTrace();
         }

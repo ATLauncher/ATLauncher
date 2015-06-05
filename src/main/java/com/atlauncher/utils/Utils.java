@@ -176,18 +176,6 @@ public class Utils {
         }
     }
 
-    public static File getOSStorageDir() {
-        switch (OperatingSystem.getOS()) {
-            case WINDOWS:
-                return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
-            case OSX:
-                return new File(System.getProperty("user.home"), "/Library/Application Support/." + Constants
-                        .LAUNCHER_NAME.toLowerCase());
-            default:
-                return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
-        }
-    }
-
     /**
      * Gets the icon image.
      *

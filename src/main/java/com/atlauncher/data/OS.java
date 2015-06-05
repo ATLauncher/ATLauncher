@@ -17,11 +17,15 @@
  */
 package com.atlauncher.data;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public enum OS {
     LINUX, WINDOWS, OSX;
 
     public static OS getOS() {
         String osName = System.getProperty("os.name").toLowerCase();
+        
         if (osName.contains("win")) {
             return OS.WINDOWS;
         } else if (osName.contains("mac")) {
@@ -49,5 +53,17 @@ public enum OS {
 
     public static boolean isLinux() {
         return getOS() == LINUX;
+    }
+
+    public static Path storagePath() {
+        switch (getOS()) {
+            case WINDOWS:
+                return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            case OSX:
+                return Paths.get(System.getenv("user.home")).resolve("Library").resolve("Application Support")
+                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            default:
+                return Paths.get(System.getenv("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+        }
     }
 }
