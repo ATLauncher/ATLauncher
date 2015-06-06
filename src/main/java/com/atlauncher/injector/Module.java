@@ -30,10 +30,6 @@ public abstract class Module {
         return this.binder().bind(tClass);
     }
 
-    protected <T> BindingBuilder bind(Key<T> tKey) {
-        return this.binder().bind(tKey.rawType);
-    }
-
     protected final void putBindings(Linker linker) {
         this.binder.push(linker);
     }

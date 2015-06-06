@@ -18,8 +18,6 @@
 package com.atlauncher.benchmark;
 
 import com.atlauncher.utils.Hashing;
-import org.junit.Assert;
-import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.runner.Runner;
@@ -36,16 +34,6 @@ public class HashCachingBenchmark {
         new Runner(opts).run();
     }
 
-    @Test
-    public void test() {
-        System.out.println("HashCachingBenchmark#fromString:");
-        this.fromString();
-        System.out.println("--------------------------------");
-        System.out.println("HashCachingBenchmark#md5");
-        this.md5();
-        System.out.println("------------------------");
-    }
-
     @Benchmark
     public void fromString() {
         Hashing.HashCode code = Hashing.HashCode.fromString("b10a8db164e0754105b7a99be72e3fe5");
@@ -54,7 +42,7 @@ public class HashCachingBenchmark {
             hashes.add(Hashing.HashCode.fromString("b10a8db164e0754105b7a99be72e3fe5"));
         }
         for (int i = 0; i < 10; i++) {
-            Assert.assertEquals(hashes.get(i), code);
+
         }
     }
 
@@ -66,7 +54,6 @@ public class HashCachingBenchmark {
             hashes.add(Hashing.md5("Hello World"));
         }
         for (int i = 0; i < 10; i++) {
-            Assert.assertEquals(hashes.get(i), code);
         }
     }
 }

@@ -20,7 +20,6 @@ package com.atlauncher.benchmark;
 import com.atlauncher.injector.Injector;
 import com.atlauncher.injector.InjectorFactory;
 import com.atlauncher.injector.Module;
-import org.junit.Assert;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.runner.Runner;
@@ -37,11 +36,6 @@ public class InjectionBenchmark {
         Options opts = new OptionsBuilder().addProfiler(StackProfiler.class).forks(1).include(InjectionBenchmark
                 .class.getSimpleName()).build();
         new Runner(opts).run();
-    }
-
-    @Benchmark
-    public void to() {
-        Assert.assertEquals(injector.getInstance(Injection.class).get(), "Hello World");
     }
 
     @Benchmark

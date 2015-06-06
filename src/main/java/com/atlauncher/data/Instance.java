@@ -1309,13 +1309,13 @@ public class Instance implements Cloneable {
      * @return Instance The cloned instance
      * @see java.lang.Object#clone()
      */
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
+    public Instance clone() {
+        try{
+            return (Instance) super.clone();
+        } catch(CloneNotSupportedException e){
             LogManager.logStackTrace(e);
+            return null;
         }
-        return null;
     }
 
     public boolean hasCustomMods() {

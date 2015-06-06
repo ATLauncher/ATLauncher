@@ -18,8 +18,6 @@
 package com.atlauncher.benchmark;
 
 import com.atlauncher.utils.Hashing;
-import org.junit.Assert;
-import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -43,15 +41,5 @@ public class HashComparisonBenchmark {
     public void setup() {
         this.original = Hashing.HashCode.fromString("b10a8db164e0754105b7a99be72e3fe5");
         this.test = Hashing.HashCode.fromString("b10a8db164e0754105b7a99be72e3fe5");
-    }
-
-    @Benchmark
-    public void stringComparison() {
-        Assert.assertEquals(original.toString(), "b10a8db164e0754105b7a99be72e3fe5");
-    }
-
-    @Benchmark
-    public void equalsComparison() {
-        Assert.assertEquals(original, test);
     }
 }
