@@ -21,14 +21,13 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Account;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.CustomLineBorder;
-import com.atlauncher.gui.dialogs.GithubIssueReporterDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -54,7 +53,6 @@ import java.awt.event.ItemListener;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar {
-    private final JButton submitError = new JButton("Submit Bug");
     private JPanel leftSide;
     private JPanel middle;
     private Account fillerAccount;
@@ -67,18 +65,6 @@ public class LauncherBottomBar extends BottomBar {
     private JLabel statusIcon;
 
     public LauncherBottomBar() {
-        submitError.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        new GithubIssueReporterDialog(null).setVisible(true);
-                    }
-                });
-            }
-        });
-
         leftSide = new JPanel();
         leftSide.setLayout(new GridBagLayout());
         middle = new JPanel();
@@ -117,7 +103,7 @@ public class LauncherBottomBar extends BottomBar {
     private void setupListeners() {
         toggleConsole.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().setVisible(!App.settings.isConsoleVisible());
+                App.console.setVisible(!App.console.isVisible());
             }
         });
 
@@ -129,8 +115,8 @@ public class LauncherBottomBar extends BottomBar {
 
         updateData.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common" + "" +
-                                        ".checkingforupdates"), 0, Language.INSTANCE.localize("common" +
+                        final ProgressDialog dialog = new ProgressDialog(LanguageManager.localize("common" + "" +
+                                ".checkingforupdates"), 0, LanguageManager.localize("common" +
                                 ".checkingforupdates"), "Aborting" + " Update Check!");
                         dialog.addThread(new Thread() {
                                     public void run() {
@@ -157,44 +143,44 @@ public class LauncherBottomBar extends BottomBar {
 /*        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
             @Override
             public void onConsoleClose() {
-                toggleConsole.setText(Language.INSTANCE.localize("console.show"));
+                toggleConsole.setText(LanguageManager.localize("console.show"));
             }
         });
 
         ConsoleOpenManager.addListener(new ConsoleOpenListener() {
             @Override
             public void onConsoleOpen() {
-                toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
+                toggleConsole.setText(LanguageManager.localize("console.hide"));
             }
         });*/
     }
 
     @Subscribe
     private void onConsoleOpen(EventHandler.ConsoleOpenEvent e) {
-        this.toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
+        this.toggleConsole.setText(LanguageManager.localize("console.hide"));
     }
 
     @Subscribe
     private void onConsoleClosed(EventHandler.ConsoleCloseEvent e) {
-        this.toggleConsole.setText(Language.INSTANCE.localize("console.show"));
+        this.toggleConsole.setText(LanguageManager.localize("console.show"));
     }
 
     /**
      * Creates the JButton's for use in the bar
      */
     private void createButtons() {
-        if (App.settings.isConsoleVisible()) {
-            toggleConsole = new JButton(Language.INSTANCE.localize("console.hide"));
+        if (App.console.isVisible()) {
+            toggleConsole = new JButton(LanguageManager.localize("console.hide"));
         } else {
-            toggleConsole = new JButton(Language.INSTANCE.localize("console.show"));
+            toggleConsole = new JButton(LanguageManager.localize("console.show"));
         }
 
-        openFolder = new JButton(Language.INSTANCE.localize("common.openfolder"));
-        updateData = new JButton(Language.INSTANCE.localize("common.updatedata"));
+        openFolder = new JButton(LanguageManager.localize("common.openfolder"));
+        updateData = new JButton(LanguageManager.localize("common.updatedata"));
 
         username = new JComboBox<>();
         username.setRenderer(new AccountsDropDownRenderer());
-        fillerAccount = new Account(Language.INSTANCE.localize("account.select"));
+        fillerAccount = new Account(LanguageManager.localize("account.select"));
         username.addItem(fillerAccount);
         for (Account account : AccountManager.getAccounts()) {
             username.addItem(account);
@@ -215,7 +201,7 @@ public class LauncherBottomBar extends BottomBar {
             }
         };
         statusIcon.setBorder(BorderFactory.createEmptyBorder());
-        statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.checking"));
+        statusIcon.setToolTipText(LanguageManager.localize("status.minecraft.checking"));
     }
 
     /**
@@ -226,19 +212,19 @@ public class LauncherBottomBar extends BottomBar {
     public void updateStatus(Status status) {
         switch (status) {
             case UNKNOWN:
-                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.checking"));
+                statusIcon.setToolTipText(LanguageManager.localize("status.minecraft.checking"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusWhite.png"));
                 break;
             case ONLINE:
-                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.online"));
+                statusIcon.setToolTipText(LanguageManager.localize("status.minecraft.online"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusGreen.png"));
                 break;
             case OFFLINE:
-                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.offline"));
+                statusIcon.setToolTipText(LanguageManager.localize("status.minecraft.offline"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusRed.png"));
                 break;
             case PARTIAL:
-                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.partial"));
+                statusIcon.setToolTipText(LanguageManager.localize("status.minecraft.partial"));
                 statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusYellow.png"));
                 break;
             default:
@@ -248,13 +234,13 @@ public class LauncherBottomBar extends BottomBar {
 
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        if (App.settings.getConsole().isVisible()) {
-            toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
+        if (App.console.isVisible()) {
+            toggleConsole.setText(LanguageManager.localize("console.hide"));
         } else {
-            toggleConsole.setText(Language.INSTANCE.localize("console.show"));
+            toggleConsole.setText(LanguageManager.localize("console.show"));
         }
-        this.updateData.setText(Language.INSTANCE.localize("common.updatedata"));
-        this.openFolder.setText(Language.INSTANCE.localize("common.openfolder"));
+        this.updateData.setText(LanguageManager.localize("common.updatedata"));
+        this.openFolder.setText(LanguageManager.localize("common.openfolder"));
     }
 
     @Subscribe

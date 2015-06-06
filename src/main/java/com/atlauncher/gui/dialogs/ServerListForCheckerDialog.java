@@ -17,8 +17,8 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import com.atlauncher.data.Language;
 import com.atlauncher.gui.tabs.ServersForCheckerTab;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -45,17 +45,17 @@ public class ServerListForCheckerDialog extends JDialog implements ActionListene
     private static final long serialVersionUID = -1462218261978353036L;
 
     private final JTabbedPane TABBED_PANE = new JTabbedPane(JTabbedPane.TOP);
-    private final JButton ADD_BUTTON = new JButton(Language.INSTANCE.localize("common.add"));
-    private final JButton CLOSE_BUTTON = new JButton(Language.INSTANCE.localize("common.close"));
-    private final JButton DELETE_BUTTON = new JButton(Language.INSTANCE.localize("common.delete"));
-    private final JButton EDIT_BUTTON = new JButton(Language.INSTANCE.localize("common.edit"));
+    private final JButton ADD_BUTTON = new JButton(LanguageManager.localize("common.add"));
+    private final JButton CLOSE_BUTTON = new JButton(LanguageManager.localize("common.close"));
+    private final JButton DELETE_BUTTON = new JButton(LanguageManager.localize("common.delete"));
+    private final JButton EDIT_BUTTON = new JButton(LanguageManager.localize("common.edit"));
 
     private final ServersForCheckerTab SERVERS_TAB = new ServersForCheckerTab();
 
     private final JPanel BOTTOM_PANEL = new JPanel();
 
     public ServerListForCheckerDialog() {
-        super(null, Language.INSTANCE.localize("tools.serverchecker"), ModalityType.APPLICATION_MODAL);
+        super(null, LanguageManager.localize("tools.serverchecker"), ModalityType.APPLICATION_MODAL);
         setSize(400, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -64,7 +64,7 @@ public class ServerListForCheckerDialog extends JDialog implements ActionListene
         setResizable(false);
         TABBED_PANE.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
-        TABBED_PANE.addTab(Language.INSTANCE.localize("tools.serverchecker.servers"), SERVERS_TAB);
+        TABBED_PANE.addTab(LanguageManager.localize("tools.serverchecker.servers"), SERVERS_TAB);
 
         SERVERS_TAB.addListSelectionListener(this);
 

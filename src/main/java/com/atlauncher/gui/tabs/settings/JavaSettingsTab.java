@@ -19,9 +19,9 @@ package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
@@ -80,11 +80,11 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, "<html>" + Utils.splitMultilinedString(Language
-                .INSTANCE.localize("settings.32bitmemorywarning"), 80, "<br/>") + "</html>", RESTART_BORDER);
+        initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, "<html>" + Utils.splitMultilinedString
+                (LanguageManager.localize("settings.32bitmemorywarning"), 80, "<br/>") + "</html>", RESTART_BORDER);
 
-        initialMemoryLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.initialmemory") + ":",
-                HELP_ICON, "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings" + "" +
+        initialMemoryLabel = new JLabelWithHover(LanguageManager.localize("settings.initialmemory") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(LanguageManager.localize("settings" + "" +
                 ".initialmemoryhelp"), 80, "<br/>") + "</html>");
 
         initialMemoryPanel = new JPanel();
@@ -115,9 +115,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                     int selectedRam = Integer.parseInt(((String) initialMemory.getSelectedItem()).replace(" MB", ""));
                     int maxRam = Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", ""));
                     if (selectedRam > maxRam) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + Language.INSTANCE
+                        JOptionPane.showMessageDialog(App.frame, "<html>" + LanguageManager
                                 .localizeWithReplace("settings.initialmemorytoohigh", "<br/><br/>") + "</html>",
-                                Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
+                                LanguageManager.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
                         initialMemory.setSelectedItem("256 MB");
                     }
                 }
@@ -131,11 +131,11 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        maximumMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, "<html>" + Utils.splitMultilinedString(Language
-                .INSTANCE.localize("settings.32bitmemorywarning"), 80, "<br/>") + "</html>", RESTART_BORDER);
+        maximumMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, "<html>" + Utils.splitMultilinedString
+                (LanguageManager.localize("settings.32bitmemorywarning"), 80, "<br/>") + "</html>", RESTART_BORDER);
 
-        maximumMemoryLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.maximummemory") + ":",
-                HELP_ICON, "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings" + "" +
+        maximumMemoryLabel = new JLabelWithHover(LanguageManager.localize("settings.maximummemory") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(LanguageManager.localize("settings" + "" +
                 ".maximummemoryhelp"), 80, "<br/>") + "</html>");
 
         maximumMemoryPanel = new JPanel();
@@ -162,9 +162,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     int selectedRam = Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", ""));
                     if (selectedRam > 4096) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + Language.INSTANCE
+                        JOptionPane.showMessageDialog(App.frame, "<html>" + LanguageManager
                                 .localizeWithReplace("settings.toomuchramallocated", "<br/><br/>") + "</html>",
-                                Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
+                                LanguageManager.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
                     }
                 }
             }
@@ -176,8 +176,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        permGenLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.permgen") + ":", HELP_ICON, Language
-                .INSTANCE.localize("settings.permgenhelp"));
+        permGenLabel = new JLabelWithHover(LanguageManager.localize("settings.permgen") + ":", HELP_ICON, LanguageManager.localize("settings.permgenhelp"));
         add(permGenLabel, gbc);
 
         gbc.gridx++;
@@ -193,8 +192,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        windowSizeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.windowsize") + ":", HELP_ICON,
-                Language.INSTANCE.localize("settings.windowsizehelp"));
+        windowSizeLabel = new JLabelWithHover(LanguageManager.localize("settings.windowsize") + ":", HELP_ICON,
+                LanguageManager.localize("settings.windowsizehelp"));
         add(windowSizeLabel, gbc);
 
         gbc.gridx++;
@@ -244,8 +243,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        javaPathLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.javapath") + ":", HELP_ICON,
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.javapathhelp", "<br/>") + "</html>");
+        javaPathLabel = new JLabelWithHover(LanguageManager.localize("settings.javapath") + ":", HELP_ICON, "<html>"
+                + LanguageManager.localizeWithReplace("settings.javapathhelp", "<br/>") + "</html>");
         add(javaPathLabel, gbc);
 
         gbc.gridx++;
@@ -255,7 +254,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaPathPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         javaPath = new JTextField(20);
         javaPath.setText(SettingsManager.getJavaPath());
-        javaPathResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
+        javaPathResetButton = new JButton(LanguageManager.localize("settings.javapathreset"));
         javaPathResetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 javaPath.setText(Utils.getJavaHome());
@@ -272,8 +271,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        javaParametersLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.javaparameters") + ":",
-                HELP_ICON, Language.INSTANCE.localize("settings.javaparametershelp"));
+        javaParametersLabel = new JLabelWithHover(LanguageManager.localize("settings.javaparameters") + ":",
+                HELP_ICON, LanguageManager.localize("settings.javaparametershelp"));
         add(javaParametersLabel, gbc);
 
         gbc.gridx++;
@@ -283,7 +282,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         javaParameters = new JTextField(20);
         javaParameters.setText(SettingsManager.getJavaParameters());
-        javaParametersResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
+        javaParametersResetButton = new JButton(LanguageManager.localize("settings.javapathreset"));
         javaParametersResetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 javaParameters.setText("");
@@ -299,8 +298,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        startMinecraftMaximisedLabel = new JLabelWithHover(Language.INSTANCE.localize("settings" + "" +
-                ".startminecraftmaximised") + "?", HELP_ICON, Language.INSTANCE.localize("settings" + "" +
+        startMinecraftMaximisedLabel = new JLabelWithHover(LanguageManager.localize("settings" + "" +
+                ".startminecraftmaximised") + "?", HELP_ICON, LanguageManager.localize("settings" + "" +
                 ".startminecraftmaximisedhelp"));
         add(startMinecraftMaximisedLabel, gbc);
 
@@ -319,8 +318,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        saveCustomModsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.savecustommods") + "?",
-                HELP_ICON, Language.INSTANCE.localize("settings.savecustommodshelp"));
+        saveCustomModsLabel = new JLabelWithHover(LanguageManager.localize("settings.savecustommods") + "?",
+                HELP_ICON, LanguageManager.localize("settings.savecustommodshelp"));
         add(saveCustomModsLabel, gbc);
 
         gbc.gridx++;
@@ -336,8 +335,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     public boolean isValidJavaPath() {
         File jPath = new File(javaPath.getText(), "bin");
         if (!jPath.exists()) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + Language.INSTANCE.localizeWithReplace
-                    ("settings.javapathincorrect", "<br/><br/>") + "</html>", Language.INSTANCE.localize("settings" +
+            JOptionPane.showMessageDialog(App.frame, "<html>" + LanguageManager.localizeWithReplace
+                    ("settings.javapathincorrect", "<br/><br/>") + "</html>", LanguageManager.localize("settings" +
                     ".help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
@@ -347,8 +346,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     public boolean isValidJavaParamaters() {
         if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx") || javaParameters
                 .getText().contains("-XX:PermSize") || javaParameters.getText().contains("-XX:MetaspaceSize")) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), "<html>" + Language.INSTANCE.localizeWithReplace
-                    ("settings.javaparametersincorrect", "<br/><br/>") + "</html>", Language.INSTANCE.localize
+            JOptionPane.showMessageDialog(App.frame, "<html>" + LanguageManager.localizeWithReplace
+                    ("settings.javaparametersincorrect", "<br/><br/>") + "</html>", LanguageManager.localize
                     ("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
@@ -369,50 +368,50 @@ public class JavaSettingsTab extends AbstractSettingsTab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("settings.javatab");
+        return LanguageManager.localize("settings.javatab");
     }
 
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        this.initialMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE
+        this.initialMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(LanguageManager
                 .localize("settings.32bitmemorywarning"), 80, "<br/>") + "</html>");
 
-        this.initialMemoryLabel.setText(Language.INSTANCE.localize("settings.initialmemory") + ":");
-        this.initialMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize
+        this.initialMemoryLabel.setText(LanguageManager.localize("settings.initialmemory") + ":");
+        this.initialMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(LanguageManager.localize
                 ("settings" + ".initialmemoryhelp"), 80, "<br/>") + "</html>");
 
-        this.maximumMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE
+        this.maximumMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(LanguageManager
                 .localize("settings.32bitmemorywarning"), 80, "<br/>") + "</html>");
 
-        this.maximumMemoryLabel.setText(Language.INSTANCE.localize("settings.maximummemory") + ":");
-        this.maximumMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize
+        this.maximumMemoryLabel.setText(LanguageManager.localize("settings.maximummemory") + ":");
+        this.maximumMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(LanguageManager.localize
                 ("settings" + "" +
                 ".maximummemoryhelp"), 80, "<br/>") + "</html>");
 
 
-        this.permGenLabel.setText(Language.INSTANCE.localize("settings.permgen") + ":");
-        this.permGenLabel.setToolTipText(Language.INSTANCE.localize("settings.permgenhelp"));
+        this.permGenLabel.setText(LanguageManager.localize("settings.permgen") + ":");
+        this.permGenLabel.setToolTipText(LanguageManager.localize("settings.permgenhelp"));
 
-        this.windowSizeLabel.setText(Language.INSTANCE.localize("settings.windowsize") + ":");
-        this.windowSizeLabel.setToolTipText(Language.INSTANCE.localize("settings.windowsizehelp"));
+        this.windowSizeLabel.setText(LanguageManager.localize("settings.windowsize") + ":");
+        this.windowSizeLabel.setToolTipText(LanguageManager.localize("settings.windowsizehelp"));
 
-        this.javaPathLabel.setText(Language.INSTANCE.localize("settings.javapath") + ":");
-        this.javaPathLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings.javapathhelp",
+        this.javaPathLabel.setText(LanguageManager.localize("settings.javapath") + ":");
+        this.javaPathLabel.setToolTipText("<html>" + LanguageManager.localizeWithReplace("settings.javapathhelp",
                 "<br/>") + "</html>");
 
-        this.javaPathResetButton.setText(Language.INSTANCE.localize("settings.javapathreset"));
+        this.javaPathResetButton.setText(LanguageManager.localize("settings.javapathreset"));
 
-        this.javaParametersLabel.setText(Language.INSTANCE.localize("settings.javaparameters") + ":");
-        this.javaParametersLabel.setToolTipText(Language.INSTANCE.localize("settings.javaparametershelp"));
+        this.javaParametersLabel.setText(LanguageManager.localize("settings.javaparameters") + ":");
+        this.javaParametersLabel.setToolTipText(LanguageManager.localize("settings.javaparametershelp"));
 
-        this.javaParametersResetButton.setText(Language.INSTANCE.localize("settings.javapathreset"));
+        this.javaParametersResetButton.setText(LanguageManager.localize("settings.javapathreset"));
 
-        this.startMinecraftMaximisedLabel.setText(Language.INSTANCE.localize("settings" + "" +
+        this.startMinecraftMaximisedLabel.setText(LanguageManager.localize("settings" + "" +
                 ".startminecraftmaximised") + "?");
-        this.startMinecraftMaximisedLabel.setToolTipText(Language.INSTANCE.localize("settings" + "" +
+        this.startMinecraftMaximisedLabel.setToolTipText(LanguageManager.localize("settings" + "" +
                 ".startminecraftmaximisedhelp"));
 
-        this.saveCustomModsLabel.setText(Language.INSTANCE.localize("settings.savecustommods") + "?");
-        this.saveCustomModsLabel.setToolTipText(Language.INSTANCE.localize("settings.savecustommodshelp"));
+        this.saveCustomModsLabel.setText(LanguageManager.localize("settings.savecustommods") + "?");
+        this.saveCustomModsLabel.setToolTipText(LanguageManager.localize("settings.savecustommodshelp"));
     }
 }

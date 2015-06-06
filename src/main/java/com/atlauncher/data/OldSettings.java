@@ -22,63 +22,44 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Gsons;
-import com.atlauncher.Network;
 import com.atlauncher.Update;
 import com.atlauncher.collection.DownloadPool;
 import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.data.version.LauncherVersion;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftVersionManager;
 import com.atlauncher.managers.PackManager;
-import com.atlauncher.managers.ServerManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.nio.JsonFile;
-import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.MojangAPIUtils;
-import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.walker.ClearDirVisitor;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
-import java.awt.Window;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.Proxy.Type;
 import java.net.URLDecoder;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -89,37 +70,18 @@ import java.util.concurrent.ExecutorService;
  * @author Ryan
  */
 public class OldSettings {
-    // Users Settings
-    private Server server; // Server to use for the Launcher
-
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<MinecraftServer> checkingServers = new ArrayList<>();
 
     // Launcher Settings
-    private JFrame parent; // Parent JFrame of the actual Launcher
-    private LauncherConsole console; // The Launcher's Console
-    private List<Server> servers = new ArrayList<>(); // Servers for the Launcher
-    private List<Server> triedServers = new ArrayList<>(); // Servers tried to connect to
     private NewsTab newsPanel; // The news panel
     private boolean offlineMode = false; // If offline mode is enabled
     private Process minecraftProcess = null; // The process minecraft is running on
-    private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
     private DropboxSync dropbox;
-    private boolean languageLoaded = false;
     private Timer checkingServersTimer = null; // Timer used for checking servers
-
-    public OldSettings() {
-        checkFolders(); // Checks the setup of the folders and makes sure they're there
-        clearTempDir(); // Cleans all files in the Temp Dir
-    }
-
-    public void loadConsole() {
-        console = new LauncherConsole();
-        LogManager.start();
-    }
 
     public void loadEverything() {
         if (App.forceOfflineMode) {
@@ -139,8 +101,6 @@ public class OldSettings {
 
         loadNews(); // Load the news
 
-        this.languageLoaded = true; // Languages are now loaded
-
         MinecraftVersionManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
 
         PackManager.loadPacks(); // Load the Packs available in the Launcher
@@ -149,25 +109,21 @@ public class OldSettings {
 
         InstanceManager.loadInstances(); // Load the users installed Instances
 
-        AccountManager.loadAccounts(); // Load the saved Accounts
-
         loadCheckingServers(); // Load the saved servers we're checking with the tool
 
-        console.setupLanguage(); // Setup language on the console
+        FileUtils.clearOldLogs(); // Clear all the old logs out
 
-        clearAllLogs(); // Clear all the old logs out
-
-        Data.ACCOUNTS.checkUUIDs(); // Check for accounts UUID's and add them if necessary
+        AccountManager.checkUUIDs(); // Check for accounts UUID's and add them if necessary
 
         InstanceManager.changeUserLocks(); // Changes any instances user locks to UUIDs if available
 
-        Data.ACCOUNTS.checkForNameChanges(); // Check account for username changes
+        AccountManager.checkForNameChanges(); // Check account for username changes
 
         LogManager.debug("Checking for access to master server");
         OUTER:
         for (Pack pack : Data.PACKS) {
             if (pack.isTester()) {
-                for (Server server : this.servers) {
+                for (Server server : Constants.SERVERS) {
                     if (server.getName().equals("Master Server (Testing Only)")) {
                         server.setUserSelectable(true);
                         LogManager.debug("Access to master server granted");
@@ -178,11 +134,12 @@ public class OldSettings {
         }
         LogManager.debug("Finished checking for access to master server");
 
-        if (Utils.isWindows() && SettingsManager.getJavaPath().contains("x86")) {
+        if (OS.isWindows() && SettingsManager.getJavaPath().contains("x86")) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
-            String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
+            String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
+            int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
+                            (LanguageManager.localizeWithReplace("settings.running32bit", "<br/><br/>")),
+                    LanguageManager.localize
                     ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 0) {
@@ -243,11 +200,13 @@ public class OldSettings {
         }
 
         if (matches) {
-            String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
+            String[] options = {LanguageManager.localize("common.ok"), LanguageManager.localize("account" + "" +
                     ".removepasswords")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
-                    ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+
+            int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
+                            (LanguageManager.localizeWithReplace("account.securitywarning", "<br/>")),
+                    LanguageManager.localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                            .ERROR_MESSAGE, null,
                     options, options[0]);
 
             if (ret == 1) {
@@ -260,124 +219,6 @@ public class OldSettings {
                 AccountManager.saveAccounts();
             }
         }
-    }
-
-    public void clearAllLogs() {
-        try {
-            for (int i = 0; i < 3; i++) {
-                Path p = FileSystem.BASE_DIR.resolve(Constants.LAUNCHER_NAME + "-Log-" + i + ".txt");
-                Files.deleteIfExists(p);
-            }
-
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LOGS, this.logFilter())) {
-                for (Path file : stream) {
-                    if (file.getFileName().toString().equals(LoggingThread.filename)) {
-                        continue;
-                    }
-
-                    Files.deleteIfExists(file);
-                }
-            }
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-        }
-    }
-
-    private DirectoryStream.Filter<Path> logFilter() {
-        return new DirectoryStream.Filter<Path>() {
-            @Override
-            public boolean accept(Path o) throws IOException {
-                return Files.isRegularFile(o) && o.startsWith(Constants.LAUNCHER_NAME + "-Log_") && o.endsWith(".log");
-            }
-        };
-    }
-
-    public void checkResources() {
-        LogManager.debug("Checking if using old format of resources");
-        Path indexes = FileSystem.RESOURCES.resolve("indexes");
-        if (!Files.exists(indexes) || !Files.isDirectory(indexes)) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
-                    ".rearrangingresources"), 0, Language.INSTANCE.localize("settings.rearrangingresources"), null);
-            Thread t = new Thread() {
-                @Override
-                public void run() {
-                    Path indexes = FileSystem.RESOURCES.resolve("indexes");
-                    Path virtual = FileSystem.RESOURCES.resolve("virtual");
-                    Path objects = FileSystem.RESOURCES.resolve("objects");
-
-                    Path tmp = FileSystem.TMP.resolve("assets");
-                    Path legacy = virtual.resolve("legacy");
-
-                    try {
-                        FileUtils.createDirectory(tmp);
-                        FileUtils.moveDirectory(FileSystem.RESOURCES, tmp);
-                        FileUtils.createDirectory(indexes);
-                        FileUtils.createDirectory(objects);
-                        FileUtils.createDirectory(virtual);
-                        FileUtils.createDirectory(legacy);
-                        FileUtils.moveDirectory(tmp, legacy);
-                        FileUtils.deleteDirectory(tmp);
-                    } catch (Exception e) {
-                        LogManager.logStackTrace(e);
-                    }
-                }
-            };
-        }
-    }
-
-    public void checkAccountUUIDs() {
-        LogManager.debug("Checking account UUID's");
-        LogManager.info("Checking account UUID's!");
-        for (Account account : Data.ACCOUNTS) {
-            if (account.isUUIDNull()) {
-                account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
-                AccountManager.saveAccounts();
-            }
-        }
-        LogManager.debug("Finished checking account UUID's");
-    }
-
-    public void changeInstanceUserLocks() {
-        LogManager.debug("Changing instances user locks to UUID's");
-
-        boolean wereChanges = false;
-
-        for (Instance instance : Data.INSTANCES) {
-            if (instance.getInstalledBy() != null) {
-                boolean found = false;
-
-                for (Account account : Data.ACCOUNTS) {
-                    // This is the user who installed this so switch to their UUID
-                    if (account.getMinecraftUsername().equalsIgnoreCase(instance.getInstalledBy())) {
-                        found = true;
-                        wereChanges = true;
-
-                        instance.removeInstalledBy();
-
-                        // If the accounts UUID is null for whatever reason, don't set the lock
-                        if (!account.isUUIDNull()) {
-                            instance.setUserLock(account.getUUIDNoDashes());
-                        }
-                        break;
-                    }
-                }
-
-                // If there were no accounts with that username, we remove the lock and old installed by
-                if (!found) {
-                    wereChanges = true;
-
-                    instance.removeInstalledBy();
-                    instance.removeUserLock();
-                }
-            }
-        }
-
-        if (wereChanges) {
-            AccountManager.saveAccounts();
-            InstanceManager.saveInstances();
-        }
-
-        LogManager.debug("Finished changing instances user locks to UUID's");
     }
 
     public void checkMojangStatus() {
@@ -491,7 +332,7 @@ public class OldSettings {
         List<String> arguments = new ArrayList<String>();
 
         String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             path += "w";
         }
         arguments.add(path);
@@ -553,26 +394,23 @@ public class OldSettings {
 
     private void downloadUpdatedFiles() {
         LogManager.info("Downloading launcher files");
+
         DownloadPool pool = this.getLauncherFiles();
+
         if (pool != null) {
             pool.downloadAll();
         }
+
         LogManager.info("Finished downloading launcher files");
 
-        if (Language.INSTANCE.getCurrent() != null) {
-            try {
-                Language.INSTANCE.reload(Language.INSTANCE.getCurrent());
-            } catch (IOException e) {
-                LogManager.logStackTrace("Couldn't reload language " + Language.INSTANCE.getCurrent(), e);
-            }
-        }
+        LanguageManager.loadLanguages();
     }
 
     public void reloadLauncherData() {
-        final JDialog dialog = new JDialog(this.parent, ModalityType.APPLICATION_MODAL);
+        final JDialog dialog = new JDialog(App.frame, ModalityType.APPLICATION_MODAL);
         dialog.setSize(300, 100);
         dialog.setTitle("Updating Launcher");
-        dialog.setLocationRelativeTo(App.settings.getParent());
+        dialog.setLocationRelativeTo(App.frame);
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
@@ -604,7 +442,7 @@ public class OldSettings {
                 downloadUpdate(); // Update the Launcher
             } else {
                 String[] options = {"Ok"};
-                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph("Update failed. " +
+                JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph("Update failed. " +
                                 "Please click Ok to close " + "the launcher and open up the downloads " +
                                 "page.<br/><br/>Download " + "the update and replace the old " + Constants
                         .LAUNCHER_NAME + " " +
@@ -660,51 +498,6 @@ public class OldSettings {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
-    }
-
-    /**
-     * Checks the directory to make sure all the necessary folders are there
-     */
-    private void checkFolders() {
-        try {
-            for (Field field : FileSystem.class.getDeclaredFields()) {
-                Path p = (Path) field.get(null);
-                if (!Files.exists(p)) {
-                    FileUtils.createDirectory(p);
-                }
-
-                if (!Files.isDirectory(p)) {
-                    Files.delete(p);
-                    FileUtils.createDirectory(p);
-                }
-            }
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
-        }
-    }
-
-    /**
-     * Deletes all files in the Temp directory
-     */
-    public void clearTempDir() {
-        try {
-            Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
-        } catch (IOException e) {
-            LogManager.logStackTrace("Error clearing temp directory at " + FileSystem.TMP, e);
-        }
-    }
-
-    /**
-     * Sets the main parent JFrame reference for the Launcher
-     *
-     * @param parent The Launcher main JFrame
-     */
-    public void setParentFrame(JFrame parent) {
-        this.parent = parent;
-    }
-
-    public void addAccount(Account account) {
-        Data.ACCOUNTS.add(account);
     }
 
     public void addCheckingServer(MinecraftServer server) {
@@ -806,25 +599,7 @@ public class OldSettings {
 
     public void setMinecraftLaunched(boolean launched) {
         this.minecraftLaunched = launched;
-        App.TRAY_MENU.setMinecraftLaunched(launched);
-    }
-
-    public boolean isUsingMacApp() {
-        return Utils.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
-    }
-
-    public boolean isUsingNewMacApp() {
-        return Files.exists(FileSystem.BASE_DIR.getParent().getParent().resolve("MacOS").resolve
-                ("universalJavaApplicationStub"));
-    }
-
-    private DirectoryStream.Filter<Path> languagesFilter() {
-        return new DirectoryStream.Filter<Path>() {
-            @Override
-            public boolean accept(Path o) throws IOException {
-                return Files.isRegularFile(o) && o.toString().endsWith(".lang");
-            }
-        };
+        App.trayMenu.setMinecraftLaunched(launched);
     }
 
     /**
@@ -837,27 +612,21 @@ public class OldSettings {
     }
 
     public void checkOnlineStatus() {
-        for (Server server : servers) {
+        for (Server server : Constants.SERVERS) {
             server.enableServer();
         }
+
         this.offlineMode = false;
+
         Downloadable download = new Downloadable("ping", true);
         String test = download.toString();
+
         if (test != null && test.equalsIgnoreCase("pong")) {
             EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
             EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
         } else {
             this.offlineMode = true;
         }
-    }
-
-    /**
-     * Returns the JFrame reference of the main Launcher
-     *
-     * @return Main JFrame of the Launcher
-     */
-    public Window getParent() {
-        return this.parent;
     }
 
     /**
@@ -882,7 +651,7 @@ public class OldSettings {
      * @return true if the console is visible, false if it's been hidden
      */
     public boolean isConsoleVisible() {
-        return this.console.isVisible();
+        return App.console.isVisible();
     }
 
     /**
@@ -891,24 +660,24 @@ public class OldSettings {
      * @return The Launcher's Console instance
      */
     public LauncherConsole getConsole() {
-        return this.console;
+        return App.console;
     }
 
     public void clearConsole() {
-        this.console.clearConsole();
+        App.console.clearConsole();
     }
 
     public String getLog() {
-        return this.console.getLog();
+        return App.console.getLog();
     }
 
     public void showKillMinecraft(Process minecraft) {
         this.minecraftProcess = minecraft;
-        this.console.showKillMinecraft();
+        App.console.showKillMinecraft();
     }
 
     public void hideKillMinecraft() {
-        this.console.hideKillMinecraft();
+        App.console.hideKillMinecraft();
     }
 
     public void killMinecraft() {
@@ -919,48 +688,5 @@ public class OldSettings {
         } else {
             LogManager.error("Cannot kill Minecraft as there is no instance open!");
         }
-    }
-
-    public String getUserAgent() {
-        return "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 " +
-                "Safari/537.36 " + Constants.LAUNCHER_NAME + "/" + Constants.VERSION;
-    }
-
-    public void restartLauncher() {
-        File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        String path = null;
-        try {
-            path = thisFile.getCanonicalPath();
-            path = URLDecoder.decode(path, "UTF-8");
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-
-        List<String> arguments = new ArrayList<String>();
-
-        if (this.isUsingMacApp()) {
-            arguments.add("open");
-            arguments.add("-n");
-            arguments.add(FileSystem.BASE_DIR.getParent().getParent().toString());
-
-        } else {
-            String jpath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-            if (Utils.isWindows()) {
-                jpath += "w";
-            }
-            arguments.add(jpath);
-            arguments.add("-jar");
-            arguments.add(path);
-        }
-
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(arguments);
-
-        try {
-            processBuilder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.exit(0);
     }
 }

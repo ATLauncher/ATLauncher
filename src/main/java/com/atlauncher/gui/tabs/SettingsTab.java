@@ -19,14 +19,15 @@ package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.SettingsManager;
+import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -49,7 +50,7 @@ public class SettingsTab extends JPanel implements Tab {
             .networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab});
     private JTabbedPane tabbedPane;
     private JPanel bottomPanel;
-    private JButton saveButton = new JButton(Language.INSTANCE.localize("common.save"));
+    private JButton saveButton = new JButton(LanguageManager.localize("common.save"));
 
     public SettingsTab() {
         setLayout(new BorderLayout());
@@ -80,25 +81,32 @@ public class SettingsTab extends JPanel implements Tab {
                     boolean reloadLocalizationTable = generalSettingsTab.reloadLocalizationTable();
                     boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                     boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
+
                     generalSettingsTab.save();
                     javaSettingsTab.save();
                     networkSettingsTab.save();
                     loggingSettingsTab.save();
                     toolsSettingsTab.save();
                     SettingsManager.saveSettings();
+
                     EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.SettingsChangeEvent.class));
+
                     if (reloadLocalizationTable) {
                         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.RelocalizationEvent.class));
                     }
+
                     if (reloadPacksPanel) {
                         EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
                     }
+
                     if (restartServerChecker) {
                         App.settings.startCheckingServers();
                     }
+
                     if (reloadTheme) {
-                        App.settings.restartLauncher();
+                        Utils.restartLauncher();
                     }
+
                     App.TOASTER.pop("Settings Saved");
                 }
             }
@@ -107,7 +115,7 @@ public class SettingsTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.settings");
+        return LanguageManager.localize("tabs.settings");
     }
 
     @Subscribe
@@ -115,7 +123,7 @@ public class SettingsTab extends JPanel implements Tab {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
-        this.saveButton.setText(Language.INSTANCE.localize("common.save"));
+        this.saveButton.setText(LanguageManager.localize("common.save"));
     }
 
 }

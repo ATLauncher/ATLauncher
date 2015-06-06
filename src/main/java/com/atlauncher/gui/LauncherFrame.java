@@ -62,12 +62,11 @@ public final class LauncherFrame extends JFrame {
 
     private LauncherBottomBar bottomBar;
 
-    public LauncherFrame(boolean show) {
+    public LauncherFrame() {
         LogManager.info("Launcher opening");
         LogManager.info("Made By Bob*");
         LogManager.info("*(Not Actually)");
 
-        App.settings.setParentFrame(this);
         setSize(new Dimension(1000, 615));
         setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION);
         setLocationRelativeTo(null);
@@ -88,10 +87,11 @@ public final class LauncherFrame extends JFrame {
         this.add(tabbedPane, BorderLayout.CENTER);
         this.add(bottomBar, BorderLayout.SOUTH);
 
-        if (show) {
+        if (App.autoLaunch == null) {
             LogManager.info("Showing Launcher");
             setVisible(true);
         }
+        
         App.TASKPOOL.execute(new Runnable() {
             public void run() {
                 App.settings.checkMojangStatus(); // Check Minecraft status

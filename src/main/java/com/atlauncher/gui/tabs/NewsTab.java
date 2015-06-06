@@ -18,7 +18,7 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.Data;
-import com.atlauncher.data.Language;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
 
@@ -103,11 +103,11 @@ public class NewsTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.news");
+        return LanguageManager.localize("tabs.news");
     }
 
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem COPY_ITEM = new JMenuItem(Language.INSTANCE.localize("common.copy"));
+        private final JMenuItem COPY_ITEM = new JMenuItem(LanguageManager.localize("common.copy"));
 
         public ContextMenu() {
             super();

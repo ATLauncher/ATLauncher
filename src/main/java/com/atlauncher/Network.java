@@ -17,6 +17,7 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.data.Constants;
 import com.atlauncher.listener.ProgressListener;
 import com.atlauncher.utils.ProgressResponseBody;
 import com.atlauncher.workers.InstanceInstaller;
@@ -29,6 +30,8 @@ import java.io.IOException;
 public final class Network {
     public static final OkHttpClient CLIENT = new OkHttpClient();
     public static final OkHttpClient PROGRESS_CLIENT = new OkHttpClient();
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like " +
+            "Gecko) Chrome/28.0.1500.72 Safari/537.36 " + Constants.LAUNCHER_NAME + "/" + Constants.VERSION;
 
     public static void setupProgressClient(final InstanceInstaller installer) {
         Network.PROGRESS_CLIENT.networkInterceptors().clear();

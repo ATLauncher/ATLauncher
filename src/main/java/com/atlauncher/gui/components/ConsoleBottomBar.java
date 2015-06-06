@@ -20,8 +20,8 @@ package com.atlauncher.gui.components;
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.HTMLUtils;
@@ -41,10 +41,10 @@ public class ConsoleBottomBar extends BottomBar {
 
     private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 10));
 
-    private final JButton clearButton = new JButton("Clear");
-    private final JButton copyLogButton = new JButton("Copy Log");
-    private final JButton uploadLogButton = new JButton("Upload Log");
-    private final JButton killMinecraftButton = new JButton("Kill Minecraft");
+    private final JButton clearButton = new JButton(LanguageManager.localize("console.clear"));
+    private final JButton copyLogButton = new JButton(LanguageManager.localize("console.copy"));
+    private final JButton uploadLogButton = new JButton(LanguageManager.localize("console.upload"));
+    private final JButton killMinecraftButton = new JButton(LanguageManager.localize("console.kill"));
 
     public ConsoleBottomBar() {
         this.addActionListeners(); // Setup Action Listeners
@@ -67,7 +67,7 @@ public class ConsoleBottomBar extends BottomBar {
     private void addActionListeners() {
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                App.settings.clearConsole();
+                App.console.clearConsole();
                 LogManager.info("Console Cleared");
             }
         });
@@ -75,7 +75,7 @@ public class ConsoleBottomBar extends BottomBar {
             public void actionPerformed(ActionEvent e) {
                 App.TOASTER.pop("Copied Log to clipboard");
                 LogManager.info("Copied Log to clipboard");
-                StringSelection text = new StringSelection(App.settings.getLog());
+                StringSelection text = new StringSelection(App.console.getLog());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);
             }
@@ -101,8 +101,9 @@ public class ConsoleBottomBar extends BottomBar {
         });
         killMinecraftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                        .INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>")), Language.INSTANCE.localize
+                int ret = JOptionPane.showConfirmDialog(App.frame, HTMLUtils.centerParagraph
+                        (LanguageManager.localizeWithReplace("console.killsure", "<br/><br/>")), LanguageManager
+                        .localize
                         ("console.kill"), JOptionPane.YES_NO_OPTION);
                 if (ret == JOptionPane.YES_OPTION) {
                     App.settings.killMinecraft();
@@ -120,18 +121,11 @@ public class ConsoleBottomBar extends BottomBar {
         killMinecraftButton.setVisible(false);
     }
 
-    public void setupLanguage() {
-        clearButton.setText(Language.INSTANCE.localize("console.clear"));
-        copyLogButton.setText(Language.INSTANCE.localize("console.copy"));
-        uploadLogButton.setText(Language.INSTANCE.localize("console.upload"));
-        killMinecraftButton.setText(Language.INSTANCE.localize("console.kill"));
-    }
-
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        clearButton.setText(Language.INSTANCE.localize("console.clear"));
-        copyLogButton.setText(Language.INSTANCE.localize("console.copy"));
-        uploadLogButton.setText(Language.INSTANCE.localize("console.upload"));
-        killMinecraftButton.setText(Language.INSTANCE.localize("console.kill"));
+        clearButton.setText(LanguageManager.localize("console.clear"));
+        copyLogButton.setText(LanguageManager.localize("console.copy"));
+        uploadLogButton.setText(LanguageManager.localize("console.upload"));
+        killMinecraftButton.setText(LanguageManager.localize("console.kill"));
     }
 }

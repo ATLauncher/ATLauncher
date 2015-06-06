@@ -42,16 +42,18 @@ public final class LogEvent {
 
     public LogEvent(LogType type, String body, int meta) {
         this.type = type;
-        if (App.settings != null && !LogManager.showDebug) {
+
+        if (!LogManager.showDebug) {
             body = body.replace(FileSystem.BASE_DIR.toString(), "**USERSDIR**");
         }
+
         this.body = (!body.endsWith("\n") ? body + "\n" : body);
         this.meta = meta;
     }
 
     public void post(LogEventWriter writer) {
         if ((this.meta & CONSOLE) == CONSOLE) {
-            Console c = App.settings.getConsole().console;
+            Console c = App.console.console;
             c.setColor(this.type.color()).setBold(true).write("[" + Timestamper.now() + "] ");
             c.setColor(App.THEME.getConsoleTextColor()).setBold(false).write(this.body);
         }

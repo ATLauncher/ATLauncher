@@ -18,7 +18,7 @@
 package com.atlauncher.collection;
 
 import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.Language;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -106,7 +106,7 @@ public final class DownloadPool extends LinkedList<Downloadable> {
         public void run() {
             try {
                 if (this.dl.needToDownload()) {
-                    installer.fireTask(Language.INSTANCE.localize("common.downloading") + " " + (this.dl.filename ==
+                    installer.fireTask(LanguageManager.localize("common.downloading") + " " + (this.dl.filename ==
                             null ? this.dl.to.getFileName() : this.dl.filename));
                     this.dl.download();
                 } else {

@@ -17,8 +17,13 @@
  */
 package com.atlauncher.utils;
 
+import com.atlauncher.App;
+import com.atlauncher.FileSystem;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.mojang.ExtractRule;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
+import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.walker.ClearDirVisitor;
 import com.atlauncher.utils.walker.CopyDirVisitor;
 import com.atlauncher.utils.walker.DeleteDirVisitor;
@@ -38,6 +43,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -382,5 +390,84 @@ public class FileUtils {
         } finally {
             in.close();
         }
+    }
+
+    public static void clearTempDir() {
+        try {
+            Files.walkFileTree(FileSystem.TMP, new ClearDirVisitor());
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error clearing temp directory at " + FileSystem.TMP, e);
+        }
+    }
+
+    public static void clearOldLogs() {
+        App.TASKPOOL.execute(new Runnable() {
+            @Override
+            public void run() {
+                LogManager.debug("Clearing out old logs");
+
+                Date toDeleteAfter = new Date();
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(toDeleteAfter);
+                calendar.add(Calendar.DATE, -(SettingsManager.getDaysOfLogsToKeep()));
+                toDeleteAfter = calendar.getTime();
+
+                for (File file : FileSystem.LOGS.toFile().listFiles(Utils.getLogsFileFilter())) {
+                    try {
+                        Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace
+                                (Constants.LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
+
+                        if (date.before(toDeleteAfter)) {
+                            FileUtils.delete(file.toPath());
+                            LogManager.debug("Deleting log file " + file.getName());
+                        }
+                    } catch (java.text.ParseException e) {
+                        LogManager.error("Invalid log file " + file.getName());
+                    }
+                }
+
+                LogManager.debug("Finished clearing out old logs");
+            }
+        });
+    }
+
+    public static void clearAllLogs() {
+        try {
+            for (int i = 0; i < 3; i++) {
+                Path p = FileSystem.BASE_DIR.resolve(Constants.LAUNCHER_NAME + "-Log-" + i + ".txt");
+                Files.deleteIfExists(p);
+            }
+
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(FileSystem.LOGS, FileUtils.logFilter())) {
+                for (Path file : stream) {
+                    if (file.getFileName().toString().equals(LoggingThread.filename)) {
+                        continue;
+                    }
+
+                    Files.deleteIfExists(file);
+                }
+            }
+        } catch (Exception e) {
+            LogManager.logStackTrace(e);
+        }
+    }
+
+    public static void clearDownloads() {
+        try {
+            Files.walkFileTree(FileSystem.DOWNLOADS, new ClearDirVisitor());
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error while clearing downloads with tool!", e);
+        }
+    }
+
+    private static DirectoryStream.Filter<Path> logFilter() {
+        return new DirectoryStream.Filter<Path>() {
+            @Override
+            public boolean accept(Path o) throws IOException {
+                return Files.isRegularFile(o) && o.getFileName().toString().startsWith(Constants.LAUNCHER_NAME +
+                        "-Log_") && o.getFileName().toString().endsWith(".log");
+            }
+        };
     }
 }

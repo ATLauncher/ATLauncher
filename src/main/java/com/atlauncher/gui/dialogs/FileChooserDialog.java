@@ -19,7 +19,7 @@ package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.data.Language;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -61,7 +61,7 @@ public class FileChooserDialog extends JDialog {
 
     public FileChooserDialog(String title, String labelName, String bottomText, String selectorText, String[]
             subOptions, String[] options) {
-        super(App.settings.getParent(), title, ModalityType.APPLICATION_MODAL);
+        super(App.frame, title, ModalityType.APPLICATION_MODAL);
         this.fileOptions = options;
         setSize(400, 175);
         setLocationRelativeTo(null);
@@ -93,7 +93,7 @@ public class FileChooserDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        selectButton = new JButton(Language.INSTANCE.localize("common.select"));
+        selectButton = new JButton(LanguageManager.localize("common.select"));
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -119,7 +119,7 @@ public class FileChooserDialog extends JDialog {
                         return false;
                     }
                 });
-                fileChooser.showOpenDialog(App.settings.getParent());
+                fileChooser.showOpenDialog(App.frame);
                 filesChosen = fileChooser.getSelectedFiles();
                 if (filesChosen != null && filesChosen.length >= 1) {
                     if (filesChosen.length == 1) {

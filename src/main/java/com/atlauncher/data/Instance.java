@@ -25,6 +25,7 @@ import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
@@ -435,7 +436,7 @@ public class Instance implements Cloneable {
         if (this.realPack != null) {
             return this.realPack.getDescription();
         } else {
-            return Language.INSTANCE.localize("pack.nodescription");
+            return LanguageManager.localize("pack.nodescription");
         }
     }
 
@@ -1078,18 +1079,19 @@ public class Instance implements Cloneable {
     public boolean launch() {
         final Account account = AccountManager.getActiveAccount();
         if (account == null) {
-            String[] options = {Language.INSTANCE.localize("common.ok")};
-            JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance.noaccount"),
-                    Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
+            String[] options = {LanguageManager.localize("common.ok")};
+            JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance.noaccount"),
+                    LanguageManager.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
                             .ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
             if ((SettingsManager.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
-                String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                        .INSTANCE.localizeWithReplace("instance.insufficientram", "<b>" + this.memory + "</b> " +
-                                "MB<br/><br/>")), Language.INSTANCE.localize("instance.insufficientramtitle"),
+                String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
+                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
+                                (LanguageManager.localizeWithReplace("instance.insufficientram", "<b>" + this.memory
+                                        + "</b> " +
+                                "MB<br/><br/>")), LanguageManager.localize("instance.insufficientramtitle"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
@@ -1098,10 +1100,11 @@ public class Instance implements Cloneable {
                 }
             }
             if (SettingsManager.getPermGen() < this.permgen) {
-                String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                        .INSTANCE.localizeWithReplace("instance.insufficientpermgen", "<b>" + this.permgen + "</b> " +
-                                "MB<br/><br/>")), Language.INSTANCE.localize("instance.insufficientpermgentitle"),
+                String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
+                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
+                                (LanguageManager.localizeWithReplace("instance.insufficientpermgen", "<b>" + this
+                                        .permgen + "</b> " + "MB<br/><br/>")), LanguageManager.localize("instance" +
+                                ".insufficientpermgentitle"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
@@ -1112,8 +1115,8 @@ public class Instance implements Cloneable {
 
 
             LogManager.info("Logging into Minecraft!");
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
-                    Language.INSTANCE.localize("account.loggingin"), "Aborted login to Minecraft!");
+            final ProgressDialog dialog = new ProgressDialog(LanguageManager.localize("account.loggingin"), 0,
+                    LanguageManager.localize("account.loggingin"), "Aborted login to Minecraft!");
             dialog.addThread(new Thread() {
                 public void run() {
                     dialog.setReturnValue(account.login());
@@ -1132,8 +1135,8 @@ public class Instance implements Cloneable {
                 public void run() {
                     try {
                         long start = System.currentTimeMillis();
-                        if (App.settings.getParent() != null) {
-                            App.settings.getParent().setVisible(false);
+                        if (App.frame != null) {
+                            App.frame.setVisible(false);
                         }
                         // Create a note of worlds for auto backup if enabled
                         HashMap<String, Long> preWorldList = new HashMap<String, Long>();
@@ -1183,8 +1186,8 @@ public class Instance implements Cloneable {
                             LogManager.minecraft(line);
                         }
                         App.settings.hideKillMinecraft();
-                        if (App.settings.getParent() != null && SettingsManager.keepLauncherOpen()) {
-                            App.settings.getParent().setVisible(true);
+                        if (App.frame != null && SettingsManager.keepLauncherOpen()) {
+                            App.frame.setVisible(true);
                         }
                         long end = System.currentTimeMillis();
                         if (App.settings.isInOfflineMode() && !App.forceOfflineMode) {
@@ -1197,7 +1200,7 @@ public class Instance implements Cloneable {
                             process.destroy(); // Kill the process
                         }
                         if (!SettingsManager.keepLauncherOpen()) {
-                            App.settings.getConsole().setVisible(false); // Hide the console to pretend we've closed
+                            App.console.setVisible(false); // Hide the console to pretend we've closed
                         }
                         if (exitValue != 0) {
                             // Submit any pending crash reports from Open Eye if need to since we

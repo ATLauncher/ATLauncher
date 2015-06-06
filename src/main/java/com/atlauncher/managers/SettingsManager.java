@@ -20,7 +20,6 @@ package com.atlauncher.managers;
 import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Network;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 import com.atlauncher.data.Settings;
 import com.atlauncher.nio.JsonFile;
@@ -34,14 +33,6 @@ import java.nio.file.Path;
 
 public class SettingsManager {
     private static volatile Settings settings;
-
-    static {
-        try {
-            Runtime.getRuntime().addShutdownHook(new SettingsSaver());
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        }
-    }
 
     public static void loadSettings() {
         boolean newFile = false;
@@ -73,6 +64,10 @@ public class SettingsManager {
 
     public static void saveSettings() {
         try {
+            if (Files.notExists(FileSystem.CONFIGS)) {
+                Files.createDirectory(FileSystem.CONFIGS);
+            }
+
             if (Files.notExists(FileSystemData.SETTINGS)) {
                 Files.createFile(FileSystemData.SETTINGS);
             }
@@ -387,6 +382,7 @@ public class SettingsManager {
 
     public static Path getThemeFile() {
         Path theme = FileSystem.THEMES.resolve(SettingsManager.settings.theme + ".zip");
+
         if (Files.exists(theme)) {
             return theme;
         } else {
@@ -439,12 +435,7 @@ public class SettingsManager {
 
     public static void setLanguage(String language) {
         SettingsManager.settings.language = language;
-
-        try {
-            Language.INSTANCE.load(language);
-        } catch (Exception ex) {
-            LogManager.logStackTrace(ex);
-        }
+        LanguageManager.setLanguage(language);
     }
 
     public static void configureProxy() {
@@ -452,10 +443,7 @@ public class SettingsManager {
         Network.PROGRESS_CLIENT.setProxy(SettingsManager.getProxy());
     }
 
-    private static final class SettingsSaver extends Thread {
-        @Override
-        public void run() {
-            SettingsManager.saveSettings();
-        }
+    public static String getLanguage() {
+        return SettingsManager.settings.language;
     }
 }

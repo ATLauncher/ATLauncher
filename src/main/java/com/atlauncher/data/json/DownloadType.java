@@ -20,7 +20,8 @@ package com.atlauncher.data.json;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.Language;
+import com.atlauncher.data.OS;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -79,16 +80,17 @@ public enum DownloadType {
                     if (ret == 1) {
                         Utils.openBrowser(mod.getUrl());
                     }
-                    String[] options = new String[]{Language.INSTANCE.localize("common.openfolder"), Language
-                            .INSTANCE.localize("instance.ivedownloaded")};
-                    ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                            .INSTANCE.localizeWithReplace("instance.browseropened", (mod.serverFile == null ? (mod
+                    String[] options = new String[]{LanguageManager.localize("common.openfolder"), LanguageManager
+                            .localize("instance.ivedownloaded")};
+                    ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
+                                    (LanguageManager.localizeWithReplace("instance.browseropened", (mod.serverFile ==
+                                            null ? (mod
                                     .filePattern ? mod.name : mod.getFile()) : (mod.filePattern ? mod.name : mod
                                     .serverFile))) + "<br/><br/>" +
-                            Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                            (App.settings.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod.filePattern ? FileSystem
+                                    LanguageManager.localize("instance.pleasesave") + "<br/><br/>" +
+                                            (OS.isUsingMacApp() ? FileSystem.USER_DOWNLOADS : (mod.filePattern ? FileSystem
                                     .DOWNLOADS : FileSystem.DOWNLOADS + " " +
-                                    "or<br/>" + FileSystem.USER_DOWNLOADS))), Language.INSTANCE.localize("common" + "" +
+                                    "or<br/>" + FileSystem.USER_DOWNLOADS))), LanguageManager.localize("common" + "" +
                             ".downloading") + " " + (mod.serverFile == null ? (mod.filePattern ? mod.name : mod
                             .getFile()) : (mod.filePattern ? mod.name : mod.serverFile)), JOptionPane.DEFAULT_OPTION,
                             JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);

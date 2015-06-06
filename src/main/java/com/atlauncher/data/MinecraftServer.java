@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.MCQuery;
 import com.google.gson.reflect.TypeToken;
 import de.zh32.pingtest.QueryVersion;
@@ -145,9 +146,9 @@ public class MinecraftServer {
 
     private String getStatusLocalization() {
         if (this.playersOnline == -1) {
-            return Language.INSTANCE.localize("tools.serverchecker.offline");
+            return LanguageManager.localize("tools.serverchecker.offline");
         } else {
-            return Language.INSTANCE.localize("tools.serverchecker.online") + " - " + this.getPrintablePlayersOnline
+            return LanguageManager.localize("tools.serverchecker.online") + " - " + this.getPrintablePlayersOnline
                     () + " Players";
         }
     }

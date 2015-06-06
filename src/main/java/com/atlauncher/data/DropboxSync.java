@@ -20,12 +20,12 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -65,7 +65,7 @@ public class DropboxSync extends SyncAbstract {
         File dropboxData = null;
 
         // host.db sometimes disappears for some reason
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             dropboxData = new File(System.getProperty("user.home"), "/AppData/Roaming/Dropbox/host.db");
         } else {
             dropboxData = new File(System.getProperty("user.home"), "/.dropbox/host.db");
@@ -116,8 +116,8 @@ public class DropboxSync extends SyncAbstract {
         }
 
         if (Files.exists(backup)) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("backup" +
-                    ".message" + ".backupexists", backupName), Language.INSTANCE.localize("backup.message" + "" +
+            JOptionPane.showMessageDialog(App.frame, LanguageManager.localizeWithReplace("backup" +
+                    ".message" + ".backupexists", backupName), LanguageManager.localize("backup.message" + "" +
                     ".backupexists.title"), JOptionPane.ERROR_MESSAGE);
         } else {
             try {
@@ -127,8 +127,8 @@ public class DropboxSync extends SyncAbstract {
             }
 
             if (SettingsManager.getNotifyBackup()) {
-                JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("backup" + "" +
-                        ".complete"), Language.INSTANCE.localize("backup.complete"), JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(App.frame, LanguageManager.localize("backup" + "" +
+                        ".complete"), LanguageManager.localize("backup.complete"), JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
@@ -162,8 +162,8 @@ public class DropboxSync extends SyncAbstract {
         Path target = instance.getSavesDirectory().resolve(backupName.replace(".zip", ""));
 
         if (Files.exists(target)) {
-            if (JOptionPane.showConfirmDialog(App.settings.getParent(), Language.INSTANCE.localizeWithReplace
-                    ("backup" + ".message.backupoverwrite", backupName.replace(".zip", "")), Language.INSTANCE
+            if (JOptionPane.showConfirmDialog(App.frame, LanguageManager.localizeWithReplace("backup"
+                    + ".message.backupoverwrite", backupName.replace(".zip", "")), LanguageManager
                     .localize("backup.message.backupoverwrite.title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane
                     .WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
                 FileUtils.unzip(dropboxLocation.resolve(backupFolder).resolve(instance.getName()).resolve(backupName)
@@ -175,11 +175,12 @@ public class DropboxSync extends SyncAbstract {
         }
 
         if (SettingsManager.getNotifyBackup()) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("backup.message" + "" +
-                            ".restoresuccess"), Language.INSTANCE.localize("backup.message.restoresuccess.title"),
+            JOptionPane.showMessageDialog(App.frame, LanguageManager.localize("backup.message" + "" +
+                            ".restoresuccess"), LanguageManager.localize("backup.message.restoresuccess.title"),
                     JOptionPane.INFORMATION_MESSAGE);
         }
-        App.settings.clearTempDir();
+
+        FileUtils.clearTempDir();
     }
 
     @Override
@@ -203,20 +204,20 @@ public class DropboxSync extends SyncAbstract {
         private final JFileChooser fileChooser = new JFileChooser();
 
         public FileChooseDialog() {
-            super(App.settings.getParent(), Language.INSTANCE.localize("dropbox.notfound.title"));
+            super(App.frame, LanguageManager.localize("dropbox.notfound.title"));
 
             setResizable(false);
             setSize(230, 90);
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-            setLocationRelativeTo(App.settings.getParent());
+            setLocationRelativeTo(App.frame);
 
-            folderChooseButton = new JButton(Language.INSTANCE.localize("dropbox.label.location"));
+            folderChooseButton = new JButton(LanguageManager.localize("dropbox.label.location"));
             folderChooseButton.addActionListener(this);
             folderChooseButton.setHorizontalAlignment(SwingConstants.CENTER);
 
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-            JLabel label = new JLabel(Language.INSTANCE.localize("dropbox.label.location"));
+            JLabel label = new JLabel(LanguageManager.localize("dropbox.label.location"));
             label.setBorder(BorderFactory.createEmptyBorder());
             label.setHorizontalAlignment(SwingConstants.CENTER);
 

@@ -17,8 +17,9 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
+import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -34,10 +35,10 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
      */
     private static final long serialVersionUID = 1964636496849129267L;
 
-    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.logclearer"));
+    private final JLabel TITLE_LABEL = new JLabel(LanguageManager.localize("tools.logclearer"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
-            .INSTANCE.localize("tools.logclearer.info"), 60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString
+            (LanguageManager.localize("tools.logclearer.info"), 60, "<br>")));
 
     public LogClearerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -51,7 +52,20 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == LAUNCH_BUTTON) {
-            App.settings.clearAllLogs();
+
+            final ProgressDialog dialog = new ProgressDialog(LanguageManager.localize("tools.logclearer"), 0,
+                    LanguageManager.localize("tools.logclearer.clearing"), "Log clearer process stopped!");
+
+            dialog.addThread(new Thread() {
+                @Override
+                public void run() {
+                    dialog.setReturnValue(false);
+                    FileUtils.clearAllLogs();
+                    dialog.close();
+                }
+            });
+
+            dialog.start();
         }
     }
 }

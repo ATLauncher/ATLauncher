@@ -20,8 +20,10 @@ package com.atlauncher.utils;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.Network;
+import com.atlauncher.Update;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.mojang.OperatingSystem;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.managers.LogManager;
@@ -72,6 +74,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
@@ -162,7 +165,7 @@ public class Utils {
     }
 
     public static Path getCoreGracefully() {
-        if (Utils.isLinux()) {
+        if (OS.isLinux()) {
             try {
                 return Paths.get(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()
                         .getSchemeSpecificPart()).getParent();
@@ -172,18 +175,6 @@ public class Utils {
             }
         } else {
             return Paths.get(System.getProperty("user.dir"));
-        }
-    }
-
-    public static File getOSStorageDir() {
-        switch (OperatingSystem.getOS()) {
-            case WINDOWS:
-                return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
-            case OSX:
-                return new File(System.getProperty("user.home"), "/Library/Application Support/." + Constants
-                        .LAUNCHER_NAME.toLowerCase());
-            default:
-                return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
         }
     }
 
@@ -217,7 +208,7 @@ public class Utils {
      * @return the font
      */
     public static Font getFont() {
-        if (isMac()) {
+        if (OS.isMac()) {
             return new Font("SansSerif", Font.PLAIN, 11);
         } else {
             return new Font("SansSerif", Font.PLAIN, 12);
@@ -321,32 +312,6 @@ public class Utils {
     }
 
     /**
-     * Os slash.
-     *
-     * @return the string
-     */
-    public static String osSlash() {
-        if (isWindows()) {
-            return "\\";
-        } else {
-            return "/";
-        }
-    }
-
-    /**
-     * Os delimiter.
-     *
-     * @return the string
-     */
-    public static String osDelimiter() {
-        if (isWindows()) {
-            return ";";
-        } else {
-            return ":";
-        }
-    }
-
-    /**
      * Gets the java home.
      *
      * @return the java home
@@ -362,33 +327,6 @@ public class Utils {
      */
     public static String getJavaVersion() {
         return System.getProperty("java.runtime.version");
-    }
-
-    /**
-     * Checks if is windows.
-     *
-     * @return true, if is windows
-     */
-    public static boolean isWindows() {
-        return OperatingSystem.getOS() == OperatingSystem.WINDOWS;
-    }
-
-    /**
-     * Checks if is mac.
-     *
-     * @return true, if is mac
-     */
-    public static boolean isMac() {
-        return OperatingSystem.getOS() == OperatingSystem.OSX;
-    }
-
-    /**
-     * Checks if is linux.
-     *
-     * @return true, if is linux
-     */
-    public static boolean isLinux() {
-        return OperatingSystem.getOS() == OperatingSystem.LINUX;
     }
 
     /**
@@ -729,7 +667,7 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
         connection.setRequestProperty("Pragma", "no-cache");
@@ -767,7 +705,7 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
@@ -804,7 +742,7 @@ public class Utils {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
@@ -886,7 +824,7 @@ public class Utils {
         if (SettingsManager.isUsingCustomJavaPath()) {
             File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add(folder + File.separator + "java" + (OS.isWindows() ? ".exe" : ""));
             arguments.add("-version");
             ProcessBuilder processBuilder = new ProcessBuilder(arguments);
             processBuilder.directory(folder);
@@ -928,7 +866,7 @@ public class Utils {
     }
 
     public static boolean isValidJavaPath(String path) {
-        return Files.exists(Paths.get(path).resolve("bin").resolve("java" + (Utils.isWindows() ? ".exe" : "")));
+        return Files.exists(Paths.get(path).resolve("bin").resolve("java" + (OS.isWindows() ? ".exe" : "")));
     }
 
     /**
@@ -940,7 +878,7 @@ public class Utils {
         if (SettingsManager.isUsingCustomJavaPath() && checkCustomPath) {
             File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add(folder + File.separator + "java" + (OS.isWindows() ? ".exe" : ""));
             arguments.add("-version");
             ProcessBuilder processBuilder = new ProcessBuilder(arguments);
             processBuilder.directory(folder);
@@ -993,7 +931,7 @@ public class Utils {
         if (SettingsManager.isUsingCustomJavaPath()) {
             File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add(folder + File.separator + "java" + (OS.isWindows() ? ".exe" : ""));
             arguments.add("-version");
             ProcessBuilder processBuilder = new ProcessBuilder(arguments);
             processBuilder.directory(folder);
@@ -1032,7 +970,7 @@ public class Utils {
         if (SettingsManager.isUsingCustomJavaPath()) {
             File folder = new File(SettingsManager.getJavaPath(), "bin/");
             List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+            arguments.add(folder + File.separator + "java" + (OS.isWindows() ? ".exe" : ""));
             arguments.add("-version");
             ProcessBuilder processBuilder = new ProcessBuilder(arguments);
             processBuilder.directory(folder);
@@ -1222,7 +1160,7 @@ public class Utils {
     }
 
     public static Float getBaseFontSize() {
-        if (isMac()) {
+        if (OS.isMac()) {
             return (float) 11;
         } else {
             return (float) 12;
@@ -1236,10 +1174,7 @@ public class Utils {
             connection = (HttpURLConnection) url.openConnection(proxy);
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);
-            if (App.useGzipForDownloads) {
-                connection.setRequestProperty("Accept-Encoding", "gzip");
-            }
-            connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+            connection.setRequestProperty("User-Agent", Network.USER_AGENT);
             connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
             connection.setRequestProperty("Expires", "0");
             connection.setRequestProperty("Pragma", "no-cache");
@@ -1300,7 +1235,7 @@ public class Utils {
         try {
             InetAddress address = InetAddress.getByName(host);
             Process traceRoute;
-            if (Utils.isWindows()) {
+            if (OS.isWindows()) {
                 traceRoute = Runtime.getRuntime().exec("ping -n 10 " + address.getHostAddress());
             } else {
                 traceRoute = Runtime.getRuntime().exec("ping -c 10 " + address.getHostAddress());
@@ -1332,7 +1267,7 @@ public class Utils {
         try {
             InetAddress address = InetAddress.getByName(host);
             Process traceRoute;
-            if (Utils.isWindows()) {
+            if (OS.isWindows()) {
                 traceRoute = Runtime.getRuntime().exec("tracert " + address.getHostAddress());
             } else {
                 traceRoute = Runtime.getRuntime().exec("traceroute " + address.getHostAddress());
@@ -1576,13 +1511,6 @@ public class Utils {
     }
 
     /**
-     * @deprecated use addToClasspath(Path)
-     */
-    public static boolean addToClasspath(File file) {
-        return Utils.addToClasspath(file.toPath());
-    }
-
-    /**
      * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
      */
     public static boolean addToClasspath(Path path) {
@@ -1592,7 +1520,7 @@ public class Utils {
             if (Files.exists(path)) {
                 addURL(path.toUri().toURL());
             } else {
-                LogManager.error("Error loading " + path.getFileName() + " to classpath as it doesn't exist!");
+                LogManager.error("Error loading " + path + " to classpath as it doesn't exist!");
                 return false;
             }
         } catch (Throwable t) {
@@ -1608,10 +1536,10 @@ public class Utils {
 
     public static boolean checkAuthLibLoaded() {
         try {
-            App.settings.getClass().forName("com.mojang.authlib.exceptions.AuthenticationException");
-            App.settings.getClass().forName("com.mojang.authlib.Agent");
-            App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
-            App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
+            App.class.forName("com.mojang.authlib.exceptions.AuthenticationException");
+            App.class.forName("com.mojang.authlib.Agent");
+            App.class.forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
+            App.class.forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
         } catch (ClassNotFoundException e) {
             LogManager.logStackTrace(e);
             return false;
@@ -1624,7 +1552,7 @@ public class Utils {
      * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
      */
     public static void addURL(URL u) throws IOException {
-        URLClassLoader sysloader = (URLClassLoader) App.settings.getClass().getClassLoader();
+        URLClassLoader sysloader = (URLClassLoader) App.class.getClassLoader();
         Class sysclass = URLClassLoader.class;
         try {
             Method method = sysclass.getDeclaredMethod("addURL", URL.class);
@@ -1642,4 +1570,55 @@ public class Utils {
         return GraphicsEnvironment.isHeadless();
     }
 
+    /**
+     * Gets the logs file filter.
+     *
+     * @return the logs file filter
+     */
+    public static FilenameFilter getLogsFileFilter() {
+        return new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                File file = new File(dir, name);
+                return file.isFile() && name.startsWith(Constants.LAUNCHER_NAME + "-Log_") && name.endsWith(".log");
+            }
+        };
+    }
+
+    public static void restartLauncher() {
+        File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        String path = null;
+        try {
+            path = thisFile.getCanonicalPath();
+            path = URLDecoder.decode(path, "UTF-8");
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        List<String> arguments = new ArrayList<>();
+
+        if (OS.isUsingMacApp()) {
+            arguments.add("open");
+            arguments.add("-n");
+            arguments.add(FileSystem.BASE_DIR.getParent().getParent().toString());
+        } else {
+            String jpath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+            if (OS.isWindows()) {
+                jpath += "w";
+            }
+            arguments.add(jpath);
+            arguments.add("-jar");
+            arguments.add(path);
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(arguments);
+
+        try {
+            processBuilder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
+    }
 }

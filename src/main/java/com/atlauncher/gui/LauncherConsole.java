@@ -20,10 +20,10 @@ package com.atlauncher.gui;
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
@@ -87,7 +87,7 @@ public class LauncherConsole extends JFrame {
     private void setupContextMenu() {
         contextMenu = new JPopupMenu();
 
-        copy = new JMenuItem("Copy");
+        copy = new JMenuItem(LanguageManager.localize("common.copy"));
         copy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 StringSelection text = new StringSelection(console.getSelectedText());
@@ -125,20 +125,12 @@ public class LauncherConsole extends JFrame {
         bottomBar.hideKillMinecraft();
     }
 
-    public void setupLanguage() {
-        LogManager.debug("Setting up language for console");
-        copy.setText(Language.INSTANCE.localize("common.copy"));
-        bottomBar.setupLanguage();
-        LogManager.debug("Finished setting up language for console");
-    }
-
     public void clearConsole() {
         console.setText(null);
     }
 
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        copy.setText(Language.INSTANCE.localize("common.copy"));
-        bottomBar.setupLanguage();
+        copy.setText(LanguageManager.localize("common.copy"));
     }
 }

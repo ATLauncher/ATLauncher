@@ -17,13 +17,13 @@
  */
 package com.atlauncher.managers;
 
-import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.EventHandler;
+import com.atlauncher.utils.MojangAPIUtils;
 
 import java.io.EOFException;
 import java.io.ObjectInputStream;
@@ -49,7 +49,17 @@ public class AccountManager {
      * @param account the account to be active, or null if none
      */
     public static void setActiveAccount(Account account) {
+        if (AccountManager.activeAccount != null && AccountManager.activeAccount.isActive()) {
+            AccountManager.activeAccount.setActive(false);
+        }
+
         AccountManager.activeAccount = account;
+
+        if (account != null && !account.isActive()) {
+            account.setActive(true);
+        }
+
+        AccountManager.saveAccounts();
     }
 
 
@@ -89,6 +99,13 @@ public class AccountManager {
             }
         }
 
+        for (Account account : Data.ACCOUNTS) {
+            if (account.isActive()) {
+                AccountManager.setActiveAccount(account);
+                break;
+            }
+        }
+
         LogManager.debug("Finished loading accounts");
     }
 
@@ -120,21 +137,20 @@ public class AccountManager {
     public static void switchAccount(Account account) {
         if (account == null) {
             LogManager.info("Logging out of account");
-            AccountManager.activeAccount = null;
+            AccountManager.setActiveAccount(null);
         } else {
             if (account.isReal()) {
                 LogManager.info("Changed account to " + account);
-                AccountManager.activeAccount = account;
+                AccountManager.setActiveAccount(account);
             } else {
                 LogManager.info("Logging out of account");
-                AccountManager.activeAccount = null;
+                AccountManager.setActiveAccount(null);
             }
         }
 
         EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
-        SettingsManager.saveSettings();
     }
 
     public static void setPackVisbility(Pack pack, boolean collapsed) {
@@ -177,5 +193,48 @@ public class AccountManager {
             AccountManager.saveAccounts();
             EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
         }
+    }
+
+    public static void checkUUIDs() {
+        LogManager.debug("Checking account UUIDs");
+
+        for (Account account : Data.ACCOUNTS) {
+            if (account.isUUIDNull()) {
+                account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
+            }
+        }
+
+        AccountManager.saveAccounts();
+        LogManager.debug("Done checking account UUIDs");
+    }
+
+    public static void checkForNameChanges() {
+        Runnable r = new Runnable() {
+            public void run() {
+                LogManager.info("Checking for username changes");
+
+                boolean changed = false;
+
+                for (Account acc : Data.ACCOUNTS) {
+                    if (acc.checkForUsernameChange()) {
+                        changed = true;
+                        break;
+                    }
+                }
+
+                if (changed) {
+                    AccountManager.saveAccounts();
+                    EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
+                }
+
+                LogManager.info("Checking for username changes complete");
+            }
+        };
+
+        new Thread(r).start();
+    }
+
+    public static void addAccount(Account account) {
+        Data.ACCOUNTS.add(account);
     }
 }

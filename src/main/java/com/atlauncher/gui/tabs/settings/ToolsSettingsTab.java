@@ -19,9 +19,9 @@ package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
@@ -47,8 +47,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
         gbc.gridy = 0;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableServerCheckerLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.serverchecker") + "?",
-                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.servercheckerhelp", "<br/>" +
+        enableServerCheckerLabel = new JLabelWithHover(LanguageManager.localize("settings.serverchecker") + "?",
+                HELP_ICON, "<html>" + LanguageManager.localizeWithReplace("settings.servercheckerhelp", "<br/>" +
                 "</html>"));
         add(enableServerCheckerLabel, gbc);
 
@@ -77,8 +77,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        serverCheckerWaitLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.servercheckerwait") + ":",
-                HELP_ICON, "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings" + "" +
+        serverCheckerWaitLabel = new JLabelWithHover(LanguageManager.localize("settings.servercheckerwait") + ":",
+                HELP_ICON, "<html>" + Utils.splitMultilinedString(LanguageManager.localize("settings" + "" +
                 ".servercheckerwaithelp"), 75, "<br/>") + "</html>");
         add(serverCheckerWaitLabel, gbc);
 
@@ -96,8 +96,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
     public boolean isValidServerCheckerWait() {
         if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1 || Integer.parseInt
                 (serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("settings" + "" +
-                    ".servercheckerwaitinvalid"), Language.INSTANCE.localize("settings.help"), JOptionPane
+            JOptionPane.showMessageDialog(App.frame, LanguageManager.localize("settings" + "" +
+                    ".servercheckerwaitinvalid"), LanguageManager.localize("settings.help"), JOptionPane
                     .PLAIN_MESSAGE);
             return false;
         }
@@ -116,17 +116,17 @@ public class ToolsSettingsTab extends AbstractSettingsTab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.tools");
+        return LanguageManager.localize("tabs.tools");
     }
 
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        this.enableServerCheckerLabel.setText(Language.INSTANCE.localize("settings.serverchecker") + "?");
-        this.enableServerCheckerLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
+        this.enableServerCheckerLabel.setText(LanguageManager.localize("settings.serverchecker") + "?");
+        this.enableServerCheckerLabel.setToolTipText("<html>" + LanguageManager.localizeWithReplace("settings" + "" +
                 ".servercheckerhelp", "<br/>" + "</html>"));
 
-        this.serverCheckerWaitLabel.setText(Language.INSTANCE.localize("settings.servercheckerwait") + ":");
-        this.serverCheckerWaitLabel.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize
+        this.serverCheckerWaitLabel.setText(LanguageManager.localize("settings.servercheckerwait") + ":");
+        this.serverCheckerWaitLabel.setToolTipText("<html>" + Utils.splitMultilinedString(LanguageManager.localize
                 ("settings.servercheckerwaithelp"), 75, "<br/>") + "</html>");
     }
 }

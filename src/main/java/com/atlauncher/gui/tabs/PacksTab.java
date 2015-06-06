@@ -19,13 +19,13 @@ package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddPackDialog;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.SettingsManager;
 
@@ -53,14 +53,14 @@ public final class PacksTab extends JPanel implements Tab {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    private final JButton addButton = new JButton(Language.INSTANCE.localize("pack.addpack"));
-    private final JButton clearButton = new JButton(Language.INSTANCE.localize("common.clear"));
-    private final JButton expandAllButton = new JButton(Language.INSTANCE.localize("pack.expandall"));
-    private final JButton collapseAllButton = new JButton(Language.INSTANCE.localize("pack.collapseall"));
+    private final JButton addButton = new JButton(LanguageManager.localize("pack.addpack"));
+    private final JButton clearButton = new JButton(LanguageManager.localize("common.clear"));
+    private final JButton expandAllButton = new JButton(LanguageManager.localize("pack.expandall"));
+    private final JButton collapseAllButton = new JButton(LanguageManager.localize("pack.collapseall"));
     private final JTextField searchField = new JTextField(16);
-    private final JCheckBox serversBox = new JCheckBox(Language.INSTANCE.localize("pack.cancreateserver"));
-    private final JCheckBox privateBox = new JCheckBox(Language.INSTANCE.localize("pack.privatepacksonly"));
-    private final JCheckBox searchDescBox = new JCheckBox(Language.INSTANCE.localize("pack.searchdescription"));
+    private final JCheckBox serversBox = new JCheckBox(LanguageManager.localize("pack.cancreateserver"));
+    private final JCheckBox privateBox = new JCheckBox(LanguageManager.localize("pack.privatepacksonly"));
+    private final JCheckBox searchDescBox = new JCheckBox(LanguageManager.localize("pack.searchdescription"));
 
     private List<PackCard> cards = new LinkedList<PackCard>();
 
@@ -186,7 +186,7 @@ public final class PacksTab extends JPanel implements Tab {
         }
 
         if (count == 0) {
-            this.contentPanel.add(new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
+            this.contentPanel.add(new NilCard(LanguageManager.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
         }
     }
 
@@ -238,10 +238,10 @@ public final class PacksTab extends JPanel implements Tab {
             }
         }
 
-        ((LauncherFrame) App.settings.getParent()).updateTitle("Packs - " + count);
+        ((LauncherFrame) App.frame).updateTitle("Packs - " + count);
 
         if (count == 0) {
-            this.contentPanel.add(new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
+            this.contentPanel.add(new NilCard(LanguageManager.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
         }
     }
 
@@ -263,18 +263,18 @@ public final class PacksTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.packs");
+        return LanguageManager.localize("tabs.packs");
     }
 
     @Subscribe
     public void onRelocalization(EventHandler.RelocalizationEvent e) {
-        addButton.setText(Language.INSTANCE.localize("pack.addpack"));
-        clearButton.setText(Language.INSTANCE.localize("common.clear"));
-        expandAllButton.setText(Language.INSTANCE.localize("pack.expandall"));
-        collapseAllButton.setText(Language.INSTANCE.localize("pack.collapseall"));
-        serversBox.setText(Language.INSTANCE.localize("pack.cancreateserver"));
-        privateBox.setText(Language.INSTANCE.localize("pack.privatepacksonly"));
-        searchDescBox.setText(Language.INSTANCE.localize("pack.searchdescription"));
+        addButton.setText(LanguageManager.localize("pack.addpack"));
+        clearButton.setText(LanguageManager.localize("common.clear"));
+        expandAllButton.setText(LanguageManager.localize("pack.expandall"));
+        collapseAllButton.setText(LanguageManager.localize("pack.collapseall"));
+        serversBox.setText(LanguageManager.localize("pack.cancreateserver"));
+        privateBox.setText(LanguageManager.localize("pack.privatepacksonly"));
+        searchDescBox.setText(LanguageManager.localize("pack.searchdescription"));
     }
 
     @Subscribe
