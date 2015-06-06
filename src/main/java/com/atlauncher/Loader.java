@@ -44,6 +44,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
+
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -51,6 +52,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -71,7 +73,15 @@ public class Loader {
     public Loader() {
         File config = FileSystem.CONFIGS.toFile();
         if (!config.exists()) {
-            int files = config.getParentFile().list().length;
+            File[] fileList = config.getParentFile().listFiles(new FileFilter() {
+            	
+				@Override
+				public boolean accept(File pathname) {
+					// TODO Auto-generated method stub
+					return !pathname.isHidden();
+				}
+			});
+            int files = fileList.length;
             if (files > 1) {
                 String[] opt = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("I've detected that you may " +
@@ -195,7 +205,7 @@ public class Loader {
         App.console.setVisible(SettingsManager.enableConsole());
         LogManager.start();
     }
-
+    
     public boolean isUsingMacApp() {
         return OS.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
     }
