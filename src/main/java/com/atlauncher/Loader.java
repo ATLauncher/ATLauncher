@@ -17,6 +17,35 @@
  */
 package com.atlauncher;
 
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.swing.InputMap;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.text.DefaultEditorKit;
+
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.OS;
@@ -37,50 +66,13 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.ClearDirVisitor;
 
-import javax.swing.InputMap;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.text.DefaultEditorKit;
-
-import java.awt.Image;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 public class Loader {
     private SplashScreen splashScreen;
 
     public Loader() {
         File config = FileSystem.CONFIGS.toFile();
         if (!config.exists()) {
-            File[] fileList = config.getParentFile().listFiles(new FileFilter() {
-            	
-				@Override
-				public boolean accept(File pathname) {
-					// TODO Auto-generated method stub
-					return !pathname.isHidden();
-				}
-			});
+            File[] fileList = config.getParentFile().listFiles(new FileFilter());
             int files = fileList.length;
             if (files > 1) {
                 String[] opt = {"Yes It's Fine", "Whoops. I'll Change That Now"};
@@ -385,5 +377,13 @@ public class Loader {
             LogManager.warn("Launcher not setup. Loading Setup Dialog");
             new SetupDialog();
         }
+    }
+    
+    private static final class FileFilter implements java.io.FileFilter{
+    	@Override
+    	public boolean accept(File pathname) {
+			// TODO Auto-generated method stub
+			return !pathname.isHidden();
+		}
     }
 }
