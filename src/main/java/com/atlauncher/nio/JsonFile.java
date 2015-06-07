@@ -82,7 +82,7 @@ public final class JsonFile {
 
     public <T> T convert(Gson gson, Class<T> tClass) throws Exception {
         try (InputStream stream = Files.newInputStream(this.path)) {
-            return gson.fromJson(new InputStreamReader(stream), tClass);
+            return gson.fromJson(new InputStreamReader(stream, "UTF-8"), tClass);
         } catch (Exception e) {
             e.printStackTrace(System.err);
             return null;
@@ -91,7 +91,7 @@ public final class JsonFile {
 
     public <T> T convert(Gson gson, Type type) throws Exception {
         try (InputStream stream = Files.newInputStream(this.path)) {
-            return gson.fromJson(new InputStreamReader(stream), type);
+            return gson.fromJson(new InputStreamReader(stream, "UTF-8"), type);
         }
     }
 }
