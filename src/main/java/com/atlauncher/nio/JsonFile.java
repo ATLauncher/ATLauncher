@@ -64,7 +64,7 @@ public final class JsonFile {
 
     public void write(Gson gson, Object obj) throws Exception {
         OutputStream os = Files.newOutputStream(this.path, StandardOpenOption.WRITE);
-        OutputStreamWriter osw = new OutputStreamWriter(os);
+        OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
 
         gson.toJson(obj, osw);
 
