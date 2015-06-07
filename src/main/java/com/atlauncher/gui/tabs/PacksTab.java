@@ -62,7 +62,7 @@ public final class PacksTab extends JPanel implements Tab {
     private final JCheckBox privateBox = new JCheckBox(LanguageManager.localize("pack.privatepacksonly"));
     private final JCheckBox searchDescBox = new JCheckBox(LanguageManager.localize("pack.searchdescription"));
 
-    private List<PackCard> cards = new LinkedList<PackCard>();
+    private List<PackCard> cards = new LinkedList<>();
 
     public PacksTab() {
         super(new BorderLayout());
@@ -91,6 +91,7 @@ public final class PacksTab extends JPanel implements Tab {
                 }
             }
         });
+
         this.expandAllButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -101,6 +102,7 @@ public final class PacksTab extends JPanel implements Tab {
                 }
             }
         });
+
         this.addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -108,6 +110,7 @@ public final class PacksTab extends JPanel implements Tab {
                 reload();
             }
         });
+
         this.clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -238,7 +241,7 @@ public final class PacksTab extends JPanel implements Tab {
             }
         }
 
-        ((LauncherFrame) App.frame).updateTitle("Packs - " + count);
+        App.frame.updateTitle("Packs - " + count);
 
         if (count == 0) {
             this.contentPanel.add(new NilCard(LanguageManager.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);

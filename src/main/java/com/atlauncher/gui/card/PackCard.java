@@ -30,12 +30,14 @@ import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.border.BevelBorder;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -44,8 +46,6 @@ import java.awt.event.ActionListener;
 
 /**
  * Class for displaying packs in the Pack Tab
- *
- * @author Ryan
  */
 public class PackCard extends CollapsiblePanel {
     private static final long serialVersionUID = -2617283435728223314L;
@@ -69,18 +69,21 @@ public class PackCard extends CollapsiblePanel {
         this.splitter.setRightComponent(this.actionsPanel);
         this.splitter.setEnabled(false);
 
-        JPanel top = new JPanel(new FlowLayout());
-        JPanel bottom = new JPanel(new FlowLayout());
-        JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        as.setEnabled(false);
-        as.setTopComponent(top);
-        as.setBottomComponent(bottom);
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         top.add(this.newInstanceButton);
         top.add(this.createServerButton);
+
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         bottom.add(this.supportButton);
         bottom.add(this.websiteButton);
         bottom.add(this.modsButton);
         bottom.add(this.removePackButton);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setEnabled(false);
+        splitPane.setTopComponent(top);
+        splitPane.setBottomComponent(bottom);
+        splitPane.setDividerSize(1);
 
         this.descArea.setText(pack.getDescription());
         this.descArea.setLineWrap(true);
@@ -90,7 +93,7 @@ public class PackCard extends CollapsiblePanel {
 
         this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
                 .HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        this.actionsPanel.add(as, BorderLayout.SOUTH);
+        this.actionsPanel.add(splitPane, BorderLayout.SOUTH);
         this.actionsPanel.setPreferredSize(new Dimension(this.actionsPanel.getPreferredSize().width, 180));
 
         this.getContentPane().add(this.splitter);
@@ -126,9 +129,9 @@ public class PackCard extends CollapsiblePanel {
                 } else {
                     if (AccountManager.getActiveAccount() == null) {
                         String[] options = {LanguageManager.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" +
-                                        ".cannotcreate"), LanguageManager.localize("instance.noaccountselected"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" + "" +
+                                ".cannotcreate"), LanguageManager.localize("instance.noaccountselected"), JOptionPane
+                                .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack);
                     }
@@ -141,14 +144,14 @@ public class PackCard extends CollapsiblePanel {
                 if (App.settings.isInOfflineMode()) {
                     String[] options = {LanguageManager.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("pack" + "" +
-                                    ".offlinecreateserver"), LanguageManager.localize("common.offline"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                                    ".offlinecreateserver"), LanguageManager.localize("common.offline"), JOptionPane
+                            .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (AccountManager.getActiveAccount() == null) {
                         String[] options = {LanguageManager.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" +
-                                        ".cannotcreate"), LanguageManager.localize("instance.noaccountselected"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" + "" +
+                                ".cannotcreate"), LanguageManager.localize("instance.noaccountselected"), JOptionPane
+                                .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack, true);
                     }

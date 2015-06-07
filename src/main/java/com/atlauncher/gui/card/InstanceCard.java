@@ -114,27 +114,30 @@ public class InstanceCard extends CollapsiblePanel {
         this.descArea.setWrapStyleWord(true);
         this.descArea.setEditable(false);
 
-        JPanel top = new JPanel(new FlowLayout());
-        JPanel bottom = new JPanel(new FlowLayout());
-        JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        as.setEnabled(false);
-        as.setTopComponent(top);
-        as.setBottomComponent(bottom);
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         top.add(this.playButton);
         top.add(this.reinstallButton);
         top.add(this.updateButton);
         top.add(this.renameButton);
         top.add(this.backupButton);
+
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         bottom.add(this.cloneButton);
         bottom.add(this.deleteButton);
         bottom.add(this.editButton);
         bottom.add(this.openButton);
 
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setEnabled(false);
+        splitPane.setTopComponent(top);
+        splitPane.setBottomComponent(bottom);
+        splitPane.setDividerSize(1);
+
         this.rightPanel.setLayout(new BorderLayout());
         this.rightPanel.setPreferredSize(new Dimension(this.rightPanel.getPreferredSize().width, 180));
         this.rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
                 .HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        this.rightPanel.add(as, BorderLayout.SOUTH);
+        this.rightPanel.add(splitPane, BorderLayout.SOUTH);
 
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(this.splitter, BorderLayout.CENTER);
@@ -197,18 +200,17 @@ public class InstanceCard extends CollapsiblePanel {
                     String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common" + "" +
                             ".no"), LanguageManager.localize("instance.dontremindmeagain")};
                     int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
-                                    .localizeWithReplace("instance" + "" +
-                                            ".updatenow", "<br/><br/>")), LanguageManager.localize("instance" + "" +
+                            .localizeWithReplace("instance" + "" +
+                                    ".updatenow", "<br/><br/>")), LanguageManager.localize("instance" + "" +
                                     ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                             options, options[0]);
                     if (ret == 0) {
                         if (AccountManager.getActiveAccount() == null) {
                             String[] optionss = {LanguageManager.localize("common.ok")};
-                            JOptionPane.showOptionDialog(App.frame, LanguageManager.localize
-                                            ("instance" + ".cantupdate"), LanguageManager.localize("instance" + "" +
-                                            ".noaccountselected")
-                                    , JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, optionss,
-                                    optionss[0]);
+                            JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" + "" +
+                                    ".cantupdate"), LanguageManager.localize("instance" + "" +
+                                            ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                    .ERROR_MESSAGE, null, optionss, optionss[0]);
                         } else {
                             new InstanceInstallerDialog(instance, true, false, null, null, true);
                         }
@@ -278,9 +280,8 @@ public class InstanceCard extends CollapsiblePanel {
                                 .localizeWithReplace("backup.backingup", instance.getName()), JOptionPane
                                 .YES_NO_OPTION);
                         if (ret == JOptionPane.YES_OPTION) {
-                            final JDialog dialog = new JDialog(App.frame, LanguageManager
-                                    .localizeWithReplace("backup.backingup", instance.getName()), ModalityType
-                                    .APPLICATION_MODAL);
+                            final JDialog dialog = new JDialog(App.frame, LanguageManager.localizeWithReplace("backup" +
+                                    ".backingup", instance.getName()), ModalityType.APPLICATION_MODAL);
                             dialog.setSize(300, 100);
                             dialog.setLocationRelativeTo(App.frame);
                             dialog.setResizable(false);
@@ -352,8 +353,8 @@ public class InstanceCard extends CollapsiblePanel {
         this.cloneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String clonedName = JOptionPane.showInputDialog(App.frame, LanguageManager.localize
-                        ("instance.cloneenter"), LanguageManager.localize("instance" + "" +
+                String clonedName = JOptionPane.showInputDialog(App.frame, LanguageManager.localize("instance" +
+                        ".cloneenter"), LanguageManager.localize("instance" + "" +
                         ".clonetitle"), JOptionPane.INFORMATION_MESSAGE);
                 if (clonedName != null && clonedName.length() >= 1 && InstanceManager.getInstanceByName(clonedName)
                         == null && InstanceManager.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", ""))
@@ -393,8 +394,8 @@ public class InstanceCard extends CollapsiblePanel {
         this.deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(App.frame, LanguageManager.localize
-                        ("instance.deletesure"), LanguageManager.localize("instance" + "" +
+                int response = JOptionPane.showConfirmDialog(App.frame, LanguageManager.localize("instance" +
+                        ".deletesure"), LanguageManager.localize("instance" + "" +
                         ".deleteinstance"), JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
                     final ProgressDialog dialog = new ProgressDialog(LanguageManager.localize("instance" + "" +
@@ -424,17 +425,17 @@ public class InstanceCard extends CollapsiblePanel {
                                 + ".no"), LanguageManager.localize("instance" + "" +
                                 ".dontremindmeagain")};
                         int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
-                                        .localizeWithReplace("instance" + "" +
-                                                ".updatenow", "<br/><br/>")), LanguageManager.localize("instance" + "" +
+                                .localizeWithReplace("instance" + "" +
+                                        ".updatenow", "<br/><br/>")), LanguageManager.localize("instance" + "" +
                                         ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
                                 null, options, options[0]);
                         if (ret == 0) {
                             if (AccountManager.getActiveAccount() == null) {
                                 String[] optionss = {LanguageManager.localize("common.ok")};
-                                JOptionPane.showOptionDialog(App.frame, LanguageManager.localize
-                                        ("instance.cantupdate"), LanguageManager.localize("instance" + "" +
-                                                ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                                        .ERROR_MESSAGE, null, optionss, optionss[0]);
+                                JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" +
+                                        ".cantupdate"), LanguageManager.localize("instance" + "" +
+                                        ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                                        null, optionss, optionss[0]);
                             } else {
                                 new InstanceInstallerDialog(instance, true, false, null, null, true);
                             }
@@ -504,17 +505,17 @@ public class InstanceCard extends CollapsiblePanel {
                                         ("common.no"), LanguageManager.localize("instance" + "" +
                                         ".dontremindmeagain")};
                                 int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
-                                                (LanguageManager.localizeWithReplace("instance" + "" +
-                                                ".updatenow", "<br/><br/>")), LanguageManager.localize("instance" +
+                                        (LanguageManager.localizeWithReplace("instance" + "" +
+                                                ".updatenow", "<br/><br/>")), LanguageManager.localize("instance" + "" +
                                         ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
                                         null, options, options[0]);
                                 if (ret == 0) {
                                     if (AccountManager.getActiveAccount() == null) {
                                         String[] optionss = {LanguageManager.localize("common.ok")};
-                                        JOptionPane.showOptionDialog(App.frame, LanguageManager
-                                                        .localize("instance.cantupdate"), LanguageManager.localize
-                                                ("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
-                                                JOptionPane.ERROR_MESSAGE, null, optionss, optionss[0]);
+                                        JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" +
+                                                ".cantupdate"), LanguageManager.localize("instance" +
+                                                ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                                .ERROR_MESSAGE, null, optionss, optionss[0]);
                                     } else {
                                         new InstanceInstallerDialog(instance, true, false, null, null, true);
                                     }

@@ -30,7 +30,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.Border;
@@ -68,19 +67,6 @@ public class CollapsiblePanel extends JPanel {
     Pack pack = null;
     Instance instance = null;
     boolean collapsed; // stores current state of the collapsible panel
-
-    /**
-     * Constructor, using a group of option radio buttons to control the collapsible panel. The buttons should be
-     * created, grouped, and then used to construct their own collapsible panels.
-     *
-     * @param component Radio button that expands and collapses the panel based on if it is selected or not
-     */
-    public CollapsiblePanel(JRadioButton component) {
-        component.addItemListener(new CollapsiblePanel.ExpandAndCollapseAction());
-        titleComponent = component;
-        collapsed = !component.isSelected();
-        commonConstructor();
-    }
 
     /**
      * Constructor, using a label/button to control the collapsible panel.
@@ -128,30 +114,6 @@ public class CollapsiblePanel extends JPanel {
     }
 
     /**
-     * Constructor, using a group of button to control the collapsible panel while will a label text.
-     *
-     * @param text Title of the collapsible panel in string format, used to create a button with text and an arrow icon
-     */
-    public CollapsiblePanel(String text, JRadioButton component) {
-        collapsed = !component.isSelected();
-        // component.addItemListener(new CollapsiblePanel.ExpandAndCollapseAction());
-        // arrow.setText(text);
-        // /if(!collapsed)
-        titleComponent = arrow;
-        // else titleComponent=null;
-
-        setLayout(new BorderLayout());
-        JLabel label = new JLabel(text);
-        panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        add(label, BorderLayout.CENTER);
-        add(titleComponent, BorderLayout.CENTER);
-        add(panel, BorderLayout.CENTER);
-        setCollapsed(collapsed);
-        placeTitleComponent();
-    }
-
-    /**
      * Sets layout, creates the content panel and adds it and the title component to the container, all constructors
      * have this procedure in common.
      */
@@ -173,13 +135,6 @@ public class CollapsiblePanel extends JPanel {
         Rectangle containerRectangle = this.getBounds();
         Rectangle componentRectangle = border.getComponentRect(containerRectangle, insets);
         titleComponent.setBounds(componentRectangle);
-    }
-
-    public void setTitleComponentText(String text) {
-        if (titleComponent instanceof JButton) {
-            titleComponent.setText(text);
-        }
-        placeTitleComponent();
     }
 
     public JPanel getContentPane() {
@@ -342,15 +297,17 @@ public class CollapsiblePanel extends JPanel {
 
         public Insets getBorderInsets(Component c, Insets insets) {
             Insets borderInsets;
+
             if (border != null) {
                 borderInsets = border.getBorderInsets(c);
             } else {
                 borderInsets = new Insets(0, 0, 0, 0);
             }
-            insets.top = EDGE_SPACING + TEXT_SPACING + borderInsets.top;
-            insets.right = EDGE_SPACING + TEXT_SPACING + borderInsets.right;
-            insets.bottom = EDGE_SPACING + TEXT_SPACING + borderInsets.bottom;
-            insets.left = EDGE_SPACING + TEXT_SPACING + borderInsets.left;
+
+            insets.top = borderInsets.top;
+            insets.right = borderInsets.right;
+            insets.bottom = borderInsets.bottom;
+            insets.left = borderInsets.left;
 
             if (c == null || component == null) {
                 return insets;
@@ -360,23 +317,23 @@ public class CollapsiblePanel extends JPanel {
 
             switch (titlePosition) {
                 case ABOVE_TOP:
-                    insets.top += compHeight + TEXT_SPACING;
+                    insets.top += compHeight;
                     break;
                 case TOP:
                 case DEFAULT_POSITION:
                     insets.top += Math.max(compHeight, borderInsets.top) - borderInsets.top;
                     break;
                 case BELOW_TOP:
-                    insets.top += compHeight + TEXT_SPACING;
+                    insets.top += compHeight;
                     break;
                 case ABOVE_BOTTOM:
-                    insets.bottom += compHeight + TEXT_SPACING;
+                    insets.bottom += compHeight;
                     break;
                 case BOTTOM:
                     insets.bottom += Math.max(compHeight, borderInsets.bottom) - borderInsets.bottom;
                     break;
                 case BELOW_BOTTOM:
-                    insets.bottom += compHeight + TEXT_SPACING;
+                    insets.bottom += compHeight;
                     break;
             }
             return insets;
