@@ -17,33 +17,6 @@
  */
 package com.atlauncher;
 
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.Instance;
-import com.atlauncher.data.OS;
-import com.atlauncher.data.Pack;
-import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.SplashScreen;
-import com.atlauncher.gui.TrayMenu;
-import com.atlauncher.gui.dialogs.SetupDialog;
-import com.atlauncher.gui.theme.Theme;
-import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LanguageManager;
-import com.atlauncher.managers.LogManager;
-import com.atlauncher.managers.PackManager;
-import com.atlauncher.managers.SettingsManager;
-import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.walker.ClearDirVisitor;
-
-import javax.swing.InputMap;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.text.DefaultEditorKit;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -65,13 +38,42 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.InputMap;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.text.DefaultEditorKit;
+
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.OS;
+import com.atlauncher.data.Pack;
+import com.atlauncher.gui.LauncherConsole;
+import com.atlauncher.gui.SplashScreen;
+import com.atlauncher.gui.TrayMenu;
+import com.atlauncher.gui.dialogs.SetupDialog;
+import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.SettingsManager;
+import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.walker.ClearDirVisitor;
+
 public class Loader {
     private SplashScreen splashScreen;
 
     public Loader() {
         File config = FileSystem.CONFIGS.toFile();
         if (!config.exists()) {
-            int files = config.getParentFile().list().length;
+            File[] fileList = config.getParentFile().listFiles(new FileFilter());
+            int files = fileList.length;
             if (files > 1) {
                 String[] opt = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("I've detected that you may " +
@@ -114,7 +116,7 @@ public class Loader {
             JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("You're using an old version of the" +
                     " ATLauncher Mac OSX app.<br/><br/>Please download the new Mac OSX app from below to " +
                     "keep playing!<br/><br/>Your instances and data will be transferred once the new app " +
-                    "is launcher.<br/><br/>Sorry for any inconvenience caused!"), "Error", JOptionPane
+                    "is launched.<br/><br/>Sorry for any inconvenience caused!"), "Error", JOptionPane
                     .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, opt, opt[0]);
 
             Utils.openBrowser("https://atl.pw/oldosxapp");
@@ -195,7 +197,7 @@ public class Loader {
         App.console.setVisible(SettingsManager.enableConsole());
         LogManager.start();
     }
-
+    
     public boolean isUsingMacApp() {
         return OS.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
     }
@@ -365,7 +367,7 @@ public class Loader {
             LogManager.info("Opening Instance " + instance.getName());
             if (!instance.launch()) {
                 App.autoLaunch = null;
-                LogManager.error("Error Opening Instance  " + instance.getName());
+                LogManager.error("Error Opening Instance " + instance.getName());
             }
         }
     }
@@ -375,5 +377,21 @@ public class Loader {
             LogManager.warn("Launcher not setup. Loading Setup Dialog");
             new SetupDialog();
         }
+    }
+   
+    /**
+     * FileFilter is a local implementation of java.io.FileFilter
+     * in order to get rid of any possible memory leaks
+     * that may occur as a result of using an anonymous class.
+     * 
+     * @author flaw600
+     *
+     */
+    private static final class FileFilter implements java.io.FileFilter {
+    	@Override
+    	public boolean accept(File pathname) {
+			// TODO Auto-generated method stub
+			return !pathname.isHidden();
+		}
     }
 }
