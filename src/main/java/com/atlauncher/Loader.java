@@ -382,7 +382,7 @@ public class Loader {
     /**
      * FileFilter is a local implementation of java.io.FileFilter
      * in order to get rid of any possible memory leaks
-     * that may occur as a result of using an anonymous class
+     * that may occur as a result of using an anonymous class.
      * 
      * @author flaw600
      *
