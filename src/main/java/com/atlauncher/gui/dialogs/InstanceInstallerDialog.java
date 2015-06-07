@@ -26,6 +26,7 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.SettingsManager;
+import com.atlauncher.utils.ATLauncherAPI;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -388,11 +389,11 @@ public class InstanceInstallerDialog extends JDialog {
                                         .class));
                                 if (pack.isLoggingEnabled() && SettingsManager.enableLogs() && !packVersion.isDev()) {
                                     if (isServer) {
-                                        pack.addServerInstall(packVersion.getVersion());
+                                        ATLauncherAPI.addPackAction(pack, packVersion.getVersion(), "serverinstalled");
                                     } else if (isUpdate) {
-                                        pack.addUpdate(packVersion.getVersion());
+                                        ATLauncherAPI.addPackAction(pack, packVersion.getVersion(), "updated");
                                     } else {
-                                        pack.addInstall(packVersion.getVersion());
+                                        ATLauncherAPI.addPackAction(pack, packVersion.getVersion(), "installed");
                                     }
                                 }
                             } else {

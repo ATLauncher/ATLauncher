@@ -24,6 +24,7 @@ import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.utils.ATLauncherAPI;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.ImageIcon;
@@ -285,47 +286,5 @@ public class Pack {
             this.jsonVersion = version;
         }
         return this.json;
-    }
-
-    public String addInstall(String version) {
-        Map<String, Object> request = new HashMap<String, Object>();
-
-        request.put("username", AccountManager.getActiveAccount().getMinecraftUsername());
-        request.put("version", version);
-
-        try {
-            return Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-        return "Install Not Added!";
-    }
-
-    public String addServerInstall(String version) {
-        Map<String, Object> request = new HashMap<String, Object>();
-
-        request.put("username", AccountManager.getActiveAccount().getMinecraftUsername());
-        request.put("version", version);
-
-        try {
-            return Utils.sendAPICall("pack/" + getSafeName() + "/serverinstalled/", request);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-        return "Install Not Added!";
-    }
-
-    public String addUpdate(String version) {
-        Map<String, Object> request = new HashMap<String, Object>();
-
-        request.put("username", AccountManager.getActiveAccount().getMinecraftUsername());
-        request.put("version", version);
-
-        try {
-            return Utils.sendAPICall("pack/" + getSafeName() + "/updated/", request);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-        return "Install Not Added!";
     }
 }

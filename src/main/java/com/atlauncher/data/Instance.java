@@ -30,6 +30,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
+import com.atlauncher.utils.ATLauncherAPI;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -1080,17 +1081,16 @@ public class Instance implements Cloneable {
         final Account account = AccountManager.getActiveAccount();
         if (account == null) {
             String[] options = {LanguageManager.localize("common.ok")};
-            JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance.noaccount"),
-                    LanguageManager.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                            .ERROR_MESSAGE, null, options, options[0]);
+            JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance.noaccount"), LanguageManager
+                    .localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                    null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
             if ((SettingsManager.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
                 String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
-                                (LanguageManager.localizeWithReplace("instance.insufficientram", "<b>" + this.memory
-                                        + "</b> " +
+                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
+                        .localizeWithReplace("instance.insufficientram", "<b>" + this.memory + "</b> " +
                                 "MB<br/><br/>")), LanguageManager.localize("instance.insufficientramtitle"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
@@ -1101,10 +1101,9 @@ public class Instance implements Cloneable {
             }
             if (SettingsManager.getPermGen() < this.permgen) {
                 String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
-                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
-                                (LanguageManager.localizeWithReplace("instance.insufficientpermgen", "<b>" + this
-                                        .permgen + "</b> " + "MB<br/><br/>")), LanguageManager.localize("instance" +
-                                ".insufficientpermgentitle"),
+                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
+                        .localizeWithReplace("instance.insufficientpermgen", "<b>" + this.permgen + "</b> " +
+                                "MB<br/><br/>")), LanguageManager.localize("instance" + ".insufficientpermgentitle"),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
@@ -1243,13 +1242,14 @@ public class Instance implements Cloneable {
 
                         App.settings.setMinecraftLaunched(false);
                         if (!App.settings.isInOfflineMode()) {
-                            if (isLeaderboardsEnabled() && isLoggingEnabled() && !isDev() && SettingsManager.enableLogs
-                                    ()) {
+                            if (isLeaderboardsEnabled() && isLoggingEnabled() && !isDev() && SettingsManager
+                                    .enableLogs()) {
                                 final int timePlayed = (int) (end - start) / 1000;
                                 if (timePlayed > 0) {
                                     App.TASKPOOL.submit(new Runnable() {
                                         public void run() {
-                                            addTimePlayed(timePlayed, (isDev ? "dev" : getVersion()));
+                                            ATLauncherAPI.addPackTimePlayed(getRealPack(), timePlayed, (isDev ? "dev"
+                                                    : getVersion()));
                                         }
                                     });
                                 }
@@ -1287,25 +1287,6 @@ public class Instance implements Cloneable {
         }
     }
 
-    public String addTimePlayed(int time, String version) {
-        Map<String, Object> request = new HashMap<String, Object>();
-
-        if (SettingsManager.enableLeaderboards()) {
-            request.put("username", AccountManager.getActiveAccount().getMinecraftUsername());
-        } else {
-            request.put("username", null);
-        }
-        request.put("version", version);
-        request.put("time", time);
-
-        try {
-            return Utils.sendAPICall("pack/" + getRealPack().getSafeName() + "/timeplayed/", request);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-        return "Leaderboard Time Not Added!";
-    }
-
     /**
      * Clones a given instance of this class.
      *
@@ -1313,9 +1294,9 @@ public class Instance implements Cloneable {
      * @see java.lang.Object#clone()
      */
     public Instance clone() {
-        try{
+        try {
             return (Instance) super.clone();
-        } catch(CloneNotSupportedException e){
+        } catch (CloneNotSupportedException e) {
             LogManager.logStackTrace(e);
             return null;
         }

@@ -23,6 +23,7 @@ import com.atlauncher.utils.ProgressResponseBody;
 import com.atlauncher.workers.InstanceInstaller;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
@@ -32,6 +33,28 @@ public final class Network {
     public static final OkHttpClient PROGRESS_CLIENT = new OkHttpClient();
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like " +
             "Gecko) Chrome/28.0.1500.72 Safari/537.36 " + Constants.LAUNCHER_NAME + "/" + Constants.VERSION;
+
+    static {
+        Network.CLIENT.networkInterceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request originalRequest = chain.request();
+                Request requestWithUserAgent = originalRequest.newBuilder().removeHeader("User-Agent").addHeader
+                        ("User-Agent", Network.USER_AGENT).build();
+                return chain.proceed(requestWithUserAgent);
+            }
+        });
+
+        Network.PROGRESS_CLIENT.networkInterceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request originalRequest = chain.request();
+                Request requestWithUserAgent = originalRequest.newBuilder().removeHeader("User-Agent").addHeader
+                        ("User-Agent", Network.USER_AGENT).build();
+                return chain.proceed(requestWithUserAgent);
+            }
+        });
+    }
 
     public static void setupProgressClient(final InstanceInstaller installer) {
         Network.PROGRESS_CLIENT.networkInterceptors().clear();

@@ -37,7 +37,7 @@ import com.atlauncher.managers.MinecraftVersionManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.nio.JsonFile;
-import com.atlauncher.utils.ATLauncherAPIUtils;
+import com.atlauncher.utils.ATLauncherAPI;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -164,7 +164,7 @@ public class OldSettings {
             App.TASKPOOL.execute(new Runnable() {
                 @Override
                 public void run() {
-                    ATLauncherAPIUtils.postSystemInfo();
+                    ATLauncherAPI.postSystemInfo();
                 }
             });
         }
