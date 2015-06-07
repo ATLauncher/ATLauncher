@@ -17,6 +17,33 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.OS;
+import com.atlauncher.data.Pack;
+import com.atlauncher.gui.LauncherConsole;
+import com.atlauncher.gui.SplashScreen;
+import com.atlauncher.gui.TrayMenu;
+import com.atlauncher.gui.dialogs.SetupDialog;
+import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.SettingsManager;
+import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.walker.ClearDirVisitor;
+
+import javax.swing.InputMap;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.text.DefaultEditorKit;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -37,34 +64,6 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import javax.swing.InputMap;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.text.DefaultEditorKit;
-
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.Instance;
-import com.atlauncher.data.OS;
-import com.atlauncher.data.Pack;
-import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.SplashScreen;
-import com.atlauncher.gui.TrayMenu;
-import com.atlauncher.gui.dialogs.SetupDialog;
-import com.atlauncher.gui.theme.Theme;
-import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LanguageManager;
-import com.atlauncher.managers.LogManager;
-import com.atlauncher.managers.PackManager;
-import com.atlauncher.managers.SettingsManager;
-import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.walker.ClearDirVisitor;
 
 public class Loader {
     private SplashScreen splashScreen;
