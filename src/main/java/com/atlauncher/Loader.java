@@ -116,7 +116,7 @@ public class Loader {
             JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("You're using an old version of the" +
                     " ATLauncher Mac OSX app.<br/><br/>Please download the new Mac OSX app from below to " +
                     "keep playing!<br/><br/>Your instances and data will be transferred once the new app " +
-                    "is launcher.<br/><br/>Sorry for any inconvenience caused!"), "Error", JOptionPane
+                    "is launched.<br/><br/>Sorry for any inconvenience caused!"), "Error", JOptionPane
                     .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, opt, opt[0]);
 
             Utils.openBrowser("https://atl.pw/oldosxapp");
@@ -367,7 +367,7 @@ public class Loader {
             LogManager.info("Opening Instance " + instance.getName());
             if (!instance.launch()) {
                 App.autoLaunch = null;
-                LogManager.error("Error Opening Instance  " + instance.getName());
+                LogManager.error("Error Opening Instance " + instance.getName());
             }
         }
     }
@@ -378,8 +378,16 @@ public class Loader {
             new SetupDialog();
         }
     }
-    
-    private static final class FileFilter implements java.io.FileFilter{
+   
+    /**
+     * FileFilter is a local implementation of java.io.FileFilter
+     * in order to get rid of any possible memory leaks
+     * that may occur as a result of using an anonymous class
+     * 
+     * @author flaw600
+     *
+     */
+    private static final class FileFilter implements java.io.FileFilter {
     	@Override
     	public boolean accept(File pathname) {
 			// TODO Auto-generated method stub
