@@ -57,6 +57,13 @@ public class LanguageManager {
         } catch (Exception e) {
             LogManager.logStackTrace("Error loading languages!", e);
         }
+
+        // Load our English default language as we use it for other languages when missing a key
+        Language en = LanguageManager.getLanguage("en");
+
+        if (en != null) {
+            en.load();
+        }
     }
 
     public static Language getLanguage() {
