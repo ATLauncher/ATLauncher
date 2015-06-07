@@ -18,6 +18,8 @@
 package com.atlauncher.data.json;
 
 import com.atlauncher.annot.Json;
+import com.atlauncher.utils.validator.DependencyValidator;
+import com.atlauncher.utils.validator.GroupValidator;
 
 @Json
 public class Library {
@@ -76,5 +78,13 @@ public class Library {
 
     public boolean forServer() {
         return this.server != null;
+    }
+
+    public DependencyValidator dependencyValidator() {
+        return new DependencyValidator(this.depends);
+    }
+
+    public GroupValidator groupValidator() {
+        return new GroupValidator(this.dependsGroup);
     }
 }

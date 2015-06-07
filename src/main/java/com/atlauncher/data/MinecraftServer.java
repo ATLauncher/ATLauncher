@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.MCQuery;
 import com.google.gson.reflect.TypeToken;
 import de.zh32.pingtest.QueryVersion;
@@ -65,9 +66,9 @@ public class MinecraftServer {
     /**
      * Default constructor for creating an instance of this class.
      *
-     * @param name         The friendly name of the server shown to the user
-     * @param host         The host/IP of the server
-     * @param port         The port of the server
+     * @param name The friendly name of the server shown to the user
+     * @param host The host/IP of the server
+     * @param port The port of the server
      * @param queryVersion The version of Minecraft querying we should use
      */
     public MinecraftServer(String name, String host, int port, QueryVersion queryVersion) {
@@ -145,9 +146,9 @@ public class MinecraftServer {
 
     private String getStatusLocalization() {
         if (this.playersOnline == -1) {
-            return Language.INSTANCE.localize("tools.serverchecker.offline");
+            return LanguageManager.localize("tools.serverchecker.offline");
         } else {
-            return Language.INSTANCE.localize("tools.serverchecker.online") + " - " + this.getPrintablePlayersOnline
+            return LanguageManager.localize("tools.serverchecker.online") + " - " + this.getPrintablePlayersOnline
                     () + " Players";
         }
     }

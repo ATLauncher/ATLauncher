@@ -17,9 +17,10 @@
  */
 package com.atlauncher.gui.card;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
+import com.atlauncher.FileSystem;
+import com.atlauncher.data.OS;
 import com.atlauncher.gui.components.ImagePanel;
+import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -30,7 +31,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Image;
-import java.io.File;
 
 /**
  * Class for displaying packs in the Pack Tab
@@ -38,8 +38,8 @@ import java.io.File;
  * @author Ryan
  */
 public class NilCard extends JPanel {
-    private static final Image defaultImage = Utils.getIconImage(new File(App.settings.getImagesDir(), "defaultimage" +
-            ".png")).getImage();
+    private static final Image defaultImage = Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage" + ".png")
+            .toFile()).getImage();
 
     private final JTextArea error = new JTextArea();
     private final JSplitPane splitter = new JSplitPane();
@@ -47,11 +47,11 @@ public class NilCard extends JPanel {
     public NilCard(String message) {
         super(new BorderLayout());
 
-        if (Utils.isMac()) {
-            this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"), TitledBorder
+        if (OS.isMac()) {
+            this.setBorder(new TitledBorder(null, LanguageManager.localize("common.nothingtoshow"), TitledBorder
                     .DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
         } else {
-            this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"), TitledBorder
+            this.setBorder(new TitledBorder(null, LanguageManager.localize("common.nothingtoshow"), TitledBorder
                     .DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
         }
 

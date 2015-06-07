@@ -17,11 +17,12 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.BlankToolPanel;
+import com.atlauncher.gui.components.DownloadClearerToolPanel;
 import com.atlauncher.gui.components.LogClearerToolPanel;
 import com.atlauncher.gui.components.NetworkCheckerToolPanel;
 import com.atlauncher.gui.components.ServerCheckerToolPanel;
+import com.atlauncher.managers.LanguageManager;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -40,8 +41,8 @@ public class ToolsTab extends JPanel implements Tab {
 
         mainPanel.add(new NetworkCheckerToolPanel());
         mainPanel.add(new ServerCheckerToolPanel());
+        mainPanel.add(new DownloadClearerToolPanel());
         mainPanel.add(new LogClearerToolPanel());
-        mainPanel.add(new BlankToolPanel());
         mainPanel.add(new BlankToolPanel());
         mainPanel.add(new BlankToolPanel());
 
@@ -50,6 +51,6 @@ public class ToolsTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.tools");
+        return LanguageManager.localize("tabs.tools");
     }
 }

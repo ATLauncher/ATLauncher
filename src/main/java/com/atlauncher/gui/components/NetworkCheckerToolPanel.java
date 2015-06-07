@@ -18,14 +18,18 @@
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.FileSystem;
+import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
-import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.ServerManager;
+import com.atlauncher.managers.SettingsManager;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -35,18 +39,20 @@ import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
+public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener {
     /**
      * Auto generated serial.
      */
     private static final long serialVersionUID = 4811953376698111667L;
 
-    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.networkchecker"));
+    private final JLabel TITLE_LABEL = new JLabel(LanguageManager.localize("tools.networkchecker"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
-            .INSTANCE.localize("tools.networkchecker.info"), 60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString
+            (LanguageManager.localize("tools.networkchecker.info"), 60, "<br>")));
 
     public NetworkCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -55,34 +61,36 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
         setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        SettingsManager.addListener(this);
         this.checkLaunchButtonEnabled();
+
+        EventHandler.EVENT_BUS.subscribe(this);
     }
 
     private void checkLaunchButtonEnabled() {
-        LAUNCH_BUTTON.setEnabled(App.settings.enableLogs());
+        LAUNCH_BUTTON.setEnabled(SettingsManager.enableLogs());
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common" + ".no")};
-        int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Utils
-                .splitMultilinedString(Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup", App
-                        .settings.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>")), Language.INSTANCE
+        String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common" + ".no")};
+        int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(Utils
+                        .splitMultilinedString(LanguageManager.localizeWithReplace("tools.networkcheckerpopup",
+                                ServerManager.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>")),
+                LanguageManager
                 .localize("tools.networkchecker"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                 options, options[0]);
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"), App
-                    .settings.getServers().size(), Language.INSTANCE.localize("tools.networkchecker" + "" +
+            final ProgressDialog dialog = new ProgressDialog(LanguageManager.localize("tools.networkchecker"),
+                    ServerManager.getServers().size(), LanguageManager.localize("tools.networkchecker" + "" +
                     ".running"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread() {
                 @Override
                 public void run() {
-                    dialog.setTotalTasksToDo(App.settings.getServers().size() * 5);
+                    dialog.setTotalTasksToDo(ServerManager.getServers().size() * 5);
                     StringBuilder results = new StringBuilder();
 
                     // Ping Test
-                    for (Server server : App.settings.getServers()) {
+                    for (Server server : ServerManager.getServers()) {
                         if (server.getHost().contains(":")) {
                             dialog.doneTask();
                             continue;
@@ -98,34 +106,54 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                     }
 
                     // Response Code Test
-                    for (Server server : App.settings.getServers()) {
-                        Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"), false);
-                        results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server
-                                .getHost(), download.getResponseCode()));
-                        dialog.doneTask();
+                    for (Server server : ServerManager.getServers()) {
+                        try {
+                            Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"),
+                                    false);
+                            results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server
+                                    .getHost(), download.code()));
+                            dialog.doneTask();
+                        } catch (Exception e) {
+                            LogManager.logStackTrace(e);
+                        }
                     }
 
                     // Ping Pong Test
-                    for (Server server : App.settings.getServers()) {
+                    for (Server server : ServerManager.getServers()) {
                         Downloadable download = new Downloadable(server.getFileURL("ping"), false);
                         results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n", server
-                                .getHost(), download.getContents()));
+                                .getHost(), download.toString()));
                         dialog.doneTask();
                     }
 
                     // Speed Test
-                    for (Server server : App.settings.getServers()) {
-                        File file = new File(App.settings.getTempDir(), "20MB.test");
-                        if (file.exists()) {
-                            Utils.delete(file);
+                    for (Server server : ServerManager.getServers()) {
+                        Path file = FileSystem.TMP.resolve("20MB.test");
+
+                        if (Files.exists(file)) {
+                            FileUtils.delete(file);
                         }
+
                         long started = System.currentTimeMillis();
 
-                        Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
-                        download.download(false);
+                        try {
+                            Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
+                            download.download();
+                        } catch (Exception e) {
+                            LogManager.logStackTrace(e);
+                        }
+
+                        long size = 0;
+
+                        try {
+                            size = Files.size(file);
+                        } catch (IOException e1) {
+                            LogManager.logStackTrace("Error getting file size of " + file + " while running network" +
+                                    " checker!", e1);
+                        }
 
                         long timeTaken = System.currentTimeMillis() - started;
-                        float bps = file.length() / (timeTaken / 1000);
+                        float bps = size / (timeTaken / 1000);
                         float kbps = bps / 1024;
                         float mbps = kbps / 1024;
                         String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f "
@@ -155,17 +183,17 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 LogManager.error("Network Test failed to run!");
             } else {
                 LogManager.info("Network Test ran and submitted to " + Constants.LAUNCHER_NAME + "!");
-                String[] options2 = {Language.INSTANCE.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
-                        .localizeWithReplace("tools.networkheckercomplete", "<br/><br/>")), Language.INSTANCE
+                String[] options2 = {LanguageManager.localize("common.ok")};
+                JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
+                        .localizeWithReplace("tools.networkheckercomplete", "<br/><br/>")), LanguageManager
                         .localize("tools" + ".networkchecker"), JOptionPane.DEFAULT_OPTION, JOptionPane
                         .INFORMATION_MESSAGE, null, options2, options2[0]);
             }
         }
     }
 
-    @Override
-    public void onSettingsSaved() {
+    @Subscribe
+    public void onSettingsSaved(EventHandler.SettingsChangeEvent e) {
         this.checkLaunchButtonEnabled();
     }
 }

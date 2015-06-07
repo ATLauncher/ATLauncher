@@ -18,15 +18,16 @@
 
 package com.atlauncher.thread;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.writer.LogEventWriter;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.BlockingQueue;
@@ -40,16 +41,18 @@ public final class LoggingThread extends Thread {
     public LoggingThread(BlockingQueue<LogEvent> queue) {
         this.queue = queue;
         this.setName("ATL-Logging-Thread");
-        File log = new File(App.settings.getLogsDir(), filename);
-        if (!log.exists()) {
+        Path log = FileSystem.LOGS.resolve(filename);
+
+        if (!Files.exists(log)) {
             try {
-                log.createNewFile();
+                Files.createFile(log);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
         try {
-            this.writer = new LogEventWriter(new FileWriter(log));
+            this.writer = new LogEventWriter(new FileWriter(log.toFile()));
             this.writer.write("Generated on " + Timestamper.now() + "\n");
             Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
                 @Override

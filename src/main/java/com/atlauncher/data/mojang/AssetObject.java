@@ -17,29 +17,38 @@
  */
 package com.atlauncher.data.mojang;
 
-import com.atlauncher.utils.Utils;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.Hashing;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class AssetObject {
     private String hash;
     private long size;
 
     public String getHash() {
-        return hash;
+        return this.hash;
     }
 
     public long getSize() {
-        return size;
+        return this.size;
     }
 
-    public boolean needToDownload(File file) {
-        if (!file.exists() || !file.isFile()) {
+    public boolean needToDownload(Path path) {
+        if (!Files.exists(path) || !Files.isRegularFile(path)) {
             return true;
         }
-        if (file.length() != this.size) {
-            return true;
+
+        long size = 0;
+
+        try {
+            size = Files.size(path);
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error getting file size from " + path, e);
         }
-        return !this.hash.equalsIgnoreCase(Utils.getSHA1(file));
+
+        return (size != this.size) || (!Hashing.HashCode.fromString(this.hash).equals(Hashing.sha1(path)));
     }
 }

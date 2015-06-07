@@ -32,7 +32,7 @@ import java.util.concurrent.Callable;
 public final class PasteUpload implements Callable<String> {
     @Override
     public String call() throws Exception {
-        String log = App.settings.getLog().replace(System.getProperty("line.separator"), "\n");
+        String log = App.console.getLog().replace(System.getProperty("line.separator"), "\n");
         String urlParameters = "";
         urlParameters += "title=" + URLEncoder.encode(Constants.LAUNCHER_NAME + " - Log", "ISO-8859-1") + "&";
         urlParameters += "language=" + URLEncoder.encode("text", "ISO-8859-1") + "&";

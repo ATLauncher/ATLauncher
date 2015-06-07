@@ -15,104 +15,69 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.atlauncher.data;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.nio.JsonFile;
+import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
-public enum Language {
-    INSTANCE, Language;
+public class Language {
+    private final Map<String, String> store = new HashMap<>();
 
-    private final Map<String, Properties> langs = new HashMap<String, Properties>();
-    private volatile String current;
+    private String name;
+    private String code;
 
-    private Language() {
+    public void load() {
+        Path path = FileSystem.LANGUAGES.resolve(this.code + ".json");
+
+        java.lang.reflect.Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
+
         try {
-            this.load("English");
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-        }
-    }
+            this.store.clear();
 
-    public static String[] available() {
-        File[] files = App.settings.getLanguagesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".lang");
-            }
-        });
-        String[] langs = new String[files.length];
-        for (int i = 0; i < files.length; i++) {
-            langs[i] = files[i].getName().substring(0, 1).toUpperCase() + files[i].getName().substring(1, files[i]
-                    .getName().lastIndexOf("."));
-        }
-        return langs;
-    }
-
-    public static synchronized String current() {
-        return INSTANCE.current;
-    }
-
-    public synchronized void load(String lang) throws IOException {
-        if (!this.langs.containsKey(lang)) {
-            Properties props = new Properties();
-            File langFile = new File(App.settings.getLanguagesDir(), lang.toLowerCase() + ".lang");
-            if (!langFile.exists()) {
-                LogManager.error("Language file " + langFile.getName() + " doesn't exist! Defaulting it inbuilt one!");
-                props.load(App.class.getResourceAsStream("/assets/lang/english.lang"));
+            if (Files.exists(path)) {
+                this.store.putAll((Map<String, String>) new JsonFile(path).convert(type));
             } else {
-                props.load(new FileInputStream(langFile));
-            }
-            this.langs.put(lang, props);
-            LogManager.info("Loading Language: " + lang);
-        }
-
-        this.current = lang;
-    }
-
-    public synchronized void reload(String lang) throws IOException {
-        if (this.langs.containsKey(lang)) {
-            this.langs.remove(lang);
-        }
-
-        this.load(lang);
-    }
-
-    public synchronized String localize(String lang, String tag) {
-        if (this.langs.containsKey(lang)) {
-            Properties props = this.langs.get(lang);
-            if (props.containsKey(tag)) {
-                return props.getProperty(tag, tag);
-            } else {
-                if (lang.equalsIgnoreCase("English")) {
-                    return "Unknown language key " + tag;
-                } else {
-                    return this.localize("English", tag);
+                try (InputStreamReader isr = new InputStreamReader(App.class.getResourceAsStream("/assets/lang/" +
+                        this.code + ".json"))) {
+                    this.store.putAll((Map<String, String>) Gsons.DEFAULT.fromJson(isr, type));
+                } catch (Exception ignored) {
                 }
             }
-        } else {
-            return this.localize("English", tag);
+
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error loading language translations for " + this.name + "!", e);
         }
     }
 
-    public synchronized String localize(String tag) {
-        return this.localize(this.current, tag);
+    public String getName() {
+        return this.name;
     }
 
-    public synchronized String localizeWithReplace(String tag, String replaceWith) {
-        return this.localize(this.current, tag).replace("%s", replaceWith);
+    public String getCode() {
+        return this.code;
     }
 
-    public synchronized String getCurrent() {
-        return this.current;
+    public String getKey(String key) {
+        if (this.store.containsKey(key)) {
+            return this.store.get(key);
+        }
+
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

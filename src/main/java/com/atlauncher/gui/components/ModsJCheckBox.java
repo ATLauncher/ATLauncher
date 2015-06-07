@@ -57,13 +57,13 @@ public class ModsJCheckBox extends JCheckBox {
      * @param mod The mod this object is displaying data for
      */
     public ModsJCheckBox(Mod mod) {
-        super(mod.getName());
-        if (mod.hasColour() && mod.getCompiledColour() != null) {
-            setForeground(mod.getCompiledColour());
+        super(mod.name);
+        if (mod.color != null && mod.getCompiledColor() != null) {
+            setForeground(mod.getCompiledColor());
         }
         this.mod = mod;
         if (mod.hasDescription()) {
-            this.setToolTipText("<html>" + Utils.splitMultilinedString(mod.getDescription(), 100, "<br/>") + "</html>");
+            this.setToolTipText("<html>" + Utils.splitMultilinedString(mod.description, 100, "<br/>") + "</html>");
         }
     }
 

@@ -1,26 +1,32 @@
 ATLauncher
 ====================================
 
-[![Build Status](https://build.atlcdn.net/buildStatus/icon?job=ATLauncher)](https://build.atlcdn.net/job/ATLauncher/)
+[![Build Status](https://build.atlcdn.net/buildStatus/icon?job=ATLauncher 3.3.0.0)](https://build.atlcdn.net/job/ATLauncher%203.3.0.0/)
 
 ### What is it?
 
 ATLauncher is a Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install ModPacks easily and quickly.
 
-
 ### Links
-[ATLauncher Website](https://www.atlauncher.com)
 
-[ATLauncher Facebook](http://www.facebook.com/ATLauncher)
-
-[ATLauncher Reddit](http://www.reddit.com/r/ATLauncher)
-
-[ATLauncher Twitter](http://twitter.com/ATLauncher)
-
+* Facebook: https://www.facebook.com/ATLauncher
+* Forums: https://forums.atlauncher.com
+* IRC channel: #ATLauncher on EsperNet
+* Reddit: http://www.reddit.com/r/ATLauncher
+* Twitter: https://twitter.com/ATLauncher
+* Website: https://www.atlauncher.com
 
 ### Coding Standards & Styling Guidelines
 
-Please see the STYLE.md file for coding standards and style guidelines.
+Please see the [STYLE.md](STYLE.md) file for coding standards and style guidelines.
+
+### Contributing to ATLauncher
+
+If you wish to contribute to ATLauncher in any way, take a look at [CONTRIBUTING.md](CONTRIBUTING.md)
+
+### Testing
+
+Please see the [TESTING.md](TESTING.md) file for information on how we write tests.
 
 ### Building
 
@@ -51,6 +57,8 @@ C:\Program Files (x86)\Launch4j
 To get started with the code and plug in your own data, you need to create a src/main/java/com/atlauncher/data/Constants.java file. Below is a starter to get you going:
 
     package com.atlauncher.data;
+    
+    import com.atlauncher.data.version.LauncherVersion;
 
     public class Constants {
 

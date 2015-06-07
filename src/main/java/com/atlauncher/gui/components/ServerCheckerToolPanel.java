@@ -17,11 +17,11 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.annot.Subscribe;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -31,16 +31,16 @@ import javax.swing.border.BevelBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
+public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener {
     /**
      * Auto generated serial.
      */
     private static final long serialVersionUID = 1964636496849129267L;
 
-    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.serverchecker"));
+    private final JLabel TITLE_LABEL = new JLabel(LanguageManager.localize("tools.serverchecker"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
-            .INSTANCE.localize("tools.serverchecker.info"), 60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString
+            (LanguageManager.localize("tools.serverchecker.info"), 60, "<br>")));
 
     public ServerCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -49,12 +49,12 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
         setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        SettingsManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
         this.checkLaunchButtonEnabled();
     }
 
     private void checkLaunchButtonEnabled() {
-        LAUNCH_BUTTON.setEnabled(App.settings.enableServerChecker());
+        LAUNCH_BUTTON.setEnabled(SettingsManager.enableServerChecker());
     }
 
     @Override
@@ -64,8 +64,8 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
         }
     }
 
-    @Override
-    public void onSettingsSaved() {
+    @Subscribe
+    public void onSettingsSaved(EventHandler.SettingsChangeEvent e) {
         this.checkLaunchButtonEnabled();
     }
 }

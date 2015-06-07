@@ -17,8 +17,8 @@
  */
 package com.atlauncher.gui.theme;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
 
@@ -31,12 +31,12 @@ public final class Theme {
     /**
      * This is the default theme used by the launcher incase all else fails and it cannot read the theme from disk.
      */
-    public static final Theme DEFAULT_THEME = new Theme(Constants.LAUNCHER_NAME, "RyanTheAllmighty", true, new Color(40, 45, 50)
-            , new Color(255, 255, 255), new Color(0, 0, 0), new Color(0, 136, 204), new Color(100, 100, 200), new
-            Color(80, 170, 107), new Color(50, 55, 60), new Color(50, 55, 60), new Color(30, 35, 40), new Color(255,
-            255, 255), new Color(255, 0, 0), new Color(255, 255, 255), new Color(137, 194, 54), new Color(255, 255,
-            76), new Color(238, 34, 34), new Color(255, 0, 255), "SansSerif", "SansSerif", "Oswald-Regular",
-            "SansSerif");
+    public static final Theme DEFAULT_THEME = new Theme(Constants.LAUNCHER_NAME, "RyanTheAllmighty", true, new Color
+            (40, 45, 50), new Color(255, 255, 255), new Color(0, 0, 0), new Color(0, 136, 204), new Color(100, 100,
+            200), new Color(80, 170, 107), new Color(50, 55, 60), new Color(50, 55, 60), new Color(30, 35, 40), new
+            Color(255, 255, 255), new Color(255, 0, 0), new Color(255, 255, 255), new Color(137, 194, 54), new Color
+            (255, 255, 76), new Color(238, 34, 34), new Color(255, 0, 255), "SansSerif", "SansSerif",
+            "Oswald-Regular", "SansSerif");
 
     /**
      * This is the name of the theme.
@@ -156,6 +156,7 @@ public final class Theme {
 
     /**
      * This is the constructor which takes in all the values for a theme. Used in creating the default theme.
+     *
      * @param name the name of the theme
      * @param author the author of the theme
      * @param tabsOnRight if tabs should be displayed on the right of the launcher

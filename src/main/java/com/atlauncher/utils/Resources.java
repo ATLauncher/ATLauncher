@@ -19,17 +19,18 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.exceptions.ChunkyException;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
 
 import javax.swing.text.html.StyleSheet;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,40 +68,34 @@ public final class Resources {
             } else {
                 StyleSheet sheet = new StyleSheet();
 
-                File themeFile = App.settings.getThemeFile();
-
-                if (themeFile != null) {
+                Path theme = SettingsManager.getThemeFile();
+                if (theme != null) {
                     InputStream stream = null;
+                    try (ZipFile zip = new ZipFile(theme.toFile())) {
+                        Enumeration<? extends ZipEntry> entries = zip.entries();
+                        while (entries.hasMoreElements()) {
+                            ZipEntry entry = entries.nextElement();
+                            if (entry.getName().equals("css/" + name + ".css")) {
+                                stream = zip.getInputStream(entry);
+                                break;
+                            }
+                        }
 
-                    ZipFile zipFile = new ZipFile(themeFile);
-                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                    while (entries.hasMoreElements()) {
-                        ZipEntry entry = entries.nextElement();
-                        if (entry.getName().equals("css/" + name + ".css")) {
-                            stream = zipFile.getInputStream(entry);
-                            break;
+                        if (stream != null) {
+                            try (Reader reader = new InputStreamReader(stream)) {
+                                sheet.loadRules(reader, null);
+                                stream.close();
+                                zip.close();
+                                resources.put(name, sheet);
+                            }
                         }
                     }
-
-                    if (stream != null) {
-                        Reader reader = new InputStreamReader(stream);
-                        sheet.loadRules(reader, null);
-                        reader.close();
-
-                        stream.close();
-                        zipFile.close();
-
-                        resources.put(name, sheet);
-                        return sheet;
-                    }
-
-                    zipFile.close();
                 }
 
-                Reader reader = new InputStreamReader(System.class.getResourceAsStream("/assets/css/" + name + ".css"));
-                sheet.loadRules(reader, null);
-                reader.close();
+                try (Reader reader = new InputStreamReader(System.class.getResourceAsStream("/assets/css/" + name + "" +
+                        ".css"))) {
+                    sheet.loadRules(reader, null);
+                }
 
                 resources.put(name, sheet);
                 return sheet;
@@ -128,34 +123,26 @@ public final class Resources {
                 } else {
                     URL url = System.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
-                        File themeFile = App.settings.getThemeFile();
-
-                        if (themeFile != null) {
+                        Path theme = SettingsManager.getThemeFile();
+                        if (theme != null) {
                             InputStream stream = null;
+                            try (ZipFile zip = new ZipFile(theme.toFile())) {
+                                Enumeration<? extends ZipEntry> entries = zip.entries();
+                                while (entries.hasMoreElements()) {
+                                    ZipEntry entry = entries.nextElement();
+                                    if (entry.getName().equals("font/" + name + ".ttf")) {
+                                        stream = zip.getInputStream(entry);
+                                        break;
+                                    }
+                                }
 
-                            ZipFile zipFile = new ZipFile(themeFile);
-                            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                            while (entries.hasMoreElements()) {
-                                ZipEntry entry = entries.nextElement();
-                                if (entry.getName().equals("font/" + name + ".ttf")) {
-                                    stream = zipFile.getInputStream(entry);
-                                    break;
+                                if (stream != null) {
+                                    Font f = Font.createFont(Font.TRUETYPE_FONT, stream);
+                                    resources.put(name, f);
+                                    stream.close();
+                                    return f;
                                 }
                             }
-
-                            if (stream != null) {
-                                Font f = Font.createFont(Font.TRUETYPE_FONT, stream);
-                                resources.put(name, f);
-
-                                stream.close();
-                                zipFile.close();
-
-                                resources.put(name, f);
-                                return f;
-                            }
-
-                            zipFile.close();
                         }
 
                         LogManager.error("Cannot find font " + name);
@@ -168,7 +155,7 @@ public final class Resources {
                 }
             }
         } catch (Exception ex) {
-            App.settings.logStackTrace("Cannot find font " + name, ex);
+            LogManager.logStackTrace("Cannot find font " + name, ex);
             return new Font("Sans-Serif", Font.PLAIN, 0);
         }
     }

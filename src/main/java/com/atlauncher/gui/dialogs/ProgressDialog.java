@@ -18,8 +18,8 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.data.Language;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JDialog;
@@ -42,7 +42,7 @@ public class ProgressDialog extends JDialog {
     private int tasksDone;
 
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.frame, ModalityType.APPLICATION_MODAL);
         this.labelText = initLabelText;
         this.max = initMax;
         this.closedLogMessage = initClosedLogMessage;
@@ -50,7 +50,7 @@ public class ProgressDialog extends JDialog {
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setSize(300, 80);
         setTitle(title);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.frame);
         setLayout(new BorderLayout());
         setResizable(false);
         progressBar = new JProgressBar();
@@ -90,13 +90,13 @@ public class ProgressDialog extends JDialog {
     public void setTotalTasksToDo(int tasksToDo) {
         this.tasksToDo = tasksToDo;
         this.tasksDone = 0;
-        this.progressBar.setString("0/" + this.tasksToDo + " " + Language.INSTANCE.localize("common.tasksdone"));
+        this.progressBar.setString("0/" + this.tasksToDo + " " + LanguageManager.localize("common.tasksdone"));
         this.progressBar.setStringPainted(true);
         this.progressBar.setMaximum(this.tasksToDo);
     }
 
     public void doneTask() {
-        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " " + Language.INSTANCE.localize("common" + "" +
+        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " " + LanguageManager.localize("common" + "" +
                 ".tasksdone"));
         this.progressBar.setValue(this.tasksDone);
     }

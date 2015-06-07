@@ -18,9 +18,9 @@
 
 package com.atlauncher.gui.components;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.SettingsManager;
 
 import javax.swing.JPanel;
 import java.awt.Color;
@@ -45,22 +45,22 @@ public final class PackImagePanel extends JPanel {
         int y = (this.getHeight() - 150) / 2;
         g2.drawImage(this.image, 0, y, 300, 150, null);
 
-        if (App.settings.enabledPackTags()) {
+        if (SettingsManager.enabledPackTags()) {
             String text;
             Color colour;
 
             if (this.pack.getVersionCount() == 0) {
-                text = Language.INSTANCE.localize("pack.dev");
+                text = LanguageManager.localize("pack.dev");
                 colour = Color.lightGray;
             } else {
                 if (this.pack.isPrivate()) {
-                    text = Language.INSTANCE.localize("pack.private");
+                    text = LanguageManager.localize("pack.private");
                     colour = Color.red;
                 } else if (this.pack.isPublic()) {
-                    text = Language.INSTANCE.localize("pack.public");
+                    text = LanguageManager.localize("pack.public");
                     colour = Color.green;
                 } else {
-                    text = Language.INSTANCE.localize("pack.semipublic");
+                    text = LanguageManager.localize("pack.semipublic");
                     colour = Color.cyan;
                 }
             }

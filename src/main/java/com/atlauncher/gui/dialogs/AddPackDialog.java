@@ -17,8 +17,8 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -48,7 +48,7 @@ public class AddPackDialog extends JDialog {
     private JButton saveButton;
 
     public AddPackDialog() {
-        super(null, Language.INSTANCE.localize("pack.addpack"), ModalityType.APPLICATION_MODAL);
+        super(null, LanguageManager.localize("pack.addpack"), ModalityType.APPLICATION_MODAL);
         setSize(350, 150);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -58,7 +58,7 @@ public class AddPackDialog extends JDialog {
 
         // Top Panel Stuff
         top = new JPanel();
-        top.add(new JLabel(Language.INSTANCE.localize("pack.addpack")));
+        top.add(new JLabel(LanguageManager.localize("pack.addpack")));
 
         // Middle Panel Stuff
         middle = new JPanel();
@@ -68,7 +68,7 @@ public class AddPackDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        packCodeLabel = new JLabel(Language.INSTANCE.localize("pack.packcode") + ": ");
+        packCodeLabel = new JLabel(LanguageManager.localize("pack.packcode") + ": ");
         middle.add(packCodeLabel, gbc);
 
         gbc.gridx++;
@@ -79,24 +79,24 @@ public class AddPackDialog extends JDialog {
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
-        saveButton = new JButton(Language.INSTANCE.localize("common.save"));
+        saveButton = new JButton(LanguageManager.localize("common.save"));
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (App.settings.semiPublicPackExistsFromCode(packCode.getText())) {
-                    if (App.settings.addPack(packCode.getText())) {
-                        JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                        ".packaddedmessage"), Language.INSTANCE.localize("pack.packadded"),
+                if (PackManager.semiPublicPackExistsFromCode(packCode.getText())) {
+                    if (PackManager.addSemiPublicPack(packCode.getText())) {
+                        JOptionPane.showMessageDialog(AddPackDialog.this, LanguageManager.localize("pack" + "" +
+                                        ".packaddedmessage"), LanguageManager.localize("pack.packadded"),
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                        ".packalreadyaddedmessage"), Language.INSTANCE.localize("pack" +
-                                ".packalreadyadded"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(AddPackDialog.this, LanguageManager.localize("pack" + "" +
+                                ".packalreadyaddedmessage"), LanguageManager.localize("pack" + ".packalreadyadded")
+                                , JOptionPane.ERROR_MESSAGE);
                     }
                     setVisible(false);
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                    ".packdoesntexist"), Language.INSTANCE.localize("pack.packaddederror"),
+                    JOptionPane.showMessageDialog(AddPackDialog.this, LanguageManager.localize("pack" + "" +
+                                    ".packdoesntexist"), LanguageManager.localize("pack.packaddederror"),
                             JOptionPane.ERROR_MESSAGE);
                 }
             }

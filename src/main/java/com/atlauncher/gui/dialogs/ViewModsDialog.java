@@ -18,10 +18,10 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.data.Mod;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.card.ModCard;
+import com.atlauncher.managers.LanguageManager;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -49,7 +49,7 @@ public final class ViewModsDialog extends JDialog {
     private final List<ModCard> cards = new LinkedList<ModCard>();
 
     public ViewModsDialog(Pack pack) {
-        super(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("pack.mods", pack.getName()),
+        super(App.frame, LanguageManager.localizeWithReplace("pack.mods", pack.getName()),
                 ModalityType.APPLICATION_MODAL);
         this.pack = pack;
 
@@ -57,7 +57,7 @@ public final class ViewModsDialog extends JDialog {
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        this.topPanel.add(new JLabel(Language.INSTANCE.localize("common.search") + ": "));
+        this.topPanel.add(new JLabel(LanguageManager.localize("common.search") + ": "));
         this.topPanel.add(this.searchField);
 
         this.add(this.topPanel, BorderLayout.NORTH);
@@ -81,11 +81,11 @@ public final class ViewModsDialog extends JDialog {
             }
         });
 
-        List<Mod> mods = this.pack.getMods(this.pack.getLatestVersion().getVersion(), false);
+        List<Mod> mods = this.pack.getJsonVersion(this.pack.getLatestVersion().getVersion()).getMods();
         Collections.sort(mods, new Comparator<Mod>() {
             @Override
             public int compare(Mod o1, Mod o2) {
-                return o1.getName().compareToIgnoreCase(o2.getName());
+                return o1.name.compareToIgnoreCase(o2.name);
             }
         });
 
@@ -97,7 +97,7 @@ public final class ViewModsDialog extends JDialog {
         }
 
         this.pack();
-        this.setLocationRelativeTo(App.settings.getParent());
+        this.setLocationRelativeTo(App.frame);
     }
 
     private void reload() {
@@ -114,7 +114,7 @@ public final class ViewModsDialog extends JDialog {
 
             if (!this.searchField.getText().isEmpty()) {
                 if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE).matcher
-                        (card.mod.getName()).find()) {
+                        (card.mod.name).find()) {
 
                     show = false;
                 }

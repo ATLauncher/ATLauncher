@@ -19,18 +19,26 @@
 package com.atlauncher;
 
 import com.atlauncher.adapter.ColorTypeAdapter;
+import com.atlauncher.adapter.HashCodeAdapter;
+import com.atlauncher.data.Server;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
+import com.atlauncher.utils.Hashing;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 
 import java.awt.Color;
 import java.io.File;
+import java.net.Proxy;
 import java.util.Date;
 
 public final class Gsons {
-    public static final Gson DEFAULT = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson DEFAULT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
+            .registerTypeAdapter(Hashing.HashCode.class, new HashCodeAdapter()).setPrettyPrinting().create();
 
     public static final Gson THEMES = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new
             ColorTypeAdapter()).create();
@@ -38,4 +46,6 @@ public final class Gsons {
     public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
             .registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File.class, new
                     FileTypeAdapter()).create();
+
+    public static final JsonParser PARSER = new JsonParser();
 }

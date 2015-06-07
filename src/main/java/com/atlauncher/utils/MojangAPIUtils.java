@@ -17,7 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.Gsons;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.mojang.api.NameHistory;
 import com.atlauncher.data.mojang.api.ProfileResponse;
@@ -39,50 +38,56 @@ public class MojangAPIUtils {
         Downloadable downloadable = new Downloadable("https://api.mojang.com/users/profiles/minecraft/" + username,
                 false);
 
-        ProfileResponse profile = Gsons.DEFAULT.fromJson(downloadable.getContents(), ProfileResponse.class);
-
-        return profile.getId();
+        try {
+            ProfileResponse profile = downloadable.fromJson(ProfileResponse.class);
+            return profile.getId();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String getCurrentUsername(String uuid) {
-        Downloadable downloadable = new Downloadable("https://api.mojang.com/user/profiles/" + uuid + "/names",
-                false);
+        Downloadable downloadable = new Downloadable("https://api.mojang.com/user/profiles/" + uuid + "/names", false);
 
         java.lang.reflect.Type type = new TypeToken<List<NameHistory>>() {
         }.getType();
 
-        List<NameHistory> history = Gsons.DEFAULT.fromJson(downloadable.getContents(), type);
+        try {
+            List<NameHistory> history = downloadable.fromJson(type);
 
-        // Mojang API is down??
-        if (history == null) {
+            // Mojang API is down??
+            if (history == null) {
+                return null;
+            }
+
+            // If there is only 1 entry that means they haven't done a name change
+            if (history.size() == 1) {
+                return history.get(0).getName();
+            }
+
+            // The username of the latest name
+            String username = null;
+
+            // The time that the latest name change occurred
+            long time = 0;
+
+            for (NameHistory name : history) {
+                if (!name.isAUsernameChange()) {
+                    username = name.getName();
+                } else if (time < name.getChangedToAt()) {
+                    time = name.getChangedToAt();
+                    username = name.getName();
+                }
+            }
+
+            // Just in case, this should never happen, but better to be safe I guess
+            if (username == null) {
+                return history.get(0).getName();
+            }
+
+            return username;
+        } catch (Exception e) {
             return null;
         }
-
-        // If there is only 1 entry that means they haven't done a name change
-        if (history.size() == 1) {
-            return history.get(0).getName();
-        }
-
-        // The username of the latest name
-        String username = null;
-
-        // The time that the latest name change occurred
-        long time = 0;
-
-        for (NameHistory name : history) {
-            if (!name.isAUsernameChange()) {
-                username = name.getName();
-            } else if (time < name.getChangedToAt()) {
-                time = name.getChangedToAt();
-                username = name.getName();
-            }
-        }
-
-        // Just in case, this should never happen, but better to be safe I guess
-        if (username == null) {
-            return history.get(0).getName();
-        }
-
-        return username;
     }
 }

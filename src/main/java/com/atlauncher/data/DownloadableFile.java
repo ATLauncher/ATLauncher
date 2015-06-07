@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class DownloadableFile {
     private String name;
@@ -41,11 +41,13 @@ public class DownloadableFile {
     }
 
     public Downloadable getDownloadable() {
-        File file = new File(new File(App.settings.getConfigsDir(), this.folder), this.name);
+        Path path = FileSystem.CONFIGS.resolve(this.folder).resolve(this.name);
+
         if (this.folder.equalsIgnoreCase("Skins")) {
-            file = new File(App.settings.getSkinsDir(), this.name);
+            path = FileSystem.SKINS.resolve(this.name);
         }
-        return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name, file, this.sha1, this
-                .size, null, true);
+
+        return new Downloadable("launcher/" + this.folder.toLowerCase() + "/" + this.name, this.getSHA1(), path,
+                null, null, this.size, true, false, null);
     }
 }

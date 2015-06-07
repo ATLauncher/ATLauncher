@@ -17,11 +17,11 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.annot.Subscribe;
+import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JCheckBox;
@@ -34,7 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class LoggingSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
+public class LoggingSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover forgeLoggingLevelLabel;
     private JComboBox<String> forgeLoggingLevel;
 
@@ -52,14 +52,14 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JCheckBox enableOpenEyeReporting;
 
     public LoggingSettingsTab() {
-        RelocalizationManager.addListener(this);
+        EventHandler.EVENT_BUS.subscribe(this);
         // Forge Logging Level
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        forgeLoggingLevelLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.forgelogginglevel") + ":",
-                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.forgelogginglevelhelp",
+        forgeLoggingLevelLabel = new JLabelWithHover(LanguageManager.localize("settings.forgelogginglevel") + ":",
+                HELP_ICON, "<html>" + LanguageManager.localizeWithReplace("settings.forgelogginglevelhelp",
                 "<br/><br/>") + "</html>");
         add(forgeLoggingLevelLabel, gbc);
 
@@ -74,7 +74,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         forgeLoggingLevel.addItem("FINE");
         forgeLoggingLevel.addItem("FINER");
         forgeLoggingLevel.addItem("FINEST");
-        forgeLoggingLevel.setSelectedItem(App.settings.getForgeLoggingLevel());
+        forgeLoggingLevel.setSelectedItem(SettingsManager.getForgeLoggingLevel());
         add(forgeLoggingLevel, gbc);
 
         // Days of logs to keep
@@ -83,17 +83,17 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        daysOfLogsToKeepLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.daysoflogstokeep") + ":",
-                HELP_ICON, Language.INSTANCE.localize("settings.daysoflogstokeephelp"));
+        daysOfLogsToKeepLabel = new JLabelWithHover(LanguageManager.localize("settings.daysoflogstokeep") + ":",
+                HELP_ICON, LanguageManager.localize("settings.daysoflogstokeephelp"));
         add(daysOfLogsToKeepLabel, gbc);
 
-        daysOfLogsToKeepModel = new SpinnerNumberModel(App.settings.getDaysOfLogsToKeep(), 1, 30, 1);
+        daysOfLogsToKeepModel = new SpinnerNumberModel(SettingsManager.getDaysOfLogsToKeep(), 1, 30, 1);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         daysOfLogsToKeep = new JSpinner(daysOfLogsToKeepModel);
-        daysOfLogsToKeep.setValue(App.settings.getDaysOfLogsToKeep());
+        daysOfLogsToKeep.setValue(SettingsManager.getDaysOfLogsToKeep());
         add(daysOfLogsToKeep, gbc);
 
         // Enable Leaderboards
@@ -102,18 +102,18 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLeaderboardsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.leaderboards") + "?",
-                HELP_ICON, Language.INSTANCE.localize("settings.leaderboardshelp"));
+        enableLeaderboardsLabel = new JLabelWithHover(LanguageManager.localize("settings.leaderboards") + "?",
+                HELP_ICON, LanguageManager.localize("settings.leaderboardshelp"));
         add(enableLeaderboardsLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLeaderboards = new JCheckBox();
-        if (App.settings.enableLeaderboards()) {
+        if (SettingsManager.enableLeaderboards()) {
             enableLeaderboards.setSelected(true);
         }
-        if (!App.settings.enableLogs()) {
+        if (!SettingsManager.enableLogs()) {
             enableLeaderboards.setEnabled(false);
         }
         add(enableLeaderboards, gbc);
@@ -124,8 +124,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLoggingLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.logging") + "?", HELP_ICON,
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.logginghelp", "<br/>" + "</html>"));
+        enableLoggingLabel = new JLabelWithHover(LanguageManager.localize("settings.logging") + "?", HELP_ICON,
+                "<html>" + LanguageManager.localizeWithReplace("settings.logginghelp", "<br/>" + "</html>"));
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
@@ -147,7 +147,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
                 }
             }
         });
-        if (App.settings.enableLogs()) {
+        if (SettingsManager.enableLogs()) {
             enableLogs.setSelected(true);
         }
         add(enableLogs, gbc);
@@ -158,8 +158,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableOpenEyeReportingLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.openeye") + "?",
-                HELP_ICON, "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings" + "" +
+        enableOpenEyeReportingLabel = new JLabelWithHover(LanguageManager.localize("settings.openeye") + "?",
+                HELP_ICON, "<html>" + Utils.splitMultilinedString(LanguageManager.localize("settings" + "" +
                 ".openeyehelp"), 80, "<br/>") + "</html>");
         add(enableOpenEyeReportingLabel, gbc);
 
@@ -167,46 +167,46 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableOpenEyeReporting = new JCheckBox();
-        if (!App.settings.enableLogs()) {
+        if (!SettingsManager.enableLogs()) {
             enableOpenEyeReporting.setEnabled(false);
         }
-        if (App.settings.enableOpenEyeReporting()) {
+        if (SettingsManager.enableOpenEyeReporting()) {
             enableOpenEyeReporting.setSelected(true);
         }
         add(enableOpenEyeReporting, gbc);
     }
 
     public void save() {
-        App.settings.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
-        App.settings.setDaysOfLogsToKeep((Integer) daysOfLogsToKeep.getValue());
-        App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
-        App.settings.setEnableLogs(enableLogs.isSelected());
-        App.settings.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());
+        SettingsManager.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
+        SettingsManager.setDaysOfLogsToKeep((Integer) daysOfLogsToKeep.getValue());
+        SettingsManager.setEnableLeaderboards(enableLeaderboards.isSelected());
+        SettingsManager.setEnableLogs(enableLogs.isSelected());
+        SettingsManager.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());
     }
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("settings.loggingtab");
+        return LanguageManager.localize("settings.loggingtab");
     }
 
-    @Override
-    public void onRelocalization() {
-        this.forgeLoggingLevelLabel.setText(Language.INSTANCE.localize("settings" + ".forgelogginglevel") + ":");
-        this.forgeLoggingLevelLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
+    @Subscribe
+    public void onRelocalization(EventHandler.RelocalizationEvent e) {
+        this.forgeLoggingLevelLabel.setText(LanguageManager.localize("settings" + ".forgelogginglevel") + ":");
+        this.forgeLoggingLevelLabel.setToolTipText("<html>" + LanguageManager.localizeWithReplace("settings" + "" +
                 ".forgelogginglevelhelp", "<br/><br/>") + "</html>");
 
-        this.daysOfLogsToKeepLabel.setText(Language.INSTANCE.localize("settings.daysoflogstokeep") + "?");
-        this.daysOfLogsToKeepLabel.setToolTipText(Language.INSTANCE.localize("settings.daysoflogstokeephelp"));
+        this.daysOfLogsToKeepLabel.setText(LanguageManager.localize("settings.daysoflogstokeep") + "?");
+        this.daysOfLogsToKeepLabel.setToolTipText(LanguageManager.localize("settings.daysoflogstokeephelp"));
 
-        this.enableLeaderboardsLabel.setText(Language.INSTANCE.localize("settings.leaderboards") + "?");
-        this.enableLeaderboardsLabel.setToolTipText(Language.INSTANCE.localize("settings.leaderboardshelp"));
+        this.enableLeaderboardsLabel.setText(LanguageManager.localize("settings.leaderboards") + "?");
+        this.enableLeaderboardsLabel.setToolTipText(LanguageManager.localize("settings.leaderboardshelp"));
 
-        this.enableLoggingLabel.setText(Language.INSTANCE.localize("settings.logging") + "?");
-        this.enableLoggingLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
+        this.enableLoggingLabel.setText(LanguageManager.localize("settings.logging") + "?");
+        this.enableLoggingLabel.setToolTipText("<html>" + LanguageManager.localizeWithReplace("settings" + "" +
                 ".logginghelp", "<br/>" + "</html>"));
 
-        this.enableOpenEyeReportingLabel.setText(Language.INSTANCE.localize("settings.openeye") + "?");
-        this.enableOpenEyeReportingLabel.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE
+        this.enableOpenEyeReportingLabel.setText(LanguageManager.localize("settings.openeye") + "?");
+        this.enableOpenEyeReportingLabel.setToolTipText("<html>" + Utils.splitMultilinedString(LanguageManager
                 .localize("settings.openeyehelp"), 80, "<br/>") + "</html>");
     }
 }

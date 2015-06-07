@@ -20,10 +20,11 @@ package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.SyncAbstract;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -60,6 +61,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -69,20 +72,20 @@ import java.util.Map;
  */
 public class BackupDialog extends JDialog implements ActionListener {
     private final Instance instance;
-    private final JButton backupButton = new JButton(Language.INSTANCE.localize("common.backup"));
-    private final JButton restoreButton = new JButton(Language.INSTANCE.localize("common.restore"));
-    private final JButton deleteButton = new JButton(Language.INSTANCE.localize("common.delete"));
+    private final JButton backupButton = new JButton(LanguageManager.localize("common.backup"));
+    private final JButton restoreButton = new JButton(LanguageManager.localize("common.restore"));
+    private final JButton deleteButton = new JButton(LanguageManager.localize("common.delete"));
     private JList worldList;
     private JList backupList;
-    private SyncAbstract selectedSync = SyncAbstract.syncList.get(App.settings.getLastSelectedSync());
+    private SyncAbstract selectedSync = SyncAbstract.syncList.get(SettingsManager.getLastSelectedSync());
 
     public BackupDialog(Instance inst) {
-        super(App.settings.getParent(), Language.INSTANCE.localize("backup.dialog.title"));
+        super(App.frame, LanguageManager.localize("backup.dialog.title"));
 
         instance = inst;
 
         setSize(320, 420);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.frame);
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -92,9 +95,9 @@ public class BackupDialog extends JDialog implements ActionListener {
         JPanel restorePanel = createRestorePanel();
         JPanel settingsPanel = createSettingsPanel();
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab(Language.INSTANCE.localize("common.backup"), null, backupPanel);
-        tabbedPane.addTab(Language.INSTANCE.localize("common.restore"), null, restorePanel);
-        tabbedPane.addTab(Language.INSTANCE.localize("tabs.settings"), null, settingsPanel);
+        tabbedPane.addTab(LanguageManager.localize("common.backup"), null, backupPanel);
+        tabbedPane.addTab(LanguageManager.localize("common.restore"), null, restorePanel);
+        tabbedPane.addTab(LanguageManager.localize("tabs.settings"), null, settingsPanel);
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -105,19 +108,18 @@ public class BackupDialog extends JDialog implements ActionListener {
                 } else {
                     backupList.setListData(list.toArray(new String[list.size()]));
                 }
-                list = new ArrayList<String>();
-                if (instance.getSavesDirectory().exists()) {
-                    if (instance.getSavesDirectory().exists()) {
-                        File[] files = instance.getSavesDirectory().listFiles();
-                        if (files != null) {
-                            for (File file : files) {
-                                if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
-                                    list.add(file.getName());
-                                }
+                list = new ArrayList<>();
+                if (Files.exists(instance.getSavesDirectory())) {
+                    File[] files = instance.getSavesDirectory().toFile().listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
+                                list.add(file.getName());
                             }
                         }
                     }
                 }
+
                 if (list.size() == 0) {
                     worldList.setListData(new String[0]);
                 } else {
@@ -131,20 +133,18 @@ public class BackupDialog extends JDialog implements ActionListener {
 
     private JPanel createBackupPanel() {
         List<String> worldData = new ArrayList<String>();
-        if (instance.getSavesDirectory().exists()) {
-            if (instance.getSavesDirectory().exists()) {
-                File[] files = instance.getSavesDirectory().listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
-                            worldData.add(file.getName());
-                        }
+        if (Files.exists(instance.getSavesDirectory())) {
+            File[] files = instance.getSavesDirectory().toFile().listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
+                        worldData.add(file.getName());
                     }
                 }
             }
         }
 
-        worldList = new JList(worldData.toArray(new String[worldData.size()]));
+        worldList = new JList<>(worldData.toArray(new String[worldData.size()]));
         worldList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         worldList.setLayoutOrientation(JList.VERTICAL_WRAP);
         worldList.setVisibleRowCount(-1);
@@ -163,7 +163,7 @@ public class BackupDialog extends JDialog implements ActionListener {
         listScroller.setPreferredSize(new Dimension(230, 300));
         listScroller.setAlignmentX(LEFT_ALIGNMENT);
 
-        JLabel backupLabel = new JLabel(Language.INSTANCE.localize("backup.label.backupchoose"));
+        JLabel backupLabel = new JLabel(LanguageManager.localize("backup.label.backupchoose"));
         backupLabel.setLabelFor(worldList);
         backupLabel.setHorizontalAlignment(SwingConstants.CENTER);
         backupLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -216,7 +216,7 @@ public class BackupDialog extends JDialog implements ActionListener {
         listScroller.setPreferredSize(new Dimension(230, 300));
         listScroller.setAlignmentX(LEFT_ALIGNMENT);
 
-        JLabel restoreLabel = new JLabel(Language.INSTANCE.localize("backup.label.restorechoose"));
+        JLabel restoreLabel = new JLabel(LanguageManager.localize("backup.label.restorechoose"));
         restoreLabel.setLabelFor(backupList);
         restoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
         restoreLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -260,17 +260,18 @@ public class BackupDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (("Backup".equals(e.getActionCommand())) && (worldList.getSelectedValue() != null)) {
             String worldToBackup = (String) worldList.getSelectedValue();
-            String backupName = JOptionPane.showInputDialog(this, Language.INSTANCE.localize("backup.message" + "" +
-                            ".backupname"), Language.INSTANCE.localize("backup.message.backupname.title"),
+            String backupName = JOptionPane.showInputDialog(this, LanguageManager.localize("backup.message" + "" +
+                            ".backupname"), LanguageManager.localize("backup.message.backupname.title"),
                     JOptionPane.QUESTION_MESSAGE);
             if (backupName != null) {
                 for (Map.Entry<String, SyncAbstract> entry : SyncAbstract.syncList.entrySet()) {
-                    File worldData = new File(instance.getSavesDirectory(), worldToBackup);
-                    if (worldData.exists()) {
-                        entry.getValue().backupWorld(backupName, worldData, instance);
+                    Path worldData = instance.getSavesDirectory().resolve(worldToBackup);
+
+                    if (Files.exists(worldData)) {
+                        entry.getValue().backupWorld(backupName, worldData.toFile(), instance);
                     } else {
-                        JOptionPane.showMessageDialog(this, Language.INSTANCE.localize("backup.message" + "" +
-                                ".backupfailed.missingdirectory"), Language.INSTANCE.localize("backup.message" + "" +
+                        JOptionPane.showMessageDialog(this, LanguageManager.localize("backup.message" + "" +
+                                ".backupfailed.missingdirectory"), LanguageManager.localize("backup.message" + "" +
                                 ".backupfailed.title"), JOptionPane.ERROR_MESSAGE);
                     }
                 }
@@ -280,8 +281,8 @@ public class BackupDialog extends JDialog implements ActionListener {
             selectedSync.restoreBackup(backupToRestore, instance);
         } else if (("Delete".equals(e.getActionCommand())) && (backupList.getSelectedValue() != null)) {
             String backupToDelete = (String) backupList.getSelectedValue();
-            if (JOptionPane.showOptionDialog(this, Language.INSTANCE.localizeWithReplace("backup.message" + "" +
-                            ".deleteconfirm", backupToDelete), Language.INSTANCE.localize("backup.message" +
+            if (JOptionPane.showOptionDialog(this, LanguageManager.localizeWithReplace("backup.message" + "" +
+                            ".deleteconfirm", backupToDelete), LanguageManager.localize("backup.message" +
                             ".deleteconfirm" + ".title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE,
                     null, null, null) == JOptionPane.OK_OPTION) {
                 selectedSync.deleteBackup(backupToDelete, instance);
@@ -296,7 +297,7 @@ public class BackupDialog extends JDialog implements ActionListener {
         } else if (e.getSource() instanceof JComboBox) {
             String selection = (String) ((JComboBox) e.getSource()).getSelectedItem();
             selectedSync = SyncAbstract.syncList.get(selection);
-            App.settings.setLastSelectedSync(selection);
+            SettingsManager.setLastSelectedSync(selection);
             List<String> list = selectedSync.getBackupsForInstance(instance);
             backupList.setListData(list.toArray(new String[list.size()]));
         }
@@ -320,7 +321,7 @@ public class BackupDialog extends JDialog implements ActionListener {
             gbc.insets = new Insets(3, 0, 3, 10);
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-            JLabel autoBackupLabel = new JLabel(Language.INSTANCE.localize("backup.label.autobackup") + ":") {
+            JLabel autoBackupLabel = new JLabel(LanguageManager.localize("backup.label.autobackup") + ":") {
                 public JToolTip createToolTip() {
                     JToolTip tip = super.createToolTip();
                     Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
@@ -329,7 +330,7 @@ public class BackupDialog extends JDialog implements ActionListener {
                 }
             };
             autoBackupLabel.setIcon(helpIcon);
-            autoBackupLabel.setToolTipText(Language.INSTANCE.localize("backup.label.autobackup.tooltip"));
+            autoBackupLabel.setToolTipText(LanguageManager.localize("backup.label.autobackup.tooltip"));
             panel.add(autoBackupLabel, gbc);
 
             JCheckBox autoBackup = new JCheckBox() {
@@ -340,17 +341,17 @@ public class BackupDialog extends JDialog implements ActionListener {
                     return tip;
                 }
             };
-            autoBackup.setToolTipText(Language.INSTANCE.localize("backup.label.autobackup.tooltip"));
-            autoBackup.setSelected(App.settings.getAutoBackup());
+            autoBackup.setToolTipText(LanguageManager.localize("backup.label.autobackup.tooltip"));
+            autoBackup.setSelected(SettingsManager.getAutoBackup());
             autoBackup.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
-                    App.settings.setAutoBackup(e.getStateChange() == ItemEvent.SELECTED);
+                    SettingsManager.setAutoBackup(e.getStateChange() == ItemEvent.SELECTED);
                 }
             });
             panel.add(autoBackup, getGBCForField());
 
-            JLabel notifyLabel = new JLabel(Language.INSTANCE.localize("backup.label.notify") + ":") {
+            JLabel notifyLabel = new JLabel(LanguageManager.localize("backup.label.notify") + ":") {
                 public JToolTip createToolTip() {
                     JToolTip tip = super.createToolTip();
                     Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
@@ -359,7 +360,7 @@ public class BackupDialog extends JDialog implements ActionListener {
                 }
             };
             notifyLabel.setIcon(helpIcon);
-            notifyLabel.setToolTipText(Language.INSTANCE.localize("backup.label.notify.tooltip"));
+            notifyLabel.setToolTipText(LanguageManager.localize("backup.label.notify.tooltip"));
             panel.add(notifyLabel, getGBCForLabel());
 
             JCheckBox notify = new JCheckBox() {
@@ -370,12 +371,12 @@ public class BackupDialog extends JDialog implements ActionListener {
                     return tip;
                 }
             };
-            notify.setToolTipText(Language.INSTANCE.localize("backup.label.notify.tooltip"));
-            notify.setSelected(App.settings.getNotifyBackup());
+            notify.setToolTipText(LanguageManager.localize("backup.label.notify.tooltip"));
+            notify.setSelected(SettingsManager.getNotifyBackup());
             notify.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
-                    App.settings.setNotifyBackup(e.getStateChange() == ItemEvent.SELECTED);
+                    SettingsManager.setNotifyBackup(e.getStateChange() == ItemEvent.SELECTED);
                 }
             });
             panel.add(notify, getGBCForField());
