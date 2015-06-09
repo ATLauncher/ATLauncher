@@ -28,6 +28,8 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -626,5 +628,11 @@ public enum OS {
             e.printStackTrace();
         }
         System.exit(0);
+    }
+
+    public static void copyToClipboard(String data) {
+        StringSelection text = new StringSelection(data);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(text, null);
     }
 }

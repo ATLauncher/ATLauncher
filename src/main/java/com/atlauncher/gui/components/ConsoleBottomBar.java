@@ -20,6 +20,7 @@ package com.atlauncher.gui.components;
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.OS;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
@@ -75,9 +76,7 @@ public class ConsoleBottomBar extends BottomBar {
             public void actionPerformed(ActionEvent e) {
                 App.TOASTER.pop("Copied Log to clipboard");
                 LogManager.info("Copied Log to clipboard");
-                StringSelection text = new StringSelection(App.console.getLog());
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(text, null);
+                OS.copyToClipboard(App.console.getLog());
             }
         });
         uploadLogButton.addActionListener(new ActionListener() {
@@ -87,9 +86,7 @@ public class ConsoleBottomBar extends BottomBar {
                     if (result.contains(Constants.PASTE_CHECK_URL)) {
                         App.TOASTER.pop("Log uploaded and link copied to clipboard");
                         LogManager.info("Log uploaded and link copied to clipboard: " + result);
-                        StringSelection text = new StringSelection(result);
-                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        clipboard.setContents(text, null);
+                        OS.copyToClipboard(result);
                     } else {
                         App.TOASTER.popError("Log failed to upload!");
                         LogManager.error("Log failed to upload: " + result);

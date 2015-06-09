@@ -545,9 +545,7 @@ public class InstanceCard extends CollapsiblePanel {
                                 if (shareCode == null) {
                                     App.TOASTER.pop(LanguageManager.localize("instance.nooptionalmods"));
                                 } else {
-                                    StringSelection text = new StringSelection(shareCode);
-                                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                                    clipboard.setContents(text, null);
+                                    OS.copyToClipboard(shareCode);
 
                                     App.TOASTER.pop(LanguageManager.localize("instance.sharecodecopied"));
                                     LogManager.info("Share code generated and copied to clipboard: " + shareCode);

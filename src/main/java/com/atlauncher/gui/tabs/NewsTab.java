@@ -31,8 +31,6 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -114,8 +112,7 @@ public class NewsTab extends JPanel implements Tab {
             this.COPY_ITEM.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    StringSelection text = new StringSelection(NEWS_PANE.getSelectedText());
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, null);
+                    OS.copyToClipboard(NEWS_PANE.getSelectedText());
                 }
             });
         }

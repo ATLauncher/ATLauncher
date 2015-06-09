@@ -20,11 +20,11 @@ package com.atlauncher.gui;
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.OS;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.managers.LanguageManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JFrame;
@@ -33,9 +33,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -90,9 +87,7 @@ public class LauncherConsole extends JFrame {
         copy = new JMenuItem(LanguageManager.localize("common.copy"));
         copy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                StringSelection text = new StringSelection(console.getSelectedText());
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(text, null);
+                OS.copyToClipboard(console.getSelectedText());
             }
         });
         contextMenu.add(copy);
