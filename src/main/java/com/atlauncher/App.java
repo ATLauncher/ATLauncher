@@ -183,10 +183,10 @@ public class App {
         OptionParser parser = new OptionParser();
         parser.accepts("launch").withRequiredArg().ofType(String.class);
         parser.accepts("updated").withRequiredArg().ofType(Boolean.class);
-        parser.accepts("debug").withRequiredArg().ofType(Boolean.class);
+        parser.accepts("debug").withOptionalArg().ofType(Boolean.class);
         parser.accepts("debug-level").withRequiredArg().ofType(Integer.class);
-        parser.accepts("skip-tray-integration").withRequiredArg().ofType(Boolean.class);
-        parser.accepts("force-offline-mode").withRequiredArg().ofType(Boolean.class);
+        parser.accepts("skip-tray-integration").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("force-offline-mode").withOptionalArg().ofType(Boolean.class);
 
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;

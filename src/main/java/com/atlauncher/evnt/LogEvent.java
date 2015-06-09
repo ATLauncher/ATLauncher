@@ -31,6 +31,7 @@ import java.io.IOException;
 public final class LogEvent {
     public static final int CONSOLE = 0xA;
     public static final int FILE = 0xB;
+    public static final int SYSTEM = 0xC;
 
     public final LogType type;
     public final String body;
@@ -56,6 +57,14 @@ public final class LogEvent {
             Console c = App.console.console;
             c.setColor(this.type.color()).setBold(true).write("[" + Timestamper.now() + "] ");
             c.setColor(App.THEME.getConsoleTextColor()).setBold(false).write(this.body);
+        }
+
+        if ((this.meta & SYSTEM) == SYSTEM) {
+            if (this.type == LogType.ERROR) {
+                System.err.print(this);
+            } else {
+                System.out.print(this);
+            }
         }
 
         if ((this.meta & FILE) == FILE) {
