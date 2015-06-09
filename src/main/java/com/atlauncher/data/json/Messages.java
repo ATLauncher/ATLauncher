@@ -19,9 +19,9 @@ package com.atlauncher.data.json;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.Pack;
 import com.atlauncher.managers.LanguageManager;
-import com.atlauncher.utils.Utils;
 
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
@@ -49,13 +49,13 @@ public class Messages {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    Utils.openBrowser(e.getURL());
+                    OS.openWebBrowser(e.getURL());
                 }
             }
         });
         return JOptionPane.showOptionDialog(App.frame, ep, LanguageManager.localize("common" + "" +
-                        ".installing") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
-                .WARNING_MESSAGE, null, options, options[0]);
+                ".installing") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null,
+                options, options[0]);
     }
 
     public String getUpdateMessage() {
@@ -74,12 +74,12 @@ public class Messages {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    Utils.openBrowser(e.getURL());
+                    OS.openWebBrowser(e.getURL());
                 }
             }
         });
         return JOptionPane.showOptionDialog(App.frame, ep, LanguageManager.localize("common" + "" +
-                        ".reinstalling") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
-                .WARNING_MESSAGE, null, options, options[0]);
+                ".reinstalling") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+                null, options, options[0]);
     }
 }

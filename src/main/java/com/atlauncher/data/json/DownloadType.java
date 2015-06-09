@@ -78,7 +78,7 @@ public enum DownloadType {
                 int ret = 1;
                 do {
                     if (ret == 1) {
-                        Utils.openBrowser(mod.getUrl());
+                        OS.openWebBrowser(mod.getUrl());
                     }
                     String[] options = new String[]{LanguageManager.localize("common.openfolder"), LanguageManager
                             .localize("instance.ivedownloaded")};
@@ -99,7 +99,7 @@ public enum DownloadType {
                         installer.cancel(true);
                         return;
                     } else if (ret == 0) {
-                        Utils.openExplorer(FileSystem.USER_DOWNLOADS);
+                        OS.openFileExplorer(FileSystem.USER_DOWNLOADS);
                     }
                 } while (ret != 1);
 

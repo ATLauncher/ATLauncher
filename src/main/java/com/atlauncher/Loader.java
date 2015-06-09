@@ -118,7 +118,7 @@ public class Loader {
                     "is launched.<br/><br/>Sorry for any inconvenience caused!"), "Error", JOptionPane
                     .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, opt, opt[0]);
 
-            Utils.openBrowser("https://atl.pw/oldosxapp");
+            OS.openWebBrowser("https://atl.pw/oldosxapp");
             System.exit(0);
         }
     }

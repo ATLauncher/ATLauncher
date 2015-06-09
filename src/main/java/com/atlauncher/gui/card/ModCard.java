@@ -18,6 +18,7 @@
 
 package com.atlauncher.gui.card;
 
+import com.atlauncher.data.OS;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.utils.Utils;
 
@@ -48,7 +49,7 @@ public final class ModCard extends JPanel {
                 super.mouseClicked(e);
                 if (ModCard.this.mod.hasWebsite()) {
                     try {
-                        Utils.openBrowser(mod.website);
+                        OS.openWebBrowser(mod.website);
                     } catch (Exception e1) {
                         e1.printStackTrace(System.err);
                     }

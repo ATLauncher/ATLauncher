@@ -19,6 +19,7 @@ package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.CollapsiblePanel;
@@ -28,16 +29,13 @@ import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.PackManager;
-import com.atlauncher.utils.Utils;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.border.BevelBorder;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -144,7 +142,7 @@ public class PackCard extends CollapsiblePanel {
                 if (App.settings.isInOfflineMode()) {
                     String[] options = {LanguageManager.localize("common.ok")};
                     JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("pack" + "" +
-                                    ".offlinecreateserver"), LanguageManager.localize("common.offline"), JOptionPane
+                            ".offlinecreateserver"), LanguageManager.localize("common.offline"), JOptionPane
                             .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (AccountManager.getActiveAccount() == null) {
@@ -161,13 +159,13 @@ public class PackCard extends CollapsiblePanel {
         this.supportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser(pack.getSupportURL());
+                OS.openWebBrowser(pack.getSupportURL());
             }
         });
         this.websiteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser(pack.getWebsiteURL());
+                OS.openWebBrowser(pack.getWebsiteURL());
             }
         });
 

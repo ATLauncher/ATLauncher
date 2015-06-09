@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.Status;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.AccountsDropDownRenderer;
@@ -109,7 +110,7 @@ public class LauncherBottomBar extends BottomBar {
 
         openFolder.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        Utils.openExplorer(FileSystem.BASE_DIR);
+                        OS.openFileExplorer(FileSystem.BASE_DIR);
                     }
                 });
 

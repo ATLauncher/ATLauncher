@@ -17,8 +17,8 @@
  */
 package com.atlauncher.gui.components;
 
+import com.atlauncher.data.OS;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -58,31 +58,31 @@ public abstract class BottomBar extends JPanel {
         nodeCraftIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LogManager.info("Opening Up NodeCraft");
-                Utils.openBrowser("https://nodecraft.com/?ref=atl&utm_source=ATL&utm_medium=launcher");
+                OS.openWebBrowser("https://nodecraft.com/?ref=atl&utm_source=ATL&utm_medium=launcher");
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LogManager.info("Opening Up ATLauncher Facebook Page");
-                Utils.openBrowser("http://www.facebook.com/ATLauncher");
+                OS.openWebBrowser("http://www.facebook.com/ATLauncher");
             }
         });
         githubIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LogManager.info("Opening Up ATLauncher GitHub Page");
-                Utils.openBrowser("https://github.com/ATLauncher/ATLauncher");
+                OS.openWebBrowser("https://github.com/ATLauncher/ATLauncher");
             }
         });
         redditIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LogManager.info("Opening Up ATLauncher Reddit Page");
-                Utils.openBrowser("http://www.reddit.com/r/ATLauncher");
+                OS.openWebBrowser("http://www.reddit.com/r/ATLauncher");
             }
         });
         twitterIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LogManager.info("Opening Up ATLauncher Twitter Page");
-                Utils.openBrowser("http://www.twitter.com/ATLauncher");
+                OS.openWebBrowser("http://www.twitter.com/ATLauncher");
             }
         });
     }

@@ -18,6 +18,7 @@
 package com.atlauncher.utils.walker;
 
 import com.atlauncher.App;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
@@ -50,13 +51,13 @@ public final class SendOpenEyeReportsVisitor extends SimpleFileVisitor<Path> {
             if (response.hasNote()) {
                 String[] options = {LanguageManager.localize("common.opencrashreport"), LanguageManager.localize
                         ("common.ok")};
-                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
-                                (LanguageManager.localizeWithReplace("instance.openeyereport1", "<br/><br/>") +
-                                response.getNoteDisplay() + LanguageManager.localize("instance" + "" +
-                                ".openeyereport2")), LanguageManager.localize("instance.aboutyourcrash"),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+                int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
+                        .localizeWithReplace("instance.openeyereport1", "<br/><br/>") +
+                        response.getNoteDisplay() + LanguageManager.localize("instance" + "" +
+                        ".openeyereport2")), LanguageManager.localize("instance.aboutyourcrash"), JOptionPane
+                        .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
                 if (ret == 0) {
-                    Utils.openBrowser(response.getURL());
+                    OS.openWebBrowser(response.getURL());
                 }
             }
         }

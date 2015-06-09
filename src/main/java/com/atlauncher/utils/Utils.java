@@ -263,55 +263,6 @@ public class Utils {
     }
 
     /**
-     * @deprecated user openExplorer(Path)
-     */
-    public static void openExplorer(File file) {
-        Utils.openExplorer(file.toPath());
-    }
-
-    public static void openExplorer(Path path) {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().open(path.toFile());
-            } catch (Exception e) {
-                LogManager.logStackTrace(e);
-            }
-        }
-    }
-
-    /**
-     * Open browser.
-     *
-     * @param URL the url
-     */
-    public static void openBrowser(String URL) {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().browse(new URI(URL));
-            } catch (Exception e) {
-                LogManager.error("Failed to open link " + URL + " in browser!");
-                LogManager.logStackTrace(e);
-            }
-        }
-    }
-
-    /**
-     * Open browser.
-     *
-     * @param URL the url
-     */
-    public static void openBrowser(URL URL) {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().browse(URL.toURI());
-            } catch (Exception e) {
-                LogManager.error("Failed to open link " + URL + " in browser!");
-                LogManager.logStackTrace(e);
-            }
-        }
-    }
-
-    /**
      * Gets the java home.
      *
      * @return the java home

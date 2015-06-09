@@ -18,7 +18,12 @@
 package com.atlauncher.data;
 
 import com.atlauncher.FileSystem;
+import com.atlauncher.managers.LogManager;
 
+import java.awt.Desktop;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,7 +33,7 @@ public enum OS {
 
     public static OS getOS() {
         String osName = System.getProperty("os.name").toLowerCase();
-        
+
         if (osName.contains("win")) {
             return OS.WINDOWS;
         } else if (osName.contains("mac")) {
@@ -72,5 +77,47 @@ public enum OS {
 
     public static boolean isUsingMacApp() {
         return OS.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
+    }
+
+    public static void openWebBrowser(String url) {
+        try {
+            OS.openWebBrowser(new URI(url));
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error opening web browser!", e);
+        }
+    }
+
+    public static void openWebBrowser(URL url) {
+        try {
+            OS.openWebBrowser(url.toURI());
+        } catch (URISyntaxException e) {
+            LogManager.logStackTrace("Error opening web browser!", e);
+        }
+    }
+
+    public static void openWebBrowser(URI uri) {
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(uri);
+            } else if (getOS() == LINUX && (Files.exists(Paths.get("/usr/bin/xdg-open")) || Files.exists(Paths.get
+                    ("/usr/local/bin/xdg-open")))) {
+                Runtime.getRuntime().exec("xdg-open " + uri);
+            }
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error opening web browser!", e);
+        }
+    }
+
+    public static void openFileExplorer(Path path) {
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                Desktop.getDesktop().open(path.toFile());
+            } else if (getOS() == LINUX && (Files.exists(Paths.get("/usr/bin/xdg-open")) || Files.exists(Paths.get
+                    ("/usr/local/bin/xdg-open")))) {
+                Runtime.getRuntime().exec("xdg-open " + path.toString());
+            }
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error opening file explorer!", e);
+        }
     }
 }

@@ -137,13 +137,12 @@ public class OldSettings {
         if (OS.isWindows() && SettingsManager.getJavaPath().contains("x86")) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
-            int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
-                            (LanguageManager.localizeWithReplace("settings.running32bit", "<br/><br/>")),
-                    LanguageManager.localize
-                    ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                    options, options[0]);
+            int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
+                    .localizeWithReplace("settings.running32bit", "<br/><br/>")), LanguageManager.localize("settings" +
+                    ".running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                    options[0]);
             if (ret == 0) {
-                Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
+                OS.openWebBrowser("http://www.atlauncher.com/help/32bit/");
                 System.exit(0);
             }
         }
@@ -203,11 +202,10 @@ public class OldSettings {
             String[] options = {LanguageManager.localize("common.ok"), LanguageManager.localize("account" + "" +
                     ".removepasswords")};
 
-            int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
-                            (LanguageManager.localizeWithReplace("account.securitywarning", "<br/>")),
-                    LanguageManager.localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                            .ERROR_MESSAGE, null,
-                    options, options[0]);
+            int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
+                    .localizeWithReplace("account.securitywarning", "<br/>")), LanguageManager.localize("account" +
+                    ".securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                    options[0]);
 
             if (ret == 1) {
                 for (Account account : AccountManager.getAccounts()) {
@@ -448,7 +446,7 @@ public class OldSettings {
                         .LAUNCHER_NAME + " " +
                                 "file."), "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
                         null, options, options[0]);
-                Utils.openBrowser("http://www.atlauncher.com/downloads/");
+                OS.openWebBrowser("http://www.atlauncher.com/downloads/");
                 System.exit(0);
             }
         } else if (Constants.VERSION.isBeta() && launcherHasBetaUpdate()) {

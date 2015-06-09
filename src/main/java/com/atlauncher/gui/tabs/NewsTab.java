@@ -18,9 +18,9 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.Data;
+import com.atlauncher.data.OS;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.utils.Resources;
-import com.atlauncher.utils.Utils;
 
 import javax.swing.JEditorPane;
 import javax.swing.JMenuItem;
@@ -76,7 +76,7 @@ public class NewsTab extends JPanel implements Tab {
                 @Override
                 public void hyperlinkUpdate(HyperlinkEvent e) {
                     if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                        Utils.openBrowser(e.getURL());
+                        OS.openWebBrowser(e.getURL());
                     }
                 }
             });

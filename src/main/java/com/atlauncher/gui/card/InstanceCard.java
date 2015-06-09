@@ -24,6 +24,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.annot.Subscribe;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.OS;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
@@ -347,7 +348,7 @@ public class InstanceCard extends CollapsiblePanel {
         this.openButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Utils.openExplorer(instance.getRootDirectory());
+                OS.openFileExplorer(instance.getRootDirectory());
             }
         });
         this.cloneButton.addActionListener(new ActionListener() {
