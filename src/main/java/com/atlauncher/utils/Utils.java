@@ -334,7 +334,7 @@ public class Utils {
             byte[] decordedValue = Base64.decode(encryptedData);
             byte[] decValue = c.doFinal(decordedValue);
             decryptedValue = new String(decValue);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return decryptedValue;
     }
@@ -347,30 +347,6 @@ public class Utils {
      */
     private static Key generateKey() throws Exception {
         return new SecretKeySpec(OS.getMACAdressHash().getBytes(), 0, 16, "AES");
-    }
-
-    /**
-     * Gets the open eye pending reports file filter.
-     *
-     * @return the open eye pending reports file filter
-     */
-    public static FilenameFilter getOpenEyePendingReportsFileFilter() {
-        return new FilenameFilter() {
-
-            @Override
-            public boolean accept(File dir, String name) {
-                File file = new File(dir, name);
-                Pattern pattern = Pattern.compile("^pending-crash-[0-9\\-_\\.]+\\.json$");
-                return file.isFile() && pattern.matcher(name).matches();
-            }
-        };
-    }
-
-    /**
-     * @deprecated use sendOpenEyeReport
-     */
-    public static OpenEyeReportResponse sendOpenEyePendingReport(File report) {
-        return Utils.sendOpenEyePendingReport(report.toPath());
     }
 
     /**
