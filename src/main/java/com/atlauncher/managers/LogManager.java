@@ -75,7 +75,7 @@ public final class LogManager {
     }
 
     public static void minecraft(String message) {
-        Object[] value = Utils.prepareMessageForMinecraftLog(message);
+        Object[] value = LogManager.prepareMessageForMinecraftLog(message);
         queue.offer(new LogEvent((LogType) value[0], (String) value[1], 10));
     }
 
@@ -100,5 +100,89 @@ public final class LogManager {
     public static void logStackTrace(String message, Exception exception) {
         LogManager.error(message);
         LogManager.logStackTrace(exception);
+    }
+
+    public static Object[] prepareMessageForMinecraftLog(String text) {
+        LogType type = null; // The log message type
+        String message = null; // The log message
+
+        if (text.contains("[INFO] [STDERR]")) {
+            message = text.substring(text.indexOf("[INFO] [STDERR]"));
+            type = LogType.WARN;
+        } else if (text.contains("[INFO]")) {
+            message = text.substring(text.indexOf("[INFO]"));
+            if (message.contains("CONFLICT")) {
+                type = LogType.ERROR;
+            } else if (message.contains("overwriting existing item")) {
+                type = LogType.WARN;
+            } else {
+                type = LogType.INFO;
+            }
+        } else if (text.contains("[WARNING]")) {
+            message = text.substring(text.indexOf("[WARNING]"));
+            type = LogType.WARN;
+        } else if (text.contains("WARNING:")) {
+            message = text.substring(text.indexOf("WARNING:"));
+            type = LogType.WARN;
+        } else if (text.contains("INFO:")) {
+            message = text.substring(text.indexOf("INFO:"));
+            type = LogType.INFO;
+        } else if (text.contains("Exception")) {
+            message = text;
+            type = LogType.ERROR;
+        } else if (text.contains("[SEVERE]")) {
+            message = text.substring(text.indexOf("[SEVERE]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[Sound Library Loader/ERROR]")) {
+            message = text.substring(text.indexOf("[Sound Library Loader/ERROR]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[Sound Library Loader/WARN]")) {
+            message = text.substring(text.indexOf("[Sound Library Loader/WARN]"));
+            type = LogType.WARN;
+        } else if (text.contains("[Sound Library Loader/INFO]")) {
+            message = text.substring(text.indexOf("[Sound Library Loader/INFO]"));
+            type = LogType.INFO;
+        } else if (text.contains("[MCO Availability Checker #1/ERROR]")) {
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/ERROR]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[MCO Availability Checker #1/WARN]")) {
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/WARN]"));
+            type = LogType.WARN;
+        } else if (text.contains("[MCO Availability Checker #1/INFO]")) {
+            message = text.substring(text.indexOf("[MCO Availability Checker #1/INFO]"));
+            type = LogType.INFO;
+        } else if (text.contains("[Client thread/ERROR]")) {
+            message = text.substring(text.indexOf("[Client thread/ERROR]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[Client thread/WARN]")) {
+            message = text.substring(text.indexOf("[Client thread/WARN]"));
+            type = LogType.WARN;
+        } else if (text.contains("[Client thread/INFO]")) {
+            message = text.substring(text.indexOf("[Client thread/INFO]"));
+            type = LogType.INFO;
+        } else if (text.contains("[Server thread/ERROR]")) {
+            message = text.substring(text.indexOf("[Server thread/ERROR]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[Server thread/WARN]")) {
+            message = text.substring(text.indexOf("[Server thread/WARN]"));
+            type = LogType.WARN;
+        } else if (text.contains("[Server thread/INFO]")) {
+            message = text.substring(text.indexOf("[Server thread/INFO]"));
+            type = LogType.INFO;
+        } else if (text.contains("[main/ERROR]")) {
+            message = text.substring(text.indexOf("[main/ERROR]"));
+            type = LogType.ERROR;
+        } else if (text.contains("[main/WARN]")) {
+            message = text.substring(text.indexOf("[main/WARN]"));
+            type = LogType.WARN;
+        } else if (text.contains("[main/INFO]")) {
+            message = text.substring(text.indexOf("[main/INFO]"));
+            type = LogType.INFO;
+        } else {
+            message = text;
+            type = LogType.INFO;
+        }
+
+        return new Object[]{type, message};
     }
 }

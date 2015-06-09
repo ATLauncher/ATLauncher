@@ -40,6 +40,7 @@ import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.ATLauncherAPI;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.NetworkUtils;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -384,7 +385,7 @@ public class OldSettings {
 
             return pool;
         } catch (Exception e) {
-            String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", dl.toString());
+            String result = NetworkUtils.uploadPaste(Constants.LAUNCHER_NAME + " Error", dl.toString());
             LogManager.logStackTrace("Error loading in file hashes, see error details @ " + result, e);
             return null;
         }

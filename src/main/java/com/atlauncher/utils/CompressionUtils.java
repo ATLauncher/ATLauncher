@@ -107,9 +107,9 @@ public final class CompressionUtils {
         }
     }
 
-    /*
-         * From: http://atl.pw/1
-         */
+    /**
+     * From: https://atl.pw/1
+     */
     public static void unpackFile(Path input, Path output) {
         if (Files.exists(output)) {
             FileUtils.delete(output);

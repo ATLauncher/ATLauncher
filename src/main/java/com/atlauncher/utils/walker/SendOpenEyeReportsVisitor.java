@@ -24,7 +24,7 @@ import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.NetworkUtils;
 
 import javax.swing.JOptionPane;
 import java.io.IOException;
@@ -38,7 +38,7 @@ public final class SendOpenEyeReportsVisitor extends SimpleFileVisitor<Path> {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         LogManager.info("OpenEye: Sending pending crash report located at " + file);
 
-        OpenEyeReportResponse response = Utils.sendOpenEyePendingReport(file);
+        OpenEyeReportResponse response = NetworkUtils.sendOpenEyePendingReport(file);
 
         if (response == null) {
             // Pending report was never sent due to an issue. Won't delete the file in case

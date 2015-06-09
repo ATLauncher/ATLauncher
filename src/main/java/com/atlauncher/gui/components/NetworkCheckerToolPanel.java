@@ -31,6 +31,7 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.NetworkUtils;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
@@ -96,11 +97,11 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                             continue;
                         }
 
-                        results.append("Ping results to " + server.getHost() + " was " + Utils.pingAddress(server
-                                .getHost()) + "\n\n----------------\n\n");
+                        results.append("Ping results to " + server.getHost() + " was " + NetworkUtils.pingAddress
+                                (server.getHost()) + "\n\n----------------\n\n");
                         dialog.doneTask();
 
-                        results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute("www" +
+                        results.append("Tracert to " + server.getHost() + " was " + NetworkUtils.traceRoute("www" +
                                 ".creeperrepo" + ".net"));
                         dialog.doneTask();
                     }
@@ -164,8 +165,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         dialog.doneTask();
                     }
 
-                    String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString
-                            ());
+                    String result = NetworkUtils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results
+                            .toString());
                     if (result.contains(Constants.PASTE_CHECK_URL)) {
                         LogManager.info("Network Test has finished running, you can view the results at " + result);
                     } else {

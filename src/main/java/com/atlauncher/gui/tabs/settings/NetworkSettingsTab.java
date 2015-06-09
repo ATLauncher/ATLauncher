@@ -26,7 +26,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.managers.SettingsManager;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.NetworkUtils;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -244,8 +244,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         dialog.addThread(new Thread() {
             @Override
             public void run() {
-                dialog.setReturnValue(Utils.testProxy(new Proxy(theType, new InetSocketAddress(proxyHost.getText(),
-                        Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", ""))))));
+                dialog.setReturnValue(NetworkUtils.testProxy(new Proxy(theType, new InetSocketAddress(proxyHost
+                        .getText(), Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", ""))))));
                 dialog.close();
             }
         });
