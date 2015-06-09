@@ -59,8 +59,7 @@ public class ModsChooser extends JDialog {
     private boolean wasClosed = false;
 
     public ModsChooser(InstanceInstaller installerr) {
-        super(App.frame, LanguageManager.localize("instance.selectmods"), ModalityType
-                .APPLICATION_MODAL);
+        super(App.frame, LanguageManager.localize("instance.selectmods"), ModalityType.APPLICATION_MODAL);
         this.installer = installerr;
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setLocationRelativeTo(App.frame);
@@ -285,9 +284,8 @@ public class ModsChooser extends JDialog {
                                     int ret = JOptionPane.showOptionDialog(App.frame, "<html>" +
                                                     message + "<br/>" +
                                                     LanguageManager.localize("instance.warningsure") + "</html>",
-                                            LanguageManager.localize("instance.warning"), JOptionPane
-                                                    .DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options,
-                                            options[1]);
+                                            LanguageManager.localize("instance.warning"), JOptionPane.DEFAULT_OPTION,
+                                            JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                                     if (ret != 0) {
                                         finalCheckBox.setSelected(false);
                                     }

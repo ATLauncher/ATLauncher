@@ -18,12 +18,10 @@
 package com.atlauncher.workers;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.backup.BackupMethods;
 import com.atlauncher.collection.DownloadPool;
 import com.atlauncher.collection.ModList;
-import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
@@ -44,17 +42,16 @@ import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.nio.JsonFile;
+import com.atlauncher.utils.ATLauncherAPI;
 import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
-import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.validator.DependencyValidator;
 import com.atlauncher.utils.validator.GroupValidator;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 
 import javax.swing.SwingWorker;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -935,19 +932,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public String getShareCodeData(String code) {
-        String shareCodeData = null;
-
-        try {
-            APIResponse response = Gsons.DEFAULT.fromJson(Utils.sendGetAPICall("pack/" + this.pack.getSafeName() + "/" +
-                    version.getVersion() + "/share-code/" + code), APIResponse.class);
-            if (!response.wasError()) {
-                shareCodeData = response.getDataAsString();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return shareCodeData;
+        return ATLauncherAPI.getShareCode(this.pack, version.getVersion(), code);
     }
 
     public void setInstance(Instance instance) {

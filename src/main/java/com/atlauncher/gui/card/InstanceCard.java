@@ -20,9 +20,7 @@ package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
 import com.atlauncher.annot.Subscribe;
-import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.OS;
 import com.atlauncher.evnt.EventHandler;
@@ -38,10 +36,10 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.SettingsManager;
+import com.atlauncher.utils.ATLauncherAPI;
 import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -210,8 +208,8 @@ public class InstanceCard extends CollapsiblePanel {
                             String[] optionss = {LanguageManager.localize("common.ok")};
                             JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" + "" +
                                     ".cantupdate"), LanguageManager.localize("instance" + "" +
-                                            ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                                    .ERROR_MESSAGE, null, optionss, optionss[0]);
+                                    ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                                    null, optionss, optionss[0]);
                         } else {
                             new InstanceInstallerDialog(instance, true, false, null, null, true);
                         }
@@ -281,8 +279,8 @@ public class InstanceCard extends CollapsiblePanel {
                                 .localizeWithReplace("backup.backingup", instance.getName()), JOptionPane
                                 .YES_NO_OPTION);
                         if (ret == JOptionPane.YES_OPTION) {
-                            final JDialog dialog = new JDialog(App.frame, LanguageManager.localizeWithReplace("backup" +
-                                    ".backingup", instance.getName()), ModalityType.APPLICATION_MODAL);
+                            final JDialog dialog = new JDialog(App.frame, LanguageManager.localizeWithReplace
+                                    ("backup" + ".backingup", instance.getName()), ModalityType.APPLICATION_MODAL);
                             dialog.setSize(300, 100);
                             dialog.setLocationRelativeTo(App.frame);
                             dialog.setResizable(false);
@@ -354,7 +352,7 @@ public class InstanceCard extends CollapsiblePanel {
         this.cloneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String clonedName = JOptionPane.showInputDialog(App.frame, LanguageManager.localize("instance" +
+                String clonedName = JOptionPane.showInputDialog(App.frame, LanguageManager.localize("instance" + "" +
                         ".cloneenter"), LanguageManager.localize("instance" + "" +
                         ".clonetitle"), JOptionPane.INFORMATION_MESSAGE);
                 if (clonedName != null && clonedName.length() >= 1 && InstanceManager.getInstanceByName(clonedName)
@@ -395,7 +393,7 @@ public class InstanceCard extends CollapsiblePanel {
         this.deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(App.frame, LanguageManager.localize("instance" +
+                int response = JOptionPane.showConfirmDialog(App.frame, LanguageManager.localize("instance" + "" +
                         ".deletesure"), LanguageManager.localize("instance" + "" +
                         ".deleteinstance"), JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
@@ -433,10 +431,10 @@ public class InstanceCard extends CollapsiblePanel {
                         if (ret == 0) {
                             if (AccountManager.getActiveAccount() == null) {
                                 String[] optionss = {LanguageManager.localize("common.ok")};
-                                JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" +
-                                        ".cantupdate"), LanguageManager.localize("instance" + "" +
-                                        ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                                        null, optionss, optionss[0]);
+                                JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" + "" +
+                                                ".cantupdate"), LanguageManager.localize("instance" + "" +
+                                                ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                        .ERROR_MESSAGE, null, optionss, optionss[0]);
                             } else {
                                 new InstanceInstallerDialog(instance, true, false, null, null, true);
                             }
@@ -508,13 +506,13 @@ public class InstanceCard extends CollapsiblePanel {
                                 int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph
                                         (LanguageManager.localizeWithReplace("instance" + "" +
                                                 ".updatenow", "<br/><br/>")), LanguageManager.localize("instance" + "" +
-                                        ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                                        null, options, options[0]);
+                                                ".updateavailable"), JOptionPane.DEFAULT_OPTION, JOptionPane
+                                        .ERROR_MESSAGE, null, options, options[0]);
                                 if (ret == 0) {
                                     if (AccountManager.getActiveAccount() == null) {
                                         String[] optionss = {LanguageManager.localize("common.ok")};
                                         JOptionPane.showOptionDialog(App.frame, LanguageManager.localize("instance" +
-                                                ".cantupdate"), LanguageManager.localize("instance" +
+                                                ".cantupdate"), LanguageManager.localize("instance" + "" +
                                                 ".noaccountselected"), JOptionPane.DEFAULT_OPTION, JOptionPane
                                                 .ERROR_MESSAGE, null, optionss, optionss[0]);
                                     } else {
@@ -542,23 +540,17 @@ public class InstanceCard extends CollapsiblePanel {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             if (instance.getInstalledOptionalModNames().size() > 0) {
-                                try {
-                                    APIResponse response = Gsons.DEFAULT.fromJson(Utils.sendAPICall("pack/" +
-                                            instance.getRealPack().getSafeName() + "/" + instance.getVersion() +
-                                            "/share-code", instance.getShareCodeData()), APIResponse.class);
+                                String shareCode = ATLauncherAPI.postShareCode(instance);
 
-                                    if (response.wasError()) {
-                                        App.TOASTER.pop(LanguageManager.localize("instance.nooptionalmods"));
-                                    } else {
-                                        StringSelection text = new StringSelection(response.getDataAsString());
-                                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                                        clipboard.setContents(text, null);
+                                if (shareCode == null) {
+                                    App.TOASTER.pop(LanguageManager.localize("instance.nooptionalmods"));
+                                } else {
+                                    StringSelection text = new StringSelection(shareCode);
+                                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                                    clipboard.setContents(text, null);
 
-                                        App.TOASTER.pop(LanguageManager.localize("instance.sharecodecopied"));
-                                        LogManager.info("Share code copied to clipboard");
-                                    }
-                                } catch (IOException e1) {
-                                    e1.printStackTrace();
+                                    App.TOASTER.pop(LanguageManager.localize("instance.sharecodecopied"));
+                                    LogManager.info("Share code generated and copied to clipboard: " + shareCode);
                                 }
                             } else {
                                 App.TOASTER.pop(LanguageManager.localize("instance.nooptionalmods"));

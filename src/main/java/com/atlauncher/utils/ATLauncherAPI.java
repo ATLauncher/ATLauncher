@@ -19,7 +19,9 @@ package com.atlauncher.utils;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
+import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.OS;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.mojang.OperatingSystem;
@@ -39,17 +41,42 @@ import java.util.Map;
  * Various utility methods for interacting with the ATLauncher API.
  */
 public class ATLauncherAPI {
-    public static boolean sendAPICall(String path, Object data) throws IOException {
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), Gsons.DEFAULT
-                .toJson(data));
-        Request request = new Request.Builder().url(Constants.API_BASE_URL + path).post(body).build();
+    private static boolean sendAPICall(String path, Object data) throws IOException {
+        Request.Builder request = new Request.Builder().url(Constants.API_BASE_URL + path);
 
-        Response response = Network.CLIENT.newCall(request).execute();
+        if (data != null) {
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), Gsons.DEFAULT
+                    .toJson(data));
+
+            request = request.post(body);
+        }
+
+        Response response = Network.CLIENT.newCall(request.build()).execute();
+
         return (response.code() / 200) == 0;
     }
 
+    private static String sendAPICallWithResponse(String path) throws IOException {
+        return sendAPICallWithResponse(path, null);
+    }
+
+    private static String sendAPICallWithResponse(String path, Object data) throws IOException {
+        Request.Builder request = new Request.Builder().url(Constants.API_BASE_URL + path);
+
+        if (data != null) {
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), Gsons.DEFAULT
+                    .toJson(data));
+
+            request = request.post(body);
+        }
+
+        Response response = Network.CLIENT.newCall(request.build()).execute();
+
+        return response.body().string();
+    }
+
     public static boolean postSystemInfo() {
-        Map<String, Object> request = new HashMap<String, Object>();
+        Map<String, Object> request = new HashMap<>();
 
         request.put("launcher_version", Constants.VERSION.toString());
         request.put("os_name", OperatingSystem.getOS().getName());
@@ -67,8 +94,46 @@ public class ATLauncherAPI {
         return false;
     }
 
+    public static String getShareCode(Pack pack, String version, String code) {
+        try {
+            String response = sendAPICallWithResponse("pack/" + pack.getSafeName() + "/" + version + "/share-code/" +
+                    code);
+
+            APIResponse apiResponse = Gsons.DEFAULT.fromJson(response, APIResponse.class);
+
+            if (apiResponse.wasError()) {
+                return null;
+            }
+
+            return apiResponse.getDataAsString();
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return null;
+    }
+
+    public static String postShareCode(Instance instance) {
+        try {
+            String response = sendAPICallWithResponse("pack/" + instance.getRealPack().getSafeName() + "/" + instance
+                    .getVersion() + "/share-code", instance.getShareCodeData());
+
+            APIResponse apiResponse = Gsons.DEFAULT.fromJson(response, APIResponse.class);
+
+            if (apiResponse.wasError()) {
+                return null;
+            }
+
+            return apiResponse.getDataAsString();
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return null;
+    }
+
     public static boolean addPackAction(Pack pack, String version, String action) {
-        Map<String, Object> request = new HashMap<String, Object>();
+        Map<String, Object> request = new HashMap<>();
 
         request.put("username", AccountManager.getActiveAccount().getMinecraftUsername());
         request.put("version", version);
