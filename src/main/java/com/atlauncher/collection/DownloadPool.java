@@ -72,12 +72,22 @@ public final class DownloadPool extends LinkedList<Downloadable> {
     }
 
     public DownloadPool downsize() {
-        DownloadPool pool = new DownloadPool();
+        final DownloadPool pool = new DownloadPool(DownloadPool.this.wait);
 
-        for (Downloadable dl : this) {
-            if (dl.needToDownload()) {
-                pool.add(dl);
-            }
+        ExecutorService executor = Utils.generateDownloadExecutor();
+        for (final Downloadable dl : DownloadPool.this) {
+            executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    if (dl.needToDownload()) {
+                        pool.add(dl);
+                    }
+                }
+            });
+        }
+
+        executor.shutdown();
+        while (!executor.isTerminated()) {
         }
 
         return pool;
