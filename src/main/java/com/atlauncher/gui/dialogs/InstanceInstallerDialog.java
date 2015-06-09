@@ -29,7 +29,6 @@ import com.atlauncher.managers.SettingsManager;
 import com.atlauncher.utils.ATLauncherAPI;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 import javax.swing.JButton;
@@ -425,7 +424,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                         dialog.dispose();
 
-                        Utils.cleanTempDirectory();
+                        FileUtils.cleanTempDirectory();
 
                         JOptionPane.showMessageDialog(App.frame, HTMLUtils.centerParagraph(text),
                                 title, type);

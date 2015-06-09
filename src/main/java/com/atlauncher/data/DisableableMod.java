@@ -21,7 +21,6 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Utils;
 
 import java.awt.Color;
 import java.io.FileInputStream;
@@ -109,7 +108,7 @@ public class DisableableMod implements Serializable {
                 if (this.type == ModType.JAR) {
                     Path inputFile = instance.getMinecraftJar();
                     Path outputTmpFile = FileSystem.TMP.resolve(instance.getSafeName() + "-minecraft.jar");
-                    if (Utils.hasMetaInf(inputFile)) {
+                    if (FileUtils.hasMetaInf(inputFile)) {
                         try {
                             JarInputStream input = new JarInputStream(new FileInputStream(inputFile.toFile()));
                             JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile.toFile()));

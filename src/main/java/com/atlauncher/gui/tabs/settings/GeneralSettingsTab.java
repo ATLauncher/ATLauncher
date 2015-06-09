@@ -25,7 +25,7 @@ import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.SettingsManager;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.FileUtils;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -99,7 +99,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<>();
-        for (String themee : FileSystem.THEMES.toFile().list(Utils.getThemesFileFilter())) {
+        for (String themee : FileSystem.THEMES.toFile().list(FileUtils.getThemesFileFilter())) {
             theme.addItem(themee.replace(".zip", ""));
         }
         theme.setSelectedItem(SettingsManager.getTheme());

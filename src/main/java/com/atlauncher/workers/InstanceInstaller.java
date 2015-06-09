@@ -923,9 +923,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (this.server) {
             File batFile = this.root.resolve("LaunchServer.bat").toFile();
             File shFile = this.root.resolve("LaunchServer.sh").toFile();
-            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.bat").toFile(), batFile, "%%SERVERJAR%%",
-                    getServerJar());
-            Utils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.sh").toFile(), shFile, "%%SERVERJAR%%",
+            FileUtils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.bat").toFile(), batFile,
+                    "%%SERVERJAR%%", getServerJar());
+            FileUtils.replaceText(FileSystem.LIBRARIES.resolve("LaunchServer.sh").toFile(), shFile, "%%SERVERJAR%%",
                     getServerJar());
             batFile.setExecutable(true);
             shFile.setExecutable(true);
