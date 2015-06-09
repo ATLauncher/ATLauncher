@@ -25,7 +25,6 @@ import com.atlauncher.data.OS;
 import com.atlauncher.data.mojang.PropertyMapSerializer;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.SettingsManager;
-import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
@@ -126,7 +125,7 @@ public class MCLauncher {
         arguments.add("-Xms" + SettingsManager.getInitialMemory() + "M");
 
         if (SettingsManager.getMaximumMemory() < instance.getMemory()) {
-            if ((Utils.getMaximumRam() / 2) < instance.getMemory()) {
+            if ((OS.getMaximumRam() / 2) < instance.getMemory()) {
                 arguments.add("-Xmx" + SettingsManager.getMaximumMemory() + "M");
             } else {
                 arguments.add("-Xmx" + instance.getMemory() + "M");
@@ -134,15 +133,15 @@ public class MCLauncher {
         } else {
             arguments.add("-Xmx" + SettingsManager.getMaximumMemory() + "M");
         }
-        if (SettingsManager.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen
+        if (SettingsManager.getPermGen() < instance.getPermGen() && (OS.getMaximumRam() / 8) < instance.getPermGen
                 ()) {
-            if (Utils.isJava8() || Utils.isJava9()) {
+            if (OS.isJava8() || OS.isJava9()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
             }
         } else {
-            if (Utils.isJava8() || Utils.isJava9()) {
+            if (OS.isJava8() || OS.isJava9()) {
                 arguments.add("-XX:MetaspaceSize=" + SettingsManager.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + SettingsManager.getPermGen() + "M");
@@ -231,8 +230,8 @@ public class MCLauncher {
             arguments.add("--assetsDir=" + FileSystem.RESOURCES);
         }
         if (SettingsManager.startMinecraftMaximised()) {
-            arguments.add("--width=" + Utils.getMaximumWindowWidth());
-            arguments.add("--height=" + Utils.getMaximumWindowHeight());
+            arguments.add("--width=" + OS.getMaximumWindowWidth());
+            arguments.add("--height=" + OS.getMaximumWindowHeight());
         } else {
             arguments.add("--width=" + SettingsManager.getWindowWidth());
             arguments.add("--height=" + SettingsManager.getWindowHeight());

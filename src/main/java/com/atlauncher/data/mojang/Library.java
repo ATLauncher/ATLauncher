@@ -18,7 +18,7 @@
 package com.atlauncher.data.mojang;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.data.OS;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -74,6 +74,6 @@ public class Library {
             return "";
         }
 
-        return "-" + this.natives.get(OperatingSystem.getOS()).replace("${arch}", Utils.getArch());
+        return "-" + this.natives.get(OperatingSystem.getOS()).replace("${arch}", OS.getArch());
     }
 }

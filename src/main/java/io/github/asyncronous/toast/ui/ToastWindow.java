@@ -1,6 +1,6 @@
 package io.github.asyncronous.toast.ui;
 
-import com.atlauncher.utils.Utils;
+import com.atlauncher.data.OS;
 import io.github.asyncronous.toast.ToasterConstants;
 import io.github.asyncronous.toast.thread.ToastAnimator;
 
@@ -37,7 +37,7 @@ public final class ToastWindow extends JWindow {
         this.MESSAGE.setMargin(new Insets(2, 2, 2, 2));
         this.MESSAGE.setWrapStyleWord(true);
 
-        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Utils.isJava7OrAbove(false) && GraphicsEnvironment
+        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && OS.isJava7OrAbove(false) && GraphicsEnvironment
                 .getLocalGraphicsEnvironment().getDefaultScreenDevice().isWindowTranslucencySupported
                         (WindowTranslucency.TRANSLUCENT)) {
             this.setOpacity((Float) UIManager.get(ToasterConstants.OPACITY));

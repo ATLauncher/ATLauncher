@@ -297,7 +297,7 @@ public class Loader {
             Properties props = new Properties();
             props.load(new FileInputStream(config.toFile()));
 
-            props.setProperty("java_version", Utils.getJavaVersion());
+            props.setProperty("java_version", OS.getJavaVersion());
             props.setProperty("location", FileSystem.BASE_DIR.toString());
             props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
                     .getPath()).getAbsolutePath());
@@ -334,10 +334,10 @@ public class Loader {
     public void logInformation() {
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
         LogManager.info("Operating System: " + OS.getName());
-        LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
-        LogManager.info("Java Version: " + Utils.getActualJavaVersion());
+        LogManager.info("RAM Available: " + OS.getMaximumRam() + "MB");
+        LogManager.info("Java Version: " + OS.getActualJavaVersion());
         LogManager.info("Java Path: " + SettingsManager.getJavaPath());
-        LogManager.info("64 Bit Java: " + Utils.is64Bit());
+        LogManager.info("64 Bit Java: " + OS.is64Bit());
         LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR.toString());
         LogManager.info("Using Theme: " + App.THEME);
     }

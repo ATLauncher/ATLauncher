@@ -20,6 +20,7 @@ package com.atlauncher.utils;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.managers.AccountManager;
@@ -54,8 +55,8 @@ public class ATLauncherAPI {
         request.put("os_name", OperatingSystem.getOS().getName());
         request.put("os_version", OperatingSystem.getVersion());
         request.put("java_version", System.getProperty("java.version"));
-        request.put("ram", Utils.getSystemRam());
-        request.put("64_bit", Utils.is64Bit());
+        request.put("ram", OS.getSystemRam());
+        request.put("64_bit", OS.is64Bit());
 
         try {
             return sendAPICall("system-info", request);

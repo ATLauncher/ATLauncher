@@ -19,13 +19,11 @@ package com.atlauncher.data;
 
 import com.atlauncher.FileSystemData;
 import com.atlauncher.annot.Json;
-import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Utils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -102,12 +100,12 @@ public class Settings {
         this.language = "English";
         this.forgeLoggingLevel = "INFO";
         this.initialMemory = 256;
-        this.maximumMemory = Utils.getMaximumSafeRam();
-        this.permGen = (Utils.is64Bit() ? 256 : 128);
+        this.maximumMemory = OS.getMaximumSafeRam();
+        this.permGen = (OS.is64Bit() ? 256 : 128);
         this.windowWidth = 854;
         this.windowHeight = 480;
         this.usingCustomJavaPath = false;
-        this.javaPath = Utils.getJavaHome();
+        this.javaPath = OS.getJavaHome();
         this.javaParamaters = "";
         this.maximiseMinecraft = false;
         this.saveCustomMods = true;
@@ -156,11 +154,11 @@ public class Settings {
 
             if (!properties.containsKey("usingcustomjavapath")) {
                 this.usingCustomJavaPath = false;
-                this.javaPath = Utils.getJavaHome();
+                this.javaPath = OS.getJavaHome();
             } else {
                 this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty("usingcustomjavapath", "false"));
                 if (this.usingCustomJavaPath) {
-                    this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+                    this.javaPath = properties.getProperty("javapath", OS.getJavaHome());
                 }
             }
 
@@ -190,9 +188,9 @@ public class Settings {
             this.language = properties.getProperty("language", "English");
 
             this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
-            this.maximumMemory = Integer.parseInt(properties.getProperty("ram", Utils.getSafeMaximumRam() + ""));
+            this.maximumMemory = Integer.parseInt(properties.getProperty("ram", OS.getSafeMaximumRam() + ""));
             this.initialMemory = Integer.parseInt(properties.getProperty("initialmemory", "256"));
-            this.permGen = Integer.parseInt(properties.getProperty("permGen", (Utils.is64Bit() ? "256" : "128")));
+            this.permGen = Integer.parseInt(properties.getProperty("permGen", (OS.is64Bit() ? "256" : "128")));
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
 
@@ -270,13 +268,13 @@ public class Settings {
 
     private void checkJavaPath() {
         if (this.javaPath == null || this.javaPath.isEmpty()) {
-            this.javaPath = Utils.getJavaHome();
+            this.javaPath = OS.getJavaHome();
             this.usingCustomJavaPath = false;
         }
 
-        if (!Utils.isValidJavaPath(this.javaPath)) {
+        if (!OS.isValidJavaPath(this.javaPath)) {
             LogManager.error("Invalid Java path! Resetting to default!");
-            this.javaPath = Utils.getJavaHome();
+            this.javaPath = OS.getJavaHome();
             this.usingCustomJavaPath = false;
         }
 
@@ -303,16 +301,16 @@ public class Settings {
     }
 
     private void checkMemory() {
-        if (this.maximumMemory > Utils.getMaximumRam()) {
-            LogManager.warn("Tried to allocate " + this.maximumMemory + "MB for maximum memory but only " + Utils
+        if (this.maximumMemory > OS.getMaximumRam()) {
+            LogManager.warn("Tried to allocate " + this.maximumMemory + "MB for maximum memory but only " + OS
                     .getMaximumRam() + "MB is available to use!");
 
             // User tried to allocate too much ram, set it back to half, capped at 4GB
-            this.maximumMemory = Utils.getMaximumSafeRam();
+            this.maximumMemory = OS.getMaximumSafeRam();
         }
 
-        if (this.initialMemory > Utils.getMaximumRam()) {
-            LogManager.warn("Tried to allocate " + this.initialMemory + "MB for initial memory but only " + Utils
+        if (this.initialMemory > OS.getMaximumRam()) {
+            LogManager.warn("Tried to allocate " + this.initialMemory + "MB for initial memory but only " + OS
                     .getMaximumRam() + "MB is available to use!");
 
             this.initialMemory = 256; // User tried to allocate too much initial memory, set it back to 256MB
@@ -327,16 +325,16 @@ public class Settings {
     }
 
     private void checkWindowSize() {
-        if (this.windowWidth > Utils.getMaximumWindowWidth()) {
+        if (this.windowWidth > OS.getMaximumWindowWidth()) {
             LogManager.warn("Tried to set window width to " + this.windowWidth + " pixels but the maximum is " +
-                    Utils.getMaximumWindowWidth() + " pixels!");
-            this.windowWidth = Utils.getMaximumWindowWidth(); // User tried to make screen size wider than they have
+                    OS.getMaximumWindowWidth() + " pixels!");
+            this.windowWidth = OS.getMaximumWindowWidth(); // User tried to make screen size wider than they have
         }
 
-        if (this.windowHeight > Utils.getMaximumWindowHeight()) {
+        if (this.windowHeight > OS.getMaximumWindowHeight()) {
             LogManager.warn("Tried to set window height to " + this.windowHeight + " pixels but the maximum is " +
-                    Utils.getMaximumWindowHeight() + " pixels!");
-            this.windowHeight = Utils.getMaximumWindowHeight(); // User tried to make screen size taller than they have
+                    OS.getMaximumWindowHeight() + " pixels!");
+            this.windowHeight = OS.getMaximumWindowHeight(); // User tried to make screen size taller than they have
         }
     }
 

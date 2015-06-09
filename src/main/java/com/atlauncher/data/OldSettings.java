@@ -95,7 +95,7 @@ public class OldSettings {
 
         downloadExternalLibraries();
 
-        if (!Utils.checkAuthLibLoaded()) {
+        if (!OS.checkAuthLibLoaded()) {
             LogManager.error("AuthLib was not loaded into the classpath!");
         }
 
@@ -477,7 +477,7 @@ public class OldSettings {
                                 dl.download();
                             }
                             Path path = lib.getFilePath();
-                            if (lib.shouldAutoLoad() && !Utils.addToClasspath(path)) {
+                            if (lib.shouldAutoLoad() && !OS.addToClasspath(path)) {
                                 LogManager.error("Couldn't add " + path + " to the classpath!");
                                 if (lib.shouldExitOnFail()) {
                                     LogManager.error("Library is necessary so launcher will exit!");

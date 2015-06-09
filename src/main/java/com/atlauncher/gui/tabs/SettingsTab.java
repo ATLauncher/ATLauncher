@@ -19,6 +19,7 @@ package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
+import com.atlauncher.data.OS;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
@@ -27,7 +28,6 @@ import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
 import com.atlauncher.managers.LanguageManager;
 import com.atlauncher.managers.SettingsManager;
-import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -104,7 +104,7 @@ public class SettingsTab extends JPanel implements Tab {
                     }
 
                     if (reloadTheme) {
-                        Utils.restartLauncher();
+                        OS.restartLauncher();
                     }
 
                     App.TOASTER.pop("Settings Saved");

@@ -19,6 +19,7 @@ package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Subscribe;
+import com.atlauncher.data.OS;
 import com.atlauncher.evnt.EventHandler;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.LanguageManager;
@@ -43,7 +44,7 @@ import java.io.File;
 
 @SuppressWarnings("serial")
 public class JavaSettingsTab extends AbstractSettingsTab {
-    private final String[] MEMORY_OPTIONS = Utils.getMemoryOptions();
+    private final String[] MEMORY_OPTIONS = OS.getMemoryOptions();
     private JLabelWithHover initialMemoryLabel;
     private JComboBox<String> initialMemory;
     private JLabelWithHover initialMemoryLabelWarning;
@@ -89,7 +90,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
 
         initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (!Utils.is64Bit()) {
+        if (!OS.is64Bit()) {
             initialMemoryPanel.add(initialMemoryLabelWarning);
         }
         initialMemoryPanel.add(initialMemoryLabel);
@@ -140,7 +141,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
 
         maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (!Utils.is64Bit()) {
+        if (!OS.is64Bit()) {
             maximumMemoryPanel.add(maximumMemoryLabelWarning);
         }
         maximumMemoryPanel.add(maximumMemoryLabel);
@@ -208,13 +209,13 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         commonScreenSizes = new JComboBox<String>();
         commonScreenSizes.addItem("Select An Option");
         commonScreenSizes.addItem("854x480");
-        if (Utils.getMaximumWindowWidth() >= 1280 && Utils.getMaximumWindowHeight() >= 720) {
+        if (OS.getMaximumWindowWidth() >= 1280 && OS.getMaximumWindowHeight() >= 720) {
             commonScreenSizes.addItem("1280x720");
         }
-        if (Utils.getMaximumWindowWidth() >= 1600 && Utils.getMaximumWindowHeight() >= 900) {
+        if (OS.getMaximumWindowWidth() >= 1600 && OS.getMaximumWindowHeight() >= 900) {
             commonScreenSizes.addItem("1600x900");
         }
-        if (Utils.getMaximumWindowWidth() >= 1920 && Utils.getMaximumWindowHeight() >= 1080) {
+        if (OS.getMaximumWindowWidth() >= 1920 && OS.getMaximumWindowHeight() >= 1080) {
             commonScreenSizes.addItem("1920x1080");
         }
         commonScreenSizes.addActionListener(new ActionListener() {
@@ -257,7 +258,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaPathResetButton = new JButton(LanguageManager.localize("settings.javapathreset"));
         javaPathResetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                javaPath.setText(Utils.getJavaHome());
+                javaPath.setText(OS.getJavaHome());
             }
         });
         javaPathPanel.add(javaPath);

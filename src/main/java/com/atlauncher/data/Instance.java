@@ -1087,7 +1087,7 @@ public class Instance implements Cloneable {
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
-            if ((SettingsManager.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
+            if ((SettingsManager.getMaximumMemory() < this.memory) && (this.memory <= OS.getSafeMaximumRam())) {
                 String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
                 int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
                         .localizeWithReplace("instance.insufficientram", "<b>" + this.memory + "</b> " +

@@ -20,11 +20,11 @@ package com.atlauncher.managers;
 import com.atlauncher.FileSystem;
 import com.atlauncher.FileSystemData;
 import com.atlauncher.Network;
+import com.atlauncher.data.OS;
 import com.atlauncher.data.Server;
 import com.atlauncher.data.Settings;
 import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.Timestamper;
-import com.atlauncher.utils.Utils;
 
 import java.io.FileNotFoundException;
 import java.net.Proxy;
@@ -143,7 +143,7 @@ public class SettingsManager {
     }
 
     public static void setJavaPath(String javaPath) {
-        SettingsManager.settings.usingCustomJavaPath = !javaPath.equalsIgnoreCase(Utils.getJavaHome());
+        SettingsManager.settings.usingCustomJavaPath = !javaPath.equalsIgnoreCase(OS.getJavaHome());
         SettingsManager.settings.javaPath = javaPath;
     }
 

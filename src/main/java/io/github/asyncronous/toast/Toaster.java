@@ -1,6 +1,6 @@
 package io.github.asyncronous.toast;
 
-import com.atlauncher.utils.Utils;
+import com.atlauncher.data.OS;
 import io.github.asyncronous.toast.ui.ToastWindow;
 
 import javax.imageio.ImageIO;
@@ -54,7 +54,7 @@ public final class Toaster {
         UIManager.put(ToasterConstants.OPAQUE, false);
         UIManager.put(ToasterConstants.OPACITY, 0.5F);
         
-        if (!Utils.isHeadless()) {
+        if (!OS.isHeadless()) {
             UIManager.put("Toaster.contBounds", GraphicsEnvironment.getLocalGraphicsEnvironment()
                     .getMaximumWindowBounds());
         }

@@ -26,7 +26,6 @@ import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.OS;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.SettingsManager;
-import com.atlauncher.utils.Utils;
 
 import java.applet.Applet;
 import java.awt.Dimension;
@@ -125,7 +124,7 @@ public class LegacyMCLauncher {
         arguments.add("-Xms" + SettingsManager.getInitialMemory() + "M");
 
         if (SettingsManager.getMaximumMemory() < instance.getMemory()) {
-            if ((Utils.getMaximumRam() / 2) < instance.getMemory()) {
+            if ((OS.getMaximumRam() / 2) < instance.getMemory()) {
                 arguments.add("-Xmx" + SettingsManager.getMaximumMemory() + "M");
             } else {
                 arguments.add("-Xmx" + instance.getMemory() + "M");
@@ -133,14 +132,14 @@ public class LegacyMCLauncher {
         } else {
             arguments.add("-Xmx" + SettingsManager.getMaximumMemory() + "M");
         }
-        if (SettingsManager.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
-            if (Utils.isJava8()) {
+        if (SettingsManager.getPermGen() < instance.getPermGen() && (OS.getMaximumRam() / 8) < instance.getPermGen()) {
+            if (OS.isJava8()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
             }
         } else {
-            if (Utils.isJava8()) {
+            if (OS.isJava8()) {
                 arguments.add("-XX:MetaspaceSize=" + SettingsManager.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + SettingsManager.getPermGen() + "M");
