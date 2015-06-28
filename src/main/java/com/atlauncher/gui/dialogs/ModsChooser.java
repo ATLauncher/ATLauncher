@@ -460,6 +460,7 @@ public class ModsChooser extends JDialog {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
                             check.setSelected(true);
+                            sortOutMods(check);
                         }
                     }
                 }
