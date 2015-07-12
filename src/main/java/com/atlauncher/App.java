@@ -72,6 +72,15 @@ public class App {
      */
     public static boolean forceOfflineMode = false;
 
+
+    /**
+     * This forces the launcher to not check for a launcher update. It can be enabled with the below command line
+     * argument.
+     * <p/>
+     * --no-launcher-update
+     */
+    public static boolean noLauncherUpdate = false;
+
     /**
      * This sets a pack code to be added to the launcher on startup.
      */
@@ -187,6 +196,7 @@ public class App {
         parser.accepts("debug-level").withRequiredArg().ofType(Integer.class);
         parser.accepts("skip-tray-integration").withOptionalArg().ofType(Boolean.class);
         parser.accepts("force-offline-mode").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("no-launcher-update").withOptionalArg().ofType(Boolean.class);
 
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
@@ -211,6 +221,11 @@ public class App {
         forceOfflineMode = options.has("force-offline-mode");
         if (forceOfflineMode) {
             LogManager.debug("Forcing offline mode!", true);
+        }
+
+        noLauncherUpdate = options.has("no-launcher-update");
+        if (noLauncherUpdate) {
+            LogManager.debug("Not updating the launcher!", true);
         }
     }
 }

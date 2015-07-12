@@ -389,7 +389,6 @@ public class Loader {
     private static final class FileFilter implements java.io.FileFilter {
     	@Override
     	public boolean accept(File pathname) {
-			// TODO Auto-generated method stub
 			return !pathname.isHidden();
 		}
     }

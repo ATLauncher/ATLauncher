@@ -92,7 +92,10 @@ public class OldSettings {
         if (this.hasUpdatedFiles()) {
             this.downloadUpdatedFiles();
         }
-        checkForLauncherUpdate();
+
+        if (!App.noLauncherUpdate) {
+            checkForLauncherUpdate();
+        }
 
         downloadExternalLibraries();
 
@@ -139,8 +142,8 @@ public class OldSettings {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {LanguageManager.localize("common.yes"), LanguageManager.localize("common.no")};
             int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
-                    .localizeWithReplace("settings.running32bit", "<br/><br/>")), LanguageManager.localize("settings" +
-                    ".running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                    .localizeWithReplace("settings.running32bit", "<br/><br/>")), LanguageManager.localize("settings"
+                    + ".running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                     options[0]);
             if (ret == 0) {
                 OS.openWebBrowser("http://www.atlauncher.com/help/32bit/");
@@ -204,9 +207,9 @@ public class OldSettings {
                     ".removepasswords")};
 
             int ret = JOptionPane.showOptionDialog(App.frame, HTMLUtils.centerParagraph(LanguageManager
-                    .localizeWithReplace("account.securitywarning", "<br/>")), LanguageManager.localize("account" +
-                    ".securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                    options[0]);
+                    .localizeWithReplace("account.securitywarning", "<br/>")), LanguageManager.localize("account" + "" +
+                            ".securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                    options, options[0]);
 
             if (ret == 1) {
                 for (Account account : AccountManager.getAccounts()) {
@@ -419,7 +422,9 @@ public class OldSettings {
                 if (hasUpdatedFiles()) {
                     downloadUpdatedFiles();
                 }
-                checkForLauncherUpdate();
+                if (!App.noLauncherUpdate) {
+                    checkForLauncherUpdate();
+                }
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
                 PackManager.loadPacks(); // Load the Packs available in the Launcher
