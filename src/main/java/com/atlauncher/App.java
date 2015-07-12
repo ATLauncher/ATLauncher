@@ -72,7 +72,6 @@ public class App {
      */
     public static boolean forceOfflineMode = false;
 
-
     /**
      * This forces the launcher to not check for a launcher update. It can be enabled with the below command line
      * argument.
@@ -80,6 +79,14 @@ public class App {
      * --no-launcher-update
      */
     public static boolean noLauncherUpdate = false;
+
+    /**
+     * This forces the launcher to remove the Downloads/ and Config/Libraries/ folder on boot. It can be enabled with
+     * the below command line argument.
+     * <p/>
+     * --clear-downloadable-files
+     */
+    public static boolean clearDownloadableFiles = false;
 
     /**
      * This sets a pack code to be added to the launcher on startup.
@@ -197,6 +204,7 @@ public class App {
         parser.accepts("skip-tray-integration").withOptionalArg().ofType(Boolean.class);
         parser.accepts("force-offline-mode").withOptionalArg().ofType(Boolean.class);
         parser.accepts("no-launcher-update").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("clear-downloadable-files").withOptionalArg().ofType(Boolean.class);
 
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
@@ -226,6 +234,11 @@ public class App {
         noLauncherUpdate = options.has("no-launcher-update");
         if (noLauncherUpdate) {
             LogManager.debug("Not updating the launcher!", true);
+        }
+
+        clearDownloadableFiles = options.has("clear-downloadable-files");
+        if (clearDownloadableFiles) {
+            LogManager.debug("Clearing downloadable files!", true);
         }
     }
 }

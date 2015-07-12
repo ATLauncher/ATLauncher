@@ -196,7 +196,7 @@ public class Loader {
         App.console.setVisible(SettingsManager.enableConsole());
         LogManager.start();
     }
-    
+
     public boolean isUsingMacApp() {
         return OS.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
     }
@@ -210,6 +210,11 @@ public class Loader {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
+        if (App.clearDownloadableFiles) {
+            FileUtils.deleteDirectory(FileSystem.DOWNLOADS);
+            FileUtils.deleteDirectory(FileSystem.LIBRARIES);
+        }
+
         try {
             for (Field field : FileSystem.class.getDeclaredFields()) {
                 Path p = (Path) field.get(null);
@@ -377,19 +382,17 @@ public class Loader {
             new SetupDialog();
         }
     }
-   
+
     /**
-     * FileFilter is a local implementation of java.io.FileFilter
-     * in order to get rid of any possible memory leaks
-     * that may occur as a result of using an anonymous class.
-     * 
-     * @author flaw600
+     * FileFilter is a local implementation of java.io.FileFilter in order to get rid of any possible memory leaks that
+     * may occur as a result of using an anonymous class.
      *
+     * @author flaw600
      */
     private static final class FileFilter implements java.io.FileFilter {
-    	@Override
-    	public boolean accept(File pathname) {
-			return !pathname.isHidden();
-		}
+        @Override
+        public boolean accept(File pathname) {
+            return !pathname.isHidden();
+        }
     }
 }
