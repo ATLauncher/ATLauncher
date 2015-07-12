@@ -18,14 +18,9 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
-import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.OS;
-import com.atlauncher.data.openmods.OpenEyeReportResponse;
-import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.managers.ServerManager;
 import com.atlauncher.managers.SettingsManager;
 
 import javax.crypto.BadPaddingException;
@@ -33,29 +28,16 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
 import javax.swing.ImageIcon;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,7 +48,6 @@ import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -134,6 +115,10 @@ public class Utils {
     }
 
     public static Path getCoreGracefully() {
+        if (App.workingDir != null) {
+            return App.workingDir;
+        }
+
         if (OS.isLinux()) {
             try {
                 return Paths.get(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()

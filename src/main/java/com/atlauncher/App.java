@@ -31,6 +31,9 @@ import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -71,6 +74,13 @@ public class App {
      * --force-offline-mode
      */
     public static boolean forceOfflineMode = false;
+
+    /**
+     * This forces the working directory for the launcher. It can be changed with the below command line argument.
+     * <p/>
+     * --working-dir=C:/Games/ATLauncher
+     */
+    public static Path workingDir = null;
 
     /**
      * This forces the launcher to not check for a launcher update. It can be enabled with the below command line
@@ -203,6 +213,7 @@ public class App {
         parser.accepts("debug-level").withRequiredArg().ofType(Integer.class);
         parser.accepts("skip-tray-integration").withOptionalArg().ofType(Boolean.class);
         parser.accepts("force-offline-mode").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("working-dir").withRequiredArg().ofType(String.class);
         parser.accepts("no-launcher-update").withOptionalArg().ofType(Boolean.class);
         parser.accepts("clear-downloadable-files").withOptionalArg().ofType(Boolean.class);
 
@@ -229,6 +240,16 @@ public class App {
         forceOfflineMode = options.has("force-offline-mode");
         if (forceOfflineMode) {
             LogManager.debug("Forcing offline mode!", true);
+        }
+
+        if (options.has("working-dir")) {
+            Path workingDirTemp = Paths.get(String.valueOf(options.valueOf("working-dir")));
+            if (Files.exists(workingDirTemp) && Files.isDirectory(workingDirTemp)) {
+                LogManager.debug("Working directory set to " + workingDirTemp + "!", true);
+                workingDir = workingDirTemp;
+            } else {
+                LogManager.error("Cannot set working directory to " + workingDirTemp + " as it doesn't exist!");
+            }
         }
 
         noLauncherUpdate = options.has("no-launcher-update");
