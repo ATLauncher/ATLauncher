@@ -282,8 +282,8 @@ public class Version {
 
     public void compileColours() {
         for (Mod mod : this.mods) {
-            if (mod.color != null) {
-                mod.setCompiledColor(this.getColour(mod.color));
+            if (mod.colour != null) {
+                mod.setCompiledColour(this.getColour(mod.colour));
             }
         }
     }

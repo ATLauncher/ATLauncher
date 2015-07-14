@@ -50,7 +50,7 @@ public final class Mod {
     public final String group;
     public final String linked;
     public final String filePreference;
-    public final String color;
+    public final String colour;
     public final String fileCheck;
     public final String warning;
     public final String[] depends;
@@ -72,11 +72,11 @@ public final class Mod {
     public final ExtractToType extractTo;
     public final DecompType decompType;
 
-    private Color compiledColor;
+    private Color compiledColour;
 
     public Mod(String name, String version, String url, Hashing.HashCode md5, Hashing.HashCode serverMD5, String
             donation, String website, String description, String file, String serverUrl, String serverFile, String
-            filePrefix, String decompFile, String group, String linked, String filePreference, String color, String
+            filePrefix, String decompFile, String group, String linked, String filePreference, String colour, String
             fileCheck, String warning, String[] depends, String[] authors, boolean client, boolean optional, boolean
             server, boolean recommended, boolean hidden, boolean library, boolean filePattern, Boolean
             serverOptional, int filesize, DownloadType download, DownloadType serverDownload, ModType type, ModType
@@ -97,7 +97,7 @@ public final class Mod {
         this.group = group;
         this.linked = linked;
         this.filePreference = filePreference;
-        this.color = color;
+        this.colour = colour;
         this.fileCheck = fileCheck;
         this.warning = warning;
         this.depends = depends;
@@ -174,7 +174,7 @@ public final class Mod {
 
     public DisableableMod generateDisableableMod(InstanceInstaller installer, String file) {
         return new DisableableMod(this.name, this.version, this.optional, file, this.type, installer.version
-                .getColour(this.color), this.description, false, false);
+                .getColour(this.colour), this.description, false, false);
     }
 
     public Downloadable generateDownloadable(InstanceInstaller installer) {
@@ -304,11 +304,11 @@ public final class Mod {
         return this.name.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    public void setCompiledColor(Color compiledColor) {
-        this.compiledColor = compiledColor;
+    public void setCompiledColour(Color compiledColour) {
+        this.compiledColour = compiledColour;
     }
 
-    public Color getCompiledColor() {
-        return compiledColor;
+    public Color getCompiledColour() {
+        return this.compiledColour;
     }
 }

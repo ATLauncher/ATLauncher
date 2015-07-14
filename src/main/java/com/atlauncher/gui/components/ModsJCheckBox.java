@@ -58,8 +58,8 @@ public class ModsJCheckBox extends JCheckBox {
      */
     public ModsJCheckBox(Mod mod) {
         super(mod.name);
-        if (mod.color != null && mod.getCompiledColor() != null) {
-            setForeground(mod.getCompiledColor());
+        if (mod.colour != null && mod.getCompiledColour() != null) {
+            setForeground(mod.getCompiledColour());
         }
         this.mod = mod;
         if (mod.hasDescription()) {

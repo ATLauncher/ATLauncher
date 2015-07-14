@@ -20,20 +20,16 @@ package com.atlauncher;
 
 import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.adapter.HashCodeAdapter;
-import com.atlauncher.data.Server;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.utils.Hashing;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 
 import java.awt.Color;
 import java.io.File;
-import java.net.Proxy;
 import java.util.Date;
 
 public final class Gsons {
