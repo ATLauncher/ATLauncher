@@ -99,6 +99,14 @@ public class App {
     public static boolean clearDownloadableFiles = false;
 
     /**
+     * This removes writing the launchers location to AppData/Application Support. It can be enabled with the below
+     * command line argument.
+     * <p/>
+     * --skip-integration
+     */
+    public static boolean skipIntegration = false;
+
+    /**
      * This sets a pack code to be added to the launcher on startup.
      */
     public static String packCodeToAdd;
@@ -194,7 +202,9 @@ public class App {
         loader.autoLaunchInstance();
 
         // See write launchers location to disk and check if the launch tool has been used and act upon it
-        loader.integrate();
+        if (!skipIntegration) {
+            loader.integrate();
+        }
 
         // Finished loading, so remove splash screen and other work
         loader.finish();
@@ -216,6 +226,7 @@ public class App {
         parser.accepts("working-dir").withRequiredArg().ofType(String.class);
         parser.accepts("no-launcher-update").withOptionalArg().ofType(Boolean.class);
         parser.accepts("clear-downloadable-files").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("skip-integration").withOptionalArg().ofType(Boolean.class);
 
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
@@ -260,6 +271,11 @@ public class App {
         clearDownloadableFiles = options.has("clear-downloadable-files");
         if (clearDownloadableFiles) {
             LogManager.debug("Clearing downloadable files!", true);
+        }
+
+        skipIntegration = options.has("skip-integration");
+        if (skipIntegration) {
+            LogManager.debug("Skipping integration!", true);
         }
     }
 }
