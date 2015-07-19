@@ -47,6 +47,7 @@ public class Mod {
     private String sha1;
     private String colour;
     private String warning;
+    private boolean force;
     private Color compiledColour;
     private ModType type;
     private ExtractToType extractTo;
@@ -157,6 +158,10 @@ public class Mod {
 
     public String getWarning() {
         return this.warning;
+    }
+
+    public boolean shouldForce() {
+        return this.force;
     }
 
     public Color getCompiledColour() {
@@ -331,16 +336,21 @@ public class Mod {
 
     public void downloadClient(InstanceInstaller installer, int attempt) {
         File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
+
         if (fileLocation.exists()) {
-            if (hasMD5()) {
-                if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
-                    return; // File already exists and matches hash, don't download it
-                } else {
-                    Utils.delete(fileLocation); // File exists but is corrupt, delete it
-                }
+            if (this.shouldForce()) {
+                Utils.delete(fileLocation); // File exists but is corrupt, delete it
             } else {
-                if (fileLocation.length() != 0) {
-                    return; // No MD5, but file is there, can only assume it's fine
+                if (hasMD5()) {
+                    if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
+                        return; // File already exists and matches hash, don't download it
+                    } else {
+                        Utils.delete(fileLocation); // File exists but is corrupt, delete it
+                    }
+                } else {
+                    if (fileLocation.length() != 0) {
+                        return; // No MD5, but file is there, can only assume it's fine
+                    }
                 }
             }
         }
@@ -384,13 +394,13 @@ public class Mod {
                                 .INSTANCE.localize("instance.ivedownloaded")};
                         retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
                                 (Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
+                                ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
                                         (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>" +
-                                        Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
-                                                : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
-                                                .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
-                                                .getUsersDownloadsDir()))), Language.INSTANCE.localize("common.downloading")
+                                Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                        : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
+                                        .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
+                                        .getUsersDownloadsDir()))), Language.INSTANCE.localize("common.downloading")
                                 + " " +
                                 (serverFile == null ? (isFilePattern() ? getName() : getFile()) : (isFilePattern() ?
                                         getName() : getServerFile())), JOptionPane.DEFAULT_OPTION, JOptionPane
@@ -525,12 +535,12 @@ public class Mod {
                 Utils.openBrowser(this.serverUrl);
                 String[] options = new String[]{Language.INSTANCE.localize("instance.ivedownloaded")};
                 int retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
-                                (Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
-                                        "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
-                                                : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App
-                                                .settings.getUsersDownloadsDir())), Language.INSTANCE.localize("common" + "" +
+                        (Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
+                                "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                        : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App
+                                        .settings.getUsersDownloadsDir())), Language.INSTANCE.localize("common" + "" +
                                 ".downloading") + " " + (serverFile == null ? getFile() : getServerFile()),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 if (retValue == JOptionPane.CLOSED_OPTION) {

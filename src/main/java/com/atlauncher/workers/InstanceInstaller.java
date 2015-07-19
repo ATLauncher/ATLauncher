@@ -706,12 +706,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             files = dir.listFiles();
         }
         for (File file : files) {
-            if (file.isFile() && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file
-                    .getName().endsWith("litemod"))) {
+            if (file.isFile() && (file.getName().endsWith("jar") || file.getName().endsWith("zip") || file.getName()
+                    .endsWith("litemod"))) {
                 if (this.jsonVersion.getCaseAllFiles() == CaseType.upper) {
                     file.renameTo(new File(file.getParentFile(), file.getName().substring(0, file.getName()
-                            .lastIndexOf(".")).toUpperCase() + file.getName().substring(file.getName()
-                            .lastIndexOf("."), file.getName().length())));
+                            .lastIndexOf(".")).toUpperCase() + file.getName().substring(file.getName().lastIndexOf("" +
+                            "."), file.getName().length())));
                 } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
                     file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
                 }
@@ -813,6 +813,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 serverLibraries.add(new File(getLibrariesDirectory(), library.getServer()));
             }
             downloadTo = new File(App.settings.getLibrariesDir(), library.getFile());
+
+            if (library.shouldForce() && downloadTo.exists()) {
+                Utils.delete(downloadTo);
+            }
+
             if (library.getDownloadType() == DownloadType.server) {
                 libraries.add(new Downloadable(library.getUrl(), downloadTo, library.getMD5(), library.getFilesize(),
                         this, true));
@@ -946,8 +951,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             if (mod.getType() == ModType.jar) {
                 return true;
-            } else if (mod.getType() == ModType.decomp && mod.getDecompType() == com
-                    .atlauncher.data.json.DecompType.jar) {
+            } else if (mod.getType() == ModType.decomp && mod.getDecompType() == com.atlauncher.data.json.DecompType
+                    .jar) {
                 return true;
             }
         }
