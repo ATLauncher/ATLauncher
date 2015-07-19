@@ -31,6 +31,7 @@ public class Library {
     private int filesize;
     private String depends;
     private String dependsGroup;
+    private boolean force;
 
     public String getUrl() {
         return this.url;
@@ -50,6 +51,10 @@ public class Library {
 
     public int getFilesize() {
         return this.filesize;
+    }
+
+    public boolean shouldForce() {
+        return this.force;
     }
 
     public DownloadType getDownloadType() {

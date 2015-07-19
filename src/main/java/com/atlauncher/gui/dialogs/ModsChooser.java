@@ -55,6 +55,7 @@ public class ModsChooser extends JDialog {
     private JButton clearAllButton;
     private JButton installButton;
     private List<ModsJCheckBox> modCheckboxes;
+    private List<ModsJCheckBox> sortedOut;
 
     private boolean wasClosed = false;
 
@@ -322,7 +323,7 @@ public class ModsChooser extends JDialog {
             checkBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     ModsJCheckBox a = (ModsJCheckBox) e.getSource();
-                    sortOutMods(a);
+                    sortOutMods(a, true);
                 }
             });
             modCheckboxes.add(checkBox);
@@ -432,6 +433,14 @@ public class ModsChooser extends JDialog {
     }
 
     public void sortOutMods(ModsJCheckBox a) {
+        this.sortOutMods(a, false);
+    }
+
+    public void sortOutMods(ModsJCheckBox a, boolean firstGo) {
+        if (firstGo) {
+            sortedOut = new ArrayList<>();
+        }
+
         if (a.isSelected()) {
             List<Mod> linkedMods = modsToChange(a.getMod());
             for (Mod mod : linkedMods) {
@@ -455,7 +464,8 @@ public class ModsChooser extends JDialog {
                 List<Mod> dependsMods = modsDependancies(a.getMod());
                 for (Mod mod : dependsMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
-                        if (check.getMod() == mod) {
+                        if (check.getMod() == mod && !sortedOut.contains(check)) {
+                            sortedOut.add(check);
                             check.setSelected(true);
                             sortOutMods(check);
                         }

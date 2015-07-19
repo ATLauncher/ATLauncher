@@ -284,6 +284,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
 
             Path to = FileSystem.LIBRARIES.resolve(lib.getFile());
+
+            if (lib.shouldForce() && Files.exists(to)) {
+                FileUtils.delete(to);
+            }
+
             if (lib.getDownloadType() == DownloadType.SERVER) {
                 pool.add(new Downloadable(lib.getUrl(), lib.getMD5(), to, lib.getFilesize(), true, this));
             } else if (lib.getDownloadType() == DownloadType.DIRECT) {

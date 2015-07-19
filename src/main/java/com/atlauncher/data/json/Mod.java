@@ -71,6 +71,7 @@ public final class Mod {
     public final ModType serverType;
     public final ExtractToType extractTo;
     public final DecompType decompType;
+    public final boolean force;
 
     private Color compiledColour;
 
@@ -80,7 +81,7 @@ public final class Mod {
             fileCheck, String warning, String[] depends, String[] authors, boolean client, boolean optional, boolean
             server, boolean recommended, boolean hidden, boolean library, boolean filePattern, Boolean
             serverOptional, int filesize, DownloadType download, DownloadType serverDownload, ModType type, ModType
-            serverType, ExtractToType extractTo, DecompType decompType, boolean selected) {
+            serverType, ExtractToType extractTo, DecompType decompType, boolean selected, boolean force) {
         this.name = name;
         this.version = version;
         this.url = url;
@@ -118,6 +119,7 @@ public final class Mod {
         this.extractTo = extractTo;
         this.decompType = decompType;
         this.selected = selected;
+        this.force = force;
     }
 
     public String getUrl() {
@@ -185,21 +187,25 @@ public final class Mod {
     private void downloadClient(InstanceInstaller installer, int attempt) throws Exception {
         Path fileLoc = FileSystem.DOWNLOADS.resolve(this.getFile());
         if (Files.exists(fileLoc)) {
-            if (this.hasMD5()) {
-                if (Hashing.md5(fileLoc).equals(this.md5)) {
-                    return;
-                } else {
-                    FileUtils.delete(fileLoc);
-                }
+            if (this.force) {
+                FileUtils.delete(fileLoc);
             } else {
-                long size = 0;
-                try {
-                    size = Files.size(fileLoc);
-                } catch (Exception e) {
-                    LogManager.logStackTrace("Error getting file size of " + fileLoc, e);
-                }
-                if (size != 0) {
-                    return;
+                if (this.hasMD5()) {
+                    if (Hashing.md5(fileLoc).equals(this.md5)) {
+                        return;
+                    } else {
+                        FileUtils.delete(fileLoc);
+                    }
+                } else {
+                    long size = 0;
+                    try {
+                        size = Files.size(fileLoc);
+                    } catch (Exception e) {
+                        LogManager.logStackTrace("Error getting file size of " + fileLoc, e);
+                    }
+                    if (size != 0) {
+                        return;
+                    }
                 }
             }
         }
@@ -220,14 +226,18 @@ public final class Mod {
     private void downloadServer(InstanceInstaller installer, int attempt) throws Exception {
         Path fileLoc = FileSystem.DOWNLOADS.resolve(this.serverFile);
         if (Files.exists(fileLoc)) {
-            if (this.serverMD5 != null && !this.serverMD5.equals(Hashing.HashCode.EMPTY)) {
-                if (Hashing.md5(fileLoc).equals(this.serverMD5)) {
-                    return;
-                } else {
-                    FileUtils.delete(fileLoc);
-                }
+            if (this.force) {
+                FileUtils.delete(fileLoc);
             } else {
-                return;
+                if (this.serverMD5 != null && !this.serverMD5.equals(Hashing.HashCode.EMPTY)) {
+                    if (Hashing.md5(fileLoc).equals(this.serverMD5)) {
+                        return;
+                    } else {
+                        FileUtils.delete(fileLoc);
+                    }
+                } else {
+                    return;
+                }
             }
         }
 
