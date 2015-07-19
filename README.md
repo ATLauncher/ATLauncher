@@ -48,20 +48,9 @@ C:\Program Files (x86)\Launch4j
 
 ### Plugging In Your Data
 
-To get started with the code and plug in your own data, you need to create a src/main/java/com/atlauncher/data/Constants.java file. Below is a starter to get you going:
+To get started with the code and plug in your own data, you need to edit the src/main/java/com/atlauncher/data/Constants.java file.
 
-    package com.atlauncher.data;
-
-    public class Constants {
-
-    public static final LauncherVersion VERSION = new LauncherVersion(1, 0, 0, 0, 1);
-    public static final String API_BASE_URL = "";
-    public static final String PASTE_CHECK_URL = "";
-    public static final String PASTE_API_URL = "";
-    public static final Server[] SERVERS = new Server[] { new Server("Test", "my.file.server.com", true, true) };
-    public static final String LAUNCHER_NAME = "MyLauncher";
-    
-    }
+By using this source code you don't get permissions to use our CDN/files/assets/modpacks. See the License section at the bottom for more.
 
 See below for explanations as to what each constant means.
 
