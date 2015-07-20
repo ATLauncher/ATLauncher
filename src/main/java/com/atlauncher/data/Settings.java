@@ -293,8 +293,8 @@ public class Settings {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                            .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
-                            ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
+                    ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
@@ -407,8 +407,8 @@ public class Settings {
             String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
                     ".removepasswords")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                            .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
-                            ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
+                    ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 1) {
                 for (Account account : this.accounts) {
@@ -841,11 +841,10 @@ public class Settings {
             } else {
                 String[] options = {"Ok"};
                 JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph("Update failed. " +
-                                "Please click Ok to close " + "the launcher and open up the downloads " +
-                                "page.<br/><br/>Download " + "the update and replace the old " + Constants
-                                .LAUNCHER_NAME + " file."),
-                        "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                        options[0]);
+                        "Please click Ok to close " + "the launcher and open up the downloads " +
+                        "page.<br/><br/>Download " + "the update and replace the old " + Constants.LAUNCHER_NAME + " " +
+                        "file."), "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                        options, options[0]);
                 Utils.openBrowser("http://www.atlauncher.com/downloads/");
                 System.exit(0);
             }
@@ -2656,10 +2655,16 @@ public class Settings {
      */
     public void logStackTrace(Exception exception) {
         exception.printStackTrace();
-        LogManager.error(exception.getMessage());
-        for (StackTraceElement element : exception.getStackTrace()) {
-            if (element.toString() != null) {
-                LogManager.error(element.toString());
+
+        if (exception.getMessage() != null) {
+            LogManager.error(exception.getMessage());
+        }
+
+        if (exception.getStackTrace() != null) {
+            for (StackTraceElement element : exception.getStackTrace()) {
+                if (element != null) {
+                    LogManager.error(element.toString());
+                }
             }
         }
     }
@@ -2667,7 +2672,7 @@ public class Settings {
     /**
      * Logs a stack trace to the console window with a custom message before it
      *
-     * @param message   A message regarding the stack trace to show before it providing more insight
+     * @param message A message regarding the stack trace to show before it providing more insight
      * @param exception The exception to show in the console
      */
     public void logStackTrace(String message, Exception exception) {

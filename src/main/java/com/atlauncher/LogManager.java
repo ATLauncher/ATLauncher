@@ -35,9 +35,6 @@ public final class LogManager {
      */
     public static int debugLevel = 0;
 
-    private LogManager() {
-    }
-
     public static void start() {
         new LoggingThread(queue).start();
     }
