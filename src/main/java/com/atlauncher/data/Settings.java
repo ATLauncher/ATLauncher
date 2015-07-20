@@ -225,7 +225,6 @@ public class Settings {
         }
 
         setupServers(); // Setup the servers available to use in the Launcher
-        findActiveServers(); // Find active servers
         loadServerProperty(false); // Get users Server preference
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
@@ -1594,29 +1593,6 @@ public class Settings {
      */
     private void setupServers() {
         this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
-    }
-
-    private void findActiveServers() {
-        LogManager.debug("Finding servers to use");
-
-        Downloadable download = new Downloadable(this.getMasterFileURL("launcher/json/servers.json"), false);
-
-        String response = download.getContents();
-
-        java.lang.reflect.Type type = new TypeToken<List<Server>>() {
-        }.getType();
-
-        if (response != null) {
-            try {
-                this.servers = Gsons.DEFAULT.fromJson(response, type);
-            } catch (Exception e) {
-                String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", response);
-                logStackTrace("Exception when reading in the servers. See error details at " + result, e);
-                this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
-            }
-        }
-
-        LogManager.debug("Finished finding servers to use");
     }
 
     public boolean disableServerGetNext() {
