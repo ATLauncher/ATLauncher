@@ -61,7 +61,7 @@ public final class LogManager {
     }
 
     public static void debug(String message, int level) {
-        if (showDebug || debugLevel >= level) {
+        if (showDebug && debugLevel >= level) {
             queue.offer(new LogEvent(LogType.DEBUG, message));
         }
     }
