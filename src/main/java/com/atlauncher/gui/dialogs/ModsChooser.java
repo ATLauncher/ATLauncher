@@ -345,7 +345,7 @@ public class ModsChooser extends JDialog {
 
         sortedOut = new ArrayList<ModsJCheckBox>();
         for (ModsJCheckBox cb : this.modCheckboxes) {
-            if (cb.getMod().isOptional() && cb.isSelected()) {
+            if ((installer.isServer() ? cb.getMod().isServerOptional() : cb.getMod().isOptional()) && cb.isSelected()) {
                 sortOutMods(cb);
             }
         }
