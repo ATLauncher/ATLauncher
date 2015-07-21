@@ -21,7 +21,6 @@ package com.atlauncher.managers;
 import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.thread.LoggingThread;
-import com.atlauncher.utils.Utils;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -82,10 +81,14 @@ public final class LogManager {
     public static void logStackTrace(Exception exception) {
         exception.printStackTrace(System.err);
 
-        LogManager.error(exception.getMessage());
+        if (exception.getMessage() != null) {
+            LogManager.error(exception.getMessage());
+        }
 
         for (StackTraceElement element : exception.getStackTrace()) {
-            LogManager.error(element.toString());
+            if (element != null) {
+                LogManager.error(element.toString());
+            }
         }
     }
 

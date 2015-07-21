@@ -339,6 +339,14 @@ public class ModsChooser extends JDialog {
                 checkBoxPanel2.add(checkBox);
             }
         }
+
+        sortedOut = new ArrayList<>();
+        for (ModsJCheckBox cb : this.modCheckboxes) {
+            if ((installer.server ? cb.getMod().isServerOptional() : cb.getMod().optional) && cb.isSelected()) {
+                sortOutMods(cb);
+            }
+        }
+
         checkBoxPanel1.setPreferredSize(new Dimension(0, count1 * 20));
         checkBoxPanel2.setPreferredSize(new Dimension(0, count2 * 20));
 

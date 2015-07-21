@@ -30,7 +30,9 @@ public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler 
         }
 
         for (StackTraceElement element : e.getStackTrace()) {
-            LogManager.error(element.toString());
+            if (element != null) {
+                LogManager.error(element.toString());
+            }
         }
     }
 }
