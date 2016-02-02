@@ -17,23 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.App;
-import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.mojang.ExtractRule;
-import com.atlauncher.data.mojang.OperatingSystem;
-import com.atlauncher.data.openmods.OpenEyeReportResponse;
-import com.atlauncher.evnt.LogEvent.LogType;
-import org.tukaani.xz.XZInputStream;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.spec.SecretKeySpec;
-import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
-import javax.swing.ImageIcon;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -96,6 +79,25 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
+import javax.swing.ImageIcon;
+
+import org.tukaani.xz.XZInputStream;
+
+import com.atlauncher.App;
+import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.mojang.ExtractRule;
+import com.atlauncher.data.mojang.OperatingSystem;
+import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.evnt.LogEvent.LogType;
 
 public class Utils {
     public static String error(Throwable t) {
@@ -395,6 +397,15 @@ public class Utils {
      */
     public static boolean is64Bit() {
         return System.getProperty("sun.arch.data.model").contains("64");
+    }
+    
+    /**
+     * Checks if Windows is 64 bit
+     * 
+     * @return true, if it is 64 bit
+     */
+    public static boolean isWindows64Bit(){
+    	return System.getenv("ProgramFiles(x86)") != null;
     }
 
     /**
