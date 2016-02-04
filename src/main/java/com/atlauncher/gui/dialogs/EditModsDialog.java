@@ -128,11 +128,17 @@ public class EditModsDialog extends JDialog {
         addButton = new JButton(Language.INSTANCE.localize("instance.addmod"));
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                FileChooserDialog fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
-                        .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
-                        .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
-                        "CoreMods Mod", "Texture Pack", "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip",
-                        "litemod"});
+                FileChooserDialog fcd = null;
+                if(Double.valueOf(instance.getMinecraftVersion().substring(0, 3)) < 1.6)
+                	fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
+                            .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
+                            .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
+                            "CoreMods Mod", "Texture Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
+                else
+                	new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
+                            .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
+                            .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
+                            "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
                 ArrayList<File> files = fcd.getChosenFiles();
                 if (files != null && files.size() >= 1) {
                     boolean reload = false;
