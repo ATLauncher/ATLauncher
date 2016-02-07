@@ -17,13 +17,6 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
-import com.atlauncher.FileSystem;
-import com.atlauncher.Update;
-import com.atlauncher.managers.LogManager;
-import com.atlauncher.managers.SettingsManager;
-import com.atlauncher.utils.Hashing;
-
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
@@ -54,6 +47,13 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.atlauncher.App;
+import com.atlauncher.FileSystem;
+import com.atlauncher.Update;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.SettingsManager;
+import com.atlauncher.utils.Hashing;
 
 public enum OS {
     LINUX, WINDOWS, OSX;
@@ -173,6 +173,15 @@ public enum OS {
      */
     public static boolean is64Bit() {
         return System.getProperty("sun.arch.data.model").contains("64");
+    }
+    
+    /**
+     * Checks if Windows is 64 bit
+     * 
+     * @return true, if it is 64 bit
+     */
+    public static boolean isWindows64Bit(){
+    	return System.getenv("ProgramFiles(x86)") != null;
     }
 
     /**
