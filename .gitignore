@@ -6,9 +6,11 @@
 !/src/
 !/macapp/
 !/.gitignore
+!/CONTRIBUTING.md
 !/CHANGELOG.md
 !/Jenkinsfile
 !/LICENSE
 !/pom.xml
 !/README.md
 !/STYLE.md
+!/TESTING.md

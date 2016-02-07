@@ -3,7 +3,6 @@
 [![Build Status](https://build.atlcdn.net/buildStatus/icon?job=ATLauncher)](https://build.atlcdn.net/job/ATLauncher/)
 
 ## What is it?
-
 ATLauncher is a Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install
 ModPacks easily and quickly.
 
@@ -15,6 +14,12 @@ ModPacks easily and quickly.
 
 ## Coding Standards & Styling Guidelines
 Please see the [STYLE.md](STYLE.md) file for coding standards and style guidelines.
+
+## Contributing to ATLauncher
+If you wish to contribute to ATLauncher in any way, take a look at [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Testing
+Please see the [TESTING.md](TESTING.md) file for information on how we write tests.
 
 ## Building
 ### Windows
