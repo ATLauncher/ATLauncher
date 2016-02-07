@@ -4,11 +4,9 @@
 
 # Except These
 !/src/
-!/macapp/
 !/.gitignore
 !/LICENSE
 !/pom.xml
-!/IntelliJ-Coding-Style.jar
 !/README.md
 !/STYLE.md
 !/TESTING.md
