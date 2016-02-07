@@ -6,9 +6,9 @@
 !/src/
 !/macapp/
 !/.gitignore
+!/CHANGELOG.md
+!/Jenkinsfile
 !/LICENSE
 !/pom.xml
-!/IntelliJ-Coding-Style.jar
 !/README.md
 !/STYLE.md
-!/CHANGELOG.md
