@@ -19,6 +19,7 @@ package com.atlauncher.data.version;
 
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.mojang.MojangVersion;
+import com.google.gson.annotations.SerializedName;
 
 @Json
 public class MinecraftVersion {
@@ -27,7 +28,9 @@ public class MinecraftVersion {
     private boolean legacy;
     private boolean coremods;
     private boolean resources;
-    private MojangVersion json;
+
+    @SerializedName("json")
+    private MojangVersion mojangVersion;
 
     public boolean canCreateServer() {
         return this.server;
@@ -38,7 +41,7 @@ public class MinecraftVersion {
     }
 
     public MojangVersion getMojangVersion() {
-        return this.json;
+        return this.mojangVersion;
     }
 
     public boolean isLegacy() {

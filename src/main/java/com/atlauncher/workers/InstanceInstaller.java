@@ -36,7 +36,9 @@ import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.mojang.AssetIndex;
 import com.atlauncher.data.mojang.AssetObject;
+import com.atlauncher.data.mojang.MojangAssetIndex;
 import com.atlauncher.data.mojang.MojangConstants;
+import com.atlauncher.data.mojang.MojangDownloads;
 import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.managers.LanguageManager;
@@ -45,7 +47,6 @@ import com.atlauncher.nio.JsonFile;
 import com.atlauncher.utils.ATLauncherAPI;
 import com.atlauncher.utils.CompressionUtils;
 import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.validator.DependencyValidator;
 import com.atlauncher.utils.validator.GroupValidator;
 import com.atlauncher.utils.walker.CaseFileVisitor;
@@ -92,7 +93,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public final List<String> forgeLibraries = new LinkedList<>();
 
     private final List<Path> serverLibraries = new LinkedList<>();
-
+    public Version version;
+    public ModList allMods;
     protected String jarOrder;
     protected int permgen;
     protected int memory;
@@ -106,8 +108,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     protected String extraArgs;
     protected String librariesNeeded;
     protected Instance instance;
-    public Version version;
-    public ModList allMods;
 
     public InstanceInstaller(String name, Pack pack, PackVersion version, boolean reinstall, String shareCode,
                              boolean server, boolean showModsChooser) {
@@ -142,6 +142,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public Instance getInstance() {
         return this.instance;
+    }
+
+    public void setInstance(Instance instance) {
+        this.instance = instance;
     }
 
     public void addDownloadedBytes(int bytes) {
@@ -331,12 +335,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
+        MojangDownloads downloads = this.packVersion.getMinecraftVersion().getMojangVersion().getDownloads();
+
         if (this.server) {
-            pool.add(new Downloadable(this.getServerURL(), null, FileSystem.JARS.resolve("minecraft_server." + this
-                    .packVersion.getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
+            pool.add(new Downloadable(downloads.getServer().getUrl(), downloads.getServer().getSha1(),
+                    FileSystem.JARS.resolve("minecraft_server." + this.packVersion.getMinecraftVersion().getVersion()
+                            + ".jar"), (int) downloads.getServer().getSize(), false, this));
         } else {
-            pool.add(new Downloadable(this.getClientURL(), null, FileSystem.JARS.resolve(this.packVersion
-                    .getMinecraftVersion().getVersion() + ".jar"), -1, false, this));
+            pool.add(new Downloadable(downloads.getClient().getUrl(), downloads.getClient().getSha1(),
+                    FileSystem.JARS.resolve(this.packVersion.getMinecraftVersion().getVersion()
+                            + ".jar"), (int) downloads.getClient().getSize(), false, this));
         }
 
         return pool;
@@ -359,8 +367,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         Path virtual = FileSystem.RESOURCES_VIRTUAL.resolve(assetVersion);
         Path indexFile = FileSystem.RESOURCES_INDEXES.resolve(assetVersion + ".json");
 
-        Downloadable dl = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("indexes/" + assetVersion + "" +
-                ".json"), Hashing.md5(indexFile).toString(), indexFile, -1, false, this);
+        MojangAssetIndex assetIndex = this.packVersion.getMinecraftVersion().getMojangVersion().getAssetIndex();
+        Downloadable dl = new Downloadable(assetIndex.getUrl(), assetIndex.getSha1(), indexFile,
+                (int) assetIndex.getSize(), false, this);
 
         try {
             if (dl.needToDownload()) {
@@ -806,7 +815,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.setMainClass();
         this.setExtraArgs();
 
-        if (this.packVersion.getMinecraftVersion().hasResources()) {
+        if (this.packVersion.getMinecraftVersion().getMojangVersion().getAssetIndex() != null) {
             this.downloadResources();
             if (this.isCancelled()) {
                 return Boolean.FALSE;
@@ -938,9 +947,5 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public String getShareCodeData(String code) {
         return ATLauncherAPI.getShareCode(this.pack, version.getVersion(), code);
-    }
-
-    public void setInstance(Instance instance) {
-        this.instance = instance;
     }
 }
