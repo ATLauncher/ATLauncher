@@ -382,8 +382,7 @@ public class Downloadable {
         new File(this.file.getAbsolutePath().substring(0, this.file.getAbsolutePath().lastIndexOf(File.separatorChar)
         )).mkdirs();
         if (getHash().equalsIgnoreCase("-")) {
-            downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to
-            // check
+            downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to check
         } else {
             String fileHash = "0";
             boolean done = false;
@@ -398,7 +397,7 @@ public class Downloadable {
                 } else {
                     fileHash = "0";
                 }
-                if (fileHash.equalsIgnoreCase(getHash())) {
+                if (App.skipHashChecking || fileHash.equalsIgnoreCase(getHash())) {
                     done = true;
                     break; // Hash matches, file is good
                 }
