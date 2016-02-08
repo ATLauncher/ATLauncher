@@ -18,7 +18,6 @@
 package com.atlauncher.data.mojang;
 
 import com.atlauncher.annot.Json;
-import com.atlauncher.data.mojang.api.MojangAssetIndex;
 
 import java.util.List;
 
