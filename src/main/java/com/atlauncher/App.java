@@ -37,6 +37,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -420,6 +421,7 @@ public class App {
         ToolTipManager.sharedInstance().setDismissDelay(15000);
         ToolTipManager.sharedInstance().setInitialDelay(50);
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
+        UIManager.put("ScrollBar.minimumThumbSize", new Dimension(50, 50));
 
         if (Utils.isMac()) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
