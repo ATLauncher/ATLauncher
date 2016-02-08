@@ -77,11 +77,11 @@ public final class Mod {
 
     public Mod(String name, String version, String url, Hashing.HashCode md5, Hashing.HashCode serverMD5, String
             donation, String website, String description, String file, String serverUrl, String serverFile, String
-            filePrefix, String decompFile, String group, String linked, String filePreference, String colour, String
-            fileCheck, String warning, String[] depends, String[] authors, boolean client, boolean optional, boolean
-            server, boolean recommended, boolean hidden, boolean library, boolean filePattern, Boolean
-            serverOptional, int filesize, DownloadType download, DownloadType serverDownload, ModType type, ModType
-            serverType, ExtractToType extractTo, DecompType decompType, boolean selected, boolean force) {
+                       filePrefix, String decompFile, String group, String linked, String filePreference, String colour, String
+                       fileCheck, String warning, String[] depends, String[] authors, boolean client, boolean optional, boolean
+                       server, boolean recommended, boolean hidden, boolean library, boolean filePattern, Boolean
+                       serverOptional, int filesize, DownloadType download, DownloadType serverDownload, ModType type, ModType
+                       serverType, ExtractToType extractTo, DecompType decompType, boolean selected, boolean force) {
         this.name = name;
         this.version = version;
         this.url = url;
@@ -189,7 +189,7 @@ public final class Mod {
         if (Files.exists(fileLoc)) {
             if (this.force) {
                 FileUtils.delete(fileLoc);
-            } else {
+            } else if (this.download != DownloadType.DIRECT) {
                 if (this.hasMD5()) {
                     if (Hashing.md5(fileLoc).equals(this.md5)) {
                         return;
@@ -228,7 +228,7 @@ public final class Mod {
         if (Files.exists(fileLoc)) {
             if (this.force) {
                 FileUtils.delete(fileLoc);
-            } else {
+            } else if (this.download != DownloadType.DIRECT) {
                 if (this.serverMD5 != null && !this.serverMD5.equals(Hashing.HashCode.EMPTY)) {
                     if (Hashing.md5(fileLoc).equals(this.serverMD5)) {
                         return;
@@ -247,6 +247,11 @@ public final class Mod {
             try {
                 Downloadable dl = new Downloadable(this.serverUrl, this.serverMD5.toString(), fileLoc, -1, this
                         .serverDownload == DownloadType.SERVER, installer);
+
+                if (this.serverDownload == DownloadType.DIRECT) {
+                    dl.checkForNewness();
+                }
+
                 if (dl.needToDownload()) {
                     dl.download();
                 }
@@ -267,7 +272,8 @@ public final class Mod {
     }
 
     protected Downloadable generateDownloadable(Path to, InstanceInstaller installer, boolean server) {
-        return new Downloadable(this.getUrl(), this.md5.toString(), to, -1, server, installer);
+        return new Downloadable(this.getUrl(), this.md5 == null ? null : this.md5.toString(), to, -1, server,
+                installer);
     }
 
     public void download(InstanceInstaller installer) throws Exception {
@@ -314,11 +320,11 @@ public final class Mod {
         return this.name.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    public void setCompiledColour(Color compiledColour) {
-        this.compiledColour = compiledColour;
-    }
-
     public Color getCompiledColour() {
         return this.compiledColour;
+    }
+
+    public void setCompiledColour(Color compiledColour) {
+        this.compiledColour = compiledColour;
     }
 }
