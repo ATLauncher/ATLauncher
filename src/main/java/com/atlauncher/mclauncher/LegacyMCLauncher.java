@@ -210,6 +210,8 @@ public class LegacyMCLauncher {
         String argsString = arguments.toString();
 
         if (!LogManager.showDebug) {
+            argsString = argsString.replace(FileSystem.BASE_DIR.toAbsolutePath().toString(), "USERSDIR");
+
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
             argsString = argsString.replace(sess.getAuth().getAuthenticatedToken(), "REDACTED");
         }
