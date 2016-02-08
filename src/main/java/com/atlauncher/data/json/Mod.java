@@ -340,7 +340,7 @@ public class Mod {
         if (fileLocation.exists()) {
             if (this.shouldForce()) {
                 Utils.delete(fileLocation); // File exists but is corrupt, delete it
-            } else {
+            } else if (this.download != DownloadType.direct) {
                 if (hasMD5()) {
                     if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
                         return; // File already exists and matches hash, don't download it
@@ -394,13 +394,13 @@ public class Mod {
                                 .INSTANCE.localize("instance.ivedownloaded")};
                         retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
                                 (Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
+                                        ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
                                         (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>" +
-                                Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
-                                        : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
-                                        .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
-                                        .getUsersDownloadsDir()))), Language.INSTANCE.localize("common.downloading")
+                                        Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                                : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
+                                                .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
+                                                .getUsersDownloadsDir()))), Language.INSTANCE.localize("common.downloading")
                                 + " " +
                                 (serverFile == null ? (isFilePattern() ? getName() : getFile()) : (isFilePattern() ?
                                         getName() : getServerFile())), JOptionPane.DEFAULT_OPTION, JOptionPane
@@ -458,6 +458,7 @@ public class Mod {
                 break;
             case direct:
                 Downloadable download1 = new Downloadable(this.getUrl(), fileLocation, this.md5, installer, false);
+                download1.checkForNewness();
                 if (download1.needToDownload()) {
                     installer.resetDownloadedBytes(download1.getFilesize());
                     download1.download(true);
@@ -490,14 +491,18 @@ public class Mod {
     public void downloadServer(InstanceInstaller installer, int attempt) {
         File fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
         if (fileLocation.exists()) {
-            if (this.hasServerMD5()) {
-                if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)) {
-                    return; // File already exists and matches hash, don't download it
+            if (this.shouldForce()) {
+                Utils.delete(fileLocation); // File exists but is corrupt, delete it
+            } else if (this.download != DownloadType.direct) {
+                if (this.hasServerMD5()) {
+                    if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)) {
+                        return; // File already exists and matches hash, don't download it
+                    } else {
+                        Utils.delete(fileLocation); // File exists but is corrupt, delete it
+                    }
                 } else {
-                    Utils.delete(fileLocation); // File exists but is corrupt, delete it
+                    return; // No MD5, but file is there, can only assume it's fine
                 }
-            } else {
-                return; // No MD5, but file is there, can only assume it's fine
             }
         }
         if (this.serverDownload == DownloadType.browser) {
@@ -535,12 +540,12 @@ public class Mod {
                 Utils.openBrowser(this.serverUrl);
                 String[] options = new String[]{Language.INSTANCE.localize("instance.ivedownloaded")};
                 int retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
-                        (Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
-                                "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
-                                        : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App
-                                        .settings.getUsersDownloadsDir())), Language.INSTANCE.localize("common" + "" +
+                                (Language.INSTANCE.localizeWithReplace("instance" + "" +
+                                        ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
+                                        "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
+                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                                : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App
+                                                .settings.getUsersDownloadsDir())), Language.INSTANCE.localize("common" + "" +
                                 ".downloading") + " " + (serverFile == null ? getFile() : getServerFile()),
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 if (retValue == JOptionPane.CLOSED_OPTION) {
@@ -592,6 +597,7 @@ public class Mod {
             }
         } else if (this.serverDownload == DownloadType.direct) {
             Downloadable download = new Downloadable(this.serverUrl, fileLocation, this.serverMD5, installer, false);
+            download.checkForNewness();
             if (download.needToDownload()) {
                 download.download(false);
             }

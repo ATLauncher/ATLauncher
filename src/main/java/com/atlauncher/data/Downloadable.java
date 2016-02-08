@@ -50,6 +50,7 @@ public class Downloadable {
     private int attempts = 0;
     private List<Server> servers;
     private Server server;
+    private boolean checkForNewness = false;
 
     public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller, boolean
             isATLauncherDownload, File copyTo, boolean actuallyCopy) {
@@ -101,6 +102,10 @@ public class Downloadable {
         return this.copyTo.getName();
     }
 
+    public void checkForNewness() {
+        this.checkForNewness = true;
+    }
+
     public boolean isMD5() {
         return hash == null || hash.length() != 40;
     }
@@ -144,7 +149,14 @@ public class Downloadable {
         if (this.file == null) {
             return true;
         }
+
         if (this.file.exists()) {
+            if (this.checkForNewness) {
+                if (this.getConnection() != null && this.getFile().length() == this.getFilesize()) {
+                    return false;
+                }
+            }
+
             if (isMD5()) {
                 if (Utils.getMD5(this.file).equalsIgnoreCase(getHash())) {
                     return false;
@@ -155,6 +167,7 @@ public class Downloadable {
                 }
             }
         }
+
         return true;
     }
 
