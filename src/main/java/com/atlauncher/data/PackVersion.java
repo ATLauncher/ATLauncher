@@ -84,6 +84,7 @@ public class PackVersion {
         if (this.hash == null || !this.isDev) {
             return false;
         }
+
         return this.hash.equalsIgnoreCase(hash);
     }
 

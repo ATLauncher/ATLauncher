@@ -17,6 +17,37 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.App;
+import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
+import com.atlauncher.Update;
+import com.atlauncher.data.json.LauncherLibrary;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.gui.LauncherConsole;
+import com.atlauncher.gui.components.LauncherBottomBar;
+import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.gui.tabs.NewsTab;
+import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.thread.LoggingThread;
+import com.atlauncher.utils.ATLauncherAPIUtils;
+import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.MojangAPIUtils;
+import com.atlauncher.utils.Timestamper;
+import com.atlauncher.utils.Utils;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
@@ -52,45 +83,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import com.atlauncher.App;
-import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
-import com.atlauncher.Update;
-import com.atlauncher.data.json.LauncherLibrary;
-import com.atlauncher.exceptions.InvalidMinecraftVersion;
-import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.components.LauncherBottomBar;
-import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.gui.tabs.NewsTab;
-import com.atlauncher.gui.tabs.PacksTab;
-import com.atlauncher.thread.LoggingThread;
-import com.atlauncher.utils.ATLauncherAPIUtils;
-import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.MojangAPIUtils;
-import com.atlauncher.utils.Timestamper;
-import com.atlauncher.utils.Utils;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user.
@@ -295,8 +292,8 @@ public class Settings {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
-                    ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                            .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
+                            ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
@@ -409,8 +406,8 @@ public class Settings {
             String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
                     ".removepasswords")};
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
-                    ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                            .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
+                            ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                     options, options[0]);
             if (ret == 1) {
                 for (Account account : this.accounts) {
@@ -501,7 +498,7 @@ public class Settings {
                     ".rearrangingresources"), 0, Language.INSTANCE.localize("settings.rearrangingresources"), null);
             Thread thread = new Thread() {
                 @Override
-				public void run() {
+                public void run() {
                     File indexesDir = new File(getResourcesDir(), "indexes");
                     File objectsDir = new File(getResourcesDir(), "objects");
                     File virtualDir = new File(getResourcesDir(), "virtual");
@@ -844,9 +841,9 @@ public class Settings {
             } else {
                 String[] options = {"Ok"};
                 JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph("Update failed. " +
-                        "Please click Ok to close " + "the launcher and open up the downloads " +
-                        "page.<br/><br/>Download " + "the update and replace the old " + Constants.LAUNCHER_NAME + " " +
-                        "file."), "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                                "Please click Ok to close " + "the launcher and open up the downloads " +
+                                "page.<br/><br/>Download " + "the update and replace the old " + Constants.LAUNCHER_NAME + " " +
+                                "file."), "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                         options, options[0]);
                 Utils.openBrowser("http://www.atlauncher.com/downloads/");
                 System.exit(0);
@@ -1660,44 +1657,28 @@ public class Settings {
      */
     private void loadMinecraftVersions() {
         LogManager.debug("Loading Minecraft versions");
+
         this.minecraftVersions = new HashMap<String, MinecraftVersion>();
-        List<MinecraftVersion> list = new ArrayList<MinecraftVersion>();
+
         try {
             java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
             }.getType();
-            list = Gsons.DEFAULT.fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")), type);
+            List<MinecraftVersion> list = Gsons.DEFAULT_ALT.fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")), type);
+
+            if (list == null) {
+                LogManager.error("Error loading Minecraft Versions. List was null. Exiting!");
+                System.exit(1); // Cannot recover from this so exit
+            }
+
+            for (MinecraftVersion mv : list) {
+                this.minecraftVersions.put(mv.getVersion(), mv);
+            }
         } catch (JsonSyntaxException e) {
             logStackTrace(e);
         } catch (JsonIOException e) {
             logStackTrace(e);
         } catch (FileNotFoundException e) {
             logStackTrace(e);
-        }
-        if (list == null) {
-            LogManager.error("Error loading Minecraft Versions. List was null. Exiting!");
-            System.exit(1); // Cannot recover from this so exit
-        }
-        for (MinecraftVersion mv : list) {
-            this.minecraftVersions.put(mv.getVersion(), mv);
-        }
-        LogManager.info("[Background] Checking Minecraft Versions Started");
-        ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
-        for (final Entry<String, MinecraftVersion> entry : this.minecraftVersions.entrySet()) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    entry.getValue().loadVersion();
-                }
-            });
-        }
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                LogManager.info("[Background] Checking Minecraft Versions Complete");
-            }
-        });
-        executor.shutdown();
-        while (!executor.isShutdown()) {
         }
         LogManager.debug("Finished loading Minecraft versions");
     }
@@ -2031,7 +2012,7 @@ public class Settings {
         List<Pack> packs = new LinkedList<Pack>(this.packs);
         Collections.sort(packs, new Comparator<Pack>() {
             @Override
-			public int compare(Pack result1, Pack result2) {
+            public int compare(Pack result1, Pack result2) {
                 return result1.getName().compareTo(result2.getName());
             }
         });
@@ -2047,7 +2028,7 @@ public class Settings {
         List<Pack> packs = new LinkedList<Pack>(this.packs);
         Collections.sort(packs, new Comparator<Pack>() {
             @Override
-			public int compare(Pack result1, Pack result2) {
+            public int compare(Pack result1, Pack result2) {
                 return (result1.getPosition() < result2.getPosition()) ? -1 : ((result1.getPosition() == result2
                         .getPosition()) ? 0 : 1);
             }
@@ -2113,7 +2094,7 @@ public class Settings {
         ArrayList<Instance> instances = new ArrayList<Instance>(this.instances);
         Collections.sort(instances, new Comparator<Instance>() {
             @Override
-			public int compare(Instance result1, Instance result2) {
+            public int compare(Instance result1, Instance result2) {
                 return result1.getName().compareTo(result2.getName());
             }
         });
@@ -2678,7 +2659,7 @@ public class Settings {
     /**
      * Logs a stack trace to the console window with a custom message before it
      *
-     * @param message A message regarding the stack trace to show before it providing more insight
+     * @param message   A message regarding the stack trace to show before it providing more insight
      * @param exception The exception to show in the console
      */
     public void logStackTrace(String message, Exception exception) {
@@ -3126,7 +3107,7 @@ public class Settings {
      * @deprecated
      */
     @Deprecated
-	public String getLocalizedString(String string) {
+    public String getLocalizedString(String string) {
         return Language.INSTANCE.localize(string);
     }
 
@@ -3134,7 +3115,7 @@ public class Settings {
      * @deprecated
      */
     @Deprecated
-	public String getLocalizedString(String string, String replace) {
+    public String getLocalizedString(String string, String replace) {
         return Language.INSTANCE.localize(string).replace("%s", replace);
     }
 
