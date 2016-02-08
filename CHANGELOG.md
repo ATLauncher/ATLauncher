@@ -1,6 +1,7 @@
 # Changelog
 
 ## 3.2.3.2
+- Fix noconfigs option for packs not doing anything
 - Fix scrollbars disappearing in large scroll lists
 - Don't download every single Minecraft json file increasing startup speed
 - Fix issue with linked/depends mods not cascading their changes to the mods they enable
