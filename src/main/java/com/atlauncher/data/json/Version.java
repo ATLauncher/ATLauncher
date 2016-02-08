@@ -56,7 +56,7 @@ public class Version {
     /**
      * If this version has no configs.
      */
-    private boolean noconfigs;
+    private boolean noConfigs;
 
     /**
      * If this version should uppercase/lowercase all files.
@@ -152,7 +152,7 @@ public class Version {
     }
 
     public boolean hasNoConfigs() {
-        return this.noconfigs;
+        return this.noConfigs;
     }
 
     public CaseType getCaseAllFiles() {
