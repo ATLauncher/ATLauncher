@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
@@ -259,7 +260,8 @@ public final class Downloadable {
                     fileHash = Hashing.sha1(this.to);
                 }
             }
-            if (fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
+            
+            if (App.skipHashChecking || fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
                 return true;
             }
 

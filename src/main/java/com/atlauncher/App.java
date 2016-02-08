@@ -69,6 +69,14 @@ public class App {
     public static boolean skipTrayIntegration = false;
 
     /**
+     * This allows skipping the hash checking when downloading files. It can be skipped with the below command line
+     * argument.
+     * <p/>
+     * --skip-hash-checking
+     */
+    public static boolean skipHashChecking = false;
+
+    /**
      * This forces the launcher to start in offline mode. It can be enabled with the below command line argument.
      * <p/>
      * --force-offline-mode
@@ -276,6 +284,11 @@ public class App {
         skipIntegration = options.has("skip-integration");
         if (skipIntegration) {
             LogManager.debug("Skipping integration!", true);
+        }
+
+        skipHashChecking = options.has("skip-hash-checking");
+        if (skipHashChecking) {
+            LogManager.debug("Skipping hash checking! Don't ask for support with this enabled!", true);
         }
     }
 }
