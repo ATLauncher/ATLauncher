@@ -154,6 +154,7 @@ public enum DownloadType {
         @Override
         public void download(InstanceInstaller installer, Path to, Mod mod) throws Exception {
             Downloadable dl = mod.generateDownloadable(to, installer, false);
+                dl.checkForNewness();
             if (dl.needToDownload()) {
                 dl.download();
             }

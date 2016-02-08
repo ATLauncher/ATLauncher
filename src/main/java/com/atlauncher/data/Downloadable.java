@@ -46,16 +46,15 @@ public final class Downloadable {
             TimeUnit.MILLISECONDS).build();
 
     public final String URL;
-    public final int size;
     public final Path to;
     public final Path copyTo;
     public final boolean atlauncher;
     public final boolean copy;
     public final String filename;
-
     private final InstanceInstaller installer;
     private final List<Server> servers = ServerManager.getServers();
-
+    public int size;
+    public boolean checkForNewness = false;
     private String url;
     private String hash;
     private Server server;
@@ -138,6 +137,10 @@ public final class Downloadable {
         return this.hash == null || this.hash.length() != 40;
     }
 
+    public void checkForNewness() {
+        this.checkForNewness = true;
+    }
+
     private String getHashFromURL() throws IOException {
         this.execute();
         String etag = this.response.header("ETag");
@@ -170,6 +173,21 @@ public final class Downloadable {
     }
 
     public int getFilesize() {
+        try {
+            if (this.size == -1) {
+                this.execute();
+                int size = Integer.parseInt(response.header("Content-Length"));
+
+                if (size == -1) {
+                    this.size = 0;
+                } else {
+                    this.size = size;
+                }
+            }
+        } catch (Exception ignored) {
+            return -1;
+        }
+
         return this.size;
     }
 
@@ -179,6 +197,12 @@ public final class Downloadable {
         }
 
         if (Files.exists(this.to)) {
+            if (this.checkForNewness) {
+                if (this.to.toFile().length() == this.getFilesize()) {
+                    return false;
+                }
+            }
+
             if (this.md5()) {
                 return !Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
             } else {
