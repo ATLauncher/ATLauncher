@@ -4,11 +4,7 @@
 
 # Except These
 !/src/
-<<<<<<< HEAD
-=======
-!/macapp/
 !/.editorconfig
->>>>>>> 7f40113... Update STYLE.md and add in editorconfig
 !/.gitignore
 !/LICENSE
 !/pom.xml
