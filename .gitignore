@@ -5,6 +5,7 @@
 # Except These
 !/src/
 !/macapp/
+!/.editorconfig
 !/.gitignore
 !/CONTRIBUTING.md
 !/CHANGELOG.md
