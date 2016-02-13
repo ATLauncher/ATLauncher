@@ -17,23 +17,6 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import com.atlauncher.App;
-import com.atlauncher.data.DisableableMod;
-import com.atlauncher.data.Instance;
-import com.atlauncher.data.json.ModType;
-import com.atlauncher.gui.components.ModsJCheckBox;
-import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LanguageManager;
-import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Utils;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -43,6 +26,26 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
+
+import com.atlauncher.App;
+import com.atlauncher.data.DisableableMod;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.json.ModType;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.gui.components.ModsJCheckBox;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LanguageManager;
+import com.atlauncher.managers.MinecraftVersionManager;
+import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Utils;
 
 public class EditModsDialog extends JDialog {
     private static final long serialVersionUID = 7004414192679481818L;
@@ -66,7 +69,8 @@ public class EditModsDialog extends JDialog {
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
+            @Override
+			public void windowClosing(WindowEvent arg0) {
                 dispose();
             }
         });
@@ -130,12 +134,31 @@ public class EditModsDialog extends JDialog {
 
         addButton = new JButton(LanguageManager.localize("instance.addmod"));
         addButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                FileChooserDialog fcd = new FileChooserDialog(LanguageManager.localize("instance.addmod"),
-                        LanguageManager.localize("common.mod"), LanguageManager.localize("common.add"), LanguageManager
-                        .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
-                        "CoreMods Mod", "Texture Pack", "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip",
-                        "litemod"});
+            @Override
+			public void actionPerformed(ActionEvent e) {
+                FileChooserDialog fcd = null;
+                boolean usesCoreMods = false;
+                try {
+                	if (MinecraftVersionManager.getMinecraftVersion(instance.getMinecraftVersion()).usesCoreMods()) {
+						usesCoreMods = true;
+					} else {
+						usesCoreMods = false;
+					}
+                } catch (InvalidMinecraftVersion e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+                if(usesCoreMods) {
+                	fcd = new FileChooserDialog(LanguageManager.localize("instance.addmod"), LanguageManager
+                            .localize("common.mod"), LanguageManager.localize("common.add"), LanguageManager
+                            .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
+                            "CoreMods Mod", "Texture Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
+                } else {
+                	new FileChooserDialog(LanguageManager.localize("instance.addmod"), LanguageManager
+                            .localize("common.mod"), LanguageManager.localize("common.add"), LanguageManager
+                            .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
+                            "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
+                }
                 ArrayList<File> files = fcd.getChosenFiles();
                 if (files != null && files.size() >= 1) {
                     boolean reload = false;
@@ -175,7 +198,8 @@ public class EditModsDialog extends JDialog {
 
         enableButton = new JButton(LanguageManager.localize("instance.enablemod"));
         enableButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 enableMods();
             }
         });
@@ -183,7 +207,8 @@ public class EditModsDialog extends JDialog {
 
         disableButton = new JButton(LanguageManager.localize("instance.disablemod"));
         disableButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 disableMods();
             }
         });
@@ -191,7 +216,8 @@ public class EditModsDialog extends JDialog {
 
         removeButton = new JButton(LanguageManager.localize("instance.removemod"));
         removeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 removeMods();
             }
         });
@@ -199,7 +225,8 @@ public class EditModsDialog extends JDialog {
 
         closeButton = new JButton(LanguageManager.localize("common.close"));
         closeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });
