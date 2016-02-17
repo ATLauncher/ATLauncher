@@ -148,7 +148,7 @@ public class AccountManager {
             }
         }
 
-        EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));
+        EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(false));
         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.InstancesChangeEvent.class));
         EventHandler.EVENT_BUS.publish(EventHandler.get(EventHandler.AccountsChangeEvent.class));
     }
