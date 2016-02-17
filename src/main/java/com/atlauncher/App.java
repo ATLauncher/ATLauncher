@@ -93,7 +93,7 @@ public class App {
     public static boolean useGzipForDownloads = true;
 
     /**
-     * This allows skipping the system tray intergation so that the launcher doesn't even try to show the icon and menu
+     * This allows skipping the system tray integration so that the launcher doesn't even try to show the icon and menu
      * etc, in the users system tray. It can be skipped with the below command line argument.
      * <p/>
      * --skip-tray-integration
