@@ -1579,7 +1579,7 @@ public class Settings {
                 this.account = null;
             }
         }
-        reloadPacksPanel();
+        refreshPacksPanel();
         reloadInstancesPanel();
         reloadAccounts();
         saveProperties();
