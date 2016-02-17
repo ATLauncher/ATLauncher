@@ -16,3 +16,4 @@
 - Changed the Edit Mods Dialog screen so that the options presented are applicable to the Minecraft version in use
 - When a direct download is used for a mod, check the content length from the url to see if it should be re downloaded
 - Fixed issue that gave a bad '32 bit Java on 64 bit Windows' warning when 64 bit Java was installed in the x86 directory
+- Fixed an issue with cloning an instance where previously changes made to a clone would affect the original
