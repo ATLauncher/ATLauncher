@@ -28,9 +28,7 @@ import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
-import com.sun.org.apache.xml.internal.resolver.helpers.FileURL;
 import io.github.asyncronous.toast.Toaster;
-import org.apache.commons.io.FileUtils;
 
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
