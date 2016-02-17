@@ -166,10 +166,14 @@ public class Utils {
     }
 
     public static File getCoreGracefully() {
+        if (App.workingDir != null) {
+            return App.workingDir;
+        }
+
         if (Utils.isLinux()) {
             try {
                 return new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()
-                        .getSchemeSpecificPart()).getParentFile();
+                    .getSchemeSpecificPart()).getParentFile();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
                 return new File(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
@@ -398,14 +402,14 @@ public class Utils {
     public static boolean is64Bit() {
         return System.getProperty("sun.arch.data.model").contains("64");
     }
-    
+
     /**
      * Checks if Windows is 64 bit
-     * 
+     *
      * @return true, if it is 64 bit
      */
-    public static boolean isWindows64Bit(){
-    	return System.getenv("ProgramFiles(x86)") != null;
+    public static boolean isWindows64Bit() {
+        return System.getenv("ProgramFiles(x86)") != null;
     }
 
     /**
@@ -722,11 +726,11 @@ public class Utils {
     public static boolean copyFile(File from, File to, boolean withFilename) {
         if (!from.isFile()) {
             LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as" +
-                    " it isn't a file");
+                " it isn't a file");
         }
         if (!from.exists()) {
             LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as" +
-                    " it doesn't exist");
+                " it doesn't exist");
             return false;
         }
         if (!withFilename) {
@@ -812,7 +816,7 @@ public class Utils {
             return true;
         } else {
             LogManager.error("Couldn't move directory " + sourceLocation.getAbsolutePath() + " to " + targetLocation
-                    .getAbsolutePath());
+                .getAbsolutePath());
             return false;
         }
     }
@@ -963,13 +967,13 @@ public class Utils {
 
         if (isSymlink(file)) {
             LogManager.error("Not deleting the " + (file.isFile() ? "file" : "folder") + file.getAbsolutePath() +
-                    "as it's a symlink");
+                "as it's a symlink");
             return;
         }
 
         if (!file.delete()) {
             LogManager.error((file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath() + " couldn't be " +
-                    "deleted");
+                "deleted");
         }
     }
 
@@ -1029,7 +1033,7 @@ public class Utils {
             } else {
                 String hash = getSHA1(file);
                 File saveTo = new File(App.settings.getObjectsAssetsDir(), hash.substring(0, 2) + File.separator +
-                        hash);
+                    hash);
                 saveTo.mkdirs();
                 copyFile(file, saveTo, true);
             }
@@ -1224,7 +1228,7 @@ public class Utils {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static void replaceText(File originalFile, File destinationFile, String replaceThis, String withThis)
-            throws IOException {
+        throws IOException {
 
         FileInputStream fs = new FileInputStream(originalFile);
         BufferedReader br = new BufferedReader(new InputStreamReader(fs));
@@ -1470,7 +1474,7 @@ public class Utils {
             return "Launcher: " + System.getProperty("java.version") + ", Minecraft: " + version;
         } else {
             return "Launcher: " + System.getProperty("java.version") + ", Minecraft: " + System.getProperty("java" +
-                    ".version");
+                ".version");
         }
     }
 
@@ -1635,7 +1639,7 @@ public class Utils {
         String request = Utils.getFileContents(report);
         if (request == null) {
             LogManager.error("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath() + "'. Pending " +
-                    "report sending failed!");
+                "report sending failed!");
             return null;
         }
 
@@ -2062,7 +2066,7 @@ public class Utils {
 
         int x = decompressed.length;
         int len = ((decompressed[x - 8] & 0xFF)) | ((decompressed[x - 7] & 0xFF) << 8) | ((decompressed[x - 6] &
-                0xFF) << 16) | ((decompressed[x - 5] & 0xFF) << 24);
+            0xFF) << 16) | ((decompressed[x - 5] & 0xFF) << 24);
         byte[] checksums = Arrays.copyOfRange(decompressed, decompressed.length - len - 8, decompressed.length - 8);
         try {
             FileOutputStream jarBytes = new FileOutputStream(output);
