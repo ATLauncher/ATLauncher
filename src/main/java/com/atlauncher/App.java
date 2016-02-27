@@ -230,6 +230,9 @@ public class App {
                 } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
                     skipTrayIntegration = true;
                     LogManager.debug("Skipping tray integration!", true);
+                } else if (parts[0].equalsIgnoreCase("--skip-integration")) {
+                    skipIntegration = true;
+                    LogManager.debug("Skipping integration!", true);
                 } else if (parts[0].equalsIgnoreCase("--skip-hash-checking")) {
                     skipHashChecking = true;
                     LogManager.debug("Skipping hash checking! Don't ask for support with this enabled!", true);
