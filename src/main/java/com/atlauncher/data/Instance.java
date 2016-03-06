@@ -1293,13 +1293,18 @@ public class Instance implements Cloneable {
      * @return Instance The cloned instance
      * @see java.lang.Object#clone()
      */
-    public Instance clone() {
-        try {
-            return (Instance) super.clone();
-        } catch (CloneNotSupportedException e) {
-            LogManager.logStackTrace(e);
-            return null;
-        }
+	public Instance clone() {
+    	Instance clone;
+        if (!this.userLock.equals(null)) {
+        	clone = new Instance(name, pack, realPack, true, version, minecraftVersion, memory, 
+						permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments, 
+						mainClass, assets, isDev, isPlayable, newLaunchMethod);
+			} else {
+				clone = new Instance(name, pack, realPack, false, version, minecraftVersion, memory, 
+						permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments, 
+						mainClass, assets, isDev, isPlayable, newLaunchMethod);
+			}
+        return clone;
     }
 
     public boolean hasCustomMods() {
