@@ -115,11 +115,11 @@ public class MCLauncher {
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
-        if (SettingsManager.getJavaParameters().isEmpty()) {
+        String javaParams = SettingsManager.getJavaParameters();
+
+        if (javaParams.isEmpty()) {
             // Mojang launcher defaults if user has no custom java arguments
-            arguments.add("-XX:+UseConcMarkSweepGC");
-            arguments.add("-XX:+CMSIncrementalMode");
-            arguments.add("-XX:-UseAdaptiveSizePolicy");
+            javaParams = "-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy";
         }
 
         arguments.add("-Xms" + SettingsManager.getInitialMemory() + "M");
@@ -166,13 +166,23 @@ public class MCLauncher {
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
-        if (!SettingsManager.getJavaParameters().isEmpty()) {
-            for (String arg : SettingsManager.getJavaParameters().split(" ")) {
+        ArrayList<String> negatedArgs = new ArrayList<String>();
+
+        if (!javaParams.isEmpty()) {
+            for (String arg : javaParams.split(" ")) {
                 if (!arg.isEmpty()) {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {
                             LogManager.error("Duplicate argument " + arg + " found and not added!");
                             continue;
+                        }
+
+                        if (arg.substring(0, 5).equalsIgnoreCase("-XX:+")) {
+                            if (instance.getExtraArguments().contains("-XX:-" + arg.substring(5))) {
+                                negatedArgs.add("-XX:-" + arg.substring(5));
+                                LogManager.error("Argument " + arg + " is negated by pack developer and not added!");
+                                continue;
+                            }
                         }
                     }
 
@@ -236,12 +246,19 @@ public class MCLauncher {
             arguments.add("--width=" + SettingsManager.getWindowWidth());
             arguments.add("--height=" + SettingsManager.getWindowHeight());
         }
+
         if (instance.hasExtraArguments()) {
             String args = instance.getExtraArguments();
             if (args.contains(" ")) {
-                Collections.addAll(arguments, args.split(" "));
+                for (String argument : args.split(" ")) {
+                    if (!negatedArgs.contains(argument)) {
+                        arguments.add(argument);
+                    }
+                }
             } else {
-                arguments.add(args);
+                if (!negatedArgs.contains(args)) {
+                    arguments.add(args);
+                }
             }
         }
 
