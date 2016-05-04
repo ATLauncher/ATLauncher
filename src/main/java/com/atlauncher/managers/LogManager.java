@@ -22,6 +22,8 @@ import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.thread.LoggingThread;
 
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -78,25 +80,12 @@ public final class LogManager {
         queue.offer(new LogEvent((LogType) value[0], (String) value[1], 10));
     }
 
-    public static void logStackTrace(Exception exception) {
-        exception.printStackTrace(System.err);
-
-        if (exception.getMessage() != null) {
-            LogManager.error(exception.getMessage());
-        }
-
-        for (StackTraceElement element : exception.getStackTrace()) {
-            if (element != null) {
-                LogManager.error(element.toString());
-            }
-        }
-    }
-
     public static void logStackTrace(Throwable t) {
-        t.printStackTrace(System.err);
-        LogManager.error(t.getMessage());
-        for (StackTraceElement e : t.getStackTrace()) {
-            LogManager.error(e.toString());
+        t.printStackTrace();
+
+        try (CharArrayWriter writer = new CharArrayWriter()) {
+            t.printStackTrace(new PrintWriter(writer));
+            LogManager.error(writer.toString());
         }
     }
 
