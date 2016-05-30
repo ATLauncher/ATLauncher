@@ -304,7 +304,7 @@ public class Loader {
             Properties props = new Properties();
             props.load(new FileInputStream(config.toFile()));
 
-            props.setProperty("java_version", OS.getJavaVersion());
+            props.setProperty("java_version", OS.getLauncherJavaVersion());
             props.setProperty("location", FileSystem.BASE_DIR.toString());
             props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
                     .getPath()).getAbsolutePath());
