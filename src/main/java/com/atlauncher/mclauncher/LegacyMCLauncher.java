@@ -133,13 +133,13 @@ public class LegacyMCLauncher {
             arguments.add("-Xmx" + SettingsManager.getMaximumMemory() + "M");
         }
         if (SettingsManager.getPermGen() < instance.getPermGen() && (OS.getMaximumRam() / 8) < instance.getPermGen()) {
-            if (OS.isJava8()) {
+            if (OS.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
             }
         } else {
-            if (OS.isJava8()) {
+            if (OS.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + SettingsManager.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + SettingsManager.getPermGen() + "M");
