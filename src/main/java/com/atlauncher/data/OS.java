@@ -94,10 +94,10 @@ public enum OS {
             case WINDOWS:
                 return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
             case OSX:
-                return Paths.get(System.getenv("user.home")).resolve("Library").resolve("Application Support")
+                return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
                         .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
             default:
-                return Paths.get(System.getenv("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+                return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
         }
     }
 
