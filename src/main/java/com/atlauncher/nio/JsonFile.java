@@ -71,7 +71,7 @@ public final class JsonFile {
         osw.flush();
         osw.close();
 
-        osw.close();
+        os.flush();
         os.close();
     }
 
