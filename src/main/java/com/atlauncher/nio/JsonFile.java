@@ -67,8 +67,11 @@ public final class JsonFile {
         OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
 
         gson.toJson(obj, osw);
-
+        
+        osw.flush();
         osw.close();
+
+        os.flush();
         os.close();
     }
 
