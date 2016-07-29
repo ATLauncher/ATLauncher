@@ -424,6 +424,10 @@ public class SettingsManager {
         return SettingsManager.settings.firstTimeRun;
     }
 
+    public static void setFirstTimeRun(boolean firstTimeRun) {
+        SettingsManager.settings.firstTimeRun = firstTimeRun;
+    }
+
     public static Server getActiveServer() {
         return SettingsManager.settings.selectedServer;
     }

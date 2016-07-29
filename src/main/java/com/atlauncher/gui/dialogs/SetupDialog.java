@@ -108,6 +108,7 @@ public class SetupDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 SettingsManager.setLanguage(((Language) language.getSelectedItem()).getCode());
                 SettingsManager.setEnableLeaderboards(enableLeaderboards.isSelected());
+                SettingsManager.setFirstTimeRun(false);
                 SettingsManager.saveSettings();
                 setVisible(false);
                 dispose();
