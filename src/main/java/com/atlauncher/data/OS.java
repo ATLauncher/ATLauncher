@@ -440,20 +440,18 @@ public enum OS {
     public static String getMACAdressHash() {
         String returnStr = null;
         try {
-            InetAddress ip;
-            ip = InetAddress.getLocalHost();
-
+            InetAddress ip = InetAddress.getLocalHost();
             NetworkInterface network = NetworkInterface.getByInetAddress(ip);
 
             // If network is null, user may be using Linux or something it doesn't support so try alternative way
             if (network == null) {
-                Enumeration e = NetworkInterface.getNetworkInterfaces();
+                Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
 
                 while (e.hasMoreElements()) {
-                    NetworkInterface n = (NetworkInterface) e.nextElement();
-                    Enumeration ee = n.getInetAddresses();
+                    NetworkInterface n = e.nextElement();
+                    Enumeration<InetAddress> ee = n.getInetAddresses();
                     while (ee.hasMoreElements()) {
-                        InetAddress i = (InetAddress) ee.nextElement();
+                        InetAddress i = ee.nextElement();
                         if (!i.isLoopbackAddress() && !i.isLinkLocalAddress() && i.isSiteLocalAddress()) {
                             ip = i;
                         }
@@ -509,10 +507,10 @@ public enum OS {
 
     public static boolean checkAuthLibLoaded() {
         try {
-            App.class.forName("com.mojang.authlib.exceptions.AuthenticationException");
-            App.class.forName("com.mojang.authlib.Agent");
-            App.class.forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
-            App.class.forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
+            Class.forName("com.mojang.authlib.exceptions.AuthenticationException");
+            Class.forName("com.mojang.authlib.Agent");
+            Class.forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
+            Class.forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
         } catch (ClassNotFoundException e) {
             LogManager.logStackTrace(e);
             return false;
@@ -526,7 +524,7 @@ public enum OS {
      */
     public static void addURL(URL u) throws IOException {
         URLClassLoader sysloader = (URLClassLoader) App.class.getClassLoader();
-        Class sysclass = URLClassLoader.class;
+        Class<URLClassLoader> sysclass = URLClassLoader.class;
         try {
             Method method = sysclass.getDeclaredMethod("addURL", URL.class);
             method.setAccessible(true);

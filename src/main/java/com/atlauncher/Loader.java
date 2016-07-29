@@ -355,10 +355,10 @@ public class Loader {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", Constants.LAUNCHER_NAME + " " +
                     Constants.VERSION);
             try {
-                Class util = Class.forName("com.apple.eawt.Application");
+                Class<?> util = Class.forName("com.apple.eawt.Application");
                 Method getApplication = util.getDeclaredMethod("getApplication");
                 Object application = getApplication.invoke(util);
-                Class params[] = new Class[]{Image.class};
+                Class<?>[] params = new Class<?>[]{Image.class};
                 Method setDockIconImage = util.getDeclaredMethod("setDockIconImage", params);
                 setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
             } catch (Exception ex) {

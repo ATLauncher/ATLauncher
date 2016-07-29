@@ -36,7 +36,7 @@ public final class BlurLayer extends LayerUI<JPanel> {
     }
 
     @Override
-    public void applyPropertyChange(PropertyChangeEvent pce, JLayer l) {
+    public void applyPropertyChange(PropertyChangeEvent pce, JLayer<? extends JPanel> l) {
         if (pce.getPropertyName().equalsIgnoreCase("blur")) {
             this.blur = (Boolean) pce.getNewValue();
             l.repaint();

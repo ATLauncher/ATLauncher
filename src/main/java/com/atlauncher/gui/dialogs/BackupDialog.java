@@ -75,8 +75,8 @@ public class BackupDialog extends JDialog implements ActionListener {
     private final JButton backupButton = new JButton(LanguageManager.localize("common.backup"));
     private final JButton restoreButton = new JButton(LanguageManager.localize("common.restore"));
     private final JButton deleteButton = new JButton(LanguageManager.localize("common.delete"));
-    private JList worldList;
-    private JList backupList;
+    private JList<String> worldList;
+    private JList<String> backupList;
     private SyncAbstract selectedSync = SyncAbstract.syncList.get(SettingsManager.getLastSelectedSync());
 
     public BackupDialog(Instance inst) {
@@ -185,7 +185,7 @@ public class BackupDialog extends JDialog implements ActionListener {
     }
 
     private JPanel createRestorePanel() {
-        JComboBox syncChoice = new JComboBox();
+        JComboBox<String> syncChoice = new JComboBox<>();
         for (Map.Entry<String, SyncAbstract> entry : SyncAbstract.syncList.entrySet()) {
             syncChoice.addItem(entry.getKey());
         }
@@ -194,9 +194,9 @@ public class BackupDialog extends JDialog implements ActionListener {
 
         List<String> list = selectedSync.getBackupsForInstance(instance);
         if (list == null) {
-            backupList = new JList();
+            backupList = new JList<>();
         } else {
-            backupList = new JList(list.toArray(new String[list.size()]));
+            backupList = new JList<>(list.toArray(new String[list.size()]));
         }
         backupList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         backupList.setLayoutOrientation(JList.VERTICAL_WRAP);
@@ -259,7 +259,7 @@ public class BackupDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (("Backup".equals(e.getActionCommand())) && (worldList.getSelectedValue() != null)) {
-            String worldToBackup = (String) worldList.getSelectedValue();
+            String worldToBackup = worldList.getSelectedValue();
             String backupName = JOptionPane.showInputDialog(this, LanguageManager.localize("backup.message" + "" +
                             ".backupname"), LanguageManager.localize("backup.message.backupname.title"),
                     JOptionPane.QUESTION_MESSAGE);
@@ -277,10 +277,10 @@ public class BackupDialog extends JDialog implements ActionListener {
                 }
             }
         } else if (("Restore".equals(e.getActionCommand())) && (backupList.getSelectedValue() != null)) {
-            String backupToRestore = (String) backupList.getSelectedValue();
+            String backupToRestore = backupList.getSelectedValue();
             selectedSync.restoreBackup(backupToRestore, instance);
         } else if (("Delete".equals(e.getActionCommand())) && (backupList.getSelectedValue() != null)) {
-            String backupToDelete = (String) backupList.getSelectedValue();
+            String backupToDelete = backupList.getSelectedValue();
             if (JOptionPane.showOptionDialog(this, LanguageManager.localizeWithReplace("backup.message" + "" +
                             ".deleteconfirm", backupToDelete), LanguageManager.localize("backup.message" +
                             ".deleteconfirm" + ".title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE,
@@ -295,7 +295,7 @@ public class BackupDialog extends JDialog implements ActionListener {
                 }
             }
         } else if (e.getSource() instanceof JComboBox) {
-            String selection = (String) ((JComboBox) e.getSource()).getSelectedItem();
+            String selection = (String) ((JComboBox<?>) e.getSource()).getSelectedItem();
             selectedSync = SyncAbstract.syncList.get(selection);
             SettingsManager.setLastSelectedSync(selection);
             List<String> list = selectedSync.getBackupsForInstance(instance);
