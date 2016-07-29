@@ -17,10 +17,6 @@
  */
 package com.atlauncher.nio;
 
-import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
-import com.google.gson.Gson;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,7 +25,10 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+
+import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
+import com.google.gson.Gson;
 
 public final class JsonFile {
     public static <T> T of(String name, Class<T> tClass) throws Exception {
@@ -63,11 +62,11 @@ public final class JsonFile {
     }
 
     public void write(Gson gson, Object obj) throws Exception {
-        OutputStream os = Files.newOutputStream(this.path, StandardOpenOption.WRITE);
+        OutputStream os = Files.newOutputStream(this.path);
         OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
 
         gson.toJson(obj, osw);
-
+        
         osw.close();
         os.close();
     }
