@@ -123,7 +123,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                     for (Server server : ServerManager.getServers()) {
                         Downloadable download = new Downloadable(server.getFileURL("ping"), false);
                         results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n", server
-                                .getHost(), download.toString()));
+                                .getHost(), download.getTextBody()));
                         dialog.doneTask();
                     }
 

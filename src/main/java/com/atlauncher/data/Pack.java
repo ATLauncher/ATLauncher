@@ -22,19 +22,14 @@ import com.atlauncher.Gsons;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.version.PackVersion;
 import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
-import com.atlauncher.utils.ATLauncherAPI;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.ImageIcon;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Pack {
     private int id;
@@ -280,7 +275,7 @@ public class Pack {
             Downloadable download = new Downloadable(path, true);
             int tries = 1;
             do {
-                this.json = download.toString();
+                this.json = download.getTextBody();
                 tries++;
             } while (json == null && tries < 5);
             this.jsonVersion = version;

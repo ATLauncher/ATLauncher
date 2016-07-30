@@ -227,7 +227,7 @@ public class OldSettings {
     public void checkMojangStatus() {
         try {
             Downloadable dl = new Downloadable("http://status.mojang.com/check", false);
-            String resp = dl.toString();
+            String resp = dl.getTextBody();
 
             if (resp == null) {
                 this.minecraftLoginServerUp = false;
@@ -389,7 +389,7 @@ public class OldSettings {
 
             return pool;
         } catch (Exception e) {
-            String result = NetworkUtils.uploadPaste(Constants.LAUNCHER_NAME + " Error", dl.toString());
+            String result = NetworkUtils.uploadPaste(Constants.LAUNCHER_NAME + " Error", dl.getTextBody());
             LogManager.logStackTrace("Error loading in file hashes, see error details @ " + result, e);
             return null;
         }
@@ -624,7 +624,7 @@ public class OldSettings {
         this.offlineMode = false;
 
         Downloadable download = new Downloadable("ping", true);
-        String test = download.toString();
+        String test = download.getTextBody();
 
         if (test != null && test.equalsIgnoreCase("pong")) {
             EventHandler.EVENT_BUS.publish(new EventHandler.PacksChangeEvent(true));

@@ -365,8 +365,7 @@ public final class Downloadable {
         }
     }
 
-    @Override
-    public String toString() {
+    public String getTextBody() {
         try {
             this.execute();
             return this.response.body().string();

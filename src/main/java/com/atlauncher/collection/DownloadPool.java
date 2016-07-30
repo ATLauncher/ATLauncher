@@ -39,8 +39,10 @@ public final class DownloadPool extends LinkedList<Downloadable> {
 
     public void downloadAll() {
         ExecutorService executor = Utils.generateDownloadExecutor();
-        for (Downloadable dl : this) {
-            executor.execute(new Downloader(dl));
+        synchronized (this) {
+            for (Downloadable dl : this) {
+                executor.execute(new Downloader(dl));
+            }
         }
         executor.shutdown();
         if (this.wait) {
@@ -51,8 +53,10 @@ public final class DownloadPool extends LinkedList<Downloadable> {
 
     public void downloadAll(InstanceInstaller installer) {
         ExecutorService executor = Utils.generateDownloadExecutor();
-        for (Downloadable dl : this) {
-            executor.execute(new Installer(dl, installer));
+        synchronized (this) {
+            for (Downloadable dl : this) {
+                executor.execute(new Installer(dl, installer));
+            }
         }
         executor.shutdown();
         if (this.wait) {
@@ -63,27 +67,33 @@ public final class DownloadPool extends LinkedList<Downloadable> {
 
     public int totalSize() {
         int size = 0;
-        for (Downloadable dl : this) {
-            if (dl.needToDownload()) {
-                size += dl.getFilesize();
+        synchronized (this) {
+            for (Downloadable dl : this) {
+                if (dl.needToDownload()) {
+                    size += dl.getFilesize();
+                }
             }
         }
         return size;
     }
 
     public DownloadPool downsize() {
-        final DownloadPool pool = new DownloadPool(DownloadPool.this.wait);
+        final DownloadPool pool = new DownloadPool(this.wait);
 
         ExecutorService executor = Utils.generateDownloadExecutor();
-        for (final Downloadable dl : DownloadPool.this) {
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    if (dl.needToDownload()) {
-                        pool.add(dl);
+        synchronized (this) {
+            for (final Downloadable dl : this) {
+                executor.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dl.needToDownload()) {
+                            synchronized (pool) {
+                                pool.add(dl);
+                            }
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         executor.shutdown();
@@ -94,9 +104,11 @@ public final class DownloadPool extends LinkedList<Downloadable> {
     }
 
     public boolean any() {
-        for (Downloadable dl : this) {
-            if (dl.needToDownload()) {
-                return true;
+        synchronized (this) {
+            for (Downloadable dl : this) {
+                if (dl.needToDownload()) {
+                    return true;
+                }
             }
         }
 
