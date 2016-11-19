@@ -512,7 +512,7 @@ public class App {
             Properties props = new Properties();
             props.load(new FileInputStream(f));
 
-            props.setProperty("java_version", Utils.getJavaVersion());
+            props.setProperty("java_version", Utils.getLauncherJavaVersion());
             props.setProperty("location", App.settings.getBaseDir().toString());
             props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
                 .getPath()).getAbsolutePath());

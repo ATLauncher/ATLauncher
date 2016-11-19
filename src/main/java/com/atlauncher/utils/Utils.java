@@ -357,16 +357,7 @@ public class Utils {
     public static String getJavaHome() {
         return System.getProperty("java.home");
     }
-
-    /**
-     * Gets the java version.
-     *
-     * @return the java version
-     */
-    public static String getJavaVersion() {
-        return System.getProperty("java.runtime.version");
-    }
-
+    
     /**
      * Checks if is windows.
      *
@@ -1427,186 +1418,140 @@ public class Utils {
             }
         };
     }
-
+    
     /**
-     * Gets the actual java version.
+     * Get the Java version that the launcher runs on.
      *
-     * @return the actual java version
+     * @return the Java version that the launcher runs on
      */
-    public static String getActualJavaVersion() {
+    public static String getLauncherJavaVersion() {
+        return System.getProperty("java.version");
+    }
+    
+    /**
+     * Get the Java version used to run Minecraft.
+     *
+     * @return the Java version used to run Minecraft
+     */
+    public static String getMinecraftJavaVersion() {
         if (App.settings.isUsingCustomJavaPath()) {
             File folder = new File(App.settings.getJavaPath(), "bin/");
-            List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
-            arguments.add("-version");
-            ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+            String javaCommand = folder + File.separator + "java" + (isWindows() ? ".exe" : "");
+            
+            ProcessBuilder processBuilder = new ProcessBuilder(javaCommand, "-version");
             processBuilder.directory(folder);
             processBuilder.redirectErrorStream(true);
+            
             String version = "Unknown";
-            BufferedReader br = null;
+            
             try {
                 Process process = processBuilder.start();
-                InputStream is = process.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
-                br = new BufferedReader(isr);
-                String line = null;
-                Pattern p = Pattern.compile("build ([0-9.-_a-zA-Z]+)");
-                while ((line = br.readLine()) != null) {
-                    // Extract version information
-                    Matcher m = p.matcher(line);
-
-                    if (m.find()) {
-                        version = m.group(1);
-                        break;
+                BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                try {
+                    String line = null;
+                    Pattern p = Pattern.compile("java version \"([^\"]*)\"");
+                    
+                    while ((line = br.readLine()) != null) {
+                        // Extract version information
+                        Matcher m = p.matcher(line);
+                        
+                        if (m.find()) {
+                            version = m.group(1);
+                            break;
+                        }
                     }
+                } finally {
+                    br.close();
                 }
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close process input stream reader", e);
-                    }
-                }
             }
-            return "Launcher: " + System.getProperty("java.version") + ", Minecraft: " + version;
+            
+            LogManager.warn("Cannot get Java version from the ouput of \"" + javaCommand + "\" -version");
+            
+            return version;
         } else {
-            return "Launcher: " + System.getProperty("java.version") + ", Minecraft: " + System.getProperty("java" +
-                ".version");
+            return getLauncherJavaVersion();
         }
     }
-
+    
     /**
-     * Checks if the user is using Java 7 or above
+     * Parse a Java version string and get the major version number. For example "1.8.0_91" is parsed to 8.
+     *
+     * @param version the version string to parse
+     * @return the parsed major version number
+     */
+    public static int parseJavaVersionNumber(String version) {
+        Matcher m = Pattern.compile("(?:1\\.)?([0-9]+).*").matcher(version);
+        
+        return m.find() ? Integer.parseInt(m.group(1)) : -1;
+    }
+    
+    /**
+     * Get the major Java version that the launcher runs on.
+     *
+     * @return the major Java version that the launcher runs on
+     */
+    public static int getLauncherJavaVersionNumber() {
+        return parseJavaVersionNumber(getLauncherJavaVersion());
+    }
+    
+    /**
+     * Get the major Java version used to run Minecraft.
+     *
+     * @return the major Java version used to run Minecraft
+     */
+    public static int getMinecraftJavaVersionNumber() {
+        return parseJavaVersionNumber(getMinecraftJavaVersion());
+    }
+    
+    /**
+     * Get the Java versions used by the Launcher and Minecraft as a string.
+     *
+     * @return the Java versions used by the Launcher and Minecraft as a string
+     */
+    public static String getActualJavaVersion() {
+        return String.format("Launcher: Java %d (%s), Minecraft: Java %d (%s)",
+            getLauncherJavaVersionNumber(), getLauncherJavaVersion(),
+            getMinecraftJavaVersionNumber(), getMinecraftJavaVersion()
+        );
+    }
+    
+    /**
+     * Checks if the user is using Java 7 or above.
      *
      * @return true if the user is using Java 7 or above else false
      */
     public static boolean isJava7OrAbove(boolean checkCustomPath) {
-        if (App.settings.isUsingCustomJavaPath() && checkCustomPath) {
-            File folder = new File(App.settings.getJavaPath(), "bin/");
-            List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
-            arguments.add("-version");
-            ProcessBuilder processBuilder = new ProcessBuilder(arguments);
-            processBuilder.directory(folder);
-            processBuilder.redirectErrorStream(true);
-            BufferedReader br = null;
-            int version = -1;
-            try {
-                Process process = processBuilder.start();
-                InputStream is = process.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
-                br = new BufferedReader(isr);
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    if (line.contains("build 1.")) {
-                        int buildIndex = line.indexOf("build 1.") + 8;
-                        version = Integer.parseInt(line.substring(buildIndex, buildIndex + 1));
-                        break;
-                    }
-                }
-                if (version == -1) {
-                    LogManager.warn("Cannot get java version number from the ouput of java -version");
-                } else {
-                    return version >= 7;
-                }
-            } catch (NumberFormatException e) {
-                App.settings.logStackTrace("Cannot get number from the ouput of java -version", e);
-            } catch (IOException e) {
-                App.settings.logStackTrace(e);
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close input stream reader", e);
-                    }
-                }
-            }
-            return true; // Can't determine version, so assume true.
-        } else {
-            return Integer.parseInt(System.getProperty("java.version").substring(2, 3)) >= 7;
-        }
+        int version = checkCustomPath ? getMinecraftJavaVersionNumber() : getLauncherJavaVersionNumber();
+        return version >= 7 || version == -1;
     }
-
+    
     /**
-     * Checks if is java8.
+     * Checks if the user is using exactly Java 8.
      *
-     * @return true, if is java8
+     * @return true if the user is using exactly Java 8
      */
     public static boolean isJava8() {
-        if (App.settings.isUsingCustomJavaPath()) {
-            File folder = new File(App.settings.getJavaPath(), "bin/");
-            List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
-            arguments.add("-version");
-            ProcessBuilder processBuilder = new ProcessBuilder(arguments);
-            processBuilder.directory(folder);
-            processBuilder.redirectErrorStream(true);
-            BufferedReader br = null;
-            try {
-                Process process = processBuilder.start();
-                InputStream is = process.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
-                br = new BufferedReader(isr);
-                String line = br.readLine(); // Read first line only
-                return line.contains("\"1.8");
-            } catch (IOException e) {
-                App.settings.logStackTrace(e);
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close input stream reader", e);
-                    }
-                }
-            }
-            return false; // Can't determine version, so fall back to not being Java 8
-        } else {
-            return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.8");
-        }
+        return getMinecraftJavaVersionNumber() == 8;
     }
-
+    
     /**
-     * Checks if is java9.
+     * Checks if the user is using exactly Java 9.
      *
-     * @return true, if is java9
+     * @return true if the user is using exactly Java 9
      */
     public static boolean isJava9() {
-        if (App.settings.isUsingCustomJavaPath()) {
-            File folder = new File(App.settings.getJavaPath(), "bin/");
-            List<String> arguments = new ArrayList<String>();
-            arguments.add(folder + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
-            arguments.add("-version");
-            ProcessBuilder processBuilder = new ProcessBuilder(arguments);
-            processBuilder.directory(folder);
-            processBuilder.redirectErrorStream(true);
-            BufferedReader br = null;
-            try {
-                Process process = processBuilder.start();
-                InputStream is = process.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
-                br = new BufferedReader(isr);
-                String line = br.readLine(); // Read first line only
-                return line.contains("\"1.9");
-            } catch (IOException e) {
-                App.settings.logStackTrace(e);
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (IOException e) {
-                        App.settings.logStackTrace("Cannot close input stream reader", e);
-                    }
-                }
-            }
-            return false; // Can't determine version, so fall back to not being Java 8
-        } else {
-            return System.getProperty("java.version").substring(0, 3).equalsIgnoreCase("1.9");
-        }
+        return getMinecraftJavaVersionNumber() == 9;
+    }
+    
+    /**
+     * Checks whether Metaspace should be used instead of PermGen. This is the case for Java 8 and above.
+     *
+     * @return whether Metaspace should be used instead of PermGen
+     */
+    public static boolean useMetaspace() {
+        return getMinecraftJavaVersionNumber() >= 8;
     }
 
     /**
