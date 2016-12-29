@@ -1129,16 +1129,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             return false;
         }
         if (this.jsonVersion.hasMessages()) {
-            if (this.isReinstall && this.jsonVersion.getMessages().hasUpdateMessage() && this.jsonVersion.getMessages
-                    ().showUpdateMessage(this.pack) != 0) {
-                LogManager.error("Instance Install Cancelled After Viewing Message!");
-                cancel(true);
-                return false;
-            } else if (this.jsonVersion.getMessages().hasInstallMessage() && this.jsonVersion.getMessages()
-                    .showInstallMessage(this.pack) != 0) {
-                LogManager.error("Instance Install Cancelled After Viewing Message!");
-                cancel(true);
-                return false;
+            if (this.isReinstall && this.jsonVersion.getMessages().hasUpdateMessage()) {
+                if (this.jsonVersion.getMessages().showUpdateMessage(this.pack) != 0) {
+                    LogManager.error("Instance Install Cancelled After Viewing Message!");
+                    cancel(true);
+                    return false;
+                }
+            } else if (this.jsonVersion.getMessages().hasInstallMessage()) {
+                if (this.jsonVersion.getMessages().showInstallMessage(this.pack) != 0) {
+                    LogManager.error("Instance Install Cancelled After Viewing Message!");
+                    cancel(true);
+                    return false;
+                }
             }
         }
 
