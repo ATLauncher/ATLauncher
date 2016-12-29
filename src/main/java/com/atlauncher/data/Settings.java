@@ -1767,6 +1767,9 @@ public class Settings {
                     continue;
                 }
 
+                // convert instance to latest data version
+                instance.convert();
+
                 if (!instance.getDisabledModsDirectory().exists()) {
                     instance.getDisabledModsDirectory().mkdir();
                 }
@@ -2617,7 +2620,7 @@ public class Settings {
      */
     public void logStackTrace(Throwable t) {
         t.printStackTrace();
-    
+
         CharArrayWriter writer = new CharArrayWriter();
         try {
             t.printStackTrace(new PrintWriter(writer));
