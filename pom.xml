@@ -140,7 +140,7 @@
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
-                <version>1.5.2</version>
+                <version>1.7.15</version>
                 <executions>
                     <execution>
                         <configuration>
@@ -155,6 +155,7 @@
                             </classPath>
                             <jre>
                                 <minVersion>1.6.0</minVersion>
+                                <runtimeBits>64/32</runtimeBits>
                             </jre>
                             <icon>src/main/resources/assets/image/Icon.ico</icon>
                         </configuration>
