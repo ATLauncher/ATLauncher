@@ -25,6 +25,7 @@ public class Library {
     private String file;
     private String server;
     private String md5;
+    private boolean force;
     private DownloadType download;
     private int filesize;
     private String depends;
@@ -48,6 +49,10 @@ public class Library {
 
     public int getFilesize() {
         return this.filesize;
+    }
+
+    public boolean shouldForce() {
+        return this.force;
     }
 
     public DownloadType getDownloadType() {

@@ -240,7 +240,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 (Language.INSTANCE.localize("common.error") +
                                         "<br/><br/>" + Language.INSTANCE.localizeWithReplace("instance" + "" +
                                         ".alreadyinstance1", instanceNameField.getText() + "<br/><br/>")), Language.INSTANCE
-                                .localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                                .localize("common.error"), JOptionPane.YES_NO_OPTION);
                         if (ret != JOptionPane.YES_OPTION) {
                             return;
                         }

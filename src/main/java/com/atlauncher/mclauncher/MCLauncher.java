@@ -244,6 +244,10 @@ public class MCLauncher {
         String argsString = arguments.toString();
 
         if (!LogManager.showDebug) {
+            if (App.settings != null) {
+                argsString = argsString.replace(App.settings.getBaseDir().getAbsolutePath(), "USERSDIR");
+            }
+            
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
             argsString = argsString.replace(account.getUUID(), "REDACTED");
             argsString = argsString.replace(account.getAccessToken(), "REDACTED");

@@ -17,17 +17,9 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
-import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
-import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.mojang.MojangVersion;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * TODO: Rewrite along with {@link com.atlauncher.data.Version} {@link com.atlauncher.data.LauncherVersion}
@@ -39,27 +31,9 @@ public class MinecraftVersion {
     private boolean legacy;
     private boolean coremods;
     private boolean resources;
-    private MojangVersion mojangVersion;
 
-    public void loadVersion() {
-        File versionFile = new File(App.settings.getVersionsDir(), this.version + ".json");
-        if (!App.skipMinecraftVersionDownloads) {
-            Downloadable download = new Downloadable(MojangConstants.DOWNLOAD_BASE.getURL("versions/" + this.version +
-                    "/" + this.version + ".json"), versionFile, null, null, false);
-            if (download.needToDownload()) {
-                download.download(false);
-            }
-        }
-        try {
-            mojangVersion = Gsons.DEFAULT_ALT.fromJson(new FileReader(versionFile), MojangVersion.class);
-        } catch (JsonSyntaxException e) {
-            App.settings.logStackTrace(e);
-        } catch (JsonIOException e) {
-            App.settings.logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
-        }
-    }
+    @SerializedName("json")
+    private MojangVersion mojangVersion;
 
     public boolean canCreateServer() {
         return this.server;

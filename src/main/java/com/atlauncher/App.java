@@ -37,6 +37,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -92,21 +93,28 @@ public class App {
     public static boolean useGzipForDownloads = true;
 
     /**
-     * This allows skipping the Minecraft version downloading which grabs all the Minecraft versions from Mojang so the
-     * launcher can know ahead of time what Minecraft versions there are and how to install them. Can be turned on to
-     * skip the downloading with the below command line argument.
-     * <p/>
-     * --skip-minecraft-version-downloads
-     */
-    public static boolean skipMinecraftVersionDownloads = false;
-
-    /**
-     * This allows skipping the system tray intergation so that the launcher doesn't even try to show the icon and menu
+     * This allows skipping the system tray integration so that the launcher doesn't even try to show the icon and menu
      * etc, in the users system tray. It can be skipped with the below command line argument.
      * <p/>
      * --skip-tray-integration
      */
     public static boolean skipTrayIntegration = false;
+
+    /**
+     * This removes writing the launchers location to AppData/Application Support. It can be enabled with the below
+     * command line argument.
+     * <p/>
+     * --skip-integration
+     */
+    public static boolean skipIntegration = false;
+
+    /**
+     * This allows skipping the hash checking when downloading files. It can be skipped with the below command line
+     * argument.
+     * <p/>
+     * --skip-hash-checking
+     */
+    public static boolean skipHashChecking = false;
 
     /**
      * This forces the launcher to start in offline mode. It can be enabled with the below command line argument.
@@ -116,20 +124,38 @@ public class App {
     public static boolean forceOfflineMode = false;
 
     /**
+     * This forces the working directory for the launcher. It can be changed with the below command line argument.
+     * <p/>
+     * --working-dir=C:/Games/ATLauncher
+     */
+    public static File workingDir = null;
+
+    /**
+     * This forces the launcher to not check for a launcher update. It can be enabled with the below command line
+     * argument.
+     * <p/>
+     * --no-launcher-update
+     */
+    public static boolean noLauncherUpdate = false;
+
+    /**
      * This sets a pack code to be added to the launcher on startup.
      */
-    public static String packCodeToAdd;
+    public static String packCodeToAdd = null;
 
     /**
      * This sets a pack to install on startup (no share code so just prompt).
      */
-    public static String packToInstall;
+    public static String packToInstall = null;
 
     /**
      * This sets a pack to install on startup (with share code).
      */
-    public static String packShareCodeToInstall;
+    public static String packShareCodeToInstall = null;
 
+    /**
+     * This sets a pack to auto launch on startup
+     */
     public static String autoLaunch = null;
 
     /**
@@ -178,7 +204,7 @@ public class App {
                     LogManager.showDebug = true;
                     LogManager.debugLevel = 1;
                     LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
-                            + "user data!");
+                        + "user data!");
                 } else if (parts[0].equalsIgnoreCase("--debug-level") && parts.length == 2) {
                     int debugLevel;
 
@@ -186,7 +212,7 @@ public class App {
                         debugLevel = Integer.parseInt(parts[1]);
                     } catch (NumberFormatException e) {
                         LogManager.error("Error converting given debug level string to an integer. The specified " +
-                                "debug level given was '" + parts[1] + "'");
+                            "debug level given was '" + parts[1] + "'");
                         continue;
                     }
 
@@ -200,17 +226,31 @@ public class App {
                 } else if (parts[0].equalsIgnoreCase("--usegzip") && parts[1].equalsIgnoreCase("false")) {
                     useGzipForDownloads = false;
                     LogManager.debug("GZip has been turned off for downloads! Don't ask for support with this " +
-                            "disabled!", true);
-                } else if (parts[0].equalsIgnoreCase("--skip-minecraft-version-downloads")) {
-                    skipMinecraftVersionDownloads = true;
-                    LogManager.debug("Skipping Minecraft version downloads! This may cause issues, only use it as " +
-                            "directed by" + Constants.LAUNCHER_NAME + " staff!", true);
+                        "disabled!", true);
                 } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
                     skipTrayIntegration = true;
                     LogManager.debug("Skipping tray integration!", true);
+                } else if (parts[0].equalsIgnoreCase("--skip-hash-checking")) {
+                    skipHashChecking = true;
+                    LogManager.debug("Skipping hash checking! Don't ask for support with this enabled!", true);
                 } else if (parts[0].equalsIgnoreCase("--force-offline-mode")) {
                     forceOfflineMode = true;
                     LogManager.debug("Forcing offline mode!", true);
+                } else if (parts[0].equalsIgnoreCase("--no-launcher-update")) {
+                    noLauncherUpdate = true;
+                    LogManager.debug("Not checking for launcher updates! Don't ask for support with this enabled",
+                        true);
+                } else if (parts[0].equalsIgnoreCase("--working-dir")) {
+                    File wDir = new File(parts[1]);
+                    if (wDir.exists() && !wDir.isDirectory()) {
+                        LogManager.error("Working directory not set as it references a file!");
+                    }
+
+                    if (!wDir.exists()) {
+                        wDir.mkdirs();
+                    }
+
+                    workingDir = wDir;
                 }
             }
         }
@@ -221,10 +261,10 @@ public class App {
             if (files > 1) {
                 String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
                 int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("I've detected that you may " +
-                        "not have installed this in the right location.<br/><br/>The exe or jar file should " +
-                        "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure " +
-                        "that's what you've done?"), "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane
-                        .ERROR_MESSAGE, null, options, options[0]);
+                    "not have installed this in the right location.<br/><br/>The exe or jar file should " +
+                    "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure " +
+                    "that's what you've done?"), "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane
+                    .ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     System.exit(0);
                 }
@@ -287,7 +327,7 @@ public class App {
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", Constants.LAUNCHER_NAME + " " +
-                    Constants.VERSION);
+                Constants.VERSION);
             try {
                 Class util = Class.forName("com.apple.eawt.Application");
                 Method getApplication = util.getMethod("getApplication", new Class[0]);
@@ -328,7 +368,11 @@ public class App {
         }
 
         TRAY_MENU.localize();
-        integrate();
+
+        if (!skipIntegration) {
+            integrate();
+        }
+
         ss.close();
 
         if (packCodeToAdd != null) {
@@ -409,6 +453,7 @@ public class App {
         ToolTipManager.sharedInstance().setDismissDelay(15000);
         ToolTipManager.sharedInstance().setInitialDelay(50);
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
+        UIManager.put("ScrollBar.minimumThumbSize", new Dimension(50, 50));
 
         if (Utils.isMac()) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
@@ -467,7 +512,7 @@ public class App {
             props.setProperty("java_version", Utils.getJavaVersion());
             props.setProperty("location", App.settings.getBaseDir().toString());
             props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
-                    .getPath()).getAbsolutePath());
+                .getPath()).getAbsolutePath());
 
             packCodeToAdd = props.getProperty("pack_code_to_add", null);
             props.remove("pack_code_to_add");

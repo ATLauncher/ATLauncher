@@ -22,6 +22,7 @@ import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
+import com.atlauncher.data.mojang.MojangVersion;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

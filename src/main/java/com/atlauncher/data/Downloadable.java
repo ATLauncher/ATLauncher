@@ -50,6 +50,7 @@ public class Downloadable {
     private int attempts = 0;
     private List<Server> servers;
     private Server server;
+    private boolean checkForNewness = false;
 
     public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller, boolean
             isATLauncherDownload, File copyTo, boolean actuallyCopy) {
@@ -101,6 +102,10 @@ public class Downloadable {
         return this.copyTo.getName();
     }
 
+    public void checkForNewness() {
+        this.checkForNewness = true;
+    }
+
     public boolean isMD5() {
         return hash == null || hash.length() != 40;
     }
@@ -144,7 +149,14 @@ public class Downloadable {
         if (this.file == null) {
             return true;
         }
+
         if (this.file.exists()) {
+            if (this.checkForNewness) {
+                if (this.getConnection() != null && this.getFile().length() == this.getFilesize()) {
+                    return false;
+                }
+            }
+
             if (isMD5()) {
                 if (Utils.getMD5(this.file).equalsIgnoreCase(getHash())) {
                     return false;
@@ -155,6 +167,7 @@ public class Downloadable {
                 }
             }
         }
+
         return true;
     }
 
@@ -369,8 +382,7 @@ public class Downloadable {
         new File(this.file.getAbsolutePath().substring(0, this.file.getAbsolutePath().lastIndexOf(File.separatorChar)
         )).mkdirs();
         if (getHash().equalsIgnoreCase("-")) {
-            downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to
-            // check
+            downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to check
         } else {
             String fileHash = "0";
             boolean done = false;
@@ -385,7 +397,7 @@ public class Downloadable {
                 } else {
                     fileHash = "0";
                 }
-                if (fileHash.equalsIgnoreCase(getHash())) {
+                if (App.skipHashChecking || fileHash.equalsIgnoreCase(getHash())) {
                     done = true;
                     break; // Hash matches, file is good
                 }

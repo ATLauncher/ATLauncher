@@ -27,6 +27,10 @@ public class LauncherVersion {
     private int revision;
     private int build = 0;
 
+    public LauncherVersion(int reserved, int major, int minor, int revision) {
+        this(reserved, major, minor, revision, 0);
+    }
+
     public LauncherVersion(int reserved, int major, int minor, int revision, int build) {
         this.reserved = reserved;
         this.major = major;
@@ -91,7 +95,7 @@ public class LauncherVersion {
             return String.format("%d.%d.%d.%d", this.reserved, this.major, this.minor, this.revision);
         } else {
             return String.format("%d.%d.%d.%d Build %d", this.reserved, this.major, this.minor, this.revision, this
-                    .build);
+                .build);
         }
     }
 

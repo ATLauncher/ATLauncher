@@ -47,6 +47,7 @@ public class Mod {
     private String sha1;
     private String colour;
     private String warning;
+    private boolean force;
     private Color compiledColour;
     private ModType type;
     private ExtractToType extractTo;
@@ -157,6 +158,10 @@ public class Mod {
 
     public String getWarning() {
         return this.warning;
+    }
+
+    public boolean shouldForce() {
+        return this.force;
     }
 
     public Color getCompiledColour() {
@@ -331,16 +336,21 @@ public class Mod {
 
     public void downloadClient(InstanceInstaller installer, int attempt) {
         File fileLocation = new File(App.settings.getDownloadsDir(), getFile());
+
         if (fileLocation.exists()) {
-            if (hasMD5()) {
-                if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
-                    return; // File already exists and matches hash, don't download it
+            if (this.shouldForce()) {
+                Utils.delete(fileLocation); // File exists but is corrupt, delete it
+            } else if (this.download != DownloadType.direct) {
+                if (hasMD5()) {
+                    if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
+                        return; // File already exists and matches hash, don't download it
+                    } else {
+                        Utils.delete(fileLocation); // File exists but is corrupt, delete it
+                    }
                 } else {
-                    Utils.delete(fileLocation); // File exists but is corrupt, delete it
-                }
-            } else {
-                if (fileLocation.length() != 0) {
-                    return; // No MD5, but file is there, can only assume it's fine
+                    if (fileLocation.length() != 0) {
+                        return; // No MD5, but file is there, can only assume it's fine
+                    }
                 }
             }
         }
@@ -448,6 +458,7 @@ public class Mod {
                 break;
             case direct:
                 Downloadable download1 = new Downloadable(this.getUrl(), fileLocation, this.md5, installer, false);
+                download1.checkForNewness();
                 if (download1.needToDownload()) {
                     installer.resetDownloadedBytes(download1.getFilesize());
                     download1.download(true);
@@ -480,14 +491,18 @@ public class Mod {
     public void downloadServer(InstanceInstaller installer, int attempt) {
         File fileLocation = new File(App.settings.getDownloadsDir(), getServerFile());
         if (fileLocation.exists()) {
-            if (this.hasServerMD5()) {
-                if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)) {
-                    return; // File already exists and matches hash, don't download it
+            if (this.shouldForce()) {
+                Utils.delete(fileLocation); // File exists but is corrupt, delete it
+            } else if (this.download != DownloadType.direct) {
+                if (this.hasServerMD5()) {
+                    if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)) {
+                        return; // File already exists and matches hash, don't download it
+                    } else {
+                        Utils.delete(fileLocation); // File exists but is corrupt, delete it
+                    }
                 } else {
-                    Utils.delete(fileLocation); // File exists but is corrupt, delete it
+                    return; // No MD5, but file is there, can only assume it's fine
                 }
-            } else {
-                return; // No MD5, but file is there, can only assume it's fine
             }
         }
         if (this.serverDownload == DownloadType.browser) {
@@ -582,6 +597,7 @@ public class Mod {
             }
         } else if (this.serverDownload == DownloadType.direct) {
             Downloadable download = new Downloadable(this.serverUrl, fileLocation, this.serverMD5, installer, false);
+            download.checkForNewness();
             if (download.needToDownload()) {
                 download.download(false);
             }

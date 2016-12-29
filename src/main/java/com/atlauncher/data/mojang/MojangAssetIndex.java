@@ -15,22 +15,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package com.atlauncher.data.mojang;
 
-package com.atlauncher;
+import com.atlauncher.annot.Json;
 
-public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler {
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        e.printStackTrace();
+@Json
+public class MojangAssetIndex {
+    private String id;
+    private String sha1;
+    private long size;
+    private String url;
+    private long totalSize;
 
-        if (e.getMessage() != null && !e.getMessage().isEmpty()) {
-            LogManager.error(e.getMessage());
-        }
+    public String getId() {
+        return this.id;
+    }
 
-        for (StackTraceElement element : e.getStackTrace()) {
-            if (element != null) {
-                LogManager.error(element.toString());
-            }
-        }
+    public String getSha1() {
+        return this.sha1;
+    }
+
+    public long getSize() {
+        return this.size;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public long getTotalSize() {
+        return this.totalSize;
     }
 }
