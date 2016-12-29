@@ -6,6 +6,7 @@
 - Fix downloads not following redirects
 - Fix noconfigs option for packs not doing anything
 - Fix scrollbars disappearing in large scroll lists
+- Fix deleting directories removing the strucutre of symlinks
 - Switch log uploading to UTF-8 to prevent possible upload issues
 - Fix issue with the PacksTab not refreshing after changing account
 - Don't download every single Minecraft json file increasing startup speed

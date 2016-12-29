@@ -357,7 +357,7 @@ public class Utils {
     public static String getJavaHome() {
         return System.getProperty("java.home");
     }
-    
+
     /**
      * Checks if is windows.
      *
@@ -948,18 +948,13 @@ public class Utils {
         if (!file.exists()) {
             return;
         }
-        if (file.isDirectory()) {
+
+        if (file.isDirectory() && !isSymlink(file)) {
             if (file.listFiles() != null) {
                 for (File c : file.listFiles()) {
                     delete(c);
                 }
             }
-        }
-
-        if (isSymlink(file)) {
-            LogManager.error("Not deleting the " + (file.isFile() ? "file" : "folder") + file.getAbsolutePath() +
-                "as it's a symlink");
-            return;
         }
 
         if (!file.delete()) {
@@ -1418,7 +1413,7 @@ public class Utils {
             }
         };
     }
-    
+
     /**
      * Get the Java version that the launcher runs on.
      *
@@ -1427,7 +1422,7 @@ public class Utils {
     public static String getLauncherJavaVersion() {
         return System.getProperty("java.version");
     }
-    
+
     /**
      * Get the Java version used to run Minecraft.
      *
@@ -1437,24 +1432,24 @@ public class Utils {
         if (App.settings.isUsingCustomJavaPath()) {
             File folder = new File(App.settings.getJavaPath(), "bin/");
             String javaCommand = folder + File.separator + "java" + (isWindows() ? ".exe" : "");
-            
+
             ProcessBuilder processBuilder = new ProcessBuilder(javaCommand, "-version");
             processBuilder.directory(folder);
             processBuilder.redirectErrorStream(true);
-            
+
             String version = "Unknown";
-            
+
             try {
                 Process process = processBuilder.start();
                 BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 try {
                     String line = null;
                     Pattern p = Pattern.compile("java version \"([^\"]*)\"");
-                    
+
                     while ((line = br.readLine()) != null) {
                         // Extract version information
                         Matcher m = p.matcher(line);
-                        
+
                         if (m.find()) {
                             version = m.group(1);
                             break;
@@ -1466,15 +1461,15 @@ public class Utils {
             } catch (IOException e) {
                 App.settings.logStackTrace(e);
             }
-            
+
             LogManager.warn("Cannot get Java version from the ouput of \"" + javaCommand + "\" -version");
-            
+
             return version;
         } else {
             return getLauncherJavaVersion();
         }
     }
-    
+
     /**
      * Parse a Java version string and get the major version number. For example "1.8.0_91" is parsed to 8.
      *
@@ -1483,10 +1478,10 @@ public class Utils {
      */
     public static int parseJavaVersionNumber(String version) {
         Matcher m = Pattern.compile("(?:1\\.)?([0-9]+).*").matcher(version);
-        
+
         return m.find() ? Integer.parseInt(m.group(1)) : -1;
     }
-    
+
     /**
      * Get the major Java version that the launcher runs on.
      *
@@ -1495,7 +1490,7 @@ public class Utils {
     public static int getLauncherJavaVersionNumber() {
         return parseJavaVersionNumber(getLauncherJavaVersion());
     }
-    
+
     /**
      * Get the major Java version used to run Minecraft.
      *
@@ -1504,7 +1499,7 @@ public class Utils {
     public static int getMinecraftJavaVersionNumber() {
         return parseJavaVersionNumber(getMinecraftJavaVersion());
     }
-    
+
     /**
      * Get the Java versions used by the Launcher and Minecraft as a string.
      *
@@ -1516,7 +1511,7 @@ public class Utils {
             getMinecraftJavaVersionNumber(), getMinecraftJavaVersion()
         );
     }
-    
+
     /**
      * Checks if the user is using Java 7 or above.
      *
@@ -1526,7 +1521,7 @@ public class Utils {
         int version = checkCustomPath ? getMinecraftJavaVersionNumber() : getLauncherJavaVersionNumber();
         return version >= 7 || version == -1;
     }
-    
+
     /**
      * Checks if the user is using exactly Java 8.
      *
@@ -1535,7 +1530,7 @@ public class Utils {
     public static boolean isJava8() {
         return getMinecraftJavaVersionNumber() == 8;
     }
-    
+
     /**
      * Checks if the user is using exactly Java 9.
      *
@@ -1544,7 +1539,7 @@ public class Utils {
     public static boolean isJava9() {
         return getMinecraftJavaVersionNumber() == 9;
     }
-    
+
     /**
      * Checks whether Metaspace should be used instead of PermGen. This is the case for Java 8 and above.
      *
