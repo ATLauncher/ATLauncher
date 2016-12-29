@@ -73,7 +73,11 @@ public class PackVersion {
     }
 
     public String toString() {
-        return this.version + " (Minecraft " + this.getMinecraftVersion().getVersion() + ")";
+        if (this.minecraft.equalsIgnoreCase(this.version)) {
+            return this.version;
+        }
+
+        return this.version + " (" + this.getMinecraftVersion().getVersion() + ")";
     }
 
     public boolean versionMatches(String version) {
@@ -84,6 +88,7 @@ public class PackVersion {
         if (this.hash == null || !this.isDev) {
             return false;
         }
+
         return this.hash.equalsIgnoreCase(hash);
     }
 

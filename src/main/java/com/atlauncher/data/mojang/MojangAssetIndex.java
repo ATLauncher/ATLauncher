@@ -19,52 +19,31 @@ package com.atlauncher.data.mojang;
 
 import com.atlauncher.annot.Json;
 
-import java.util.List;
-
 @Json
-public class MojangVersion {
+public class MojangAssetIndex {
     private String id;
-    private String minecraftArguments;
-    private MojangAssetIndex assetIndex;
-    private String assets;
-    private MojangDownloads downloads;
-    private List<Library> libraries;
-    private List<Rule> rules;
-    private String mainClass;
+    private String sha1;
+    private long size;
+    private String url;
+    private long totalSize;
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
-    public String getMinecraftArguments() {
-        return this.minecraftArguments;
+    public String getSha1() {
+        return this.sha1;
     }
 
-    public MojangAssetIndex getAssetIndex() {
-        return this.assetIndex;
+    public long getSize() {
+        return this.size;
     }
 
-    public String getAssets() {
-        if (this.assets == null) {
-            return "legacy";
-        }
-
-        return this.assets;
+    public String getUrl() {
+        return this.url;
     }
 
-    public MojangDownloads getDownloads() {
-        return this.downloads;
-    }
-
-    public List<Library> getLibraries() {
-        return this.libraries;
-    }
-
-    public List<Rule> getRules() {
-        return this.rules;
-    }
-
-    public String getMainClass() {
-        return this.mainClass;
+    public long getTotalSize() {
+        return this.totalSize;
     }
 }

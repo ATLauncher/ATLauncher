@@ -35,9 +35,6 @@ public final class LogManager {
      */
     public static int debugLevel = 0;
 
-    private LogManager() {
-    }
-
     public static void start() {
         new LoggingThread(queue).start();
     }
@@ -61,7 +58,7 @@ public final class LogManager {
     }
 
     public static void debug(String message, int level) {
-        if (showDebug || debugLevel >= level) {
+        if (showDebug && debugLevel >= level) {
             queue.offer(new LogEvent(LogType.DEBUG, message));
         }
     }

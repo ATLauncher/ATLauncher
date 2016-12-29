@@ -5,10 +5,16 @@
 # Except These
 !/src/
 !/macapp/
+!/.editorconfig
 !/.gitignore
+!/CONTRIBUTING.md
+!/CHANGELOG.md
+!/Jenkinsfile
 !/LICENSE
 !/pom.xml
-!/IntelliJ-Coding-Style.jar
 !/README.md
 !/STYLE.md
-!/CHANGELOG.md
+!/TESTING.md
+
+# OS X things
+.DS_Store

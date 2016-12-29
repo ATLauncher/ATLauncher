@@ -109,11 +109,11 @@ public class LegacyMCLauncher {
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
-        if (App.settings.getJavaParameters().isEmpty()) {
+        String javaParams = App.settings.getJavaParameters();
+
+        if (javaParams.isEmpty()) {
             // Mojang launcher defaults if user has no custom java arguments
-            arguments.add("-XX:+UseConcMarkSweepGC");
-            arguments.add("-XX:+CMSIncrementalMode");
-            arguments.add("-XX:-UseAdaptiveSizePolicy");
+            javaParams = "-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy";
         }
 
         arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
@@ -128,13 +128,13 @@ public class LegacyMCLauncher {
             arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
         }
         if (App.settings.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
-            if (Utils.isJava8()) {
+            if (Utils.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
             }
         } else {
-            if (Utils.isJava8()) {
+            if (Utils.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + App.settings.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
@@ -152,13 +152,23 @@ public class LegacyMCLauncher {
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
-        if (!App.settings.getJavaParameters().isEmpty()) {
-            for (String arg : App.settings.getJavaParameters().split(" ")) {
+        ArrayList<String> negatedArgs = new ArrayList<String>();
+
+        if (!javaParams.isEmpty()) {
+            for (String arg : javaParams.split(" ")) {
                 if (!arg.isEmpty()) {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {
                             LogManager.error("Duplicate argument " + arg + " found and not added!");
                             continue;
+                        }
+
+                        if (arg.substring(0, 5).equalsIgnoreCase("-XX:+")) {
+                            if (instance.getExtraArguments().contains("-XX:-" + arg.substring(5))) {
+                                negatedArgs.add("-XX:-" + arg.substring(5));
+                                LogManager.error("Argument " + arg + " is negated by pack developer and not added!");
+                                continue;
+                            }
                         }
                     }
 
@@ -203,9 +213,28 @@ public class LegacyMCLauncher {
             arguments.add("false"); // Not Maximised
         }
 
+        if (instance.hasExtraArguments()) {
+            String args = instance.getExtraArguments();
+            if (args.contains(" ")) {
+                for (String argument : args.split(" ")) {
+                    if (!negatedArgs.contains(argument)) {
+                        arguments.add(argument);
+                    }
+                }
+            } else {
+                if (!negatedArgs.contains(args)) {
+                    arguments.add(args);
+                }
+            }
+        }
+
         String argsString = arguments.toString();
 
         if (!LogManager.showDebug) {
+            if (App.settings != null) {
+                argsString = argsString.replace(App.settings.getBaseDir().getAbsolutePath(), "USERSDIR");
+            }
+
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
             argsString = argsString.replace(sess.getAuth().getAuthenticatedToken(), "REDACTED");
         }

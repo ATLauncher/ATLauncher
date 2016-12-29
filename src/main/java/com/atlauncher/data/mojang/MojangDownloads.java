@@ -15,23 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package com.atlauncher.data.mojang;
 
-package com.atlauncher;
+import com.atlauncher.annot.Json;
 
-import java.io.CharArrayWriter;
-import java.io.PrintWriter;
+@Json
+public class MojangDownloads {
+    private MojangDownload client;
+    private MojangDownload server;
+    private MojangDownload windows_server;
 
-public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler {
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        e.printStackTrace();
-    
-        CharArrayWriter writer = new CharArrayWriter();
-        try {
-            e.printStackTrace(new PrintWriter(writer));
-            LogManager.error(writer.toString());
-        } finally {
-            writer.close();
-        }
+    public MojangDownload getClient() {
+        return this.client;
+    }
+
+    public MojangDownload getServer() {
+        return this.server;
+    }
+
+    public MojangDownload getWindowsServer() {
+        return this.windows_server;
     }
 }

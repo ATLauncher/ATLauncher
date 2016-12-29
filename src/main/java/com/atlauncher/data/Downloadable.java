@@ -50,6 +50,7 @@ public class Downloadable {
     private int attempts = 0;
     private List<Server> servers;
     private Server server;
+    private boolean checkForNewness = false;
 
     public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller, boolean
             isATLauncherDownload, File copyTo, boolean actuallyCopy) {
@@ -101,6 +102,10 @@ public class Downloadable {
         return this.copyTo.getName();
     }
 
+    public void checkForNewness() {
+        this.checkForNewness = true;
+    }
+
     public boolean isMD5() {
         return hash == null || hash.length() != 40;
     }
@@ -144,7 +149,14 @@ public class Downloadable {
         if (this.file == null) {
             return true;
         }
+
         if (this.file.exists()) {
+            if (this.checkForNewness) {
+                if (this.getConnection() != null && this.getFile().length() == this.getFilesize()) {
+                    return false;
+                }
+            }
+
             if (isMD5()) {
                 if (Utils.getMD5(this.file).equalsIgnoreCase(getHash())) {
                     return false;
@@ -155,6 +167,7 @@ public class Downloadable {
                 }
             }
         }
+
         return true;
     }
 
@@ -209,27 +222,52 @@ public class Downloadable {
         if (this.connection == null) {
             LogManager.debug("Opening connection to " + this.url, 3);
             try {
-                if (App.settings.getEnableProxy()) {
-                    this.connection = (HttpURLConnection) new URL(this.url).openConnection(App.settings.getProxy());
-                } else {
-                    this.connection = (HttpURLConnection) new URL(this.url).openConnection();
+                String url = this.url;
+                Integer numberOfRedirects = 0;
+
+                while (numberOfRedirects < 5)
+                {
+                    URL resourceUrl = new URL(url);
+
+                    if (App.settings.getEnableProxy()) {
+                        this.connection = (HttpURLConnection) resourceUrl.openConnection(App.settings.getProxy());
+                    } else {
+                        this.connection = (HttpURLConnection) resourceUrl.openConnection();
+                    }
+                    this.connection.setInstanceFollowRedirects(true);
+                    this.connection.setUseCaches(false);
+                    this.connection.setDefaultUseCaches(false);
+                    if (App.useGzipForDownloads) {
+                        this.connection.setRequestProperty("Accept-Encoding", "gzip");
+                    }
+                    this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+                    this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+                    this.connection.setRequestProperty("Expires", "0");
+                    this.connection.setRequestProperty("Pragma", "no-cache");
+                    this.connection.connect();
+
+                    // check for redirections
+                    switch (this.connection.getResponseCode()) {
+                        case HttpURLConnection.HTTP_MOVED_PERM:
+                        case HttpURLConnection.HTTP_MOVED_TEMP:
+                        case 307:
+                            String location = this.connection.getHeaderField("Location");
+                            URL base = new URL(url);
+                            URL next = new URL(base, location);  // Deal with relative URLs
+                            url = next.toExternalForm();
+                            numberOfRedirects++;
+                            continue;
+                    }
+
+                    break;
                 }
-                this.connection.setUseCaches(false);
-                this.connection.setDefaultUseCaches(false);
-                if (App.useGzipForDownloads) {
-                    this.connection.setRequestProperty("Accept-Encoding", "gzip");
-                }
-                this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
-                this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
-                this.connection.setRequestProperty("Expires", "0");
-                this.connection.setRequestProperty("Pragma", "no-cache");
-                this.connection.connect();
 
                 if (this.connection.getResponseCode() / 100 != 2) {
                     throw new IOException(this.url + " returned response code " + this.connection.getResponseCode() +
                             (this.connection.getResponseMessage() != null ? " with message of " + this.connection
                                     .getResponseMessage() : ""));
                 }
+
                 LogManager.debug("Connection opened to " + this.url, 3);
             } catch (IOException e) {
                 LogManager.debug("Exception when opening connection to " + this.url, 3);
@@ -369,8 +407,7 @@ public class Downloadable {
         new File(this.file.getAbsolutePath().substring(0, this.file.getAbsolutePath().lastIndexOf(File.separatorChar)
         )).mkdirs();
         if (getHash().equalsIgnoreCase("-")) {
-            downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to
-            // check
+            downloadFile(downloadAsLibrary); // Only download the file once since we have no MD5 to check
         } else {
             String fileHash = "0";
             boolean done = false;
@@ -385,7 +422,7 @@ public class Downloadable {
                 } else {
                     fileHash = "0";
                 }
-                if (fileHash.equalsIgnoreCase(getHash())) {
+                if (App.skipHashChecking || fileHash.equalsIgnoreCase(getHash())) {
                     done = true;
                     break; // Hash matches, file is good
                 }
