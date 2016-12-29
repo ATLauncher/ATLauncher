@@ -916,6 +916,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.downloadedBytes = 0;
         configsDownload.download(true); // Download the file
 
+        if (!configs.exists()) {
+            LogManager.warn("Failed to download configs for pack!");
+            this.cancel(true);
+            return;
+        }
+
         // Extract the configs zip file
         fireSubProgressUnknown();
         fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
@@ -1275,6 +1281,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
         if (!this.jsonVersion.hasNoConfigs()) {
             configurePack();
+        }
+        if (isCancelled()) {
+            return false;
         }
         // Copy over common configs if any
         if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
