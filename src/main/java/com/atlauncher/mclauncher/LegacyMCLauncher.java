@@ -163,7 +163,7 @@ public class LegacyMCLauncher {
                             continue;
                         }
 
-                        if (arg.substring(0, 5).equalsIgnoreCase("-XX:+")) {
+                        if (arg.startsWith("-XX:+")) {
                             if (instance.getExtraArguments().contains("-XX:-" + arg.substring(5))) {
                                 negatedArgs.add("-XX:-" + arg.substring(5));
                                 LogManager.error("Argument " + arg + " is negated by pack developer and not added!");

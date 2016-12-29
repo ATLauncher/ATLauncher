@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MCLauncher {
@@ -173,7 +172,7 @@ public class MCLauncher {
                             continue;
                         }
 
-                        if (arg.substring(0, 5).equalsIgnoreCase("-XX:+")) {
+                        if (arg.startsWith("-XX:+")) {
                             if (instance.getExtraArguments().contains("-XX:-" + arg.substring(5))) {
                                 negatedArgs.add("-XX:-" + arg.substring(5));
                                 LogManager.error("Argument " + arg + " is negated by pack developer and not added!");
