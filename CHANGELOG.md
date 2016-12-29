@@ -1,6 +1,9 @@
 # Changelog
 
 ## 3.2.3.2
+- Add in Discord social button
+- Change links for social buttons
+- Fix downloads not following redirects
 - Fix noconfigs option for packs not doing anything
 - Fix scrollbars disappearing in large scroll lists
 - Switch log uploading to UTF-8 to prevent possible upload issues
