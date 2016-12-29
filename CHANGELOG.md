@@ -13,6 +13,7 @@
 - Don't download every single Minecraft json file increasing startup speed
 - Add --no-launcher-update command line argument to not allow launcher updates
 - Add --working-dir command line argument to set the working directory of the launcher
+- Change the versions dropdown to take up less space due to change of string formatting
 - Add --skip-integration command line argument to not put files in APPDATA or equivelant
 - Fix issue with linked/depends mods not cascading their changes to the mods they enable
 - When reinstalling/updating an instance, select the mods which the user initially selected
