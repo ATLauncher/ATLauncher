@@ -50,6 +50,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     private final JTextArea descArea = new JTextArea();
     private final JButton newInstanceButton = new JButton(Language.INSTANCE.localize("common.newinstance"));
     private final JButton createServerButton = new JButton(Language.INSTANCE.localize("common.createserver"));
+    private final JButton discordInviteButton = new JButton("Discord");
     private final JButton supportButton = new JButton(Language.INSTANCE.localize("common.support"));
     private final JButton websiteButton = new JButton(Language.INSTANCE.localize("common.website"));
     private final JButton modsButton = new JButton(Language.INSTANCE.localize("pack.viewmods"));
@@ -75,6 +76,11 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         as.setBottomComponent(bottom);
         top.add(this.newInstanceButton);
         top.add(this.createServerButton);
+
+        if (pack.getDiscordInviteURL() != null) {
+            bottom.add(this.discordInviteButton);
+        }
+
         bottom.add(this.supportButton);
         bottom.add(this.websiteButton);
         bottom.add(this.modsButton);
@@ -133,6 +139,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                 }
             }
         });
+
         this.createServerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -153,12 +160,21 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                 }
             }
         });
+
+        this.discordInviteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Utils.openBrowser(pack.getDiscordInviteURL());
+            }
+        });
+
         this.supportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Utils.openBrowser(pack.getSupportURL());
             }
         });
+
         this.websiteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
