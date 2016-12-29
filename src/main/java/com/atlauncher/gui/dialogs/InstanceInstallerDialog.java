@@ -186,10 +186,19 @@ public class InstanceInstallerDialog extends JDialog {
                 break;
             }
         }
+
+        // ensures that font width is taken into account
         for (PackVersion version : versions) {
-            versionLength = Math.max(versionLength, version.toString().length());
+            versionLength = Math.max(versionLength, getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 254);
         }
-        versionsDropDown.setPreferredSize(new Dimension(versionLength+20, 25));
+
+        // ensures that the dropdown is at least 200 px wide
+        versionLength = Math.max(200, versionLength);
+
+        // ensures that there is a maximum width of 250 px to prevent overflow
+        versionLength = Math.min(250, versionLength);
+
+        versionsDropDown.setPreferredSize(new Dimension(versionLength, 25));
         middle.add(versionsDropDown, gbc);
 
         if (autoInstallVersion != null) {
