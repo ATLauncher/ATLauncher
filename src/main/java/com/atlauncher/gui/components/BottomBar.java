@@ -58,7 +58,7 @@ public abstract class BottomBar extends JPanel {
         nodeCraftIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 LogManager.info("Opening Up NodeCraft");
-                Utils.openBrowser("https://nodecraft.com/?ref=atl&utm_source=ATL&utm_medium=launcher");
+                Utils.openBrowser("https://nodecraft.com/r/atlauncher-client");
             }
         });
         facebookIcon.addActionListener(new ActionListener() {
