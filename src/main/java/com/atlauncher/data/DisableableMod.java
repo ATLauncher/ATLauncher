@@ -98,6 +98,10 @@ public class DisableableMod implements Serializable {
         return this.wasSelected;
     }
 
+    public void setWasSelected(boolean wasSelected) {
+        this.wasSelected = wasSelected;
+    }
+
     public boolean isUserAdded() {
         return this.userAdded;
     }
