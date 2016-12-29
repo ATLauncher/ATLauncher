@@ -1,4 +1,4 @@
 # Changelog
 
-## 3.2.3.4
-- Add Discord button for packs
+## 3.2.3.5
+- Fix NPE when java arg has less than 5 characters
