@@ -15,6 +15,7 @@
 - Add --working-dir command line argument to set the working directory of the launcher
 - Add --skip-integration command line argument to not put files in APPDATA or equivelant
 - Fix issue with linked/depends mods not cascading their changes to the mods they enable
+- When reinstalling/updating an instance, select the mods which the user initially selected
 - Download resources for all versions of Minecraft and download server/client jar differently
 - Remove the --skip-minecraft-version-downloads command line argument as it's no longer necessary
 - Add in command line argument --skip-hash-checking to disable the checking of hashes when downloading

@@ -344,6 +344,23 @@ public class Instance implements Cloneable {
     }
 
     /**
+     * Gets a List of the selected installed mods in this Instance. Mods are listed as DisableableMod objects.
+     *
+     * @return a List of DisableableMod objects of the selected installed mods in this instance or null if none
+     */
+    public List<DisableableMod> getInstalledSelectedMods() {
+        List<DisableableMod> mods = new ArrayList<DisableableMod>();
+
+        for (DisableableMod mod : this.mods) {
+            if (mod.wasSelected()) {
+                mods.add(mod);
+            }
+        }
+
+        return mods;
+    }
+
+    /**
      * Gets the minimum recommended PermGen/Metaspace size for this Instance based off what the Pack specifies. Defaults
      * to 0 if there is non specified by the pack. Value is in MB.
      *
@@ -1046,6 +1063,23 @@ public class Instance implements Cloneable {
     }
 
     /**
+     * Checks is a mod was selected with this Instance.
+     *
+     * @param name the name of the mod
+     * @return true if the mod was selected with the Instance
+     */
+    public boolean wasModSelected(String name) {
+        if (this.mods != null) {
+            for (DisableableMod mod : this.mods) {
+                if (mod.getName().equalsIgnoreCase(name)) {
+                    return mod.wasSelected();
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Sets the mods installed for this Instance.
      *
      * @param mods List of {@link com.atlauncher.data.DisableableMod} objects of the mods installed with this Instance.
@@ -1317,12 +1351,12 @@ public class Instance implements Cloneable {
 	public Instance clone() {
     	Instance clone;
         if (!this.userLock.equals(null)) {
-        	clone = new Instance(name, pack, realPack, true, version, minecraftVersion, memory, 
-						permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments, 
+        	clone = new Instance(name, pack, realPack, true, version, minecraftVersion, memory,
+						permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments,
 						mainClass, assets, isDev, isPlayable, newLaunchMethod);
 			} else {
-				clone = new Instance(name, pack, realPack, false, version, minecraftVersion, memory, 
-						permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments, 
+				clone = new Instance(name, pack, realPack, false, version, minecraftVersion, memory,
+						permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments,
 						mainClass, assets, isDev, isPlayable, newLaunchMethod);
 			}
         return clone;
