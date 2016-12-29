@@ -53,6 +53,7 @@ public class Pack {
     private boolean leaderboards;
     private boolean logging;
     private String description;
+    private String discordInviteURL;
     private String supportURL;
     private String websiteURL;
     private List<String> testers = new ArrayList<String>();
@@ -112,6 +113,10 @@ public class Pack {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public String getDiscordInviteURL() {
+        return this.discordInviteURL;
     }
 
     public String getSupportURL() {
