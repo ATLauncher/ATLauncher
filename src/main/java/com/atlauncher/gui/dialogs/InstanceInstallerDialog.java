@@ -51,6 +51,7 @@ import java.util.concurrent.ExecutionException;
 
 public class InstanceInstallerDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
+    private int versionLength = 0;
     private boolean isReinstall = false;
     private boolean isServer = false;
     private Pack pack = null;
@@ -185,7 +186,10 @@ public class InstanceInstallerDialog extends JDialog {
                 break;
             }
         }
-        versionsDropDown.setPreferredSize(new Dimension(200, 25));
+        for (PackVersion version : versions) {
+            versionLength = Math.max(versionLength, version.toString().length());
+        }
+        versionsDropDown.setPreferredSize(new Dimension(versionLength+20, 25));
         middle.add(versionsDropDown, gbc);
 
         if (autoInstallVersion != null) {
