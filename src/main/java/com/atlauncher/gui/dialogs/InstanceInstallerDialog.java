@@ -189,7 +189,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         // ensures that font width is taken into account
         for (PackVersion version : versions) {
-            versionLength = Math.max(versionLength, getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 254);
+            versionLength = Math.max(versionLength, getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 25);
         }
 
         // ensures that the dropdown is at least 200 px wide
