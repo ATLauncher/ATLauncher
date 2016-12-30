@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MCLauncher {
@@ -131,13 +130,13 @@ public class MCLauncher {
             arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
         }
         if (App.settings.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
-            if (Utils.isJava8() || Utils.isJava9()) {
+            if (Utils.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
             }
         } else {
-            if (Utils.isJava8() || Utils.isJava9()) {
+            if (Utils.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + App.settings.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
@@ -173,7 +172,7 @@ public class MCLauncher {
                             continue;
                         }
 
-                        if (arg.substring(0, 5).equalsIgnoreCase("-XX:+")) {
+                        if (arg.startsWith("-XX:+")) {
                             if (instance.getExtraArguments().contains("-XX:-" + arg.substring(5))) {
                                 negatedArgs.add("-XX:-" + arg.substring(5));
                                 LogManager.error("Argument " + arg + " is negated by pack developer and not added!");

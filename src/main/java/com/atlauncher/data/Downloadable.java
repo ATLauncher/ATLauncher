@@ -222,27 +222,52 @@ public class Downloadable {
         if (this.connection == null) {
             LogManager.debug("Opening connection to " + this.url, 3);
             try {
-                if (App.settings.getEnableProxy()) {
-                    this.connection = (HttpURLConnection) new URL(this.url).openConnection(App.settings.getProxy());
-                } else {
-                    this.connection = (HttpURLConnection) new URL(this.url).openConnection();
+                String url = this.url;
+                Integer numberOfRedirects = 0;
+
+                while (numberOfRedirects < 5)
+                {
+                    URL resourceUrl = new URL(url);
+
+                    if (App.settings.getEnableProxy()) {
+                        this.connection = (HttpURLConnection) resourceUrl.openConnection(App.settings.getProxy());
+                    } else {
+                        this.connection = (HttpURLConnection) resourceUrl.openConnection();
+                    }
+                    this.connection.setInstanceFollowRedirects(true);
+                    this.connection.setUseCaches(false);
+                    this.connection.setDefaultUseCaches(false);
+                    if (App.useGzipForDownloads) {
+                        this.connection.setRequestProperty("Accept-Encoding", "gzip");
+                    }
+                    this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+                    this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+                    this.connection.setRequestProperty("Expires", "0");
+                    this.connection.setRequestProperty("Pragma", "no-cache");
+                    this.connection.connect();
+
+                    // check for redirections
+                    switch (this.connection.getResponseCode()) {
+                        case HttpURLConnection.HTTP_MOVED_PERM:
+                        case HttpURLConnection.HTTP_MOVED_TEMP:
+                        case 307:
+                            String location = this.connection.getHeaderField("Location");
+                            URL base = new URL(url);
+                            URL next = new URL(base, location);  // Deal with relative URLs
+                            url = next.toExternalForm();
+                            numberOfRedirects++;
+                            continue;
+                    }
+
+                    break;
                 }
-                this.connection.setUseCaches(false);
-                this.connection.setDefaultUseCaches(false);
-                if (App.useGzipForDownloads) {
-                    this.connection.setRequestProperty("Accept-Encoding", "gzip");
-                }
-                this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
-                this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
-                this.connection.setRequestProperty("Expires", "0");
-                this.connection.setRequestProperty("Pragma", "no-cache");
-                this.connection.connect();
 
                 if (this.connection.getResponseCode() / 100 != 2) {
                     throw new IOException(this.url + " returned response code " + this.connection.getResponseCode() +
                             (this.connection.getResponseMessage() != null ? " with message of " + this.connection
                                     .getResponseMessage() : ""));
                 }
+
                 LogManager.debug("Connection opened to " + this.url, 3);
             } catch (IOException e) {
                 LogManager.debug("Exception when opening connection to " + this.url, 3);

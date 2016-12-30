@@ -98,6 +98,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private int percent = 0; // Percent done installing
     private List<Mod> allMods;
     private List<Mod> selectedMods;
+    private List<Mod> unselectedMods = new ArrayList<Mod>();
     private int totalDownloads = 0; // Total number of downloads to download
     private int doneDownloads = 0; // Total number of downloads downloaded
     private int totalBytes = 0; // Total number of bytes to download
@@ -291,6 +292,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean wasModInstalled(String mod) {
         return instance != null && instance.wasModInstalled(mod);
+    }
+
+    public boolean wasModSelected(String mod) {
+        return instance != null && instance.wasModSelected(mod);
     }
 
     public boolean isReinstall() {
@@ -916,6 +921,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.downloadedBytes = 0;
         configsDownload.download(true); // Download the file
 
+        if (!configs.exists()) {
+            LogManager.warn("Failed to download configs for pack!");
+            this.cancel(true);
+            return;
+        }
+
         // Extract the configs zip file
         fireSubProgressUnknown();
         fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
@@ -1123,16 +1134,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             return false;
         }
         if (this.jsonVersion.hasMessages()) {
-            if (this.isReinstall && this.jsonVersion.getMessages().hasUpdateMessage() && this.jsonVersion.getMessages
-                    ().showUpdateMessage(this.pack) != 0) {
-                LogManager.error("Instance Install Cancelled After Viewing Message!");
-                cancel(true);
-                return false;
-            } else if (this.jsonVersion.getMessages().hasInstallMessage() && this.jsonVersion.getMessages()
-                    .showInstallMessage(this.pack) != 0) {
-                LogManager.error("Instance Install Cancelled After Viewing Message!");
-                cancel(true);
-                return false;
+            if (this.isReinstall && this.jsonVersion.getMessages().hasUpdateMessage()) {
+                if (this.jsonVersion.getMessages().showUpdateMessage(this.pack) != 0) {
+                    LogManager.error("Instance Install Cancelled After Viewing Message!");
+                    cancel(true);
+                    return false;
+                }
+            } else if (this.jsonVersion.getMessages().hasInstallMessage()) {
+                if (this.jsonVersion.getMessages().showInstallMessage(this.pack) != 0) {
+                    LogManager.error("Instance Install Cancelled After Viewing Message!");
+                    cancel(true);
+                    return false;
+                }
             }
         }
 
@@ -1165,6 +1178,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 return false;
             }
             this.selectedMods = modsChooser.getSelectedMods();
+            this.unselectedMods = modsChooser.getUnselectedMods();
         }
         if (!hasOptional) {
             this.selectedMods = this.allMods;
@@ -1276,6 +1290,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (!this.jsonVersion.hasNoConfigs()) {
             configurePack();
         }
+        if (isCancelled()) {
+            return false;
+        }
         // Copy over common configs if any
         if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
             Utils.copyDirectory(App.settings.getCommonConfigsDir(), getRootDirectory());
@@ -1290,6 +1307,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     getServerJar());
             batFile.setExecutable(true);
             shFile.setExecutable(true);
+        }
+
+        // add in the deselected mods to the instance.json
+        for (Mod mod : this.unselectedMods) {
+            String file = mod.getFile();
+            if (this.jsonVersion.getCaseAllFiles() == CaseType.upper) {
+                file = file.substring(0, file.lastIndexOf(".")).toUpperCase() + file.substring(file.lastIndexOf("."));
+            } else if (this.jsonVersion.getCaseAllFiles() == CaseType.lower) {
+                file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
+            }
+
+            this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file, Type
+                .valueOf(Type.class, mod.getType().toString()), this.jsonVersion.getColour(mod.getColour()), mod
+                .getDescription(), false, false, false));
         }
 
         return true;

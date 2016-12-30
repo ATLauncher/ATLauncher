@@ -42,9 +42,10 @@ public class DisableableMod implements Serializable {
     private String description;
     private boolean disabled;
     private boolean userAdded = false; // Default to not being user added
+    private boolean wasSelected = true; // Default to it being selected on install
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour, String
-            description, boolean disabled, boolean userAdded) {
+            description, boolean disabled, boolean userAdded, boolean wasSelected) {
         this.name = name;
         this.version = version;
         this.optional = optional;
@@ -54,6 +55,12 @@ public class DisableableMod implements Serializable {
         this.description = description;
         this.disabled = disabled;
         this.userAdded = userAdded;
+        this.wasSelected = wasSelected;
+    }
+
+    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour, String
+            description, boolean disabled, boolean userAdded) {
+        this(name, version, optional, file, type, colour, description, disabled, userAdded, true);
     }
 
     public String getName() {
@@ -85,6 +92,14 @@ public class DisableableMod implements Serializable {
 
     public boolean isDisabled() {
         return this.disabled;
+    }
+
+    public boolean wasSelected() {
+        return this.wasSelected;
+    }
+
+    public void setWasSelected(boolean wasSelected) {
+        this.wasSelected = wasSelected;
     }
 
     public boolean isUserAdded() {

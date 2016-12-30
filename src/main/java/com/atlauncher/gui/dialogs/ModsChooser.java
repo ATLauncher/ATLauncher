@@ -311,7 +311,12 @@ public class ModsChooser extends JDialog {
                 }
             }
             if (installer.isReinstall()) {
-                if (installer.wasModInstalled(mod.getName())) {
+                if (!installer.wasModSelected(mod.getName())) {
+                    if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
+                        checkBox.setSelected(false);
+                        checkBox.setEnabled(true);
+                    }
+                } else if (installer.wasModInstalled(mod.getName())) {
                     if ((installer.isServer() ? mod.isServerOptional() : mod.isOptional())) {
                         checkBox.setSelected(true);
                         checkBox.setEnabled(true);
@@ -524,6 +529,19 @@ public class ModsChooser extends JDialog {
         List<Mod> mods = new ArrayList<Mod>();
         for (ModsJCheckBox check : modCheckboxes) {
             if (check.isSelected()) {
+                mods.add(check.getMod());
+            }
+        }
+        return mods;
+    }
+
+    public List<Mod> getUnselectedMods() {
+        if (wasClosed) {
+            return null;
+        }
+        List<Mod> mods = new ArrayList<Mod>();
+        for (ModsJCheckBox check : modCheckboxes) {
+            if (!check.isSelected()) {
                 mods.add(check.getMod());
             }
         }

@@ -234,7 +234,7 @@ public class EditModsDialog extends JDialog {
     }
 
     private void loadMods() {
-        List<DisableableMod> mods = instance.getInstalledMods();
+        List<DisableableMod> mods = instance.getInstalledSelectedMods();
         enabledMods = new ArrayList<ModsJCheckBox>();
         disabledMods = new ArrayList<ModsJCheckBox>();
         int dCount = 0;
