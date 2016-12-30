@@ -534,17 +534,19 @@ public class Instance implements Cloneable {
 
         // this ensures all existing instances have the new format for mods
         if (this.dataVersion < 1) {
-            List<DisableableMod> selectedMods = this.getInstalledSelectedMods();
+            if (this.mods != null) {
+                List<DisableableMod> selectedMods = this.getInstalledSelectedMods();
 
-            if (selectedMods.size() == 0) {
-                List<DisableableMod> mods = new ArrayList<DisableableMod>();
+                if (selectedMods.size() == 0) {
+                    List<DisableableMod> mods = new ArrayList<DisableableMod>();
 
-                for (DisableableMod mod : this.mods) {
-                    mod.setWasSelected(true);
-                    mods.add(mod);
+                    for (DisableableMod mod : this.mods) {
+                        mod.setWasSelected(true);
+                        mods.add(mod);
+                    }
+
+                    this.mods = mods;
                 }
-
-                this.mods = mods;
             }
 
             this.dataVersion = 1;
