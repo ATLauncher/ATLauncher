@@ -17,6 +17,25 @@
  */
 package com.atlauncher.workers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
+
+import javax.swing.SwingWorker;
+
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
@@ -45,29 +64,12 @@ import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.mojang.MojangDownloads;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.utils.Utils;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
-
-import javax.swing.SwingWorker;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
@@ -1514,7 +1516,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 shareCodeData = response.getDataAsString();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LogManager.logStackTrace("API call failed", e);
         }
 
         return shareCodeData;

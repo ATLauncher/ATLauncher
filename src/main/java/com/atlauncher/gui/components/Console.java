@@ -18,10 +18,12 @@
 
 package com.atlauncher.gui.components;
 
+import java.awt.Color;
+
 import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import java.awt.Color;
 
 public final class Console extends JTextPane {
     /**
@@ -53,7 +55,7 @@ public final class Console extends JTextPane {
         try {
             this.getDocument().insertString(this.getDocument().getLength(), str, this.attrs);
             this.setCaretPosition(this.getDocument().getLength());
-        } catch (Exception ex) {
+        } catch (BadLocationException ex) {
             ex.printStackTrace(System.err);
         }
     }

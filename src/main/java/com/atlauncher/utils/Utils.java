@@ -17,23 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.App;
-import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.mojang.ExtractRule;
-import com.atlauncher.data.mojang.OperatingSystem;
-import com.atlauncher.data.openmods.OpenEyeReportResponse;
-import com.atlauncher.evnt.LogEvent.LogType;
-import org.tukaani.xz.XZInputStream;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.spec.SecretKeySpec;
-import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
-import javax.swing.ImageIcon;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -93,8 +76,28 @@ import java.util.jar.Pack200;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
+import javax.swing.ImageIcon;
+
+import com.atlauncher.App;
+import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.mojang.ExtractRule;
+import com.atlauncher.data.mojang.OperatingSystem;
+import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.evnt.LogEvent.LogType;
+
+import org.tukaani.xz.XZInputStream;
 
 public class Utils {
     public static String error(Throwable t) {
@@ -119,15 +122,25 @@ public class Utils {
      * @return the icon image
      */
     public static ImageIcon getIconImage(String path) {
-        try {
-            File themeFile = App.settings.getThemeFile();
+        File themeFile = App.settings.getThemeFile();
 
-            if (themeFile != null) {
-                InputStream stream = null;
+        if (themeFile != null) {
 
-                ZipFile zipFile = new ZipFile(themeFile);
+            ZipFile zipFile;
+            try {
+                zipFile = new ZipFile(themeFile);
+            } catch (ZipException e) {
+                LogManager.logStackTrace("Invalid zip file", e);
+                return null;
+            } catch (IOException e) {
+                LogManager.logStackTrace("Failed to open theme zip file", e);
+                return null;
+            }
+            
+            try {
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
+                InputStream stream = null;
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
                     if (entry.getName().equals("image/" + path.substring(path.lastIndexOf('/') + 1))) {
@@ -137,29 +150,31 @@ public class Utils {
                 }
 
                 if (stream != null) {
-                    BufferedImage image = ImageIO.read(stream);
-
-                    stream.close();
-                    zipFile.close();
-
-                    return new ImageIcon(image);
+                    try {
+                        return new ImageIcon(ImageIO.read(stream));
+                    } finally {
+                        stream.close();
+                    }
                 }
-
-                zipFile.close();
+            } catch (IOException e) {
+                LogManager.logStackTrace("Failed to read icon from theme zip file", e);
+            } finally {
+                try {
+                    zipFile.close();
+                } catch (IOException e) {
+                    LogManager.logStackTrace("Failed to close zip file", e);
+                }
             }
+        }
 
-            URL url = System.class.getResource(path);
+        URL url = System.class.getResource(path);
 
-            if (url == null) {
-                LogManager.error("Unable to load resource " + path);
-                return null;
-            }
-
-            return new ImageIcon(url);
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
+        if (url == null) {
+            LogManager.error("Unable to load resource " + path);
             return null;
         }
+
+        return new ImageIcon(url);
     }
 
     public static File getCoreGracefully() {
@@ -172,7 +187,7 @@ public class Utils {
                 return new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()
                     .getSchemeSpecificPart()).getParentFile();
             } catch (URISyntaxException e) {
-                e.printStackTrace();
+                LogManager.logStackTrace("URI syntax error", e);
                 return new File(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
             }
         } else {
@@ -220,26 +235,36 @@ public class Utils {
     }
 
     public static BufferedImage getImage(String img) {
-        try {
-            String name;
-            if (!img.startsWith("/assets/image/")) {
-                name = "/assets/image/" + img;
-            } else {
-                name = img;
+        String name;
+        if (!img.startsWith("/assets/image/")) {
+            name = "/assets/image/" + img;
+        } else {
+            name = img;
+        }
+
+        if (!name.endsWith(".png")) {
+            name += ".png";
+        }
+
+        File themeFile = App.settings.getThemeFile();
+
+        if (themeFile != null) {
+    
+            ZipFile zipFile;
+            try {
+                zipFile = new ZipFile(themeFile);
+            } catch (ZipException e) {
+                LogManager.logStackTrace("Invalid zip file", e);
+                return null;
+            } catch (IOException e) {
+                LogManager.logStackTrace("Failed to open theme zip file", e);
+                return null;
             }
-
-            if (!name.endsWith(".png")) {
-                name = name + ".png";
-            }
-
-            File themeFile = App.settings.getThemeFile();
-
-            if (themeFile != null) {
-                InputStream stream = null;
-
-                ZipFile zipFile = new ZipFile(themeFile);
+            
+            try {
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
+        
+                InputStream stream = null;
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
                     if (entry.getName().equals("image/" + name.substring(name.lastIndexOf('/') + 1))) {
@@ -249,26 +274,33 @@ public class Utils {
                 }
 
                 if (stream != null) {
-                    BufferedImage image = ImageIO.read(stream);
-
-                    stream.close();
-                    zipFile.close();
-
-                    return image;
+                    try {
+                        return ImageIO.read(stream);
+                    } finally {
+                        stream.close();
+                    }
                 }
-
-                zipFile.close();
+            } catch (IOException e) {
+                LogManager.logStackTrace("Failed to read image from theme zip file", e);
+            } finally {
+                try {
+                    zipFile.close();
+                } catch (IOException e) {
+                    LogManager.logStackTrace("Failed to close zip file", e);
+                }
             }
+        }
 
-            InputStream stream = App.class.getResourceAsStream(name);
+        InputStream stream = App.class.getResourceAsStream(name);
 
-            if (stream == null) {
-                throw new NullPointerException("Stream == null");
-            }
-
+        if (stream == null) {
+            throw new NullPointerException("Stream == null");
+        }
+    
+        try {
             return ImageIO.read(stream);
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
+        } catch (IOException e) {
+            LogManager.logStackTrace("Failed to read image", e);
             return null;
         }
     }
@@ -961,29 +993,33 @@ public class Utils {
     }
 
     public static boolean isSymlink(File file) {
-        try {
-            if (file == null) {
-                throw new NullPointerException("File must not be null");
-            }
-
-            File canon;
-
-            if (file.getParent() == null) {
-                canon = file;
-            } else {
-                File canonDir = null;
-
-                canonDir = file.getParentFile().getCanonicalFile();
-
-                canon = new File(canonDir, file.getName());
-            }
-
-            return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (file == null) {
+            throw new NullPointerException("File must not be null");
         }
 
-        return false;
+        File canon;
+
+        if (file.getParent() == null) {
+            canon = file;
+        } else {
+            File canonDir = null;
+    
+            try {
+                canonDir = file.getParentFile().getCanonicalFile();
+            } catch (IOException e) {
+                LogManager.logStackTrace("Failed to get canonical file", e);
+                return false;
+            }
+    
+            canon = new File(canonDir, file.getName());
+        }
+    
+        try {
+            return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
+        } catch (IOException e) {
+            LogManager.logStackTrace("Failed to get canonical file", e);
+            return false;
+        }
     }
 
     /**

@@ -17,9 +17,6 @@
  */
 package com.atlauncher.mclauncher;
 
-import com.atlauncher.utils.Utils;
-import net.minecraft.Launcher;
-
 import java.applet.Applet;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -27,6 +24,10 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import com.atlauncher.utils.Utils;
+
+import net.minecraft.Launcher;
 
 public class MCFrame extends Frame implements WindowListener {
 
@@ -76,11 +77,13 @@ public class MCFrame extends Frame implements WindowListener {
     @Override
     public void windowClosing(WindowEvent e) {
         new Thread() {
+            @Override
             public void run() {
                 try {
                     Thread.sleep(30000L);
-                } catch (InterruptedException localInterruptedException) {
-                    localInterruptedException.printStackTrace();
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                    return;
                 }
                 System.out.println("FORCING EXIT!");
                 System.exit(0);

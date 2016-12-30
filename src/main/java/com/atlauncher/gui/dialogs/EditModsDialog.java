@@ -36,6 +36,7 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
@@ -66,7 +67,7 @@ public class EditModsDialog extends JDialog {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
-			public void windowClosing(WindowEvent arg0) {
+            public void windowClosing(WindowEvent arg0) {
                 dispose();
             }
         });
@@ -131,26 +132,21 @@ public class EditModsDialog extends JDialog {
         addButton = new JButton(Language.INSTANCE.localize("instance.addmod"));
         addButton.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 FileChooserDialog fcd = null;
                 boolean usesCoreMods = false;
                 try {
-                	if (App.settings.getMinecraftVersion(instance.getMinecraftVersion()).usesCoreMods()) {
-						usesCoreMods = true;
-					} else {
-						usesCoreMods = false;
-					}
+                    usesCoreMods = App.settings.getMinecraftVersion(instance.getMinecraftVersion()).usesCoreMods();
                 } catch (InvalidMinecraftVersion e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+                    LogManager.logStackTrace(e1);
+                }
                 if(usesCoreMods) {
-                	fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
+                    fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
                             .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
                             .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
                             "CoreMods Mod", "Texture Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
                 } else {
-                	new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
+                    new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
                             .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
                             .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
                             "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
@@ -195,7 +191,7 @@ public class EditModsDialog extends JDialog {
         enableButton = new JButton(Language.INSTANCE.localize("instance.enablemod"));
         enableButton.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 enableMods();
             }
         });
@@ -204,7 +200,7 @@ public class EditModsDialog extends JDialog {
         disableButton = new JButton(Language.INSTANCE.localize("instance.disablemod"));
         disableButton.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 disableMods();
             }
         });
@@ -213,7 +209,7 @@ public class EditModsDialog extends JDialog {
         removeButton = new JButton(Language.INSTANCE.localize("instance.removemod"));
         removeButton.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 removeMods();
             }
         });
@@ -222,7 +218,7 @@ public class EditModsDialog extends JDialog {
         closeButton = new JButton(Language.INSTANCE.localize("common.close"));
         closeButton.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });

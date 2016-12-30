@@ -165,6 +165,8 @@
  */
 package com.atlauncher.utils;
 
+import com.atlauncher.LogManager;
+
 public class Base64 {
     /* ******** P U B L I C F I E L D S ******** */
 
@@ -1285,7 +1287,7 @@ public class Base64 {
 
                 } // end try
                 catch (java.io.IOException e) {
-                    e.printStackTrace();
+                    LogManager.logStackTrace(e);
                     // Just return originally-decoded bytes
                 } // end catch
                 finally {

@@ -17,6 +17,24 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
@@ -26,22 +44,6 @@ import com.atlauncher.mclauncher.LegacyMCLauncher;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class handles contains information about a single Instance in the Launcher. An Instance being an installed
@@ -1426,24 +1428,30 @@ public class Instance implements Cloneable {
     }
 
     public void save(boolean showToast) {
+        Writer writer;
         try {
-            FileWriter writer = null;
-            try {
-                writer = new FileWriter(new File(new File(App.settings.getInstancesDir(), this.getSafeName()),
-                    "instance.json"));
-                writer.write(Gsons.DEFAULT.toJson(this));
-                writer.flush();
+            writer = new FileWriter(new File(new File(App.settings.getInstancesDir(), this.getSafeName()),
+                "instance.json"));
+        } catch (IOException e) {
+            LogManager.logStackTrace("Failed to open instance.json for writing", e);
+            return;
+        }
+        
+        try {
+            writer.write(Gsons.DEFAULT.toJson(this));
+            writer.flush();
 
-                if (showToast) {
-                    App.TOASTER.pop("Instance " + this.getName());
-                }
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
+            if (showToast) {
+                App.TOASTER.pop("Instance " + this.getName());
             }
         } catch (IOException e) {
-            e.printStackTrace(System.err);
+            LogManager.logStackTrace("Failed to write instance.json", e);
+        } finally {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                LogManager.logStackTrace("Failed to close instance.json writer", e);
+            }
         }
     }
 

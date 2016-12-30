@@ -17,37 +17,6 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
-import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
-import com.atlauncher.Update;
-import com.atlauncher.data.json.LauncherLibrary;
-import com.atlauncher.exceptions.InvalidMinecraftVersion;
-import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.gui.LauncherConsole;
-import com.atlauncher.gui.components.LauncherBottomBar;
-import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.gui.tabs.NewsTab;
-import com.atlauncher.gui.tabs.PacksTab;
-import com.atlauncher.thread.LoggingThread;
-import com.atlauncher.utils.ATLauncherAPIUtils;
-import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.MojangAPIUtils;
-import com.atlauncher.utils.Timestamper;
-import com.atlauncher.utils.Utils;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
@@ -88,6 +57,40 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import com.atlauncher.App;
+import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
+import com.atlauncher.Update;
+import com.atlauncher.data.json.LauncherLibrary;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.gui.LauncherConsole;
+import com.atlauncher.gui.components.LauncherBottomBar;
+import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.gui.tabs.NewsTab;
+import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.thread.LoggingThread;
+import com.atlauncher.utils.ATLauncherAPIUtils;
+import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.MojangAPIUtils;
+import com.atlauncher.utils.Timestamper;
+import com.atlauncher.utils.Utils;
+
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the user.
@@ -834,24 +837,23 @@ public class Settings {
     private void downloadExternalLibraries() {
         LogManager.debug("Downloading external libraries");
 
-        FileReader fr = null;
-
+        FileReader fr;
         try {
             fr = new FileReader(new File(this.jsonDir, "libraries.json"));
+        } catch (FileNotFoundException e) {
+            LogManager.logStackTrace("Missing libraries.json", e);
+            return;
+        }
 
-            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
-            }.getType();
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {}.getType();
 
             this.launcherLibraries = Gsons.DEFAULT.fromJson(fr, type);
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
         } finally {
-            if (fr != null) {
-                try {
-                    fr.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                fr.close();
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
             }
         }
 
@@ -2638,8 +2640,8 @@ public class Settings {
     public void setLanguage(String language) {
         try {
             Language.INSTANCE.load(language);
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
+        } catch (IOException ex) {
+            LogManager.logStackTrace("Failed to load language", ex);
         }
     }
 
@@ -3098,7 +3100,7 @@ public class Settings {
         try {
             processBuilder.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogManager.logStackTrace("Failed to start updater process", e);
         }
         System.exit(0);
     }
