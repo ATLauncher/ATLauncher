@@ -419,7 +419,7 @@ public class Instance implements Cloneable {
                 Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
                 return new ImageIcon(dimg);
             } catch (IOException e) {
-                App.settings.logStackTrace("Error creating scaled image from the custom image of instance " + this
+                LogManager.logStackTrace("Error creating scaled image from the custom image of instance " + this
                     .getName(), e);
             }
         }
@@ -1307,7 +1307,7 @@ public class Instance implements Cloneable {
                             System.exit(0);
                         }
                     } catch (IOException e1) {
-                        App.settings.logStackTrace(e1);
+                        LogManager.logStackTrace(e1);
                     }
                 }
             };
@@ -1367,7 +1367,7 @@ public class Instance implements Cloneable {
         try {
             return Utils.sendAPICall("pack/" + getRealPack().getSafeName() + "/timeplayed/", request);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return "Leaderboard Time Not Added!";
     }

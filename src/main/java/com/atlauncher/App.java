@@ -298,7 +298,7 @@ public class App {
                 // Try to enable the tray icon.
                 trySystemTrayIntegration();
             } catch (Exception e) {
-                settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
 

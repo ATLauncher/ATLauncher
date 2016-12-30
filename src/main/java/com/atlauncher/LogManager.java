@@ -23,6 +23,8 @@ import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.Utils;
 
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -74,5 +76,33 @@ public final class LogManager {
     public static void minecraft(String message) {
         Object[] value = Utils.prepareMessageForMinecraftLog(message);
         queue.offer(new LogEvent((LogType) value[0], (String) value[1], 10));
+    }
+    
+    /**
+     * Logs a stack trace to the console window
+     *
+     * @param t The throwable to show in the console
+     */
+    public static void logStackTrace(Throwable t) {
+        t.printStackTrace();
+
+        CharArrayWriter writer = new CharArrayWriter();
+        try {
+            t.printStackTrace(new PrintWriter(writer));
+            error(writer.toString());
+        } finally {
+            writer.close();
+        }
+    }
+    
+    /**
+     * Logs a stack trace to the console window with a custom message before it
+     *
+     * @param message   A message regarding the stack trace to show before it providing more insight
+     * @param t The throwable to show in the console
+     */
+    public static void logStackTrace(String message, Throwable t) {
+        error(message);
+        logStackTrace(t);
     }
 }

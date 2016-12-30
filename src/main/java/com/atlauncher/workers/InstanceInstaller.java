@@ -763,11 +763,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         } catch (JsonSyntaxException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (JsonIOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (FileNotFoundException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
 
         return downloads;
@@ -907,7 +907,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             inputFile.delete();
             outputTmpFile.renameTo(inputFile);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -1334,7 +1334,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             this.jsonVersion = Gsons.DEFAULT.fromJson(this.pack.getJSON(version.getVersion()), Version.class);
             return installUsingJSON();
         } catch (JsonParseException e) {
-            App.settings.logStackTrace("Couldn't parse JSON of pack!", e);
+            LogManager.logStackTrace("Couldn't parse JSON of pack!", e);
         }
 
         return false;

@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
@@ -334,9 +335,9 @@ public class InstanceInstallerDialog extends JDialog {
                             try {
                                 success = get();
                             } catch (InterruptedException e) {
-                                App.settings.logStackTrace(e);
+                                LogManager.logStackTrace(e);
                             } catch (ExecutionException e) {
-                                App.settings.logStackTrace(e);
+                                LogManager.logStackTrace(e);
                             }
                             if (success) {
                                 type = JOptionPane.INFORMATION_MESSAGE;

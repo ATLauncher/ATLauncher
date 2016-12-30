@@ -54,7 +54,6 @@ import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.CharArrayWriter;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,7 +66,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -606,7 +604,7 @@ public class Settings {
                 }
             }
         } catch (ParseException e) {
-            this.logStackTrace(e);
+            LogManager.logStackTrace(e);
             minecraftSessionServerUp = false;
             minecraftLoginServerUp = false;
         }
@@ -627,11 +625,11 @@ public class Settings {
             this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(new File(this.jsonDir, "version.json")
             ), LauncherVersion.class);
         } catch (JsonSyntaxException e) {
-            this.logStackTrace("Exception when loading latest launcher version!", e);
+            LogManager.logStackTrace("Exception when loading latest launcher version!", e);
         } catch (JsonIOException e) {
-            this.logStackTrace("Exception when loading latest launcher version!", e);
+            LogManager.logStackTrace("Exception when loading latest launcher version!", e);
         } catch (FileNotFoundException e) {
-            this.logStackTrace("Exception when loading latest launcher version!", e);
+            LogManager.logStackTrace("Exception when loading latest launcher version!", e);
         }
 
         return this.latestLauncherVersion != null && Constants.VERSION.needsUpdate(this.latestLauncherVersion);
@@ -655,7 +653,7 @@ public class Settings {
             update.download(false);
             runUpdate(path, newFile.getAbsolutePath());
         } catch (IOException e) {
-            this.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -681,7 +679,7 @@ public class Settings {
         try {
             processBuilder.start();
         } catch (IOException e) {
-            this.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
 
         System.exit(0);
@@ -699,7 +697,7 @@ public class Settings {
             this.launcherFiles = Gsons.DEFAULT.fromJson(contents, type);
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", contents);
-            this.logStackTrace("Error loading in file hashes! See error details at " + result, e);
+            LogManager.logStackTrace("Error loading in file hashes! See error details at " + result, e);
         }
     }
 
@@ -748,7 +746,7 @@ public class Settings {
             try {
                 Language.INSTANCE.reload(Language.INSTANCE.getCurrent());
             } catch (IOException e) {
-                logStackTrace("Couldn't reload langauge " + Language.INSTANCE.getCurrent(), e);
+                LogManager.logStackTrace("Couldn't reload langauge " + Language.INSTANCE.getCurrent(), e);
             }
         }
     }
@@ -846,7 +844,7 @@ public class Settings {
 
             this.launcherLibraries = Gsons.DEFAULT.fromJson(fr, type);
         } catch (Exception e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             if (fr != null) {
                 try {
@@ -1162,9 +1160,9 @@ public class Settings {
                 this.originalServer = this.server;
             }
         } catch (FileNotFoundException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading server to use");
     }
@@ -1239,9 +1237,9 @@ public class Settings {
                 this.daysOfLogsToKeep = 7;
             }
         } catch (FileNotFoundException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -1456,9 +1454,9 @@ public class Settings {
             this.notifyBackup = Boolean.parseBoolean(properties.getProperty("notifybackup", "true"));
             this.dropboxFolderLocation = properties.getProperty("dropboxlocation", "");
         } catch (FileNotFoundException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading properties");
     }
@@ -1515,9 +1513,9 @@ public class Settings {
             properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
             this.properties.store(new FileOutputStream(propertiesFile), Constants.LAUNCHER_NAME + " Settings");
         } catch (FileNotFoundException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -1614,15 +1612,15 @@ public class Settings {
             this.news = Gsons.DEFAULT.fromJson(in, type);
             in.close();
         } catch (JsonSyntaxException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (JsonIOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (FileNotFoundException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (UnsupportedEncodingException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading news");
     }
@@ -1649,11 +1647,11 @@ public class Settings {
                 this.minecraftVersions.put(mv.getVersion(), mv);
             }
         } catch (JsonSyntaxException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (JsonIOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (FileNotFoundException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading Minecraft versions");
     }
@@ -1668,11 +1666,11 @@ public class Settings {
             }.getType();
             this.packs = Gsons.DEFAULT.fromJson(new FileReader(new File(getJSONDir(), "packs.json")), type);
         } catch (JsonSyntaxException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (JsonIOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (FileNotFoundException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading packs");
     }
@@ -1689,9 +1687,9 @@ public class Settings {
             }.getType();
             packUsers = Gsons.DEFAULT.fromJson(download.getContents(), type);
         } catch (JsonSyntaxException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (JsonIOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         if (packUsers == null) {
             this.offlineMode = true;
@@ -1743,7 +1741,7 @@ public class Settings {
                     in.close();
                 }
             } catch (Exception e) {
-                logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
             saveInstances(); // Save the instances to new json format
             Utils.delete(instancesDataFile); // Remove old instances data file
@@ -1758,7 +1756,7 @@ public class Settings {
                     fileReader = new FileReader(new File(instanceDir, "instance.json"));
                     instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
                 } catch (Exception e) {
-                    logStackTrace("Failed to load instance in the folder " + instanceDir, e);
+                    LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
                     continue; // Instance.json not found for some reason, continue before loading
                 }
 
@@ -1801,7 +1799,7 @@ public class Settings {
                 bw = new BufferedWriter(fw);
                 bw.write(Gsons.DEFAULT.toJson(instance));
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             } finally {
                 try {
                     if (bw != null) {
@@ -1811,7 +1809,7 @@ public class Settings {
                         fw.close();
                     }
                 } catch (IOException e) {
-                    logStackTrace("Exception while trying to close FileWriter/BufferedWriter for saving instances " +
+                    LogManager.logStackTrace("Exception while trying to close FileWriter/BufferedWriter for saving instances " +
                         "json file.", e);
                 }
             }
@@ -1838,9 +1836,9 @@ public class Settings {
             } catch (EOFException e) {
                 // Don't log this, it always happens when it gets to the end of the file
             } catch (IOException e) {
-                logStackTrace("Exception while trying to read accounts in from file.", e);
+                LogManager.logStackTrace("Exception while trying to read accounts in from file.", e);
             } catch (ClassNotFoundException e) {
-                logStackTrace("Exception while trying to read accounts in from file.", e);
+                LogManager.logStackTrace("Exception while trying to read accounts in from file.", e);
             } finally {
                 try {
                     if (objIn != null) {
@@ -1850,7 +1848,7 @@ public class Settings {
                         in.close();
                     }
                 } catch (IOException e) {
-                    logStackTrace("Exception while trying to close FileInputStream/ObjectInputStream when reading in " +
+                    LogManager.logStackTrace("Exception while trying to close FileInputStream/ObjectInputStream when reading in " +
                         "" + "accounts.", e);
                 }
             }
@@ -1868,7 +1866,7 @@ public class Settings {
                 objOut.writeObject(account);
             }
         } catch (IOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             try {
                 if (objOut != null) {
@@ -1878,7 +1876,7 @@ public class Settings {
                     out.close();
                 }
             } catch (IOException e) {
-                logStackTrace("Exception while trying to close FileOutputStream/ObjectOutputStream when saving " +
+                LogManager.logStackTrace("Exception while trying to close FileOutputStream/ObjectOutputStream when saving " +
                     "accounts.", e);
             }
         }
@@ -1904,7 +1902,7 @@ public class Settings {
             try {
                 fileReader = new FileReader(checkingServersFile);
             } catch (FileNotFoundException e) {
-                logStackTrace(e);
+                LogManager.logStackTrace(e);
                 return;
             }
 
@@ -1914,7 +1912,7 @@ public class Settings {
                 try {
                     fileReader.close();
                 } catch (IOException e) {
-                    logStackTrace("Exception while trying to close FileReader when loading servers for server " +
+                    LogManager.logStackTrace("Exception while trying to close FileReader when loading servers for server " +
                         "checker" + " tool.", e);
                 }
             }
@@ -1934,7 +1932,7 @@ public class Settings {
             bw = new BufferedWriter(fw);
             bw.write(Gsons.DEFAULT.toJson(this.checkingServers));
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } finally {
             try {
                 if (bw != null) {
@@ -1944,7 +1942,7 @@ public class Settings {
                     fw.close();
                 }
             } catch (IOException e) {
-                logStackTrace("Exception while trying to close FileWriter/BufferedWriter when saving servers for " +
+                LogManager.logStackTrace("Exception while trying to close FileWriter/BufferedWriter when saving servers for " +
                     "server checker tool.", e);
             }
         }
@@ -2612,35 +2610,7 @@ public class Settings {
     public String getLog() {
         return this.console.getLog();
     }
-
-    /**
-     * Logs a stack trace to the console window
-     *
-     * @param t The throwable to show in the console
-     */
-    public void logStackTrace(Throwable t) {
-        t.printStackTrace();
-
-        CharArrayWriter writer = new CharArrayWriter();
-        try {
-            t.printStackTrace(new PrintWriter(writer));
-            LogManager.error(writer.toString());
-        } finally {
-            writer.close();
-        }
-    }
-
-    /**
-     * Logs a stack trace to the console window with a custom message before it
-     *
-     * @param message   A message regarding the stack trace to show before it providing more insight
-     * @param t The throwable to show in the console
-     */
-    public void logStackTrace(String message, Throwable t) {
-        LogManager.error(message);
-        logStackTrace(t);
-    }
-
+    
     public void showKillMinecraft(Process minecraft) {
         this.minecraftProcess = minecraft;
         this.console.showKillMinecraft();
@@ -3100,9 +3070,9 @@ public class Settings {
             path = thisFile.getCanonicalPath();
             path = URLDecoder.decode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
 
         List<String> arguments = new ArrayList<String>();
