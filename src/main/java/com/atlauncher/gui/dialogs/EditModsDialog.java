@@ -133,26 +133,29 @@ public class EditModsDialog extends JDialog {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileChooserDialog fcd = null;
                 boolean usesCoreMods = false;
                 try {
                     usesCoreMods = App.settings.getMinecraftVersion(instance.getMinecraftVersion()).usesCoreMods();
                 } catch (InvalidMinecraftVersion e1) {
                     LogManager.logStackTrace(e1);
                 }
-                if(usesCoreMods) {
-                    fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
-                            .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
-                            .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
-                            "CoreMods Mod", "Texture Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
+                String[] modTypes;
+                if (usesCoreMods) {
+                    modTypes = new String[] {"Mods Folder", "Inside Minecraft.jar", "CoreMods Mod", "Texture Pack", "Shader Pack"};
                 } else {
-                    new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"), Language
-                            .INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"), Language.INSTANCE
-                            .localize("instance.typeofmod"), new String[]{"Mods Folder", "Inside Minecraft.jar",
-                            "Resource Pack", "Shader Pack"}, new String[]{"jar", "zip", "litemod"});
+                    modTypes = new String[] {"Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack"};
                 }
+
+                FileChooserDialog fcd = new FileChooserDialog(
+                    Language.INSTANCE.localize("instance.addmod"),
+                    Language.INSTANCE.localize("common.mod"),
+                    Language.INSTANCE.localize("common.add"),
+                    Language.INSTANCE.localize("instance.typeofmod"),
+                    modTypes,
+                    new String[] {"jar", "zip", "litemod"}
+                );
                 ArrayList<File> files = fcd.getChosenFiles();
-                if (files != null && files.size() >= 1) {
+                if (files != null && !files.isEmpty()) {
                     boolean reload = false;
                     for (File file : files) {
                         String typeTemp = fcd.getSelectorValue();
