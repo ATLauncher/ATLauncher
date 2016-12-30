@@ -122,7 +122,7 @@ public class Utils {
      * @return the icon image
      */
     public static ImageIcon getIconImage(String path) {
-        File themeFile = App.settings.getThemeFile();
+        File themeFile = App.settings == null ? null : App.settings.getThemeFile();
 
         if (themeFile != null) {
 
@@ -246,7 +246,7 @@ public class Utils {
             name += ".png";
         }
 
-        File themeFile = App.settings.getThemeFile();
+        File themeFile = App.settings == null ? null : App.settings.getThemeFile();
 
         if (themeFile != null) {
     
