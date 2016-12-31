@@ -329,21 +329,14 @@ public class App {
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
-
-        // Now for some Mac specific stuff, mainly just setting the name of the application and icon.
+        
+        tryToSetAppIcon(Utils.getImage("/assets/image/Icon.png"));
+    
+        // Now for some Mac specific stuff, mainly just setting the name of the application.
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", Constants.LAUNCHER_NAME + " " +
                 Constants.VERSION);
-            try {
-                Class<?> util = Class.forName("com.apple.eawt.Application");
-                Method getApplication = util.getMethod("getApplication");
-                Object application = getApplication.invoke(util);
-                Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
-                setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
-            } catch (Exception ex) {
-                LogManager.logStackTrace("Failed to set dock icon", ex);
-            }
         }
 
         if (settings.enableConsole()) {
@@ -394,6 +387,48 @@ public class App {
         }
 
         new LauncherFrame(open); // Open the Launcher
+    }
+    
+    private static void tryToSetAppIcon(Image image) {
+        Class<?> taskbarClazz = null;
+        try {
+            taskbarClazz = Class.forName("java.awt.Taskbar");
+        } catch (ClassNotFoundException ignored) {
+            LogManager.debug("Taskbar class not found, won't use it to set taskbar/dock icon");
+        }
+        
+        if (taskbarClazz != null) {
+            try {
+                final Class<?> taskbarFeatureClazz = Class.forName("java.awt.Taskbar$Feature");
+                final Object featureIconImage = taskbarFeatureClazz.getField("ICON_IMAGE").get(null);
+                
+                final Method getTaskbar = taskbarClazz.getMethod("getTaskbar");
+                final Method isSupported = taskbarClazz.getMethod("isSupported", taskbarFeatureClazz);
+                final Method setIconImage = taskbarClazz.getMethod("setIconImage", Image.class);
+                
+                final Object taskbar = getTaskbar.invoke(null);
+                if (!(Boolean)isSupported.invoke(taskbar, featureIconImage)) {
+                    LogManager.info("Setting taskbar icon not supported");
+                    return;
+                }
+                setIconImage.invoke(taskbar, image);
+            } catch (Exception e) {
+                LogManager.logStackTrace("Failed to set taskbar/dock icon", e);
+            }
+            return;
+        }
+        
+        if (Utils.isMac()) {
+            try {
+                Class<?> util = Class.forName("com.apple.eawt.Application");
+                Method getApplication = util.getMethod("getApplication");
+                Object application = getApplication.invoke(util);
+                Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
+                setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
+            } catch (Exception ex) {
+                LogManager.logStackTrace("Failed to set dock icon", ex);
+            }
+        }
     }
 
     /**
