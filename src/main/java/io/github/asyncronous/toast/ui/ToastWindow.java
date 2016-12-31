@@ -1,8 +1,15 @@
 package io.github.asyncronous.toast.ui;
 
-import com.atlauncher.utils.Utils;
-import io.github.asyncronous.toast.ToasterConstants;
-import io.github.asyncronous.toast.thread.ToastAnimator;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.lang.reflect.Method;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -11,15 +18,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JWindow;
 import javax.swing.UIManager;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GraphicsDevice.WindowTranslucency;
-import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
+import com.atlauncher.LogManager;
+
+import io.github.asyncronous.toast.ToasterConstants;
+import io.github.asyncronous.toast.thread.ToastAnimator;
 
 /**
  * Main Toaster Notification class
@@ -37,10 +40,8 @@ public final class ToastWindow extends JWindow {
         this.MESSAGE.setMargin(new Insets(2, 2, 2, 2));
         this.MESSAGE.setWrapStyleWord(true);
 
-        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Utils.isJava7OrAbove(false) && GraphicsEnvironment
-                .getLocalGraphicsEnvironment().getDefaultScreenDevice().isWindowTranslucencySupported
-                        (WindowTranslucency.TRANSLUCENT)) {
-            this.setOpacity((Float) UIManager.get(ToasterConstants.OPACITY));
+        if (!((Boolean)UIManager.get(ToasterConstants.OPAQUE))) {
+            tryToSetTranslucency();
         }
 
         JPanel CONTENT_PANEL = new JPanel(new BorderLayout(1, 1));
@@ -66,6 +67,23 @@ public final class ToastWindow extends JWindow {
                 dispose();
             }
         });
+    }
+    
+    private void tryToSetTranslucency() {
+        try {
+            final Class<?> windowTranslucency = Class.forName("java.awt.GraphicsDevice$WindowTranslucency");
+            final Object translucent = windowTranslucency.getField("TRANSLUCENT").get(null);
+            final Method isWindowTranslucencySupported = GraphicsDevice.class.getMethod("isWindowTranslucencySupported", windowTranslucency);
+            final Method setOpacity = this.getClass().getMethod("setOpacity", float.class);
+            
+            final GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            
+            if ((Boolean)isWindowTranslucencySupported.invoke(device, translucent)) {
+                setOpacity.invoke(this, (Float)UIManager.get(ToasterConstants.OPACITY));
+            }
+        } catch (Exception e) {
+            LogManager.logStackTrace("Could not set window translucency, ignoring", e);
+        }
     }
 
     /**
