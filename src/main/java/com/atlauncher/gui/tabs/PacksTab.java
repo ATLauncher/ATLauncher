@@ -61,6 +61,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JCheckBox serversBox = new JCheckBox(Language.INSTANCE.localize("pack.cancreateserver"));
     private final JCheckBox privateBox = new JCheckBox(Language.INSTANCE.localize("pack.privatepacksonly"));
     private final JCheckBox searchDescBox = new JCheckBox(Language.INSTANCE.localize("pack.searchdescription"));
+    private NilCard nilCard;
 
     private List<PackCard> cards = new LinkedList<PackCard>();
 
@@ -188,7 +189,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         }
 
         if (count == 0) {
-            this.contentPanel.add(new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
+            nilCard = new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n"));
+            this.contentPanel.add(nilCard, gbc);
         }
     }
 
@@ -243,7 +245,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         ((LauncherFrame) App.settings.getParent()).updateTitle("Packs - " + count);
 
         if (count == 0) {
-            this.contentPanel.add(new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
+            nilCard = new NilCard(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n"));
+            this.contentPanel.add(nilCard, gbc);
         }
     }
 
@@ -277,5 +280,9 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         serversBox.setText(Language.INSTANCE.localize("pack.cancreateserver"));
         privateBox.setText(Language.INSTANCE.localize("pack.privatepacksonly"));
         searchDescBox.setText(Language.INSTANCE.localize("pack.searchdescription"));
+        
+        if (nilCard != null) {
+            nilCard.setMessage(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n"));
+        }
     }
 }
