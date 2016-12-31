@@ -17,19 +17,6 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.utils.Utils;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -41,6 +28,20 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.utils.Utils;
+
 public class FileChooserDialog extends JDialog {
     private JPanel top;
     private JPanel middle;
@@ -50,7 +51,7 @@ public class FileChooserDialog extends JDialog {
     private JTextField textField;
 
     private JLabel selectorLabel;
-    private JComboBox<String> selector;
+    private JComboBox selector;
 
     private File[] filesChosen;
     private String[] fileOptions;
@@ -139,7 +140,7 @@ public class FileChooserDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        selector = new JComboBox<String>();
+        selector = new JComboBox();
         for (String item : subOptions) {
             selector.addItem(item);
         }

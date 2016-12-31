@@ -17,26 +17,6 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.data.Account;
-import com.atlauncher.data.Language;
-import com.atlauncher.data.LoginResponse;
-import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.utils.Authentication;
-import com.atlauncher.utils.HTMLUtils;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -51,6 +31,27 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
+
+import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.data.Account;
+import com.atlauncher.data.Language;
+import com.atlauncher.data.LoginResponse;
+import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.utils.Authentication;
+import com.atlauncher.utils.HTMLUtils;
+
 public class AccountsTab extends JPanel implements Tab {
     private static final long serialVersionUID = 2493791137600123223L;
     private final Insets TOP_INSETS = new Insets(0, 0, 20, 0);
@@ -60,7 +61,7 @@ public class AccountsTab extends JPanel implements Tab {
     private JLabel userSkin;
     private JPanel rightPanel;
     private JPanel topPanel;
-    private JComboBox<Account> accountsComboBox;
+    private JComboBox accountsComboBox;
     private JLabel usernameLabel;
     private JTextField usernameField;
     private JLabel passwordLabel;
@@ -95,7 +96,7 @@ public class AccountsTab extends JPanel implements Tab {
 
         fillerAccount = new Account(Language.INSTANCE.localize("account.add"));
 
-        accountsComboBox = new JComboBox<Account>();
+        accountsComboBox = new JComboBox();
         accountsComboBox.addItem(fillerAccount);
         for (Account account : App.settings.getAccounts()) {
             accountsComboBox.addItem(account);

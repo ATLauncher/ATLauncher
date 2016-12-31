@@ -17,6 +17,18 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
@@ -26,21 +38,10 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.Proxy.Type;
-
 @SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private JLabelWithHover downloadServerLabel;
-    private JComboBox<Server> server;
+    private JComboBox server;
 
     private JLabelWithHover concurrentConnectionsLabel;
     private JTextField concurrentConnections;
@@ -55,7 +56,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JTextField proxyPort;
 
     private JLabelWithHover proxyTypeLabel;
-    private JComboBox<String> proxyType;
+    private JComboBox proxyType;
 
     public NetworkSettingsTab() {
         RelocalizationManager.addListener(this);
@@ -71,7 +72,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        server = new JComboBox<Server>();
+        server = new JComboBox();
         for (Server serverr : App.settings.getServers()) {
             if (serverr.isUserSelectable()) {
                 server.addItem(serverr);
@@ -182,7 +183,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        proxyType = new JComboBox<String>();
+        proxyType = new JComboBox();
         proxyType.addItem("HTTP");
         proxyType.addItem("SOCKS");
         proxyType.addItem("DIRECT");

@@ -17,20 +17,6 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.utils.Utils;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -40,15 +26,30 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.utils.Utils;
+
 @SuppressWarnings("serial")
 public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private final String[] MEMORY_OPTIONS = Utils.getMemoryOptions();
     private JLabelWithHover initialMemoryLabel;
-    private JComboBox<String> initialMemory;
+    private JComboBox initialMemory;
     private JLabelWithHover initialMemoryLabelWarning;
     private JPanel initialMemoryPanel;
     private JLabelWithHover maximumMemoryLabel;
-    private JComboBox<String> maximumMemory;
+    private JComboBox maximumMemory;
     private JLabelWithHover maximumMemoryLabelWarning;
     private JPanel maximumMemoryPanel;
     private JLabelWithHover permGenLabel;
@@ -57,7 +58,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private JLabelWithHover windowSizeLabel;
     private JTextField widthField;
     private JTextField heightField;
-    private JComboBox<String> commonScreenSizes;
+    private JComboBox commonScreenSizes;
     private JPanel javaPathPanel;
     private JLabelWithHover javaPathLabel;
     private JTextField javaPath;
@@ -98,7 +99,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        initialMemory = new JComboBox<String>();
+        initialMemory = new JComboBox();
         initialMemory.addItem("64 MB");
         initialMemory.addItem("128 MB");
         initialMemory.addItem("256 MB");
@@ -149,7 +150,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        maximumMemory = new JComboBox<String>();
+        maximumMemory = new JComboBox();
         for (String option : MEMORY_OPTIONS) {
             maximumMemory.addItem(option);
         }
@@ -205,7 +206,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         widthField.setText(App.settings.getWindowWidth() + "");
         heightField = new JTextField(4);
         heightField.setText(App.settings.getWindowHeight() + "");
-        commonScreenSizes = new JComboBox<String>();
+        commonScreenSizes = new JComboBox();
         commonScreenSizes.addItem("Select An Option");
         commonScreenSizes.addItem("854x480");
         if (Utils.getMaximumWindowWidth() >= 1280 && Utils.getMaximumWindowHeight() >= 720) {

@@ -17,17 +17,18 @@
  */
 package com.atlauncher.gui;
 
-import com.atlauncher.data.Account;
+import java.awt.Component;
+import java.awt.Dimension;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import java.awt.Component;
-import java.awt.Dimension;
+
+import com.atlauncher.data.Account;
 
 @SuppressWarnings("serial")
-public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<Account> {
+public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer {
     public AccountsDropDownRenderer() {
         setOpaque(true);
         setHorizontalAlignment(CENTER);
@@ -41,18 +42,20 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
      * bottom accounts selection dropdown.
      *
      * @param list The JList we're painting
-     * @param account the account we're rendering
+     * @param object the account we're rendering
      * @param index The cells index
      * @param isSelected True if the specified cell was selected
      * @param cellHasFocus True if the specified cell has the focus
      * @return A component whose paint() method will render the specified value
      */
     @SuppressWarnings("rawtypes")
-    public Component getListCellRendererComponent(JList list, Account account, int index, boolean isSelected, boolean
+    public Component getListCellRendererComponent(JList list, Object object, int index, boolean isSelected, boolean
             cellHasFocus) {
-        if (account == null) {
+        if (object == null) {
             return this;
         }
+        
+        Account account = (Account)object;
 
         if (isSelected) {
             setBackground(list.getSelectionBackground());

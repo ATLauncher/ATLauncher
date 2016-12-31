@@ -17,10 +17,13 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.data.MinecraftServer;
-import com.atlauncher.gui.dialogs.AddEditServerForCheckerDialog;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -30,13 +33,11 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.data.MinecraftServer;
+import com.atlauncher.gui.dialogs.AddEditServerForCheckerDialog;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ServersForCheckerTab extends JPanel implements ActionListener {
@@ -49,7 +50,7 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
     private final JMenuItem EDIT_BUTTON = new JMenuItem(Language.INSTANCE.localize("common.edit"));
     private final JMenuItem DELETE_BUTTON = new JMenuItem(Language.INSTANCE.localize("common.delete"));
 
-    private DefaultListModel<MinecraftServer> listModel;
+    private DefaultListModel listModel;
     private JList serverList;
 
     public ServersForCheckerTab() {
@@ -59,7 +60,7 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
         CONTEXT_MENU.add(EDIT_BUTTON);
         CONTEXT_MENU.add(DELETE_BUTTON);
 
-        listModel = new DefaultListModel<MinecraftServer>();
+        listModel = new DefaultListModel();
         for (MinecraftServer server : App.settings.getCheckingServers()) {
             listModel.addElement(server);
         }

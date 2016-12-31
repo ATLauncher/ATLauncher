@@ -17,6 +17,13 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -24,22 +31,16 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private JLabelWithHover languageLabel;
-    private JComboBox<String> language;
+    private JComboBox language;
     private JLabelWithHover themeLabel;
-    private JComboBox<String> theme;
+    private JComboBox theme;
     private JLabelWithHover themeLabelRestart;
     private JPanel themeLabelPanel;
     private JLabelWithHover dateFormatLabel;
-    private JComboBox<String> dateFormat;
+    private JComboBox dateFormat;
     private JLabelWithHover advancedBackupLabel;
     private JCheckBox advancedBackup;
     private JLabelWithHover sortPacksAlphabeticallyLabel;
@@ -69,7 +70,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<String>(Language.available());
+        language = new JComboBox(Language.available());
         language.setSelectedItem(Language.current());
         add(language, gbc);
 
@@ -96,7 +97,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        theme = new JComboBox<String>();
+        theme = new JComboBox();
         for (String themee : App.settings.getThemesDir().list(Utils.getThemesFileFilter())) {
             theme.addItem(themee.replace(".zip", ""));
         }
@@ -119,7 +120,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        dateFormat = new JComboBox<String>();
+        dateFormat = new JComboBox();
         dateFormat.addItem("dd/M/yyy");
         dateFormat.addItem("M/dd/yyy");
         dateFormat.addItem("yyy/M/dd");
