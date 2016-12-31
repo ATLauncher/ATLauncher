@@ -192,7 +192,7 @@ public class Account implements Serializable {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
 
         BufferedImage main = image.getSubimage(8, 8, 8, 8);
@@ -231,7 +231,7 @@ public class Account implements Serializable {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
 
         BufferedImage head = image.getSubimage(8, 8, 8, 8);
@@ -474,9 +474,9 @@ public class Account implements Serializable {
                                 }
                             }
                         } catch (MalformedURLException e) {
-                            App.settings.logStackTrace(e);
+                            LogManager.logStackTrace(e);
                         } catch (IOException e) {
-                            App.settings.logStackTrace(e);
+                            LogManager.logStackTrace(e);
                         }
                         App.settings.reloadAccounts();
                     }
@@ -526,7 +526,7 @@ public class Account implements Serializable {
             }
             reader.close();
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             response = null;
         }
 

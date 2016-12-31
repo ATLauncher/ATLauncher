@@ -36,7 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -335,7 +334,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -359,7 +358,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -383,7 +382,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -407,7 +406,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return 0;
     }
@@ -431,7 +430,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -456,7 +455,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -481,7 +480,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -505,7 +504,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -530,7 +529,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -555,7 +554,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -579,7 +578,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return 0;
     }
@@ -603,7 +602,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -627,7 +626,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return true;
     }
@@ -652,7 +651,7 @@ public class Pack {
             }
         } catch (Exception e) {
             String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", xml);
-            App.settings.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
+            LogManager.logStackTrace("Exception when reading a versions XML. See error details at " + result, e);
         }
         return null;
     }
@@ -805,11 +804,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return mods;
     }
@@ -836,11 +835,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return false;
     }
@@ -884,11 +883,11 @@ public class Pack {
                 }
             }
         } catch (SAXException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (ParserConfigurationException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return files;
     }
@@ -902,7 +901,7 @@ public class Pack {
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return "Install Not Added!";
     }
@@ -916,7 +915,7 @@ public class Pack {
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/serverinstalled/", request);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return "Install Not Added!";
     }
@@ -930,7 +929,7 @@ public class Pack {
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/updated/", request);
         } catch (IOException e) {
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
         }
         return "Install Not Added!";
     }

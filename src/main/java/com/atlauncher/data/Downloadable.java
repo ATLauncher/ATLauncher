@@ -187,7 +187,7 @@ public class Downloadable {
             try {
                 this.hash = getHashFromURL();
             } catch (IOException e) {
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
                 this.hash = "-";
                 this.connection = null;
             }
@@ -271,7 +271,7 @@ public class Downloadable {
                 LogManager.debug("Connection opened to " + this.url, 3);
             } catch (IOException e) {
                 LogManager.debug("Exception when opening connection to " + this.url, 3);
-                App.settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
                 if (this.isATLauncherDownload) {
                     if (getNextServer()) {
                         this.url = server.getFileURL(this.beforeURL);
@@ -317,7 +317,7 @@ public class Downloadable {
         } catch (SocketException e) {
             LogManager.error("Failed to download " + this.url + " due to SocketException!");
             // Connection reset. Close connection and try again
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             this.connection.disconnect();
             this.connection = null;
             if (this.oldFile != null && this.oldFile.exists()) {
@@ -325,7 +325,7 @@ public class Downloadable {
             }
         } catch (IOException e) {
             LogManager.error("Failed to download " + this.url + " due to IOException!");
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             if (this.oldFile != null && this.oldFile.exists()) {
                 Utils.moveFile(this.oldFile, this.file, true);
             }
@@ -338,7 +338,7 @@ public class Downloadable {
                     in.close();
                 }
             } catch (IOException e1) {
-                App.settings.logStackTrace(e1);
+                LogManager.logStackTrace(e1);
             }
         }
     }
@@ -367,7 +367,7 @@ public class Downloadable {
             in.close();
         } catch (IOException e) {
             LogManager.error("Failed to get contents of " + this.url + " due to IOException!");
-            App.settings.logStackTrace(e);
+            LogManager.logStackTrace(e);
             return null;
         }
         this.connection.disconnect();
@@ -514,7 +514,7 @@ public class Downloadable {
         try {
             return getConnection().getResponseCode();
         } catch (IOException e) {
-            App.settings.logStackTrace("IOException when getting response code for the url " + this.url, e);
+            LogManager.logStackTrace("IOException when getting response code for the url " + this.url, e);
             return -1;
         }
     }

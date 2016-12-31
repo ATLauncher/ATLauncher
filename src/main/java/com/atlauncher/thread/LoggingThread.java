@@ -18,18 +18,18 @@
 
 package com.atlauncher.thread;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Constants;
-import com.atlauncher.evnt.LogEvent;
-import com.atlauncher.utils.Timestamper;
-import com.atlauncher.writer.LogEventWriter;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.BlockingQueue;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Constants;
+import com.atlauncher.evnt.LogEvent;
+import com.atlauncher.utils.Timestamper;
+import com.atlauncher.writer.LogEventWriter;
 
 public final class LoggingThread extends Thread {
     private final LogEventWriter writer;
@@ -41,12 +41,10 @@ public final class LoggingThread extends Thread {
         this.queue = queue;
         this.setName("ATL-Logging-Thread");
         File log = new File(App.settings.getLogsDir(), filename);
-        if (!log.exists()) {
-            try {
-                log.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            log.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         try {
             this.writer = new LogEventWriter(new FileWriter(log));
@@ -68,15 +66,17 @@ public final class LoggingThread extends Thread {
 
     @Override
     public void run() {
-        try {
-            while (true) {
-                LogEvent next = this.queue.take();
-                if (next != null) {
-                    next.post(this.writer);
-                }
+        while (true) {
+            LogEvent next;
+            try {
+                next = this.queue.take();
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+                return;
             }
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
+            if (next != null) {
+                next.post(this.writer);
+            }
         }
     }
 

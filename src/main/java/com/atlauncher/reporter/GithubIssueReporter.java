@@ -18,6 +18,11 @@
 
 package com.atlauncher.reporter;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
@@ -25,18 +30,20 @@ import com.atlauncher.data.APIResponse;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.Utils;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 public final class GithubIssueReporter {
     private GithubIssueReporter() {
     }
 
-    public static void submit(String title, String body) throws Exception {
+    public static void submit(String title, String message) throws InterruptedException {
         if (App.settings != null && App.settings.enableLogs()) {
-            body = body + "\n\n" + times('-', 50) + "\n" + "Here is my log: " + App.TASKPOOL.submit(new PasteUpload()
-            ).get();
+            String body = null;
+            try {
+                body = message + "\n\n" + times('-', 50) + "\n" + "Here is my log: " + App.TASKPOOL.submit(new PasteUpload()
+                ).get();
+            } catch (ExecutionException e) {
+                LogManager.logStackTrace("Exception while uploading paste", e);
+                return;
+            }
             Map<String, Object> request = new HashMap<String, Object>();
             request.put("issue", new GithubIssue(title, body));
 
@@ -48,16 +55,16 @@ public final class GithubIssueReporter {
                             .getDataAsString());
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                LogManager.logStackTrace(e);
             }
         }
     }
 
     private static String times(char c, int times) {
-        String s = "";
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < times; i++) {
-            s += c;
+            builder.append(c);
         }
-        return s;
+        return builder.toString();
     }
 }

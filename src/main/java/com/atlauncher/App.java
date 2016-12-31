@@ -17,6 +17,38 @@
  */
 package com.atlauncher;
 
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.swing.InputMap;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.text.DefaultEditorKit;
+
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
@@ -28,36 +60,8 @@ import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
-import io.github.asyncronous.toast.Toaster;
 
-import javax.swing.InputMap;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.text.DefaultEditorKit;
-import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import io.github.asyncronous.toast.Toaster;
 
 /**
  * Main entry point for the application, Java runs the main method here when the application is launched.
@@ -298,7 +302,7 @@ public class App {
                 // Try to enable the tray icon.
                 trySystemTrayIntegration();
             } catch (Exception e) {
-                settings.logStackTrace(e);
+                LogManager.logStackTrace(e);
             }
         }
 
@@ -332,15 +336,13 @@ public class App {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", Constants.LAUNCHER_NAME + " " +
                 Constants.VERSION);
             try {
-                Class util = Class.forName("com.apple.eawt.Application");
-                Method getApplication = util.getMethod("getApplication", new Class[0]);
+                Class<?> util = Class.forName("com.apple.eawt.Application");
+                Method getApplication = util.getMethod("getApplication");
                 Object application = getApplication.invoke(util);
-                Class params[] = new Class[1];
-                params[0] = Image.class;
-                Method setDockIconImage = util.getMethod("setDockIconImage", params);
+                Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
                 setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
             } catch (Exception ex) {
-                ex.printStackTrace(System.err);
+                LogManager.logStackTrace("Failed to set dock icon", ex);
             }
         }
 
@@ -498,37 +500,74 @@ public class App {
      * about itself and it's location in a set location.
      */
     public static void integrate() {
+        if (!Utils.getOSStorageDir().exists()) {
+            boolean success = Utils.getOSStorageDir().mkdirs();
+            if (!success) {
+                LogManager.error("Failed to create OS storage directory");
+                return;
+            }
+        }
+
+        File f = new File(Utils.getOSStorageDir(), "atlauncher.conf");
+
         try {
-            if (!Utils.getOSStorageDir().exists()) {
-                Utils.getOSStorageDir().mkdirs();
-            }
-
-            File f = new File(Utils.getOSStorageDir(), "atlauncher.conf");
-
-            if (!f.exists()) {
-                f.createNewFile();
-            }
-
-            Properties props = new Properties();
-            props.load(new FileInputStream(f));
-
-            props.setProperty("java_version", Utils.getLauncherJavaVersion());
-            props.setProperty("location", App.settings.getBaseDir().toString());
-            props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
-                .getPath()).getAbsolutePath());
-
-            packCodeToAdd = props.getProperty("pack_code_to_add", null);
-            props.remove("pack_code_to_add");
-
-            packToInstall = props.getProperty("pack_to_install", null);
-            props.remove("pack_to_install");
-
-            packShareCodeToInstall = props.getProperty("pack_share_code_to_install", null);
-            props.remove("pack_share_code_to_install");
-
-            props.store(new FileOutputStream(f), "");
+            f.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogManager.logStackTrace("Failed to create atlauncher.conf", e);
+            return;
+        }
+
+        Properties props = new Properties();
+        InputStream is = null;
+        try {
+            is = new FileInputStream(f);
+            props.load(is);
+        } catch (FileNotFoundException e) {
+            LogManager.logStackTrace("Failed to open atlauncher.conf for reading", e);
+            return;
+        } catch (IOException e) {
+            LogManager.logStackTrace("Failed to read from atlauncher.conf", e);
+            return;
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    LogManager.logStackTrace("Failed to close atlauncher.conf FileInputStream", e);
+                }
+            }
+        }
+
+        props.setProperty("java_version", Utils.getLauncherJavaVersion());
+        props.setProperty("location", App.settings.getBaseDir().toString());
+        props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
+            .getPath()).getAbsolutePath());
+
+        packCodeToAdd = props.getProperty("pack_code_to_add", null);
+        props.remove("pack_code_to_add");
+
+        packToInstall = props.getProperty("pack_to_install", null);
+        props.remove("pack_to_install");
+
+        packShareCodeToInstall = props.getProperty("pack_share_code_to_install", null);
+        props.remove("pack_share_code_to_install");
+
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(f);
+            props.store(os, "");
+        } catch (FileNotFoundException e) {
+            LogManager.logStackTrace("Failed to open atlauncher.conf for writing", e);
+        } catch (IOException e) {
+            LogManager.logStackTrace("Failed to write to atlauncher.conf", e);
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    LogManager.logStackTrace("Failed to close atlauncher.conf FileOutputStream", e);
+                }
+            }
         }
     }
 }
