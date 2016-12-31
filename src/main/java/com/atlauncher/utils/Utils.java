@@ -46,7 +46,6 @@ import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -469,31 +468,33 @@ public class Utils {
      * @return The amount of RAM in the system
      */
     public static int getSystemRam() {
-        long ramm = 0;
-        int ram = 0;
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         try {
             Method m = operatingSystemMXBean.getClass().getDeclaredMethod("getTotalPhysicalMemorySize");
             m.setAccessible(true);
             Object value = m.invoke(operatingSystemMXBean);
             if (value != null) {
-                ramm = Long.parseLong(value.toString());
-                ram = (int) (ramm / 1048576);
+                return (int) ((Long)value / 1048576);
             } else {
-                ram = 1024;
+                return 1024;
             }
-        } catch (SecurityException e) {
+        } catch (RuntimeException e) {
+            Class<?> inaccessibleObjectException;
+            try {
+                inaccessibleObjectException = Class.forName("java.lang.reflect.InaccessibleObjectException");
+            } catch (ClassNotFoundException ignored) {
+                throw e;
+            }
+            if (inaccessibleObjectException.isInstance(e)) {
+                LogManager.info("Could not determine system RAM due to Java 9 restrictions, using 8 GB as a placeholder");
+                return 8192;
+            } else {
+                throw e;
+            }
+        } catch (Exception e) {
             LogManager.logStackTrace(e);
-        } catch (NoSuchMethodException e) {
-            LogManager.logStackTrace(e);
-        } catch (IllegalArgumentException e) {
-            LogManager.logStackTrace(e);
-        } catch (IllegalAccessException e) {
-            LogManager.logStackTrace(e);
-        } catch (InvocationTargetException e) {
-            LogManager.logStackTrace(e);
+            return 0;
         }
-        return ram;
     }
 
     /**
