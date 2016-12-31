@@ -70,8 +70,15 @@ public final class ToastWindow extends JWindow {
     }
     
     private void tryToSetTranslucency() {
+        final Class<?> windowTranslucency;
         try {
-            final Class<?> windowTranslucency = Class.forName("java.awt.GraphicsDevice$WindowTranslucency");
+            windowTranslucency = Class.forName("java.awt.GraphicsDevice$WindowTranslucency");
+        } catch (ClassNotFoundException ignored) {
+            LogManager.info("GraphicsDevice.WindowTranslucency enum not found, won't set translucency");
+            return;
+        }
+        
+        try {
             final Object translucent = windowTranslucency.getField("TRANSLUCENT").get(null);
             final Method isWindowTranslucencySupported = GraphicsDevice.class.getMethod("isWindowTranslucencySupported", windowTranslucency);
             final Method setOpacity = this.getClass().getMethod("setOpacity", float.class);
@@ -82,7 +89,7 @@ public final class ToastWindow extends JWindow {
                 setOpacity.invoke(this, (Float)UIManager.get(ToasterConstants.OPACITY));
             }
         } catch (Exception e) {
-            LogManager.logStackTrace("Could not set window translucency, ignoring", e);
+            LogManager.logStackTrace("Could not set window translucency", e);
         }
     }
 
