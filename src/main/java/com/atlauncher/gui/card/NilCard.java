@@ -19,6 +19,8 @@ package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.utils.Utils;
 
@@ -37,7 +39,7 @@ import java.io.File;
  *
  * @author Ryan
  */
-public class NilCard extends JPanel {
+public class NilCard extends JPanel implements RelocalizationListener {
     private static final Image defaultImage = Utils.getIconImage(new File(App.settings.getImagesDir(), "defaultimage" +
             ".png")).getImage();
 
@@ -46,6 +48,7 @@ public class NilCard extends JPanel {
 
     public NilCard(String message) {
         super(new BorderLayout());
+        RelocalizationManager.addListener(this);
 
         if (Utils.isMac()) {
             this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"), TitledBorder
@@ -67,5 +70,15 @@ public class NilCard extends JPanel {
         this.splitter.setRightComponent(this.error);
 
         this.add(this.splitter, BorderLayout.CENTER);
+    }
+    
+    public void setMessage(String message) {
+        error.setText(message);
+    }
+
+    @Override
+    public void onRelocalization() {
+        TitledBorder border = (TitledBorder) this.getBorder();
+        border.setTitle(Language.INSTANCE.localize("common.nothingtoshow"));
     }
 }

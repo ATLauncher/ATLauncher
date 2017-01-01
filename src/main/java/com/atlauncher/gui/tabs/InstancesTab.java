@@ -20,6 +20,8 @@ package com.atlauncher.gui.tabs;
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 
@@ -43,7 +45,7 @@ import java.util.regex.Pattern;
 /**
  * TODO: Rewrite this for better loading
  */
-public class InstancesTab extends JPanel implements Tab {
+public class InstancesTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = -969812552965390610L;
     private JPanel topPanel;
     private JButton clearButton;
@@ -58,10 +60,13 @@ public class InstancesTab extends JPanel implements Tab {
     private JPanel panel;
     private JScrollPane scrollPane;
     private int currentPosition = 0;
+    
+    private NilCard nilCard;
 
     public InstancesTab() {
         setLayout(new BorderLayout());
         loadContent(false);
+        RelocalizationManager.addListener(this);
     }
 
     public void loadContent(boolean keepFilters) {
@@ -157,7 +162,8 @@ public class InstancesTab extends JPanel implements Tab {
             }
         }
         if (count == 0) {
-            panel.add(new NilCard(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n")), gbc);
+            nilCard = new NilCard(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n"));
+            panel.add(nilCard, gbc);
         }
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -184,5 +190,16 @@ public class InstancesTab extends JPanel implements Tab {
     @Override
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.instances");
+    }
+
+    @Override
+    public void onRelocalization() {
+        clearButton.setText(Language.INSTANCE.localize("common.clear"));
+        searchButton.setText(Language.INSTANCE.localize("common.search"));
+        hasUpdateLabel.setText(Language.INSTANCE.localize("instance.hasupdate"));
+        
+        if (nilCard != null) {
+            nilCard.setMessage(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n"));
+        }
     }
 }
