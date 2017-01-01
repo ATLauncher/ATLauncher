@@ -144,7 +144,7 @@ public class DisableableMod implements Serializable {
                             inputFile.delete();
                             outputTmpFile.renameTo(inputFile);
                         } catch (IOException e) {
-                            App.settings.logStackTrace(e);
+                            LogManager.logStackTrace(e);
                         }
                     }
                 }

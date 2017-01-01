@@ -22,6 +22,8 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
@@ -51,7 +53,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class AccountsTab extends JPanel implements Tab {
+public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = 2493791137600123223L;
     private final Insets TOP_INSETS = new Insets(0, 0, 20, 0);
     private final Insets BOTTOM_INSETS = new Insets(10, 0, 0, 0);
@@ -77,6 +79,8 @@ public class AccountsTab extends JPanel implements Tab {
 
     public AccountsTab() {
         setLayout(new BorderLayout());
+        
+        RelocalizationManager.addListener(this);
 
         rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
@@ -354,5 +358,25 @@ public class AccountsTab extends JPanel implements Tab {
     @Override
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.accounts");
+    }
+    
+    @Override
+    public void onRelocalization() {
+        fillerAccount.setMinecraftUsername(Language.INSTANCE.localize("account.add"));
+        
+        if (accountsComboBox.getSelectedIndex() == 0)
+        {
+            leftButton.setText(Language.INSTANCE.localize("common.add"));
+            rightButton.setText(Language.INSTANCE.localize("common.clear"));
+        } else
+        {
+            leftButton.setText(Language.INSTANCE.localize("common.save"));
+            rightButton.setText(Language.INSTANCE.localize("common.delete"));
+        }
+        
+        usernameLabel.setText(Language.INSTANCE.localize("account.usernameemail") + ":");
+        passwordLabel.setText(Language.INSTANCE.localize("account.password") + ":");
+        rememberLabel.setText(Language.INSTANCE.localize("account.remember") + ":");
+        updateSkin.setText(Language.INSTANCE.localize("account.reloadskin"));
     }
 }

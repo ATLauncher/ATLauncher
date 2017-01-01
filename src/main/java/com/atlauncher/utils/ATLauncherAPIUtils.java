@@ -17,7 +17,7 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.mojang.OperatingSystem;
 
@@ -42,7 +42,7 @@ public class ATLauncherAPIUtils {
         try {
             Utils.sendAPICall("system-info", request);
         } catch (IOException e) {
-            App.settings.logStackTrace("Error sending in details of system", e);
+            LogManager.logStackTrace("Error sending in details of system", e);
         }
     }
 }

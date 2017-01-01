@@ -17,6 +17,19 @@
  */
 package com.atlauncher.gui.components;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
@@ -25,17 +38,6 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.HTMLUtils;
-
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
 
@@ -81,21 +83,27 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             }
         });
         uploadLogButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
+                String result;
                 try {
-                    String result = App.TASKPOOL.submit(new PasteUpload()).get();
-                    if (result.contains(Constants.PASTE_CHECK_URL)) {
-                        App.TOASTER.pop("Log uploaded and link copied to clipboard");
-                        LogManager.info("Log uploaded and link copied to clipboard: " + result);
-                        StringSelection text = new StringSelection(result);
-                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        clipboard.setContents(text, null);
-                    } else {
-                        App.TOASTER.popError("Log failed to upload!");
-                        LogManager.error("Log failed to upload: " + result);
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace(System.err);
+                    result = App.TASKPOOL.submit(new PasteUpload()).get();
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                    return;
+                } catch (ExecutionException ex) {
+                    LogManager.logStackTrace("Exception while uploading paste", ex);
+                    return;
+                }
+                if (result.contains(Constants.PASTE_CHECK_URL)) {
+                    App.TOASTER.pop("Log uploaded and link copied to clipboard");
+                    LogManager.info("Log uploaded and link copied to clipboard: " + result);
+                    StringSelection text = new StringSelection(result);
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(text, null);
+                } else {
+                    App.TOASTER.popError("Log failed to upload!");
+                    LogManager.error("Log failed to upload: " + result);
                 }
             }
         });

@@ -257,5 +257,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
         this.updateData.setText(Language.INSTANCE.localize("common.updatedata"));
         this.openFolder.setText(Language.INSTANCE.localize("common.openfolder"));
+        this.fillerAccount.setMinecraftUsername(Language.INSTANCE.localize("account.select"));
     }
 }

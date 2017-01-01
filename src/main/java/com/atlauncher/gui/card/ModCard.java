@@ -18,10 +18,6 @@
 
 package com.atlauncher.gui.card;
 
-import com.atlauncher.data.Mod;
-import com.atlauncher.utils.Utils;
-
-import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -29,6 +25,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.JPanel;
+
+import com.atlauncher.data.Mod;
+import com.atlauncher.utils.Utils;
 
 public final class ModCard extends JPanel {
     public final Mod mod;
@@ -45,15 +46,9 @@ public final class ModCard extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (ModCard.this.mod.hasWebsite()) {
-                    try {
-                        Utils.openBrowser(mod.getWebsite());
-                    } catch (Exception e1) {
-                        e1.printStackTrace(System.err);
-                    }
+                    Utils.openBrowser(mod.getWebsite());
                 }
             }
-
-
         });
     }
 

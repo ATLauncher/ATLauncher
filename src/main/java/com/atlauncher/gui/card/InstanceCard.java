@@ -18,38 +18,6 @@
 
 package com.atlauncher.gui.card;
 
-import com.atlauncher.App;
-import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
-import com.atlauncher.data.APIResponse;
-import com.atlauncher.data.Instance;
-import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.components.CollapsiblePanel;
-import com.atlauncher.gui.components.ImagePanel;
-import com.atlauncher.gui.dialogs.BackupDialog;
-import com.atlauncher.gui.dialogs.EditModsDialog;
-import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
-import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.dialogs.RenameInstanceDialog;
-import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.Utils;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
@@ -68,6 +36,39 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.atlauncher.App;
+import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
+import com.atlauncher.data.APIResponse;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.gui.components.ImagePanel;
+import com.atlauncher.gui.dialogs.BackupDialog;
+import com.atlauncher.gui.dialogs.EditModsDialog;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.gui.dialogs.RenameInstanceDialog;
+import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Utils;
 
 /**
  * <p/>
@@ -479,8 +480,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                         Utils.safeCopy(img, new File(instance.getRootDirectory(), "instance.png"));
                                         image.setImage(instance.getImage().getImage());
                                         instance.save();
-                                    } catch (IOException e1) {
-                                        e1.printStackTrace(System.err);
+                                    } catch (IOException ex) {
+                                        LogManager.logStackTrace("Failed to set instance image", ex);
                                     }
                                 }
                             }
@@ -530,7 +531,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     shareCodeItem.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            if (instance.getInstalledOptionalModNames().size() > 0) {
+                            if (!instance.getInstalledOptionalModNames().isEmpty()) {
                                 try {
                                     APIResponse response = Gsons.DEFAULT.fromJson(Utils.sendAPICall("pack/" +
                                             instance.getRealPack().getSafeName() + "/" + instance.getVersion() +
@@ -546,8 +547,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                         App.TOASTER.pop(Language.INSTANCE.localize("instance.sharecodecopied"));
                                         LogManager.info("Share code copied to clipboard");
                                     }
-                                } catch (IOException e1) {
-                                    e1.printStackTrace();
+                                } catch (IOException ex) {
+                                    LogManager.logStackTrace("API call failed", ex);
                                 }
                             } else {
                                 App.TOASTER.pop(Language.INSTANCE.localize("instance.nooptionalmods"));

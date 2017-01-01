@@ -1,16 +1,20 @@
 package io.github.asyncronous.toast;
 
-import io.github.asyncronous.toast.ui.ToastWindow;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.io.InputStream;
+
+import com.atlauncher.LogManager;
+
+import io.github.asyncronous.toast.ui.ToastWindow;
 
 /**
  * Static class to allow easier use of toaster notifications
@@ -124,16 +128,16 @@ public final class Toaster {
     }
 
     private Image createImage(String name) {
+        InputStream stream = Toaster.class.getResourceAsStream("/assets/toast/icons/" + name + ".png");
+
+        if (stream == null) {
+            throw new NullPointerException("Stream == null");
+        }
+
         try {
-            InputStream stream = Toaster.class.getResourceAsStream("/assets/toast/icons/" + name + ".png");
-
-            if (stream == null) {
-                throw new NullPointerException("Stream == null");
-            }
-
             return ImageIO.read(stream);
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
+        } catch (IOException ex) {
+            LogManager.logStackTrace("Failed to load Toaster image", ex);
             return null;
         }
     }

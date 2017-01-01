@@ -168,7 +168,7 @@ public final class Resources {
                 }
             }
         } catch (Exception ex) {
-            App.settings.logStackTrace("Cannot find font " + name, ex);
+            LogManager.logStackTrace("Cannot find font " + name, ex);
             return new Font("Sans-Serif", Font.PLAIN, 0);
         }
     }

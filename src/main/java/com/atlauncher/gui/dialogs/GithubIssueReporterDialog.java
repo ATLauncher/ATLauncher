@@ -18,11 +18,9 @@
 
 package com.atlauncher.gui.dialogs;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.Language;
-import com.atlauncher.gui.components.ToolsPanel;
-import com.atlauncher.reporter.GithubIssueReporter;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -31,9 +29,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.Language;
+import com.atlauncher.gui.components.ToolsPanel;
+import com.atlauncher.reporter.GithubIssueReporter;
 
 public final class GithubIssueReporterDialog extends JDialog {
     private final JTextField TITLE_FIELD = new JTextField(16);
@@ -58,12 +59,12 @@ public final class GithubIssueReporterDialog extends JDialog {
                     @Override
                     public void run() {
                         try {
-                            GithubIssueReporter.submit(TITLE_FIELD.getText() + " - " + Constants.VERSION, INFO_AREA
-                                    .getText());
-                        } catch (Exception e1) {
-                            e1.printStackTrace(System.err);
+                            GithubIssueReporter.submit(TITLE_FIELD.getText() + " - " + Constants.VERSION, INFO_AREA.getText());
+                        } catch (InterruptedException ignored) {
+                            Thread.currentThread().interrupt();
+                        } finally {
+                            dispose();
                         }
-                        dispose();
                     }
                 });
             }
