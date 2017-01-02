@@ -4,15 +4,20 @@
 
 # Except These
 !/src/
-!/macapp/
+!/gradle/
 !/.editorconfig
+!/.gitattributes
 !/.gitignore
+!/build.gradle
 !/CONTRIBUTING.md
 !/CHANGELOG.md
+!/gradle.properties
+!/gradlew
+!/gradlew.bat
 !/Jenkinsfile
 !/LICENSE
-!/pom.xml
 !/README.md
+!/settings.gradle
 !/STYLE.md
 !/TESTING.md
 

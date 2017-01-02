@@ -1,0 +1,94 @@
+import java.util.function.Predicate
+import java.util.stream.Collectors
+
+plugins {
+    id 'java'
+
+    id 'idea'
+    id 'eclipse'
+
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
+    id 'edu.sc.seis.macAppBundle' version '2.1.6'
+    id 'edu.sc.seis.launch4j' version '2.1.0'
+}
+
+sourceCompatibility = '1.6'
+targetCompatibility = '1.6'
+
+group = 'com.atlauncher'
+version = '3.2.4.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://libraries.minecraft.net'
+    }
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    compile 'org.tukaani:xz:1.5'
+    compile 'com.mojang:authlib:1.5.17'
+    compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
+    compile 'org.apache.logging.log4j:log4j-core:2.0-beta9'
+    compile 'com.google.guava:guava:17.0'
+
+    testCompile 'junit:junit:4.11'
+}
+
+jar {
+    manifest {
+        attributes(
+                'SplashScreen-Image': '/assets/image/SplashScreen.png',
+                'Implementation-Title': project.name,
+                'Implementation-Version': version,
+                'Implementation-Vender': 'RyanTheAllmighty',
+                'Main-Class': 'com.atlauncher.App'
+        )
+    }
+}
+
+shadowJar {
+    classifier = ''
+}
+
+macAppBundle {
+    mainClassName = 'com.atlauncher.App'
+    icon = 'src/main/resources/assets/image/Icon.icns'
+    javaProperties.put('user.dir', '$APP_ROOT/Contents/Java')
+}
+
+// macAppBundle plugin is silly
+assemble.dependsOn.removeIf(new Predicate<Object>() {
+    @Override
+    boolean test(Object o) {
+        if (o instanceof Task) {
+            return o.name == 'createDmg' || o.name == 'createAppZip'
+        }
+        return false
+    }
+})
+
+copyToResourcesJava {
+    exclude(project.configurations.runtime.toList().stream().map({ f -> f.name }).collect(Collectors.toList()))
+    rename("ATLauncher-${project.version}.jar", "ATLauncher.jar")
+}
+
+launch4j {
+    outfile = "ATLauncher-${project.version}.exe"
+    mainClassName = 'com.atlauncher.App'
+    icon = "${projectDir}/src/main/resources/assets/image/Icon.ico" // launch4j plugin is silly
+}
+
+artifacts {
+    archives shadowJar
+}
+
+// lets do some corrections
+build.dependsOn(createExe) // launch4j plugin is silly
+build.dependsOn(createAppZip) // macAppBundle plugin is silly
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14.1'
+}
