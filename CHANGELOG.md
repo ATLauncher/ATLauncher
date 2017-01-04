@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.3.6
-- Fix NPE when trying to edit mods for an instance
-- Fix some content not being relocalized when language is changed
+## 3.2.4.0
+- Add in Alex default skins for even UUID's
+- Stop showing error dialog when no skin is set by the user and is using default
