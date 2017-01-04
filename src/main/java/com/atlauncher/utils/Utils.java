@@ -97,8 +97,6 @@ import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 
-import org.tukaani.xz.XZInputStream;
-
 public class Utils {
     public static String error(Throwable t) {
         StringBuilder builder = new StringBuilder();
@@ -136,7 +134,7 @@ public class Utils {
                 LogManager.logStackTrace("Failed to open theme zip file", e);
                 return null;
             }
-            
+
             try {
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
@@ -249,7 +247,7 @@ public class Utils {
         File themeFile = App.settings == null ? null : App.settings.getThemeFile();
 
         if (themeFile != null) {
-    
+
             ZipFile zipFile;
             try {
                 zipFile = new ZipFile(themeFile);
@@ -260,10 +258,10 @@ public class Utils {
                 LogManager.logStackTrace("Failed to open theme zip file", e);
                 return null;
             }
-            
+
             try {
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        
+
                 InputStream stream = null;
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
@@ -296,7 +294,7 @@ public class Utils {
         if (stream == null) {
             throw new NullPointerException("Stream == null");
         }
-    
+
         try {
             return ImageIO.read(stream);
         } catch (IOException e) {
@@ -1003,17 +1001,17 @@ public class Utils {
             canon = file;
         } else {
             File canonDir = null;
-    
+
             try {
                 canonDir = file.getParentFile().getCanonicalFile();
             } catch (IOException e) {
                 LogManager.logStackTrace("Failed to get canonical file", e);
                 return false;
             }
-    
+
             canon = new File(canonDir, file.getName());
         }
-    
+
         try {
             return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
         } catch (IOException e) {
@@ -1973,91 +1971,6 @@ public class Utils {
         return bytes;
     }
 
-    public static void unXZPackFile(File xzFile, File packFile, File outputFile) {
-        unXZFile(xzFile, packFile);
-        unpackFile(packFile, outputFile);
-    }
-
-    public static void unXZFile(File input, File output) {
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
-        BufferedInputStream bis = null;
-        XZInputStream xzis = null;
-        try {
-            fis = new FileInputStream(input);
-            xzis = new XZInputStream(fis);
-            fos = new FileOutputStream(output);
-
-            final byte[] buffer = new byte[8192];
-            int n = 0;
-            while (-1 != (n = xzis.read(buffer))) {
-                fos.write(buffer, 0, n);
-            }
-
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        } finally {
-            try {
-                if (fis != null) {
-                    fis.close();
-                }
-                if (bis != null) {
-                    bis.close();
-                }
-                if (fos != null) {
-                    fos.close();
-                }
-                if (xzis != null) {
-                    xzis.close();
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
-    }
-
-    /*
-     * From: http://atl.pw/1
-     */
-    public static void unpackFile(File input, File output) {
-        if (output.exists()) {
-            Utils.delete(output);
-        }
-
-        byte[] decompressed = readFile(input);
-
-        if (decompressed == null) {
-            LogManager.error("unpackFile: While reading in " + input.getName() + " the file returned null");
-            return;
-        }
-
-        String end = new String(decompressed, decompressed.length - 4, 4);
-        if (!end.equals("SIGN")) {
-            LogManager.error("unpackFile: Unpacking failed, signature missing " + end);
-            return;
-        }
-
-        int x = decompressed.length;
-        int len = ((decompressed[x - 8] & 0xFF)) | ((decompressed[x - 7] & 0xFF) << 8) | ((decompressed[x - 6] &
-            0xFF) << 16) | ((decompressed[x - 5] & 0xFF) << 24);
-        byte[] checksums = Arrays.copyOfRange(decompressed, decompressed.length - len - 8, decompressed.length - 8);
-        try {
-            FileOutputStream jarBytes = new FileOutputStream(output);
-            JarOutputStream jos = new JarOutputStream(jarBytes);
-
-            Pack200.newUnpacker().unpack(new ByteArrayInputStream(decompressed), jos);
-
-            jos.putNextEntry(new JarEntry("checksums.sha1"));
-            jos.write(checksums);
-            jos.closeEntry();
-
-            jos.close();
-            jarBytes.close();
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-    }
-
     private static String getMACAdressHash() {
         String returnStr = null;
         try {
@@ -2102,58 +2015,5 @@ public class Utils {
         }
 
         return getMD5(returnStr);
-    }
-
-    /**
-     * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
-     */
-    public static boolean addToClasspath(File file) {
-        LogManager.info("Loading external library " + file.getName() + " to classpath");
-        try {
-            if (file.exists()) {
-                addURL(file.toURI().toURL());
-            } else {
-                LogManager.error("Error loading AuthLib");
-            }
-        } catch (Throwable t) {
-            if (t.getMessage() != null) {
-                LogManager.error(t.getMessage());
-            }
-            return false;
-        }
-
-        return true;
-    }
-
-    public static boolean checkAuthLibLoaded() {
-        try {
-            App.settings.getClass().forName("com.mojang.authlib.exceptions.AuthenticationException");
-            App.settings.getClass().forName("com.mojang.authlib.Agent");
-            App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
-            App.settings.getClass().forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
-        } catch (ClassNotFoundException e) {
-            LogManager.logStackTrace(e);
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Credit to https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
-     */
-    public static void addURL(URL u) throws IOException {
-        URLClassLoader sysloader = (URLClassLoader) App.settings.getClass().getClassLoader();
-        Class sysclass = URLClassLoader.class;
-        try {
-            Method method = sysclass.getDeclaredMethod("addURL", URL.class);
-            method.setAccessible(true);
-            method.invoke(sysloader, u);
-        } catch (Throwable t) {
-            if (t.getMessage() != null) {
-                LogManager.error(t.getMessage());
-            }
-            throw new IOException("Error, could not add URL to system classloader");
-        }
     }
 }
