@@ -18,13 +18,13 @@
 
 package com.atlauncher.adapter;
 
+import java.awt.Color;
+import java.io.IOException;
+
 import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
-import java.awt.Color;
-import java.io.IOException;
 
 /**
  * This class will ensure that colors are serialized to a hex value for easy editing
@@ -37,15 +37,34 @@ public final class ColorTypeAdapter extends TypeAdapter<Color> {
 
     @Override
     public Color read(JsonReader reader) throws IOException {
+        Color ret = null;
         reader.beginObject();
-        String next = reader.nextName();
-        if (!next.equalsIgnoreCase("value")) {
-            throw new JsonParseException("Key " + next + " isnt a valid key");
+        while (reader.hasNext()) {
+            String next = reader.nextName();
+            if ("value".equals(next)) {
+                String value = reader.nextString();
+                if (value.startsWith("#")) {
+                    // Custom color format in hex form
+                    reader.endObject();
+                    int[] rgb = toRGB(clamp(value.substring(1)));
+                    ret = new Color(rgb[0], rgb[1], rgb[2]);
+                } else {
+                    // For compatibility with old java.awt.Color-based format
+                    ret = new Color(Integer.parseInt(value));
+                }
+            } else if ("frgbvalue".equals(next) || "fvalue".equals(next) || "falpha".equals(next) || "cs".equals(next)) {
+                // Ignore these, for compatibility with old java.awt.Color-based format
+                reader.nextString();
+            } else {
+                throw new JsonParseException("Key " + next + " isn't a valid key");
+            }
         }
-        String hex = reader.nextString();
         reader.endObject();
-        int[] rgb = toRGB(clamp(hex.substring(1)));
-        return new Color(rgb[0], rgb[1], rgb[2]);
+        if (ret == null) {
+            throw new JsonParseException("Color object must contain a \"value\" key");
+        } else {
+            return ret;
+        }
     }
 
     /**
