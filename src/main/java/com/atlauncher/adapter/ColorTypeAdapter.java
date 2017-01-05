@@ -24,6 +24,7 @@ import java.io.IOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 /**
@@ -32,11 +33,19 @@ import com.google.gson.stream.JsonWriter;
 public final class ColorTypeAdapter extends TypeAdapter<Color> {
     @Override
     public void write(JsonWriter writer, Color c) throws IOException {
-        writer.beginObject().name("value").value("#" + toHex(c)).endObject();
+        if (c == null) {
+            writer.nullValue();
+        } else {
+            writer.beginObject().name("value").value("#" + toHex(c)).endObject();
+        }
     }
 
     @Override
     public Color read(JsonReader reader) throws IOException {
+        if (JsonToken.NULL.equals(reader.peek())) {
+            return null;
+        }
+        
         Color ret = null;
         reader.beginObject();
         while (reader.hasNext()) {
