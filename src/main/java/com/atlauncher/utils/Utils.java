@@ -160,7 +160,7 @@ public class Utils {
             }
         }
 
-        URL url = System.class.getResource(path);
+        URL url = App.class.getResource(path);
 
         if (url == null) {
             LogManager.error("Unable to load resource " + path);

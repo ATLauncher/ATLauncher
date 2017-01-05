@@ -98,7 +98,7 @@ public final class Resources {
                     zipFile.close();
                 }
 
-                Reader reader = new InputStreamReader(System.class.getResourceAsStream("/assets/css/" + name + ".css"));
+                Reader reader = new InputStreamReader(App.class.getResourceAsStream("/assets/css/" + name + ".css"));
                 sheet.loadRules(reader, null);
                 reader.close();
 
@@ -126,7 +126,7 @@ public final class Resources {
                     resources.put(name, f);
                     return f;
                 } else {
-                    URL url = System.class.getResource("/assets/font/" + name + ".ttf");
+                    URL url = App.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
                         File themeFile = App.settings.getThemeFile();
 
