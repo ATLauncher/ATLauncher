@@ -17,6 +17,12 @@
  */
 package com.atlauncher.mclauncher;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
@@ -24,21 +30,18 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.mojang.PropertyMapSerializer;
 import com.atlauncher.utils.Utils;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.authlib.properties.PropertyMap;
-import com.mojang.util.UUIDTypeAdapter;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.mojang.authlib.properties.PropertyMap;
+
+import com.mojang.util.UUIDTypeAdapter;
 
 public class MCLauncher {
 
     public static Process launch(Account account, Instance instance, LoginResponse response) throws IOException {
-        StringBuilder cpb = new StringBuilder();
+        final List<File> cp = new ArrayList<File>();
         boolean hasCustomJarMods = false;
 
         File jarMods = instance.getJarModsDirectory();
@@ -52,8 +55,7 @@ public class MCLauncher {
                 for (String mod : jarmods) {
                     File thisFile = new File(jarMods, mod);
                     if (thisFile.exists()) {
-                        cpb.append(File.pathSeparator);
-                        cpb.append(thisFile);
+                        cp.add(thisFile);
                     }
                 }
                 for (File file : jarModFiles) {
@@ -61,21 +63,18 @@ public class MCLauncher {
                         continue;
                     }
                     hasCustomJarMods = true;
-                    cpb.append(File.pathSeparator);
-                    cpb.append(file);
+                    cp.add(file);
                 }
             } else {
                 for (File file : jarModFiles) {
                     hasCustomJarMods = true;
-                    cpb.append(File.pathSeparator);
-                    cpb.append(file);
+                    cp.add(file);
                 }
             }
         }
 
         for (String jarFile : instance.getLibrariesNeeded().split(",")) {
-            cpb.append(File.pathSeparator);
-            cpb.append(new File(instance.getBinDirectory(), jarFile));
+            cp.add(new File(instance.getBinDirectory(), jarFile));
         }
 
         File binFolder = instance.getBinDirectory();
@@ -89,13 +88,11 @@ public class MCLauncher {
 
                 LogManager.info("Added in custom library " + file.getName());
 
-                cpb.append(File.pathSeparator);
-                cpb.append(file);
+                cp.add(file);
             }
         }
 
-        cpb.append(File.pathSeparator);
-        cpb.append(instance.getMinecraftJar());
+        cp.add(instance.getMinecraftJar());
 
         List<String> arguments = new ArrayList<String>();
 
@@ -192,8 +189,19 @@ public class MCLauncher {
         }
 
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());
-        arguments.add("-cp");
-        arguments.add(System.getProperty("java.class.path") + cpb.toString());
+        
+        if (!cp.isEmpty()) {
+            arguments.add("-cp");
+            
+            final StringBuilder sb = new StringBuilder(cp.get(0).getAbsolutePath());
+            for (final File f : cp.subList(1, cp.size())) {
+                sb.append(File.pathSeparator);
+                sb.append(f.getPath());
+            }
+            
+            arguments.add(sb.toString());
+        }
+        
         arguments.add(instance.getMainClass());
 
         String props = "[]";
