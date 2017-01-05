@@ -91,6 +91,8 @@ import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 
 public class Utils {
+    private static int systemRam = -1;
+    
     public static String error(Throwable t) {
         StringBuilder builder = new StringBuilder();
 
@@ -460,15 +462,19 @@ public class Utils {
      * @return The amount of RAM in the system
      */
     public static int getSystemRam() {
+        if (systemRam != -1) {
+            return systemRam;
+        }
+        
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         try {
             Method m = operatingSystemMXBean.getClass().getDeclaredMethod("getTotalPhysicalMemorySize");
             m.setAccessible(true);
             Object value = m.invoke(operatingSystemMXBean);
             if (value != null) {
-                return (int) ((Long)value / 1048576);
+                systemRam = (int) ((Long)value / 1048576);
             } else {
-                return 1024;
+                systemRam = 1024;
             }
         } catch (RuntimeException e) {
             Class<?> inaccessibleObjectException;
@@ -479,14 +485,15 @@ public class Utils {
             }
             if (inaccessibleObjectException.isInstance(e)) {
                 LogManager.info("Could not determine system RAM due to Java 9 restrictions, using 8 GB as a placeholder");
-                return 8192;
+                systemRam = 8192;
             } else {
                 throw e;
             }
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
-            return 0;
+            LogManager.logStackTrace("Could not determine system RAM due to error, using 8 GB as a placeholder", e);
+            systemRam = 8192;
         }
+        return systemRam;
     }
 
     /**
