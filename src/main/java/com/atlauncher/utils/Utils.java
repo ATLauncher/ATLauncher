@@ -1470,7 +1470,7 @@ public class Utils {
             processBuilder.directory(folder);
             processBuilder.redirectErrorStream(true);
 
-            String version = "Unknown";
+            String version = null;
 
             try {
                 Process process = processBuilder.start();
@@ -1495,9 +1495,12 @@ public class Utils {
                 LogManager.logStackTrace(e);
             }
 
-            LogManager.warn("Cannot get Java version from the ouput of \"" + javaCommand + "\" -version");
-
-            return version;
+            if (version == null) {
+                LogManager.warn("Cannot get Java version from the ouput of \"" + javaCommand + "\" -version");
+                return "Unknown";
+            } else {
+                return version;
+            }
         } else {
             return getLauncherJavaVersion();
         }
