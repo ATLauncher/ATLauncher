@@ -80,7 +80,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
     public AccountsTab() {
         setLayout(new BorderLayout());
-        
+
         RelocalizationManager.addListener(this);
 
         rightPanel = new JPanel();
@@ -299,7 +299,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     usernameField.getText());
             dialog.addThread(new Thread() {
                 public void run() {
-                    // TODO: Change this to use Mojang authlib.
                     LoginResponse resp = Authentication.checkAccount(usernameField.getText(), new String
                             (passwordField.getPassword()));
                     dialog.setReturnValue(resp);
@@ -360,11 +359,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     public String getTitle() {
         return Language.INSTANCE.localize("tabs.accounts");
     }
-    
+
     @Override
     public void onRelocalization() {
         fillerAccount.setMinecraftUsername(Language.INSTANCE.localize("account.add"));
-        
+
         if (accountsComboBox.getSelectedIndex() == 0)
         {
             leftButton.setText(Language.INSTANCE.localize("common.add"));
@@ -374,7 +373,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             leftButton.setText(Language.INSTANCE.localize("common.save"));
             rightButton.setText(Language.INSTANCE.localize("common.delete"));
         }
-        
+
         usernameLabel.setText(Language.INSTANCE.localize("account.usernameemail") + ":");
         passwordLabel.setText(Language.INSTANCE.localize("account.password") + ":");
         rememberLabel.setText(Language.INSTANCE.localize("account.remember") + ":");

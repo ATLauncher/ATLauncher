@@ -36,12 +36,9 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,7 +67,6 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
-import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
@@ -153,10 +149,9 @@ public class Settings {
     private List<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
     private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
-    private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
-        commonConfigsDir, resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir,
+        commonConfigsDir, resourcesDir, librariesDir, languagesDir, downloadsDir,
         usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir, instancesDataFile,
         checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
@@ -211,7 +206,6 @@ public class Settings {
         commonConfigsDir = new File(configsDir, "Common");
         resourcesDir = new File(configsDir, "Resources");
         librariesDir = new File(configsDir, "Libraries");
-        launcherLibrariesdir = new File(librariesDir, "Launcher");
         languagesDir = new File(configsDir, "Languages");
         downloadsDir = new File(baseDir, "Downloads");
         instancesDir = new File(baseDir, "Instances");
@@ -236,10 +230,6 @@ public class Settings {
         }
 
         checkForLauncherUpdate();
-
-        downloadExternalLibraries();
-
-        checkAuthLibLoaded();
 
         loadNews(); // Load the news
 
@@ -342,17 +332,6 @@ public class Settings {
                     ATLauncherAPIUtils.postSystemInfo();
                 }
             });
-        }
-    }
-    
-    private static void checkAuthLibLoaded() {
-        try {
-            Class.forName("com.mojang.authlib.exceptions.AuthenticationException");
-            Class.forName("com.mojang.authlib.Agent");
-            Class.forName("com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService");
-            Class.forName("com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication");
-        } catch (ClassNotFoundException e) {
-            LogManager.logStackTrace("Authlib was not loaded properly, this will make it impossible to log in!", e);
         }
     }
 
@@ -843,82 +822,11 @@ public class Settings {
     }
 
     /**
-     * Downloads and loads all external libraries used by the launcher as specified in the Configs/JSON/libraries.json
-     * file.
-     */
-    private void downloadExternalLibraries() {
-        LogManager.debug("Downloading external libraries");
-
-        FileReader fr;
-        try {
-            fr = new FileReader(new File(this.jsonDir, "libraries.json"));
-        } catch (FileNotFoundException e) {
-            LogManager.logStackTrace("Missing libraries.json", e);
-            return;
-        }
-
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {}.getType();
-
-            this.launcherLibraries = Gsons.DEFAULT.fromJson(fr, type);
-        } finally {
-            try {
-                fr.close();
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
-
-        ExecutorService executor = Executors.newFixedThreadPool(getConcurrentConnections());
-
-        for (final LauncherLibrary library : this.launcherLibraries) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    Downloadable download = library.getDownloadable();
-
-                    if (download.needToDownload()) {
-                        LogManager.info("Downloading library " + library.getFilename() + "!");
-                        download.download(false);
-                    }
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
-
-        for (LauncherLibrary library : this.launcherLibraries) {
-            File file = library.getFile();
-
-            if (library.shouldAutoLoad()) {
-                // Based on https://github.com/Slowpoke101/FTBLaunch/blob/master/src/main/java/net/ftb/workers/AuthlibDLWorker.java
-                LogManager.info("Adding external library " + library.getName() + " (" + file.getName() + ") to classpath");
-                try {
-                    URLClassLoader sysloader = (URLClassLoader) App.settings.getClass().getClassLoader();
-                    Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                    method.setAccessible(true);
-                    method.invoke(sysloader, file.toURI().toURL());
-                } catch (Exception e) {
-                    LogManager.logStackTrace("Couldn't add " + file + " to the classpath!", e);
-                    if (library.shouldExitOnFail()) {
-                        LogManager.error("Library is necessary so launcher will exit!");
-                        System.exit(1);
-                    }
-                }
-            }
-        }
-
-        LogManager.debug("Finished downloading external libraries");
-    }
-
-    /**
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
         File[] files = {backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
-            resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir, instancesDir,
+            resourcesDir, librariesDir, languagesDir, downloadsDir, instancesDir,
             serversDir, tempDir, failedDownloadsDir, logsDir};
         for (File file : files) {
             if (!file.exists()) {
@@ -1051,15 +959,6 @@ public class Settings {
      */
     public File getLibrariesDir() {
         return this.librariesDir;
-    }
-
-    /**
-     * Returns the launchers libraries directory
-     *
-     * @return File object for the libraries directory
-     */
-    public File getLauncherLibrariesDir() {
-        return this.launcherLibrariesdir;
     }
 
     /**
@@ -2633,7 +2532,7 @@ public class Settings {
     public String getLog() {
         return this.console.getLog();
     }
-    
+
     public void showKillMinecraft(Process minecraft) {
         this.minecraftProcess = minecraft;
         this.console.showKillMinecraft();

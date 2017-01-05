@@ -1,5 +1,8 @@
 # Changelog
 
-## 3.2.3.6
-- Fix NPE when trying to edit mods for an instance
-- Fix some content not being relocalized when language is changed
+## 3.2.4.0
+- Update GSON
+- Update JUnit
+- Update AuthLib
+- Update JSON Simple
+- Compile AuthLib into the application rather than downloading it on start

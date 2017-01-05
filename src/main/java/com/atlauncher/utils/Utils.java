@@ -127,7 +127,7 @@ public class Utils {
                 LogManager.logStackTrace("Failed to open theme zip file", e);
                 return null;
             }
-            
+
             try {
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
@@ -240,7 +240,7 @@ public class Utils {
         File themeFile = App.settings == null ? null : App.settings.getThemeFile();
 
         if (themeFile != null) {
-    
+
             ZipFile zipFile;
             try {
                 zipFile = new ZipFile(themeFile);
@@ -251,10 +251,10 @@ public class Utils {
                 LogManager.logStackTrace("Failed to open theme zip file", e);
                 return null;
             }
-            
+
             try {
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        
+
                 InputStream stream = null;
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
@@ -287,7 +287,7 @@ public class Utils {
         if (stream == null) {
             throw new NullPointerException("Stream == null");
         }
-    
+
         try {
             return ImageIO.read(stream);
         } catch (IOException e) {
@@ -996,17 +996,17 @@ public class Utils {
             canon = file;
         } else {
             File canonDir = null;
-    
+
             try {
                 canonDir = file.getParentFile().getCanonicalFile();
             } catch (IOException e) {
                 LogManager.logStackTrace("Failed to get canonical file", e);
                 return false;
             }
-    
+
             canon = new File(canonDir, file.getName());
         }
-    
+
         try {
             return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
         } catch (IOException e) {
