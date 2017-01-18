@@ -67,6 +67,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     private JComboBox<Account> username;
 
     private JLabel statusIcon;
+    private Status lastStatus;
 
     public LauncherBottomBar() {
         submitError.addActionListener(new ActionListener() {
@@ -211,6 +212,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
      * @param status The status of servers
      */
     public void updateStatus(Status status) {
+        lastStatus = status;
         switch (status) {
             case UNKNOWN:
                 statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.checking"));
@@ -258,5 +260,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         this.updateData.setText(Language.INSTANCE.localize("common.updatedata"));
         this.openFolder.setText(Language.INSTANCE.localize("common.openfolder"));
         this.fillerAccount.setMinecraftUsername(Language.INSTANCE.localize("account.select"));
+        updateStatus(lastStatus);
     }
 }

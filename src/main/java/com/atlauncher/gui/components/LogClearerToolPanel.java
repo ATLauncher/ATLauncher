@@ -54,4 +54,12 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
             App.settings.clearAllLogs();
         }
     }
+    
+    @Override
+    public void onRelocalization() {
+        super.onRelocalization();
+        TITLE_LABEL.setText(Language.INSTANCE.localize("tools.logclearer"));
+        INFO_LABEL.setText(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
+                .INSTANCE.localize("tools.logclearer.info"), 60, "<br>")));
+    }
 }

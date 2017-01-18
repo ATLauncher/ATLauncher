@@ -19,6 +19,8 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.utils.Utils;
 
 import javax.swing.JButton;
@@ -26,7 +28,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Font;
 
-public abstract class AbstractToolPanel extends JPanel {
+public abstract class AbstractToolPanel extends JPanel implements RelocalizationListener {
     /**
      * Auto generated serial.
      */
@@ -41,9 +43,15 @@ public abstract class AbstractToolPanel extends JPanel {
     protected final JButton LAUNCH_BUTTON = new JButton(Language.INSTANCE.localize("tools.launch"));
 
     public AbstractToolPanel() {
+        RelocalizationManager.addListener(this);
         setLayout(new BorderLayout());
         add(TOP_PANEL, BorderLayout.NORTH);
         add(MIDDLE_PANEL, BorderLayout.CENTER);
         add(BOTTOM_PANEL, BorderLayout.SOUTH);
+    }
+    
+    @Override
+    public void onRelocalization() {
+        LAUNCH_BUTTON.setText(Language.INSTANCE.localize("tools.launch"));
     }
 }

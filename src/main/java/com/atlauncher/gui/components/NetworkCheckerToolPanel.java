@@ -168,4 +168,12 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     public void onSettingsSaved() {
         this.checkLaunchButtonEnabled();
     }
+    
+    @Override
+    public void onRelocalization() {
+        super.onRelocalization();
+        TITLE_LABEL.setText(Language.INSTANCE.localize("tools.networkchecker"));
+        INFO_LABEL.setText(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
+                .INSTANCE.localize("tools.networkchecker.info"), 60, "<br>")));
+    }
 }

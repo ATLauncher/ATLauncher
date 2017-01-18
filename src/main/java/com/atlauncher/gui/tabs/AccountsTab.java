@@ -378,5 +378,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         passwordLabel.setText(Language.INSTANCE.localize("account.password") + ":");
         rememberLabel.setText(Language.INSTANCE.localize("account.remember") + ":");
         updateSkin.setText(Language.INSTANCE.localize("account.reloadskin"));
+        
+        accountsComboBox.setPrototypeDisplayValue(fillerAccount);
+        accountsComboBox.revalidate();
+        accountsComboBox.repaint();
+        revalidate();
+        repaint();
     }
 }

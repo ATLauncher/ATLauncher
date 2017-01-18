@@ -242,7 +242,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             }
         }
 
-        ((LauncherFrame) App.settings.getParent()).updateTitle("Packs - " + count);
+        ((LauncherFrame) App.settings.getParent()).updateTitle(getTitle() + " - " + count);
 
         if (count == 0) {
             nilCard = new NilCard(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n"));

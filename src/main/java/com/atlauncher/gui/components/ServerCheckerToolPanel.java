@@ -68,4 +68,12 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
     public void onSettingsSaved() {
         this.checkLaunchButtonEnabled();
     }
+    
+    @Override
+    public void onRelocalization() {
+        super.onRelocalization();
+        TITLE_LABEL.setText(Language.INSTANCE.localize("tools.serverchecker"));
+        INFO_LABEL.setText(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
+                .INSTANCE.localize("tools.serverchecker.info"), 60, "<br>")));
+    }
 }

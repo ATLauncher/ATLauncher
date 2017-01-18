@@ -22,6 +22,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
@@ -116,6 +117,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
         this.saveButton.setText(Language.INSTANCE.localize("common.save"));
+        ((LauncherFrame) App.settings.getParent()).updateTitle(getTitle());
     }
 
 }

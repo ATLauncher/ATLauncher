@@ -299,5 +299,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.enableTrayIconLabel.setText(Language.INSTANCE.localize("settings.traymenu") + "?");
         this.enableTrayIconLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
                 ".traymenuhelp", "<br/>") + "</html>");
+        
+        this.enablePackTagsLabel.setText(Language.INSTANCE.localize("settings.packtags"));
+        this.enablePackTagsLabel.setToolTipText(Language.INSTANCE.localize("settings.packtagshelp"));
     }
 }
