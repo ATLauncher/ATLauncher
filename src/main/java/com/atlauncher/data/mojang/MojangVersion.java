@@ -25,6 +25,7 @@ import java.util.List;
 public class MojangVersion {
     private String id;
     private String minecraftArguments;
+    private String type;
     private MojangAssetIndex assetIndex;
     private String assets;
     private MojangDownloads downloads;
@@ -38,6 +39,10 @@ public class MojangVersion {
 
     public String getMinecraftArguments() {
         return this.minecraftArguments;
+    }
+
+    public String getType() {
+        return this.type;
     }
 
     public MojangAssetIndex getAssetIndex() {

@@ -354,6 +354,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 if (isReinstall) {
                                     instance.setVersion(version.getVersion());
                                     instance.setMinecraftVersion(version.getMinecraftVersion().getVersion());
+                                    instance.setVersionType(version.getMinecraftVersion().getMojangVersion().getType());
                                     instance.setModsInstalled(this.getModsInstalled());
                                     instance.setJarOrder(this.getJarOrder());
                                     instance.setMemory(this.getMemory());
@@ -379,12 +380,14 @@ public class InstanceInstallerDialog extends JDialog {
 
                                 } else {
                                     Instance newInstance = new Instance(instanceNameField.getText(), pack.getName(),
-                                            pack, enableUserLock.isSelected(), version.getVersion(), version
-                                            .getMinecraftVersion().getVersion(), this.getMemory(), this.getPermGen(),
-                                            this.getModsInstalled(), this.getJarOrder(), this.getLibrariesNeeded(),
-                                            this.getExtraArguments(), this.getMinecraftArguments(), this.getMainClass
-                                            (), version.getMinecraftVersion().getMojangVersion().getAssets(), version
-                                            .isDev(), !version.getMinecraftVersion().isLegacy());
+                                        pack, enableUserLock.isSelected(), version.getVersion(), version
+                                        .getMinecraftVersion().getVersion(),
+                                        version.getMinecraftVersion().getMojangVersion().getType(), this.getMemory(),
+                                        this.getPermGen(), this.getModsInstalled(), this.getJarOrder(),
+                                        this.getLibrariesNeeded(), this.getExtraArguments(),
+                                        this.getMinecraftArguments(), this.getMainClass(),
+                                        version.getMinecraftVersion().getMojangVersion().getAssets(), version.isDev(),
+                                        !version.getMinecraftVersion().isLegacy());
 
                                     if (version.isDev() && (version.getHash() != null)) {
                                         newInstance.setHash(version.getHash());
