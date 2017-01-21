@@ -86,6 +86,11 @@ public class Instance implements Cloneable {
     private String minecraftVersion;
 
     /**
+     * The version type that this instance uses.
+     */
+    private String versionType;
+
+    /**
      * The minimum RAM/memory recommended for this Instance by the pack developer/s.
      */
     private int memory = 0;
@@ -187,6 +192,7 @@ public class Instance implements Cloneable {
      * @param enableUserLock     if this instance is only meant to be used by the original installer
      * @param version            the version of the Pack this Instance is of
      * @param minecraftVersion   the Minecraft version this Instance runs off
+     * @param versionType        the version type this Instance runs off
      * @param memory             the minimum RAM/memory as recommended by the pack developer/s
      * @param permgen            the minimum PermGen/Metaspace as recommended by the pack developer/s
      * @param mods               the mods installed in this Instance
@@ -201,14 +207,15 @@ public class Instance implements Cloneable {
      * @param newLaunchMethod    if this instance is using the new launch method for Minecraft
      */
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version, String
-        minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder, String
-                        librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
+        minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods, String jarOrder,
+                    String librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
                     String assets, boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
         this.version = version;
         this.minecraftVersion = minecraftVersion;
+        this.versionType = versionType;
         this.memory = memory;
         this.permgen = permgen;
         this.mods = mods;
@@ -239,6 +246,7 @@ public class Instance implements Cloneable {
      * @param enableUserLock     if this instance is only meant to be used by the original installer
      * @param version            the version of the Pack this Instance is of
      * @param minecraftVersion   the Minecraft version this Instance runs off
+     * @param versionType        the version type this Instance runs off
      * @param memory             the minimum RAM/memory as recommended by the pack developer/s
      * @param permgen            the minimum PermGen/Metaspace as recommended by the pack developer/s
      * @param mods               the mods installed in this Instance
@@ -252,10 +260,10 @@ public class Instance implements Cloneable {
      * @param newLaunchMethod    if this instance is using the new launch method for Minecraft
      */
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version, String
-        minecraftVersion, int memory, int permgen, List<DisableableMod> mods, String jarOrder, String
-                        librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
+        minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods, String jarOrder,
+                    String librariesNeeded, String extraArguments, String minecraftArguments, String mainClass,
                     String assets, boolean isDev, boolean newLaunchMethod) {
-        this(name, pack, realPack, enableUserLock, version, minecraftVersion, memory, permgen, mods, jarOrder,
+        this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods, jarOrder,
             librariesNeeded, extraArguments, minecraftArguments, mainClass, assets, isDev, true, newLaunchMethod);
     }
 
@@ -595,12 +603,34 @@ public class Instance implements Cloneable {
     }
 
     /**
-     * Sets the Minecraft version of the Pack this Instance was created from.
+     * Sets the Minecraft cersion of the Pack this Instance was created from.
      *
-     * @param minecraftVersion the new minecraft version
+     * @param minecraftVersion the new Minecraft cersion
      */
     public void setMinecraftVersion(String minecraftVersion) {
         this.minecraftVersion = minecraftVersion;
+    }
+
+    /**
+     * Gets the version type that this Instance uses.
+     *
+     * @return the version type that this Instance uses
+     */
+    public String getVersionType() {
+        if (this.versionType == null) {
+            return "release";
+        }
+
+        return this.versionType;
+    }
+
+    /**
+     * Sets the version type of the Pack this Instance was created from.
+     *
+     * @param versionType the new version type
+     */
+    public void setVersionType(String versionType) {
+        this.versionType = versionType;
     }
 
     /**
@@ -1383,12 +1413,12 @@ public class Instance implements Cloneable {
     public Instance clone() {
         Instance clone;
         if (!this.userLock.equals(null)) {
-            clone = new Instance(name, pack, realPack, true, version, minecraftVersion, memory,
-                permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments,
+            clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType,
+                memory, permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments,
                 mainClass, assets, isDev, isPlayable, newLaunchMethod);
         } else {
-            clone = new Instance(name, pack, realPack, false, version, minecraftVersion, memory,
-                permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments,
+            clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType,
+                memory, permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments,
                 mainClass, assets, isDev, isPlayable, newLaunchMethod);
         }
         return clone;
@@ -1436,7 +1466,7 @@ public class Instance implements Cloneable {
             LogManager.logStackTrace("Failed to open instance.json for writing", e);
             return;
         }
-        
+
         try {
             writer.write(Gsons.DEFAULT.toJson(this));
             writer.flush();

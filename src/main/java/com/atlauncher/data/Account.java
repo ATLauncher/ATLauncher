@@ -177,7 +177,7 @@ public class Account implements Serializable {
         File file = null;
         if (this.isReal()) {
             file = new File(App.settings.getSkinsDir(), (this.isUUIDNull() ? "default" : this.getUUIDNoDashes()) +
-                    ".png");
+                ".png");
             if (!file.exists()) {
                 this.updateSkin(); // Download/update the users skin
             }
@@ -445,17 +445,26 @@ public class Account implements Serializable {
             final File file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
             LogManager.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
-                    ".downloadingskin"), 0, Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin",
-                    this.minecraftUsername), "Aborting downloading Minecraft skin for " + this.minecraftUsername);
+                ".downloadingskin"), 0, Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin",
+                this.minecraftUsername), "Aborting downloading Minecraft skin for " + this.minecraftUsername);
+            final UUID uid = this.getRealUUID();
             dialog.addThread(new Thread() {
                 public void run() {
                     dialog.setReturnValue(false);
                     String skinURL = getSkinURL();
                     if (skinURL == null) {
-                        LogManager.error("Couldn't download skin because the url found was NULL");
+                        LogManager.warn("Couldn't download skin because the url found was NULL. Using default skin");
                         if (!file.exists()) {
+                            String skinFilename = "default.png";
+
+                            // even UUID's use the alex skin
+                            if ((uid.hashCode() & 1) != 0) {
+                                skinFilename = "default_alex.png";
+                            }
+
                             // Only copy over the default skin if there is no skin for the user
-                            Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                            Utils.copyFile(new File(App.settings.getSkinsDir(), skinFilename), file, true);
+                            dialog.setReturnValue(true);
                         }
                     } else {
                         try {
@@ -469,8 +478,16 @@ public class Account implements Serializable {
                                 dialog.setReturnValue(true);
                             } else {
                                 if (!file.exists()) {
+                                    String skinFilename = "default.png";
+
+                                    // even UUID's use the alex skin
+                                    if ((uid.hashCode() & 1) != 0) {
+                                        skinFilename = "default_alex.png";
+                                    }
+
                                     // Only copy over the default skin if there is no skin for the user
-                                    Utils.copyFile(new File(App.settings.getSkinsDir(), "default.png"), file, true);
+                                    Utils.copyFile(new File(App.settings.getSkinsDir(), skinFilename), file, true);
+                                    dialog.setReturnValue(true);
                                 }
                             }
                         } catch (MalformedURLException e) {
@@ -487,8 +504,8 @@ public class Account implements Serializable {
             if (!(Boolean) dialog.getReturnValue()) {
                 String[] options = {Language.INSTANCE.localize("common.ok")};
                 JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                        ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
-                        .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
+                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
@@ -580,10 +597,10 @@ public class Account implements Serializable {
 
     public String getSession(LoginResponse response) {
         if (!response.isOffline() && response != null && response.getAuth().isLoggedIn() && response.getAuth()
-                .canPlayOnline()) {
+            .canPlayOnline()) {
             if (response.getAuth() instanceof YggdrasilUserAuthentication) {
                 return String.format("token:%s:%s", response.getAuth().getAuthenticatedToken(), UUIDTypeAdapter
-                        .fromUUID(response.getAuth().getSelectedProfile().getId()));
+                    .fromUUID(response.getAuth().getSelectedProfile().getId()));
             } else {
                 return response.getAuth().getAuthenticatedToken();
             }
@@ -624,13 +641,13 @@ public class Account implements Serializable {
                 JPanel panel = new JPanel();
                 panel.setLayout(new BorderLayout());
                 JLabel passwordLabel = new JLabel(Language.INSTANCE.localizeWithReplace("instance.enterpassword",
-                        this.getMinecraftUsername()));
+                    this.getMinecraftUsername()));
 
                 JPasswordField passwordField = new JPasswordField();
                 panel.add(passwordLabel, BorderLayout.NORTH);
                 panel.add(passwordField, BorderLayout.CENTER);
                 int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel, Language.INSTANCE.localize
-                        ("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
+                    ("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
                 if (ret == JOptionPane.OK_OPTION) {
                     this.setPassword(new String(passwordField.getPassword()));
                 } else {
@@ -647,9 +664,9 @@ public class Account implements Serializable {
             LogManager.error(response.getErrorMessage());
             String[] options = {Language.INSTANCE.localize("common.ok")};
             JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
-                            .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())),
-                    Language.INSTANCE.localize("instance" + ".errorloggingintitle"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())),
+                Language.INSTANCE.localize("instance" + ".errorloggingintitle"), JOptionPane.DEFAULT_OPTION,
+                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
             return null;
         }
@@ -682,7 +699,7 @@ public class Account implements Serializable {
 
         if (!currentUsername.equals(this.minecraftUsername)) {
             LogManager.info("The username for account with UUID of " + this.getUUIDNoDashes() + " changed from " +
-                    this.minecraftUsername + " to " + currentUsername);
+                this.minecraftUsername + " to " + currentUsername);
             this.minecraftUsername = currentUsername;
             return true;
         }

@@ -1397,8 +1397,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (found) {
                     this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
                 }
-            } else if (this.jsonVersion.getMainClass().hasDependsGroup()) {
-                String depends = this.jsonVersion.getMainClass().getDependsGroup();
+            } else if (this.jsonVersion.getExtraArguments().hasDependsGroup()) {
+                String depends = this.jsonVersion.getExtraArguments().getDependsGroup();
                 boolean found = false;
                 for (Mod mod : this.selectedMods) {
                     if (!mod.hasGroup()) {
