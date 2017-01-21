@@ -1382,10 +1382,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private void setExtraArguments() {
         if (this.jsonVersion.hasExtraArguments()) {
+            System.out.println("1");
             if (!this.jsonVersion.getExtraArguments().hasDepends() && !this.jsonVersion.getExtraArguments()
                     .hasDependsGroup()) {
+                System.out.println("2");
                 this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
             } else if (this.jsonVersion.getExtraArguments().hasDepends()) {
+                System.out.println("3");
                 String depends = this.jsonVersion.getExtraArguments().getDepends();
                 boolean found = false;
                 for (Mod mod : this.selectedMods) {
@@ -1397,8 +1400,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 if (found) {
                     this.extraArguments = this.jsonVersion.getExtraArguments().getArguments();
                 }
-            } else if (this.jsonVersion.getMainClass().hasDependsGroup()) {
-                String depends = this.jsonVersion.getMainClass().getDependsGroup();
+            } else if (this.jsonVersion.getExtraArguments().hasDependsGroup()) {
+                System.out.println("4");
+                String depends = this.jsonVersion.getExtraArguments().getDependsGroup();
                 boolean found = false;
                 for (Mod mod : this.selectedMods) {
                     if (!mod.hasGroup()) {
