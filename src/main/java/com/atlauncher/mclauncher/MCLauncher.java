@@ -225,6 +225,7 @@ public class MCLauncher {
                 argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
                 argument = argument.replace("${auth_access_token}", account.getAccessToken());
                 argument = argument.replace("${auth_session}", account.getSession(response));
+                argument = argument.replace("${version_type}", instance.getVersionType());
                 argument = argument.replace("${user_type}", response.isOffline() ? com.mojang.authlib.UserType.MOJANG
                     .getName() : response.getAuth().getUserType().getName());
                 arguments.add(argument);
