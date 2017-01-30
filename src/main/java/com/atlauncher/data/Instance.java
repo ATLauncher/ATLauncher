@@ -1411,17 +1411,7 @@ public class Instance implements Cloneable {
      * @see java.lang.Object#clone()
      */
     public Instance clone() {
-        Instance clone;
-        if (!this.userLock.equals(null)) {
-            clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType,
-                memory, permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments,
-                mainClass, assets, isDev, isPlayable, newLaunchMethod);
-        } else {
-            clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType,
-                memory, permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments,
-                mainClass, assets, isDev, isPlayable, newLaunchMethod);
-        }
-        return clone;
+        return new Instance(name, pack, realPack, this.userLock != null, version, minecraftVersion, versionType, memory, permgen, mods, jarOrder, librariesNeeded, extraArguments, minecraftArguments, mainClass, assets, isDev, isPlayable, newLaunchMethod);
     }
 
     public boolean hasCustomMods() {
