@@ -37,8 +37,20 @@ Download and install [launch4j](http://sourceforge.net/projects/launch4j/files/l
 Make sure to add the directory containing launch4jc to your executable path which for me on 64bit Windows was:
 
 ```
-C:\Program Files (x86)\Launch4j
+`C:\Program Files (x86)\Launch4j`
 ```
+
+## Running the application
+If you wish to run the application in development, you can run the following:
+
+```
+mvn exec:java -Dexec.args='--working-dir=D:\\ATLauncher-Testing'
+```
+
+Making sure to change the directory to a working directory you wish to use.
+
+## Building artifacts
+To build artifacts for release, simply run `mvn install`.
 
 ## Plugging In Your Data
 To get started with the code and plug in your own data, you need to edit the
