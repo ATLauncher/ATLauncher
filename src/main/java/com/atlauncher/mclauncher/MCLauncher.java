@@ -82,8 +82,8 @@ public class MCLauncher {
         File[] libraryFiles = binFolder.listFiles();
         if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
             for (File file : libraryFiles) {
-                if (file.isDirectory() || file.getName().equalsIgnoreCase(instance.getMinecraftJar().getName()) ||
-                    instance.getLibrariesNeeded().contains(file.getName())) {
+                if (file.isDirectory() || file.getName().equalsIgnoreCase(instance.getMinecraftJar().getName())
+                        || instance.getLibrariesNeeded().contains(file.getName())) {
                     continue;
                 }
 
@@ -193,7 +193,7 @@ public class MCLauncher {
 
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());
         arguments.add("-cp");
-        arguments.add(System.getProperty("java.class.path") + cpb.toString());
+        arguments.add(cpb.toString());
         arguments.add(instance.getMainClass());
 
         String props = "[]";
@@ -218,8 +218,9 @@ public class MCLauncher {
                 argument = argument.replace("${auth_access_token}", account.getAccessToken());
                 argument = argument.replace("${auth_session}", account.getSession(response));
                 argument = argument.replace("${version_type}", instance.getVersionType());
-                argument = argument.replace("${user_type}", response.isOffline() ? com.mojang.authlib.UserType.MOJANG
-                    .getName() : response.getAuth().getUserType().getName());
+                argument = argument.replace("${user_type}",
+                        response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
+                                : response.getAuth().getUserType().getName());
                 arguments.add(argument);
             }
         } else {
@@ -272,8 +273,8 @@ public class MCLauncher {
             argsString = argsString.replace(props, "REDACTED");
         }
 
-        LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):" +
-            " " + argsString);
+        LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):"
+                + " " + argsString);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);

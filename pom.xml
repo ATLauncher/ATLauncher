@@ -6,7 +6,7 @@
     <groupId>com.atlauncher</groupId>
     <artifactId>atlauncher</artifactId>
     <name>ATLauncher</name>
-    <version>3.2.3.7</version>
+    <version>3.2.3.8</version>
     <organization>
         <name>ATLauncher</name>
         <url>http://www.github.com/ATLauncher/</url>
@@ -87,10 +87,31 @@
 			<version>17.0</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>exec-maven-plugin</artifactId>
+			<version>1.6.0</version>
+			<scope>runtime</scope>
+		</dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                    <goals>
+                        <goal>java</goal>
+                    </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>com.atlauncher.App</mainClass>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
