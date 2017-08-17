@@ -71,7 +71,7 @@ public class Library {
     }
 
     public String getClassifier() {
-        if (this.natives == null) {
+        if (this.natives == null || !this.natives.containsKey(OperatingSystem.getOS())) {
             return "";
         }
         return "-" + this.natives.get(OperatingSystem.getOS()).replace("${arch}", Utils.getArch());
