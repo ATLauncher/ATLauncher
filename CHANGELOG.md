@@ -1,5 +1,6 @@
 # Changelog
 
-## 3.2.3.9
-- Fix issues installing some libraries on OSX
+## 3.2.3.10
+- Switch to https for all urls
+- Require minimum version of Java 7
 

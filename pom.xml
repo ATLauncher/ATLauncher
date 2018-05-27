@@ -6,7 +6,7 @@
     <groupId>com.atlauncher</groupId>
     <artifactId>atlauncher</artifactId>
     <name>ATLauncher</name>
-    <version>3.2.3.9</version>
+    <version>3.2.3.10</version>
     <organization>
         <name>ATLauncher</name>
         <url>http://www.github.com/ATLauncher/</url>
@@ -19,7 +19,7 @@
     <url>https://www.atlauncher.com</url>
 
     <properties>
-        <project.jdk.version>1.6</project.jdk.version>
+        <project.jdk.version>1.7</project.jdk.version>
         <mainclass>com.atlauncher.App</mainclass>
     </properties>
 
@@ -110,6 +110,10 @@
                 </executions>
                 <configuration>
                     <mainClass>com.atlauncher.App</mainClass>
+                    <arguments>
+                        <argument>--working-dir</argument>
+                        <argument>./testDir</argument>
+                    </arguments>
                 </configuration>
             </plugin>
             <plugin>
@@ -175,7 +179,7 @@
                                 <preCp>anything</preCp>
                             </classPath>
                             <jre>
-                                <minVersion>1.6.0</minVersion>
+                                <minVersion>1.7.0</minVersion>
                                 <runtimeBits>64/32</runtimeBits>
                             </jre>
                             <icon>src/main/resources/assets/image/Icon.ico</icon>
@@ -224,7 +228,7 @@
                                                 filemode="755"/>
                                 </zip>
                                 <delete dir="{project.build.directory}/${project.name}.app"/>
-                            </target>
+                           </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
