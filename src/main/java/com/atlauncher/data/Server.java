@@ -24,17 +24,23 @@ public class Server {
     private boolean userSelectable;
     private boolean disabled;
     private boolean isMaster;
+    private boolean isSecure;
 
-    public Server(String name, String baseURL, boolean userSelectable, boolean isMaster) {
+    public Server(String name, String baseURL, boolean userSelectable, boolean isMaster, boolean isSecure) {
         this.name = name;
         this.baseURL = baseURL;
         this.userSelectable = userSelectable;
         this.disabled = false;
         this.isMaster = isMaster;
+        this.isSecure = isSecure;
     }
 
     public boolean isMaster() {
         return this.isMaster;
+    }
+
+    public boolean isSecure() {
+        return this.isSecure;
     }
 
     public void disableServer() {
@@ -61,12 +67,16 @@ public class Server {
         return this.name;
     }
 
+    private String getProtocol() {
+        return "http" + (this.isSecure ? "s" : "") + "://";
+    }
+
     public String getFileURL(String file) {
-        return "http://" + this.baseURL + "/" + file;
+        return this.getProtocol() + this.baseURL + "/" + file;
     }
 
     public String getTestURL() {
-        return "http://" + this.baseURL + "/ping";
+        return this.getProtocol() + this.baseURL + "/ping";
     }
 
     public void setUserSelectable(boolean selectable) {

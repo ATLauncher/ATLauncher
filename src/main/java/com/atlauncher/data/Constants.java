@@ -18,20 +18,19 @@
 package com.atlauncher.data;
 
 public class Constants {
-    public static final LauncherVersion VERSION = new LauncherVersion(3, 2, 3, 9);
+    public static final LauncherVersion VERSION = new LauncherVersion(3, 2, 3, 10);
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String API_BASE_URL = "https://api.atlauncher.com/v1/launcher/";
-    public static final String PASTE_CHECK_URL = "http://paste.atlauncher.com";
-    public static final String PASTE_API_URL = "http://paste.atlauncher.com/api/create";
+    public static final String PASTE_CHECK_URL = "https://paste.atlauncher.com";
+    public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";
     public static final Server[] SERVERS = new Server[] {
-            new Server("Auto", "download.nodecdn.net/containers/atl", true, false),
-            new Server("Backup Server", "anne.nodecdn.net:8080/containers/atl", false, false),
-            new Server("EU - Amsterdam 1", "bob.nodecdn.net/containers/atl", true, false),
-            new Server("EU - Amsterdam 2", "emma.nodecdn.net/containers/atl", true, false),
-            new Server("EU - Amsterdam 3", "lisa.nodecdn.net/containers/atl", true, false),
-            new Server("US East - Ashburn 1", "anne.nodecdn.net/containers/atl", true, false),
-            new Server("US East - Ashburn 2", "bruce.nodecdn.net/containers/atl", true, false),
-            new Server("US East - Ashburn 3", "dave.nodecdn.net/containers/atl", true, false),
-            new Server("US West - Phoenix 1", "adam.nodecdn.net/containers/atl", true, false),
-            new Server("Master Server (Testing Only)", "master.atlcdn.net", false, true) };
+            new Server("Auto", "download.nodecdn.net/containers/atl", true, false, true),
+            new Server("EU - Amsterdam 1", "bob.nodecdn.net/containers/atl", true, false, true),
+            new Server("EU - Amsterdam 2", "emma.nodecdn.net/containers/atl", true, false, true),
+            new Server("EU - Amsterdam 3", "lisa.nodecdn.net/containers/atl", true, false, true),
+            new Server("US East - Ashburn 1", "anne.nodecdn.net/containers/atl", true, false, true),
+            new Server("US East - Ashburn 2", "bruce.nodecdn.net/containers/atl", true, false, true),
+            new Server("US East - Ashburn 3", "dave.nodecdn.net/containers/atl", true, false, true),
+            new Server("US West - Phoenix 1", "adam.nodecdn.net/containers/atl", true, false, true),
+            new Server("Master Server (Testing Only)", "master.atlcdn.net", false, true, true) };
 }
