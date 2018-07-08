@@ -20,6 +20,7 @@ package com.atlauncher.gui.tabs;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.PackVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.TabChangeListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -213,6 +214,12 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                             (pack.getName()).find()) {
                         show = false;
                     }
+                    for (PackVersion version: pack.getVersions()) {
+                        if (version.getMinecraftVersion().getVersion().startsWith(this.searchField.getText())) {
+                            show = true;
+                            break;
+                        }
+                    }
                 }
 
                 if (this.searchDescBox.isSelected()) {
@@ -280,7 +287,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         serversBox.setText(Language.INSTANCE.localize("pack.cancreateserver"));
         privateBox.setText(Language.INSTANCE.localize("pack.privatepacksonly"));
         searchDescBox.setText(Language.INSTANCE.localize("pack.searchdescription"));
-        
+
         if (nilCard != null) {
             nilCard.setMessage(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n"));
         }
