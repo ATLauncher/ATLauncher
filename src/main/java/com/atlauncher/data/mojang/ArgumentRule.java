@@ -23,28 +23,30 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class ArgumentRule {
-    private List<Object> game;
-    private List<Object> jvm;
+    private List<Rule> rules;
+    private Object value;
 
-    public List<Object> getGame() {
-        return this.game;
+    public List<Rule> getRules() {
+        return this.rules;
     }
 
-    public List<Object> getJVM() {
-        return this.jvm;
+    public Object getValue() {
+        return this.value;
     }
 
-    public String asString() {
-        String arguments = "";
+    public Boolean applies() {
+        if (this.rules == null) {
+            return true; // No rules setup so we need it
+        }
 
-        for (Object arg : this.game) {
-            if (arg.getClass() == String.class) {
-                arguments += " " + arg.toString();
-            } else {
-                LogManager.error(arg.getClass().toString());
+        Action lastAction = Action.DISALLOW;
+
+        for (Rule rule : this.rules) { // Loop through all the rules
+            if (rule.ruleApplies()) { // See if this rule applies to this system
+                lastAction = rule.getAction();
             }
         }
 
-        return arguments;
+        return (lastAction == Action.ALLOW); // Check if we should use this argument it
     }
 }
