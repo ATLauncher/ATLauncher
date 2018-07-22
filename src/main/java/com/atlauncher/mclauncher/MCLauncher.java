@@ -22,12 +22,16 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.MinecraftVersion;
+import com.atlauncher.data.mojang.MojangVersion;
 import com.atlauncher.data.mojang.PropertyMapSerializer;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
+
+import com.atlauncher.data.Constants;
 
 import java.io.File;
 import java.io.IOException;
@@ -203,9 +207,23 @@ public class MCLauncher {
             props = gson.toJson(response.getAuth().getUserProperties());
         }
 
-        if (instance.hasMinecraftArguments()) {
-            String[] minecraftArguments = instance.getMinecraftArguments().split(" ");
-            for (String argument : minecraftArguments) {
+        List<String> launchArguments = new ArrayList<String>();
+
+        MinecraftVersion minecraftVersion = instance.getActualMinecraftVersion();
+
+        if (minecraftVersion != null) {
+            MojangVersion mojangVersion = minecraftVersion.getMojangVersion();
+
+            if (mojangVersion.hasArguments()) {
+                LogManager.info(mojangVersion.getArguments().asString());
+                launchArguments = Arrays.asList(mojangVersion.getArguments().asString().split(" "));
+            } else {
+                launchArguments = Arrays.asList(mojangVersion.getMinecraftArguments().split(" "));
+            }
+        }
+
+        if (launchArguments.size() != 0) {
+            for (String argument : launchArguments) {
                 argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
                 argument = argument.replace("${profile_name}", instance.getName());
                 argument = argument.replace("${user_properties}", props);
@@ -218,6 +236,9 @@ public class MCLauncher {
                 argument = argument.replace("${auth_access_token}", account.getAccessToken());
                 argument = argument.replace("${auth_session}", account.getSession(response));
                 argument = argument.replace("${version_type}", instance.getVersionType());
+                argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
+                argument = argument.replace("${launcher_version}", Constants.VERSION);
+                argument = argument.replace("${natives_directory}", instance.getNativesDirectory().getAbsolutePath());
                 argument = argument.replace("${user_type}",
                         response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
                                 : response.getAuth().getUserType().getName());
@@ -236,6 +257,7 @@ public class MCLauncher {
             arguments.add("--gameDir=" + instance.getRootDirectory().getAbsolutePath());
             arguments.add("--assetsDir=" + App.settings.getResourcesDir().getAbsolutePath());
         }
+
         if (App.settings.startMinecraftMaximised()) {
             arguments.add("--width=" + Utils.getMaximumWindowWidth());
             arguments.add("--height=" + Utils.getMaximumWindowHeight());

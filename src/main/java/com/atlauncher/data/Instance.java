@@ -45,6 +45,8 @@ import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
+
 /**
  * This class handles contains information about a single Instance in the Launcher. An Instance being an installed
  * version of a ModPack separate to others by file structure.
@@ -600,6 +602,14 @@ public class Instance implements Cloneable {
      */
     public String getMinecraftVersion() {
         return this.minecraftVersion;
+    }
+
+    public MinecraftVersion getActualMinecraftVersion() {
+        try {
+            return App.settings.getMinecraftVersion(this.minecraftVersion);
+        } catch (InvalidMinecraftVersion e) {
+            return null;
+        }
     }
 
     /**
