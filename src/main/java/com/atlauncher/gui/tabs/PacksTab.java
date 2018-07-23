@@ -214,11 +214,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                             (pack.getName()).find()) {
                         show = false;
                     }
-                    for (PackVersion version: pack.getVersions()) {
-                        if (version.getMinecraftVersion().getVersion().startsWith(this.searchField.getText())) {
-                            show = true;
-                            break;
-                        }
+                    if (pack.getLatestVersion().getMinecraftVersion().getVersion().startsWith(this.searchField.getText())) {
+                        show = true;
                     }
                 }
 
