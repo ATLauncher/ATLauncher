@@ -21,6 +21,7 @@ public class OperatingSystemRule {
 
     private OperatingSystem name;
     private String version;
+    private String arch;
 
     public OperatingSystem getName() {
         return this.name;
@@ -28,6 +29,10 @@ public class OperatingSystemRule {
 
     public String getVersion() {
         return this.version;
+    }
+
+    public String getArch() {
+        return this.arch;
     }
 
 }

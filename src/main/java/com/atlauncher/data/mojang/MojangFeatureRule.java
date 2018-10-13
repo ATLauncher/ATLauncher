@@ -15,15 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data;
+package com.atlauncher.data.mojang;
 
-public class Constants {
-    public static final LauncherVersion VERSION = new LauncherVersion(3, 2, 3, 11);
-    public static final String LAUNCHER_NAME = "ATLauncher";
-    public static final String API_BASE_URL = "https://api.atlauncher.com/v1/launcher/";
-    public static final String PASTE_CHECK_URL = "https://paste.atlauncher.com";
-    public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";
-    public static final Server[] SERVERS = new Server[] {
-            new Server("Auto", "download.nodecdn.net/containers/atl", true, false, true),
-            new Server("Master Server (Testing Only)", "master.atlcdn.net", false, true, true) };
+public class MojangFeatureRule {
+
+    private String is_demo;
+    private String has_custom_resolution;
+
 }

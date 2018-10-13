@@ -22,6 +22,8 @@ import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
+import com.atlauncher.data.mojang.MojangArguments;
+import com.atlauncher.data.mojang.MojangArgumentsTypeAdapter;
 import com.atlauncher.data.mojang.MojangVersion;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,6 +39,7 @@ public final class Gsons {
             ColorTypeAdapter()).create();
 
     public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
-            .registerTypeAdapter(Date.class, new DateTypeAdapter()).registerTypeAdapter(File.class, new
-                    FileTypeAdapter()).create();
+            .registerTypeAdapter(Date.class, new DateTypeAdapter())
+            .registerTypeAdapter(MojangArguments.class, new MojangArgumentsTypeAdapter())
+            .registerTypeAdapter(File.class, new FileTypeAdapter()).create();
 }

@@ -24,6 +24,7 @@ import java.util.List;
 @Json
 public class MojangVersion {
     private String id;
+    private MojangArguments arguments;
     private String minecraftArguments;
     private String type;
     private MojangAssetIndex assetIndex;
@@ -35,6 +36,14 @@ public class MojangVersion {
 
     public String getId() {
         return id;
+    }
+
+    public MojangArguments getArguments() {
+        return this.arguments;
+    }
+
+    public Boolean hasArguments() {
+        return this.arguments != null;
     }
 
     public String getMinecraftArguments() {
