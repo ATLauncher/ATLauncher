@@ -112,6 +112,8 @@
                     <mainClass>com.atlauncher.App</mainClass>
                     <arguments>
                         <argument>--working-dir=./testDir</argument>
+                        <argument>--debug</argument>
+                        <argument>--debug-level 3</argument>
                     </arguments>
                 </configuration>
             </plugin>

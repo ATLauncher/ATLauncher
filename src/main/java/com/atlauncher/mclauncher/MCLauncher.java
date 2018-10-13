@@ -196,6 +196,8 @@ public class MCLauncher {
         }
 
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());
+        arguments.add("-cp");
+        arguments.add(cpb.toString());
         arguments.add(instance.getMainClass());
 
         String props = "[]";
@@ -213,15 +215,15 @@ public class MCLauncher {
             MojangVersion mojangVersion = minecraftVersion.getMojangVersion();
 
             if (mojangVersion.hasArguments()) {
-                LogManager.info(mojangVersion.getArguments().asString());
                 launchArguments = Arrays.asList(mojangVersion.getArguments().asString().split(" "));
             } else {
                 launchArguments = Arrays.asList(mojangVersion.getMinecraftArguments().split(" "));
 
-                // this is built in to 1.13+ arguments
                 arguments.add("-cp");
                 arguments.add(cpb.toString());
             }
+        } else if (instance.hasMinecraftArguments()) {
+            launchArguments = Arrays.asList(instance.getMinecraftArguments().split(" "));
         }
 
         if (launchArguments.size() != 0) {
@@ -241,11 +243,13 @@ public class MCLauncher {
                 argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
                 argument = argument.replace("${launcher_version}", Constants.VERSION.toString());
                 argument = argument.replace("${natives_directory}", instance.getNativesDirectory().getAbsolutePath());
-                argument = argument.replace("${classpath}", cpb.toString());
                 argument = argument.replace("${user_type}",
                         response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
                                 : response.getAuth().getUserType().getName());
-                arguments.add(argument);
+
+                if (argument != "-cp" && argument != "${classpath}") {
+                    arguments.add(argument);
+                }
             }
         } else {
             arguments.add("--username=" + account.getMinecraftUsername());
