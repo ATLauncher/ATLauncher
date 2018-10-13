@@ -18,30 +18,38 @@
 package com.atlauncher.data.mojang;
 
 import java.util.List;
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 
 @Json
 public class MojangArguments {
-    private List<Rule> rules;
-    private String value;
+    private List<ArgumentRule> game;
+    private List<ArgumentRule> jvm;
 
-    public List<Object> getGame() {
+    MojangArguments(List<ArgumentRule> game, List<ArgumentRule> jvm) {
+        this.game = game;
+        this.jvm = jvm;
+    }
+
+    public List<ArgumentRule> getGame() {
         return this.game;
     }
 
-    public List<Object> getJVM() {
+    public List<ArgumentRule> getJVM() {
         return this.jvm;
     }
 
     public String asString() {
         String arguments = "";
 
-        for (Object arg : this.game) {
-            if (arg.getClass() == String.class) {
-                arguments += " " + arg.toString();
-            } else {
-                LogManager.error(arg.getClass().toString());
+        for (ArgumentRule rule : this.jvm) {
+            if (rule.applies()) {
+                arguments += " " + rule.getValue();
+            }
+        }
+
+        for (ArgumentRule rule : this.game) {
+            if (rule.applies()) {
+                arguments += " " + rule.getValue();
             }
         }
 

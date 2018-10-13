@@ -17,8 +17,8 @@
  */
 package com.atlauncher.data.mojang;
 
+import java.util.Arrays;
 import java.util.List;
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 
 @Json
@@ -26,12 +26,32 @@ public class ArgumentRule {
     private List<Rule> rules;
     private Object value;
 
+    ArgumentRule(List<Rule> rules, Object value) {
+        this.rules = rules;
+        this.value = value;
+    }
+
     public List<Rule> getRules() {
         return this.rules;
     }
 
-    public Object getValue() {
-        return this.value;
+    public String getValue() {
+        if (this.value instanceof String) {
+            return (String) this.value;
+        }
+
+        StringBuilder argBuilder = new StringBuilder();
+
+        for (String arg : (List<String>) this.value) {
+            argBuilder.append(arg + ' ');
+        }
+
+        String arguments = argBuilder.toString();
+
+        // remove last extra space
+        arguments = arguments.substring(0, arguments.length() - 1);
+
+        return arguments;
     }
 
     public Boolean applies() {

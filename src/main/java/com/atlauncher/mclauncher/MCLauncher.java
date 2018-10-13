@@ -196,8 +196,6 @@ public class MCLauncher {
         }
 
         arguments.add("-Djava.library.path=" + instance.getNativesDirectory().getAbsolutePath());
-        arguments.add("-cp");
-        arguments.add(cpb.toString());
         arguments.add(instance.getMainClass());
 
         String props = "[]";
@@ -219,6 +217,10 @@ public class MCLauncher {
                 launchArguments = Arrays.asList(mojangVersion.getArguments().asString().split(" "));
             } else {
                 launchArguments = Arrays.asList(mojangVersion.getMinecraftArguments().split(" "));
+
+                // this is built in to 1.13+ arguments
+                arguments.add("-cp");
+                arguments.add(cpb.toString());
             }
         }
 
@@ -237,8 +239,9 @@ public class MCLauncher {
                 argument = argument.replace("${auth_session}", account.getSession(response));
                 argument = argument.replace("${version_type}", instance.getVersionType());
                 argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
-                argument = argument.replace("${launcher_version}", Constants.VERSION);
+                argument = argument.replace("${launcher_version}", Constants.VERSION.toString());
                 argument = argument.replace("${natives_directory}", instance.getNativesDirectory().getAbsolutePath());
+                argument = argument.replace("${classpath}", cpb.toString());
                 argument = argument.replace("${user_type}",
                         response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
                                 : response.getAuth().getUserType().getName());
