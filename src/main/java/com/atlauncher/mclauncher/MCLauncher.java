@@ -218,9 +218,6 @@ public class MCLauncher {
                 launchArguments = Arrays.asList(mojangVersion.getArguments().asString().split(" "));
             } else {
                 launchArguments = Arrays.asList(mojangVersion.getMinecraftArguments().split(" "));
-
-                arguments.add("-cp");
-                arguments.add(cpb.toString());
             }
         } else if (instance.hasMinecraftArguments()) {
             launchArguments = Arrays.asList(instance.getMinecraftArguments().split(" "));
