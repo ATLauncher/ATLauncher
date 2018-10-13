@@ -25,12 +25,5 @@ public class Constants {
     public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";
     public static final Server[] SERVERS = new Server[] {
             new Server("Auto", "download.nodecdn.net/containers/atl", true, false, true),
-            new Server("EU - Amsterdam 1", "bob.nodecdn.net/containers/atl", true, false, true),
-            new Server("EU - Amsterdam 2", "emma.nodecdn.net/containers/atl", true, false, true),
-            new Server("EU - Amsterdam 3", "lisa.nodecdn.net/containers/atl", true, false, true),
-            new Server("US East - Ashburn 1", "anne.nodecdn.net/containers/atl", true, false, true),
-            new Server("US East - Ashburn 2", "bruce.nodecdn.net/containers/atl", true, false, true),
-            new Server("US East - Ashburn 3", "dave.nodecdn.net/containers/atl", true, false, true),
-            new Server("US West - Phoenix 1", "adam.nodecdn.net/containers/atl", true, false, true),
             new Server("Master Server (Testing Only)", "master.atlcdn.net", false, true, true) };
 }

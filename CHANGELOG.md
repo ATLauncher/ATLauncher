@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.2.3.10
-- Switch to https for all urls
-- Require minimum version of Java 7
+## 3.2.3.11
+- Support 1.13 and later versions of Minecraft
+- Remove all download servers other than Auto and Master
 
