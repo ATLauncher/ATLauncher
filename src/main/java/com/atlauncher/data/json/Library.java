@@ -47,12 +47,12 @@ public class Library {
         return this.file;
     }
 
-    public File getFinalPath() {
-        return new File(App.settings.getGameLibrariesDir(), this.path + '/' + this.file);
-    }
+    public File getDownloadPath() {
+        if (this.path == null) {
+            return new File(App.settings.getGameLibrariesDir(), this.file);
+        }
 
-    public String getPathFromRoot() {
-        return this.path + '/' + this.file;
+        return new File(App.settings.getGameLibrariesDir(), this.path);
     }
 
     public String getServer() {

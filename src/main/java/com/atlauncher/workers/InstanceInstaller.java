@@ -801,17 +801,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 library.setDownloadType(DownloadType.server);
             }
 
-            this.libraries.add(library.getPathFromRoot());
+            this.libraries.add(library.getPath());
 
-            forgeLibraries.add(library.getFinalPath());
-            File downloadTo = null;
+            forgeLibraries.add(library.getDownloadPath());
+            File downloadTo = library.getDownloadPath();
+
             if (this.isServer) {
                 if (!library.forServer()) {
                     continue;
                 }
                 serverLibraries.add(new File(getLibrariesDirectory(), library.getServer()));
             }
-            downloadTo = new File(App.settings.getLibrariesDir(), library.getFile());
 
             if (library.shouldForce() && downloadTo.exists()) {
                 Utils.delete(downloadTo);

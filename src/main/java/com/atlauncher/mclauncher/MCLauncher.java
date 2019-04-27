@@ -57,7 +57,7 @@ public class MCLauncher {
                     File thisFile = new File(jarMods, mod);
                     if (thisFile.exists()) {
                         cpb.append(File.pathSeparator);
-                        cpb.append(thisFile);
+                        cpb.append(thisFile.getAbsolutePath());
                     }
                 }
                 for (File file : jarModFiles) {
@@ -66,13 +66,13 @@ public class MCLauncher {
                     }
                     hasCustomJarMods = true;
                     cpb.append(File.pathSeparator);
-                    cpb.append(file);
+                    cpb.append(file.getAbsolutePath());
                 }
             } else {
                 for (File file : jarModFiles) {
                     hasCustomJarMods = true;
                     cpb.append(File.pathSeparator);
-                    cpb.append(file);
+                    cpb.append(file.getAbsolutePath());
                 }
             }
         }
@@ -103,7 +103,7 @@ public class MCLauncher {
 
         if (!instance.usesNewLibraries()) {
             cpb.append(File.pathSeparator);
-            cpb.append(instance.getMinecraftJar());
+            cpb.append(instance.getMinecraftJar().getAbsolutePath());
         }
 
         List<String> arguments = new ArrayList<String>();
