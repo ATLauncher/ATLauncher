@@ -730,9 +730,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     private ArrayList<Downloadable> getResources() {
         ArrayList<Downloadable> downloads = new ArrayList<Downloadable>(); // All the files
-        File objectsFolder = new File(App.settings.getResourcesDir(), "objects");
-        File indexesFolder = new File(App.settings.getResourcesDir(), "indexes");
-        File virtualFolder = new File(App.settings.getResourcesDir(), "virtual");
+        File objectsFolder = new File(App.settings.getAssetsDir(), "objects");
+        File indexesFolder = new File(App.settings.getAssetsDir(), "indexes");
+        File virtualFolder = new File(App.settings.getAssetsDir(), "virtual");
         String assetVersion = this.version.getMinecraftVersion().getMojangVersion().getAssets();
         File virtualRoot = new File(virtualFolder, assetVersion);
         File indexFile = new File(indexesFolder, assetVersion + ".json");

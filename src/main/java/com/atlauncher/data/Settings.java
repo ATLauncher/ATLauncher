@@ -153,9 +153,9 @@ public class Settings {
     private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
-        commonConfigsDir, resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir,
-        usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir, instancesDataFile,
-        checkingServersFile, userDataFile, propertiesFile, logsDir;
+            commonConfigsDir, assetsDir, resourcesDir, librariesDir, launcherLibrariesdir,
+            languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
+            instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -207,6 +207,7 @@ public class Settings {
         jarsDir = new File(configsDir, "Jars");
         commonConfigsDir = new File(configsDir, "Common");
         resourcesDir = new File(configsDir, "Resources");
+        assetsDir = new File(baseDir, "assets");
         librariesDir = new File(configsDir, "Libraries");
         launcherLibrariesdir = new File(librariesDir, "Launcher");
         languagesDir = new File(configsDir, "Languages");
@@ -495,33 +496,25 @@ public class Settings {
 
     public void checkResources() {
         LogManager.debug("Checking if using old format of resources");
-        File indexesDir = new File(this.resourcesDir, "indexes");
-        if (!indexesDir.exists() || !indexesDir.isDirectory()) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
-                ".rearrangingresources"), 0, Language.INSTANCE.localize("settings.rearrangingresources"), null);
+        // moving from Resources to more vanilla 'assets' folder
+        if (this.resourcesDir.exists() && this.resourcesDir.isDirectory()) {
+            final ProgressDialog dialog = new ProgressDialog(
+                    Language.INSTANCE.localize("settings" + "" + ".rearrangingresources"), 0,
+                    Language.INSTANCE.localize("settings.rearrangingresources"), null);
             Thread thread = new Thread() {
                 @Override
                 public void run() {
-                    File indexesDir = new File(getResourcesDir(), "indexes");
-                    File objectsDir = new File(getResourcesDir(), "objects");
-                    File virtualDir = new File(getResourcesDir(), "virtual");
-                    File legacyDir = new File(virtualDir, "legacy");
-                    File tempDir = new File(getTempDir(), "assets");
-                    tempDir.mkdir();
-                    Utils.moveDirectory(getResourcesDir(), tempDir);
-                    indexesDir.mkdirs();
-                    objectsDir.mkdirs();
-                    virtualDir.mkdirs();
-                    legacyDir.mkdirs();
-                    Utils.moveDirectory(tempDir, legacyDir);
-                    Utils.delete(tempDir);
-                    Utils.spreadOutResourceFiles(legacyDir);
+                    Utils.moveDirectory(new File(getResourcesDir(), "indexes"), new File(assetsDir, "indexes"));
+                    Utils.moveDirectory(new File(getResourcesDir(), "objects"), new File(assetsDir, "objects"));
+                    Utils.moveDirectory(new File(getResourcesDir(), "virtual"), new File(assetsDir, "virtual"));
+
+                    Utils.delete(getResourcesDir());
+
                     dialog.close();
                 }
             };
             dialog.addThread(thread);
             dialog.start();
-
         }
         LogManager.debug("Finished checking if using old format of resources");
     }
@@ -896,9 +889,9 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = {backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
-            resourcesDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir, instancesDir,
-            serversDir, tempDir, failedDownloadsDir, logsDir};
+        File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
+                assetsDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir,
+                instancesDir, serversDir, tempDir, failedDownloadsDir, logsDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -1011,12 +1004,21 @@ public class Settings {
         return this.resourcesDir;
     }
 
+    /**
+     * Returns the assets directory
+     *
+     * @return File object for the resources directory
+     */
+    public File getAssetsDir() {
+        return this.assetsDir;
+    }
+
     public File getVirtualAssetsDir() {
-        return new File(this.resourcesDir, "virtual");
+        return new File(this.assetsDir, "virtual");
     }
 
     public File getObjectsAssetsDir() {
-        return new File(this.resourcesDir, "objects");
+        return new File(this.assetsDir, "objects");
     }
 
     public File getLegacyVirtualAssetsDir() {

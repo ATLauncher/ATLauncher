@@ -1,7 +1,5 @@
 # Changelog
 
-## 3.2.4.0
+## 3.2.5.0
 
--   Support 1.13 and later versions of Minecraft
--   Remove all download servers other than Auto and Master
--   Update NodeCraft icon
+-   Move Minecraft assets into the root directory rather than within Configs directory

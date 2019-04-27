@@ -231,7 +231,7 @@ public class MCLauncher {
                 argument = argument.replace("${version_name}", instance.getMinecraftVersion());
                 argument = argument.replace("${game_directory}", instance.getRootDirectory().getAbsolutePath());
                 argument = argument.replace("${game_assets}", instance.getAssetsDir().getAbsolutePath());
-                argument = argument.replace("${assets_root}", App.settings.getResourcesDir().getAbsolutePath());
+                argument = argument.replace("${assets_root}", App.settings.getAssetsDir().getAbsolutePath());
                 argument = argument.replace("${assets_index_name}", instance.getAssets());
                 argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
                 argument = argument.replace("${auth_access_token}", account.getAccessToken());
@@ -259,7 +259,7 @@ public class MCLauncher {
 
             arguments.add("--version=" + instance.getMinecraftVersion());
             arguments.add("--gameDir=" + instance.getRootDirectory().getAbsolutePath());
-            arguments.add("--assetsDir=" + App.settings.getResourcesDir().getAbsolutePath());
+            arguments.add("--assetsDir=" + App.settings.getAssetsDir().getAbsolutePath());
         }
 
         if (App.settings.startMinecraftMaximised()) {
