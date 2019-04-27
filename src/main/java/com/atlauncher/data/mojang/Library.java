@@ -66,6 +66,10 @@ public class Library {
         return this.downloads != null && this.downloads.getArtifact() != null;
     }
 
+    public boolean hasClassifier(String name) {
+        return this.downloads != null && this.downloads.hasClassifier(name);
+    }
+
     public String getURL() {
         if (this.hasArtifact()) {
             return this.downloads.getArtifact().getUrl();
@@ -94,6 +98,27 @@ public class Library {
 
         String[] parts = this.name.split(":", 3);
         return parts[1] + "-" + parts[2] + getClassifier() + ".jar";
+    }
+
+    public String getNativeURL() {
+        return this.getNativeClassifier().getUrl();
+    }
+
+    public File getNativeFile() {
+        return new File(App.settings.getGameLibrariesDir(), this.getNativeClassifier().getPath());
+    }
+
+    public String getNativePathFromRoot() {
+        return this.getNativeClassifier().getPath();
+    }
+
+    public DownloadsItem getNativeClassifier() {
+        return this.downloads.getClassifier(this.natives.get(OperatingSystem.getOS()));
+    }
+
+    public boolean hasNatives() {
+        return this.natives != null && this.natives.containsKey(OperatingSystem.getOS())
+                && this.hasClassifier(this.natives.get(OperatingSystem.getOS()));
     }
 
     public String getClassifier() {

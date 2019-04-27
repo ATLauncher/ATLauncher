@@ -660,7 +660,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                     if (library.getFile().exists()) {
                         if (library.shouldExtract()) {
-                            Utils.unzip(library.getFile(), getNativesDirectory(), library.getExtractRule());
+                            if (library.hasNatives()) {
+                                Utils.unzip(library.getNativeFile(), getNativesDirectory(), library.getExtractRule());
+                            } else {
+                                Utils.unzip(library.getFile(), getNativesDirectory(), library.getExtractRule());
+                            }
                         }
                     } else {
                         LogManager.error("Cannot install instance because the library file "
@@ -851,6 +855,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                                 artifact.getSize(), this, false));
                     } else {
                         libraries.add(new Downloadable(library.getURL(), library.getFile(), null, this, false));
+                    }
+
+                    if (library.hasNatives()) {
+                        this.libraries.add(library.getNativePathFromRoot());
+                        DownloadsItem nativeClassifier = library.getNativeClassifier();
+                        libraries.add(new Downloadable(library.getNativeURL(), library.getNativeFile(),
+                                nativeClassifier.getSha1(), nativeClassifier.getSize(), this, false));
                     }
                 }
             }
