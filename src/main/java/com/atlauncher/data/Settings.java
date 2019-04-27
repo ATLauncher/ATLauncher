@@ -93,7 +93,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
- * Settings class for storing all data for the Launcher and the settings of the user.
+ * Settings class for storing all data for the Launcher and the settings of the
+ * user.
  *
  * @author Ryan
  */
@@ -153,7 +154,7 @@ public class Settings {
     private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
-            commonConfigsDir, assetsDir, resourcesDir, librariesDir, launcherLibrariesdir,
+            commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, launcherLibrariesdir,
             languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
             instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
@@ -172,8 +173,8 @@ public class Settings {
     private Process minecraftProcess = null; // The process minecraft is running on
     private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
-    private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, " +
-        "" + "like Gecko) Chrome/28.0.1500.72 Safari/537.36";
+    private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, " + ""
+            + "like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
     @SuppressWarnings("unused")
@@ -209,6 +210,7 @@ public class Settings {
         resourcesDir = new File(configsDir, "Resources");
         assetsDir = new File(baseDir, "assets");
         librariesDir = new File(configsDir, "Libraries");
+        gameLibrariesDir = new File(baseDir, "libraries");
         launcherLibrariesdir = new File(librariesDir, "Launcher");
         languagesDir = new File(configsDir, "Languages");
         downloadsDir = new File(baseDir, "Downloads");
@@ -276,8 +278,7 @@ public class Settings {
         checkAccountsForNameChanges(); // Check account for username changes
 
         LogManager.debug("Checking for access to master server");
-        OUTER:
-        for (Pack pack : this.packs) {
+        OUTER: for (Pack pack : this.packs) {
             if (pack.isTester()) {
                 for (Server server : this.servers) {
                     if (server.getName().equals("Master Server (Testing Only)")) {
@@ -294,11 +295,12 @@ public class Settings {
 
         if (Utils.isWindows() && !Utils.is64Bit() && Utils.isWindows64Bit()) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
-            String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")), Language.INSTANCE.localize
-                    ("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                options, options[0]);
+            String[] options = { Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no") };
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                    HTMLUtils.centerParagraph(
+                            Language.INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")),
+                    Language.INSTANCE.localize("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
                 System.exit(0);
@@ -307,13 +309,14 @@ public class Settings {
 
         if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
             LogManager.warn("You're using an old unsupported version of Java (Java 6 or older)!");
-            String[] options = {Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common" +
-                ".ok"), Language.INSTANCE.localize("instance" + "" +
-                ".dontremindmeagain")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                .INSTANCE.localizeWithReplace("settings.unsupportedjava", "<br/><br/>")), Language.INSTANCE
-                .localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION, JOptionPane
-                .ERROR_MESSAGE, null, options, options[0]);
+            String[] options = { Language.INSTANCE.localize("common.download"),
+                    Language.INSTANCE.localize("common" + ".ok"),
+                    Language.INSTANCE.localize("instance" + "" + ".dontremindmeagain") };
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                    HTMLUtils.centerParagraph(
+                            Language.INSTANCE.localizeWithReplace("settings.unsupportedjava", "<br/><br/>")),
+                    Language.INSTANCE.localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
                 Utils.openBrowser("http://atl.pw/java7download");
                 System.exit(0);
@@ -364,8 +367,8 @@ public class Settings {
     }
 
     public void checkForValidJavaPath(boolean save) {
-        File java = new File(App.settings.getJavaPath(), "bin" + File.separator + "java" +
-            (Utils.isWindows() ? ".exe" : ""));
+        File java = new File(App.settings.getJavaPath(),
+                "bin" + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
 
         if (!java.exists()) {
             LogManager.error("Custom Java Path Is Incorrect! Defaulting to valid value!");
@@ -407,12 +410,13 @@ public class Settings {
             }
         }
         if (matches) {
-            String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("account" + "" +
-                ".removepasswords")};
-            int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")), Language.INSTANCE.localize
-                    ("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                options, options[0]);
+            String[] options = { Language.INSTANCE.localize("common.ok"),
+                    Language.INSTANCE.localize("account" + "" + ".removepasswords") };
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                    HTMLUtils
+                            .centerParagraph(Language.INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")),
+                    Language.INSTANCE.localize("account.securitywarningtitle"), JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 1) {
                 for (Account account : this.accounts) {
                     if (account.isRemembered()) {
@@ -453,8 +457,8 @@ public class Settings {
 
         for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
             try {
-                Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").parse(file.getName().replace(Constants
-                    .LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
+                Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
+                        .parse(file.getName().replace(Constants.LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
 
                 if (date.before(toDeleteAfter)) {
                     Utils.delete(file);
@@ -556,7 +560,8 @@ public class Settings {
                     }
                 }
 
-                // If there were no accounts with that username, we remove the lock and old installed by
+                // If there were no accounts with that username, we remove the lock and old
+                // installed by
                 if (!found) {
                     wereChanges = true;
 
@@ -618,8 +623,8 @@ public class Settings {
 
     public boolean launcherHasUpdate() {
         try {
-            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(new File(this.jsonDir, "version.json")
-            ), LauncherVersion.class);
+            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(new File(this.jsonDir, "version.json")),
+                    LauncherVersion.class);
         } catch (JsonSyntaxException e) {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);
         } catch (JsonIOException e) {
@@ -698,7 +703,8 @@ public class Settings {
     }
 
     /**
-     * This checks the servers hashes.json file and gets the files that the Launcher needs to have
+     * This checks the servers hashes.json file and gets the files that the Launcher
+     * needs to have
      */
     private ArrayList<Downloadable> getLauncherFiles() {
         getFileHashes(); // Get File Hashes
@@ -748,7 +754,8 @@ public class Settings {
     }
 
     /**
-     * This checks the servers hashes.json file and looks for new/updated files that differ from what the user has
+     * This checks the servers hashes.json file and looks for new/updated files that
+     * differ from what the user has
      */
     public boolean hasUpdatedFiles() {
         if (isInOfflineMode()) {
@@ -810,12 +817,13 @@ public class Settings {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
             } else {
-                String[] options = {"Ok"};
-                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph("Update failed. " +
-                        "Please click Ok to close " + "the launcher and open up the downloads " +
-                        "page.<br/><br/>Download " + "the update and replace the old " + Constants.LAUNCHER_NAME + " " +
-                        "file."), "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                    options, options[0]);
+                String[] options = { "Ok" };
+                JOptionPane.showOptionDialog(App.settings.getParent(),
+                        HTMLUtils.centerParagraph("Update failed. " + "Please click Ok to close "
+                                + "the launcher and open up the downloads " + "page.<br/><br/>Download "
+                                + "the update and replace the old " + Constants.LAUNCHER_NAME + " " + "file."),
+                        "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                        options[0]);
                 Utils.openBrowser("http://www.atlauncher.com/downloads/");
                 System.exit(0);
             }
@@ -824,8 +832,8 @@ public class Settings {
     }
 
     /**
-     * Downloads and loads all external libraries used by the launcher as specified in the Configs/JSON/libraries.json
-     * file.
+     * Downloads and loads all external libraries used by the launcher as specified
+     * in the Configs/JSON/libraries.json file.
      */
     private void downloadExternalLibraries() {
         LogManager.debug("Downloading external libraries");
@@ -839,7 +847,8 @@ public class Settings {
         }
 
         try {
-            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {}.getType();
+            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
+            }.getType();
 
             this.launcherLibraries = Gsons.DEFAULT.fromJson(fr, type);
         } finally {
@@ -890,7 +899,7 @@ public class Settings {
      */
     private void checkFolders() {
         File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
-                assetsDir, librariesDir, launcherLibrariesdir, languagesDir, downloadsDir,
+                assetsDir, librariesDir, gameLibrariesDir, launcherLibrariesdir, languagesDir, downloadsDir,
                 instancesDir, serversDir, tempDir, failedDownloadsDir, logsDir };
         for (File file : files) {
             if (!file.exists()) {
@@ -1032,6 +1041,15 @@ public class Settings {
      */
     public File getLibrariesDir() {
         return this.librariesDir;
+    }
+
+    /**
+     * Returns the libraries directory for Minecraft
+     *
+     * @return File object for the libraries directory for Minecraft
+     */
+    public File getGameLibrariesDir() {
+        return this.gameLibrariesDir;
     }
 
     /**
@@ -1180,19 +1198,20 @@ public class Settings {
                 propertiesFile.createNewFile();
             }
         } catch (IOException e) {
-            String[] options = {"OK"};
-            JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("Cannot create the config file" +
-                    ".<br/><br/>Make sure you're running the Launcher from somewhere with<br/>write" +
-                    " permissions for your user account such as your Home/Users folder or desktop."),
-                "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            String[] options = { "OK" };
+            JOptionPane.showOptionDialog(null,
+                    HTMLUtils.centerParagraph("Cannot create the config file"
+                            + ".<br/><br/>Make sure you're running the Launcher from somewhere with<br/>write"
+                            + " permissions for your user account such as your Home/Users folder or desktop."),
+                    "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             System.exit(0);
         }
         try {
             this.properties.load(new FileInputStream(propertiesFile));
             this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
-            if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
-                !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
+            if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
+                    && !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
                 this.dateFormat = "dd/M/yyy";
             }
             this.enablePackTags = Boolean.parseBoolean(properties.getProperty("enablepacktags", "false"));
@@ -1221,8 +1240,8 @@ public class Settings {
                 }
 
                 this.proxyType = properties.getProperty("proxytype", "");
-                if (!this.proxyType.equals("SOCKS") && !this.proxyType.equals("HTTP") && !this.proxyType.equals
-                    ("DIRECT")) {
+                if (!this.proxyType.equals("SOCKS") && !this.proxyType.equals("HTTP")
+                        && !this.proxyType.equals("DIRECT")) {
                     this.enableProxy = false;
                 }
             } else {
@@ -1279,11 +1298,13 @@ public class Settings {
             Language.INSTANCE.load(lang);
 
             this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
-            if (!this.forgeLoggingLevel.equalsIgnoreCase("SEVERE") && !this.forgeLoggingLevel.equalsIgnoreCase
-                ("WARNING") && !this.forgeLoggingLevel.equalsIgnoreCase("INFO") && !this.forgeLoggingLevel
-                .equalsIgnoreCase("CONFIG") && !this.forgeLoggingLevel.equalsIgnoreCase("FINE") && !this
-                .forgeLoggingLevel.equalsIgnoreCase("FINER") && !this.forgeLoggingLevel.equalsIgnoreCase
-                ("FINEST")) {
+            if (!this.forgeLoggingLevel.equalsIgnoreCase("SEVERE")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("WARNING")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("INFO")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("CONFIG")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("FINE")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("FINER")
+                    && !this.forgeLoggingLevel.equalsIgnoreCase("FINEST")) {
                 LogManager.warn("Invalid Forge Logging level " + this.forgeLoggingLevel + ". Defaulting to INFO!");
                 this.forgeLoggingLevel = "INFO";
             }
@@ -1293,8 +1314,8 @@ public class Settings {
                 int defaultRam = (halfRam >= 4096 ? 4096 : halfRam); // Default ram
                 this.maximumMemory = Integer.parseInt(properties.getProperty("ram", defaultRam + ""));
                 if (this.maximumMemory > Utils.getMaximumRam()) {
-                    LogManager.warn("Tried to allocate " + this.maximumMemory + "MB of Ram but only " + Utils
-                        .getMaximumRam() + "MB is available to use!");
+                    LogManager.warn("Tried to allocate " + this.maximumMemory + "MB of Ram but only "
+                            + Utils.getMaximumRam() + "MB is available to use!");
                     this.maximumMemory = defaultRam; // User tried to allocate too much ram, set it
                     // back to
                     // half, capped at 4GB
@@ -1302,8 +1323,8 @@ public class Settings {
             } else {
                 this.maximumMemory = Integer.parseInt(properties.getProperty("ram", "1024"));
                 if (this.maximumMemory > Utils.getMaximumRam()) {
-                    LogManager.warn("Tried to allocate " + this.maximumMemory + "MB of Maximum Ram but only " + Utils
-                        .getMaximumRam() + "MB is available to use!");
+                    LogManager.warn("Tried to allocate " + this.maximumMemory + "MB of Maximum Ram but only "
+                            + Utils.getMaximumRam() + "MB is available to use!");
                     this.maximumMemory = 1024; // User tried to allocate too much ram, set it back
                     // to 1GB
                 }
@@ -1311,13 +1332,13 @@ public class Settings {
 
             this.initialMemory = Integer.parseInt(properties.getProperty("initialmemory", "256"));
             if (this.initialMemory > Utils.getMaximumRam()) {
-                LogManager.warn("Tried to allocate " + this.initialMemory + "MB of Initial Ram but only " + Utils
-                    .getMaximumRam() + "MB is available to use!");
+                LogManager.warn("Tried to allocate " + this.initialMemory + "MB of Initial Ram but only "
+                        + Utils.getMaximumRam() + "MB is available to use!");
                 this.initialMemory = 256; // User tried to allocate too much ram, set it back to
                 // 256MB
             } else if (this.initialMemory > this.maximumMemory) {
-                LogManager.warn("Tried to allocate " + this.initialMemory + "MB of Initial Ram but maximum ram is " +
-                    this.maximumMemory + "MB which is less!");
+                LogManager.warn("Tried to allocate " + this.initialMemory + "MB of Initial Ram but maximum ram is "
+                        + this.maximumMemory + "MB which is less!");
                 this.initialMemory = 256; // User tried to allocate too much ram, set it back to 256MB
             }
 
@@ -1326,8 +1347,8 @@ public class Settings {
 
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
             if (this.windowWidth > Utils.getMaximumWindowWidth()) {
-                LogManager.warn("Tried to set window width to " + this.windowWidth + " pixels but the maximum is " +
-                    Utils.getMaximumWindowWidth() + " pixels!");
+                LogManager.warn("Tried to set window width to " + this.windowWidth + " pixels but the maximum is "
+                        + Utils.getMaximumWindowWidth() + " pixels!");
                 this.windowWidth = Utils.getMaximumWindowWidth(); // User tried to make screen size
                 // wider than they have
             }
@@ -1335,7 +1356,7 @@ public class Settings {
             this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
             if (this.windowHeight > Utils.getMaximumWindowHeight()) {
                 LogManager.warn("Tried to set window height to " + this.windowHeight + " pixels but the maximum is "
-                    + Utils.getMaximumWindowHeight() + " pixels!");
+                        + Utils.getMaximumWindowHeight() + " pixels!");
                 this.windowHeight = Utils.getMaximumWindowHeight(); // User tried to make screen
                 // size wider than they have
             }
@@ -1347,8 +1368,8 @@ public class Settings {
             } else {
                 this.javaPath = Utils.getJavaHome();
                 if (this.isUsingMacApp()) {
-                    File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin" + "" +
-                        ".plugin/Contents/Home/bin/java");
+                    File oracleJava = new File(
+                            "/Library/Internet Plug-Ins/JavaAppletPlugin" + "" + ".plugin/Contents/Home/bin/java");
                     if (oracleJava.exists() && oracleJava.canExecute()) {
                         this.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
                     }
@@ -1363,8 +1384,8 @@ public class Settings {
 
             this.advancedBackup = Boolean.parseBoolean(properties.getProperty("advancedbackup", "false"));
 
-            this.sortPacksAlphabetically = Boolean.parseBoolean(properties.getProperty("sortpacksalphabetically",
-                "false"));
+            this.sortPacksAlphabetically = Boolean
+                    .parseBoolean(properties.getProperty("sortpacksalphabetically", "false"));
 
             this.keepLauncherOpen = Boolean.parseBoolean(properties.getProperty("keeplauncheropen", "true"));
 
@@ -1378,8 +1399,8 @@ public class Settings {
 
             this.enableServerChecker = Boolean.parseBoolean(properties.getProperty("enableserverchecker", "false"));
 
-            this.enableOpenEyeReporting = Boolean.parseBoolean(properties.getProperty("enableopeneyereporting",
-                "true"));
+            this.enableOpenEyeReporting = Boolean
+                    .parseBoolean(properties.getProperty("enableopeneyereporting", "true"));
 
             this.enableProxy = Boolean.parseBoolean(properties.getProperty("enableproxy", "false"));
 
@@ -1389,17 +1410,17 @@ public class Settings {
                 this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", "0"));
                 if (this.proxyPort <= 0 || this.proxyPort > 65535) {
                     // Proxy port is invalid so disable proxy
-                    LogManager.warn("Tried to set proxy port to " + this.proxyPort + " which is not a valid port! " +
-                        "Proxy support disabled!");
+                    LogManager.warn("Tried to set proxy port to " + this.proxyPort + " which is not a valid port! "
+                            + "Proxy support disabled!");
                     this.enableProxy = false;
                 }
 
                 this.proxyType = properties.getProperty("proxytype", "");
-                if (!this.proxyType.equals("SOCKS") && !this.proxyType.equals("HTTP") && !this.proxyType.equals
-                    ("DIRECT")) {
+                if (!this.proxyType.equals("SOCKS") && !this.proxyType.equals("HTTP")
+                        && !this.proxyType.equals("DIRECT")) {
                     // Proxy type is invalid so disable proxy
-                    LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy " +
-                        "support disabled!");
+                    LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy "
+                            + "support disabled!");
                     this.enableProxy = false;
                 }
             } else {
@@ -1411,8 +1432,8 @@ public class Settings {
             this.serverCheckerWait = Integer.parseInt(properties.getProperty("servercheckerwait", "5"));
             if (this.serverCheckerWait < 1 || this.serverCheckerWait > 30) {
                 // Server checker wait should be between 1 and 30
-                LogManager.warn("Tried to set server checker wait to " + this.serverCheckerWait + " which is not " +
-                    "valid! Must be between 1 and 30. Setting back to default of 5!");
+                LogManager.warn("Tried to set server checker wait to " + this.serverCheckerWait + " which is not "
+                        + "valid! Must be between 1 and 30. Setting back to default of 5!");
                 this.serverCheckerWait = 5;
             }
 
@@ -1420,25 +1441,25 @@ public class Settings {
             if (this.concurrentConnections < 1) {
                 // Concurrent connections should be more than or equal to 1
                 LogManager.warn("Tried to set the number of concurrent connections to " + this.concurrentConnections
-                    + " which is not valid! Must be 1 or more. Setting back to default of 8!");
+                        + " which is not valid! Must be 1 or more. Setting back to default of 8!");
                 this.concurrentConnections = 8;
             }
 
             this.daysOfLogsToKeep = Integer.parseInt(properties.getProperty("daysoflogstokeep", "7"));
             if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
                 // Days of logs to keep should be 1 or more but less than 30
-                LogManager.warn("Tried to set the number of days worth of logs to keep to " + this.daysOfLogsToKeep +
-                    " which is not valid! Must be between 1 and 30 inclusive. Setting back to default of 7!");
+                LogManager.warn("Tried to set the number of days worth of logs to keep to " + this.daysOfLogsToKeep
+                        + " which is not valid! Must be between 1 and 30 inclusive. Setting back to default of 7!");
                 this.daysOfLogsToKeep = 7;
             }
 
             this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
 
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
-            if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy") &&
-                !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
-                LogManager.warn("Tried to set the date format to " + this.dateFormat + " which is not valid! Setting " +
-                    "back to default of dd/M/yyy!");
+            if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
+                    && !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
+                LogManager.warn("Tried to set the date format to " + this.dateFormat + " which is not valid! Setting "
+                        + "back to default of dd/M/yyy!");
                 this.dateFormat = "dd/M/yyy";
             }
 
@@ -1447,8 +1468,8 @@ public class Settings {
                 if (isAccountByName(lastAccountTemp)) {
                     this.account = getAccountByName(lastAccountTemp);
                 } else {
-                    LogManager.warn("The Account " + lastAccountTemp + " is no longer available. Logging out of " +
-                        "Account!");
+                    LogManager.warn(
+                            "The Account " + lastAccountTemp + " is no longer available. Logging out of " + "Account!");
                     this.account = null; // Account not found
                 }
             }
@@ -1565,7 +1586,8 @@ public class Settings {
     /**
      * The servers available to use in the Launcher
      * <p/>
-     * These MUST be hardcoded in order for the Launcher to make the initial connections to download files
+     * These MUST be hardcoded in order for the Launcher to make the initial
+     * connections to download files
      */
     private void setupServers() {
         this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
@@ -1640,7 +1662,8 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
             }.getType();
-            List<MinecraftVersion> list = Gsons.DEFAULT_ALT.fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")), type);
+            List<MinecraftVersion> list = Gsons.DEFAULT_ALT
+                    .fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")), type);
 
             if (list == null) {
                 LogManager.error("Error loading Minecraft Versions. List was null. Exiting!");
@@ -1725,8 +1748,8 @@ public class Settings {
                             }
                             Instance instance = (Instance) obj;
                             if (!instance.hasBeenConverted()) {
-                                LogManager.warn("Instance " + instance.getName() + " is being converted! This is " +
-                                    "normal and should only appear once!");
+                                LogManager.warn("Instance " + instance.getName() + " is being converted! This is "
+                                        + "normal and should only appear once!");
                                 instance.convert();
                             }
                             if (!instance.getDisabledModsDirectory().exists()) {
@@ -1813,8 +1836,10 @@ public class Settings {
                         fw.close();
                     }
                 } catch (IOException e) {
-                    LogManager.logStackTrace("Exception while trying to close FileWriter/BufferedWriter for saving instances " +
-                        "json file.", e);
+                    LogManager.logStackTrace(
+                            "Exception while trying to close FileWriter/BufferedWriter for saving instances "
+                                    + "json file.",
+                            e);
                 }
             }
         }
@@ -1852,8 +1877,10 @@ public class Settings {
                         in.close();
                     }
                 } catch (IOException e) {
-                    LogManager.logStackTrace("Exception while trying to close FileInputStream/ObjectInputStream when reading in " +
-                        "" + "accounts.", e);
+                    LogManager.logStackTrace(
+                            "Exception while trying to close FileInputStream/ObjectInputStream when reading in " + ""
+                                    + "accounts.",
+                            e);
                 }
             }
         }
@@ -1880,8 +1907,10 @@ public class Settings {
                     out.close();
                 }
             } catch (IOException e) {
-                LogManager.logStackTrace("Exception while trying to close FileOutputStream/ObjectOutputStream when saving " +
-                    "accounts.", e);
+                LogManager.logStackTrace(
+                        "Exception while trying to close FileOutputStream/ObjectOutputStream when saving "
+                                + "accounts.",
+                        e);
             }
         }
     }
@@ -1916,8 +1945,9 @@ public class Settings {
                 try {
                     fileReader.close();
                 } catch (IOException e) {
-                    LogManager.logStackTrace("Exception while trying to close FileReader when loading servers for server " +
-                        "checker" + " tool.", e);
+                    LogManager
+                            .logStackTrace("Exception while trying to close FileReader when loading servers for server "
+                                    + "checker" + " tool.", e);
                 }
             }
         }
@@ -1946,8 +1976,10 @@ public class Settings {
                     fw.close();
                 }
             } catch (IOException e) {
-                LogManager.logStackTrace("Exception while trying to close FileWriter/BufferedWriter when saving servers for " +
-                    "server checker tool.", e);
+                LogManager.logStackTrace(
+                        "Exception while trying to close FileWriter/BufferedWriter when saving servers for "
+                                + "server checker tool.",
+                        e);
             }
         }
     }
@@ -1959,7 +1991,8 @@ public class Settings {
     /**
      * Finds out if this is the first time the Launcher has been run
      *
-     * @return true if the Launcher hasn't been run and setup yet, false for otherwise
+     * @return true if the Launcher hasn't been run and setup yet, false for
+     *         otherwise
      */
     public boolean isFirstTimeRun() {
         return this.firstTimeRun;
@@ -2009,8 +2042,8 @@ public class Settings {
         Collections.sort(packs, new Comparator<Pack>() {
             @Override
             public int compare(Pack result1, Pack result2) {
-                return (result1.getPosition() < result2.getPosition()) ? -1 : ((result1.getPosition() == result2
-                    .getPosition()) ? 0 : 1);
+                return (result1.getPosition() < result2.getPosition()) ? -1
+                        : ((result1.getPosition() == result2.getPosition()) ? 0 : 1);
             }
         });
         return packs;
@@ -2614,7 +2647,7 @@ public class Settings {
     public String getLog() {
         return this.console.getLog();
     }
-    
+
     public void showKillMinecraft(Process minecraft) {
         this.minecraftProcess = minecraft;
         this.console.showKillMinecraft();
@@ -3013,8 +3046,8 @@ public class Settings {
                 type = Proxy.Type.DIRECT;
             } else {
                 // Oh noes, problem!
-                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support " +
-                    "disabled!");
+                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
+                        + "disabled!");
                 this.enableProxy = false;
                 return null;
             }
@@ -3037,8 +3070,8 @@ public class Settings {
                 type = Proxy.Type.DIRECT;
             } else {
                 // Oh noes, problem!
-                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support " +
-                    "disabled!");
+                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
+                        + "disabled!");
                 this.enableProxy = false;
                 return Proxy.NO_PROXY;
             }

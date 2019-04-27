@@ -77,9 +77,12 @@ public class MCLauncher {
             }
         }
 
-        for (String jarFile : instance.getLibrariesNeeded().split(",")) {
+        File librariesBaseDir = instance.usesNewLibraries() ? App.settings.getGameLibrariesDir()
+                : instance.getBinDirectory();
+
+        for (String jarFile : instance.getLibraries()) {
             cpb.append(File.pathSeparator);
-            cpb.append(new File(instance.getBinDirectory(), jarFile));
+            cpb.append(new File(librariesBaseDir, jarFile).getAbsolutePath());
         }
 
         File binFolder = instance.getBinDirectory();
@@ -87,7 +90,7 @@ public class MCLauncher {
         if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
             for (File file : libraryFiles) {
                 if (file.isDirectory() || file.getName().equalsIgnoreCase(instance.getMinecraftJar().getName())
-                        || instance.getLibrariesNeeded().contains(file.getName())) {
+                        || instance.getLibraries().contains(file.getName())) {
                     continue;
                 }
 
@@ -98,8 +101,10 @@ public class MCLauncher {
             }
         }
 
-        cpb.append(File.pathSeparator);
-        cpb.append(instance.getMinecraftJar());
+        if (!instance.usesNewLibraries()) {
+            cpb.append(File.pathSeparator);
+            cpb.append(instance.getMinecraftJar());
+        }
 
         List<String> arguments = new ArrayList<String>();
 
@@ -244,7 +249,7 @@ public class MCLauncher {
                         response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
                                 : response.getAuth().getUserType().getName());
 
-                if (argument != "-cp" && argument != "${classpath}") {
+                if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
                     arguments.add(argument);
                 }
             }

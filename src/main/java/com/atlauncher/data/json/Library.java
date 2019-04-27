@@ -17,11 +17,15 @@
  */
 package com.atlauncher.data.json;
 
+import com.atlauncher.App;
 import com.atlauncher.annot.Json;
+
+import java.io.File;
 
 @Json
 public class Library {
     private String url;
+    private String path;
     private String file;
     private String server;
     private String md5;
@@ -35,8 +39,20 @@ public class Library {
         return this.url;
     }
 
+    public String getPath() {
+        return this.path;
+    }
+
     public String getFile() {
         return this.file;
+    }
+
+    public File getFinalPath() {
+        return new File(App.settings.getGameLibrariesDir(), this.path + '/' + this.file);
+    }
+
+    public String getPathFromRoot() {
+        return this.path + '/' + this.file;
     }
 
     public String getServer() {

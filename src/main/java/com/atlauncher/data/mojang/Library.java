@@ -30,6 +30,7 @@ public class Library {
     private Map<OperatingSystem, String> natives;
     private List<Rule> rules;
     private ExtractRule extract;
+    private Downloads downloads;
     private String url;
 
     public boolean shouldInstall() {
@@ -57,17 +58,42 @@ public class Library {
         return this.name;
     }
 
+    public Downloads getDownloads() {
+        return this.downloads;
+    }
+
+    public boolean hasArtifact() {
+        return this.downloads != null && this.downloads.getArtifact() != null;
+    }
+
     public String getURL() {
+        if (this.hasArtifact()) {
+            return this.downloads.getArtifact().getUrl();
+        }
+
         String path;
         String[] parts = this.name.split(":", 3);
-        path = parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2] + "/" + parts[1] + "-" + parts[2] +
-                getClassifier() + ".jar";
+        path = parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2] + "/" + parts[1] + "-" + parts[2]
+                + getClassifier() + ".jar";
         return MojangConstants.LIBRARIES_BASE.getURL(path);
     }
 
     public File getFile() {
+        if (this.hasArtifact()) {
+            return new File(App.settings.getGameLibrariesDir(), this.downloads.getArtifact().getPath());
+        }
+
         String[] parts = this.name.split(":", 3);
         return new File(App.settings.getLibrariesDir(), parts[1] + "-" + parts[2] + getClassifier() + ".jar");
+    }
+
+    public String getPathFromRoot() {
+        if (this.hasArtifact()) {
+            return this.downloads.getArtifact().getPath();
+        }
+
+        String[] parts = this.name.split(":", 3);
+        return parts[1] + "-" + parts[2] + getClassifier() + ".jar";
     }
 
     public String getClassifier() {
