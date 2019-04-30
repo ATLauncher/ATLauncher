@@ -50,6 +50,7 @@ import com.atlauncher.data.Type;
 import com.atlauncher.data.json.Action;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.DownloadType;
+import com.atlauncher.data.json.Loader;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;
@@ -533,6 +534,62 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor.shutdown();
         while (!executor.isTerminated()) {
         }
+        fireSubProgress(-1); // Hide the subprogress bar
+    }
+
+    private void downloadLoader() {
+        fireTask(Language.INSTANCE.localize("instance.downloadingloader"));
+        fireSubProgressUnknown();
+
+        Loader loader = this.jsonVersion.getLoader();
+
+        // download
+        // https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.13.2-25.0.191/forge-1.13.2-25.0.191-installer.jar
+        File path = loader.downloadAndExtractInstaller(this);
+
+        List<Downloadable> downloads = loader.getLibraries(path, this);
+
+        ExecutorService executor;
+        totalBytes = 0;
+        downloadedBytes = 0;
+
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        totalBytes += download.getFilesize();
+                    }
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        fireSubProgress(0); // Show the subprogress bar
+
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+
+        for (final Downloadable download : downloads) {
+            executor.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (download.needToDownload()) {
+                        fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
+                        download.download(true);
+                    }
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
@@ -1222,6 +1279,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 return false;
             }
         }
+
+        if (this.jsonVersion.hasLoader()) {
+            downloadLoader(); // Download Loader
+            if (isCancelled()) {
+                return false;
+            }
+
+            // installLoader(); // Install Loader
+            // if (isCancelled()) {
+            // return false;
+            // }
+        }
+
         downloadLibraries(); // Download Libraries
         if (isCancelled()) {
             return false;

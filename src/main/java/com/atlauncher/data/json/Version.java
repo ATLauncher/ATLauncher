@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class contains information about a pack's version. This is a singular version and contains all the information
- * necessary to install the pack.
+ * This class contains information about a pack's version. This is a singular
+ * version and contains all the information necessary to install the pack.
  */
 @Json
 public class Version {
@@ -68,10 +68,15 @@ public class Version {
     private MainClass mainClass;
 
     /**
-     * Details about any extra arguments this version uses when launching Minecraft, usually including the tweakClass
-     * for Forge.
+     * Details about any extra arguments this version uses when launching Minecraft,
+     * usually including the tweakClass for Forge.
      */
     private ExtraArguments extraArguments;
+
+    /**
+     * The loader this version uses (if any).
+     */
+    private Loader loader;
 
     /**
      * The deletes which should be made when updating/reinstalling this version.
@@ -79,12 +84,14 @@ public class Version {
     private Deletes deletes;
 
     /**
-     * The messages that should be shown to the user upon various different conditions such as a new install or update.
+     * The messages that should be shown to the user upon various different
+     * conditions such as a new install or update.
      */
     private Messages messages;
 
     /**
-     * The warning messages that should be shown to the user when an optional mod is selected.
+     * The warning messages that should be shown to the user when an optional mod is
+     * selected.
      */
     private Map<String, String> warnings;
 
@@ -94,7 +101,8 @@ public class Version {
     private List<Library> libraries;
 
     /**
-     * A map of the difference colours used in this version for things such as mod display.
+     * A map of the difference colours used in this version for things such as mod
+     * display.
      */
     private Map<String, String> colours;
 
@@ -109,8 +117,8 @@ public class Version {
     private List<Action> actions;
 
     /**
-     * Sets the default empty objects which are later overwritten by GSON if they exist. If they don't exist, having
-     * these here will ensure no NPE's.
+     * Sets the default empty objects which are later overwritten by GSON if they
+     * exist. If they don't exist, having these here will ensure no NPE's.
      */
     public Version() {
         this.libraries = new ArrayList<Library>();
@@ -138,7 +146,8 @@ public class Version {
     }
 
     /**
-     * Gets the minimum memory specified by this version to use when launching the pack.
+     * Gets the minimum memory specified by this version to use when launching the
+     * pack.
      *
      * @return The minimum memory to use when launching this version
      */
@@ -176,6 +185,14 @@ public class Version {
 
     public boolean hasExtraArguments() {
         return this.extraArguments != null && this.extraArguments.getArguments() != null;
+    }
+
+    public Loader getLoader() {
+        return this.loader;
+    }
+
+    public boolean hasLoader() {
+        return this.loader != null;
     }
 
     public Deletes getDeletes() {
@@ -261,11 +278,13 @@ public class Version {
     }
 
     /**
-     * Returns a Color object of a given key specified in a mods colour field. If the key is not found or the code given
-     * is incorrect, it will return null and create a warning log message.
+     * Returns a Color object of a given key specified in a mods colour field. If
+     * the key is not found or the code given is incorrect, it will return null and
+     * create a warning log message.
      *
      * @param key The key/name given to the colour by the pack developer/s
-     * @return a {@link Color} object of the colour matching the key or null if there was an issue with the value given
+     * @return a {@link Color} object of the colour matching the key or null if
+     *         there was an issue with the value given
      */
     public Color getColour(String key) {
         if (key == null) {
