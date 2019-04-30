@@ -63,6 +63,7 @@ import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.data.mojang.Library;
 import com.atlauncher.data.mojang.MojangAssetIndex;
 import com.atlauncher.data.mojang.MojangConstants;
+import com.atlauncher.data.mojang.MojangDownload;
 import com.atlauncher.data.mojang.MojangDownloads;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.utils.Utils;
@@ -268,6 +269,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar");
         }
         return new File(getBinDirectory(), "minecraft.jar");
+    }
+
+    public File getMinecraftJarLibrary() {
+        return getMinecraftJarLibrary(isServer ? "server" : "client");
+    }
+
+    public File getMinecraftJarLibrary(String type) {
+        return new File(App.settings.getGameLibrariesDir(),
+                "net/minecraft/" + type + "/" + this.version.getMinecraftVersion().getVersion() + "/" + type + "-"
+                        + this.version.getMinecraftVersion().getVersion()
+                        + ".jar".replace("/", File.separatorChar + ""));
     }
 
     public String getJarOrder() {
@@ -537,17 +549,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    private void downloadLoader() {
+    private File downloadLoader() {
         fireTask(Language.INSTANCE.localize("instance.downloadingloader"));
         fireSubProgressUnknown();
 
         Loader loader = this.jsonVersion.getLoader();
 
-        // download
-        // https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.13.2-25.0.191/forge-1.13.2-25.0.191-installer.jar
         File path = loader.downloadAndExtractInstaller(this);
 
         List<Downloadable> downloads = loader.getLibraries(path, this);
+
+        fireTask(Language.INSTANCE.localize("instance.installingloaderlibraries"));
 
         ExecutorService executor;
         totalBytes = 0;
@@ -589,6 +601,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor.shutdown();
         while (!executor.isTerminated()) {
         }
+
+        fireSubProgress(-1); // Hide the subprogress bar
+
+        return path;
+    }
+
+    public void installLoader(File tempDir) {
+        fireTask(Language.INSTANCE.localize("instance.installingloader"));
+        fireSubProgressUnknown();
+
+        Loader loader = this.jsonVersion.getLoader();
+
+        loader.runProcessors(tempDir, this);
 
         fireSubProgress(-1); // Hide the subprogress bar
     }
@@ -923,25 +948,32 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         }
+        return libraries;
+    }
 
-        // Add Minecraft.jar
+    public void downloadMinecraft() {
         MojangDownloads downloads = this.version.getMinecraftVersion().getMojangVersion().getDownloads();
 
-        if (isServer) {
-            libraries.add(new Downloadable(downloads.getServer().getUrl(),
-                    new File(App.settings.getJarsDir(),
-                            "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar"),
-                    downloads.getServer().getSha1(), (int) downloads.getServer().getSize(), this, false));
-        } else {
-            String clientJarPath = "com/mojang/minecraft/" + this.version.getMinecraftVersion().getVersion()
-                    + "/minecraft-" + this.version.getMinecraftVersion().getVersion() + "-client.jar";
+        MojangDownload mojangDownload;
 
-            this.libraries.add(clientJarPath);
-            libraries.add(new Downloadable(downloads.getClient().getUrl(),
-                    new File(App.settings.getGameLibrariesDir(), clientJarPath), downloads.getClient().getSha1(),
-                    (int) downloads.getClient().getSize(), this, false));
+        if (isServer) {
+            mojangDownload = downloads.getServer();
+        } else {
+            mojangDownload = downloads.getClient();
         }
-        return libraries;
+
+        Downloadable download = new Downloadable(mojangDownload.getUrl(), getMinecraftJarLibrary(),
+                mojangDownload.getSha1(), (int) mojangDownload.getSize(), this, false, getMinecraftJar(), true);
+
+        fireTask(Language.INSTANCE.localize("instance.downloadingminecraft"));
+        fireSubProgressUnknown();
+
+        if (download.needToDownload()) {
+            totalBytes += download.getFilesize();
+            download.download(true);
+        }
+
+        fireSubProgress(-1); // Hide the subprogress bar
     }
 
     public void deleteMetaInf() {
@@ -1280,16 +1312,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
+        downloadMinecraft(); // Download Minecraft
+        if (isCancelled()) {
+            return false;
+        }
+
         if (this.jsonVersion.hasLoader()) {
-            downloadLoader(); // Download Loader
+            File tempPath = downloadLoader(); // Download Loader
             if (isCancelled()) {
                 return false;
             }
 
-            // installLoader(); // Install Loader
-            // if (isCancelled()) {
-            // return false;
-            // }
+            installLoader(tempPath); // Install Loader
+            if (isCancelled()) {
+                return false;
+            }
         }
 
         downloadLibraries(); // Download Libraries

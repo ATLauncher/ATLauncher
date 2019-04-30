@@ -22,16 +22,19 @@ import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.loaders.forge.Data;
 import com.atlauncher.data.loaders.forge.DownloadsItem;
 import com.atlauncher.data.loaders.forge.ForgeInstallProfile;
 import com.atlauncher.data.loaders.forge.Version;
 import com.atlauncher.data.loaders.forge.Library;
+import com.atlauncher.data.loaders.forge.Processor;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.JsonIOException;
@@ -78,58 +81,97 @@ public class Loader {
         return extractLocation;
     }
 
-    public List<Downloadable> getLibraries(File extractedDir, InstanceInstaller instanceInstaller) {
-        ArrayList<Downloadable> librariesToDownload = new ArrayList<Downloadable>();
+    public ForgeInstallProfile getInstallProfile(InstanceInstaller instanceInstaller, File extractedDir) {
+        ForgeInstallProfile installProfile = null;
 
         try {
-            ForgeInstallProfile installProfile = Gsons.DEFAULT.fromJson(
-                    new FileReader(new File(extractedDir, "install_profile.json")), ForgeInstallProfile.class);
-            Version version = Gsons.DEFAULT.fromJson(new FileReader(new File(extractedDir, "version.json")),
-                    Version.class);
-
-            for (Library library : installProfile.getLibraries()) {
-                DownloadsItem artifact = library.getDownloads().getArtifact();
-                File downloadTo = new File(App.settings.getGameLibrariesDir(), artifact.getPath());
-
-                if (!artifact.hasUrl()) {
-                    File extractedLibraryFile = new File(extractedDir, "maven/" + artifact.getPath());
-
-                    if (extractedLibraryFile.exists()
-                            && (!downloadTo.exists() || Utils.getSHA1(downloadTo) != artifact.getSha1())) {
-                        Utils.copyFile(extractedLibraryFile, downloadTo, true);
-                    } else {
-                        LogManager.warn("Cannot resolve Forge loader install profile library with name of "
-                                + library.getName());
-                    }
-                } else {
-                    librariesToDownload.add(new Downloadable(artifact.getUrl(), downloadTo, artifact.getSha1(),
-                            artifact.getSize(), instanceInstaller, false));
-                }
-            }
-
-            for (Library library : version.getLibraries()) {
-                DownloadsItem artifact = library.getDownloads().getArtifact();
-                File downloadTo = new File(App.settings.getGameLibrariesDir(), artifact.getPath());
-
-                if (!artifact.hasUrl()) {
-                    File extractedLibraryFile = new File(extractedDir, "maven/" + artifact.getPath());
-
-                    if (extractedLibraryFile.exists()
-                            && (!downloadTo.exists() || Utils.getSHA1(downloadTo) != artifact.getSha1())) {
-                        Utils.copyFile(extractedLibraryFile, downloadTo, true);
-                    } else {
-                        LogManager
-                                .warn("Cannot resolve Forge loader version library with name of " + library.getName());
-                    }
-                } else {
-                    librariesToDownload.add(new Downloadable(artifact.getUrl(), downloadTo, artifact.getSha1(),
-                            artifact.getSize(), instanceInstaller, false));
-                }
-            }
+            installProfile = Gsons.DEFAULT.fromJson(new FileReader(new File(extractedDir, "install_profile.json")),
+                    ForgeInstallProfile.class);
         } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
             LogManager.logStackTrace(e);
         }
 
+        installProfile.getData().put("SIDE", new Data("client", "server"));
+        installProfile.getData().put("MINECRAFT_JAR",
+                new Data(instanceInstaller.getMinecraftJarLibrary("client").getAbsolutePath(),
+                        instanceInstaller.getMinecraftJarLibrary("server").getAbsolutePath()));
+
+        return installProfile;
+    }
+
+    public Version getVersion(File extractedDir) {
+        Version version = null;
+
+        try {
+            version = Gsons.DEFAULT.fromJson(new FileReader(new File(extractedDir, "version.json")), Version.class);
+        } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return version;
+    }
+
+    public List<Downloadable> getLibraries(File extractedDir, InstanceInstaller instanceInstaller) {
+        ArrayList<Downloadable> librariesToDownload = new ArrayList<Downloadable>();
+
+        ForgeInstallProfile installProfile = this.getInstallProfile(instanceInstaller, extractedDir);
+        Version version = this.getVersion(extractedDir);
+
+        for (Library library : installProfile.getLibraries()) {
+            DownloadsItem artifact = library.getDownloads().getArtifact();
+            File downloadTo = new File(App.settings.getGameLibrariesDir(), artifact.getPath());
+
+            if (!artifact.hasUrl()) {
+                File extractedLibraryFile = new File(extractedDir, "maven/" + artifact.getPath());
+
+                if (extractedLibraryFile.exists()
+                        && (!downloadTo.exists() || Utils.getSHA1(downloadTo) != artifact.getSha1())) {
+                    Utils.copyFile(extractedLibraryFile, downloadTo, true);
+                } else {
+                    LogManager.warn(
+                            "Cannot resolve Forge loader install profile library with name of " + library.getName());
+                }
+            } else {
+                librariesToDownload.add(new Downloadable(artifact.getUrl(), downloadTo, artifact.getSha1(),
+                        artifact.getSize(), instanceInstaller, false));
+            }
+        }
+
+        for (Library library : version.getLibraries()) {
+            DownloadsItem artifact = library.getDownloads().getArtifact();
+            File downloadTo = new File(App.settings.getGameLibrariesDir(), artifact.getPath());
+
+            if (!artifact.hasUrl()) {
+                File extractedLibraryFile = new File(extractedDir, "maven/" + artifact.getPath());
+
+                if (extractedLibraryFile.exists()
+                        && (!downloadTo.exists() || Utils.getSHA1(downloadTo) != artifact.getSha1())) {
+                    Utils.copyFile(extractedLibraryFile, downloadTo, true);
+                } else {
+                    LogManager.warn("Cannot resolve Forge loader version library with name of " + library.getName());
+                }
+            } else {
+                librariesToDownload.add(new Downloadable(artifact.getUrl(), downloadTo, artifact.getSha1(),
+                        artifact.getSize(), instanceInstaller, false));
+            }
+        }
+
         return librariesToDownload;
+    }
+
+    public void runProcessors(File extractedDir, InstanceInstaller instanceInstaller) {
+        ForgeInstallProfile installProfile = this.getInstallProfile(instanceInstaller, extractedDir);
+
+        for (Processor processor : installProfile.getProcessors()) {
+            if (!instanceInstaller.isCancelled()) {
+                try {
+                    processor.process(installProfile, extractedDir, instanceInstaller);
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                    LogManager.error("Failed to process processor with jar " + processor.getJar());
+                    instanceInstaller.cancel(true);
+                }
+            }
+        }
     }
 }

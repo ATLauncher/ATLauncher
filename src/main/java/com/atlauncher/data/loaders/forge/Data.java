@@ -17,18 +17,41 @@
  */
 package com.atlauncher.data.loaders.forge;
 
+import com.atlauncher.App;
 import com.atlauncher.annot.Json;
+import com.atlauncher.utils.Utils;
 
 @Json
 public class Data {
     private String client;
     private String server;
 
+    public Data(String client, String server) {
+        this.client = client;
+        this.server = server;
+    }
+
     public String getClient() {
+        char start = this.client.charAt(0);
+        char end = this.client.charAt(this.client.length() - 1);
+
+        if (start == '[' && end == ']') {
+            return Utils.convertMavenIdentifierToFile(this.client.substring(1, this.client.length() - 1),
+                    App.settings.getGameLibrariesDir()).getAbsolutePath();
+        }
+
         return this.client;
     }
 
     public String getServer() {
+        char start = this.server.charAt(0);
+        char end = this.server.charAt(this.server.length() - 1);
+
+        if (start == '[' && end == ']') {
+            return Utils.convertMavenIdentifierToFile(this.server.substring(1, this.server.length() - 1),
+                    App.settings.getGameLibrariesDir()).getAbsolutePath();
+        }
+
         return this.server;
     }
 }
