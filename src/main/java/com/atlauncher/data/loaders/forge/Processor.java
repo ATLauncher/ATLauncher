@@ -63,8 +63,17 @@ public class Processor {
         return this.outputs;
     }
 
+    public boolean hasOutputs() {
+        return this.outputs != null && this.outputs.size() != 0;
+    }
+
     public void process(ForgeInstallProfile installProfile, File extractedDir, InstanceInstaller instanceInstaller)
             throws IOException {
+        if (this.hasCachedOutputs(installProfile, extractedDir, instanceInstaller)) {
+            LogManager.debug("Processor with jar " + this.jar + " doesn't need to process as the output is cached");
+            return;
+        }
+
         File jarPath = this.getJarFile();
         LogManager.debug("Jar path is " + jarPath);
         if (!jarPath.exists() || !jarPath.isFile()) {
@@ -168,58 +177,80 @@ public class Processor {
             return;
         }
 
-        if (this.outputs != null && this.outputs.size() != 0) {
-            for (Entry<String, String> entry : this.outputs.entrySet()) {
-                String key = entry.getKey();
-                LogManager.debug("Processing output for " + key);
+        if (!this.checkOutputs(installProfile, extractedDir, instanceInstaller)) {
+            LogManager.error(
+                    "Failed to process processor with jar " + this.jar + " as the output sha1 hashes didn't match");
+            instanceInstaller.cancel(true);
+        }
+    }
 
-                char start = key.charAt(0);
-                char end = key.charAt(key.length() - 1);
+    public boolean hasCachedOutputs(ForgeInstallProfile installProfile, File extractedDir,
+            InstanceInstaller instanceInstaller) {
+        if (!this.hasOutputs()) {
+            return false;
+        }
 
-                if (start == '{' && end == '}') {
-                    LogManager.debug("Getting data with key of " + key.substring(1, key.length() - 1));
-                    String dataItem = installProfile.getData().get(key.substring(1, key.length() - 1)).getClient();
+        return this.checkOutputs(installProfile, extractedDir, instanceInstaller);
+    }
+
+    public boolean checkOutputs(ForgeInstallProfile installProfile, File extractedDir,
+            InstanceInstaller instanceInstaller) {
+        if (!this.hasOutputs()) {
+            return true;
+        }
+
+        for (Entry<String, String> entry : this.outputs.entrySet()) {
+            String key = entry.getKey();
+            LogManager.debug("Processing output for " + key);
+
+            char start = key.charAt(0);
+            char end = key.charAt(key.length() - 1);
+
+            if (start == '{' && end == '}') {
+                LogManager.debug("Getting data with key of " + key.substring(1, key.length() - 1));
+                String dataItem = installProfile.getData().get(key.substring(1, key.length() - 1)).getClient();
+                if (dataItem == null || dataItem.isEmpty()) {
+                    LogManager.error("Failed to process processor with jar " + this.jar + " as the output with key "
+                            + key + " doesn't have a corresponding data entry");
+                    instanceInstaller.cancel(true);
+                    return false;
+                }
+
+                String value = entry.getValue();
+                File outputFile = new File(dataItem);
+
+                if (!outputFile.exists() || !outputFile.isFile()) {
+                    return false;
+                }
+
+                char valueStart = value.charAt(0);
+                char valueEnd = value.charAt(value.length() - 1);
+
+                if (valueStart == '{' && valueEnd == '}') {
+                    LogManager.debug("Getting data with key of " + value.substring(1, value.length() - 1));
+                    String valueDataItem = installProfile.getData().get(value.substring(1, value.length() - 1))
+                            .getClient();
                     if (dataItem == null || dataItem.isEmpty()) {
-                        LogManager.error("Failed to process processor with jar " + this.jar + " as the output with key "
-                                + key + " doesn't have a corresponding data entry");
+                        LogManager.error("Failed to process processor with jar " + this.jar
+                                + " as the output with value " + value + " doesn't have a corresponding data entry");
                         instanceInstaller.cancel(true);
-                        return;
+                        return false;
                     }
 
-                    String value = entry.getValue();
-                    File outputFile = new File(dataItem);
+                    String sha1Hash = Utils.getSHA1(outputFile);
+                    String expectedHash = valueDataItem.charAt(0) == '\''
+                            ? valueDataItem.substring(1, valueDataItem.length() - 1)
+                            : valueDataItem;
 
-                    char valueStart = value.charAt(0);
-                    char valueEnd = value.charAt(value.length() - 1);
-
-                    if (valueStart == '{' && valueEnd == '}') {
-                        LogManager.debug("Getting data with key of " + value.substring(1, value.length() - 1));
-                        String valueDataItem = installProfile.getData().get(value.substring(1, value.length() - 1))
-                                .getClient();
-                        if (dataItem == null || dataItem.isEmpty()) {
-                            LogManager.error(
-                                    "Failed to process processor with jar " + this.jar + " as the output with value "
-                                            + value + " doesn't have a corresponding data entry");
-                            instanceInstaller.cancel(true);
-                            return;
-                        }
-
-                        String sha1Hash = Utils.getSHA1(outputFile);
-                        String expectedHash = valueDataItem.charAt(0) == '\''
-                                ? valueDataItem.substring(1, valueDataItem.length() - 1)
-                                : valueDataItem;
-
-                        if (!sha1Hash.equals(expectedHash)) {
-                            Utils.delete(outputFile);
-                            LogManager.error(
-                                    "Failed to process processor with jar " + this.jar + " as the output sha1 hash "
-                                            + sha1Hash + " doesn't match the sha1 hash expected  " + expectedHash);
-                            instanceInstaller.cancel(true);
-                            return;
-                        }
+                    LogManager.debug("Expecting " + sha1Hash + " to equal " + sha1Hash);
+                    if (!sha1Hash.equals(expectedHash)) {
+                        Utils.delete(outputFile);
+                        return false;
                     }
                 }
             }
         }
+
+        return true;
     }
 }
