@@ -214,18 +214,22 @@ public class MCLauncher {
 
         List<String> launchArguments = new ArrayList<String>();
 
-        MinecraftVersion minecraftVersion = instance.getActualMinecraftVersion();
+        if (instance.hasArguments()) {
+            launchArguments.addAll(instance.getArguments());
+        } else {
+            MinecraftVersion minecraftVersion = instance.getActualMinecraftVersion();
 
-        if (minecraftVersion != null) {
-            MojangVersion mojangVersion = minecraftVersion.getMojangVersion();
+            if (minecraftVersion != null) {
+                MojangVersion mojangVersion = minecraftVersion.getMojangVersion();
 
-            if (mojangVersion.hasArguments()) {
-                launchArguments = Arrays.asList(mojangVersion.getArguments().asString().split(" "));
-            } else {
-                launchArguments = Arrays.asList(mojangVersion.getMinecraftArguments().split(" "));
+                if (mojangVersion.hasArguments()) {
+                    launchArguments = Arrays.asList(mojangVersion.getArguments().asString().split(" "));
+                } else {
+                    launchArguments = Arrays.asList(mojangVersion.getMinecraftArguments().split(" "));
+                }
+            } else if (instance.hasMinecraftArguments()) {
+                launchArguments = Arrays.asList(instance.getMinecraftArguments().split(" "));
             }
-        } else if (instance.hasMinecraftArguments()) {
-            launchArguments = Arrays.asList(instance.getMinecraftArguments().split(" "));
         }
 
         if (launchArguments.size() != 0) {

@@ -54,6 +54,7 @@ import com.atlauncher.data.json.Loader;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;
+import com.atlauncher.data.mojang.ArgumentRule;
 import com.atlauncher.data.mojang.AssetIndex;
 import com.atlauncher.data.mojang.AssetObject;
 import com.atlauncher.data.mojang.DateTypeAdapter;
@@ -98,6 +99,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private int permgen = 0;
     private int memory = 0;
     private List<String> libraries = new ArrayList<String>();
+    private List<String> arguments = new ArrayList<String>();
     private String extraArguments = null;
     private String mainClass = null;
     private int percent = 0; // Percent done installing
@@ -613,7 +615,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         Loader loader = this.jsonVersion.getLoader();
 
+        // run any processors that the loader needs
         loader.runProcessors(tempDir, this);
+
+        // add the libraries for the loader
+        this.libraries.addAll(loader.getLibraries(tempDir));
+
+        // add the arguments for the loader
+        this.arguments.addAll(loader.getArguments(tempDir));
+
+        // add the arguments for Minecraft
+        for (ArgumentRule argument : this.version.getMinecraftVersion().getMojangVersion().getArguments().getGame()) {
+            if (argument.applies()) {
+                this.arguments.add(argument.getValue());
+            }
+        }
+
+        // add the mainclass for the loader
+        this.mainClass = loader.getMainClass(tempDir);
 
         fireSubProgress(-1); // Hide the subprogress bar
     }
@@ -1110,6 +1129,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return this.version.getMinecraftVersion().getMojangVersion().getMinecraftArguments();
     }
 
+    public List<String> getArguments() {
+        return this.arguments;
+    }
+
+    public boolean hasArguments() {
+        return this.arguments.size() != 0;
+    }
+
     public String getMainClass() {
         if (this.mainClass == null) {
             return this.version.getMinecraftVersion().getMojangVersion().getMainClass();
@@ -1303,7 +1330,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         backupSelectFiles();
         makeDirectories();
         addPercent(5);
-        setMainClass();
+        if (this.jsonVersion.hasLoader()) {
+            setMainClass();
+        }
         setExtraArguments();
         if (this.version.getMinecraftVersion().getMojangVersion().getAssetIndex() != null) {
             downloadResources(); // Download Minecraft Resources

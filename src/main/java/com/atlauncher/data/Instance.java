@@ -117,6 +117,11 @@ public class Instance implements Cloneable {
     private List<String> libraries;
 
     /**
+     * Array of paths for the libraries needed to be loaded.
+     */
+    private List<String> arguments;
+
+    /**
      * Comma seperated list of the libraries needed by Minecraft/Forge to be added
      * to the class path when launching Minecraft.
      *
@@ -1026,6 +1031,35 @@ public class Instance implements Cloneable {
      */
     public void setLibraries(List<String> libraries) {
         this.libraries = libraries;
+    }
+
+    /**
+     * Gets the arguments needed when launching Minecraft.
+     *
+     * @return a list of paths for the arguments to be used when Minecraft is
+     *         started
+     */
+    public List<String> getArguments() {
+        return this.arguments;
+    }
+
+    /**
+     * Sets the list of arguments needed when launching Minecraft.
+     *
+     * @param arguments a list of paths for the arguments to be used when Minecraft
+     *                  is started
+     */
+    public void setArguments(List<String> arguments) {
+        this.arguments = arguments;
+    }
+
+    /**
+     * Checks if there are arguments set for this Instance.
+     *
+     * @return true if there are set arguments for this Instance
+     */
+    public boolean hasArguments() {
+        return this.arguments != null;
     }
 
     /**

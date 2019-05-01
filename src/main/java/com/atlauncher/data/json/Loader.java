@@ -174,4 +174,25 @@ public class Loader {
             }
         }
     }
+
+    public List<String> getLibraries(File extractedDir) {
+        Version version = this.getVersion(extractedDir);
+        List<String> libraries = new ArrayList<String>();
+
+        for (Library library : version.getLibraries()) {
+            libraries.add(library.getDownloads().getArtifact().getPath());
+        }
+
+        return libraries;
+    }
+
+    public List<String> getArguments(File extractedDir) {
+        return this.getVersion(extractedDir).getArguments().get("game");
+    }
+
+    public String getMainClass(File extractedDir) {
+        Version version = this.getVersion(extractedDir);
+
+        return version.getMainClass();
+    }
 }
