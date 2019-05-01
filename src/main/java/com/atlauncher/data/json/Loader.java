@@ -59,7 +59,7 @@ public class Loader {
     }
 
     public File downloadAndExtractInstaller(InstanceInstaller instanceInstaller) {
-        File saveTo = new File(App.settings.getTempDir(),
+        File saveTo = new File(App.settings.getLoadersDir(),
                 "/forge-" + this.minecraft + "-" + this.version + "-installer.jar");
         File extractLocation = new File(App.settings.getTempDir(),
                 "forge-" + this.minecraft + "-" + this.version + "-installer");
@@ -72,11 +72,14 @@ public class Loader {
             Utils.delete(extractLocation);
         }
 
-        download.download();
+        download.checkForNewness();
+
+        if (download.needToDownload()) {
+            download.download();
+        }
 
         extractLocation.mkdir();
         Utils.unzip(saveTo, extractLocation);
-        Utils.delete(saveTo);
 
         return extractLocation;
     }

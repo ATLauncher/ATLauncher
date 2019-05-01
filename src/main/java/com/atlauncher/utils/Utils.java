@@ -713,6 +713,36 @@ public class Utils {
     }
 
     /**
+     * Gets the md5 hex.
+     *
+     * @param string the string
+     * @return the m d5
+     */
+    public static String getMD5Hex(String string) {
+        if (string == null) {
+            LogManager.error("Cannot get MD5 of null");
+            return "0"; // String null so return 0
+        }
+        StringBuffer sb = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] bytesOfMessage = string.getBytes("UTF-8");
+            byte[] mdbytes = md.digest(bytesOfMessage);
+
+            // convert the byte to hex format method 1
+            sb = new StringBuffer();
+            for (int i = 0; i < mdbytes.length; i++) {
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+        } catch (NoSuchAlgorithmException e) {
+            LogManager.logStackTrace(e);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+        return sb.toString();
+    }
+
+    /**
      * Move file.
      *
      * @param from         the from

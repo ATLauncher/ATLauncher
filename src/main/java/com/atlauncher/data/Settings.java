@@ -154,7 +154,7 @@ public class Settings {
     private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
-            commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, launcherLibrariesdir,
+            commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, launcherLibrariesdir, loadersDir,
             languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
             instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
@@ -212,6 +212,7 @@ public class Settings {
         librariesDir = new File(configsDir, "Libraries");
         gameLibrariesDir = new File(baseDir, "libraries");
         launcherLibrariesdir = new File(librariesDir, "Launcher");
+        loadersDir = new File(baseDir, "loaders");
         languagesDir = new File(configsDir, "Languages");
         downloadsDir = new File(baseDir, "Downloads");
         instancesDir = new File(baseDir, "Instances");
@@ -899,7 +900,7 @@ public class Settings {
      */
     private void checkFolders() {
         File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
-                assetsDir, librariesDir, gameLibrariesDir, launcherLibrariesdir, languagesDir, downloadsDir,
+                assetsDir, librariesDir, gameLibrariesDir, launcherLibrariesdir, loadersDir, languagesDir, downloadsDir,
                 instancesDir, serversDir, tempDir, failedDownloadsDir, logsDir };
         for (File file : files) {
             if (!file.exists()) {
@@ -1059,6 +1060,15 @@ public class Settings {
      */
     public File getLauncherLibrariesDir() {
         return this.launcherLibrariesdir;
+    }
+
+    /**
+     * Returns the loaders directory
+     *
+     * @return File object for the loaders directory
+     */
+    public File getLoadersDir() {
+        return this.loadersDir;
     }
 
     /**
