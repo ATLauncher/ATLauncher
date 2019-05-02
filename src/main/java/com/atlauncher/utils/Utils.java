@@ -2200,8 +2200,7 @@ public class Utils {
         }
     }
 
-    public static File convertMavenIdentifierToFile(String identifier, File base) {
-
+    public static String convertMavenIdentifierToPath(String identifier) {
         String[] parts = identifier.split(":", 3);
         String name = parts[1];
         String version = parts[2];
@@ -2221,6 +2220,10 @@ public class Utils {
         String path = parts[0].replace(".", "/") + "/" + name + "/" + version + "/" + name + "-" + version + classifier
                 + "." + extension;
 
-        return new File(base, path.replace("/", File.separatorChar + ""));
+        return path;
+    }
+
+    public static File convertMavenIdentifierToFile(String identifier, File base) {
+        return new File(base, convertMavenIdentifierToPath(identifier).replace("/", File.separatorChar + ""));
     }
 }

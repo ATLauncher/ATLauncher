@@ -146,6 +146,7 @@ instance.disablemod=Disable Mod
 instance.dontremindmeagain=Don't Remind Me Again
 instance.downloadingconfigs=Downloading Configs
 instance.downloadingloader=Downloading Loader
+instance.downloadingloaderlibraries=Downloading Loader Libraries
 instance.installingloader=Installing Loader
 instance.downloadinglibraries=Downloading Libraries
 instance.downloadingmods=Downloading Mods

@@ -25,9 +25,15 @@ import java.util.Map;
 @Json
 public class ForgeInstallProfile {
     private String version;
+    private String target; // in <= 1.12.3
     private String json;
     private String path;
+    private String filePath; // in <= 1.12.3
     private String minecraft;
+    private String minecraftArguments; // in <= 1.12.3
+    private String mainClass; // in <= 1.12.3
+    private ForgeInstallProfile versionInfo; // in <= 1.12.3
+    private ForgeInstallProfile install; // in <= 1.12.3
 
     private Map<String, Data> data;
     private List<Processor> processors;
@@ -35,6 +41,10 @@ public class ForgeInstallProfile {
 
     public String getVersion() {
         return this.version;
+    }
+
+    public String getTarget() {
+        return this.target;
     }
 
     public String getJson() {
@@ -45,8 +55,28 @@ public class ForgeInstallProfile {
         return this.path;
     }
 
+    public String getFilePath() {
+        return this.filePath;
+    }
+
     public String getMinecraft() {
         return this.minecraft;
+    }
+
+    public String getMinecraftArguments() {
+        return this.minecraftArguments;
+    }
+
+    public String getMainClass() {
+        return this.mainClass;
+    }
+
+    public ForgeInstallProfile getVersionInfo() {
+        return this.versionInfo;
+    }
+
+    public ForgeInstallProfile getInstall() {
+        return this.install;
     }
 
     public Map<String, Data> getData() {
@@ -58,6 +88,10 @@ public class ForgeInstallProfile {
     }
 
     public List<Library> getLibraries() {
+        if (this.versionInfo != null) { // in <= 1.12.3
+            return this.versionInfo.libraries;
+        }
+
         return this.libraries;
     }
 }

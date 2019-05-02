@@ -66,6 +66,7 @@ import com.atlauncher.data.mojang.MojangAssetIndex;
 import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.mojang.MojangDownload;
 import com.atlauncher.data.mojang.MojangDownloads;
+import com.atlauncher.data.mojang.MojangVersion;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.utils.Utils;
 
@@ -551,17 +552,26 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    private File downloadLoader() {
+    private void downloadLoader() {
         fireTask(Language.INSTANCE.localize("instance.downloadingloader"));
         fireSubProgressUnknown();
 
-        Loader loader = this.jsonVersion.getLoader();
+        com.atlauncher.data.loaders.Loader loader;
 
-        File path = loader.downloadAndExtractInstaller(this);
+        try {
+            loader = this.jsonVersion.getLoader().getLoader(new File(this.getTempDirectory(), "loader"), this);
+        } catch (Throwable e) {
+            LogManager.logStackTrace(e);
+            LogManager.error("Cannot install instance because the loader failed to create");
+            this.cancel(true);
+            return;
+        }
 
-        List<Downloadable> downloads = loader.getLibraries(path, this);
+        loader.downloadAndExtractInstaller();
 
-        fireTask(Language.INSTANCE.localize("instance.installingloaderlibraries"));
+        List<Downloadable> downloads = loader.getDownloadableLibraries();
+
+        fireTask(Language.INSTANCE.localize("instance.downloadingloaderlibraries"));
 
         ExecutorService executor;
         totalBytes = 0;
@@ -597,7 +607,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
                         download.download(true);
                     }
+
+                    if (download.getFilename().endsWith(".pack.xz")) {
+                        File packFile = new File(download.getFile().getAbsolutePath().substring(0,
+                                download.getFile().getAbsolutePath().length() - 3));
+                        File outputFile = new File(download.getFile().getAbsolutePath().substring(0,
+                                download.getFile().getAbsolutePath().length() - 8));
+                        Utils.unXZPackFile(download.getFile(), packFile, outputFile);
+                        Utils.delete(download.getFile());
+                        Utils.delete(packFile);
+                    }
                 }
+
             });
         }
         executor.shutdown();
@@ -605,34 +626,52 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         fireSubProgress(-1); // Hide the subprogress bar
-
-        return path;
     }
 
-    public void installLoader(File tempDir) {
+    public void installLoader() {
         fireTask(Language.INSTANCE.localize("instance.installingloader"));
         fireSubProgressUnknown();
 
-        Loader loader = this.jsonVersion.getLoader();
+        com.atlauncher.data.loaders.Loader loader;
+
+        try {
+            loader = this.jsonVersion.getLoader().getLoader(new File(this.getTempDirectory(), "loader"), this);
+        } catch (Throwable e) {
+            LogManager.logStackTrace(e);
+            LogManager.error("Cannot install instance because the loader failed to create");
+            this.cancel(true);
+            return;
+        }
 
         // run any processors that the loader needs
-        loader.runProcessors(tempDir, this);
+        loader.runProcessors();
 
         // add the libraries for the loader
-        this.libraries.addAll(loader.getLibraries(tempDir));
+        this.libraries.addAll(loader.getLibraries());
 
         // add the arguments for the loader
-        this.arguments.addAll(loader.getArguments(tempDir));
+        this.arguments.addAll(loader.getArguments());
 
         // add the arguments for Minecraft
-        for (ArgumentRule argument : this.version.getMinecraftVersion().getMojangVersion().getArguments().getGame()) {
-            if (argument.applies()) {
-                this.arguments.add(argument.getValue());
+        MojangVersion mojangVersion = this.version.getMinecraftVersion().getMojangVersion();
+
+        if (mojangVersion.hasArguments()) {
+            for (ArgumentRule argument : mojangVersion.getArguments().getGame()) {
+                if (argument.applies()) {
+                    this.arguments.add(argument.getValue());
+                }
+            }
+        } else {
+            for (String argument : mojangVersion.getMinecraftArguments().split(" ")) {
+                // make sure not to duplicate any since Forge copies what Minecraft include
+                if (!this.arguments.contains(argument)) {
+                    this.arguments.add(argument);
+                }
             }
         }
 
         // add the mainclass for the loader
-        this.mainClass = loader.getMainClass(tempDir);
+        this.mainClass = loader.getMainClass();
 
         fireSubProgress(-1); // Hide the subprogress bar
     }
@@ -676,6 +715,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         download.download(true);
                     }
                 }
+
             });
         }
         executor.shutdown();
@@ -729,7 +769,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         fireSubProgress(-1); // Hide the subprogress bar
 
-        for (Mod mod : mods) {
+        for (
+
+        Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
                 fireTask(Language.INSTANCE.localize("common.downloading") + " "
                         + (mod.isFilePattern() ? mod.getName() : mod.getFile()));
@@ -737,6 +779,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 fireSubProgress(-1); // Hide the subprogress bar
             }
         }
+
     }
 
     private void organiseLibraries() {
@@ -1347,12 +1390,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         if (this.jsonVersion.hasLoader()) {
-            File tempPath = downloadLoader(); // Download Loader
+            downloadLoader(); // Download Loader
             if (isCancelled()) {
                 return false;
             }
 
-            installLoader(tempPath); // Install Loader
+            installLoader(); // Install Loader
             if (isCancelled()) {
                 return false;
             }

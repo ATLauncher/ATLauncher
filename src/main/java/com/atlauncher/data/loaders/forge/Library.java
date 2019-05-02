@@ -17,15 +17,45 @@
  */
 package com.atlauncher.data.loaders.forge;
 
+import java.util.List;
+
 import com.atlauncher.annot.Json;
 
 @Json
 public class Library {
     private String name;
+    private String url; // in <= 1.12.3
+    private List<String> checksums; // in <= 1.12.3
+    private boolean clientreq; // in <= 1.12.3
+    private boolean serverreq; // in <= 1.12.3
     private Downloads downloads;
 
     public String getName() {
         return this.name;
+    }
+
+    public List<String> getChecksums() {
+        return this.checksums;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public boolean isUsingPackXz() {
+        return this.url != null && this.checksums != null && this.checksums.size() == 2;
+    }
+
+    public boolean hasUrl() {
+        return this.url != null;
+    }
+
+    public boolean getClientreq() {
+        return this.clientreq;
+    }
+
+    public boolean getServereq() {
+        return this.serverreq;
     }
 
     public Downloads getDownloads() {
