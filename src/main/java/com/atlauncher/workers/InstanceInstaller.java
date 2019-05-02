@@ -279,10 +279,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public File getMinecraftJarLibrary(String type) {
-        return new File(App.settings.getGameLibrariesDir(),
-                "net/minecraft/" + type + "/" + this.version.getMinecraftVersion().getVersion() + "/" + type + "-"
-                        + this.version.getMinecraftVersion().getVersion()
-                        + ".jar".replace("/", File.separatorChar + ""));
+        return new File(App.settings.getGameLibrariesDir(), getMinecraftJarLibraryPath(type));
+    }
+
+    public String getMinecraftJarLibraryPath() {
+        return getMinecraftJarLibraryPath(isServer ? "server" : "client");
+    }
+
+    public String getMinecraftJarLibraryPath(String type) {
+        return "net/minecraft/" + type + "/" + this.version.getMinecraftVersion().getVersion() + "/" + type + "-"
+                + this.version.getMinecraftVersion().getVersion() + ".jar".replace("/", File.separatorChar + "");
     }
 
     public String getJarOrder() {
@@ -1385,6 +1391,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         downloadMinecraft(); // Download Minecraft
+        libraries.add(getMinecraftJarLibraryPath()); // add it to the libraries list
         if (isCancelled()) {
             return false;
         }
