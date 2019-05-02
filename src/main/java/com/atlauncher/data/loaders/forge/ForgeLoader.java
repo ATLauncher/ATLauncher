@@ -26,6 +26,8 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.ForgeXzDownloadable;
+import com.atlauncher.data.HashableDownloadable;
 import com.atlauncher.data.loaders.Loader;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -89,8 +91,14 @@ public class ForgeLoader implements Loader {
             if (library.getName().equals(installProfile.getInstall().getPath())) {
                 File extractedLibraryFile = new File(this.tempDir, installProfile.getInstall().getFilePath());
 
-                if (extractedLibraryFile.exists() && !downloadTo.exists()) {
-                    Utils.copyFile(extractedLibraryFile, downloadTo, true);
+                if (extractedLibraryFile.exists()) {
+                    if (!downloadTo.exists()) {
+                        LogManager.debug("Copying " + extractedLibraryFile.getAbsolutePath() + " to "
+                                + downloadTo.getAbsolutePath());
+                        new File(downloadTo.getAbsolutePath().substring(0,
+                                downloadTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
+                        Utils.copyFile(extractedLibraryFile, downloadTo, true);
+                    }
                 } else {
                     LogManager.warn(
                             "Cannot resolve Forge loader install profile library with name of " + library.getName());
@@ -98,17 +106,15 @@ public class ForgeLoader implements Loader {
                 continue;
             }
 
-            String extension = "";
             String urlBase = library.hasUrl() ? library.getUrl() : "https://libraries.minecraft.net/";
 
+            String url = urlBase + Utils.convertMavenIdentifierToPath(library.getName());
+
             if (library.isUsingPackXz()) {
-                extension = ".pack.xz";
-                downloadTo = new File(downloadTo.getAbsolutePath() + extension);
+                librariesToDownload.add(new ForgeXzDownloadable(url, downloadTo, instanceInstaller));
+            } else {
+                librariesToDownload.add(new HashableDownloadable(url, downloadTo, instanceInstaller));
             }
-
-            String url = urlBase + Utils.convertMavenIdentifierToPath(library.getName()) + extension;
-
-            librariesToDownload.add(new Downloadable(url, downloadTo, instanceInstaller));
         }
 
         return librariesToDownload;

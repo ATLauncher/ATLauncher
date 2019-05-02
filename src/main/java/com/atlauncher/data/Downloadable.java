@@ -37,12 +37,12 @@ import java.util.zip.GZIPInputStream;
 
 public class Downloadable {
     private String beforeURL;
-    private String url;
-    private File file;
+    protected String url;
+    protected File file;
     private File oldFile;
     private String hash;
     private int size;
-    private HttpURLConnection connection;
+    protected HttpURLConnection connection;
     private InstanceInstaller instanceInstaller;
     private boolean isATLauncherDownload;
     private File copyTo;
@@ -217,7 +217,17 @@ public class Downloadable {
         }
     }
 
-    private HttpURLConnection getConnection() {
+    protected void setRequestHeaders() {
+        if (App.useGzipForDownloads) {
+            this.connection.setRequestProperty("Accept-Encoding", "gzip");
+        }
+        this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+        this.connection.setRequestProperty("Expires", "0");
+        this.connection.setRequestProperty("Pragma", "no-cache");
+    }
+
+    protected HttpURLConnection getConnection() {
         if (this.instanceInstaller != null) {
             if (this.instanceInstaller.isCancelled()) {
                 return null;
@@ -240,13 +250,7 @@ public class Downloadable {
                     this.connection.setInstanceFollowRedirects(true);
                     this.connection.setUseCaches(false);
                     this.connection.setDefaultUseCaches(false);
-                    if (App.useGzipForDownloads) {
-                        this.connection.setRequestProperty("Accept-Encoding", "gzip");
-                    }
-                    this.connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
-                    this.connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
-                    this.connection.setRequestProperty("Expires", "0");
-                    this.connection.setRequestProperty("Pragma", "no-cache");
+                    this.setRequestHeaders();
                     this.connection.connect();
 
                     // check for redirections
@@ -265,7 +269,8 @@ public class Downloadable {
                     break;
                 }
 
-                if (this.connection.getResponseCode() / 100 != 2) {
+                if (this.connection.getResponseCode() != HttpURLConnection.HTTP_NOT_MODIFIED
+                        && this.connection.getResponseCode() / 100 != 2) {
                     throw new IOException(this.url + " returned response code " + this.connection.getResponseCode()
                             + (this.connection.getResponseMessage() != null
                                     ? " with message of " + this.connection.getResponseMessage()
@@ -502,9 +507,12 @@ public class Downloadable {
             Utils.delete(this.oldFile);
         }
 
+        this.afterDownload();
+
         if (this.connection != null) {
             this.connection.disconnect();
         }
+
     }
 
     public boolean getNextServer() {
@@ -526,5 +534,8 @@ public class Downloadable {
             LogManager.logStackTrace("IOException when getting response code for the url " + this.url, e);
             return -1;
         }
+    }
+
+    protected void afterDownload() {
     }
 }

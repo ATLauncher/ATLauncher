@@ -613,16 +613,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                         fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
                         download.download(true);
                     }
-
-                    if (download.getFilename().endsWith(".pack.xz")) {
-                        File packFile = new File(download.getFile().getAbsolutePath().substring(0,
-                                download.getFile().getAbsolutePath().length() - 3));
-                        File outputFile = new File(download.getFile().getAbsolutePath().substring(0,
-                                download.getFile().getAbsolutePath().length() - 8));
-                        Utils.unXZPackFile(download.getFile(), packFile, outputFile);
-                        Utils.delete(download.getFile());
-                        Utils.delete(packFile);
-                    }
                 }
 
             });

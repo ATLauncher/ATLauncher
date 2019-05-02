@@ -144,6 +144,7 @@ instance.deletinginstance=Deleting Instance. Please wait...
 instance.disabledmods=Disabled Mods
 instance.disablemod=Disable Mod
 instance.dontremindmeagain=Don't Remind Me Again
+instance.downloadingminecraft=Downloadming Minecraft
 instance.downloadingconfigs=Downloading Configs
 instance.downloadingloader=Downloading Loader
 instance.downloadingloaderlibraries=Downloading Loader Libraries

@@ -101,6 +101,9 @@ public class Forge113Loader extends ForgeLoader {
 
                 if (extractedLibraryFile.exists()
                         && (!downloadTo.exists() || Utils.getSHA1(downloadTo) != artifact.getSha1())) {
+
+                    new File(downloadTo.getAbsolutePath().substring(0,
+                            downloadTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
                     Utils.copyFile(extractedLibraryFile, downloadTo, true);
                 } else {
                     LogManager.warn("Cannot resolve Forge loader version library with name of " + library.getName());
