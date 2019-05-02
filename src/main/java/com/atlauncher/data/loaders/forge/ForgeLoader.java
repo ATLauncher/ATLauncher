@@ -50,15 +50,14 @@ public class ForgeLoader implements Loader {
     public void downloadAndExtractInstaller() {
         File saveTo = new File(App.settings.getLoadersDir(),
                 "/forge-" + this.minecraft + "-" + this.version + "-installer.jar");
-        Downloadable download = new Downloadable(
+        HashableDownloadable download = new HashableDownloadable(
                 "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + this.minecraft + "-" + this.version
                         + "/forge-" + this.minecraft + "-" + this.version + "-installer.jar",
                 saveTo, instanceInstaller);
 
-        download.checkForNewness();
-
         if (download.needToDownload()) {
-            download.download();
+            this.instanceInstaller.addTotalDownloadedBytes(download.getFilesize());
+            download.download(true);
         }
 
         this.tempDir.mkdir();

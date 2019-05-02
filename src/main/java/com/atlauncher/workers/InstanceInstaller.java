@@ -561,6 +561,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private void downloadLoader() {
         fireTask(Language.INSTANCE.localize("instance.downloadingloader"));
         fireSubProgressUnknown();
+        totalBytes = 0;
+        downloadedBytes = 0;
 
         com.atlauncher.data.loaders.Loader loader;
 
@@ -1010,6 +1012,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public void downloadMinecraft() {
+        totalBytes = 0;
+        downloadedBytes = 0;
         MojangDownloads downloads = this.version.getMinecraftVersion().getMojangVersion().getDownloads();
 
         MojangDownload mojangDownload;

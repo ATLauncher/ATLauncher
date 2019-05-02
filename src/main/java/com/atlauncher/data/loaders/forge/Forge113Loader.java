@@ -35,7 +35,6 @@ import com.atlauncher.data.loaders.forge.Version;
 import com.atlauncher.data.loaders.forge.Library;
 import com.atlauncher.data.loaders.forge.Processor;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
