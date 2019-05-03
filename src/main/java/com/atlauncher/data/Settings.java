@@ -165,6 +165,7 @@ public class Settings {
     private List<Server> triedServers = new ArrayList<Server>(); // Servers tried to connect to
     private InstancesTab instancesPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
+    private PacksTab vanillaPacksPanel; // The vanilla packs panel
     private PacksTab packsPanel; // The packs panel
     private LauncherBottomBar bottomBar; // The bottom bar
     private boolean hadPasswordDialog = false; // If the user has seen the password dialog
@@ -797,6 +798,7 @@ public class Settings {
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
                 loadPacks(); // Load the Packs available in the Launcher
+                reloadVanillaPacksPanel(); // Reload packs panel
                 reloadPacksPanel(); // Reload packs panel
                 loadUsers(); // Load the Testers and Allowed Players for the packs
                 loadInstances(); // Load the users installed Instances
@@ -1587,6 +1589,7 @@ public class Settings {
                 this.account = null;
             }
         }
+        refreshVanillaPacksPanel();
         refreshPacksPanel();
         reloadInstancesPanel();
         reloadAccounts();
@@ -2031,8 +2034,21 @@ public class Settings {
      *
      * @return The Packs available in the Launcher sorted alphabetically
      */
-    public List<Pack> getPacksSortedAlphabetically() {
-        List<Pack> packs = new LinkedList<Pack>(this.packs);
+    public List<Pack> getPacksSortedAlphabetically(boolean isVanilla) {
+        List<Pack> packs = new LinkedList<Pack>();
+
+        for (Pack pack : this.packs) {
+            if (isVanilla) {
+                if (pack.getSafeName().startsWith("VanillaMinecraft")) {
+                    packs.add(pack);
+                }
+            } else {
+                if (!pack.getSafeName().startsWith("VanillaMinecraft")) {
+                    packs.add(pack);
+                }
+            }
+        }
+
         Collections.sort(packs, new Comparator<Pack>() {
             @Override
             public int compare(Pack result1, Pack result2) {
@@ -2047,8 +2063,21 @@ public class Settings {
      *
      * @return The Packs available in the Launcher sorted by position
      */
-    public List<Pack> getPacksSortedPositionally() {
-        List<Pack> packs = new LinkedList<Pack>(this.packs);
+    public List<Pack> getPacksSortedPositionally(boolean isVanilla) {
+        List<Pack> packs = new LinkedList<Pack>();
+
+        for (Pack pack : this.packs) {
+            if (isVanilla) {
+                if (pack.getSafeName().startsWith("VanillaMinecraft")) {
+                    packs.add(pack);
+                }
+            } else {
+                if (!pack.getSafeName().startsWith("VanillaMinecraft")) {
+                    packs.add(pack);
+                }
+            }
+        }
+
         Collections.sort(packs, new Comparator<Pack>() {
             @Override
             public int compare(Pack result1, Pack result2) {
@@ -2073,6 +2102,7 @@ public class Settings {
                 }
             }
             saveAccounts();
+            reloadVanillaPacksPanel();
             reloadPacksPanel();
         }
     }
@@ -2194,6 +2224,7 @@ public class Settings {
                     }
                     this.addedPacks += packCode + ",";
                     this.saveProperties();
+                    this.refreshVanillaPacksPanel();
                     this.refreshPacksPanel();
                     return true;
                 }
@@ -2207,6 +2238,7 @@ public class Settings {
             if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
                 this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
+                this.refreshVanillaPacksPanel();
                 this.refreshPacksPanel();
             }
         }
@@ -2291,6 +2323,7 @@ public class Settings {
         Downloadable download = new Downloadable("ping", true);
         String test = download.getContents();
         if (test != null && test.equalsIgnoreCase("pong")) {
+            reloadVanillaPacksPanel();
             reloadPacksPanel();
             reloadInstancesPanel();
         } else {
@@ -2340,6 +2373,15 @@ public class Settings {
     }
 
     /**
+     * Sets the panel used for Vanilla Packs
+     *
+     * @param vanillaPacksPanel Vanilla Packs Panel
+     */
+    public void setVanillaPacksPanel(PacksTab vanillaPacksPanel) {
+        this.vanillaPacksPanel = vanillaPacksPanel;
+    }
+
+    /**
      * Sets the panel used for Packs
      *
      * @param packsPanel Packs Panel
@@ -2362,6 +2404,20 @@ public class Settings {
      */
     public void reloadNewsPanel() {
         this.newsPanel.reload(); // Reload the news panel
+    }
+
+    /**
+     * Reloads the panel used for Vanilla Packs
+     */
+    public void reloadVanillaPacksPanel() {
+        this.vanillaPacksPanel.reload();
+    }
+
+    /**
+     * Refreshes the panel used for Vanilla Packs
+     */
+    public void refreshVanillaPacksPanel() {
+        this.vanillaPacksPanel.refresh();
     }
 
     /**
