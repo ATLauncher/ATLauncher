@@ -41,8 +41,8 @@ public class ForgeLoader implements Loader {
     protected InstanceInstaller instanceInstaller;
 
     @Override
-    public void set(String version, String minecraft, boolean latest, boolean recommended, File tempDir,
-            InstanceInstaller instanceInstaller) {
+    public void set(String version, String minecraft, String yarn, String loader, boolean latest, boolean recommended,
+            File tempDir, InstanceInstaller instanceInstaller) {
         this.minecraft = minecraft;
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;

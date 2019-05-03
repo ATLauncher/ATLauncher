@@ -26,6 +26,8 @@ import java.io.File;
 public class Loader {
     private String type;
     private String version;
+    private String yarn;
+    private String loader;
     private boolean latest;
     private boolean recommended;
     private String minecraft;
@@ -52,7 +54,8 @@ public class Loader {
         com.atlauncher.data.loaders.Loader instance = (com.atlauncher.data.loaders.Loader) Class.forName(this.className)
                 .newInstance();
 
-        instance.set(this.version, this.minecraft, this.latest, this.recommended, tempDir, instanceInstaller);
+        instance.set(this.version, this.minecraft, this.yarn, this.loader, this.latest, this.recommended, tempDir,
+                instanceInstaller);
 
         return instance;
     }

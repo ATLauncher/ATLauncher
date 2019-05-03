@@ -15,27 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.loaders;
+package com.atlauncher.data.loaders.fabric;
 
 import java.util.List;
-import java.io.File;
 
-import com.atlauncher.data.Downloadable;
-import com.atlauncher.workers.InstanceInstaller;
+import com.atlauncher.annot.Json;
 
-public interface Loader {
-    public void set(String version, String minecraft, String yarn, String loader, boolean latest, boolean recommended, File tempDir,
-            InstanceInstaller instanceInstaller);
+@Json
+public class Library {
+    private String name;
+    private String url;
 
-    public void downloadAndExtractInstaller();
+    public String getName() {
+        return this.name;
+    }
 
-    public List<Downloadable> getDownloadableLibraries();
-
-    public void runProcessors();
-
-    public List<String> getLibraries();
-
-    public List<String> getArguments();
-
-    public String getMainClass();
+    public String getUrl() {
+        return this.url;
+    }
 }

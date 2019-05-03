@@ -15,27 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.loaders;
+package com.atlauncher.data.loaders.fabric;
+
+import com.atlauncher.annot.Json;
 
 import java.util.List;
-import java.io.File;
+import java.util.Map;
 
-import com.atlauncher.data.Downloadable;
-import com.atlauncher.workers.InstanceInstaller;
+@Json
+public class FabricInstallProfile {
+    private Map<String, List<String>> arguments;
+    private String mainClass;
+    private List<Library> libraries;
 
-public interface Loader {
-    public void set(String version, String minecraft, String yarn, String loader, boolean latest, boolean recommended, File tempDir,
-            InstanceInstaller instanceInstaller);
+    public Map<String, List<String>> getArguments() {
+        return this.arguments;
+    }
 
-    public void downloadAndExtractInstaller();
+    public String getMainClass() {
+        return this.mainClass;
+    }
 
-    public List<Downloadable> getDownloadableLibraries();
-
-    public void runProcessors();
-
-    public List<String> getLibraries();
-
-    public List<String> getArguments();
-
-    public String getMainClass();
+    public List<Library> getLibraries() {
+        return this.libraries;
+    }
 }
