@@ -17,7 +17,6 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;

@@ -24,11 +24,12 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.reflect.TypeToken;
+
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.ForgeXzDownloadable;
 import com.atlauncher.data.HashableDownloadable;
 import com.atlauncher.data.loaders.Loader;
 import com.atlauncher.utils.Utils;
@@ -45,10 +46,45 @@ public class FabricLoader implements Loader {
     public void set(String version, String minecraft, String yarn, String loader, boolean latest, boolean recommended,
             File tempDir, InstanceInstaller instanceInstaller) {
         this.minecraft = minecraft;
-        this.yarn = yarn;
-        this.loader = loader;
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
+
+        if (yarn != null && loader != null) {
+            this.yarn = yarn;
+            this.loader = loader;
+        } else if (latest) {
+            LogManager.debug("Downloading latest Fabric version");
+            FabricMetaVersion latestVersion = this.getLatestVersion();
+            this.yarn = latestVersion.getMappings().getVersion();
+            this.loader = latestVersion.getLoader().getVersion();
+        }
+    }
+
+    public List<FabricMetaVersion> getLoaders() {
+        try {
+            Downloadable loaderVersions = new Downloadable(
+                    "https://meta.fabricmc.net/v1/versions/loader/" + this.minecraft, false);
+
+            String contents = loaderVersions.getContents();
+
+            java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
+            }.getType();
+            return Gsons.DEFAULT.fromJson(contents, type);
+        } catch (Throwable e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return null;
+    }
+
+    public FabricMetaVersion getLatestVersion() {
+        List<FabricMetaVersion> loaders = this.getLoaders();
+
+        if (loaders == null || loaders.size() == 0) {
+            return null;
+        }
+
+        return loaders.get(0);
     }
 
     @Override
