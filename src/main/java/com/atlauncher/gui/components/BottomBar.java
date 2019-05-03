@@ -32,7 +32,7 @@ import java.awt.event.ActionListener;
 public abstract class BottomBar extends JPanel {
     private static final long serialVersionUID = -7488195680365431776L;
 
-    protected final JButton nodeCraftIcon = new SMButton("/assets/image/NodeCraftIcon.png", "NodeCraft - Setup a " +
+    protected final JButton nodeCraftIcon = new SMButton("/assets/image/NodeCraftIcon.png", "Nodecraft - Setup a " +
             "Minecraft server with an ATL modpack in less than 60 seconds");
     protected final JButton discordIcon = new SMButton("/assets/image/DiscordIcon.png", "Discord");
     protected final JButton facebookIcon = new SMButton("/assets/image/FacebookIcon.png", "Facebook");
@@ -59,7 +59,7 @@ public abstract class BottomBar extends JPanel {
     private void setupSocialButtonListeners() {
         nodeCraftIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LogManager.info("Opening Up NodeCraft");
+                LogManager.info("Opening Up Nodecraft");
                 Utils.openBrowser("https://atl.pw/nodecraft-from-launcher");
             }
         });
