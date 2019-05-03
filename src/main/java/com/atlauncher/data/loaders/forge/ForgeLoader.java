@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
@@ -35,24 +36,21 @@ import com.atlauncher.workers.InstanceInstaller;
 public class ForgeLoader implements Loader {
     protected String version;
     protected String minecraft;
-    protected boolean latest;
-    protected boolean recommended;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
 
     @Override
-    public void set(String version, String minecraft, String yarn, String loader, boolean latest, boolean recommended,
-            File tempDir, InstanceInstaller instanceInstaller) {
-        this.minecraft = minecraft;
+    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller) {
+        this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
 
-        if (version != null) {
-            this.version = version;
-        } else if (latest) {
+        if (metadata.containsKey("version")) {
+            this.version = (String) metadata.get("version");
+        } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Forge version");
             this.version = this.getLatestVersion();
-        } else if (recommended) {
+        } else if ((boolean) metadata.get("recommended")) {
             LogManager.debug("Downloading recommended Forge version");
             this.version = this.getRecommendedVersion();
         }

@@ -18,14 +18,14 @@
 package com.atlauncher.data.loaders;
 
 import java.util.List;
+import java.util.Map;
 import java.io.File;
 
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.workers.InstanceInstaller;
 
 public interface Loader {
-    public void set(String version, String minecraft, String yarn, String loader, boolean latest, boolean recommended, File tempDir,
-            InstanceInstaller instanceInstaller);
+    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller);
 
     public void downloadAndExtractInstaller();
 

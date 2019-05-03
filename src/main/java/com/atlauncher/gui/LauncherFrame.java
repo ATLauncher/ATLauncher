@@ -158,7 +158,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         newsTab = new NewsTab();
         App.settings.setNewsPanel(newsTab);
         vanillaPacksTab = new PacksTab(true);
-        App.settings.setVanillaPacksPanel(packsTab);
+        App.settings.setVanillaPacksPanel(vanillaPacksTab);
         packsTab = new PacksTab(false);
         App.settings.setPacksPanel(packsTab);
         instancesTab = new InstancesTab();

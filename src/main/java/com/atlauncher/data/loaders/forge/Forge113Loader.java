@@ -78,10 +78,13 @@ public class Forge113Loader extends ForgeLoader {
 
                 if (extractedLibraryFile.exists()
                         && (!downloadTo.exists() || Utils.getSHA1(downloadTo) != artifact.getSha1())) {
-                    Utils.copyFile(extractedLibraryFile, downloadTo, true);
+                    if (!Utils.copyFile(extractedLibraryFile, downloadTo, true)) {
+                        LogManager.error("Failed to copy forge library file");
+                        instanceInstaller.cancel(true);
+                    }
                 } else {
-                    LogManager.warn(
-                            "Cannot resolve Forge loader install profile library with name of " + library.getName());
+                    LogManager.error("Failed to find and verify forge library file");
+                    instanceInstaller.cancel(true);
                 }
             } else {
                 librariesToDownload.add(new Downloadable(artifact.getUrl(), downloadTo, artifact.getSha1(),

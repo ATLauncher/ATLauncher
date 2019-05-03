@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -43,16 +44,15 @@ public class FabricLoader implements Loader {
     protected InstanceInstaller instanceInstaller;
 
     @Override
-    public void set(String version, String minecraft, String yarn, String loader, boolean latest, boolean recommended,
-            File tempDir, InstanceInstaller instanceInstaller) {
-        this.minecraft = minecraft;
+    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller) {
+        this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
 
-        if (yarn != null && loader != null) {
-            this.yarn = yarn;
-            this.loader = loader;
-        } else if (latest) {
+        if (metadata.containsKey("yarn") && metadata.containsKey("loader")) {
+            this.yarn = (String) metadata.get("yarn");
+            this.loader = (String) metadata.get("loader");
+        } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Fabric version");
             FabricMetaVersion latestVersion = this.getLatestVersion();
             this.yarn = latestVersion.getMappings().getVersion();

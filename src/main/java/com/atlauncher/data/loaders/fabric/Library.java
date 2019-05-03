@@ -17,8 +17,6 @@
  */
 package com.atlauncher.data.loaders.fabric;
 
-import java.util.List;
-
 import com.atlauncher.annot.Json;
 
 @Json
