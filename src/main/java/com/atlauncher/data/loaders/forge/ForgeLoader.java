@@ -35,15 +35,62 @@ import com.atlauncher.workers.InstanceInstaller;
 public class ForgeLoader implements Loader {
     protected String version;
     protected String minecraft;
+    protected boolean latest;
+    protected boolean recommended;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
 
     @Override
-    public void set(String version, String minecraft, File tempDir, InstanceInstaller instanceInstaller) {
-        this.version = version;
+    public void set(String version, String minecraft, boolean latest, boolean recommended, File tempDir,
+            InstanceInstaller instanceInstaller) {
         this.minecraft = minecraft;
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
+
+        if (version != null) {
+            this.version = version;
+        } else if (latest) {
+            LogManager.debug("Downloading latest Forge version");
+            this.version = this.getLatestVersion();
+        } else if (recommended) {
+            LogManager.debug("Downloading recommended Forge version");
+            this.version = this.getRecommendedVersion();
+        }
+    }
+
+    public ForgePromotions getPromotions() {
+        try {
+            Downloadable promotionsSlimJson = new Downloadable(
+                    "https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json", false);
+
+            String contents = promotionsSlimJson.getContents();
+
+            return Gsons.DEFAULT.fromJson(contents, ForgePromotions.class);
+        } catch (Throwable e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return null;
+    }
+
+    public String getLatestVersion() {
+        ForgePromotions promotions = this.getPromotions();
+
+        if (promotions == null || !promotions.hasPromo(this.minecraft + "-latest")) {
+            return null;
+        }
+
+        return promotions.getPromo(this.minecraft + "-latest");
+    }
+
+    public String getRecommendedVersion() {
+        ForgePromotions promotions = this.getPromotions();
+
+        if (promotions == null || !promotions.hasPromo(this.minecraft + "-recommended")) {
+            return null;
+        }
+
+        return promotions.getPromo(this.minecraft + "-recommended");
     }
 
     @Override

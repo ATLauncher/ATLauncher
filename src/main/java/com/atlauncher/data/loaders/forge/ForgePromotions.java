@@ -15,27 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.loaders;
+package com.atlauncher.data.loaders.forge;
 
-import java.util.List;
-import java.io.File;
+import java.util.Map;
 
-import com.atlauncher.data.Downloadable;
-import com.atlauncher.workers.InstanceInstaller;
+public class ForgePromotions {
+    private Map<String, String> promos;
 
-public interface Loader {
-    public void set(String version, String minecraft, boolean latest, boolean recommended, File tempDir,
-            InstanceInstaller instanceInstaller);
+    public Map<String, String> getPromos() {
+        return this.promos;
+    }
 
-    public void downloadAndExtractInstaller();
+    public boolean hasPromo(String promotion) {
+        return this.promos.containsKey(promotion);
+    }
 
-    public List<Downloadable> getDownloadableLibraries();
-
-    public void runProcessors();
-
-    public List<String> getLibraries();
-
-    public List<String> getArguments();
-
-    public String getMainClass();
+    public String getPromo(String promotion) {
+        return this.promos.get(promotion);
+    }
 }
