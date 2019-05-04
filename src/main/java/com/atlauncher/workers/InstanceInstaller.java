@@ -653,17 +653,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         // add the arguments for Minecraft
         MojangVersion mojangVersion = this.version.getMinecraftVersion().getMojangVersion();
 
-        if (mojangVersion.hasArguments()) {
-            for (ArgumentRule argument : mojangVersion.getArguments().getGame()) {
-                if (argument.applies()) {
-                    this.arguments.add(argument.getValue());
+        if (loader.useMinecraftArguments()) {
+            if (mojangVersion.hasArguments()) {
+                for (ArgumentRule argument : mojangVersion.getArguments().getGame()) {
+                    if (argument.applies()) {
+                        this.arguments.add(argument.getValue());
+                    }
                 }
-            }
-        } else {
-            for (String argument : mojangVersion.getMinecraftArguments().split(" ")) {
-                // make sure not to duplicate any since Forge copies what Minecraft include
-                if (!this.arguments.contains(argument)) {
-                    this.arguments.add(argument);
+            } else {
+                for (String argument : mojangVersion.getMinecraftArguments().split(" ")) {
+                    // make sure not to duplicate any since Forge copies what Minecraft include
+                    if (!this.arguments.contains(argument)) {
+                        this.arguments.add(argument);
+                    }
                 }
             }
         }

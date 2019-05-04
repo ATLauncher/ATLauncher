@@ -153,4 +153,9 @@ public class Forge113Loader extends ForgeLoader {
     public String getMainClass() {
         return this.getVersion().getMainClass();
     }
+
+    @Override
+    public boolean useMinecraftArguments() {
+        return true;
+    }
 }

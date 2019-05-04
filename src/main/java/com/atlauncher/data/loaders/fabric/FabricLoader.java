@@ -180,4 +180,9 @@ public class FabricLoader implements Loader {
     public String getMainClass() {
         return this.getInstallProfile().getMainClass();
     }
+
+    @Override
+    public boolean useMinecraftArguments() {
+        return true;
+    }
 }

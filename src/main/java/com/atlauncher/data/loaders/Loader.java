@@ -38,4 +38,6 @@ public interface Loader {
     public List<String> getArguments();
 
     public String getMainClass();
+
+    public boolean useMinecraftArguments();
 }

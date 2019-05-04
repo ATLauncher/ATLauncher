@@ -196,4 +196,9 @@ public class ForgeLoader implements Loader {
     public String getMainClass() {
         return this.getInstallProfile().getVersionInfo().getMainClass();
     }
+
+    @Override
+    public boolean useMinecraftArguments() {
+        return false;
+    }
 }
