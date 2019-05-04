@@ -799,6 +799,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
+        if (this.isServer) {
+            for (File file : serverLibraries) {
+                file.getParentFile().mkdirs();
+                Utils.copyFile(new File(App.settings.getGameLibrariesDir(), file.getName()), file, true);
+            }
+        }
+
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
@@ -925,6 +932,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
             forgeLibraries.add(library.getDownloadPath());
             File downloadTo = library.getDownloadPath();
+
+            if (this.isServer && library.forServer()) {
+                this.serverLibraries.add(new File(getLibrariesDirectory(), library.getServer()));
+            }
 
             if (library.shouldForce() && downloadTo.exists()) {
                 Utils.delete(downloadTo);
