@@ -17,15 +17,41 @@
  */
 package com.atlauncher.data.loaders.fabric;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
@@ -131,22 +157,117 @@ public class FabricLoader implements Loader {
     public List<Downloadable> getDownloadableLibraries() {
         List<Downloadable> librariesToDownload = new ArrayList<Downloadable>();
 
-        FabricInstallProfile installProfile = this.getInstallProfile();
+        // We use Fabric installer for servers, so we don't need to worry about
+        // libraries
+        if (!this.instanceInstaller.isServer()) {
+            File librariesDirectory = this.instanceInstaller.isServer() ? this.instanceInstaller.getLibrariesDirectory()
+                    : App.settings.getGameLibrariesDir();
 
-        for (Library library : installProfile.getLibraries()) {
-            File downloadTo = Utils.convertMavenIdentifierToFile(library.getName(), App.settings.getGameLibrariesDir());
+            FabricInstallProfile installProfile = this.getInstallProfile();
 
-            String url = library.getUrl() + Utils.convertMavenIdentifierToPath(library.getName());
+            for (Library library : installProfile.getLibraries()) {
+                File downloadTo = Utils.convertMavenIdentifierToFile(library.getName(), librariesDirectory);
 
-            librariesToDownload.add(new HashableDownloadable(url, downloadTo, instanceInstaller));
+                String url = library.getUrl() + Utils.convertMavenIdentifierToPath(library.getName());
+
+                librariesToDownload.add(new HashableDownloadable(url, downloadTo, instanceInstaller));
+            }
         }
 
         return librariesToDownload;
     }
 
+    public String getInstallerVersion() {
+        Downloadable installerVersions = new Downloadable(
+                "https://maven.fabricmc.net/net/fabricmc/fabric-installer/maven-metadata.xml", false);
+
+        try {
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                    .parse(new InputSource(new StringReader(installerVersions.getContents())));
+
+            Node rootElement = document.getFirstChild();
+            NodeList rootList = rootElement.getChildNodes();
+            for (int i = 0; i < rootList.getLength(); i++) {
+                Node child = rootList.item(i);
+                if (child.getNodeName().equals("versioning")) {
+                    NodeList versioningList = child.getChildNodes();
+                    for (int j = 0; j < versioningList.getLength(); j++) {
+                        Node versionChild = versioningList.item(j);
+                        if (versionChild.getNodeName().equals("release")) {
+                            return versionChild.getTextContent();
+                        }
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return null;
+    }
+
     @Override
     public void runProcessors() {
+        if (this.instanceInstaller.isServer()) {
+            this.instanceInstaller.getMinecraftJar()
+                    .renameTo(new File(this.instanceInstaller.getRootDirectory(), "server.jar"));
 
+            Utils.delete(this.instanceInstaller.getLibrariesDirectory()); // no libraries here
+
+            String installerVersion = this.getInstallerVersion();
+
+            if (installerVersion == null) {
+                LogManager.error("Failed to find innstaller version for Fabric");
+                instanceInstaller.cancel(true);
+                return;
+            }
+
+            LogManager.debug("Downloading installer version " + installerVersion + " for Fabric");
+
+            File installerFile = new File(App.settings.getLoadersDir(),
+                    "fabric-installer-" + this.yarn + "-" + this.loader + ".jar");
+
+            Downloadable installerDownload = new HashableDownloadable(
+                    "https://maven.fabricmc.net/net/fabricmc/fabric-installer/" + installerVersion
+                            + "/fabric-installer-" + installerVersion + ".jar",
+                    installerFile, this.instanceInstaller);
+
+            if (installerDownload.needToDownload()) {
+                installerDownload.download();
+            }
+
+            try {
+                List<String> arguments = new ArrayList<String>();
+                String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+                arguments.add(path);
+                arguments.add("-jar");
+                arguments.add("\"" + installerFile.getAbsolutePath() + "\"");
+                arguments.add("server");
+                arguments.add("-dir");
+                arguments.add("\"" + this.instanceInstaller.getRootDirectory().getAbsolutePath() + "\"");
+                arguments.add("-mappings");
+                arguments.add("\"" + this.yarn + "\"");
+                arguments.add("-loader");
+                arguments.add("\"" + this.loader + "\"");
+                LogManager.debug("Running Fabric installer with arguments " + arguments.toString());
+
+                ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+                processBuilder.directory(this.instanceInstaller.getRootDirectory().getAbsoluteFile());
+                processBuilder.redirectErrorStream(true);
+                Process process = processBuilder.start();
+                InputStream is = process.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    LogManager.debug("Fabric installer output: " + line);
+                }
+
+                LogManager.debug("Finished running Fabric installer");
+            } catch (Throwable e) {
+                LogManager.logStackTrace(e);
+            }
+        }
     }
 
     @Override
@@ -154,8 +275,12 @@ public class FabricLoader implements Loader {
         FabricInstallProfile installProfile = this.getInstallProfile();
         List<String> libraries = new ArrayList<String>();
 
-        for (Library library : installProfile.getLibraries()) {
-            libraries.add(Utils.convertMavenIdentifierToPath(library.getName()));
+        // We use Fabric installer for servers, so we don't need to worry about
+        // libraries
+        if (!this.instanceInstaller.isServer()) {
+            for (Library library : installProfile.getLibraries()) {
+                libraries.add(Utils.convertMavenIdentifierToPath(library.getName()));
+            }
         }
 
         return libraries;
@@ -182,8 +307,15 @@ public class FabricLoader implements Loader {
     }
 
     @Override
+    public String getServerJar() {
+        return "fabric-server-launch.jar";
+    }
+
+    @Override
     public boolean useMinecraftLibraries() {
-        return true;
+        // We use Fabric installer for servers, so we don't need to worry about
+        // libraries
+        return !this.instanceInstaller.isServer();
     }
 
     @Override
