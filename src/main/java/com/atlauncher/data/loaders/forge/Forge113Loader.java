@@ -80,10 +80,10 @@ public class Forge113Loader extends ForgeLoader {
             if (!artifact.hasUrl()) {
                 File extractedLibraryFile = new File(this.tempDir, "maven/" + artifact.getPath());
 
-                if (extractedLibraryFile.exists() && (!downloadTo.exists()
-                        || (downloadTo.exists() && Utils.getSHA1(downloadTo) != artifact.getSha1()))) {
-                    downloadTo.getParentFile().mkdirs();
-                    if (!Utils.copyFile(extractedLibraryFile, downloadTo, true)) {
+                if (extractedLibraryFile.exists() && (!finalDownloadTo.exists()
+                        || (finalDownloadTo.exists() && Utils.getSHA1(finalDownloadTo) != artifact.getSha1()))) {
+                    finalDownloadTo.getParentFile().mkdirs();
+                    if (!Utils.copyFile(extractedLibraryFile, finalDownloadTo, true)) {
                         LogManager.error("Failed to copy forge library file");
                         instanceInstaller.cancel(true);
                     }
@@ -108,11 +108,11 @@ public class Forge113Loader extends ForgeLoader {
                 File extractedLibraryFile = new File(this.tempDir, "maven/" + artifact.getPath());
 
                 if (extractedLibraryFile.exists()
-                        && (!downloadTo.exists() || Utils.getSHA1(downloadTo) != artifact.getSha1())) {
+                        && (!finalDownloadTo.exists() || Utils.getSHA1(finalDownloadTo) != artifact.getSha1())) {
 
-                    new File(downloadTo.getAbsolutePath().substring(0,
-                            downloadTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
-                    Utils.copyFile(extractedLibraryFile, downloadTo, true);
+                    new File(finalDownloadTo.getAbsolutePath().substring(0,
+                            finalDownloadTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
+                    Utils.copyFile(extractedLibraryFile, finalDownloadTo, true);
                 } else {
                     LogManager.warn("Cannot resolve Forge loader version library with name of " + library.getName());
                 }

@@ -66,6 +66,7 @@ public class HashableDownloadable extends Downloadable {
                 if (this.file.exists() && Utils.getSHA1(this.file).equals(sha1)) {
                     LogManager.debug("When downloading " + this.url
                             + " a 304 not modified was sent back, so we don't need to redownload");
+                    this.copyFile();
                     return false;
                 }
             }

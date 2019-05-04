@@ -948,7 +948,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
         // Now read in the library jars needed from Mojang
-        if (this.loader.useMinecraftLibraries()) {
+        if (this.loader == null || this.loader.useMinecraftLibraries()) {
             for (Library library : this.version.getMinecraftVersion().getMojangVersion().getLibraries()) {
                 if (library.shouldInstall()) {
                     if (libraryNamesAdded.contains(

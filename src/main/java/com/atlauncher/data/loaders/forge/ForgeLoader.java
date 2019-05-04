@@ -147,12 +147,12 @@ public class ForgeLoader implements Loader {
                 File extractedLibraryFile = new File(this.tempDir, installProfile.getInstall().getFilePath());
 
                 if (extractedLibraryFile.exists()) {
-                    if (!downloadTo.exists()) {
+                    if (!finalDownloadTo.exists()) {
                         LogManager.debug("Copying " + extractedLibraryFile.getAbsolutePath() + " to "
-                                + downloadTo.getAbsolutePath());
-                        new File(downloadTo.getAbsolutePath().substring(0,
-                                downloadTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
-                        Utils.copyFile(extractedLibraryFile, downloadTo, true);
+                                + finalDownloadTo.getAbsolutePath());
+                        new File(finalDownloadTo.getAbsolutePath().substring(0,
+                                finalDownloadTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
+                        Utils.copyFile(extractedLibraryFile, finalDownloadTo, true);
                     }
 
                     if (this.instanceInstaller.isServer()) {

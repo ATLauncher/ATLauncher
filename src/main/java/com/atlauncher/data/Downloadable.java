@@ -157,16 +157,19 @@ public class Downloadable {
         if (this.file.exists()) {
             if (this.checkForNewness) {
                 if (this.getConnection() != null && this.getFile().length() == this.getFilesize()) {
+                    this.copyFile();
                     return false;
                 }
             }
 
             if (isMD5()) {
                 if (Utils.getMD5(this.file).equalsIgnoreCase(getHash())) {
+                    this.copyFile();
                     return false;
                 }
             } else {
                 if (Utils.getSHA1(this.file).equalsIgnoreCase(getHash())) {
+                    this.copyFile();
                     return false;
                 }
             }
