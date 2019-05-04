@@ -1051,6 +1051,8 @@ public class Instance implements Cloneable {
      */
     public void setArguments(List<String> arguments) {
         this.arguments = arguments;
+
+        this.minecraftArguments = null;
     }
 
     /**

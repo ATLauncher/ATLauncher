@@ -375,9 +375,10 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setIsNewLaunchMethod(!this.isLegacy());
                                     instance.setUsesNewLibraries(true);
                                     instance.setLibraries(this.getLibrariesForLaunch());
-                                    instance.setMinecraftArguments(this.getMinecraftArguments());
                                     if (this.hasArguments()) {
                                         instance.setArguments(this.getArguments());
+                                    } else {
+                                        instance.setMinecraftArguments(this.getMinecraftArguments());
                                     }
                                     instance.setExtraArguments(this.getExtraArguments());
                                     instance.setMainClass(this.getMainClass());
