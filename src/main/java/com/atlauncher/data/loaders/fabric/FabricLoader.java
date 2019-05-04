@@ -166,11 +166,13 @@ public class FabricLoader implements Loader {
             FabricInstallProfile installProfile = this.getInstallProfile();
 
             for (Library library : installProfile.getLibraries()) {
-                File downloadTo = Utils.convertMavenIdentifierToFile(library.getName(), librariesDirectory);
+                String libraryPath = Utils.convertMavenIdentifierToPath(library.getName());
+                File downloadTo = new File(App.settings.getGameLibrariesDir(), libraryPath);
+                File finalDownloadTo = new File(librariesDirectory, libraryPath);
 
                 String url = library.getUrl() + Utils.convertMavenIdentifierToPath(library.getName());
 
-                librariesToDownload.add(new HashableDownloadable(url, downloadTo, instanceInstaller));
+                librariesToDownload.add(new HashableDownloadable(url, downloadTo, instanceInstaller, finalDownloadTo));
             }
         }
 

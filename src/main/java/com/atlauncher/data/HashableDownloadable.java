@@ -34,8 +34,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HashableDownloadable extends Downloadable {
+    public HashableDownloadable(String url, File file, InstanceInstaller instanceInstaller, File copyTo) {
+        super(url, file, null, -1, instanceInstaller, false, copyTo, copyTo != null ? true : false);
+    }
+
     public HashableDownloadable(String url, File file, InstanceInstaller instanceInstaller) {
-        super(url, file, null, -1, instanceInstaller, false, null, false);
+        this(url, file, instanceInstaller, null);
     }
 
     @Override

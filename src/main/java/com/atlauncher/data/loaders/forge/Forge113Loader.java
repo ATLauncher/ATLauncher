@@ -74,7 +74,8 @@ public class Forge113Loader extends ForgeLoader {
 
         for (Library library : installProfile.getLibraries()) {
             DownloadsItem artifact = library.getDownloads().getArtifact();
-            File downloadTo = new File(librariesDirectory, artifact.getPath());
+            File downloadTo = new File(App.settings.getGameLibrariesDir(), artifact.getPath());
+            File finalDownloadTo = new File(librariesDirectory, artifact.getPath());
 
             if (!artifact.hasUrl()) {
                 File extractedLibraryFile = new File(this.tempDir, "maven/" + artifact.getPath());
@@ -92,7 +93,7 @@ public class Forge113Loader extends ForgeLoader {
                 }
             } else {
                 librariesToDownload.add(new Downloadable(artifact.getUrl(), downloadTo, artifact.getSha1(),
-                        artifact.getSize(), instanceInstaller, false));
+                        artifact.getSize(), instanceInstaller, false, finalDownloadTo, true));
             }
         }
 
@@ -100,7 +101,8 @@ public class Forge113Loader extends ForgeLoader {
 
         for (Library library : version.getLibraries()) {
             DownloadsItem artifact = library.getDownloads().getArtifact();
-            File downloadTo = new File(librariesDirectory, artifact.getPath());
+            File downloadTo = new File(App.settings.getGameLibrariesDir(), artifact.getPath());
+            File finalDownloadTo = new File(librariesDirectory, artifact.getPath());
 
             if (!artifact.hasUrl()) {
                 File extractedLibraryFile = new File(this.tempDir, "maven/" + artifact.getPath());
@@ -121,7 +123,7 @@ public class Forge113Loader extends ForgeLoader {
                 }
             } else {
                 librariesToDownload.add(new Downloadable(artifact.getUrl(), downloadTo, artifact.getSha1(),
-                        artifact.getSize(), instanceInstaller, false));
+                        artifact.getSize(), instanceInstaller, false, finalDownloadTo, true));
             }
         }
 

@@ -138,7 +138,9 @@ public class ForgeLoader implements Loader {
                 : App.settings.getGameLibrariesDir();
 
         for (Library library : installProfile.getLibraries()) {
-            File downloadTo = Utils.convertMavenIdentifierToFile(library.getName(), librariesDirectory);
+            String libraryPath = Utils.convertMavenIdentifierToPath(library.getName());
+            File downloadTo = new File(App.settings.getGameLibrariesDir(), libraryPath);
+            File finalDownloadTo = new File(librariesDirectory, libraryPath);
 
             // forge universal
             if (library.getName().equals(installProfile.getInstall().getPath())) {
@@ -176,9 +178,11 @@ public class ForgeLoader implements Loader {
             String url = urlBase + Utils.convertMavenIdentifierToPath(library.getName());
 
             if (library.isUsingPackXz()) {
-                librariesToDownload.add(new ForgeXzDownloadable(url, downloadTo, instanceInstaller));
+                librariesToDownload
+                        .add(new ForgeXzDownloadable(url, downloadTo, instanceInstaller, finalDownloadTo));
             } else {
-                librariesToDownload.add(new HashableDownloadable(url, downloadTo, instanceInstaller));
+                librariesToDownload
+                        .add(new HashableDownloadable(url, downloadTo, instanceInstaller, finalDownloadTo));
             }
         }
 
