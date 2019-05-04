@@ -34,6 +34,7 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class ForgeLoader implements Loader {
+    protected String installerUrl;
     protected String version;
     protected String minecraft;
     protected File tempDir;
@@ -47,12 +48,20 @@ public class ForgeLoader implements Loader {
 
         if (metadata.containsKey("version")) {
             this.version = (String) metadata.get("version");
+            this.installerUrl = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + this.minecraft
+                    + "-" + this.version + "/forge-" + this.minecraft + "-" + this.version + "-installer.jar";
         } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Forge version");
             this.version = this.getLatestVersion();
+            this.installerUrl = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + this.minecraft
+                    + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft
+                    + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         } else if ((boolean) metadata.get("recommended")) {
             LogManager.debug("Downloading recommended Forge version");
             this.version = this.getRecommendedVersion();
+            this.installerUrl = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + this.minecraft
+                    + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft
+                    + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         }
     }
 
@@ -95,10 +104,7 @@ public class ForgeLoader implements Loader {
     public void downloadAndExtractInstaller() {
         File saveTo = new File(App.settings.getLoadersDir(),
                 "/forge-" + this.minecraft + "-" + this.version + "-installer.jar");
-        HashableDownloadable download = new HashableDownloadable(
-                "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + this.minecraft + "-" + this.version
-                        + "/forge-" + this.minecraft + "-" + this.version + "-installer.jar",
-                saveTo, instanceInstaller);
+        HashableDownloadable download = new HashableDownloadable(this.installerUrl, saveTo, instanceInstaller);
 
         if (download.needToDownload()) {
             this.instanceInstaller.addTotalDownloadedBytes(download.getFilesize());
