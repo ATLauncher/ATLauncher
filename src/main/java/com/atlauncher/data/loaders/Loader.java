@@ -39,5 +39,9 @@ public interface Loader {
 
     public String getMainClass();
 
+    public String getServerJar();
+
+    public boolean useMinecraftLibraries();
+
     public boolean useMinecraftArguments();
 }

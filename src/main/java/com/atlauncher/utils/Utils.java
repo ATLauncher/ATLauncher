@@ -806,6 +806,8 @@ public class Utils {
         FileChannel source = null;
         FileChannel destination = null;
 
+        LogManager.debug("Copying file from " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+
         try {
             source = new FileInputStream(from).getChannel();
             destination = new FileOutputStream(to).getChannel();

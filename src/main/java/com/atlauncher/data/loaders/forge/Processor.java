@@ -47,10 +47,6 @@ public class Processor {
         return this.jar;
     }
 
-    public File getJarFile() {
-        return Utils.convertMavenIdentifierToFile(this.jar, App.settings.getGameLibrariesDir());
-    }
-
     public List<String> getClasspath() {
         return this.classpath;
     }
@@ -69,12 +65,13 @@ public class Processor {
 
     public void process(ForgeInstallProfile installProfile, File extractedDir, InstanceInstaller instanceInstaller)
             throws IOException {
-        if (this.hasCachedOutputs(installProfile, extractedDir, instanceInstaller)) {
-            LogManager.debug("Processor with jar " + this.jar + " doesn't need to process as the output is cached");
-            return;
-        }
+        // delete any outputs that are invalid. They still need to run
+        this.checkOutputs(installProfile, extractedDir, instanceInstaller);
 
-        File jarPath = this.getJarFile();
+        File librariesDirectory = instanceInstaller.isServer() ? instanceInstaller.getLibrariesDirectory()
+                : App.settings.getGameLibrariesDir();
+
+        File jarPath = Utils.convertMavenIdentifierToFile(this.jar, librariesDirectory);
         LogManager.debug("Jar path is " + jarPath);
         if (!jarPath.exists() || !jarPath.isFile()) {
             LogManager.error("Failed to process processor with jar " + this.jar + " as the jar doesn't exist");
@@ -120,7 +117,8 @@ public class Processor {
             if (start == '{' && end == '}') {
                 String key = arg.substring(1, arg.length() - 1);
                 LogManager.debug("Getting data with key of " + key);
-                String value = installProfile.getData().get(key).getClient();
+                String value = installProfile.getData().get(key).getValue(!instanceInstaller.isServer(),
+                        librariesDirectory);
 
                 if (value == null || value.isEmpty()) {
                     LogManager.error("Failed to process processor with jar " + this.jar + " as the argument with name "
@@ -177,27 +175,17 @@ public class Processor {
             return;
         }
 
-        if (!this.checkOutputs(installProfile, extractedDir, instanceInstaller)) {
-            LogManager.error(
-                    "Failed to process processor with jar " + this.jar + " as the output sha1 hashes didn't match");
-            instanceInstaller.cancel(true);
-        }
+        this.checkOutputs(installProfile, extractedDir, instanceInstaller);
     }
 
-    public boolean hasCachedOutputs(ForgeInstallProfile installProfile, File extractedDir,
+    public void checkOutputs(ForgeInstallProfile installProfile, File extractedDir,
             InstanceInstaller instanceInstaller) {
         if (!this.hasOutputs()) {
-            return false;
+            return;
         }
 
-        return this.checkOutputs(installProfile, extractedDir, instanceInstaller);
-    }
-
-    public boolean checkOutputs(ForgeInstallProfile installProfile, File extractedDir,
-            InstanceInstaller instanceInstaller) {
-        if (!this.hasOutputs()) {
-            return true;
-        }
+        File librariesDirectory = instanceInstaller.isServer() ? instanceInstaller.getLibrariesDirectory()
+                : App.settings.getGameLibrariesDir();
 
         for (Entry<String, String> entry : this.outputs.entrySet()) {
             String key = entry.getKey();
@@ -208,19 +196,20 @@ public class Processor {
 
             if (start == '{' && end == '}') {
                 LogManager.debug("Getting data with key of " + key.substring(1, key.length() - 1));
-                String dataItem = installProfile.getData().get(key.substring(1, key.length() - 1)).getClient();
+                String dataItem = installProfile.getData().get(key.substring(1, key.length() - 1))
+                        .getValue(!instanceInstaller.isServer(), librariesDirectory);
                 if (dataItem == null || dataItem.isEmpty()) {
                     LogManager.error("Failed to process processor with jar " + this.jar + " as the output with key "
                             + key + " doesn't have a corresponding data entry");
                     instanceInstaller.cancel(true);
-                    return false;
+                    return;
                 }
 
                 String value = entry.getValue();
                 File outputFile = new File(dataItem);
 
                 if (!outputFile.exists() || !outputFile.isFile()) {
-                    return false;
+                    return;
                 }
 
                 char valueStart = value.charAt(0);
@@ -229,12 +218,12 @@ public class Processor {
                 if (valueStart == '{' && valueEnd == '}') {
                     LogManager.debug("Getting data with key of " + value.substring(1, value.length() - 1));
                     String valueDataItem = installProfile.getData().get(value.substring(1, value.length() - 1))
-                            .getClient();
+                            .getValue(!instanceInstaller.isServer(), librariesDirectory);
                     if (dataItem == null || dataItem.isEmpty()) {
                         LogManager.error("Failed to process processor with jar " + this.jar
                                 + " as the output with value " + value + " doesn't have a corresponding data entry");
                         instanceInstaller.cancel(true);
-                        return false;
+                        return;
                     }
 
                     String sha1Hash = Utils.getSHA1(outputFile);
@@ -245,12 +234,10 @@ public class Processor {
                     LogManager.debug("Expecting " + sha1Hash + " to equal " + sha1Hash);
                     if (!sha1Hash.equals(expectedHash)) {
                         Utils.delete(outputFile);
-                        return false;
+                        return;
                     }
                 }
             }
         }
-
-        return true;
     }
 }

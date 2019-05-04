@@ -149,10 +149,22 @@ public class ForgeLoader implements Loader {
                                 downloadTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
                         Utils.copyFile(extractedLibraryFile, downloadTo, true);
                     }
+
+                    if (this.instanceInstaller.isServer()) {
+                        Utils.copyFile(extractedLibraryFile, new File(this.instanceInstaller.getRootDirectory(),
+                                installProfile.getInstall().getFilePath()), true);
+                    }
                 } else {
                     LogManager.warn(
                             "Cannot resolve Forge loader install profile library with name of " + library.getName());
                 }
+                continue;
+            }
+
+            LogManager.debug(library.getName() + " - " + library.isServerReq() + " - " + library.isClientReq());
+            if (this.instanceInstaller.isServer() && !library.isServerReq()) {
+                continue;
+            } else if (!this.instanceInstaller.isServer() && !library.isClientReq()) {
                 continue;
             }
 
@@ -181,6 +193,10 @@ public class ForgeLoader implements Loader {
         List<String> libraries = new ArrayList<String>();
 
         for (Library library : installProfile.getLibraries()) {
+            if (this.instanceInstaller.isServer() && library.getName().equals(installProfile.getInstall().getPath())) {
+                continue;
+            }
+
             libraries.add(Utils.convertMavenIdentifierToPath(library.getName()));
         }
 
@@ -201,6 +217,16 @@ public class ForgeLoader implements Loader {
     @Override
     public String getMainClass() {
         return this.getInstallProfile().getVersionInfo().getMainClass();
+    }
+
+    @Override
+    public String getServerJar() {
+        return this.getInstallProfile().getInstall().getFilePath();
+    }
+
+    @Override
+    public boolean useMinecraftLibraries() {
+        return !this.instanceInstaller.isServer();
     }
 
     @Override

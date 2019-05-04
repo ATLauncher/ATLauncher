@@ -67,17 +67,21 @@ public class Forge113Loader extends ForgeLoader {
     public List<Downloadable> getDownloadableLibraries() {
         List<Downloadable> librariesToDownload = new ArrayList<Downloadable>();
 
+        File librariesDirectory = this.instanceInstaller.isServer() ? this.instanceInstaller.getLibrariesDirectory()
+                : App.settings.getGameLibrariesDir();
+
         ForgeInstallProfile installProfile = this.getInstallProfile();
 
         for (Library library : installProfile.getLibraries()) {
             DownloadsItem artifact = library.getDownloads().getArtifact();
-            File downloadTo = new File(App.settings.getGameLibrariesDir(), artifact.getPath());
+            File downloadTo = new File(librariesDirectory, artifact.getPath());
 
             if (!artifact.hasUrl()) {
                 File extractedLibraryFile = new File(this.tempDir, "maven/" + artifact.getPath());
 
-                if (extractedLibraryFile.exists()
-                        && (!downloadTo.exists() || Utils.getSHA1(downloadTo) != artifact.getSha1())) {
+                if (extractedLibraryFile.exists() && (!downloadTo.exists()
+                        || (downloadTo.exists() && Utils.getSHA1(downloadTo) != artifact.getSha1()))) {
+                    downloadTo.getParentFile().mkdirs();
                     if (!Utils.copyFile(extractedLibraryFile, downloadTo, true)) {
                         LogManager.error("Failed to copy forge library file");
                         instanceInstaller.cancel(true);
@@ -96,7 +100,7 @@ public class Forge113Loader extends ForgeLoader {
 
         for (Library library : version.getLibraries()) {
             DownloadsItem artifact = library.getDownloads().getArtifact();
-            File downloadTo = new File(App.settings.getGameLibrariesDir(), artifact.getPath());
+            File downloadTo = new File(librariesDirectory, artifact.getPath());
 
             if (!artifact.hasUrl()) {
                 File extractedLibraryFile = new File(this.tempDir, "maven/" + artifact.getPath());
@@ -109,6 +113,11 @@ public class Forge113Loader extends ForgeLoader {
                     Utils.copyFile(extractedLibraryFile, downloadTo, true);
                 } else {
                     LogManager.warn("Cannot resolve Forge loader version library with name of " + library.getName());
+                }
+
+                if (this.instanceInstaller.isServer()) {
+                    Utils.copyFile(extractedLibraryFile,
+                            new File(this.instanceInstaller.getRootDirectory(), downloadTo.getName()), true);
                 }
             } else {
                 librariesToDownload.add(new Downloadable(artifact.getUrl(), downloadTo, artifact.getSha1(),
@@ -136,10 +145,15 @@ public class Forge113Loader extends ForgeLoader {
     }
 
     public List<String> getLibraries() {
-        Version version = this.getVersion();
         List<String> libraries = new ArrayList<String>();
 
-        for (Library library : version.getLibraries()) {
+        if (this.instanceInstaller.isServer()) {
+            for (Library library : this.getInstallProfile().getLibraries()) {
+                libraries.add(library.getDownloads().getArtifact().getPath());
+            }
+        }
+
+        for (Library library : this.getVersion().getLibraries()) {
             libraries.add(library.getDownloads().getArtifact().getPath());
         }
 
@@ -152,6 +166,25 @@ public class Forge113Loader extends ForgeLoader {
 
     public String getMainClass() {
         return this.getVersion().getMainClass();
+    }
+
+    @Override
+    public String getServerJar() {
+        for (Library library : this.getVersion().getLibraries()) {
+            DownloadsItem artifact = library.getDownloads().getArtifact();
+
+            if (!artifact.hasUrl()) {
+                return artifact.getPath().substring(artifact.getPath().lastIndexOf("/") + 1,
+                        artifact.getPath().length());
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean useMinecraftLibraries() {
+        return true;
     }
 
     @Override

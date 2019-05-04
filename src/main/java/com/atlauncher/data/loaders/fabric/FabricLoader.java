@@ -182,6 +182,11 @@ public class FabricLoader implements Loader {
     }
 
     @Override
+    public boolean useMinecraftLibraries() {
+        return true;
+    }
+
+    @Override
     public boolean useMinecraftArguments() {
         return true;
     }

@@ -115,6 +115,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private List<DisableableMod> modsInstalled;
     private List<File> serverLibraries;
     private List<File> forgeLibraries = new ArrayList<File>();
+    private com.atlauncher.data.loaders.Loader loader;
 
     public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean isServer,
             String shareCode, boolean showModsChooser) {
@@ -564,20 +565,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         totalBytes = 0;
         downloadedBytes = 0;
 
-        com.atlauncher.data.loaders.Loader loader;
+        this.loader.downloadAndExtractInstaller();
 
-        try {
-            loader = this.jsonVersion.getLoader().getLoader(new File(this.getTempDirectory(), "loader"), this);
-        } catch (Throwable e) {
-            LogManager.logStackTrace(e);
-            LogManager.error("Cannot install instance because the loader failed to create");
-            this.cancel(true);
-            return;
-        }
-
-        loader.downloadAndExtractInstaller();
-
-        List<Downloadable> downloads = loader.getDownloadableLibraries();
+        List<Downloadable> downloads = this.loader.getDownloadableLibraries();
 
         fireTask(Language.INSTANCE.localize("instance.downloadingloaderlibraries"));
 
@@ -630,30 +620,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireTask(Language.INSTANCE.localize("instance.installingloader"));
         fireSubProgressUnknown();
 
-        com.atlauncher.data.loaders.Loader loader;
-
-        try {
-            loader = this.jsonVersion.getLoader().getLoader(new File(this.getTempDirectory(), "loader"), this);
-        } catch (Throwable e) {
-            LogManager.logStackTrace(e);
-            LogManager.error("Cannot install instance because the loader failed to create");
-            this.cancel(true);
-            return;
-        }
-
         // run any processors that the loader needs
-        loader.runProcessors();
+        this.loader.runProcessors();
 
         // add the libraries for the loader
-        this.libraries.addAll(loader.getLibraries());
+        this.libraries.addAll(this.loader.getLibraries());
 
         // add the arguments for the loader
-        this.arguments.addAll(loader.getArguments());
+        this.arguments.addAll(this.loader.getArguments());
 
         // add the arguments for Minecraft
         MojangVersion mojangVersion = this.version.getMinecraftVersion().getMojangVersion();
 
-        if (loader.useMinecraftArguments()) {
+        if (this.loader.useMinecraftArguments()) {
             if (mojangVersion.hasArguments()) {
                 for (ArgumentRule argument : mojangVersion.getArguments().getGame()) {
                     if (argument.applies()) {
@@ -671,7 +650,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         // add the mainclass for the loader
-        this.mainClass = loader.getMainClass();
+        this.mainClass = this.loader.getMainClass();
 
         fireSubProgress(-1); // Hide the subprogress bar
     }
@@ -819,18 +798,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 }
             }
         }
-        File toCopy = null;
-        File copyTo = null;
-        boolean withFilename = false;
-        if (isServer) {
-            toCopy = new File(App.settings.getJarsDir(),
-                    "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar");
-            copyTo = getRootDirectory();
-        }
 
-        if (toCopy != null && toCopy.exists()) {
-            Utils.copyFile(toCopy, copyTo, withFilename);
-        }
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
@@ -917,6 +885,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // Now read in the library jars needed from the pack
         for (com.atlauncher.data.json.Library library : this.jsonVersion.getLibraries()) {
+            if (this.isServer && !library.forServer()) {
+                continue;
+            }
+
             if (library.hasDepends()) {
                 boolean found = false;
                 for (Mod mod : selectedMods) {
@@ -954,13 +926,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             forgeLibraries.add(library.getDownloadPath());
             File downloadTo = library.getDownloadPath();
 
-            if (this.isServer) {
-                if (!library.forServer()) {
-                    continue;
-                }
-                serverLibraries.add(new File(getLibrariesDirectory(), library.getServer()));
-            }
-
             if (library.shouldForce() && downloadTo.exists()) {
                 Utils.delete(downloadTo);
             }
@@ -983,7 +948,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
         // Now read in the library jars needed from Mojang
-        if (!this.isServer) {
+        if (this.loader.useMinecraftLibraries()) {
             for (Library library : this.version.getMinecraftVersion().getMojangVersion().getLibraries()) {
                 if (library.shouldInstall()) {
                     if (libraryNamesAdded.contains(
@@ -1039,6 +1004,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (download.needToDownload()) {
             totalBytes += download.getFilesize();
             download.download(true);
+        }
+
+        if (this.isServer) {
+            Utils.copyFile(getMinecraftJarLibrary(), getMinecraftJar(), true);
+        } else {
+            libraries.add(getMinecraftJarLibraryPath()); // add it to the libraries list for client only
         }
 
         fireSubProgress(-1); // Hide the subprogress bar
@@ -1099,6 +1070,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public String getServerJar() {
+        if (this.jsonVersion.hasLoader()) {
+            return this.loader.getServerJar();
+        }
+
         Mod forge = null; // The Forge Mod
         Mod mcpc = null; // The MCPC Mod
         for (Mod mod : selectedMods) {
@@ -1392,12 +1367,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         downloadMinecraft(); // Download Minecraft
-        libraries.add(getMinecraftJarLibraryPath()); // add it to the libraries list
         if (isCancelled()) {
             return false;
         }
 
         if (this.jsonVersion.hasLoader()) {
+            try {
+                this.loader = this.jsonVersion.getLoader().getLoader(new File(this.getTempDirectory(), "loader"), this);
+            } catch (Throwable e) {
+                LogManager.logStackTrace(e);
+                LogManager.error("Cannot install instance because the loader failed to create");
+                return false;
+            }
+
             downloadLoader(); // Download Loader
             if (isCancelled()) {
                 return false;
@@ -1416,12 +1398,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         organiseLibraries(); // Organise the libraries
         if (isCancelled()) {
             return false;
-        }
-        if (this.isServer) {
-            for (File file : serverLibraries) {
-                file.mkdirs();
-                Utils.copyFile(new File(App.settings.getLibrariesDir(), file.getName()), file, true);
-            }
         }
         addPercent(5);
         if (this.isServer && this.hasJarMods()) {

@@ -26,8 +26,8 @@ public class Library {
     private String name;
     private String url; // in <= 1.12.3
     private List<String> checksums; // in <= 1.12.3
-    private boolean clientreq; // in <= 1.12.3
-    private boolean serverreq; // in <= 1.12.3
+    private boolean clientreq = true; // in <= 1.12.3
+    private boolean serverreq = true; // in <= 1.12.3
     private Downloads downloads;
 
     public String getName() {
@@ -50,11 +50,11 @@ public class Library {
         return this.url != null;
     }
 
-    public boolean getClientreq() {
+    public boolean isClientReq() {
         return this.clientreq;
     }
 
-    public boolean getServereq() {
+    public boolean isServerReq() {
         return this.serverreq;
     }
 
