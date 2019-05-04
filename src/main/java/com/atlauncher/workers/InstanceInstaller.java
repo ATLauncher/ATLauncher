@@ -943,7 +943,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 library.setDownloadType(DownloadType.server);
             }
 
-            this.libraries.add(library.getPath());
+            if (library.hasPath()) {
+                this.libraries.add(library.getPath());
+            } else {
+                this.libraries.add(library.getFile());
+            }
 
             forgeLibraries.add(library.getDownloadPath());
             File downloadTo = library.getDownloadPath();

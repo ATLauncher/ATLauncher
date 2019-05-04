@@ -39,6 +39,10 @@ public class Library {
         return this.url;
     }
 
+    public boolean hasPath() {
+        return this.path != null;
+    }
+
     public String getPath() {
         return this.path;
     }
