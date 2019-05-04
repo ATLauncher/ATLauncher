@@ -134,8 +134,11 @@ public class ForgeLoader implements Loader {
 
         ForgeInstallProfile installProfile = this.getInstallProfile();
 
+        File librariesDirectory = this.instanceInstaller.isServer() ? this.instanceInstaller.getLibrariesDirectory()
+                : App.settings.getGameLibrariesDir();
+
         for (Library library : installProfile.getLibraries()) {
-            File downloadTo = Utils.convertMavenIdentifierToFile(library.getName(), App.settings.getGameLibrariesDir());
+            File downloadTo = Utils.convertMavenIdentifierToFile(library.getName(), librariesDirectory);
 
             // forge universal
             if (library.getName().equals(installProfile.getInstall().getPath())) {
