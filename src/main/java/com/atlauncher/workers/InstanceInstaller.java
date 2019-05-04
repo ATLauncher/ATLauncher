@@ -1359,7 +1359,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             setMainClass();
         }
         setExtraArguments();
-        if (this.version.getMinecraftVersion().getMojangVersion().getAssetIndex() != null) {
+        if (!this.isServer && this.version.getMinecraftVersion().getMojangVersion().getAssetIndex() != null) {
             downloadResources(); // Download Minecraft Resources
             if (isCancelled()) {
                 return false;

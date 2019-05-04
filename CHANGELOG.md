@@ -9,3 +9,4 @@
 -   Add Vanilla Minecraft tab to host Vanilla packs
 -   Make the window size a little bit bigger
 -   Change references to NodeCraft to Nodecraft
+-   Don't download resources when creating a server
