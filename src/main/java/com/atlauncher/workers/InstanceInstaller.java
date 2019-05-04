@@ -1186,8 +1186,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public String getMainClass() {
         if (this.mainClass == null) {
-            return this.version.getMinecraftVersion().getMojangVersion().getMainClass();
+            this.setMainClass();
         }
+
         return this.mainClass;
     }
 
