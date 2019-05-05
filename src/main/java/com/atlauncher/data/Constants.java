@@ -23,6 +23,7 @@ public class Constants {
     public static final String API_BASE_URL = "https://api.atlauncher.com/v1/launcher/";
     public static final String PASTE_CHECK_URL = "https://paste.atlauncher.com";
     public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";
+    public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/";
     public static final Server[] SERVERS = new Server[] {
             new Server("Auto", "download.nodecdn.net/containers/atl", true, false, true),
             new Server("Master Server (Testing Only)", "master.atlcdn.net", false, true, true) };
