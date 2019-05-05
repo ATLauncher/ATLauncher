@@ -26,6 +26,7 @@ import java.util.Map;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.ForgeXzDownloadable;
 import com.atlauncher.data.HashableDownloadable;
@@ -48,18 +49,18 @@ public class ForgeLoader implements Loader {
 
         if (metadata.containsKey("version")) {
             this.version = (String) metadata.get("version");
-            this.installerUrl = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + this.minecraft
+            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft
                     + "-" + this.version + "/forge-" + this.minecraft + "-" + this.version + "-installer.jar";
         } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Forge version");
             this.version = this.getLatestVersion();
-            this.installerUrl = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + this.minecraft
+            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft
                     + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft
                     + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         } else if ((boolean) metadata.get("recommended")) {
             LogManager.debug("Downloading recommended Forge version");
             this.version = this.getRecommendedVersion();
-            this.installerUrl = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + this.minecraft
+            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft
                     + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft
                     + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         }
