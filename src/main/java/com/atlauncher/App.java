@@ -62,6 +62,7 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
 import io.github.asyncronous.toast.Toaster;
+import io.sentry.Sentry;
 
 /**
  * Main entry point for the application, Java runs the main method here when the application is launched.
@@ -191,6 +192,8 @@ public class App {
      * @param args all the arguments passed in from the command line
      */
     public static void main(String[] args) {
+        Sentry.init(Constants.SENTRY_DSN);
+
         // Set English as the default locale. CodeChickenLib(?) has some issues when not using this on some systems.
         Locale.setDefault(Locale.ENGLISH);
 

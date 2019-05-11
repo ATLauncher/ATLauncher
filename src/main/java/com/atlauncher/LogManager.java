@@ -23,6 +23,8 @@ import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.Utils;
 
+import io.sentry.Sentry;
+
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -33,7 +35,8 @@ public final class LogManager {
     public static boolean showDebug = false;
 
     /**
-     * The level of debug logs to show. 1 being lowest, 2 being meh, 3 being EXTREEEEEEEME
+     * The level of debug logs to show. 1 being lowest, 2 being meh, 3 being
+     * EXTREEEEEEEME
      */
     public static int debugLevel = 0;
 
@@ -77,14 +80,19 @@ public final class LogManager {
         Object[] value = Utils.prepareMessageForMinecraftLog(message);
         queue.offer(new LogEvent((LogType) value[0], (String) value[1], 10));
     }
-    
+
     /**
      * Logs a stack trace to the console window
      *
      * @param t The throwable to show in the console
      */
-    public static void logStackTrace(Throwable t) {
+
+    public static void logStackTrace(Throwable t, Boolean logToSentry) {
         t.printStackTrace();
+
+        if (logToSentry) {
+            Sentry.capture(t);
+        }
 
         CharArrayWriter writer = new CharArrayWriter();
         try {
@@ -94,15 +102,25 @@ public final class LogManager {
             writer.close();
         }
     }
-    
+
+    public static void logStackTrace(Throwable t) {
+        logStackTrace(t, true);
+    }
+
     /**
      * Logs a stack trace to the console window with a custom message before it
      *
-     * @param message   A message regarding the stack trace to show before it providing more insight
-     * @param t The throwable to show in the console
+     * @param message A message regarding the stack trace to show before it
+     *                providing more insight
+     * @param t       The throwable to show in the console
      */
     public static void logStackTrace(String message, Throwable t) {
         error(message);
-        logStackTrace(t);
+        logStackTrace(t, true);
+    }
+
+    public static void logStackTrace(String message, Throwable t, Boolean logToSentry) {
+        error(message);
+        logStackTrace(t, logToSentry);
     }
 }
