@@ -1,6 +1,5 @@
 # Changelog
 
-## 3.2.5.3
+## 3.2.5.4
 
--   Print out java version information earlier in bootup process
--   Add in dialog panel when using Newer Java than 8
+-   If Minecraft java > 8 don't use default launch params

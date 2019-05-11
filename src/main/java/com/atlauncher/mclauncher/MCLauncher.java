@@ -130,8 +130,8 @@ public class MCLauncher {
 
         String javaParams = App.settings.getJavaParameters();
 
-        if (javaParams.isEmpty()) {
-            // Mojang launcher defaults if user has no custom java arguments
+        if (javaParams.isEmpty() && !Utils.isMinecraftJavaNewerThanJava8()) {
+            // Some defaults if on Java 8 or less
             javaParams = "-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy";
         }
 

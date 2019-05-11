@@ -1502,10 +1502,11 @@ public class Utils {
     public static String getMinecraftJavaVersion() {
         if (App.settings.isUsingCustomJavaPath()) {
             File folder = new File(App.settings.getJavaPath(), "bin/");
-            String javaCommand = folder + File.separator + "java" + (isWindows() ? ".exe" : "");
+            String javaFile = App.settings.getJavaPath() + File.separator + "bin" + File.separator + "java"
+                    + (isWindows() ? "w" : "");
 
-            ProcessBuilder processBuilder = new ProcessBuilder(javaCommand, "-version");
-            processBuilder.directory(folder);
+            ProcessBuilder processBuilder = new ProcessBuilder(javaFile, "-version");
+            processBuilder.directory(folder.getAbsoluteFile());
             processBuilder.redirectErrorStream(true);
 
             String version = "Unknown";
@@ -1515,14 +1516,14 @@ public class Utils {
                 BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 try {
                     String line = null;
-                    Pattern p = Pattern.compile("java version \"([^\"]*)\"");
+                    Pattern p = Pattern.compile("(java|openjdk) version \"([^\"]*)\"");
 
                     while ((line = br.readLine()) != null) {
                         // Extract version information
                         Matcher m = p.matcher(line);
 
                         if (m.find()) {
-                            version = m.group(1);
+                            version = m.group(2);
                             break;
                         }
                     }
@@ -1533,7 +1534,9 @@ public class Utils {
                 LogManager.logStackTrace(e);
             }
 
-            LogManager.warn("Cannot get Java version from the ouput of \"" + javaCommand + "\" -version");
+            if (version.equals("Unknown")) {
+                LogManager.warn("Cannot get Java version from the output of \"" + javaFile + " -version\"");
+            }
 
             return version;
         } else {
@@ -1594,6 +1597,10 @@ public class Utils {
 
     public static boolean isSystemJavaNewerThanJava8() {
         return getLauncherJavaVersionNumber() >= 9;
+    }
+
+    public static boolean isMinecraftJavaNewerThanJava8() {
+        return getMinecraftJavaVersionNumber() >= 9;
     }
 
     /**
