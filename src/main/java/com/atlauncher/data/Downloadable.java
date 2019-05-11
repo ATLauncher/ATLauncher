@@ -179,7 +179,8 @@ public class Downloadable {
     }
 
     public void copyFile() {
-        if (this.copyTo != null && this.actuallyCopy) {
+        if (this.copyTo != null && this.actuallyCopy
+                && !this.copyTo.getAbsolutePath().equalsIgnoreCase(this.file.getAbsolutePath())) {
             if (this.copyTo.exists()) {
                 Utils.delete(this.copyTo);
             }
@@ -495,12 +496,7 @@ public class Downloadable {
                     fileHash2 = "0";
                 }
                 if (!fileHash2.equalsIgnoreCase(getHash())) {
-                    if (this.copyTo.exists()) {
-                        Utils.delete(this.copyTo);
-                    }
-                    new File(this.copyTo.getAbsolutePath().substring(0,
-                            this.copyTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
-                    Utils.copyFile(this.file, this.copyTo, true);
+                    this.copyFile();
                 }
             }
             App.settings.clearTriedServers(); // Okay downloaded it so clear the servers used
