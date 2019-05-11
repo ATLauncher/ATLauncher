@@ -327,8 +327,6 @@ public class App {
         Sentry.getContext().addTag("osName", System.getProperty("os.name"));
         Sentry.getContext().addTag("osVersion", System.getProperty("os.version"));
 
-        LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
-
         if (settings.isUsingCustomJavaPath()) {
             LogManager.warn("Custom Java Path Set!");
 
@@ -351,6 +349,8 @@ public class App {
 
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
         Sentry.getContext().addTag("64BitJava", Utils.is64Bit() ? "true" : "false");
+
+        LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
 
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
