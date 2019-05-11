@@ -321,7 +321,7 @@ public class InstanceInstallerDialog extends JDialog {
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
 
                 Sentry.getContext().recordBreadcrumb(new BreadcrumbBuilder()
-                        .setMessage("Installing pack " + pack.getName() + " version " + instance.getVersion()).build());
+                        .setMessage("Installing pack " + pack.getName() + " version " + version.getVersion()).build());
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(
                         (isServer ? "" : instanceNameField.getText()), pack, version, isReinstall, isServer, shareCode,
