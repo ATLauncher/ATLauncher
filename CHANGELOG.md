@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.5.1
+## 3.2.5.2
 
--   Add in system information to Sentry
+-   Fix broken Sentry release id
