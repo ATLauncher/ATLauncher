@@ -31,8 +31,6 @@ import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 
-import io.sentry.Sentry;
-import io.sentry.event.BreadcrumbBuilder;
 
 import com.atlauncher.data.Constants;
 
@@ -47,11 +45,6 @@ public class MCLauncher {
     public static Process launch(Account account, Instance instance, LoginResponse response) throws IOException {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
-
-        Sentry.getContext()
-                .recordBreadcrumb(new BreadcrumbBuilder().setMessage(
-                        "Launching instance from pack " + instance.getPackName() + " version " + instance.getVersion())
-                        .build());
 
         File jarMods = instance.getJarModsDirectory();
         File[] jarModFiles = jarMods.listFiles();

@@ -51,9 +51,6 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
-import io.sentry.Sentry;
-import io.sentry.event.BreadcrumbBuilder;
-
 public class InstanceInstallerDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
     private int versionLength = 0;
@@ -319,9 +316,6 @@ public class InstanceInstallerDialog extends JDialog {
 
                 dialog.add(topPanel, BorderLayout.CENTER);
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
-
-                Sentry.getContext().recordBreadcrumb(new BreadcrumbBuilder()
-                        .setMessage("Installing pack " + pack.getName() + " version " + version.getVersion()).build());
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(
                         (isServer ? "" : instanceNameField.getText()), pack, version, isReinstall, isServer, shareCode,

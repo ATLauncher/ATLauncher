@@ -48,7 +48,7 @@ public class Authentication {
                 response.setAuth(auth);
             } catch (AuthenticationException e) {
                 response.setErrorMessage(e.getMessage());
-                LogManager.logStackTrace("Authentication failed", e, false);
+                LogManager.logStackTrace("Authentication failed", e);
             }
         }
 

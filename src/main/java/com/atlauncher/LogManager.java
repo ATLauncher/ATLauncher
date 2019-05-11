@@ -23,8 +23,6 @@ import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.Utils;
 
-import io.sentry.Sentry;
-
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -87,12 +85,8 @@ public final class LogManager {
      * @param t The throwable to show in the console
      */
 
-    public static void logStackTrace(Throwable t, Boolean logToSentry) {
+    public static void logStackTrace(Throwable t) {
         t.printStackTrace();
-
-        if (logToSentry) {
-            Sentry.capture(t);
-        }
 
         CharArrayWriter writer = new CharArrayWriter();
         try {
@@ -101,10 +95,6 @@ public final class LogManager {
         } finally {
             writer.close();
         }
-    }
-
-    public static void logStackTrace(Throwable t) {
-        logStackTrace(t, true);
     }
 
     /**
@@ -116,11 +106,6 @@ public final class LogManager {
      */
     public static void logStackTrace(String message, Throwable t) {
         error(message);
-        logStackTrace(t, true);
-    }
-
-    public static void logStackTrace(String message, Throwable t, Boolean logToSentry) {
-        error(message);
-        logStackTrace(t, logToSentry);
+        logStackTrace(t);
     }
 }

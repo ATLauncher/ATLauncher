@@ -44,9 +44,6 @@ import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
-import io.sentry.Sentry;
-import io.sentry.event.BreadcrumbBuilder;
-
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 
 /**
@@ -1417,8 +1414,6 @@ public class Instance implements Cloneable {
                             }
                             LogManager.minecraft(line);
                         }
-                        Sentry.getContext().recordBreadcrumb(
-                                new BreadcrumbBuilder().setMessage("Launched instance closed").build());
                         App.settings.hideKillMinecraft();
                         if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
                             App.settings.getParent().setVisible(true);

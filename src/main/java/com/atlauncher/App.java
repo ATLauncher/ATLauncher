@@ -62,7 +62,6 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
 import io.github.asyncronous.toast.Toaster;
-import io.sentry.Sentry;
 
 /**
  * Main entry point for the application, Java runs the main method here when the
@@ -200,8 +199,6 @@ public class App {
      * @param args all the arguments passed in from the command line
      */
     public static void main(String[] args) {
-        Sentry.init(Constants.SENTRY_DSN);
-
         // Set English as the default locale. CodeChickenLib(?) has some issues when not
         // using this on some systems.
         Locale.setDefault(Locale.ENGLISH);
@@ -324,8 +321,6 @@ public class App {
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
 
         LogManager.info("Operating System: " + System.getProperty("os.name"));
-        Sentry.getContext().addTag("osName", System.getProperty("os.name"));
-        Sentry.getContext().addTag("osVersion", System.getProperty("os.version"));
 
         if (settings.isUsingCustomJavaPath()) {
             LogManager.warn("Custom Java Path Set!");
@@ -343,12 +338,10 @@ public class App {
         }
 
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
-        Sentry.getContext().addTag("javaVersion", Utils.getLauncherJavaVersion());
 
         LogManager.info("Java Path: " + settings.getJavaPath());
 
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
-        Sentry.getContext().addTag("64BitJava", Utils.is64Bit() ? "true" : "false");
 
         if (Utils.isSystemJavaNewerThanJava8()) {
             LogManager.warn(
