@@ -65,7 +65,8 @@ import io.github.asyncronous.toast.Toaster;
 import io.sentry.Sentry;
 
 /**
- * Main entry point for the application, Java runs the main method here when the application is launched.
+ * Main entry point for the application, Java runs the main method here when the
+ * application is launched.
  */
 public class App {
     /**
@@ -79,65 +80,71 @@ public class App {
     public static final Toaster TOASTER = Toaster.instance();
 
     /**
-     * The tray menu shown in the notification area or whatever it's called in non Windows OS.
+     * The tray menu shown in the notification area or whatever it's called in non
+     * Windows OS.
      */
     public static TrayMenu TRAY_MENU = new TrayMenu();
 
     /**
-     * If the launcher was just updated and this is it's first time loading after the update. This is used to check for
-     * when there are possible issues in which the user may have to download the update manually.
+     * If the launcher was just updated and this is it's first time loading after
+     * the update. This is used to check for when there are possible issues in which
+     * the user may have to download the update manually.
      */
     public static boolean wasUpdated = false;
 
     /**
-     * This controls if GZIP is used when downloading files through the launcher. It's used as a debugging tool and is
-     * enabled with the command line argument shown below.
+     * This controls if GZIP is used when downloading files through the launcher.
+     * It's used as a debugging tool and is enabled with the command line argument
+     * shown below.
      * <p/>
      * --usegzip=false
      */
     public static boolean useGzipForDownloads = true;
 
     /**
-     * This allows skipping the system tray integration so that the launcher doesn't even try to show the icon and menu
-     * etc, in the users system tray. It can be skipped with the below command line argument.
+     * This allows skipping the system tray integration so that the launcher doesn't
+     * even try to show the icon and menu etc, in the users system tray. It can be
+     * skipped with the below command line argument.
      * <p/>
      * --skip-tray-integration
      */
     public static boolean skipTrayIntegration = false;
 
     /**
-     * This removes writing the launchers location to AppData/Application Support. It can be enabled with the below
-     * command line argument.
+     * This removes writing the launchers location to AppData/Application Support.
+     * It can be enabled with the below command line argument.
      * <p/>
      * --skip-integration
      */
     public static boolean skipIntegration = false;
 
     /**
-     * This allows skipping the hash checking when downloading files. It can be skipped with the below command line
-     * argument.
+     * This allows skipping the hash checking when downloading files. It can be
+     * skipped with the below command line argument.
      * <p/>
      * --skip-hash-checking
      */
     public static boolean skipHashChecking = false;
 
     /**
-     * This forces the launcher to start in offline mode. It can be enabled with the below command line argument.
+     * This forces the launcher to start in offline mode. It can be enabled with the
+     * below command line argument.
      * <p/>
      * --force-offline-mode
      */
     public static boolean forceOfflineMode = false;
 
     /**
-     * This forces the working directory for the launcher. It can be changed with the below command line argument.
+     * This forces the working directory for the launcher. It can be changed with
+     * the below command line argument.
      * <p/>
      * --working-dir=C:/Games/ATLauncher
      */
     public static File workingDir = null;
 
     /**
-     * This forces the launcher to not check for a launcher update. It can be enabled with the below command line
-     * argument.
+     * This forces the launcher to not check for a launcher update. It can be
+     * enabled with the below command line argument.
      * <p/>
      * --no-launcher-update
      */
@@ -164,16 +171,17 @@ public class App {
     public static String autoLaunch = null;
 
     /**
-     * This is the Settings instance which holds all the users settings and alot of methods relating to getting things
-     * done.
+     * This is the Settings instance which holds all the users settings and alot of
+     * methods relating to getting things done.
      *
-     * @TODO This should probably be switched to be less large and have less responsibility.
+     * @TODO This should probably be switched to be less large and have less
+     *       responsibility.
      */
     public static Settings settings;
 
     /**
-     * This is the theme used by the launcher. By default it uses the default theme until the theme can be created and
-     * loaded.
+     * This is the theme used by the launcher. By default it uses the default theme
+     * until the theme can be created and loaded.
      * <p/>
      * For more information on themeing, please see https://atl.pw/theme
      */
@@ -194,7 +202,8 @@ public class App {
     public static void main(String[] args) {
         Sentry.init(Constants.SENTRY_DSN);
 
-        // Set English as the default locale. CodeChickenLib(?) has some issues when not using this on some systems.
+        // Set English as the default locale. CodeChickenLib(?) has some issues when not
+        // using this on some systems.
         Locale.setDefault(Locale.ENGLISH);
 
         // Prefer to use IPv4
@@ -211,15 +220,15 @@ public class App {
                     LogManager.showDebug = true;
                     LogManager.debugLevel = 1;
                     LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
-                        + "user data!");
+                            + "user data!");
                 } else if (parts[0].equalsIgnoreCase("--debug-level") && parts.length == 2) {
                     int debugLevel;
 
                     try {
                         debugLevel = Integer.parseInt(parts[1]);
                     } catch (NumberFormatException e) {
-                        LogManager.error("Error converting given debug level string to an integer. The specified " +
-                            "debug level given was '" + parts[1] + "'");
+                        LogManager.error("Error converting given debug level string to an integer. The specified "
+                                + "debug level given was '" + parts[1] + "'");
                         continue;
                     }
 
@@ -232,8 +241,9 @@ public class App {
                     LogManager.debug("Debug level has been set to " + debugLevel + "!");
                 } else if (parts[0].equalsIgnoreCase("--usegzip") && parts[1].equalsIgnoreCase("false")) {
                     useGzipForDownloads = false;
-                    LogManager.debug("GZip has been turned off for downloads! Don't ask for support with this " +
-                        "disabled!", true);
+                    LogManager.debug(
+                            "GZip has been turned off for downloads! Don't ask for support with this " + "disabled!",
+                            true);
                 } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
                     skipTrayIntegration = true;
                     LogManager.debug("Skipping tray integration!", true);
@@ -249,7 +259,7 @@ public class App {
                 } else if (parts[0].equalsIgnoreCase("--no-launcher-update")) {
                     noLauncherUpdate = true;
                     LogManager.debug("Not checking for launcher updates! Don't ask for support with this enabled",
-                        true);
+                            true);
                 } else if (parts[0].equalsIgnoreCase("--working-dir")) {
                     File wDir = new File(parts[1]);
                     if (wDir.exists() && !wDir.isDirectory()) {
@@ -269,12 +279,13 @@ public class App {
         if (!config.exists()) {
             int files = config.getParentFile().list().length;
             if (files > 1) {
-                String[] options = {"Yes It's Fine", "Whoops. I'll Change That Now"};
-                int ret = JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph("I've detected that you may " +
-                    "not have installed this in the right location.<br/><br/>The exe or jar file should " +
-                    "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure " +
-                    "that's what you've done?"), "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane
-                    .ERROR_MESSAGE, null, options, options[0]);
+                String[] options = { "Yes It's Fine", "Whoops. I'll Change That Now" };
+                int ret = JOptionPane.showOptionDialog(null,
+                        HTMLUtils.centerParagraph("I've detected that you may "
+                                + "not have installed this in the right location.<br/><br/>The exe or jar file should "
+                                + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
+                                + "that's what you've done?"),
+                        "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 if (ret != 0) {
                     System.exit(0);
                 }
@@ -297,7 +308,8 @@ public class App {
         // Load the theme and style everything.
         loadTheme();
 
-        // Load the console, making sure it's after the theme and L&F has been loaded otherwise bad results may occur.
+        // Load the console, making sure it's after the theme and L&F has been loaded
+        // otherwise bad results may occur.
         settings.loadConsole();
 
         if (settings.enableTrayIcon() && !skipTrayIntegration) {
@@ -310,7 +322,11 @@ public class App {
         }
 
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
+
         LogManager.info("Operating System: " + System.getProperty("os.name"));
+        Sentry.getContext().addTag("osName", System.getProperty("os.name"));
+        Sentry.getContext().addTag("osVersion", System.getProperty("os.version"));
+
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
 
         if (settings.isUsingCustomJavaPath()) {
@@ -318,7 +334,8 @@ public class App {
 
             settings.checkForValidJavaPath(false);
         } else if (settings.isUsingMacApp()) {
-            // If the user is using the Mac Application, then we forcibly set the java path if they have none set.
+            // If the user is using the Mac Application, then we forcibly set the java path
+            // if they have none set.
 
             File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
             if (oracleJava.exists() && oracleJava.canExecute()) {
@@ -328,16 +345,22 @@ public class App {
         }
 
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
+        Sentry.getContext().addTag("javaVersion", Utils.getActualJavaVersion());
+
         LogManager.info("Java Path: " + settings.getJavaPath());
+
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
+        Sentry.getContext().addTag("64BitJava", Utils.is64Bit() ? "true" : "false");
+
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
 
-        // Now for some Mac specific stuff, mainly just setting the name of the application and icon.
+        // Now for some Mac specific stuff, mainly just setting the name of the
+        // application and icon.
         if (Utils.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", Constants.LAUNCHER_NAME + " " +
-                Constants.VERSION);
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+                    Constants.LAUNCHER_NAME + " " + Constants.VERSION);
             try {
                 Class<?> util = Class.forName("com.apple.eawt.Application");
                 Method getApplication = util.getMethod("getApplication");
@@ -499,8 +522,9 @@ public class App {
     }
 
     /**
-     * This creates some integration files so the launcher can work with other applications by storing some properties
-     * about itself and it's location in a set location.
+     * This creates some integration files so the launcher can work with other
+     * applications by storing some properties about itself and it's location in a
+     * set location.
      */
     public static void integrate() {
         if (!Utils.getOSStorageDir().exists()) {
@@ -543,8 +567,8 @@ public class App {
 
         props.setProperty("java_version", Utils.getLauncherJavaVersion());
         props.setProperty("location", App.settings.getBaseDir().toString());
-        props.setProperty("executable", new File(Update.class.getProtectionDomain().getCodeSource().getLocation()
-            .getPath()).getAbsolutePath());
+        props.setProperty("executable",
+                new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath());
 
         packCodeToAdd = props.getProperty("pack_code_to_add", null);
         props.remove("pack_code_to_add");
