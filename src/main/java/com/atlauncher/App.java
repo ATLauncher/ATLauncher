@@ -343,12 +343,22 @@ public class App {
         }
 
         LogManager.info("Java Version: " + Utils.getActualJavaVersion());
-        Sentry.getContext().addTag("javaVersion", Utils.getActualJavaVersion());
+        Sentry.getContext().addTag("javaVersion", Utils.getLauncherJavaVersion());
 
         LogManager.info("Java Path: " + settings.getJavaPath());
 
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
         Sentry.getContext().addTag("64BitJava", Utils.is64Bit() ? "true" : "false");
+
+        if (Utils.isSystemJavaNewerThanJava8()) {
+            LogManager.warn(
+                    "You're using a newer version of Java than Java 8! ATLauncher is only compatable with Java 8");
+            String[] options = { "Close" };
+            JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph(
+                    "You're using a newer version of Java than Java 8! ATLauncher is only compatable with Java 8. Please uninstall Java and install Java 8"),
+                    "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            System.exit(0);
+        }
 
         LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
 

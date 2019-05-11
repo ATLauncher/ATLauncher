@@ -1592,6 +1592,10 @@ public class Utils {
         return version >= 7 || version == -1;
     }
 
+    public static boolean isSystemJavaNewerThanJava8() {
+        return getLauncherJavaVersionNumber() >= 9;
+    }
+
     /**
      * Checks if the user is using exactly Java 8.
      *
