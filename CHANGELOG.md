@@ -1,6 +1,5 @@
 # Changelog
 
-## 3.2.5.4
+## 3.2.5.5
 
--   If Minecraft java > 8 don't use default launch params
--   Remove Sentry
+-   Fix issue with skins not downloading causes application hang

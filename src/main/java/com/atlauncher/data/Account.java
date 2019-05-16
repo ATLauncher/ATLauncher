@@ -116,7 +116,8 @@ public class Account implements Serializable {
     private List<String> collapsedPacks;
 
     /**
-     * The instance names this account has collapsed in the {@link InstancesTab}, if any.
+     * The instance names this account has collapsed in the {@link InstancesTab}, if
+     * any.
      */
     private List<String> collapsedInstances;
 
@@ -137,7 +138,8 @@ public class Account implements Serializable {
      * @param password          The password of the Account
      * @param minecraftUsername The Minecraft username of the Account
      * @param uuid              The UUID of the Account
-     * @param remember          If this Account's password should be remembered or not
+     * @param remember          If this Account's password should be remembered or
+     *                          not
      */
     public Account(String username, String password, String minecraftUsername, String uuid, boolean remember) {
         this.username = username;
@@ -154,7 +156,8 @@ public class Account implements Serializable {
     }
 
     /**
-     * Constructor for a fake user account, used for displaying non selectable accounts.
+     * Constructor for a fake user account, used for displaying non selectable
+     * accounts.
      *
      * @param name The name of the Account
      */
@@ -169,15 +172,16 @@ public class Account implements Serializable {
     }
 
     /**
-     * Creates an {@link ImageIcon} of the Account's Minecraft skin, getting just the head of it.
+     * Creates an {@link ImageIcon} of the Account's Minecraft skin, getting just
+     * the head of it.
      *
      * @return The Account's Minecraft usernames head
      */
     public ImageIcon getMinecraftHead() {
         File file = null;
         if (this.isReal()) {
-            file = new File(App.settings.getSkinsDir(), (this.isUUIDNull() ? "default" : this.getUUIDNoDashes()) +
-                ".png");
+            file = new File(App.settings.getSkinsDir(),
+                    (this.isUUIDNull() ? "default" : this.getUUIDNoDashes()) + ".png");
             if (!file.exists()) {
                 this.updateSkin(); // Download/update the users skin
             }
@@ -189,6 +193,16 @@ public class Account implements Serializable {
         }
 
         BufferedImage image = null;
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        if (image == null) {
+            file = new File(App.settings.getSkinsDir(), "default.png");
+        }
+
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
@@ -234,6 +248,16 @@ public class Account implements Serializable {
             LogManager.logStackTrace(e);
         }
 
+        if (image == null) {
+            file = new File(App.settings.getSkinsDir(), "default.png");
+        }
+
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
         BufferedImage head = image.getSubimage(8, 8, 8, 8);
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
         BufferedImage arm = image.getSubimage(44, 20, 4, 12);
@@ -244,7 +268,8 @@ public class Account implements Serializable {
         Graphics g = skin.getGraphics();
         g.drawImage(head, 4, 0, null);
 
-        // Draw the helmet on the skin if more than half of the pixels are not transparent.
+        // Draw the helmet on the skin if more than half of the pixels are not
+        // transparent.
         if (Utils.nonTransparentPixels(helmet) <= 32) {
             g.drawImage(helmet, 4, 0, null);
         }
@@ -261,15 +286,17 @@ public class Account implements Serializable {
     /**
      * If this Account is real or not.
      *
-     * @return true if the Account is real and was added by the user, false otherwise
+     * @return true if the Account is real and was added by the user, false
+     *         otherwise
      */
     public boolean isReal() {
         return this.isReal;
     }
 
     /**
-     * Gets the username used for logging into Mojang servers. Can be an email address or a username if the user has not
-     * migrated their Minecraft account to a Mojang account.
+     * Gets the username used for logging into Mojang servers. Can be an email
+     * address or a username if the user has not migrated their Minecraft account to
+     * a Mojang account.
      *
      * @return The username used for logging into Mojang servers
      */
@@ -379,7 +406,8 @@ public class Account implements Serializable {
     /**
      * Sets this Account to remember or not remember the password.
      *
-     * @param remember True if the password should be remembered, False if it shouldn't be remembered
+     * @param remember True if the password should be remembered, False if it
+     *                 shouldn't be remembered
      */
     public void setRemember(boolean remember) {
         this.remember = remember;
@@ -425,7 +453,8 @@ public class Account implements Serializable {
     }
 
     /**
-     * Gets a List of instances this Account has collapsed in the {@link InstancesTab}.
+     * Gets a List of instances this Account has collapsed in the
+     * {@link InstancesTab}.
      *
      * @return List of collapsed instances
      */
@@ -437,16 +466,18 @@ public class Account implements Serializable {
     }
 
     /**
-     * Updates this Account's skin by redownloading the Minecraft skin from Mojang's skin server.
+     * Updates this Account's skin by redownloading the Minecraft skin from Mojang's
+     * skin server.
      */
     public void updateSkin() {
         if (!this.skinUpdating) {
             this.skinUpdating = true;
             final File file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
             LogManager.info("Downloading skin for " + this.minecraftUsername);
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
-                ".downloadingskin"), 0, Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin",
-                this.minecraftUsername), "Aborting downloading Minecraft skin for " + this.minecraftUsername);
+            final ProgressDialog dialog = new ProgressDialog(
+                    Language.INSTANCE.localize("account" + "" + ".downloadingskin"), 0,
+                    Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin", this.minecraftUsername),
+                    "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             final UUID uid = this.getRealUUID();
             dialog.addThread(new Thread() {
                 public void run() {
@@ -502,10 +533,11 @@ public class Account implements Serializable {
             });
             dialog.start();
             if (!(Boolean) dialog.getReturnValue()) {
-                String[] options = {Language.INSTANCE.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                    ".skinerror"), Language.INSTANCE.localize("common.error"), JOptionPane
-                    .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                String[] options = { Language.INSTANCE.localize("common.ok") };
+                JOptionPane.showOptionDialog(App.settings.getParent(),
+                        Language.INSTANCE.localize("account" + "" + ".skinerror"),
+                        Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
             this.skinUpdating = false;
         }
@@ -596,11 +628,11 @@ public class Account implements Serializable {
     }
 
     public String getSession(LoginResponse response) {
-        if (!response.isOffline() && response != null && response.getAuth().isLoggedIn() && response.getAuth()
-            .canPlayOnline()) {
+        if (!response.isOffline() && response != null && response.getAuth().isLoggedIn()
+                && response.getAuth().canPlayOnline()) {
             if (response.getAuth() instanceof YggdrasilUserAuthentication) {
-                return String.format("token:%s:%s", response.getAuth().getAuthenticatedToken(), UUIDTypeAdapter
-                    .fromUUID(response.getAuth().getSelectedProfile().getId()));
+                return String.format("token:%s:%s", response.getAuth().getAuthenticatedToken(),
+                        UUIDTypeAdapter.fromUUID(response.getAuth().getSelectedProfile().getId()));
             } else {
                 return response.getAuth().getAuthenticatedToken();
             }
@@ -640,14 +672,14 @@ public class Account implements Serializable {
             if (!this.isRemembered()) {
                 JPanel panel = new JPanel();
                 panel.setLayout(new BorderLayout());
-                JLabel passwordLabel = new JLabel(Language.INSTANCE.localizeWithReplace("instance.enterpassword",
-                    this.getMinecraftUsername()));
+                JLabel passwordLabel = new JLabel(
+                        Language.INSTANCE.localizeWithReplace("instance.enterpassword", this.getMinecraftUsername()));
 
                 JPasswordField passwordField = new JPasswordField();
                 panel.add(passwordLabel, BorderLayout.NORTH);
                 panel.add(passwordField, BorderLayout.CENTER);
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel, Language.INSTANCE.localize
-                    ("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
+                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
+                        Language.INSTANCE.localize("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
                 if (ret == JOptionPane.OK_OPTION) {
                     this.setPassword(new String(passwordField.getPassword()));
                 } else {
@@ -662,11 +694,12 @@ public class Account implements Serializable {
 
         if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());
-            String[] options = {Language.INSTANCE.localize("common.ok")};
-            JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
-                    .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())),
-                Language.INSTANCE.localize("instance" + ".errorloggingintitle"), JOptionPane.DEFAULT_OPTION,
-                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            String[] options = { Language.INSTANCE.localize("common.ok") };
+            JOptionPane.showOptionDialog(App.settings.getParent(),
+                    HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorloggingin",
+                            "<br/><br/>" + response.getErrorMessage())),
+                    Language.INSTANCE.localize("instance" + ".errorloggingintitle"), JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             App.settings.setMinecraftLaunched(false);
             return null;
         }
@@ -698,8 +731,8 @@ public class Account implements Serializable {
         }
 
         if (!currentUsername.equals(this.minecraftUsername)) {
-            LogManager.info("The username for account with UUID of " + this.getUUIDNoDashes() + " changed from " +
-                this.minecraftUsername + " to " + currentUsername);
+            LogManager.info("The username for account with UUID of " + this.getUUIDNoDashes() + " changed from "
+                    + this.minecraftUsername + " to " + currentUsername);
             this.minecraftUsername = currentUsername;
             return true;
         }
