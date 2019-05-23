@@ -76,7 +76,6 @@ import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.thread.LoggingThread;
-import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Timestamper;
@@ -329,15 +328,6 @@ public class Settings {
 
         if (this.enableServerChecker) {
             this.startCheckingServers();
-        }
-
-        if (this.enableLogs) {
-            App.TASKPOOL.execute(new Runnable() {
-                @Override
-                public void run() {
-                    ATLauncherAPIUtils.postSystemInfo();
-                }
-            });
         }
     }
 
