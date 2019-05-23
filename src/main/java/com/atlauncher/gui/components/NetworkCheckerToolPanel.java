@@ -92,8 +92,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                                 .getHost()) + "\n\n----------------\n\n");
                         dialog.doneTask();
 
-                        results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute("www" +
-                                ".creeperrepo" + ".net"));
+                        results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute(server.getHost()));
                         dialog.doneTask();
                     }
 
