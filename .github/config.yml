@@ -1,0 +1,19 @@
+# Configuration for request-info - https://github.com/behaviorbot/request-info
+
+# *Required* Comment to reply with
+requestInfoReplyComment: >
+  It looks like you may have forgotten to provide information for this. If you could please edit it to add in some more information, that would make our lives much easier when it comes time to look this. The more information the better!
+
+# *OPTIONAL* Label to be added to Issues and Pull Requests with insufficient information given
+requestInfoLabelToAdd: more-information-needed
+
+
+
+# Configuration for move-issues - https://github.com/dessant/move-issues
+
+# Delete the command comment. Ignored when the comment also contains other content
+deleteCommand: true
+# Close the source issue after moving
+closeSourceIssue: true
+# Lock the source issue after moving
+lockSourceIssue: false
