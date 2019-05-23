@@ -49,20 +49,20 @@ public class ForgeLoader implements Loader {
 
         if (metadata.containsKey("version")) {
             this.version = (String) metadata.get("version");
-            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft
-                    + "-" + this.version + "/forge-" + this.minecraft + "-" + this.version + "-installer.jar";
+            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft + "-" + this.version + "/forge-" + this.minecraft
+                    + "-" + this.version + "-installer.jar";
         } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Forge version");
             this.version = this.getLatestVersion();
-            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft
-                    + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft
-                    + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
+            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft + "-" + this.version
+                    + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft + "-" + this.version
+                    + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         } else if ((boolean) metadata.get("recommended")) {
             LogManager.debug("Downloading recommended Forge version");
             this.version = this.getRecommendedVersion();
-            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft
-                    + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft
-                    + "-" + this.version + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
+            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft + "-" + this.version
+                    + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft + "-" + this.version
+                    + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         }
     }
 
@@ -140,6 +140,7 @@ public class ForgeLoader implements Loader {
 
         for (Library library : installProfile.getLibraries()) {
             String libraryPath = Utils.convertMavenIdentifierToPath(library.getName());
+            LogManager.debug(libraryPath);
             File downloadTo = new File(App.settings.getGameLibrariesDir(), libraryPath);
             File finalDownloadTo = new File(librariesDirectory, libraryPath);
 
@@ -167,10 +168,13 @@ public class ForgeLoader implements Loader {
                 continue;
             }
 
-            LogManager.debug(library.getName() + " - " + library.isServerReq() + " - " + library.isClientReq());
             if (this.instanceInstaller.isServer() && !library.isServerReq()) {
+                LogManager.debug("Not using library " + library.getName()
+                        + " as this is a server install and it's not required");
                 continue;
             } else if (!this.instanceInstaller.isServer() && !library.isClientReq()) {
+                LogManager.debug("Not using library " + library.getName()
+                        + " as this is a client install and it's not required");
                 continue;
             }
 
@@ -179,11 +183,9 @@ public class ForgeLoader implements Loader {
             String url = urlBase + Utils.convertMavenIdentifierToPath(library.getName());
 
             if (library.isUsingPackXz()) {
-                librariesToDownload
-                        .add(new ForgeXzDownloadable(url, downloadTo, instanceInstaller, finalDownloadTo));
+                librariesToDownload.add(new ForgeXzDownloadable(url, downloadTo, instanceInstaller, finalDownloadTo));
             } else {
-                librariesToDownload
-                        .add(new HashableDownloadable(url, downloadTo, instanceInstaller, finalDownloadTo));
+                librariesToDownload.add(new HashableDownloadable(url, downloadTo, instanceInstaller, finalDownloadTo));
             }
         }
 

@@ -625,6 +625,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // add the libraries for the loader
         this.libraries.addAll(this.loader.getLibraries());
+        for (String library : this.libraries) {
+            LogManager.debug(library);
+        }
 
         // add the arguments for the loader
         this.arguments.addAll(this.loader.getArguments());

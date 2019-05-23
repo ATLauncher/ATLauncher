@@ -26,13 +26,15 @@ public class ForgeXzDownloadable extends HashableDownloadable {
     private File packXzFile;
     private File packFile;
     private File finalFile;
+    private File copyTo;
 
     public ForgeXzDownloadable(String url, File file, InstanceInstaller instanceInstaller, File copyTo) {
-        super(url + ".pack.xz", new File(file.getAbsolutePath() + ".pack.xz"), instanceInstaller, copyTo);
+        super(url + ".pack.xz", new File(file.getAbsolutePath() + ".pack.xz"), instanceInstaller);
 
         this.packXzFile = new File(file.getAbsolutePath() + ".pack.xz");
         this.packFile = new File(file.getAbsolutePath() + ".pack");
         this.finalFile = file;
+        this.copyTo = copyTo;
     }
 
     @Override
@@ -52,5 +54,16 @@ public class ForgeXzDownloadable extends HashableDownloadable {
 
         Utils.delete(this.packXzFile);
         Utils.delete(this.packFile);
+
+        if (this.copyTo != null) {
+            if (this.copyTo.exists()) {
+                Utils.delete(this.copyTo);
+            }
+
+            new File(this.copyTo.getAbsolutePath().substring(0,
+                    this.copyTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
+
+            Utils.copyFile(this.finalFile, this.copyTo, true);
+        }
     }
 }
