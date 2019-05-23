@@ -67,7 +67,6 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
-import com.atlauncher.data.json.LauncherLibrary;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
@@ -151,11 +150,10 @@ public class Settings {
     private List<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
     private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
-    private List<LauncherLibrary> launcherLibraries = new ArrayList<LauncherLibrary>();
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
-            commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, launcherLibrariesdir, loadersDir,
-            languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
+            commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, loadersDir, languagesDir,
+            downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
             instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -212,7 +210,6 @@ public class Settings {
         assetsDir = new File(baseDir, "assets");
         librariesDir = new File(configsDir, "Libraries");
         gameLibrariesDir = new File(baseDir, "libraries");
-        launcherLibrariesdir = new File(librariesDir, "Launcher");
         loadersDir = new File(baseDir, "loaders");
         languagesDir = new File(configsDir, "Languages");
         downloadsDir = new File(baseDir, "Downloads");
@@ -238,12 +235,6 @@ public class Settings {
         }
 
         checkForLauncherUpdate();
-
-        downloadExternalLibraries();
-
-        if (!Utils.checkAuthLibLoaded()) {
-            LogManager.error("AuthLib was not loaded into the classpath!");
-        }
 
         loadNews(); // Load the news
 
@@ -835,75 +826,12 @@ public class Settings {
     }
 
     /**
-     * Downloads and loads all external libraries used by the launcher as specified
-     * in the Configs/JSON/libraries.json file.
-     */
-    private void downloadExternalLibraries() {
-        LogManager.debug("Downloading external libraries");
-
-        FileReader fr;
-        try {
-            fr = new FileReader(new File(this.jsonDir, "libraries.json"));
-        } catch (FileNotFoundException e) {
-            LogManager.logStackTrace("Missing libraries.json", e);
-            return;
-        }
-
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<LauncherLibrary>>() {
-            }.getType();
-
-            this.launcherLibraries = Gsons.DEFAULT.fromJson(fr, type);
-        } finally {
-            try {
-                fr.close();
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
-
-        ExecutorService executor = Executors.newFixedThreadPool(getConcurrentConnections());
-
-        for (final LauncherLibrary library : this.launcherLibraries) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    Downloadable download = library.getDownloadable();
-
-                    if (download.needToDownload()) {
-                        LogManager.info("Downloading library " + library.getFilename() + "!");
-                        download.download(false);
-                    }
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
-
-        for (LauncherLibrary library : this.launcherLibraries) {
-            File file = library.getFile();
-
-            if (library.shouldAutoLoad() && !Utils.addToClasspath(file)) {
-                LogManager.error("Couldn't add " + file + " to the classpath!");
-                if (library.shouldExitOnFail()) {
-                    LogManager.error("Library is necessary so launcher will exit!");
-                    System.exit(1);
-                }
-            }
-        }
-
-        LogManager.debug("Finished downloading external libraries");
-    }
-
-    /**
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
         File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
-                assetsDir, librariesDir, gameLibrariesDir, launcherLibrariesdir, loadersDir, languagesDir, downloadsDir,
-                instancesDir, serversDir, tempDir, failedDownloadsDir, logsDir };
+                assetsDir, librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir, instancesDir,
+                serversDir, tempDir, failedDownloadsDir, logsDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -1053,15 +981,6 @@ public class Settings {
      */
     public File getGameLibrariesDir() {
         return this.gameLibrariesDir;
-    }
-
-    /**
-     * Returns the launchers libraries directory
-     *
-     * @return File object for the libraries directory
-     */
-    public File getLauncherLibrariesDir() {
-        return this.launcherLibrariesdir;
     }
 
     /**
