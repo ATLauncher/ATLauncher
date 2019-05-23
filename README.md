@@ -51,16 +51,6 @@ Make sure to add the directory containing launch4jc to your executable path whic
 `C:\Program Files (x86)\Launch4j`
 ```
 
-## Running the application
-
-If you wish to run the application in development, you can run the following:
-
-```
-mvn exec:java
-```
-
-All working files will be put in the `testDir` directory.
-
 ## Building artefacts
 
 To build artefacts for release, simply run `mvn install`.
