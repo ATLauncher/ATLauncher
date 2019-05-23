@@ -1,10 +1,10 @@
 <!--
 
-Have you read the [Code of Conduct](CODE_OF_CONDUCT.md)? By filing an Issue, you are expected to comply with it.
+Have you read the Code of Conduct? By filing an Issue, you are expected to comply with it.
 
 Want to ask a question? Looking for support? Our Discord is the best place to get support: https://atl.pw/discord
 
-Also please make sure to check for an existing issue: https://github.com/issues?utf8=✓&q=is%3Aissue+org%3Aatlauncher
+Also please make sure to check for an existing issue: https://github.com/issues?q=is%3Aissue+org%3Aatlauncher
 
 -->
 
