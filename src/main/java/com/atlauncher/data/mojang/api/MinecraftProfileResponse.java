@@ -29,6 +29,14 @@ public class MinecraftProfileResponse {
     private String name;
     private List<UserPropertyRaw> properties;
 
+    public String getId() {
+        return this.id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
     public boolean hasProperties() {
         return this.properties != null;
     }

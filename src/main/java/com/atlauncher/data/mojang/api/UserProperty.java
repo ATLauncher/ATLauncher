@@ -30,6 +30,22 @@ public class UserProperty {
     private boolean isPublic;
     private Map<String, ProfileTexture> textures;
 
+    public long getTimestamp() {
+        return this.timestamp;
+    }
+
+    public String getProfileId() {
+        return this.profileId;
+    }
+
+    public String getProfileName() {
+        return this.profileName;
+    }
+
+    public boolean isPublic() {
+        return this.isPublic;
+    }
+
     public ProfileTexture getTexture(String name) {
         if (!textures.containsKey(name)) {
             LogManager.error("No texture " + name + " for account " + this.profileName);

@@ -380,14 +380,6 @@ public class CollapsiblePanel extends JPanel {
             return insets;
         }
 
-        public JComponent getTitleComponent() {
-            return component;
-        }
-
-        public void setTitleComponent(JComponent component) {
-            this.component = component;
-        }
-
         public Rectangle getComponentRect(Rectangle rect, Insets borderInsets) {
             Dimension compD = component.getPreferredSize();
 

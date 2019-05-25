@@ -18,8 +18,15 @@
 package com.atlauncher.data.mojang;
 
 public class MojangFeatureRule {
-
     private String is_demo;
     private String has_custom_resolution;
+
+    public String isDemo() {
+        return this.is_demo;
+    }
+
+    public String hasCustomResolution() {
+        return this.has_custom_resolution;
+    }
 
 }

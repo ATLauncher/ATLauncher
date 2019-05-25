@@ -17,7 +17,6 @@
  */
 package com.atlauncher.data.mojang;
 
-import java.util.Arrays;
 import java.util.List;
 import com.atlauncher.annot.Json;
 

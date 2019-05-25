@@ -26,7 +26,6 @@ import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.data.mojang.MojangArguments;
 import com.atlauncher.data.mojang.MojangArgumentsTypeAdapter;
-import com.atlauncher.data.mojang.MojangVersion;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

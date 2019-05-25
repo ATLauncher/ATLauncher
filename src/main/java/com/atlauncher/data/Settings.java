@@ -177,7 +177,6 @@ public class Settings {
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
     @SuppressWarnings("unused")
     private DropboxSync dropbox;
-    private boolean languageLoaded = false;
     private Timer checkingServersTimer = null; // Timer used for checking servers
 
     public Settings() {
@@ -236,8 +235,6 @@ public class Settings {
         checkForLauncherUpdate();
 
         loadNews(); // Load the news
-
-        this.languageLoaded = true; // Languages are now loaded
 
         loadMinecraftVersions(); // Load info about the different Minecraft versions
 

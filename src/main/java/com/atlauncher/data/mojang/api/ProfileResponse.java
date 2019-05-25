@@ -18,12 +18,24 @@
 package com.atlauncher.data.mojang.api;
 
 public class ProfileResponse {
-    private String name;
     private String id;
+    private String name;
     private boolean legacy;
     private boolean demo;
 
     public String getId() {
         return this.id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public boolean isLegacy() {
+        return this.legacy;
+    }
+
+    public boolean isDemo() {
+        return this.demo;
     }
 }

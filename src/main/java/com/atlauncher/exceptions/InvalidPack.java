@@ -17,11 +17,8 @@
  */
 package com.atlauncher.exceptions;
 
-
 /**
  * InvalidPack is thrown when searching for a Pack by ID and that ID isn't found
- *
- * @author Ryan
  */
 public class InvalidPack extends Exception {
     public InvalidPack(String message) {

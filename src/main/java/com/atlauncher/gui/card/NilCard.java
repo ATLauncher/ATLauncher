@@ -35,9 +35,7 @@ import java.awt.Image;
 import java.io.File;
 
 /**
- * Class for displaying packs in the Pack Tab
- *
- * @author Ryan
+ * Class for displaying packs in the Pack Tab.
  */
 public class NilCard extends JPanel implements RelocalizationListener {
     private static final Image defaultImage = Utils.getIconImage(new File(App.settings.getImagesDir(), "defaultimage" +
@@ -71,7 +69,7 @@ public class NilCard extends JPanel implements RelocalizationListener {
 
         this.add(this.splitter, BorderLayout.CENTER);
     }
-    
+
     public void setMessage(String message) {
         error.setText(message);
     }

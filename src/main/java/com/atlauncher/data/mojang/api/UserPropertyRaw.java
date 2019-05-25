@@ -33,6 +33,14 @@ public class UserPropertyRaw {
         return this.name;
     }
 
+    public String getValue() {
+        return this.value;
+    }
+
+    public String getSignature() {
+        return this.signature;
+    }
+
     public UserProperty parse() throws IOException {
         return Gsons.DEFAULT.fromJson(new String(Base64.decode(this.value)), UserProperty.class);
     }

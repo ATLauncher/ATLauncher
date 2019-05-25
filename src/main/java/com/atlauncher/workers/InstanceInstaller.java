@@ -50,7 +50,6 @@ import com.atlauncher.data.Type;
 import com.atlauncher.data.json.Action;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.DownloadType;
-import com.atlauncher.data.json.Loader;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;

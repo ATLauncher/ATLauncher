@@ -62,6 +62,10 @@ public class Library {
         return this.downloads;
     }
 
+    public String getUrl() {
+        return this.url;
+    }
+
     public boolean hasArtifact() {
         return this.downloads != null && this.downloads.getArtifact() != null;
     }
