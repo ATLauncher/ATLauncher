@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.5.6
+## 3.2.6.0
 
--   Fix some forge libraries not downloading
+-   Add featured packs tab

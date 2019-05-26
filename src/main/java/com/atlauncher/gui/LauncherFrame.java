@@ -52,6 +52,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
     private JTabbedPane tabbedPane;
     private NewsTab newsTab;
     private PacksTab vanillaPacksTab;
+    private PacksTab featuredPacksTab;
     private PacksTab packsTab;
     private InstancesTab instancesTab;
     private AccountsTab accountsTab;
@@ -157,18 +158,25 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         newsTab = new NewsTab();
         App.settings.setNewsPanel(newsTab);
-        vanillaPacksTab = new PacksTab(true);
+
+        vanillaPacksTab = new PacksTab(false, true);
         App.settings.setVanillaPacksPanel(vanillaPacksTab);
-        packsTab = new PacksTab(false);
+
+        featuredPacksTab = new PacksTab(true, false);
+        App.settings.setFeaturedPacksPanel(featuredPacksTab);
+
+        packsTab = new PacksTab(false, false);
         App.settings.setPacksPanel(packsTab);
+
         instancesTab = new InstancesTab();
         App.settings.setInstancesPanel(instancesTab);
+
         accountsTab = new AccountsTab();
         toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
 
         this.tabs = Arrays.asList(
-                new Tab[] { newsTab, vanillaPacksTab, packsTab, instancesTab, accountsTab, toolsTab, settingsTab });
+                new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab, accountsTab, toolsTab, settingsTab });
 
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(32.0F));
         for (Tab tab : this.tabs) {

@@ -163,6 +163,7 @@ public class Settings {
     private InstancesTab instancesPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
     private PacksTab vanillaPacksPanel; // The vanilla packs panel
+    private PacksTab featuredPacksPanel; // The featured packs panel
     private PacksTab packsPanel; // The packs panel
     private LauncherBottomBar bottomBar; // The bottom bar
     private boolean hadPasswordDialog = false; // If the user has seen the password dialog
@@ -777,6 +778,7 @@ public class Settings {
                 reloadNewsPanel(); // Reload news panel
                 loadPacks(); // Load the Packs available in the Launcher
                 reloadVanillaPacksPanel(); // Reload packs panel
+                reloadFeaturedPacksPanel(); // Reload packs panel
                 reloadPacksPanel(); // Reload packs panel
                 loadUsers(); // Load the Testers and Allowed Players for the packs
                 loadInstances(); // Load the users installed Instances
@@ -1496,6 +1498,7 @@ public class Settings {
             }
         }
         refreshVanillaPacksPanel();
+        refreshFeaturedPacksPanel();
         refreshPacksPanel();
         reloadInstancesPanel();
         reloadAccounts();
@@ -1940,10 +1943,16 @@ public class Settings {
      *
      * @return The Packs available in the Launcher sorted alphabetically
      */
-    public List<Pack> getPacksSortedAlphabetically(boolean isVanilla) {
+    public List<Pack> getPacksSortedAlphabetically(boolean isFeatured, boolean isVanilla) {
         List<Pack> packs = new LinkedList<Pack>();
 
         for (Pack pack : this.packs) {
+            if (isFeatured) {
+                if (!pack.isFeatured()) {
+                    continue;
+                }
+            }
+
             if (isVanilla) {
                 if (pack.getSafeName().startsWith("VanillaMinecraft")) {
                     packs.add(pack);
@@ -1969,10 +1978,16 @@ public class Settings {
      *
      * @return The Packs available in the Launcher sorted by position
      */
-    public List<Pack> getPacksSortedPositionally(boolean isVanilla) {
+    public List<Pack> getPacksSortedPositionally(boolean isFeatured, boolean isVanilla) {
         List<Pack> packs = new LinkedList<Pack>();
 
         for (Pack pack : this.packs) {
+            if (isFeatured) {
+                if (!pack.isFeatured()) {
+                    continue;
+                }
+            }
+            
             if (isVanilla) {
                 if (pack.getSafeName().startsWith("VanillaMinecraft")) {
                     packs.add(pack);
@@ -2009,6 +2024,7 @@ public class Settings {
             }
             saveAccounts();
             reloadVanillaPacksPanel();
+            reloadFeaturedPacksPanel();
             reloadPacksPanel();
         }
     }
@@ -2131,6 +2147,7 @@ public class Settings {
                     this.addedPacks += packCode + ",";
                     this.saveProperties();
                     this.refreshVanillaPacksPanel();
+                    this.refreshFeaturedPacksPanel();
                     this.refreshPacksPanel();
                     return true;
                 }
@@ -2145,6 +2162,7 @@ public class Settings {
                 this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
                 this.refreshVanillaPacksPanel();
+                this.refreshFeaturedPacksPanel();
                 this.refreshPacksPanel();
             }
         }
@@ -2230,6 +2248,7 @@ public class Settings {
         String test = download.getContents();
         if (test != null && test.equalsIgnoreCase("pong")) {
             reloadVanillaPacksPanel();
+            reloadFeaturedPacksPanel();
             reloadPacksPanel();
             reloadInstancesPanel();
         } else {
@@ -2288,6 +2307,15 @@ public class Settings {
     }
 
     /**
+     * Sets the panel used for Featured Packs
+     *
+     * @param featuredPacksPanel Featured Packs Panel
+     */
+    public void setFeaturedPacksPanel(PacksTab featuredPacksPanel) {
+        this.featuredPacksPanel = featuredPacksPanel;
+    }
+
+    /**
      * Sets the panel used for Packs
      *
      * @param packsPanel Packs Panel
@@ -2324,6 +2352,20 @@ public class Settings {
      */
     public void refreshVanillaPacksPanel() {
         this.vanillaPacksPanel.refresh();
+    }
+
+    /**
+     * Reloads the panel used for Featured Packs
+     */
+    public void reloadFeaturedPacksPanel() {
+        this.featuredPacksPanel.reload();
+    }
+
+    /**
+     * Refreshes the panel used for Featured Packs
+     */
+    public void refreshFeaturedPacksPanel() {
+        this.featuredPacksPanel.refresh();
     }
 
     /**

@@ -63,11 +63,13 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JCheckBox searchDescBox = new JCheckBox(Language.INSTANCE.localize("pack.searchdescription"));
     private NilCard nilCard;
     private boolean isVanilla;
+    private boolean isFeatured;
 
     private List<PackCard> cards = new LinkedList<PackCard>();
 
-    public PacksTab(boolean isVanilla) {
+    public PacksTab(boolean isFeatured, boolean isVanilla) {
         super(new BorderLayout());
+        this.isFeatured = isFeatured;
         this.isVanilla = isVanilla;
         this.topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.contentPanel.setLayout(new GridBagLayout());
@@ -177,8 +179,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         gbc.fill = GridBagConstraints.BOTH;
 
         List<Pack> packs = App.settings.sortPacksAlphabetically()
-                ? App.settings.getPacksSortedAlphabetically(this.isVanilla)
-                : App.settings.getPacksSortedPositionally(this.isVanilla);
+                ? App.settings.getPacksSortedAlphabetically(this.isFeatured, this.isVanilla)
+                : App.settings.getPacksSortedPositionally(this.isFeatured, this.isVanilla);
 
         int count = 0;
         for (Pack pack : packs) {
@@ -271,7 +273,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
     @Override
     public String getTitle() {
-        return (this.isVanilla ? "Vanilla " : "") + Language.INSTANCE.localize("tabs.packs");
+        return (this.isFeatured ? "Featured " : "") + (this.isVanilla ? "Vanilla " : "")
+                + Language.INSTANCE.localize("tabs.packs");
     }
 
     @Override

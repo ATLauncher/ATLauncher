@@ -51,6 +51,7 @@ public class Pack {
     private boolean createServer;
     private boolean leaderboards;
     private boolean logging;
+    private boolean featured;
     private String description;
     private String discordInviteURL;
     private String supportURL;
@@ -71,7 +72,8 @@ public class Pack {
     }
 
     /**
-     * Gets a file safe and URL safe name which simply means replacing all non alpha numerical characters with nothing
+     * Gets a file safe and URL safe name which simply means replacing all non alpha
+     * numerical characters with nothing
      *
      * @return File safe and URL safe name of the pack
      */
@@ -136,6 +138,10 @@ public class Pack {
 
     public boolean isLeaderboardsEnabled() {
         return this.leaderboards;
+    }
+
+    public boolean isFeatured() {
+        return this.featured;
     }
 
     public void addTesters(List<String> users) {
@@ -784,7 +790,7 @@ public class Pack {
                         if (dependTemp.contains(",")) {
                             depends = dependTemp.split(",");
                         } else {
-                            depends = new String[]{dependTemp};
+                            depends = new String[] { dependTemp };
                         }
                     } else {
                         depends = null;
@@ -796,9 +802,9 @@ public class Pack {
                     }
 
                     String description = element.getAttribute("description");
-                    mods.add(new Mod(name, version, url, file, website, donation, colour, warning, md5, type,
-                            extractTo, extractFolder, decompFile, decompType, filePattern, filePreference, fileCheck,
-                            client, server, serverURL, serverFile, serverDownload, serverMD5, serverType, optional,
+                    mods.add(new Mod(name, version, url, file, website, donation, colour, warning, md5, type, extractTo,
+                            extractFolder, decompFile, decompType, filePattern, filePreference, fileCheck, client,
+                            server, serverURL, serverFile, serverDownload, serverMD5, serverType, optional,
                             serverOptional, selected, download, hidden, library, group, category, linked, depends,
                             filePrefix, recommended, description));
                 }
@@ -862,18 +868,20 @@ public class Pack {
                     if (nodeInside.getNodeType() == Node.ELEMENT_NODE) {
                         if (nodeInside.getNodeName().equalsIgnoreCase((getFiles ? "file" : "folder"))) {
                             Element element = (Element) nodeInside;
-                            File file = new File(instance.getRootDirectory(), element.getAttribute("target").replace
-                                    ("%s%", File.separator));
+                            File file = new File(instance.getRootDirectory(),
+                                    element.getAttribute("target").replace("%s%", File.separator));
                             if (element.getAttribute("base").equalsIgnoreCase("root")) {
-                                if (element.getAttribute("target").startsWith("world") || element.getAttribute
-                                        ("target").startsWith("DIM") || element.getAttribute("target").startsWith
-                                        ("saves") || element.getAttribute("target").startsWith("instance.json") ||
-                                        element.getAttribute("target").contains("./") || element.getAttribute
-                                        ("target").contains(".\\") || element.getAttribute("target").contains("~/")
+                                if (element.getAttribute("target").startsWith("world")
+                                        || element.getAttribute("target").startsWith("DIM")
+                                        || element.getAttribute("target").startsWith("saves")
+                                        || element.getAttribute("target").startsWith("instance.json")
+                                        || element.getAttribute("target").contains("./")
+                                        || element.getAttribute("target").contains(".\\")
+                                        || element.getAttribute("target").contains("~/")
                                         || element.getAttribute("target").contains("~\\") || !file.getCanonicalPath()
-                                        .contains(instance.getRootDirectory().getCanonicalPath())) {
-                                    LogManager.error("Cannot delete the file/folder " + file.getAbsolutePath() + " as" +
-                                            " it's protected.");
+                                                .contains(instance.getRootDirectory().getCanonicalPath())) {
+                                    LogManager.error("Cannot delete the file/folder " + file.getAbsolutePath() + " as"
+                                            + " it's protected.");
                                 } else {
                                     files.add(file);
                                 }
