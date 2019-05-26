@@ -55,7 +55,7 @@ public class ForgeXzDownloadable extends HashableDownloadable {
         Utils.delete(this.packXzFile);
         Utils.delete(this.packFile);
 
-        if (this.copyTo != null) {
+        if (this.copyTo != null && !this.copyTo.getAbsolutePath().equalsIgnoreCase(this.finalFile.getAbsolutePath())) {
             if (this.copyTo.exists()) {
                 Utils.delete(this.copyTo);
             }
