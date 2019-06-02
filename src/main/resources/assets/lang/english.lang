@@ -25,6 +25,7 @@ account.select=Select An Account
 account.skinerror=Error downloading skin. Please try again later!
 account.username=Username
 account.usernameemail=Email\\/Username
+account.infotext=In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href="https://my.minecraft.net/en-us/store/minecraft/#register">by buying Minecraft here</a>. The launcher doesn't work with cracked accounts.
 addon.nodisplay=There are no addons to display.%sPlease check back another time.
 backup.backingup=Backing Up %s
 backup.backupcomplete=Backup is complete. Your backup was saved to the following location:%s

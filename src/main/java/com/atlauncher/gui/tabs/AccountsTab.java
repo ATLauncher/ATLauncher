@@ -27,11 +27,13 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Utils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -39,6 +41,13 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -60,6 +69,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private final Insets LABEL_INSETS = new Insets(3, 0, 3, 10);
     private final Insets FIELD_INSETS = new Insets(3, 0, 3, 0);
     private JLabel userSkin;
+    private JPanel infoPanel;
     private JPanel rightPanel;
     private JPanel topPanel;
     private JComboBox<Account> accountsComboBox;
@@ -81,6 +91,24 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         setLayout(new BorderLayout());
 
         RelocalizationManager.addListener(this);
+
+        infoPanel = new JPanel();
+        infoPanel.setLayout(new BorderLayout());
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(60, 250, 0, 250));
+
+        JEditorPane infoTextPane = new JEditorPane("text/html",
+                "<html>" + Language.INSTANCE.localize("account.infotext") + "</html>");
+        infoTextPane.setEditable(false);
+        infoTextPane.addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    Utils.openBrowser(e.getURL());
+                }
+            }
+        });
+
+        infoPanel.add(infoTextPane);
 
         rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
@@ -126,6 +154,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 }
             }
         });
+        topPanel.add(accountsComboBox, gbc);
         bottomPanel.add(accountsComboBox, gbc);
 
         gbc.gridx = 0;
@@ -188,13 +217,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (rememberField.isSelected()) {
-                    String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common"
-                            + ".no")};
-                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
-                            (Language.INSTANCE.localizeWithReplace("account" + "" +
-                                    ".rememberpasswordwarning", "<br/><br/>")), Language.INSTANCE.localize("account"
-                            + ".securitywarningtitle"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
-                            options, options[0]);
+                    String[] options = { Language.INSTANCE.localize("common.yes"),
+                            Language.INSTANCE.localize("common" + ".no") };
+                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                            HTMLUtils.centerParagraph(Language.INSTANCE
+                                    .localizeWithReplace("account" + "" + ".rememberpasswordwarning", "<br/><br/>")),
+                            Language.INSTANCE.localize("account" + ".securitywarningtitle"), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     if (ret != 0) {
                         rememberField.setSelected(false);
                     }
@@ -224,9 +253,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     rememberField.setSelected(false);
                 } else {
                     Account account = (Account) accountsComboBox.getSelectedItem();
-                    int res = JOptionPane.showConfirmDialog(App.settings.getParent(), Language.INSTANCE
-                            .localizeWithReplace("account.deletesure", usernameField.getText()), Language.INSTANCE
-                            .localize("account.delete"), JOptionPane.YES_NO_OPTION);
+                    int res = JOptionPane.showConfirmDialog(App.settings.getParent(),
+                            Language.INSTANCE.localizeWithReplace("account.deletesure", usernameField.getText()),
+                            Language.INSTANCE.localize("account.delete"), JOptionPane.YES_NO_OPTION);
                     if (res == JOptionPane.YES_OPTION) {
                         App.settings.removeAccount(account);
                         accountsComboBox.removeAllItems();
@@ -269,37 +298,40 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             }
         });
         userSkin.setBorder(BorderFactory.createEmptyBorder(0, 60, 0, 0));
+        add(infoPanel, BorderLayout.NORTH);
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
     }
 
     private void leftButtonActions() {
         if (App.settings.isInOfflineMode()) {
-            String[] options = {Language.INSTANCE.localize("common.ok")};
-            JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                    ".offlinemode"), Language.INSTANCE.localize("common.offline"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            String[] options = { Language.INSTANCE.localize("common.ok") };
+            JOptionPane.showOptionDialog(App.settings.getParent(),
+                    Language.INSTANCE.localize("account" + "" + ".offlinemode"),
+                    Language.INSTANCE.localize("common.offline"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                    null, options, options[0]);
         } else {
             Account account;
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             boolean remember = rememberField.isSelected();
             if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
-                String[] options = {Language.INSTANCE.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                        ".exists"), Language.INSTANCE.localize("account.notadded"), JOptionPane.DEFAULT_OPTION,
+                String[] options = { Language.INSTANCE.localize("common.ok") };
+                JOptionPane.showOptionDialog(App.settings.getParent(),
+                        Language.INSTANCE.localize("account" + "" + ".exists"),
+                        Language.INSTANCE.localize("account.notadded"), JOptionPane.DEFAULT_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 return;
             }
 
             LogManager.info("Logging into Minecraft!");
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" +
-                    ".loggingin"), 0, Language.INSTANCE.localize("account.loggingin"), "Aborting login for " +
-                    usernameField.getText());
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" + ".loggingin"),
+                    0, Language.INSTANCE.localize("account.loggingin"),
+                    "Aborting login for " + usernameField.getText());
             dialog.addThread(new Thread() {
                 public void run() {
-                    LoginResponse resp = Authentication.checkAccount(usernameField.getText(), new String
-                            (passwordField.getPassword()));
+                    LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
+                            new String(passwordField.getPassword()));
                     dialog.setReturnValue(resp);
                     dialog.close();
                 }
@@ -312,11 +344,12 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                             response.getAuth().getSelectedProfile().getId().toString(), remember);
                     App.settings.addAccount(account);
                     LogManager.info("Added Account " + account);
-                    String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common"
-                            + ".no")};
-                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize
-                            ("account.addedswitch"), Language.INSTANCE.localize("account.added"), JOptionPane
-                            .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                    String[] options = { Language.INSTANCE.localize("common.yes"),
+                            Language.INSTANCE.localize("common" + ".no") };
+                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                            Language.INSTANCE.localize("account.addedswitch"),
+                            Language.INSTANCE.localize("account.added"), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                     if (ret == 0) {
                         App.settings.switchAccount(account);
                     }
@@ -330,10 +363,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     }
                     account.setRemember(remember);
                     LogManager.info("Edited Account " + account);
-                    String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("account" + "" +
-                                    ".editeddone"), Language.INSTANCE.localize("account.edited"), JOptionPane
-                            .DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                    String[] options = { Language.INSTANCE.localize("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            Language.INSTANCE.localize("account" + "" + ".editeddone"),
+                            Language.INSTANCE.localize("account.edited"), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 }
                 response.save();
                 App.settings.reloadAccounts();
@@ -345,11 +379,12 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 accountsComboBox.setSelectedItem(account);
             } else {
                 LogManager.error(response.getErrorMessage());
-                String[] options = {Language.INSTANCE.localize("common.ok")};
-                JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language.INSTANCE
-                        .localize("account.incorrect") +
-                                "<br/><br/>" + response.getErrorMessage()), Language.INSTANCE.localize("account" +
-                        ".notadded"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                String[] options = { Language.INSTANCE.localize("common.ok") };
+                JOptionPane.showOptionDialog(App.settings.getParent(),
+                        HTMLUtils.centerParagraph(Language.INSTANCE.localize("account.incorrect") + "<br/><br/>"
+                                + response.getErrorMessage()),
+                        Language.INSTANCE.localize("account" + ".notadded"), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             }
         }
     }
@@ -363,12 +398,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     public void onRelocalization() {
         fillerAccount.setMinecraftUsername(Language.INSTANCE.localize("account.add"));
 
-        if (accountsComboBox.getSelectedIndex() == 0)
-        {
+        if (accountsComboBox.getSelectedIndex() == 0) {
             leftButton.setText(Language.INSTANCE.localize("common.add"));
             rightButton.setText(Language.INSTANCE.localize("common.clear"));
-        } else
-        {
+        } else {
             leftButton.setText(Language.INSTANCE.localize("common.save"));
             rightButton.setText(Language.INSTANCE.localize("common.delete"));
         }
