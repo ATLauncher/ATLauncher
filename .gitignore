@@ -3,6 +3,8 @@
 /*/
 
 # Except These
+!/.vscode/launch.json
+!/.github/
 !/src/
 !/macapp/
 !/.editorconfig

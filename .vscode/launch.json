@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch",
+            "request": "launch",
+            "mainClass": "com.atlauncher.App",
+            "projectName": "atlauncher",
+            "args": "--debug --debug-level 3 --working-dir=test"
+        }
+    ]
+}
