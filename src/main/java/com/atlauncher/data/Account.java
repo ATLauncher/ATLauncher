@@ -653,7 +653,6 @@ public class Account implements Serializable {
         App.settings.saveAccounts();
     }
 
-    // TODO: Change to use Mojang authlib
     public LoginResponse login() {
         LoginResponse response = null;
 
