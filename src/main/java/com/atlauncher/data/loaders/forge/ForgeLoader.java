@@ -37,6 +37,7 @@ import com.atlauncher.workers.InstanceInstaller;
 public class ForgeLoader implements Loader {
     protected String installerUrl;
     protected String version;
+    protected String rawVersion;
     protected String minecraft;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
@@ -49,8 +50,14 @@ public class ForgeLoader implements Loader {
 
         if (metadata.containsKey("version")) {
             this.version = (String) metadata.get("version");
-            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft + "-" + this.version + "/forge-" + this.minecraft
-                    + "-" + this.version + "-installer.jar";
+            this.rawVersion = this.minecraft + "-" + this.version;
+
+            if (metadata.containsKey("rawVersion")) {
+                this.rawVersion = (String) metadata.get("rawVersion");
+            }
+
+            this.installerUrl = Constants.FORGE_MAVEN + this.rawVersion + "/forge-" + this.rawVersion
+                    + "-installer.jar";
         } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Forge version");
             this.version = this.getLatestVersion();
