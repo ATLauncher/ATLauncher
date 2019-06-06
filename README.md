@@ -35,12 +35,6 @@ Please see the [TESTING.md](TESTING.md) file for information on how we write tes
 Download and install the latest version from
 [Oracle's Java Downloads page](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
 
-##### Apache Maven
-
-Download Apache Maven via the official [download site](http://maven.apache.org/download.cgi).
-
-Make sure to follow the [installation docs](http://maven.apache.org/install.html).
-
 ##### launch4j
 
 Download and install [launch4j](http://sourceforge.net/projects/launch4j/files/launch4j-3/3.1.0-beta2/).
@@ -53,7 +47,7 @@ Make sure to add the directory containing launch4jc to your executable path whic
 
 ## Building artefacts
 
-To build artefacts for release, simply run `mvn install`.
+To build artefacts for release, simply run `./mvnw install`.
 
 ## Plugging In Your Data
 

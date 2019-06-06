@@ -5,6 +5,7 @@
 # Except These
 !/.vscode/launch.json
 !/.github/
+!/.mvn/
 !/src/
 !/macapp/
 !/.editorconfig
@@ -13,6 +14,8 @@
 !/CHANGELOG.md
 !/Jenkinsfile
 !/LICENSE
+!/mvnw
+!/mvnw.cmd
 !/pom.xml
 !/README.md
 !/STYLE.md
