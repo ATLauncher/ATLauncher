@@ -1231,14 +1231,13 @@ public class Settings {
 
             if (Utils.is64Bit()) {
                 int halfRam = (Utils.getMaximumRam() / 1000) * 512;
-                int defaultRam = (halfRam >= 4096 ? 4096 : halfRam); // Default ram
+                int defaultRam = (halfRam >= 8192 ? 8192 : halfRam); // Default ram
                 this.maximumMemory = Integer.parseInt(properties.getProperty("ram", defaultRam + ""));
                 if (this.maximumMemory > Utils.getMaximumRam()) {
                     LogManager.warn("Tried to allocate " + this.maximumMemory + "MB of Ram but only "
                             + Utils.getMaximumRam() + "MB is available to use!");
                     this.maximumMemory = defaultRam; // User tried to allocate too much ram, set it
-                    // back to
-                    // half, capped at 4GB
+                    // back to half, capped at 8GB
                 }
             } else {
                 this.maximumMemory = Integer.parseInt(properties.getProperty("ram", "1024"));
@@ -1250,16 +1249,16 @@ public class Settings {
                 }
             }
 
-            this.initialMemory = Integer.parseInt(properties.getProperty("initialmemory", "256"));
+            this.initialMemory = Integer.parseInt(properties.getProperty("initialmemory", "512"));
             if (this.initialMemory > Utils.getMaximumRam()) {
                 LogManager.warn("Tried to allocate " + this.initialMemory + "MB of Initial Ram but only "
                         + Utils.getMaximumRam() + "MB is available to use!");
-                this.initialMemory = 256; // User tried to allocate too much ram, set it back to
-                // 256MB
+                this.initialMemory = 512; // User tried to allocate too much ram, set it back to
+                // 512MB
             } else if (this.initialMemory > this.maximumMemory) {
                 LogManager.warn("Tried to allocate " + this.initialMemory + "MB of Initial Ram but maximum ram is "
                         + this.maximumMemory + "MB which is less!");
-                this.initialMemory = 256; // User tried to allocate too much ram, set it back to 256MB
+                this.initialMemory = 512; // User tried to allocate too much ram, set it back to 512MB
             }
 
             // Default PermGen to 256 for 64 bit systems and 128 for 32 bit systems
@@ -1296,7 +1295,8 @@ public class Settings {
                 }
             }
 
-            this.javaParamaters = properties.getProperty("javaparameters", "");
+            this.javaParamaters = properties.getProperty("javaparameters",
+                    "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M");
 
             this.maximiseMinecraft = Boolean.parseBoolean(properties.getProperty("maximiseminecraft", "false"));
 
@@ -1987,7 +1987,7 @@ public class Settings {
                     continue;
                 }
             }
-            
+
             if (isVanilla) {
                 if (pack.getSafeName().startsWith("VanillaMinecraft")) {
                     packs.add(pack);
