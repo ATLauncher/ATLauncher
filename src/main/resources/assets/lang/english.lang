@@ -328,6 +328,7 @@ settings.toomuchramallocated=You have allocated more than 4GB of ram.%sPlease no
 settings.traymenu=Enable Tray Menu
 settings.traymenuhelp=The Tray Menu is a little icon that shows in your system taskbar which%sallows you to perform different functions to do various things with the launcher%ssuch as hiding or showing the console, killing Minecraft or closing ATLauncher
 settings.unsupportedjava=You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 7.%sWithout Java 7 some mods will refuse to load meaning you cannot play.%sClick Download to go to the Java downloads page
+settings.unsupportedjava8101=You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 8 version 101.%sWithout doing this, some packs may not install.%sClick Download to go to the Java downloads page and install the latest Java
 settings.unsupportedjavatitle=Unsupported Java Version
 settings.windowsize=Window Size
 settings.windowsizehelp=The size that the Minecraft window should open as, Width x Height, in pixels.

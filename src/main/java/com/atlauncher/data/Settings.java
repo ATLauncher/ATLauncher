@@ -131,6 +131,7 @@ public class Settings {
     private String theme; // The theme to use
     private String dateFormat; // The date format to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
+    private boolean hideJava8101Warning; // If the user has hidden the <= java 8.101 warning
     private boolean hideJava8Warning; // If the user has hidden the Java 8 warning
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
@@ -297,6 +298,25 @@ public class Settings {
             }
         }
 
+        if (!Utils.isJava8101OrNewer() && !this.hideJava8101Warning) {
+            LogManager.warn("You're using an old version of Java that may not work!");
+            String[] options = { Language.INSTANCE.localize("common.download"),
+                    Language.INSTANCE.localize("common" + ".ok"),
+                    Language.INSTANCE.localize("instance" + "" + ".dontremindmeagain") };
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                    HTMLUtils.centerParagraph(
+                            Language.INSTANCE.localizeWithReplace("settings.unsupportedjava8101", "<br/><br/>")),
+                    Language.INSTANCE.localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            if (ret == 0) {
+                Utils.openBrowser("http://atl.pw/java8download");
+                System.exit(0);
+            } else if (ret == 2) {
+                this.hideJava8101Warning = true;
+                this.saveProperties();
+            }
+        }
+
         if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
             LogManager.warn("You're using an old unsupported version of Java (Java 6 or older)!");
             String[] options = { Language.INSTANCE.localize("common.download"),
@@ -308,7 +328,7 @@ public class Settings {
                     Language.INSTANCE.localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
-                Utils.openBrowser("http://atl.pw/java7download");
+                Utils.openBrowser("http://atl.pw/java8download");
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideOldJavaWarning = true;
@@ -1207,6 +1227,8 @@ public class Settings {
 
             this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty("hideoldjavawarning", "false"));
 
+            this.hideJava8101Warning = Boolean.parseBoolean(properties.getProperty("hidejava8101warning", "false"));
+
             this.hideJava8Warning = Boolean.parseBoolean(properties.getProperty("hidejava8warning", "false"));
 
             String lang = properties.getProperty("language", "English");
@@ -1414,6 +1436,7 @@ public class Settings {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("hadpassworddialog", "true");
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
+            properties.setProperty("hidejava8101warning", this.hideJava8101Warning + "");
             properties.setProperty("hidejava8warning", this.hideJava8Warning + "");
             properties.setProperty("language", Language.INSTANCE.getCurrent());
             properties.setProperty("server", this.server.getName());

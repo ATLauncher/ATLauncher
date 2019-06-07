@@ -1555,6 +1555,23 @@ public class Utils {
     }
 
     /**
+     * Parse a Java build version string and get the major version number. For
+     * example "1.8.0_91" is parsed to 91.
+     *
+     * @param version the version string to parse
+     * @return the parsed build number
+     */
+    public static int parseJavaBuildVersion(String version) {
+        Matcher m = Pattern.compile(".*_([0-9]+)").matcher(version);
+
+        if (m.find()) {
+            return Integer.parseInt(m.group(1));
+        }
+
+        return 0;
+    }
+
+    /**
      * Get the major Java version that the launcher runs on.
      *
      * @return the major Java version that the launcher runs on
@@ -1578,8 +1595,10 @@ public class Utils {
      * @return the Java versions used by the Launcher and Minecraft as a string
      */
     public static String getActualJavaVersion() {
-        return String.format("Launcher: Java %d (%s), Minecraft: Java %d (%s)", getLauncherJavaVersionNumber(),
-                getLauncherJavaVersion(), getMinecraftJavaVersionNumber(), getMinecraftJavaVersion());
+        return String.format("Launcher: Java %d (%s) Build %s, Minecraft: Java %d (%s) Build %s",
+                getLauncherJavaVersionNumber(), getLauncherJavaVersion(),
+                parseJavaBuildVersion(getLauncherJavaVersion()), getMinecraftJavaVersionNumber(),
+                getMinecraftJavaVersion(), parseJavaBuildVersion(getMinecraftJavaVersion()));
     }
 
     /**
@@ -1607,6 +1626,18 @@ public class Utils {
      */
     public static boolean isJava8() {
         return getMinecraftJavaVersionNumber() == 8;
+    }
+
+    /**
+     * Checks if the user is using Java 8 or newer or if on Java 8, on version 101
+     * or newer.
+     *
+     * @return true if the user is using Java 8 or newer or if on Java 8, on version
+     *         101 or newer
+     */
+    public static boolean isJava8101OrNewer() {
+        return getLauncherJavaVersionNumber() > 8
+                || (getLauncherJavaVersionNumber() == 8 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 101);
     }
 
     /**
