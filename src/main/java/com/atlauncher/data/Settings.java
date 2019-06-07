@@ -132,7 +132,7 @@ public class Settings {
     private String dateFormat; // The date format to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
     private boolean hideJavaLetsEncryptWarning; // If the user has hidden the <= java 8.101 warning
-    private boolean hideJava8Warning; // If the user has hidden the Java 8 warning
+    private boolean hideJava9Warning; // If the user has hidden the Java 8 warning
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
     // General backup settings
@@ -296,6 +296,25 @@ public class Settings {
             if (ret == 0) {
                 Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
                 System.exit(0);
+            }
+        }
+
+        if (Utils.isMinecraftJavaNewerThanJava8() && !this.hideJava9Warning) {
+            LogManager.warn("You're using a newer version of Java than Java 8! Modpacks may not launch!");
+            String[] options = { Language.INSTANCE.localize("common.download"),
+                    Language.INSTANCE.localize("common" + ".ok"),
+                    Language.INSTANCE.localize("instance" + "" + ".dontremindmeagain") };
+            int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                    HTMLUtils.centerParagraph(
+                            Language.INSTANCE.localizeWithReplace("settings.java9warning", "<br/><br/>")),
+                    Language.INSTANCE.localize("settings.java9warningtitle"), JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+            if (ret == 0) {
+                Utils.openBrowser("http://atl.pw/java8download");
+                System.exit(0);
+            } else if (ret == 2) {
+                this.hideJava9Warning = true;
+                this.saveProperties();
             }
         }
 
@@ -1240,7 +1259,7 @@ public class Settings {
             this.hideJavaLetsEncryptWarning = Boolean
                     .parseBoolean(properties.getProperty("hidejavaletsencryptwarning", "false"));
 
-            this.hideJava8Warning = Boolean.parseBoolean(properties.getProperty("hidejava8warning", "false"));
+            this.hideJava9Warning = Boolean.parseBoolean(properties.getProperty("hideJava9Warning", "false"));
 
             String lang = properties.getProperty("language", "English");
             if (!isLanguageByName(lang)) {
@@ -1263,7 +1282,7 @@ public class Settings {
             }
 
             if (Utils.is64Bit()) {
-                this.maximumMemory = Integer.parseInt(properties.getProperty("ram", defaultRam + ""));
+                this.maximumMemory = Integer.parseInt(properties.getProperty("ram", "4096"));
                 if (Utils.getMaximumRam() != 0 && this.maximumMemory > Utils.getMaximumRam()) {
                     LogManager.warn("Tried to allocate " + this.maximumMemory + "MB of Ram but only "
                             + Utils.getMaximumRam() + "MB is available to use!");
@@ -1448,7 +1467,7 @@ public class Settings {
             properties.setProperty("hadpassworddialog", "true");
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
             properties.setProperty("hidejavaletsencryptwarning", this.hideJavaLetsEncryptWarning + "");
-            properties.setProperty("hidejava8warning", this.hideJava8Warning + "");
+            properties.setProperty("hideJava9Warning", this.hideJava9Warning + "");
             properties.setProperty("language", Language.INSTANCE.getCurrent());
             properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
