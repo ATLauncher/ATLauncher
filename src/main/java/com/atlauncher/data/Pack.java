@@ -18,7 +18,9 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.json.Version;
 import com.atlauncher.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -299,6 +301,10 @@ public class Pack {
             this.xmlVersion = version;
         }
         return this.xml;
+    }
+
+    public Version getJsonVersion(String version) {
+        return Gsons.DEFAULT.fromJson(this.getJSON(version), Version.class);
     }
 
     public String getJSON(String version) {
@@ -664,6 +670,7 @@ public class Pack {
 
     public ArrayList<Mod> getMods(String versionToInstall, boolean isServer) {
         ArrayList<Mod> mods = new ArrayList<Mod>(); // ArrayList to hold the mods
+        this.getJSON(versionToInstall);
         String xml = getXML(versionToInstall, false);
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

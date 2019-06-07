@@ -120,6 +120,10 @@ public class Mod {
         return this.download;
     }
 
+    public boolean hasWebsite() {
+        return (this.website != null && this.website.substring(0, 4).equalsIgnoreCase("http"));
+    }
+
     public String getWebsite() {
         return this.website;
     }

@@ -19,7 +19,7 @@ package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
-import com.atlauncher.data.Mod;
+import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.Pack;
 import com.atlauncher.gui.card.ModCard;
 
@@ -81,7 +81,7 @@ public final class ViewModsDialog extends JDialog {
             }
         });
 
-        List<Mod> mods = this.pack.getMods(this.pack.getLatestVersion().getVersion(), false);
+        List<Mod> mods = this.pack.getJsonVersion(this.pack.getLatestVersion().getVersion()).getMods();
         Collections.sort(mods, new Comparator<Mod>() {
             @Override
             public int compare(Mod o1, Mod o2) {
@@ -113,8 +113,8 @@ public final class ViewModsDialog extends JDialog {
             boolean show = true;
 
             if (!this.searchField.getText().isEmpty()) {
-                if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE).matcher
-                        (card.mod.getName()).find()) {
+                if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE)
+                        .matcher(card.mod.getName()).find()) {
 
                     show = false;
                 }
