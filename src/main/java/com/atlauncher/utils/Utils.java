@@ -1629,14 +1629,12 @@ public class Utils {
     }
 
     /**
-     * Checks if the user is using Java 8 or newer or if on Java 8, on version 101
-     * or newer.
-     *
-     * @return true if the user is using Java 8 or newer or if on Java 8, on version
-     *         101 or newer
+     * Checks if the user is using Java 8 or newer or if on Java 7 at least version
+     * 111 or if on Java 8 at least version 101 or newer.
      */
-    public static boolean isJava8101OrNewer() {
+    public static boolean isUsingJavaSupportingLetsEncrypt() {
         return getLauncherJavaVersionNumber() > 8
+                || (getLauncherJavaVersionNumber() == 7 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 111)
                 || (getLauncherJavaVersionNumber() == 8 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 101);
     }
 
