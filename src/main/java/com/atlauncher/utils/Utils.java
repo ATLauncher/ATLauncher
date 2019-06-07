@@ -447,24 +447,6 @@ public class Utils {
     }
 
     /**
-     * Gets the memory options.
-     *
-     * @return the memory options
-     */
-    public static String[] getMemoryOptions() {
-        int options = Utils.getMaximumRam() / 512;
-        int ramLeft = 0;
-        int count = 0;
-        String[] ramOptions = new String[options];
-        while ((ramLeft + 512) <= Utils.getMaximumRam()) {
-            ramLeft = ramLeft + 512;
-            ramOptions[count] = ramLeft + " MB";
-            count++;
-        }
-        return ramOptions;
-    }
-
-    /**
      * Returns the amount of RAM in the users system via OperatingSystemMXBean. This
      * was removed in Java 9.
      *

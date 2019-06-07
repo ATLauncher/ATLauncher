@@ -1263,18 +1263,18 @@ public class Settings {
             }
 
             if (Utils.is64Bit()) {
-                int halfRam = (Utils.getMaximumRam() / 1000) * 512;
-                int defaultRam = (halfRam >= 8192 ? 8192 : halfRam); // Default ram
                 this.maximumMemory = Integer.parseInt(properties.getProperty("ram", defaultRam + ""));
-                if (this.maximumMemory > Utils.getMaximumRam()) {
+                if (Utils.getMaximumRam() != 0 && this.maximumMemory > Utils.getMaximumRam()) {
                     LogManager.warn("Tried to allocate " + this.maximumMemory + "MB of Ram but only "
                             + Utils.getMaximumRam() + "MB is available to use!");
+                    int halfRam = (Utils.getMaximumRam() / 1000) * 512;
+                    int defaultRam = (halfRam >= 8192 ? 8192 : halfRam); // Default ram
                     this.maximumMemory = defaultRam; // User tried to allocate too much ram, set it
                     // back to half, capped at 8GB
                 }
             } else {
                 this.maximumMemory = Integer.parseInt(properties.getProperty("ram", "1024"));
-                if (this.maximumMemory > Utils.getMaximumRam()) {
+                if (Utils.getMaximumRam() != 0 && this.maximumMemory > Utils.getMaximumRam()) {
                     LogManager.warn("Tried to allocate " + this.maximumMemory + "MB of Maximum Ram but only "
                             + Utils.getMaximumRam() + "MB is available to use!");
                     this.maximumMemory = 1024; // User tried to allocate too much ram, set it back
@@ -1283,7 +1283,7 @@ public class Settings {
             }
 
             this.initialMemory = Integer.parseInt(properties.getProperty("initialmemory", "512"));
-            if (this.initialMemory > Utils.getMaximumRam()) {
+            if (Utils.getMaximumRam() != 0 && this.initialMemory > Utils.getMaximumRam()) {
                 LogManager.warn("Tried to allocate " + this.initialMemory + "MB of Initial Ram but only "
                         + Utils.getMaximumRam() + "MB is available to use!");
                 this.initialMemory = 512; // User tried to allocate too much ram, set it back to

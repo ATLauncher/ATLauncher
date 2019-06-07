@@ -130,7 +130,7 @@ public class MCLauncher {
 
         arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
 
-        if (App.settings.getMaximumMemory() < instance.getMemory()) {
+        if (Utils.getMaximumRam() != 0 && App.settings.getMaximumMemory() < instance.getMemory()) {
             if ((Utils.getMaximumRam() / 2) < instance.getMemory()) {
                 arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
             } else {
@@ -139,7 +139,7 @@ public class MCLauncher {
         } else {
             arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
         }
-        if (App.settings.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
+        if (Utils.getMaximumRam() != 0 && App.settings.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
             if (Utils.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
