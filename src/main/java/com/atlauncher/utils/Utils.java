@@ -44,6 +44,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
@@ -463,11 +465,45 @@ public class Utils {
     }
 
     /**
-     * Returns the amount of RAM in the users system.
+     * Returns the amount of RAM in the users system via OperatingSystemMXBean. This
+     * was removed in Java 9.
      *
      * @return The amount of RAM in the system
      */
-    public static int getSystemRam() {
+    public static int getSystemRamViaBean() {
+        long ramm = 0;
+        int ram = 0;
+        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+        try {
+            Method m = operatingSystemMXBean.getClass().getDeclaredMethod("getTotalPhysicalMemorySize");
+            m.setAccessible(true);
+            Object value = m.invoke(operatingSystemMXBean);
+            if (value != null) {
+                ramm = Long.parseLong(value.toString());
+                ram = (int) (ramm / 1048576);
+            } else {
+                ram = 1024;
+            }
+        } catch (SecurityException e) {
+            LogManager.logStackTrace(e);
+        } catch (NoSuchMethodException e) {
+            LogManager.logStackTrace(e);
+        } catch (IllegalArgumentException e) {
+            LogManager.logStackTrace(e);
+        } catch (IllegalAccessException e) {
+            LogManager.logStackTrace(e);
+        } catch (InvocationTargetException e) {
+            LogManager.logStackTrace(e);
+        }
+        return ram;
+    }
+
+    /**
+     * Returns the amount of RAM in the users system via the getMemory tool.
+     *
+     * @return The amount of RAM in the system
+     */
+    public static int getSystemRamViaTool() {
         long ramm = 0;
         int ram = 0;
 
@@ -486,9 +522,23 @@ public class Utils {
                 br.close();
             }
         } catch (IOException ignored) {
+            return ram;
         }
 
         return ram;
+    }
+
+    /**
+     * Returns the amount of RAM in the users system.
+     *
+     * @return The amount of RAM in the system
+     */
+    public static int getSystemRam() {
+        if (!Utils.isSystemJavaNewerThanJava8()) {
+            return Utils.getSystemRamViaBean();
+        }
+
+        return Utils.getSystemRamViaTool();
     }
 
     /**
