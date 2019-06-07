@@ -30,7 +30,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -42,17 +46,19 @@ import java.io.File;
 
 @SuppressWarnings("serial")
 public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
-    private final String[] MEMORY_OPTIONS = Utils.getMemoryOptions();
     private JLabelWithHover initialMemoryLabel;
-    private JComboBox<String> initialMemory;
+    private JSpinner initialMemory;
     private JLabelWithHover initialMemoryLabelWarning;
+
     private JPanel initialMemoryPanel;
     private JLabelWithHover maximumMemoryLabel;
-    private JComboBox<String> maximumMemory;
+    private JSpinner maximumMemory;
     private JLabelWithHover maximumMemoryLabelWarning;
     private JPanel maximumMemoryPanel;
+
     private JLabelWithHover permGenLabel;
-    private JTextField permGen;
+    private JSpinner permGen;
+
     private JPanel windowSizePanel;
     private JLabelWithHover windowSizeLabel;
     private JTextField widthField;
@@ -72,6 +78,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private JCheckBox saveCustomMods;
 
     public JavaSettingsTab() {
+        int systemRam = Utils.getSystemRam();
+
         RelocalizationManager.addListener(this);
         // Initial Memory Settings
         gbc.gridx = 0;
@@ -101,48 +109,26 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        initialMemory = new JComboBox<String>();
-        initialMemory.addItem("64 MB");
-        initialMemory.addItem("128 MB");
-        initialMemory.addItem("256 MB");
-        for (String option : MEMORY_OPTIONS) {
-            initialMemory.addItem(option);
-        }
-        initialMemory.setSelectedItem(App.settings.getInitialMemory() + " MB");
-        initialMemory.addItemListener(new ItemListener() {
-
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    int selectedRam = Integer.parseInt(((String) initialMemory.getSelectedItem()).replace(" MB", ""));
-                    int maxRam = Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", ""));
-                    if (selectedRam > maxRam) {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                "<html>" + Language.INSTANCE.localizeWithReplace("settings.initialmemorytoohigh",
-                                        "<br/><br/>") + "</html>",
-                                Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
-                        initialMemory.setSelectedItem("512 MB");
-                    }
-                }
-            }
-        });
+        SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(App.settings.getInitialMemory(), null, null,
+                128);
+        initialMemoryModel.setMinimum(128);
+        initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
+        initialMemory = new JSpinner(initialMemoryModel);
+        ((JSpinner.DefaultEditor) initialMemory.getEditor()).getTextField().setColumns(5);
         add(initialMemory, gbc);
 
         // Maximum Memory Settings
+        // Perm Gen Settings
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-
-        maximumMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, "<html>"
-                + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.32bitmemorywarning"), 80, "<br/>")
-                + "</html>", RESTART_BORDER);
-
         maximumMemoryLabel = new JLabelWithHover(
                 Language.INSTANCE.localize("settings.maximummemory") + ":", HELP_ICON, "<html>"
                         + Utils.splitMultilinedString(
                                 Language.INSTANCE.localize("settings" + "" + ".maximummemoryhelp"), 80, "<br/>")
                         + "</html>");
+        add(maximumMemoryLabel, gbc);
 
         maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -156,11 +142,12 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        maximumMemory = new JComboBox<String>();
-        for (String option : MEMORY_OPTIONS) {
-            maximumMemory.addItem(option);
-        }
-        maximumMemory.setSelectedItem(App.settings.getMaximumMemory() + " MB");
+        SpinnerNumberModel maximumMemoryModel = new SpinnerNumberModel(App.settings.getMaximumMemory(), null, null,
+                512);
+        maximumMemoryModel.setMinimum(512);
+        maximumMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
+        maximumMemory = new JSpinner(maximumMemoryModel);
+        ((JSpinner.DefaultEditor) maximumMemory.getEditor()).getTextField().setColumns(5);
         add(maximumMemory, gbc);
 
         // Perm Gen Settings
@@ -175,8 +162,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        permGen = new JTextField(4);
-        permGen.setText(App.settings.getPermGen() + "");
+        SpinnerNumberModel permGenModel = new SpinnerNumberModel(App.settings.getPermGen(), null, null, 32);
+        permGenModel.setMinimum(32);
+        permGenModel.setMaximum((systemRam == 0 ? null : systemRam));
+        permGen = new JSpinner(permGenModel);
+        ((JSpinner.DefaultEditor) permGen.getEditor()).getTextField().setColumns(3);
         add(permGen, gbc);
 
         // Window Size
@@ -353,9 +343,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     }
 
     public void save() {
-        App.settings.setInitialMemory(Integer.parseInt(((String) initialMemory.getSelectedItem()).replace(" MB", "")));
-        App.settings.setMaximumMemory(Integer.parseInt(((String) maximumMemory.getSelectedItem()).replace(" MB", "")));
-        App.settings.setPermGen(Integer.parseInt(permGen.getText().replaceAll("[^0-9]", "")));
+        App.settings.setInitialMemory((Integer) initialMemory.getValue());
+        App.settings.setMaximumMemory((Integer) maximumMemory.getValue());
+        App.settings.setPermGen((Integer) permGen.getValue());
         App.settings.setWindowWidth(Integer.parseInt(widthField.getText().replaceAll("[^0-9]", "")));
         App.settings.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll("[^0-9]", "")));
         App.settings.setJavaPath(javaPath.getText());

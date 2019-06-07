@@ -8,3 +8,4 @@
 - Fix view mods button not working
 - Remove old xml code from 2014 no longer user
 - Make launcher compatable with Java 9 and newer
+- Change ram settings to be spinners
