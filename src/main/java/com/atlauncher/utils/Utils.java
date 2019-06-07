@@ -44,8 +44,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
@@ -472,28 +470,24 @@ public class Utils {
     public static int getSystemRam() {
         long ramm = 0;
         int ram = 0;
-        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                App.settings.getToolsDir() + File.separator + "getMemory.exe");
+        processBuilder.directory(App.settings.getToolsDir().getAbsoluteFile());
+        processBuilder.redirectErrorStream(true);
+
         try {
-            Method m = operatingSystemMXBean.getClass().getDeclaredMethod("getTotalPhysicalMemorySize");
-            m.setAccessible(true);
-            Object value = m.invoke(operatingSystemMXBean);
-            if (value != null) {
-                ramm = Long.parseLong(value.toString());
+            Process process = processBuilder.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            try {
+                ramm = Long.parseLong(br.readLine());
                 ram = (int) (ramm / 1048576);
-            } else {
-                ram = 1024;
+            } finally {
+                br.close();
             }
-        } catch (SecurityException e) {
-            LogManager.logStackTrace(e);
-        } catch (NoSuchMethodException e) {
-            LogManager.logStackTrace(e);
-        } catch (IllegalArgumentException e) {
-            LogManager.logStackTrace(e);
-        } catch (IllegalAccessException e) {
-            LogManager.logStackTrace(e);
-        } catch (InvocationTargetException e) {
-            LogManager.logStackTrace(e);
+        } catch (IOException ignored) {
         }
+
         return ram;
     }
 

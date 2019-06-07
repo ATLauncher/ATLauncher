@@ -151,9 +151,9 @@ public class Settings {
     private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
     // Directories and Files for the Launcher
-    private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, jarsDir,
-            commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, loadersDir, languagesDir,
-            downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
+    private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, toolsDir,
+            jarsDir, commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, loadersDir,
+            languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
             instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -204,6 +204,7 @@ public class Settings {
         versionsDir = new File(configsDir, "Versions");
         imagesDir = new File(configsDir, "Images");
         skinsDir = new File(imagesDir, "Skins");
+        toolsDir = new File(configsDir, "Tools");
         jarsDir = new File(configsDir, "Jars");
         commonConfigsDir = new File(configsDir, "Common");
         resourcesDir = new File(configsDir, "Resources");
@@ -838,9 +839,9 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, jarsDir,
-                assetsDir, librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir, instancesDir,
-                serversDir, tempDir, failedDownloadsDir, logsDir };
+        File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, toolsDir,
+                jarsDir, assetsDir, librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir,
+                instancesDir, serversDir, tempDir, failedDownloadsDir, logsDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -933,6 +934,15 @@ public class Settings {
      */
     public File getSkinsDir() {
         return this.skinsDir;
+    }
+
+    /**
+     * Returns the tools directory
+     *
+     * @return File object for the tools directory
+     */
+    public File getToolsDir() {
+        return this.toolsDir;
     }
 
     /**

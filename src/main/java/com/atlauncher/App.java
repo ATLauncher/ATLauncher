@@ -343,18 +343,17 @@ public class App {
 
         LogManager.info("64 Bit Java: " + Utils.is64Bit());
 
-        if (Utils.isSystemJavaNewerThanJava8()) {
-            LogManager.warn(
-                    "You're using a newer version of Java than Java 8! ATLauncher is only compatable with Java 8");
-            String[] options = { "Close" };
+        if (Utils.isMinecraftJavaNewerThanJava8()) {
+            LogManager.warn("You're using a newer version of Java than Java 8! Modpacks may not launch.");
+            String[] options = { "Ok" };
             JOptionPane.showOptionDialog(null, HTMLUtils.centerParagraph(
-                    "You're using a newer version of Java than Java 8! ATLauncher is only compatable with Java 8. Please uninstall Java and install Java 8"),
-                    "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-            System.exit(0);
+                    "You're using a newer version of Java than Java 8! Modpacks may not work with Java 8. Please install Java 8 then set it in the launchers java settings"),
+                    "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
         }
 
-        LogManager.info("RAM Available: " + Utils.getMaximumRam() + "MB");
-
+        int maxRam = Utils.getMaximumRam();
+        LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
+        
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
 
