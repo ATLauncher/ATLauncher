@@ -680,6 +680,12 @@ public class Account implements Serializable {
                 int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
                         Language.INSTANCE.localize("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
                 if (ret == JOptionPane.OK_OPTION) {
+                    if (passwordField.getPassword().length == 0) {
+                        LogManager.error("Aborting login for " + this.getMinecraftUsername() + ", no password entered");
+                        App.settings.setMinecraftLaunched(false);
+                        return null;
+                    }
+
                     this.setPassword(new String(passwordField.getPassword()));
                 } else {
                     LogManager.error("Aborting login for " + this.getMinecraftUsername());
