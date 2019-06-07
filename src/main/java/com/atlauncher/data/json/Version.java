@@ -195,6 +195,10 @@ public class Version {
         return this.loader != null;
     }
 
+    public boolean hasDeletes() {
+        return this.deletes != null;
+    }
+
     public Deletes getDeletes() {
         return this.deletes;
     }

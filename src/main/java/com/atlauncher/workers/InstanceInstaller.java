@@ -49,6 +49,8 @@ import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.json.Action;
 import com.atlauncher.data.json.CaseType;
+import com.atlauncher.data.json.Delete;
+import com.atlauncher.data.json.Deletes;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
@@ -434,18 +436,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else {
                 Utils.delete(getLibrariesDirectory()); // Only delete if it's a server
             }
-            if (this.instance != null) {
-                if (this.pack.hasDeleteArguments(true, this.version.getVersion())) {
-                    List<File> fileDeletes = this.pack.getDeletes(true, this.version.getVersion(), this.instance);
-                    for (File file : fileDeletes) {
+            if (this.instance != null && this.jsonVersion.hasDeletes()) {
+                Deletes deletes = this.jsonVersion.getDeletes();
+
+                for (Delete delete : deletes.getFiles()) {
+                    if (delete.isAllowed()) {
+                        File file = delete.getFile(this.instance.getRootDirectory());
                         if (file.exists()) {
                             Utils.delete(file);
                         }
                     }
                 }
-                if (this.pack.hasDeleteArguments(false, this.version.getVersion())) {
-                    List<File> fileDeletes = this.pack.getDeletes(false, this.version.getVersion(), this.instance);
-                    for (File file : fileDeletes) {
+
+                for (Delete delete : deletes.getFolders()) {
+                    if (delete.isAllowed()) {
+                        File file = delete.getFile(this.instance.getRootDirectory());
                         if (file.exists()) {
                             Utils.delete(file);
                         }

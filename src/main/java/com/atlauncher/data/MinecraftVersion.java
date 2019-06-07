@@ -21,9 +21,6 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.data.mojang.MojangVersion;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * TODO: Rewrite along with {@link com.atlauncher.data.Version} {@link com.atlauncher.data.LauncherVersion}
- */
 @Json
 public class MinecraftVersion {
     private String version;
