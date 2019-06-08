@@ -40,6 +40,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.APIResponse;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Instance;
@@ -488,6 +489,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
+        if (Utils.matchVersion(this.getVersion().getMinecraftVersion().getVersion(), "1.6", true, true)) {
+            mods.add(new Downloadable(Constants.LEGACY_JAVA_FIXER_URL,
+                    new File(App.settings.getDownloadsDir(), "legacyjavafixer-1.0.jar"),
+                    Constants.LEGACY_JAVA_FIXER_MD5, -1, this, false));
+        }
+
         return mods;
     }
 
@@ -504,6 +511,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 addPercent(this.selectedMods.size() / 40);
                 mod.install(this);
             }
+        }
+
+        if (Utils.matchVersion(this.getVersion().getMinecraftVersion().getVersion(), "1.6", true, true)) {
+            Utils.copyFile(new File(App.settings.getDownloadsDir(), "legacyjavafixer-1.0.jar"),
+                    this.getModsDirectory());
         }
     }
 

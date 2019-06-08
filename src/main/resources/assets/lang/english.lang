@@ -380,3 +380,5 @@ tools.serverchecker.serveredited=Server Edited Successfully
 tools.serverchecker.serverexistshost=Already checking a server with the same host/ip and port. Please change the name and try again!
 tools.serverchecker.serverexistsname=Already checking a server with the same name. Please change the name and try again!
 tools.serverchecker.servers=Servers
+instancecrash.outofmemory=Minecraft has crashed due to insufficent memory being allocated.%sPlease go to the settings tab and increase the maximum memory option and then try launching the instance again.
+instancecrash.concurrentmodificationerror16=Minecraft has crashed due to an incompatability with Forge and your version of Java.%sPlease reinstall the instance to automatically fix the problem, and then try launching the instance again.

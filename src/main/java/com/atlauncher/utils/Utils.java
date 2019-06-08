@@ -2236,4 +2236,25 @@ public class Utils {
     public static File convertMavenIdentifierToFile(String identifier, File base) {
         return new File(base, convertMavenIdentifierToPath(identifier).replace("/", File.separatorChar + ""));
     }
+
+    public static boolean matchVersion(String version, String matches, boolean lessThan, boolean equal) {
+        String[] versionParts = version.split("\\.", 3);
+        String[] matchedParts = matches.split("\\.", 2);
+
+        if (equal && versionParts[0].equals(matchedParts[0]) && versionParts[1].equals(matchedParts[1])) {
+            return true;
+        }
+
+        if (lessThan && versionParts[0].equals(matchedParts[0])
+                && Integer.parseInt(versionParts[1]) < Integer.parseInt(matchedParts[1])) {
+            return true;
+        }
+
+        if (!lessThan && versionParts[0].equals(matchedParts[0])
+                && Integer.parseInt(versionParts[1]) > Integer.parseInt(matchedParts[1])) {
+            return true;
+        }
+
+        return false;
+    }
 }

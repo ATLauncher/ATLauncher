@@ -1453,7 +1453,18 @@ public class Instance implements Cloneable {
                         InputStreamReader isr = new InputStreamReader(is);
                         BufferedReader br = new BufferedReader(isr);
                         String line;
+                        int detectedError = 0;
+
                         while ((line = br.readLine()) != null) {
+                            if (line.contains("java.lang.OutOfMemoryError")) {
+                                detectedError = MinecraftError.OUT_OF_MEMORY;
+                            }
+
+                            if (line.contains("java.util.ConcurrentModificationException")
+                                    && Utils.matchVersion(Instance.this.getMinecraftVersion(), "1.6", true, true)) {
+                                detectedError = MinecraftError.CONCURRENT_MODIFICATION_ERROR_1_6;
+                            }
+
                             if (!LogManager.showDebug) {
                                 line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
                                 line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
@@ -1523,6 +1534,10 @@ public class Instance implements Cloneable {
                                     }
                                 }
                             }
+                        }
+
+                        if (detectedError != 0) {
+                            MinecraftError.showInformationPopup(detectedError);
                         }
 
                         App.settings.setMinecraftLaunched(false);
