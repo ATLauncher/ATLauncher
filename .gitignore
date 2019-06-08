@@ -1,27 +1,16 @@
-# Ignore Everything
-/*
-/*/
+# Directories
+.gradle/
+.settings/
+.vscode
+bin/
+build/
+dist/
+target/
+test/
 
-# Except These
-!/.circleci/
-!/.github/
-!/.mvn/
-!/.vscode/launch.json
-!/getMemory/
-!/src/
-!/macapp/
-!/.editorconfig
-!/.gitignore
-!/CONTRIBUTING.md
-!/CHANGELOG.md
-!/Jenkinsfile
-!/LICENSE
-!/mvnw
-!/mvnw.cmd
-!/pom.xml
-!/README.md
-!/STYLE.md
-!/TESTING.md
+# Files
+.classpath
+.project
 
 # OS X things
 .DS_Store
