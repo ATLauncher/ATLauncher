@@ -107,6 +107,7 @@ public class Settings {
     private int windowHeight; // Height of the Minecraft window
     private boolean maximiseMinecraft; // If Minecraft should start maximised
     private boolean saveCustomMods; // If custom mods should be saved between updates/reinstalls
+    private boolean ignoreJavaOnInstanceLaunch; // If Java enforcement on instance launch should be ignored
     private boolean usingCustomJavaPath; // If the user is using a custom java path
     private String javaPath; // Users path to Java
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
@@ -1354,6 +1355,8 @@ public class Settings {
 
             this.saveCustomMods = Boolean.parseBoolean(properties.getProperty("savecustommods", "true"));
 
+            this.ignoreJavaOnInstanceLaunch = Boolean.parseBoolean(properties.getProperty("ignorejavaoninstancelaunch", "false"));
+
             this.advancedBackup = Boolean.parseBoolean(properties.getProperty("advancedbackup", "false"));
 
             this.sortPacksAlphabetically = Boolean
@@ -1481,6 +1484,7 @@ public class Settings {
             properties.setProperty("javaparameters", this.javaParamaters);
             properties.setProperty("maximiseminecraft", (this.maximiseMinecraft) ? "true" : "false");
             properties.setProperty("savecustommods", (this.saveCustomMods) ? "true" : "false");
+            properties.setProperty("ignorejavaoninstancelaunch", (this.ignoreJavaOnInstanceLaunch) ? "true" : "false");
             properties.setProperty("advancedbackup", (this.advancedBackup) ? "true" : "false");
             properties.setProperty("sortpacksalphabetically", (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("keeplauncheropen", (this.keepLauncherOpen) ? "true" : "false");
@@ -2875,6 +2879,14 @@ public class Settings {
 
     public void setSaveCustomMods(boolean saveCustomMods) {
         this.saveCustomMods = saveCustomMods;
+    }
+
+    public boolean ignoreJavaOnInstanceLaunch() {
+        return this.ignoreJavaOnInstanceLaunch;
+    }
+
+    public void setIgnoreJavaOnInstanceLaunch(boolean ignoreJavaOnInstanceLaunch) {
+        this.ignoreJavaOnInstanceLaunch = ignoreJavaOnInstanceLaunch;
     }
 
     /**

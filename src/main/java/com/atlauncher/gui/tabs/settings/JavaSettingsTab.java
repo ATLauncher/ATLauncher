@@ -76,6 +76,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private JCheckBox startMinecraftMaximised;
     private JLabelWithHover saveCustomModsLabel;
     private JCheckBox saveCustomMods;
+    private JLabelWithHover ignoreJavaOnInstanceLaunchLabel;
+    private JCheckBox ignoreJavaOnInstanceLaunch;
 
     public JavaSettingsTab() {
         int systemRam = Utils.getSystemRam();
@@ -314,6 +316,26 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             saveCustomMods.setSelected(true);
         }
         add(saveCustomMods, gbc);
+
+        // Save Custom Mods
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        ignoreJavaOnInstanceLaunchLabel = new JLabelWithHover(
+                Language.INSTANCE.localize("settings.ignorejavaoninstancelaunch") + "?", HELP_ICON,
+                Language.INSTANCE.localize("settings.ignorejavaoninstancelaunchhelp"));
+        add(ignoreJavaOnInstanceLaunchLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        ignoreJavaOnInstanceLaunch = new JCheckBox();
+        if (App.settings.ignoreJavaOnInstanceLaunch()) {
+            ignoreJavaOnInstanceLaunch.setSelected(true);
+        }
+        add(ignoreJavaOnInstanceLaunch, gbc);
     }
 
     public boolean isValidJavaPath() {
@@ -352,6 +374,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         App.settings.setJavaParameters(javaParameters.getText());
         App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
         App.settings.setSaveCustomMods(saveCustomMods.isSelected());
+        App.settings.setIgnoreJavaOnInstanceLaunch(ignoreJavaOnInstanceLaunch.isSelected());
     }
 
     @Override
@@ -404,5 +427,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         this.saveCustomModsLabel.setText(Language.INSTANCE.localize("settings.savecustommods") + "?");
         this.saveCustomModsLabel.setToolTipText(Language.INSTANCE.localize("settings.savecustommodshelp"));
+
+        this.ignoreJavaOnInstanceLaunchLabel
+                .setText(Language.INSTANCE.localize("settings.ignorejavaoninstancelaunch") + "?");
+        this.ignoreJavaOnInstanceLaunchLabel
+                .setToolTipText(Language.INSTANCE.localize("settings.ignorejavaoninstancelaunch"));
     }
 }

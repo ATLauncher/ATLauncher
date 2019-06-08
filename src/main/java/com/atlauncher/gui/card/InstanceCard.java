@@ -187,7 +187,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (instance.getJava() != null && !Utils.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
+                if (!App.settings.ignoreJavaOnInstanceLaunch() && instance.getJava() != null
+                        && !Utils.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
                         && !instance.getJava().conforms()) {
                     String[] javaBadOptions = { Language.INSTANCE.localize("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
