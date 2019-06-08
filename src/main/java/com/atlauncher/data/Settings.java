@@ -1002,6 +1002,10 @@ public class Settings {
         return new File(getVirtualAssetsDir(), "legacy");
     }
 
+    public File getLogConfigsDir() {
+        return new File(this.assetsDir, "log_configs");
+    }
+
     /**
      * Returns the libraries directory
      *

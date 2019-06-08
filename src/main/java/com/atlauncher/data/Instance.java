@@ -39,6 +39,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.Java;
+import com.atlauncher.data.mojang.LoggingClient;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.mclauncher.MCLauncher;
@@ -168,6 +169,11 @@ public class Instance implements Cloneable {
     private String assets = null;
 
     /**
+     * The logging client used for Minecraft.
+     */
+    private LoggingClient logging = null;
+
+    /**
      * If this instance has been converted or not from the old format.
      */
     private boolean isConverted = false;
@@ -256,8 +262,8 @@ public class Instance implements Cloneable {
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, boolean isDev, boolean isPlayable, boolean newLaunchMethod, Java java,
-            boolean enableCurseIntegration, boolean enableEditingMods) {
+            String assets, LoggingClient logging, boolean isDev, boolean isPlayable, boolean newLaunchMethod,
+            Java java, boolean enableCurseIntegration, boolean enableEditingMods) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -271,6 +277,7 @@ public class Instance implements Cloneable {
         this.libraries = libraries;
         this.mainClass = mainClass;
         this.assets = assets;
+        this.logging = logging;
         this.jarOrder = jarOrder;
         this.extraArguments = extraArguments;
         this.minecraftArguments = minecraftArguments;
@@ -320,11 +327,11 @@ public class Instance implements Cloneable {
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, boolean isDev, boolean newLaunchMethod, Java java, boolean enableCurseIntegration,
-            boolean enableEditingMods) {
+            String assets, LoggingClient logging, boolean isDev, boolean newLaunchMethod, Java java,
+            boolean enableCurseIntegration, boolean enableEditingMods) {
         this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods,
-                jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, isDev, true,
-                newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
+                jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev,
+                true, newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
     }
 
     /**
@@ -1205,6 +1212,14 @@ public class Instance implements Cloneable {
         return (this.assets == null ? "legacy" : this.assets);
     }
 
+    public boolean hasLogging() {
+        return this.logging != null;
+    }
+
+    public LoggingClient getLogging() {
+        return this.logging;
+    }
+
     /**
      * Sets the assets value which Minecraft uses to determine how to load assets in
      * the game.
@@ -1213,6 +1228,10 @@ public class Instance implements Cloneable {
      */
     public void setAssets(String assets) {
         this.assets = assets;
+    }
+
+    public void setLogging(LoggingClient logging) {
+        this.logging = logging;
     }
 
     /**
@@ -1552,24 +1571,16 @@ public class Instance implements Cloneable {
                                         }
                                     });
                                 }
-                            }
-                            if (App.settings.keepLauncherOpen() && App.settings.hasUpdatedFiles())
+                            }if(App.settings.keepLauncherOpen()&&App.settings.hasUpdatedFiles())
 
-                            {
-                                App.settings.reloadLauncherData();
-                            }
-                        }
-                        if (!App.settings.keepLauncherOpen()) {
-                            System.exit(0);
-                        }
-                    } catch (IOException e1) {
-                        LogManager.logStackTrace(e1);
-                    }
-                }
-            };
-            launcher.start();
-            return true;
-        }
+    {
+        App.settings.reloadLauncherData();
+    }}if(!App.settings.keepLauncherOpen()){System.exit(0);}}catch(
+    IOException e1)
+    {
+        LogManager.logStackTrace(e1);
+    }
+    }};launcher.start();return true;}
 
     }
 
@@ -1641,11 +1652,12 @@ public class Instance implements Cloneable {
         Instance clone;
         if (!this.userLock.equals(null)) {
             clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType, memory, permgen,
-                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, isDev, isPlayable,
+                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev, isPlayable,
                     newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
         } else {
             clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType, memory, permgen,
-                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, isDev, isPlayable,
+                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging,
+                    isDev, isPlayable,
                     newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
         }
         return clone;

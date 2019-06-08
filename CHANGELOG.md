@@ -14,3 +14,4 @@
 - Allow packs to disable edit mods button
 - Add browse button to java path box
 - Automatically install LegacyJavaFixer if it should be installed
+- Add in support for Minecraft logging client

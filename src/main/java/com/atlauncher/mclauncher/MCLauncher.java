@@ -31,7 +31,6 @@ import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 
-
 import com.atlauncher.data.Constants;
 
 import java.io.File;
@@ -139,7 +138,8 @@ public class MCLauncher {
         } else {
             arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
         }
-        if (Utils.getMaximumRam() != 0 && App.settings.getPermGen() < instance.getPermGen() && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
+        if (Utils.getMaximumRam() != 0 && App.settings.getPermGen() < instance.getPermGen()
+                && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
             if (Utils.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {

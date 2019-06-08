@@ -27,9 +27,13 @@ public class MojangVersion {
     private MojangArguments arguments;
     private String minecraftArguments;
     private String type;
+    private String time;
+    private String releaseTime;
+    private String minimumLauncherVersion;
     private MojangAssetIndex assetIndex;
     private String assets;
     private MojangDownloads downloads;
+    private Logging logging;
     private List<Library> libraries;
     private List<Rule> rules;
     private String mainClass;
@@ -54,6 +58,18 @@ public class MojangVersion {
         return this.type;
     }
 
+    public String getTime() {
+        return this.time;
+    }
+
+    public String getReleaseTime() {
+        return this.releaseTime;
+    }
+
+    public String getMinimumLauncherVersion() {
+        return this.minimumLauncherVersion;
+    }
+
     public MojangAssetIndex getAssetIndex() {
         return this.assetIndex;
     }
@@ -68,6 +84,14 @@ public class MojangVersion {
 
     public MojangDownloads getDownloads() {
         return this.downloads;
+    }
+
+    public boolean hasLogging() {
+        return this.logging != null;
+    }
+
+    public Logging getLogging() {
+        return this.logging;
     }
 
     public List<Library> getLibraries() {

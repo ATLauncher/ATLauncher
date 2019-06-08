@@ -64,6 +64,7 @@ import com.atlauncher.data.mojang.DownloadsItem;
 import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
 import com.atlauncher.data.mojang.FileTypeAdapter;
 import com.atlauncher.data.mojang.Library;
+import com.atlauncher.data.mojang.LoggingFile;
 import com.atlauncher.data.mojang.MojangAssetIndex;
 import com.atlauncher.data.mojang.MojangConstants;
 import com.atlauncher.data.mojang.MojangDownload;
@@ -1045,6 +1046,25 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
+    public void downloadLoggingClient() {
+        totalBytes = 0;
+        downloadedBytes = 0;
+        LoggingFile loggingFile = this.version.getMinecraftVersion().getMojangVersion().getLogging().getClient().getFile();
+
+        Downloadable download = new Downloadable(loggingFile.getUrl(), new File(App.settings.getLogConfigsDir(), loggingFile.getId()),
+                loggingFile.getSha1(), (int) loggingFile.getSize(), this, false);
+
+        fireTask(Language.INSTANCE.localize("instance.downloadingloggingconfig"));
+        fireSubProgressUnknown();
+
+        if (download.needToDownload()) {
+            totalBytes += download.getFilesize();
+            download.download(true);
+        }
+
+        fireSubProgress(-1); // Hide the subprogress bar
+    }
+
     public void deleteMetaInf() {
         File inputFile = getMinecraftJar();
         File outputTmpFile = new File(App.settings.getTempDir(), pack.getSafeName() + "-minecraft.jar");
@@ -1399,6 +1419,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         downloadMinecraft(); // Download Minecraft
         if (isCancelled()) {
             return false;
+        }
+
+        if (!this.isServer && this.version.getMinecraftVersion().getMojangVersion().hasLogging()) {
+            downloadLoggingClient(); // Download logging client
         }
 
         if (this.jsonVersion.hasLoader()) {

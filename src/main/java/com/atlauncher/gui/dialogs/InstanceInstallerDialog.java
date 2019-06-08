@@ -383,8 +383,10 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setExtraArguments(this.getExtraArguments());
                                     instance.setMainClass(this.getMainClass());
                                     instance.setAssets(version.getMinecraftVersion().getMojangVersion().getAssets());
+                                    instance.setLogging(version.getMinecraftVersion().getMojangVersion().getLogging().getClient());
                                     instance.setJava(this.getJsonVersion().getJava());
-                                    instance.setEnableCurseIntegration(this.getJsonVersion().hasEnabledCurseIntegration());
+                                    instance.setEnableCurseIntegration(
+                                            this.getJsonVersion().hasEnabledCurseIntegration());
                                     instance.setEnableEditingMods(this.getJsonVersion().hasEnabledEditingMods());
                                     if (version.isDev()) {
                                         instance.setDevVersion();
@@ -408,7 +410,8 @@ public class InstanceInstallerDialog extends JDialog {
                                             this.getJarOrder(), this.getLibrariesForLaunch(), this.getExtraArguments(),
                                             this.getMinecraftArguments(), this.getMainClass(),
                                             version.getMinecraftVersion().getMojangVersion().getAssets(),
-                                            version.isDev(), !version.getMinecraftVersion().isLegacy(), this.getJsonVersion().getJava(),
+                                            version.getMinecraftVersion().getMojangVersion().getLogging().getClient(), version.isDev(),
+                                            !version.getMinecraftVersion().isLegacy(), this.getJsonVersion().getJava(),
                                             this.getJsonVersion().hasEnabledCurseIntegration(),
                                             this.getJsonVersion().hasEnabledEditingMods());
 
