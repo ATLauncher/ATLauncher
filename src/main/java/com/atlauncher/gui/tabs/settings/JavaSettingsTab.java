@@ -27,6 +27,7 @@ import com.atlauncher.utils.Utils;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -68,6 +69,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private JLabelWithHover javaPathLabel;
     private JTextField javaPath;
     private JButton javaPathResetButton;
+    private JButton javaBrowseButton;
     private JPanel javaParametersPanel;
     private JLabelWithHover javaParametersLabel;
     private JTextField javaParameters;
@@ -234,10 +236,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         gbc.gridx++;
         gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         javaPathPanel = new JPanel();
         javaPathPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        javaPath = new JTextField(20);
+        javaPath = new JTextField(32);
         javaPath.setText(App.settings.getJavaPath());
         javaPathResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
         javaPathResetButton.addActionListener(new ActionListener() {
@@ -245,8 +247,23 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 javaPath.setText(Utils.getJavaHome());
             }
         });
+        javaBrowseButton = new JButton(Language.INSTANCE.localize("common.browse"));
+        javaBrowseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.setCurrentDirectory(new File(javaPath.getText()));
+                chooser.setDialogTitle(Language.INSTANCE.localize("settings.selectjavapath"));
+                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                chooser.setAcceptAllFileFilterUsed(false);
+
+                if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
+                }
+            }
+        });
         javaPathPanel.add(javaPath);
         javaPathPanel.add(javaPathResetButton);
+        javaPathPanel.add(javaBrowseButton);
         add(javaPathPanel, gbc);
 
         // Java Paramaters
@@ -262,10 +279,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         gbc.gridx++;
         gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         javaParametersPanel = new JPanel();
         javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        javaParameters = new JTextField(20);
+        javaParameters = new JTextField(40);
         javaParameters.setText(App.settings.getJavaParameters());
         javaParametersResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
         javaParametersResetButton.addActionListener(new ActionListener() {
@@ -345,7 +362,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                     .showMessageDialog(App.settings.getParent(),
                             "<html>" + Language.INSTANCE.localizeWithReplace("settings.javapathincorrect", "<br/><br/>")
                                     + "</html>",
-                            Language.INSTANCE.localize("settings" + ".help"), JOptionPane.PLAIN_MESSAGE);
+                            Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
             return false;
         }
         return true;
@@ -414,6 +431,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 "<html>" + Language.INSTANCE.localizeWithReplace("settings.javapathhelp", "<br/>") + "</html>");
 
         this.javaPathResetButton.setText(Language.INSTANCE.localize("settings.javapathreset"));
+
+        this.javaBrowseButton.setText(Language.INSTANCE.localize("common.browse"));
 
         this.javaParametersLabel.setText(Language.INSTANCE.localize("settings.javaparameters") + ":");
         this.javaParametersLabel.setToolTipText(Language.INSTANCE.localize("settings.javaparametershelp"));
