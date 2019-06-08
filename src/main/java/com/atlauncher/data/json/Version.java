@@ -58,6 +58,16 @@ public class Version {
     private boolean noConfigs;
 
     /**
+     * If this version allows Curse mod integration.
+     */
+    private boolean enableCurseIntegration = false;
+
+    /**
+     * If this version allows editing mods.
+     */
+    private boolean enableEditingMods = true;
+
+    /**
      * If this version should uppercase/lowercase all files.
      */
     private CaseType caseAllFiles;
@@ -166,6 +176,14 @@ public class Version {
 
     public boolean hasNoConfigs() {
         return this.noConfigs;
+    }
+
+    public boolean hasEnabledCurseIntegration() {
+        return this.enableCurseIntegration;
+    }
+
+    public boolean hasEnabledEditingMods() {
+        return this.enableEditingMods;
     }
 
     public CaseType getCaseAllFiles() {

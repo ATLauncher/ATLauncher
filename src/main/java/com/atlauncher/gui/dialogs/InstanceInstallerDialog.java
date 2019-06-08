@@ -384,6 +384,8 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setMainClass(this.getMainClass());
                                     instance.setAssets(version.getMinecraftVersion().getMojangVersion().getAssets());
                                     instance.setJava(this.getJsonVersion().getJava());
+                                    instance.setEnableCurseIntegration(this.getJsonVersion().hasEnabledCurseIntegration());
+                                    instance.setEnableEditingMods(this.getJsonVersion().hasEnabledEditingMods());
                                     if (version.isDev()) {
                                         instance.setDevVersion();
                                         if (version.getHash() != null) {
@@ -406,7 +408,9 @@ public class InstanceInstallerDialog extends JDialog {
                                             this.getJarOrder(), this.getLibrariesForLaunch(), this.getExtraArguments(),
                                             this.getMinecraftArguments(), this.getMainClass(),
                                             version.getMinecraftVersion().getMojangVersion().getAssets(),
-                                            version.isDev(), !version.getMinecraftVersion().isLegacy(), this.getJsonVersion().getJava());
+                                            version.isDev(), !version.getMinecraftVersion().isLegacy(), this.getJsonVersion().getJava(),
+                                            this.getJsonVersion().hasEnabledCurseIntegration(),
+                                            this.getJsonVersion().hasEnabledEditingMods());
 
                                     if (this.hasArguments()) {
                                         newInstance.setArguments(this.getArguments());

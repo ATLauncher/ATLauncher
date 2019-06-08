@@ -100,6 +100,16 @@ public class Instance implements Cloneable {
     private Java java;
 
     /**
+     * If this version allows Curse mod integration.
+     */
+    private boolean enableCurseIntegration;
+
+    /**
+     * If this version allows editing mods.
+     */
+    private boolean enableEditingMods;
+
+    /**
      * The minimum RAM/memory recommended for this Instance by the pack developer/s.
      */
     private int memory = 0;
@@ -246,7 +256,8 @@ public class Instance implements Cloneable {
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, boolean isDev, boolean isPlayable, boolean newLaunchMethod, Java java) {
+            String assets, boolean isDev, boolean isPlayable, boolean newLaunchMethod, Java java,
+            boolean enableCurseIntegration, boolean enableEditingMods) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -274,6 +285,8 @@ public class Instance implements Cloneable {
         this.isConverted = true;
         this.usesNewLibraries = true;
         this.java = java;
+        this.enableCurseIntegration = enableCurseIntegration;
+        this.enableEditingMods = enableEditingMods;
     }
 
     /**
@@ -307,10 +320,11 @@ public class Instance implements Cloneable {
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, boolean isDev, boolean newLaunchMethod, Java java) {
+            String assets, boolean isDev, boolean newLaunchMethod, Java java, boolean enableCurseIntegration,
+            boolean enableEditingMods) {
         this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods,
                 jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, isDev, true,
-                newLaunchMethod, java);
+                newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
     }
 
     /**
@@ -684,6 +698,22 @@ public class Instance implements Cloneable {
 
     public void setJava(Java newJava) {
         this.java = newJava;
+    }
+
+    public boolean hasEnabledCurseIntegration() {
+        return this.enableCurseIntegration;
+    }
+
+    public void setEnableCurseIntegration(boolean enableCurseIntegration) {
+        this.enableCurseIntegration = enableCurseIntegration;
+    }
+
+    public boolean hasEnabledEditingMods() {
+        return this.enableEditingMods;
+    }
+
+    public void setEnableEditingMods(boolean enableEditingMods) {
+        this.enableEditingMods = enableEditingMods;
     }
 
     /**
@@ -1597,11 +1627,11 @@ public class Instance implements Cloneable {
         if (!this.userLock.equals(null)) {
             clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType, memory, permgen,
                     mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, isDev, isPlayable,
-                    newLaunchMethod, java);
+                    newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
         } else {
             clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType, memory, permgen,
                     mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, isDev, isPlayable,
-                    newLaunchMethod, java);
+                    newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
         }
         return clone;
     }

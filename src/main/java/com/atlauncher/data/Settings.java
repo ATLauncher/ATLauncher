@@ -304,7 +304,7 @@ public class Settings {
             LogManager.warn("You're using a newer version of Java than Java 8! Modpacks may not launch!");
             String[] options = { Language.INSTANCE.localize("common.download"),
                     Language.INSTANCE.localize("common" + ".ok"),
-                    Language.INSTANCE.localize("instance" + "" + ".dontremindmeagain") };
+                    Language.INSTANCE.localize("instance.dontremindmeagain") };
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
                     HTMLUtils.centerParagraph(
                             Language.INSTANCE.localizeWithReplace("settings.java9warning", "<br/><br/>")),
@@ -321,9 +321,8 @@ public class Settings {
 
         if (!Utils.isUsingJavaSupportingLetsEncrypt() && !this.hideJavaLetsEncryptWarning) {
             LogManager.warn("You're using an old version of Java that may not work!");
-            String[] options = { Language.INSTANCE.localize("common.download"),
-                    Language.INSTANCE.localize("common" + ".ok"),
-                    Language.INSTANCE.localize("instance" + "" + ".dontremindmeagain") };
+            String[] options = { Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common.ok"),
+                    Language.INSTANCE.localize("instance.dontremindmeagain") };
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
                     HTMLUtils.centerParagraph(
                             Language.INSTANCE.localizeWithReplace("settings.unsupportedjavaletsencrypt", "<br/><br/>")),
@@ -340,9 +339,8 @@ public class Settings {
 
         if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
             LogManager.warn("You're using an old unsupported version of Java (Java 6 or older)!");
-            String[] options = { Language.INSTANCE.localize("common.download"),
-                    Language.INSTANCE.localize("common" + ".ok"),
-                    Language.INSTANCE.localize("instance" + "" + ".dontremindmeagain") };
+            String[] options = { Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common.ok"),
+                    Language.INSTANCE.localize("instance.dontremindmeagain") };
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
                     HTMLUtils.centerParagraph(
                             Language.INSTANCE.localizeWithReplace("settings.unsupportedjava", "<br/><br/>")),
@@ -433,7 +431,7 @@ public class Settings {
         }
         if (matches) {
             String[] options = { Language.INSTANCE.localize("common.ok"),
-                    Language.INSTANCE.localize("account" + "" + ".removepasswords") };
+                    Language.INSTANCE.localize("account.removepasswords") };
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
                     HTMLUtils
                             .centerParagraph(Language.INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")),
@@ -525,7 +523,7 @@ public class Settings {
         // moving from Resources to more vanilla 'assets' folder
         if (this.resourcesDir.exists() && this.resourcesDir.isDirectory()) {
             final ProgressDialog dialog = new ProgressDialog(
-                    Language.INSTANCE.localize("settings" + "" + ".rearrangingresources"), 0,
+                    Language.INSTANCE.localize("settings.rearrangingresources"), 0,
                     Language.INSTANCE.localize("settings.rearrangingresources"), null);
             Thread thread = new Thread() {
                 @Override
@@ -843,9 +841,9 @@ public class Settings {
             } else {
                 String[] options = { "Ok" };
                 JOptionPane.showOptionDialog(App.settings.getParent(),
-                        HTMLUtils.centerParagraph("Update failed. " + "Please click Ok to close "
-                                + "the launcher and open up the downloads " + "page.<br/><br/>Download "
-                                + "the update and replace the old " + Constants.LAUNCHER_NAME + " " + "file."),
+                        HTMLUtils.centerParagraph("Update failed. Please click Ok to close "
+                                + "the launcher and open up the downloads page.<br/><br/>Download "
+                                + "the update and replace the old " + Constants.LAUNCHER_NAME + " file."),
                         "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                         options[0]);
                 Utils.openBrowser("http://www.atlauncher.com/downloads/");
@@ -1341,7 +1339,7 @@ public class Settings {
                 this.javaPath = Utils.getJavaHome();
                 if (this.isUsingMacApp()) {
                     File oracleJava = new File(
-                            "/Library/Internet Plug-Ins/JavaAppletPlugin" + "" + ".plugin/Contents/Home/bin/java");
+                            "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
                     if (oracleJava.exists() && oracleJava.canExecute()) {
                         this.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
                     }
@@ -1355,7 +1353,8 @@ public class Settings {
 
             this.saveCustomMods = Boolean.parseBoolean(properties.getProperty("savecustommods", "true"));
 
-            this.ignoreJavaOnInstanceLaunch = Boolean.parseBoolean(properties.getProperty("ignorejavaoninstancelaunch", "false"));
+            this.ignoreJavaOnInstanceLaunch = Boolean
+                    .parseBoolean(properties.getProperty("ignorejavaoninstancelaunch", "false"));
 
             this.advancedBackup = Boolean.parseBoolean(properties.getProperty("advancedbackup", "false"));
 

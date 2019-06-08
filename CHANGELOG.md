@@ -11,3 +11,4 @@
 - Change ram settings to be spinners
 - Warn when using Java 9 or newer that some packs may not work
 - Allow packs to set min/max java versions for their packs
+- Allow packs to disable edit mods button
