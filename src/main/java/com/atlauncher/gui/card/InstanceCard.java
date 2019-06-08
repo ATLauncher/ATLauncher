@@ -187,6 +187,18 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (instance.getJava() != null && !Utils.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
+                        && !instance.getJava().conforms()) {
+                    String[] javaBadOptions = { Language.INSTANCE.localize("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            HTMLUtils.centerParagraph(
+                                    Language.INSTANCE.localizeWithReplace("instance.incorrectjava", "<br/><br/>")
+                                            + instance.getJava().getVersionString()),
+                            Language.INSTANCE.localize("instance.incorrectjavatitle"), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, javaBadOptions, javaBadOptions[0]);
+                    return;
+                }
+
                 if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(
                         (instance.isDev() ? instance.getLatestDevHash() : instance.getLatestVersion()))) {
                     String[] options = { Language.INSTANCE.localize("common.yes"),
@@ -207,14 +219,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         } else {
                             new InstanceInstallerDialog(instance, true, false, null, null, true);
                         }
-                    } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
-                        if (!App.settings.isMinecraftLaunched()) {
-                            if (instance.launch()) {
-                                App.settings.setMinecraftLaunched(true);
-                            }
+                    } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION || ret == 2) {
+                        if (ret == 2) {
+                            instance.ignoreUpdate();
                         }
-                    } else if (ret == 2) {
-                        instance.ignoreUpdate();
+
                         if (!App.settings.isMinecraftLaunched()) {
                             if (instance.launch()) {
                                 App.settings.setMinecraftLaunched(true);

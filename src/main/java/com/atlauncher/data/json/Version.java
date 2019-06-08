@@ -74,6 +74,11 @@ public class Version {
     private ExtraArguments extraArguments;
 
     /**
+     * The java options for this version (if any).
+     */
+    private Java java;
+
+    /**
      * The loader this version uses (if any).
      */
     private Loader loader;
@@ -185,6 +190,10 @@ public class Version {
 
     public boolean hasExtraArguments() {
         return this.extraArguments != null && this.extraArguments.getArguments() != null;
+    }
+
+    public Java getJava() {
+        return this.java;
     }
 
     public Loader getLoader() {

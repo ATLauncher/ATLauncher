@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.json.Java;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.mclauncher.MCLauncher;
@@ -92,6 +93,11 @@ public class Instance implements Cloneable {
      * The version type that this instance uses.
      */
     private String versionType;
+
+    /**
+     * The java requirements for this instance.
+     */
+    private Java java;
 
     /**
      * The minimum RAM/memory recommended for this Instance by the pack developer/s.
@@ -235,11 +241,12 @@ public class Instance implements Cloneable {
      * @param isPlayable         if this instance is playable
      * @param newLaunchMethod    if this instance is using the new launch method for
      *                           Minecraft
+     * @param java               the java requirements for the instance
      */
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, boolean isDev, boolean isPlayable, boolean newLaunchMethod) {
+            String assets, boolean isDev, boolean isPlayable, boolean newLaunchMethod, Java java) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -266,6 +273,7 @@ public class Instance implements Cloneable {
         }
         this.isConverted = true;
         this.usesNewLibraries = true;
+        this.java = java;
     }
 
     /**
@@ -294,14 +302,15 @@ public class Instance implements Cloneable {
      * @param isDev              if this Instance is using a dev version of the pack
      * @param newLaunchMethod    if this instance is using the new launch method for
      *                           Minecraft
+     * @param java               the java requirements for the instance
      */
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, boolean isDev, boolean newLaunchMethod) {
+            String assets, boolean isDev, boolean newLaunchMethod, Java java) {
         this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods,
                 jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, isDev, true,
-                newLaunchMethod);
+                newLaunchMethod, java);
     }
 
     /**
@@ -662,6 +671,19 @@ public class Instance implements Cloneable {
     public void removeInstalledMod(DisableableMod mod) {
         Utils.delete((mod.isDisabled() ? mod.getDisabledFile(this) : mod.getFile(this)));
         this.mods.remove(mod); // Remove mod from mod List
+    }
+
+    /**
+     * Gets the java requirements for this instance.
+     *
+     * @return the java requirements for this instance
+     */
+    public Java getJava() {
+        return this.java;
+    }
+
+    public void setJava(Java newJava) {
+        this.java = newJava;
     }
 
     /**
@@ -1575,11 +1597,11 @@ public class Instance implements Cloneable {
         if (!this.userLock.equals(null)) {
             clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType, memory, permgen,
                     mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, isDev, isPlayable,
-                    newLaunchMethod);
+                    newLaunchMethod, java);
         } else {
             clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType, memory, permgen,
                     mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, isDev, isPlayable,
-                    newLaunchMethod);
+                    newLaunchMethod, java);
         }
         return clone;
     }

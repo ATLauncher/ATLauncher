@@ -388,7 +388,7 @@ public class App {
             if (instance.launch()) {
                 open = false;
             } else {
-                LogManager.error("Error Opening Instance  " + instance.getName());
+                LogManager.error("Error Opening Instance " + instance.getName());
             }
         }
 

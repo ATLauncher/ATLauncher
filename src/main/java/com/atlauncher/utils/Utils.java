@@ -1567,14 +1567,16 @@ public class Utils {
         }
     }
 
-    /**
-     * Parse a Java version string and get the major version number. For example
-     * "1.8.0_91" is parsed to 8.
-     *
-     * @param version the version string to parse
-     * @return the parsed major version number
-     */
-    public static int parseJavaVersionNumber(String version) {
+
+     a Java version18.0_1p*
+
+    @retur
+     the parsed
+    major version 
+    umber*
+    
+    ub
+
         Matcher m = Pattern.compile("(?:1\\.)?([0-9]+).*").matcher(version);
 
         return m.find() ? Integer.parseInt(m.group(1)) : -1;
