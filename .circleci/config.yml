@@ -1,4 +1,15 @@
 version: 2
+workflows:
+  version: 2
+  build_test_package:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - package:
+          requires:
+            - test
 jobs:
   build:
     docker:
@@ -16,9 +27,17 @@ jobs:
           paths:
             - ~/.m2
           key: pom-{{ checksum "pom.xml" }}
+  test:
+    docker:
+      - image: circleci/openjdk:8
 
+    steps:
       - run: mvn test
+  package:
+    docker:
+      - image: circleci/openjdk:8
 
+    steps:
       - run: mvn package
 
       - store_artifacts:
