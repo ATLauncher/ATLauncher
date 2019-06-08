@@ -114,10 +114,6 @@ public class MCLauncher {
         }
         arguments.add(path);
 
-        if (Utils.isWindows()) {
-            arguments.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
-        }
-
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
         String javaParams = App.settings.getJavaParameters();
