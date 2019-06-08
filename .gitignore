@@ -3,9 +3,10 @@
 /*/
 
 # Except These
-!/.vscode/launch.json
+!/.circleci/
 !/.github/
 !/.mvn/
+!/.vscode/launch.json
 !/getMemory/
 !/src/
 !/macapp/
