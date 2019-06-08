@@ -17,6 +17,8 @@ jobs:
             - ~/.m2
           key: pom-{{ checksum "pom.xml" }}
 
+      - run: mvn test
+
       - run: mvn package
 
       - store_artifacts:
