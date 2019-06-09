@@ -489,8 +489,17 @@ public class Utils {
         long ramm = 0;
         int ram = 0;
 
-        ProcessBuilder processBuilder = new ProcessBuilder(App.settings.getToolsDir() + File.separator
-                + (Utils.isWindows() ? "getMemory.exe" : (Utils.isLinux() ? "getMemory-linux" : "getMemory-osx")));
+        String binaryFile;
+
+        if (Utils.is64Bit()) {
+            binaryFile = (Utils.isWindows() ? "getMemory-x64.exe"
+                    : (Utils.isLinux() ? "getMemory-x64-linux" : "getMemory-x64-osx"));
+        } else {
+            binaryFile = (Utils.isWindows() ? "getMemory.exe"
+                    : (Utils.isLinux() ? "getMemory-linux" : "getMemory-osx"));
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder(App.settings.getToolsDir() + File.separator + binaryFile);
         processBuilder.directory(App.settings.getToolsDir().getAbsoluteFile());
         processBuilder.redirectErrorStream(true);
 
