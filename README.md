@@ -1,6 +1,8 @@
 # ATLauncher
 
-## What is it?
+[![CircleCI](https://circleci.com/gh/ATLauncher/ATLauncher/tree/master.svg?style=shield)](https://circleci.com/gh/ATLauncher/ATLauncher/tree/master)
+
+## What is it
 
 ATLauncher is a Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install
 ModPacks easily and quickly.
