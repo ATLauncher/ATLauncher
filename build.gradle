@@ -58,6 +58,8 @@ license {
 }
 
 shadowJar {
+    classifier = null
+    minimize()
     classifier = ''
 }
 
