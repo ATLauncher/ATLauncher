@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.mojang.MojangVersion;
@@ -44,6 +45,16 @@ public class MCLauncher {
     public static Process launch(Account account, Instance instance, LoginResponse response) throws IOException {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
+
+        InstanceSettings settings = instance.getSettings();
+        Integer initialMemory = settings.getInitialMemory() == null ? App.settings.getInitialMemory()
+                : settings.getInitialMemory();
+        Integer maximumMemory = settings.getMaximumMemory() == null ? App.settings.getMaximumMemory()
+                : settings.getMaximumMemory();
+        Integer permGen = settings.getPermGen() == null ? App.settings.getPermGen() : settings.getPermGen();
+        String javaPath = settings.getJavaPath() == null ? App.settings.getJavaPath() : settings.getJavaPath();
+        String javaArguments = settings.getJavaArguments() == null ? App.settings.getJavaParameters()
+                : settings.getJavaArguments();
 
         File jarMods = instance.getJarModsDirectory();
         File[] jarModFiles = jarMods.listFiles();
@@ -108,7 +119,7 @@ public class MCLauncher {
 
         List<String> arguments = new ArrayList<String>();
 
-        String path = App.settings.getJavaPath() + File.separator + "bin" + File.separator + "java";
+        String path = javaPath + File.separator + "bin" + File.separator + "java";
         if (Utils.isWindows()) {
             path += "w";
         }
@@ -116,25 +127,23 @@ public class MCLauncher {
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
-        String javaParams = App.settings.getJavaParameters();
-
-        if (javaParams.isEmpty() && !Utils.isMinecraftJavaNewerThanJava8()) {
+        if (javaArguments.isEmpty() && !Utils.isMinecraftJavaNewerThanJava8()) {
             // Some defaults if on Java 8 or less
-            javaParams = "-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy";
+            javaArguments = "-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy";
         }
 
-        arguments.add("-Xms" + App.settings.getInitialMemory() + "M");
+        arguments.add("-Xms" + initialMemory + "M");
 
-        if (Utils.getMaximumRam() != 0 && App.settings.getMaximumMemory() < instance.getMemory()) {
+        if (Utils.getMaximumRam() != 0 && maximumMemory < instance.getMemory()) {
             if ((Utils.getMaximumRam() / 2) < instance.getMemory()) {
-                arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
+                arguments.add("-Xmx" + maximumMemory + "M");
             } else {
                 arguments.add("-Xmx" + instance.getMemory() + "M");
             }
         } else {
-            arguments.add("-Xmx" + App.settings.getMaximumMemory() + "M");
+            arguments.add("-Xmx" + maximumMemory + "M");
         }
-        if (Utils.getMaximumRam() != 0 && App.settings.getPermGen() < instance.getPermGen()
+        if (Utils.getMaximumRam() != 0 && permGen < instance.getPermGen()
                 && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
             if (Utils.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
@@ -143,9 +152,9 @@ public class MCLauncher {
             }
         } else {
             if (Utils.useMetaspace()) {
-                arguments.add("-XX:MetaspaceSize=" + App.settings.getPermGen() + "M");
+                arguments.add("-XX:MetaspaceSize=" + permGen + "M");
             } else {
-                arguments.add("-XX:PermSize=" + App.settings.getPermGen() + "M");
+                arguments.add("-XX:PermSize=" + permGen + "M");
             }
         }
 
@@ -169,8 +178,8 @@ public class MCLauncher {
 
         ArrayList<String> negatedArgs = new ArrayList<String>();
 
-        if (!javaParams.isEmpty()) {
-            for (String arg : javaParams.split(" ")) {
+        if (!javaArguments.isEmpty()) {
+            for (String arg : javaArguments.split(" ")) {
                 if (!arg.isEmpty()) {
                     if (instance.hasExtraArguments()) {
                         if (instance.getExtraArguments().contains(arg)) {

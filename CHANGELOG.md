@@ -16,3 +16,4 @@
 -   Automatically install LegacyJavaFixer if it should be installed
 -   Add in support for Minecraft logging client
 -   Switch to Gradle build system
+-   Add in Settings for instances to set Java settings per instance

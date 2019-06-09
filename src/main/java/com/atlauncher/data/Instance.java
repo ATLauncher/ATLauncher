@@ -230,6 +230,8 @@ public class Instance implements Cloneable {
      */
     private List<String> ignoredUpdates;
 
+    private InstanceSettings settings = null;
+
     /**
      * Instantiates a new instance.
      *
@@ -262,8 +264,8 @@ public class Instance implements Cloneable {
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, LoggingClient logging, boolean isDev, boolean isPlayable, boolean newLaunchMethod,
-            Java java, boolean enableCurseIntegration, boolean enableEditingMods) {
+            String assets, LoggingClient logging, boolean isDev, boolean isPlayable, boolean newLaunchMethod, Java java,
+            boolean enableCurseIntegration, boolean enableEditingMods) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -330,8 +332,8 @@ public class Instance implements Cloneable {
             String assets, LoggingClient logging, boolean isDev, boolean newLaunchMethod, Java java,
             boolean enableCurseIntegration, boolean enableEditingMods) {
         this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods,
-                jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev,
-                true, newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
+                jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev, true,
+                newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
     }
 
     /**
@@ -1571,16 +1573,24 @@ public class Instance implements Cloneable {
                                         }
                                     });
                                 }
-                            }if(App.settings.keepLauncherOpen()&&App.settings.hasUpdatedFiles())
+                            }
+                            if (App.settings.keepLauncherOpen() && App.settings.hasUpdatedFiles())
 
-    {
-        App.settings.reloadLauncherData();
-    }}if(!App.settings.keepLauncherOpen()){System.exit(0);}}catch(
-    IOException e1)
-    {
-        LogManager.logStackTrace(e1);
-    }
-    }};launcher.start();return true;}
+                            {
+                                App.settings.reloadLauncherData();
+                            }
+                        }
+                        if (!App.settings.keepLauncherOpen()) {
+                            System.exit(0);
+                        }
+                    } catch (IOException e1) {
+                        LogManager.logStackTrace(e1);
+                    }
+                }
+            };
+            launcher.start();
+            return true;
+        }
 
     }
 
@@ -1652,13 +1662,12 @@ public class Instance implements Cloneable {
         Instance clone;
         if (!this.userLock.equals(null)) {
             clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType, memory, permgen,
-                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev, isPlayable,
-                    newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
+                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev,
+                    isPlayable, newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
         } else {
             clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType, memory, permgen,
-                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging,
-                    isDev, isPlayable,
-                    newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
+                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev,
+                    isPlayable, newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
         }
         return clone;
     }
@@ -1752,5 +1761,17 @@ public class Instance implements Cloneable {
         data.put("mods", mods);
 
         return data;
+    }
+
+    public InstanceSettings getSettings() {
+        if (this.settings == null) {
+            this.settings = new InstanceSettings();
+        }
+
+        return this.settings;
+    }
+
+    public void setSettings(InstanceSettings settings) {
+        this.settings = settings;
     }
 }

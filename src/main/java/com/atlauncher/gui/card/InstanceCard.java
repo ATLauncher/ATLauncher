@@ -63,6 +63,7 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.BackupDialog;
 import com.atlauncher.gui.dialogs.EditModsDialog;
+import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
@@ -88,6 +89,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton deleteButton = new JButton(Language.INSTANCE.localize("common.delete"));
     private final JButton editButton = new JButton(Language.INSTANCE.localize("common.editmods"));
     private final JButton openButton = new JButton(Language.INSTANCE.localize("common.openfolder"));
+    private final JButton settingsButton = new JButton(Language.INSTANCE.localize("tabs.settings"));
 
     public InstanceCard(Instance instance) {
         super(instance);
@@ -124,6 +126,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
 
         bottom.add(this.openButton);
+        bottom.add(this.settingsButton);
 
         this.rightPanel.setLayout(new BorderLayout());
         this.rightPanel.setPreferredSize(new Dimension(this.rightPanel.getPreferredSize().width, 180));
@@ -355,6 +358,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             @Override
             public void actionPerformed(ActionEvent e) {
                 Utils.openExplorer(instance.getRootDirectory());
+            }
+        });
+        this.settingsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new InstanceSettingsDialog(instance);
             }
         });
         this.cloneButton.addActionListener(new ActionListener() {
@@ -611,5 +620,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.deleteButton.setText(Language.INSTANCE.localize("common.delete"));
         this.editButton.setText(Language.INSTANCE.localize("common.editmods"));
         this.openButton.setText(Language.INSTANCE.localize("common.openfolder"));
+        this.settingsButton.setText(Language.INSTANCE.localize("tabs.settings"));
     }
 }
