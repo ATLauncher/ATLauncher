@@ -756,6 +756,13 @@ public class Settings {
                         }
                     }
                 });
+
+                if (download.getFile().exists()
+                        && download.getFile().getAbsolutePath().contains(toolsDir.getAbsolutePath())
+                        && !download.getFile().canExecute()) {
+                    System.out.println("Executable bit being set");
+                    download.getFile().setExecutable(true);
+                }
             }
             executor.shutdown();
             while (!executor.isTerminated()) {
