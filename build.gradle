@@ -4,6 +4,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.0.0'
     id 'edu.sc.seis.macAppBundle' version '2.3.0'
     id 'edu.sc.seis.launch4j' version '2.4.6'
+    id 'net.minecrell.licenser' version '0.4.1'
 }
 
 sourceCompatibility = '1.7'
@@ -41,6 +42,15 @@ jar {
                 'Main-Class': 'com.atlauncher.App'
         )
     }
+}
+
+license {
+    header = project.file('LICENSEHEADER')
+    include "**/*.java"
+    exclude 'de/zh32/**/*.java'
+    exclude 'io/github/**/*.java'
+    exclude 'net/minecraft/**/*.java'
+    newLine = false
 }
 
 shadowJar {

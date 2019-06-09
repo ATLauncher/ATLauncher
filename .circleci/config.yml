@@ -5,12 +5,18 @@ jobs:
         docker:
             - image: circleci/openjdk:11-jdk-sid
         steps:
+            # Checkout the code
             - checkout
 
+            # Restore the gradle cache
             - restore_cache:
                 keys:
                     - gradle-{{ checksum "build.gradle" }}
 
+            # Check the licenses have the expected syntax
+            - run: gradle checkLicenses
+
+            # Run the tests and publish the reports
             - run: gradle test
             - run:
                 name: Save test results
@@ -23,12 +29,15 @@ jobs:
             - store_artifacts:
                 path: ~/test-results/junit
 
+            # Build the artifacts
             - run: gradle build
 
+            # Save the gradle cache
             - save_cache:
                 paths:
                     - ~/.gradle
                 key: gradle-{{ checksum "build.gradle" }}
 
+            # Store the built artifacts
             - store_artifacts:
                 path: dist
