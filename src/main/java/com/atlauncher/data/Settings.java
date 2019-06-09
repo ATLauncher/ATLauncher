@@ -40,6 +40,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URLDecoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +68,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
+import com.atlauncher.data.mojang.MojangStatus;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
@@ -84,11 +86,6 @@ import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the
@@ -486,7 +483,7 @@ public class Settings {
                     Utils.delete(file);
                     LogManager.debug("Deleting log file " + file.getName());
                 }
-            } catch (java.text.ParseException e) {
+            } catch (ParseException e) {
                 LogManager.error("Invalid log file " + file.getName());
             }
         }
@@ -602,31 +599,18 @@ public class Settings {
     }
 
     public void checkMojangStatus() {
-        JSONParser parser = new JSONParser();
         try {
-            Downloadable download = new Downloadable("http://status.mojang.com/check", false);
+            Downloadable download = new Downloadable("https://status.mojang.com/check", false);
             String response = download.getContents();
             if (response == null) {
                 minecraftSessionServerUp = false;
                 minecraftLoginServerUp = false;
                 return;
             }
-            Object obj = parser.parse(response);
-            JSONArray jsonObject = (JSONArray) obj;
-            Iterator<JSONObject> iterator = jsonObject.iterator();
-            while (iterator.hasNext()) {
-                JSONObject object = iterator.next();
-                if (object.containsKey("authserver.mojang.com")) {
-                    if (((String) object.get("authserver.mojang.com")).equalsIgnoreCase("green")) {
-                        minecraftLoginServerUp = true;
-                    }
-                } else if (object.containsKey("session.minecraft.net")) {
-                    if (((String) object.get("session.minecraft.net")).equalsIgnoreCase("green")) {
-                        minecraftSessionServerUp = true;
-                    }
-                }
-            }
-        } catch (ParseException e) {
+            MojangStatus status = Gsons.DEFAULT_ALT.fromJson(response, MojangStatus.class);
+            minecraftLoginServerUp = status.isAuthServerUp();
+            minecraftSessionServerUp = status.isSessionServerUp();
+        } catch (Exception e) {
             LogManager.logStackTrace(e);
             minecraftSessionServerUp = false;
             minecraftLoginServerUp = false;

@@ -25,7 +25,6 @@ repositories {
 
 dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.googlecode.json-simple:json-simple:1.1.1'
     compile 'org.tukaani:xz:1.5'
     compile 'com.mojang:authlib:1.5.21'
 
