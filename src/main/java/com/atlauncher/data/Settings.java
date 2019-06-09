@@ -238,6 +238,8 @@ public class Settings {
 
         checkForLauncherUpdate();
 
+        addExecutableBitToTools();
+
         loadNews(); // Load the news
 
         loadMinecraftVersions(); // Load info about the different Minecraft versions
@@ -756,13 +758,6 @@ public class Settings {
                         }
                     }
                 });
-
-                if (download.getFile().exists()
-                        && download.getFile().getAbsolutePath().contains(toolsDir.getAbsolutePath())
-                        && !download.getFile().canExecute()) {
-                    System.out.println("Executable bit being set");
-                    download.getFile().setExecutable(true);
-                }
             }
             executor.shutdown();
             while (!executor.isTerminated()) {
@@ -820,6 +815,7 @@ public class Settings {
                     downloadUpdatedFiles(); // Downloads updated files on the server
                 }
                 checkForLauncherUpdate();
+                addExecutableBitToTools();
                 loadNews(); // Load the news
                 reloadNewsPanel(); // Reload news panel
                 loadPacks(); // Load the Packs available in the Launcher
@@ -858,6 +854,18 @@ public class Settings {
             }
         }
         LogManager.debug("Finished checking for launcher update");
+    }
+
+    private void addExecutableBitToTools() {
+        File[] files = toolsDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (!file.canExecute()) {
+                    LogManager.info("Executable bit being set on " + file.getName());
+                    file.setExecutable(true);
+                }
+            }
+        }
     }
 
     /**
