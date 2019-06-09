@@ -121,4 +121,5 @@ clean.doFirst {
 }
 
 build.finalizedBy copyArtifacts
+shadowJar.dependsOn jar
 build.dependsOn createExe, createMacApp
