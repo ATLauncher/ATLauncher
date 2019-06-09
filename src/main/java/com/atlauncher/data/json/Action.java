@@ -17,12 +17,12 @@
  */
 package com.atlauncher.data.json;
 
+import java.io.File;
+import java.util.List;
+
 import com.atlauncher.annot.Json;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
-
-import java.io.File;
-import java.util.List;
 
 @Json
 public class Action {

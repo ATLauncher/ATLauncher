@@ -17,14 +17,15 @@
  */
 package com.atlauncher.gui;
 
-import com.atlauncher.data.Account;
+import java.awt.Component;
+import java.awt.Dimension;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import java.awt.Component;
-import java.awt.Dimension;
+
+import com.atlauncher.data.Account;
 
 @SuppressWarnings("serial")
 public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<Account> {

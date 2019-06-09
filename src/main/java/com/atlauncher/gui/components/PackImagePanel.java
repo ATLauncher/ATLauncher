@@ -17,16 +17,17 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.data.Pack;
-
-import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+
+import javax.swing.JPanel;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.data.Pack;
 
 public final class PackImagePanel extends JPanel {
     private final Image image;

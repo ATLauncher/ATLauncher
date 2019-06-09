@@ -17,6 +17,10 @@
  */
 package com.atlauncher;
 
+import java.awt.Color;
+import java.io.File;
+import java.util.Date;
+
 import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.Downloads;
@@ -29,10 +33,6 @@ import com.atlauncher.data.mojang.MojangStatus;
 import com.atlauncher.data.mojang.MojangStatusTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.awt.Color;
-import java.io.File;
-import java.util.Date;
 
 public final class Gsons {
     public static final Gson DEFAULT = new GsonBuilder().setPrettyPrinting().create();

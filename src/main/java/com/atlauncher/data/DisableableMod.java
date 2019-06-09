@@ -17,10 +17,6 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.utils.Utils;
-
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +26,10 @@ import java.io.Serializable;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
+
+import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.utils.Utils;
 
 public class DisableableMod implements Serializable {
     private static final long serialVersionUID = 8429405767313518704L;

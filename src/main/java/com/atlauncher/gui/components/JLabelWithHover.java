@@ -17,13 +17,13 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.App;
-import com.atlauncher.gui.CustomLineBorder;
-
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JToolTip;
 import javax.swing.border.Border;
+
+import com.atlauncher.App;
+import com.atlauncher.gui.CustomLineBorder;
 
 public class JLabelWithHover extends JLabel {
     private static final long serialVersionUID = -4371080285355832166L;

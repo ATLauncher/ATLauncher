@@ -17,6 +17,10 @@
  */
 package com.atlauncher.gui.components;
 
+import javax.swing.JCheckBox;
+import javax.swing.JToolTip;
+import javax.swing.border.Border;
+
 import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.json.Mod;
@@ -24,10 +28,6 @@ import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.utils.Utils;
-
-import javax.swing.JCheckBox;
-import javax.swing.JToolTip;
-import javax.swing.border.Border;
 
 /**
  * This class extends {@link JCheckBox} and overrides the need to use JCheckBox in the {@link ModsChooser}, {@link

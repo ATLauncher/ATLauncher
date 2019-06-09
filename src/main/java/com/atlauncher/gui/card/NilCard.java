@@ -17,22 +17,23 @@
  */
 package com.atlauncher.gui.card;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.components.ImagePanel;
-import com.atlauncher.utils.Utils;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.Image;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.Image;
-import java.io.File;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.gui.components.ImagePanel;
+import com.atlauncher.utils.Utils;
 
 /**
  * Class for displaying packs in the Pack Tab.

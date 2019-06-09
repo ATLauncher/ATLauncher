@@ -17,6 +17,13 @@
  */
 package com.atlauncher.gui.components;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.border.BevelBorder;
+
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.SettingsListener;
@@ -24,12 +31,6 @@ import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.border.BevelBorder;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
     /**

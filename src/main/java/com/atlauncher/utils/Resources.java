@@ -17,11 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
-import com.atlauncher.exceptions.ChunkyException;
-
-import javax.swing.text.html.StyleSheet;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -34,6 +29,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import javax.swing.text.html.StyleSheet;
+
+import com.atlauncher.App;
+import com.atlauncher.LogManager;
+import com.atlauncher.exceptions.ChunkyException;
 
 public final class Resources {
     private static final Map<String, Object> resources = new HashMap<String, Object>();

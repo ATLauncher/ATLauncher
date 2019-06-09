@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data.mojang;
 
-import com.atlauncher.utils.Utils;
-
 import java.io.File;
+
+import com.atlauncher.utils.Utils;
 
 public class AssetObject {
     private String hash;

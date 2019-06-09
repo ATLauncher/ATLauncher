@@ -17,19 +17,18 @@
  */
 package com.atlauncher.data.mojang;
 
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import com.atlauncher.Gsons;
-import com.atlauncher.data.mojang.Downloads;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 public class DownloadsTypeAdapter implements JsonDeserializer<Downloads> {
     @Override

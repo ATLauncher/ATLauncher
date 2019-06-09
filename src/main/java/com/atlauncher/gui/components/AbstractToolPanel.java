@@ -17,14 +17,15 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.utils.Utils;
+import java.awt.BorderLayout;
+import java.awt.Font;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Font;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.utils.Utils;
 
 public abstract class AbstractToolPanel extends JPanel {
     /**

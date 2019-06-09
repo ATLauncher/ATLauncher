@@ -17,11 +17,12 @@
  */
 package com.atlauncher.evnt.manager;
 
-import com.atlauncher.evnt.listener.ConsoleOpenListener;
-
-import javax.swing.SwingUtilities;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.swing.SwingUtilities;
+
+import com.atlauncher.evnt.listener.ConsoleOpenListener;
 
 public final class ConsoleOpenManager {
     private static final List<ConsoleOpenListener> listeners = new LinkedList<ConsoleOpenListener>();

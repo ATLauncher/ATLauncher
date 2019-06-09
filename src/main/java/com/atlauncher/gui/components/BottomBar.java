@@ -17,17 +17,18 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.LogManager;
-import com.atlauncher.utils.Utils;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+import com.atlauncher.LogManager;
+import com.atlauncher.utils.Utils;
 
 public abstract class BottomBar extends JPanel {
     private static final long serialVersionUID = -7488195680365431776L;

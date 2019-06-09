@@ -17,10 +17,11 @@
  */
 package com.atlauncher.gui;
 
-import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Insets;
+
+import javax.swing.border.LineBorder;
 
 public class CustomLineBorder extends LineBorder {
     private int insets = 0;

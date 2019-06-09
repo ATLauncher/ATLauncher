@@ -17,6 +17,13 @@
  */
 package com.atlauncher.data.json;
 
+import java.awt.Color;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
@@ -25,12 +32,6 @@ import com.atlauncher.data.Language;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
-
-import javax.swing.JOptionPane;
-import java.awt.Color;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.List;
 
 @Json
 public class Mod {

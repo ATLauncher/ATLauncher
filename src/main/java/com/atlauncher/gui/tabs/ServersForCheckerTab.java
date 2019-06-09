@@ -17,10 +17,13 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.data.MinecraftServer;
-import com.atlauncher.gui.dialogs.AddEditServerForCheckerDialog;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -30,13 +33,11 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.data.MinecraftServer;
+import com.atlauncher.gui.dialogs.AddEditServerForCheckerDialog;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ServersForCheckerTab extends JPanel implements ActionListener {

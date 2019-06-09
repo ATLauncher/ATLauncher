@@ -17,9 +17,10 @@
  */
 package com.atlauncher.gui.components;
 
+import java.awt.FlowLayout;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
 
 public final class ToolsPanel extends JPanel {
     /**

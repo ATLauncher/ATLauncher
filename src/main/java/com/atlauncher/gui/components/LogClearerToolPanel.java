@@ -17,16 +17,17 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.utils.HTMLUtils;
-import com.atlauncher.utils.Utils;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Utils;
 
 public class LogClearerToolPanel extends AbstractToolPanel implements ActionListener {
     /**

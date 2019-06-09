@@ -17,15 +17,16 @@
  */
 package com.atlauncher.gui.theme;
 
+import java.awt.Color;
+import java.awt.Font;
+
+import javax.swing.BorderFactory;
+import javax.swing.UIManager;
+
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
-
-import javax.swing.BorderFactory;
-import javax.swing.UIManager;
-import java.awt.Color;
-import java.awt.Font;
 
 public final class Theme {
     /**

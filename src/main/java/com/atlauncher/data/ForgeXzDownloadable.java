@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data;
 
+import java.io.File;
+
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
-
-import java.io.File;
 
 public class ForgeXzDownloadable extends HashableDownloadable {
     private File packXzFile;

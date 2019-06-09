@@ -17,12 +17,12 @@
  */
 package com.atlauncher.data.mojang;
 
-import com.atlauncher.App;
-import com.atlauncher.utils.Utils;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+
+import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
 
 public class Library {
 

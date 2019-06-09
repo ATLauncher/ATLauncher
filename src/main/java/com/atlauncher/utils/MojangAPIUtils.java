@@ -17,13 +17,13 @@
  */
 package com.atlauncher.utils;
 
+import java.util.List;
+
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.mojang.api.NameHistory;
 import com.atlauncher.data.mojang.api.ProfileResponse;
 import com.google.gson.reflect.TypeToken;
-
-import java.util.List;
 
 /**
  * Various utility methods for interacting with the Mojang API.

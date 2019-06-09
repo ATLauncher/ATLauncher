@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data.loaders;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.io.File;
 
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.workers.InstanceInstaller;

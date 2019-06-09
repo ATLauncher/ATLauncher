@@ -17,23 +17,17 @@
  */
 package com.atlauncher.data.loaders.forge;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.loaders.forge.Data;
-import com.atlauncher.data.loaders.forge.DownloadsItem;
-import com.atlauncher.data.loaders.forge.ForgeInstallProfile;
-import com.atlauncher.data.loaders.forge.Version;
-import com.atlauncher.data.loaders.forge.Library;
-import com.atlauncher.data.loaders.forge.Processor;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;

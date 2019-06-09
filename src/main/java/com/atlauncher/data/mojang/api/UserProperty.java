@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.mojang.api;
 
+import java.util.Map;
+
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
-
-import java.util.Map;
 
 @Json
 public class UserProperty {

@@ -17,9 +17,12 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import com.atlauncher.data.Language;
-import com.atlauncher.gui.tabs.ServersForCheckerTab;
-import com.atlauncher.utils.Utils;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -31,12 +34,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+
+import com.atlauncher.data.Language;
+import com.atlauncher.gui.tabs.ServersForCheckerTab;
+import com.atlauncher.utils.Utils;
 
 public class ServerListForCheckerDialog extends JDialog implements ActionListener, ListSelectionListener {
     /**

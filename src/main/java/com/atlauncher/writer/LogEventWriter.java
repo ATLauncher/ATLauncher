@@ -17,13 +17,13 @@
  */
 package com.atlauncher.writer;
 
-import com.atlauncher.evnt.LogEvent;
-import com.atlauncher.exceptions.ChunkyException;
-
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.Writer;
+
+import com.atlauncher.evnt.LogEvent;
+import com.atlauncher.exceptions.ChunkyException;
 
 public final class LogEventWriter implements Closeable, Flushable {
     private final Writer writer;

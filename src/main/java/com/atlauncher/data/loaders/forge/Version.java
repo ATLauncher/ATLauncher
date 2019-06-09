@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.loaders.forge;
 
-import com.atlauncher.annot.Json;
-
 import java.util.List;
 import java.util.Map;
+
+import com.atlauncher.annot.Json;
 
 @Json
 public class Version {

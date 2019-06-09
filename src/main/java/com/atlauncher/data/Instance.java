@@ -41,12 +41,11 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.json.Java;
 import com.atlauncher.data.mojang.LoggingClient;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
-
-import com.atlauncher.exceptions.InvalidMinecraftVersion;
 
 /**
  * This class handles contains information about a single Instance in the

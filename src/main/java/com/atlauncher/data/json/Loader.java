@@ -17,11 +17,11 @@
  */
 package com.atlauncher.data.json;
 
-import com.atlauncher.annot.Json;
-import com.atlauncher.workers.InstanceInstaller;
-
 import java.io.File;
 import java.util.Map;
+
+import com.atlauncher.annot.Json;
+import com.atlauncher.workers.InstanceInstaller;
 
 @Json
 public class Loader {

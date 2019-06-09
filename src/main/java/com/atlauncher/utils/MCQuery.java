@@ -17,14 +17,14 @@
  */
 package com.atlauncher.utils;
 
+import java.net.InetSocketAddress;
+
 import de.zh32.pingtest.QueryVersion;
 import de.zh32.pingtest.ServerListPing14;
 import de.zh32.pingtest.ServerListPing16;
 import de.zh32.pingtest.ServerListPing17;
 import de.zh32.pingtest.ServerListPing17.StatusResponse;
 import de.zh32.pingtest.ServerListPingB18;
-
-import java.net.InetSocketAddress;
 
 public class MCQuery {
     public static QueryVersion getMinecraftServerQueryVersion(String host, int port) {

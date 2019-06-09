@@ -17,13 +17,6 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
-import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.InstanceInstaller;
-
-import com.google.gson.reflect.TypeToken;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
@@ -32,6 +25,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.InstanceInstaller;
+import com.google.gson.reflect.TypeToken;
 
 public class HashableDownloadable extends Downloadable {
     public HashableDownloadable(String url, File file, InstanceInstaller instanceInstaller, File copyTo) {

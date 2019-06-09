@@ -17,23 +17,6 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.listener.TabChangeListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.TabChangeManager;
-import com.atlauncher.gui.LauncherFrame;
-import com.atlauncher.gui.card.NilCard;
-import com.atlauncher.gui.card.PackCard;
-import com.atlauncher.gui.dialogs.AddPackDialog;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -48,6 +31,24 @@ import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.data.Pack;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.listener.TabChangeListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.TabChangeManager;
+import com.atlauncher.gui.LauncherFrame;
+import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.card.PackCard;
+import com.atlauncher.gui.dialogs.AddPackDialog;
 
 public final class PacksTab extends JPanel implements Tab, RelocalizationListener {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

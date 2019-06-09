@@ -17,16 +17,17 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.App;
-import com.atlauncher.gui.CustomLineBorder;
-import com.atlauncher.utils.Utils;
+import java.awt.Cursor;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolTip;
 import javax.swing.border.Border;
-import java.awt.Cursor;
+
+import com.atlauncher.App;
+import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.utils.Utils;
 
 public class SMButton extends JButton {
     private static final Cursor hand = new Cursor(Cursor.HAND_CURSOR);

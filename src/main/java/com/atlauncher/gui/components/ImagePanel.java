@@ -17,12 +17,13 @@
  */
 package com.atlauncher.gui.components;
 
-import javax.swing.JPanel;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+
+import javax.swing.JPanel;
 
 public final class ImagePanel extends JPanel {
     private static final Cursor HAND = new Cursor(Cursor.HAND_CURSOR);

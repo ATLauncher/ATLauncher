@@ -17,14 +17,14 @@
  */
 package com.atlauncher.evnt;
 
+import java.awt.Color;
+import java.io.IOException;
+
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.writer.LogEventWriter;
-
-import java.awt.Color;
-import java.io.IOException;
 
 public final class LogEvent {
     public static final int CONSOLE = 0xA;

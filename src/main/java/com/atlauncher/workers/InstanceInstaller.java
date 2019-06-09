@@ -72,7 +72,6 @@ import com.atlauncher.data.mojang.MojangDownloads;
 import com.atlauncher.data.mojang.MojangVersion;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.utils.Utils;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;

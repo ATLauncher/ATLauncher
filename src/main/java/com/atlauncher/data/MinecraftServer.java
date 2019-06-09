@@ -17,13 +17,14 @@
  */
 package com.atlauncher.data;
 
+import java.text.DecimalFormat;
+import java.util.List;
+
 import com.atlauncher.App;
 import com.atlauncher.utils.MCQuery;
 import com.google.gson.reflect.TypeToken;
-import de.zh32.pingtest.QueryVersion;
 
-import java.text.DecimalFormat;
-import java.util.List;
+import de.zh32.pingtest.QueryVersion;
 
 public class MinecraftServer {
     /**

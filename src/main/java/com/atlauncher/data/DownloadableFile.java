@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
-
 import java.io.File;
+
+import com.atlauncher.App;
 
 public class DownloadableFile {
     private String name;

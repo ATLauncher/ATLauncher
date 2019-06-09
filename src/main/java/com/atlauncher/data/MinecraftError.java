@@ -17,12 +17,10 @@
  */
 package com.atlauncher.data;
 
+import javax.swing.JOptionPane;
+
 import com.atlauncher.App;
 import com.atlauncher.utils.HTMLUtils;
-
-import java.io.File;
-
-import javax.swing.JOptionPane;
 
 public class MinecraftError {
     static final int OUT_OF_MEMORY = 1;

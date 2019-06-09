@@ -17,13 +17,13 @@
  */
 package com.atlauncher.adapter;
 
+import java.awt.Color;
+import java.io.IOException;
+
 import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
-import java.awt.Color;
-import java.io.IOException;
 
 /**
  * This class will ensure that colors are serialized to a hex value for easy editing

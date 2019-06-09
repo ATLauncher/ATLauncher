@@ -17,11 +17,11 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.gui.components.CollapsiblePanel;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+
+import com.atlauncher.gui.components.CollapsiblePanel;
 
 /**
  * Extend this class if you wish to add a backup/sync method. You will need to track any backups you make yourself.

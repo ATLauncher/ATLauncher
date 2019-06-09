@@ -17,19 +17,17 @@
  */
 package com.atlauncher.data.mojang;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.atlauncher.Gsons;
-import com.atlauncher.data.mojang.ArgumentRule;
-import com.atlauncher.data.mojang.MojangArguments;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MojangArgumentsTypeAdapter implements JsonDeserializer<MojangArguments> {
     @Override

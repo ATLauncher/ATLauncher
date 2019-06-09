@@ -17,12 +17,12 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Language;
-import com.atlauncher.data.MinecraftServer;
-import com.atlauncher.utils.MCQuery;
-import com.atlauncher.utils.Utils;
-import de.zh32.pingtest.QueryVersion;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -31,12 +31,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
+import com.atlauncher.data.MinecraftServer;
+import com.atlauncher.utils.MCQuery;
+import com.atlauncher.utils.Utils;
+
+import de.zh32.pingtest.QueryVersion;
 
 public class AddEditServerForCheckerDialog extends JDialog implements ActionListener {
     /**
