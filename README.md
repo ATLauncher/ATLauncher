@@ -9,10 +9,10 @@ ModPacks easily and quickly.
 
 ## Links
 
-* [ATLauncher Website](https://www.atlauncher.com)
-* [ATLauncher Facebook](http://www.facebook.com/ATLauncher)
-* [ATLauncher Reddit](http://www.reddit.com/r/ATLauncher)
-* [ATLauncher Twitter](http://twitter.com/ATLauncher)
+-   [ATLauncher Website](https://www.atlauncher.com)
+-   [ATLauncher Facebook](http://www.facebook.com/ATLauncher)
+-   [ATLauncher Reddit](http://www.reddit.com/r/ATLauncher)
+-   [ATLauncher Twitter](http://twitter.com/ATLauncher)
 
 ## Coding Standards & Styling Guidelines
 
@@ -36,6 +36,17 @@ To build this project, simply run:
 
 This will build the application and output the resulting files for Windows, Linux and OSX in the
 `dist` directory.
+
+## Running in test
+
+If you want to run the launcher while developing with it, you can use your IDE (if you have one) to
+do that for you.
+
+Alternatively you can run:
+
+```sh
+./gradlew run --args="--debug --debug-level 3 --working-dir=test"
+```
 
 ## Plugging In Your Data
 
