@@ -1,3 +1,5 @@
+import java.util.stream.Collectors
+
 plugins {
     id 'java'
     id 'application'
@@ -48,7 +50,7 @@ jar {
 
 license {
     header = project.file('LICENSEHEADER')
-    include "**/*.java"
+    include '**/*.java'
     exclude 'de/zh32/**/*.java'
     exclude 'io/github/**/*.java'
     exclude 'net/minecraft/**/*.java'
@@ -61,13 +63,22 @@ shadowJar {
 
 macAppBundle {
     mainClassName = 'com.atlauncher.App'
+    appName = 'ATLauncher'
+    runtimeConfigurationName = 'shadow'
+    jarTask = 'shadowJar'
     icon = 'src/main/resources/assets/image/Icon.icns'
     javaProperties.put('user.dir', '$APP_ROOT/Contents/Java')
-    javaProperties.put("apple.laf.useScreenMenuBar", "true")
+    javaProperties.put('apple.laf.useScreenMenuBar', 'true')
+}
+
+copyToResourcesJava {
+    exclude(project.configurations.runtime.toList().stream().map({ f -> f.name }).collect(Collectors.toList()))
+    rename("ATLauncher-${project.version}.jar", "ATLauncher.jar")
 }
 
 launch4j {
     outfile = "ATLauncher-${project.version}.exe"
+    jreMinVersion = '1.7.111'
     mainClassName = 'com.atlauncher.App'
     icon = "${projectDir}/src/main/resources/assets/image/Icon.ico"
     initialHeapPercent = 5;
@@ -76,25 +87,38 @@ launch4j {
 
 artifacts {
     archives shadowJar
-    archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe").replace("libs", "launch4j"))
-    archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions"))
+    archives file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.exe').replace('libs', 'launch4j'))
+    archives file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.zip').replace('libs', 'distributions'))
 }
 
 task copyArtifacts(type: Copy) {
     dependsOn build
     from shadowJar
-    from file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe").replace("libs", "launch4j"))
-    from file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions"))
+    from file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.exe').replace('libs', 'launch4j'))
+    from file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.zip').replace('libs', 'distributions'))
     into "${projectDir}/dist"
+}
+
+task createMacApp(type: Zip) {
+    dependsOn createApp, shadowJar
+    from("$buildDir/macApp") {
+        include "${project.name}.app/**"
+        exclude "${project.name}.app/Contents/MacOS"
+    }
+    from("$buildDir/macApp") {
+        include "${project.name}.app/Contents/MacOS/**"
+        fileMode 0777
+    }
+    archiveName = "${project.name}-${project.version}.zip"
+}
+
+copyArtifacts.finalizedBy {
+    println 'ATLauncher has been built. Distribution files are located in the dist directory'
 }
 
 clean.doFirst {
     delete "${projectDir}/dist"
 }
 
-build.doLast {
-    println "ATLauncher has been built. Distribution files are located in the dist directory"
-}
 build.finalizedBy copyArtifacts
-build.dependsOn(createExe)
-build.dependsOn(createAppZip)
+build.dependsOn createExe, createMacApp
