@@ -76,6 +76,10 @@ task copyArtifacts(type: Copy) {
     into "${projectDir}/dist"
 }
 
+clean.doFirst {
+    delete "${projectDir}/dist"
+}
+
 build.doLast {
     println "ATLauncher has been built. Distribution files are located in the dist directory"
 }

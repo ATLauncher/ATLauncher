@@ -1,0 +1,34 @@
+version: 2.0
+
+jobs:
+    build:
+        docker:
+            - image: circleci/openjdk:11-jdk-sid
+        steps:
+            - checkout
+
+            - restore_cache:
+                keys:
+                    - gradle-{{ checksum "build.gradle" }}
+
+            - run: gradle test
+            - run:
+                name: Save test results
+                command: |
+                  mkdir -p ~/test-results/junit/
+                  find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+                when: always
+            - store_test_results:
+                path: ~/test-results
+            - store_artifacts:
+                path: ~/test-results/junit
+
+            - run: gradle build
+
+            - save_cache:
+                paths:
+                    - ~/.gradle
+                key: gradle-{{ checksum "build.gradle" }}
+
+            - store_artifacts:
+                path: dist
