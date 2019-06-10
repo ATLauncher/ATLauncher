@@ -47,6 +47,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
+import com.atlauncher.data.mojang.LoggingClient;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -365,6 +366,12 @@ public class InstanceInstallerDialog extends JDialog {
                                 title = pack.getName() + " " + version.getVersion() + " "
                                         + Language.INSTANCE.localize("common.installed");
                                 if (isReinstall) {
+                                    LoggingClient loggingClient = version.getMinecraftVersion().getMojangVersion()
+                                            .hasLogging()
+                                                    ? version.getMinecraftVersion().getMojangVersion().getLogging()
+                                                            .getClient()
+                                                    : null;
+
                                     instance.setVersion(version.getVersion());
                                     instance.setMinecraftVersion(version.getMinecraftVersion().getVersion());
                                     instance.setVersionType(version.getMinecraftVersion().getMojangVersion().getType());
@@ -383,7 +390,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setExtraArguments(this.getExtraArguments());
                                     instance.setMainClass(this.getMainClass());
                                     instance.setAssets(version.getMinecraftVersion().getMojangVersion().getAssets());
-                                    instance.setLogging(version.getMinecraftVersion().getMojangVersion().getLogging().getClient());
+                                    instance.setLogging(loggingClient);
                                     instance.setJava(this.getJsonVersion().getJava());
                                     instance.setEnableCurseIntegration(
                                             this.getJsonVersion().hasEnabledCurseIntegration());
@@ -402,6 +409,12 @@ public class InstanceInstallerDialog extends JDialog {
                                 } else if (isServer) {
 
                                 } else {
+                                    LoggingClient loggingClient = version.getMinecraftVersion().getMojangVersion()
+                                            .hasLogging()
+                                                    ? version.getMinecraftVersion().getMojangVersion().getLogging()
+                                                            .getClient()
+                                                    : null;
+
                                     Instance newInstance = new Instance(instanceNameField.getText(), pack.getName(),
                                             pack, enableUserLock.isSelected(), version.getVersion(),
                                             version.getMinecraftVersion().getVersion(),
@@ -409,9 +422,9 @@ public class InstanceInstallerDialog extends JDialog {
                                             this.getMemory(), this.getPermGen(), this.getModsInstalled(),
                                             this.getJarOrder(), this.getLibrariesForLaunch(), this.getExtraArguments(),
                                             this.getMinecraftArguments(), this.getMainClass(),
-                                            version.getMinecraftVersion().getMojangVersion().getAssets(),
-                                            version.getMinecraftVersion().getMojangVersion().getLogging().getClient(), version.isDev(),
-                                            !version.getMinecraftVersion().isLegacy(), this.getJsonVersion().getJava(),
+                                            version.getMinecraftVersion().getMojangVersion().getAssets(), loggingClient,
+                                            version.isDev(), !version.getMinecraftVersion().isLegacy(),
+                                            this.getJsonVersion().getJava(),
                                             this.getJsonVersion().hasEnabledCurseIntegration(),
                                             this.getJsonVersion().hasEnabledEditingMods());
 
