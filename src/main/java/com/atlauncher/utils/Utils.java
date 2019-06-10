@@ -56,6 +56,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -63,6 +64,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.Enumeration;
@@ -2265,5 +2267,35 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static void relaunchInDebugMode() {
+        try {
+            List<String> arguments = new ArrayList<String>();
+
+            String launcherPath = URLDecoder
+                    .decode(new File(App.class.getProtectionDomain().getCodeSource().getLocation().getPath())
+                            .getCanonicalPath(), "UTF-8");
+
+            String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+            if (Utils.isWindows()) {
+                path += "w";
+            }
+            arguments.add(path);
+            arguments.add("-jar");
+            arguments.add(launcherPath);
+            arguments.add("--debug");
+            arguments.add("--debug-level 3");
+
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.command(arguments);
+
+            LogManager.info("Running launcher in debug mode " + arguments);
+
+            processBuilder.start();
+            System.exit(0);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
     }
 }
