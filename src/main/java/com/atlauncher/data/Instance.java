@@ -102,12 +102,12 @@ public class Instance implements Cloneable {
     /**
      * If this version allows Curse mod integration.
      */
-    private boolean enableCurseIntegration;
+    private Boolean enableCurseIntegration = false;
 
     /**
      * If this version allows editing mods.
      */
-    private boolean enableEditingMods;
+    private Boolean enableEditingMods = true;
 
     /**
      * The minimum RAM/memory recommended for this Instance by the pack developer/s.
@@ -709,7 +709,7 @@ public class Instance implements Cloneable {
     }
 
     public boolean hasEnabledCurseIntegration() {
-        return this.enableCurseIntegration;
+        return this.enableCurseIntegration != null && this.enableCurseIntegration;
     }
 
     public void setEnableCurseIntegration(boolean enableCurseIntegration) {
@@ -717,7 +717,7 @@ public class Instance implements Cloneable {
     }
 
     public boolean hasEnabledEditingMods() {
-        return this.enableEditingMods;
+        return this.enableEditingMods == null || this.enableEditingMods;
     }
 
     public void setEnableEditingMods(boolean enableEditingMods) {
