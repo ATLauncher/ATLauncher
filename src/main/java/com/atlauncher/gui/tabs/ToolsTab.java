@@ -26,8 +26,8 @@ import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.BlankToolPanel;
 import com.atlauncher.gui.components.LogClearerToolPanel;
 import com.atlauncher.gui.components.NetworkCheckerToolPanel;
-import com.atlauncher.gui.components.ServerCheckerToolPanel;
 import com.atlauncher.gui.components.RelaunchInDebugModePanel;
+import com.atlauncher.gui.components.ServerCheckerToolPanel;
 
 @SuppressWarnings("serial")
 public class ToolsTab extends JPanel implements Tab {

@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 enum Action {
     ALLOW, DISALLOW

@@ -54,10 +54,10 @@ import com.atlauncher.data.LoginResponse;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = 2493791137600123223L;
@@ -302,22 +302,16 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
     private void leftButtonActions() {
         if (App.settings.isInOfflineMode()) {
-            String[] options = { Language.INSTANCE.localize("common.ok") };
-            JOptionPane.showOptionDialog(App.settings.getParent(),
-                    Language.INSTANCE.localize("account" + "" + ".offlinemode"),
-                    Language.INSTANCE.localize("common.offline"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
-                    null, options, options[0]);
+            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
+                    .setContent(Language.INSTANCE.localize("account.offlinemode")).setType(DialogManager.ERROR).show();
         } else {
             Account account;
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             boolean remember = rememberField.isSelected();
             if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
-                String[] options = { Language.INSTANCE.localize("common.ok") };
-                JOptionPane.showOptionDialog(App.settings.getParent(),
-                        Language.INSTANCE.localize("account" + "" + ".exists"),
-                        Language.INSTANCE.localize("account.notadded"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("account.notadded"))
+                        .setContent(Language.INSTANCE.localize("account.exists")).setType(DialogManager.ERROR).show();
                 return;
             }
 
@@ -360,11 +354,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     }
                     account.setRemember(remember);
                     LogManager.info("Edited Account " + account);
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("account" + "" + ".editeddone"),
-                            Language.INSTANCE.localize("account.edited"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("account.edited"))
+                            .setContent(Language.INSTANCE.localize("account.editeddone")).setType(DialogManager.INFO)
+                            .show();
                 }
                 response.save();
                 App.settings.reloadAccounts();
@@ -376,12 +368,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 accountsComboBox.setSelectedItem(account);
             } else {
                 LogManager.error(response.getErrorMessage());
-                String[] options = { Language.INSTANCE.localize("common.ok") };
-                JOptionPane.showOptionDialog(App.settings.getParent(),
-                        HTMLUtils.centerParagraph(Language.INSTANCE.localize("account.incorrect") + "<br/><br/>"
-                                + response.getErrorMessage()),
-                        Language.INSTANCE.localize("account" + ".notadded"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("account.notadded")).setContent(
+                        Language.INSTANCE.localize("account.incorrect") + "<br/><br/>" + response.getErrorMessage())
+                        .setType(DialogManager.INFO).show();
             }
         }
     }

@@ -43,6 +43,7 @@ import com.atlauncher.data.mojang.LoggingClient;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
@@ -1385,21 +1386,21 @@ public class Instance implements Cloneable {
     public boolean launch() {
         final Account account = App.settings.getAccount();
         if (account == null) {
-            String[] options = { Language.INSTANCE.localize("common.ok") };
-            JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance.noaccount"),
-                    Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                    .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localize("instance.noaccount")))
+                    .setType(DialogManager.ERROR).show();
+
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
             if ((App.settings.getMaximumMemory() < this.memory) && (this.memory <= OS.getSafeMaximumRam())) {
-                String[] options = { Language.INSTANCE.localize("common.yes"),
-                        Language.INSTANCE.localize("common.no") };
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                        HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.insufficientram",
-                                "<b>" + this.memory + "</b> " + "MB<br/><br/>")),
-                        Language.INSTANCE.localize("instance.insufficientramtitle"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                int ret = DialogManager.optionDialog()
+                        .setTitle(Language.INSTANCE.localize("instance.insufficientramtitle"))
+                        .setContent(Language.INSTANCE.localizeWithReplace("instance.insufficientram",
+                                "<b>" + this.memory + "</b> " + "MB<br/><br/>"))
+                        .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
+                        .setDefaultOption(DialogManager.YES_OPTION).show();
+
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
                     App.settings.setMinecraftLaunched(false);
@@ -1407,13 +1408,12 @@ public class Instance implements Cloneable {
                 }
             }
             if (App.settings.getPermGen() < this.permgen) {
-                String[] options = { Language.INSTANCE.localize("common.yes"),
-                        Language.INSTANCE.localize("common.no") };
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                        HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.insufficientpermgen",
-                                "<b>" + this.permgen + "</b> " + "MB<br/><br/>")),
-                        Language.INSTANCE.localize("instance.insufficientpermgentitle"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                int ret = DialogManager.optionDialog()
+                        .setTitle(Language.INSTANCE.localize("instance.insufficientpermgentitle"))
+                        .setContent(Language.INSTANCE.localizeWithReplace("instance.insufficientpermgen",
+                                "<b>" + this.permgen + "</b> " + "MB<br/><br/>"))
+                        .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
+                        .setDefaultOption(DialogManager.YES_OPTION).show();
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
                     App.settings.setMinecraftLaunched(false);

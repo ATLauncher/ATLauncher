@@ -38,7 +38,6 @@ import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Resources;
-import com.atlauncher.utils.Utils;
 
 /**
  * This class extends {@link JPanel} and provides a Panel for displaying the latest news.

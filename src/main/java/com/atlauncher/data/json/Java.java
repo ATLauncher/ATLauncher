@@ -18,7 +18,6 @@
 package com.atlauncher.data.json;
 
 import com.atlauncher.annot.Json;
-import com.atlauncher.utils.Utils;
 
 @Json
 public class Java {

@@ -38,9 +38,9 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
@@ -50,6 +50,7 @@ import com.atlauncher.data.mojang.api.ProfileTexture;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.MojangAPIUtils;
@@ -534,11 +535,9 @@ public class Account implements Serializable {
             });
             dialog.start();
             if (!(Boolean) dialog.getReturnValue()) {
-                String[] options = { Language.INSTANCE.localize("common.ok") };
-                JOptionPane.showOptionDialog(App.settings.getParent(),
-                        Language.INSTANCE.localize("account" + "" + ".skinerror"),
-                        Language.INSTANCE.localize("common.error"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
+                        .setContent(Language.INSTANCE.localize("account.skinerror")).setType(DialogManager.ERROR)
+                        .show();
             }
             this.skinUpdating = false;
         }
@@ -678,9 +677,11 @@ public class Account implements Serializable {
                 JPasswordField passwordField = new JPasswordField();
                 panel.add(passwordLabel, BorderLayout.NORTH);
                 panel.add(passwordField, BorderLayout.CENTER);
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), panel,
-                        Language.INSTANCE.localize("instance.enterpasswordtitle"), JOptionPane.OK_CANCEL_OPTION);
-                if (ret == JOptionPane.OK_OPTION) {
+
+                int ret = DialogManager.confirmDialog()
+                        .setTitle(Language.INSTANCE.localize("instance.enterpasswordtitle")).setContent(panel).show();
+
+                if (ret == DialogManager.OK_OPTION) {
                     if (passwordField.getPassword().length == 0) {
                         LogManager.error("Aborting login for " + this.getMinecraftUsername() + ", no password entered");
                         App.settings.setMinecraftLaunched(false);
@@ -700,12 +701,12 @@ public class Account implements Serializable {
 
         if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());
-            String[] options = { Language.INSTANCE.localize("common.ok") };
-            JOptionPane.showOptionDialog(App.settings.getParent(),
-                    HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorloggingin",
-                            "<br/><br/>" + response.getErrorMessage())),
-                    Language.INSTANCE.localize("instance" + ".errorloggingintitle"), JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+
+            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.errorloggingintitle"))
+                    .setContent(HTMLUtils.centerParagraph(Language.INSTANCE
+                            .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())))
+                    .setType(DialogManager.ERROR).show();
+
             App.settings.setMinecraftLaunched(false);
             return null;
         }

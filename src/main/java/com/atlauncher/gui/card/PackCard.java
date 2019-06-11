@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -39,8 +38,8 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 /**
  * Class for displaying packs in the Pack Tab
@@ -129,18 +128,14 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("pack" + "" + ".offlinenewinstance"),
-                            Language.INSTANCE.localize("common.offline"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
+                            .setContent(Language.INSTANCE.localize("pack.offlinenewinstance"))
+                            .setType(DialogManager.ERROR).show();
                 } else {
                     if (App.settings.getAccount() == null) {
-                        String[] options = { Language.INSTANCE.localize("common.ok") };
-                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                Language.INSTANCE.localize("instance" + ".cannotcreate"),
-                                Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                                .setContent(Language.INSTANCE.localize("instance.cannotcreate"))
+                                .setType(DialogManager.ERROR).show();
                     } else {
                         new InstanceInstallerDialog(pack);
                     }
@@ -152,18 +147,14 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("pack" + "" + ".offlinecreateserver"),
-                            Language.INSTANCE.localize("common.offline"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
+                            .setContent(Language.INSTANCE.localize("pack.offlinecreateserver"))
+                            .setType(DialogManager.ERROR).show();
                 } else {
                     if (App.settings.getAccount() == null) {
-                        String[] options = { Language.INSTANCE.localize("common.ok") };
-                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                Language.INSTANCE.localize("instance" + ".cannotcreate"),
-                                Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                                .setContent(Language.INSTANCE.localize("instance.cannotcreate"))
+                                .setType(DialogManager.ERROR).show();
                     } else {
                         new InstanceInstallerDialog(pack, true);
                     }

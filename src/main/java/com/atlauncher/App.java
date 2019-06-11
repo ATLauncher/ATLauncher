@@ -43,7 +43,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.InputMap;
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
@@ -58,9 +57,10 @@ import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
-import com.atlauncher.managers.DialogManager;
 import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Java;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -284,15 +284,15 @@ public class App {
                             + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
                             + "that's what you've done?");
 
-                    int returnOption = DialogManager.optionDialog().setTitle("Warning").setContent(content)
-                            .addOption("Yes It's Fine", true).addOption("Whoops. I'll Change That Now")
-                            .setType(DialogManager.ERROR).show();
+                    int returnOption = DialogManager.optionDialog().setParent(null).setTitle("Warning")
+                            .setContent(content).addOption("Yes It's Fine", true)
+                            .addOption("Whoops. I'll Change That Now").setType(DialogManager.ERROR).show();
 
                     if (returnOption != 0) {
                         System.exit(0);
                     }
                 }
-            } catch(IOException e) {
+            } catch (IOException e) {
                 // ignored
             }
         }

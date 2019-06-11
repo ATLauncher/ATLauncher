@@ -29,7 +29,6 @@ import javax.swing.JPanel;
 
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 public abstract class BottomBar extends JPanel {
     private static final long serialVersionUID = -7488195680365431776L;

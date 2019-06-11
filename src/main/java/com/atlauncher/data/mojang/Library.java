@@ -23,7 +23,6 @@ import java.util.Map;
 
 import com.atlauncher.App;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 public class Library {
 

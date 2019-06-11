@@ -32,7 +32,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolTip;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;

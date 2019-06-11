@@ -17,39 +17,75 @@
  */
 package com.atlauncher.managers;
 
-import com.atlauncher.data.Constants;
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
-
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.awt.Window;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
-public final class DialogManager {
-    public static final int OPTION = 0;
+import com.atlauncher.App;
+import com.atlauncher.data.Language;
 
-    public static final int ERROR = 0;
-    public static final int INFO = 1;
-    public static final int WARNING = 2;
-    public static final int QUESTION = 3;
+public final class DialogManager {
+    public static final int OPTION_TYPE = 0;
+    public static final int CONFIRM_TYPE = 1;
+    public static final int OK_TYPE = 1;
+
+    public static final int ERROR = JOptionPane.ERROR_MESSAGE;
+    public static final int INFO = JOptionPane.INFORMATION_MESSAGE;
+    public static final int WARNING = JOptionPane.WARNING_MESSAGE;
+    public static final int QUESTION = JOptionPane.QUESTION_MESSAGE;
+
+    public static final int DEFAULT_OPTION = JOptionPane.DEFAULT_OPTION;
+    public static final int YES_NO_OPTION = JOptionPane.YES_NO_OPTION;
+    public static final int YES_NO_CANCEL_OPTION = JOptionPane.YES_NO_CANCEL_OPTION;
+    public static final int OK_CANCEL_OPTION = JOptionPane.OK_CANCEL_OPTION;
+
+    public static final int YES_OPTION = JOptionPane.YES_OPTION;
+    public static final int NO_OPTION = JOptionPane.NO_OPTION;
+    public static final int CANCEL_OPTION = JOptionPane.CANCEL_OPTION;
+    public static final int OK_OPTION = JOptionPane.OK_OPTION;
+    public static final int CLOSED_OPTION = JOptionPane.CLOSED_OPTION;
 
     public int dialogType;
+    public Window parent = App.settings.getParent();
     public String title;
-    public String content;
+    public Object content;
     public List<String> options = new LinkedList<String>();
-    public int defaultOption;
-    public int type;
+    public Icon icon = null;
+    public int lookAndFeel = DialogManager.DEFAULT_OPTION;
+    public Integer defaultOption = null;
+    public int type = DialogManager.QUESTION;
 
     private DialogManager(int dialogType) {
         this.dialogType = dialogType;
     }
 
     public static DialogManager optionDialog() {
-        return new DialogManager(DialogManager.OPTION);
+        return new DialogManager(DialogManager.OPTION_TYPE);
+    }
+
+    public static DialogManager confirmDialog() {
+        return new DialogManager(DialogManager.CONFIRM_TYPE);
+    }
+
+    public static DialogManager okDialog() {
+        DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
+
+        dialog.addOption(Language.INSTANCE.localize("common.ok"), true);
+
+        return dialog;
+    }
+
+    public DialogManager setParent(Window parent) {
+        this.parent = parent;
+        return this;
+    }
+
+    public DialogManager setLookAndFeel(int lookAndFeel) {
+        this.lookAndFeel = lookAndFeel;
+        return this;
     }
 
     public DialogManager setTitle(String title) {
@@ -57,13 +93,23 @@ public final class DialogManager {
         return this;
     }
 
-    public DialogManager setContent(String content) {
+    public DialogManager setContent(Object content) {
         this.content = content;
         return this;
     }
 
     public DialogManager setType(int type) {
         this.type = type;
+        return this;
+    }
+
+    public DialogManager setDefaultOption(int defaultOption) {
+        this.defaultOption = defaultOption;
+        return this;
+    }
+
+    public DialogManager setIcon(Icon icon) {
+        this.icon = icon;
         return this;
     }
 
@@ -81,12 +127,16 @@ public final class DialogManager {
         return this.addOption(option, false);
     }
 
-    public int show() {
-        if (this.dialogType == DialogManager.OPTION) {
-            return JOptionPane.showOptionDialog(null, this.content, this.title, JOptionPane.DEFAULT_OPTION, this.type,
-                    null, this.options.toArray(), this.defaultOption);
+    public Object[] getOptions() {
+        if (this.options.size() == 0) {
+            return null;
         }
 
-        return -1;
+        return this.options.toArray();
+    }
+
+    public int show() {
+        return JOptionPane.showOptionDialog(this.parent, this.content, this.title, this.lookAndFeel, this.type,
+                this.icon, this.getOptions(), this.defaultOption);
     }
 }

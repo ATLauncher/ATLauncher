@@ -67,6 +67,7 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -157,11 +158,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             }
             playButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.corruptplay"),
-                            Language.INSTANCE.localize("instance.corrupt"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
+                            .setContent(Language.INSTANCE.localize("instance.corruptplay")).setType(DialogManager.ERROR)
+                            .show();
                 }
             });
             for (ActionListener al : backupButton.getActionListeners()) {
@@ -169,11 +168,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             }
             backupButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.corruptbackup"),
-                            Language.INSTANCE.localize("instance.corrupt"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
+                            .setContent(Language.INSTANCE.localize("instance.corruptbackup"))
+                            .setType(DialogManager.ERROR).show();
                 }
             });
             for (ActionListener al : cloneButton.getActionListeners()) {
@@ -181,11 +178,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             }
             cloneButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.corruptclone"),
-                            Language.INSTANCE.localize("instance.corrupt"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
+                            .setContent(Language.INSTANCE.localize("instance.corruptclone"))
+                            .setType(DialogManager.ERROR).show();
                 }
             });
         }
@@ -198,13 +193,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 if (!App.settings.ignoreJavaOnInstanceLaunch() && instance.getJava() != null
                         && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
                         && !instance.getJava().conforms()) {
-                    String[] javaBadOptions = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            HTMLUtils.centerParagraph(
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.incorrectjavatitle"))
+                            .setContent(HTMLUtils.centerParagraph(
                                     Language.INSTANCE.localizeWithReplace("instance.incorrectjava", "<br/><br/>")
-                                            + instance.getJava().getVersionString()),
-                            Language.INSTANCE.localize("instance.incorrectjavatitle"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, javaBadOptions, javaBadOptions[0]);
+                                            + instance.getJava().getVersionString()))
+                            .setType(DialogManager.ERROR).show();
                     return;
                 }
 
@@ -220,11 +213,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     if (ret == 0) {
                         if (App.settings.getAccount() == null) {
-                            String[] optionss = { Language.INSTANCE.localize("common.ok") };
-                            JOptionPane.showOptionDialog(App.settings.getParent(),
-                                    Language.INSTANCE.localize("instance.cantupdate"),
-                                    Language.INSTANCE.localize("instance.noaccountselected"),
-                                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, optionss, optionss[0]);
+                            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                                    .setContent(Language.INSTANCE.localize("instance.cantupdate"))
+                                    .setType(DialogManager.ERROR).show();
                         } else {
                             new InstanceInstallerDialog(instance, true, false, null, null, true);
                         }
@@ -252,11 +243,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.getAccount() == null) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.cantreinstall"),
-                            Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                            .setContent(Language.INSTANCE.localize("instance.cantreinstall"))
+                            .setType(DialogManager.ERROR).show();
                 } else {
                     new InstanceInstallerDialog(instance);
                 }
@@ -265,11 +254,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.updateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.getAccount() == null) {
-                    String[] options = { Language.INSTANCE.localize("common.ok") };
-                    JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("instance.cantupdate"),
-                            Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                            .setContent(Language.INSTANCE.localize("instance.cantupdate")).setType(DialogManager.ERROR)
+                            .show();
                 } else {
                     new InstanceInstallerDialog(instance, true, false, null, null, true);
                 }
@@ -341,11 +328,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             dialog.setVisible(true);
                         }
                     } else {
-                        String[] options = { Language.INSTANCE.localize("common.ok") };
-                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                Language.INSTANCE.localize("backup" + ".nosaves"),
-                                Language.INSTANCE.localize("backup.nosavestitle"), JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("backup.nosavestitle"))
+                                .setContent(Language.INSTANCE.localize("backup.nosaves")).setType(DialogManager.ERROR)
+                                .show();
                     }
                 }
             }
@@ -452,12 +437,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                         if (ret == 0) {
                             if (App.settings.getAccount() == null) {
-                                String[] optionss = { Language.INSTANCE.localize("common.ok") };
-                                JOptionPane.showOptionDialog(App.settings.getParent(),
-                                        Language.INSTANCE.localize("instance.cantupdate"),
-                                        Language.INSTANCE.localize("instance.noaccountselected"),
-                                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, optionss,
-                                        optionss[0]);
+                                DialogManager.okDialog()
+                                        .setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                                        .setContent(Language.INSTANCE.localize("instance.cantupdate"))
+                                        .setType(DialogManager.ERROR).show();
                             } else {
                                 new InstanceInstallerDialog(instance, true, false, null, null, true);
                             }
@@ -538,12 +521,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                         options[0]);
                                 if (ret == 0) {
                                     if (App.settings.getAccount() == null) {
-                                        String[] optionss = { Language.INSTANCE.localize("common.ok") };
-                                        JOptionPane.showOptionDialog(App.settings.getParent(),
-                                                Language.INSTANCE.localize("instance.cantupdate"),
-                                                Language.INSTANCE.localize("instance.noaccountselected"),
-                                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, optionss,
-                                                optionss[0]);
+                                        DialogManager.okDialog()
+                                                .setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                                                .setContent(Language.INSTANCE.localize("instance.cantupdate"))
+                                                .setType(DialogManager.ERROR).show();
                                     } else {
                                         new InstanceInstallerDialog(instance, true, false, null, null, true);
                                     }

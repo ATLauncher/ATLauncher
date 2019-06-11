@@ -17,10 +17,7 @@
  */
 package com.atlauncher.data;
 
-import javax.swing.JOptionPane;
-
-import com.atlauncher.App;
-import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.managers.DialogManager;
 
 public class MinecraftError {
     static final int OUT_OF_MEMORY = 1;
@@ -36,20 +33,15 @@ public class MinecraftError {
     }
 
     static void showOutOfMemoryPopup() {
-        String[] options = { Language.INSTANCE.localize("common.ok") };
-        JOptionPane.showOptionDialog(App.settings.getParent(),
-                HTMLUtils.centerParagraph(
-                        Language.INSTANCE.localizeWithReplace("instancecrash.outofmemory", "<br/><br/>")),
-                Language.INSTANCE.localize("instance.aboutyourcrash"), JOptionPane.DEFAULT_OPTION,
-                JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.aboutyourcrash"))
+                .setContent(Language.INSTANCE.localizeWithReplace("instancecrash.outofmemory", "<br/><br/>"))
+                .setType(DialogManager.INFO).show();
     }
 
     static void showConcurrentModificationError16() {
-        String[] options = { Language.INSTANCE.localize("common.ok") };
-        JOptionPane.showOptionDialog(App.settings.getParent(),
-                HTMLUtils.centerParagraph(Language.INSTANCE
-                        .localizeWithReplace("instancecrash.concurrentmodificationerror16", "<br/><br/>")),
-                Language.INSTANCE.localize("instance.aboutyourcrash"), JOptionPane.DEFAULT_OPTION,
-                JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        DialogManager
+                .okDialog().setTitle(Language.INSTANCE.localize("instance.aboutyourcrash")).setContent(Language.INSTANCE
+                        .localizeWithReplace("instancecrash.concurrentmodificationerror16", "<br/><br/>"))
+                .setType(DialogManager.INFO).show();
     }
 }

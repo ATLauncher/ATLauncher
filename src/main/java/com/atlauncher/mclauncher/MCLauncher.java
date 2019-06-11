@@ -35,7 +35,6 @@ import com.atlauncher.data.mojang.MojangVersion;
 import com.atlauncher.data.mojang.PropertyMapSerializer;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;

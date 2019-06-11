@@ -27,7 +27,6 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 @Json
 public class Messages {

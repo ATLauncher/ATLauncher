@@ -17,13 +17,12 @@
  */
 package com.atlauncher;
 
-import com.atlauncher.data.Constants;
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
-
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import com.atlauncher.data.Constants;
+import com.atlauncher.utils.OS;
 
 public final class FileSystem {
     public static final Path USER_DOWNLOADS = Paths.get(System.getProperty("user.home"), "Downloads");
