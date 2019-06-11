@@ -176,26 +176,13 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
 
-        this.tabs = Arrays.asList(
-                new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab, accountsTab, toolsTab, settingsTab });
+        this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab,
+                accountsTab, toolsTab, settingsTab });
 
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(32.0F));
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
-        tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                String tabName = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-                if (tabbedPane.getSelectedIndex() == 1) {
-                    updateTitle("Packs - " + App.settings.getPackInstallableCount());
-                } else {
-                    updateTitle(tabName);
-                }
-
-                TabChangeManager.post();
-            }
-        });
         tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
     }
