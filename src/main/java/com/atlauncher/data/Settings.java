@@ -64,6 +64,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
@@ -78,7 +79,9 @@ import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Java;
 import com.atlauncher.utils.MojangAPIUtils;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -190,7 +193,7 @@ public class Settings {
     }
 
     public void setupFiles() {
-        baseDir = Utils.getCoreGracefully();
+        baseDir = FileSystem.getCoreGracefully().toFile();
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
         logsDir = new File(baseDir, "Logs");
         backupsDir = new File(baseDir, "Backups");
@@ -283,7 +286,7 @@ public class Settings {
 
         loadServerProperty(true); // Get users Server preference
 
-        if (Utils.isWindows() && !Utils.is64Bit() && Utils.isWindows64Bit()) {
+        if (OS.isWindows() && !OS.is64Bit() && OS.isWindows64Bit()) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
             String[] options = { Language.INSTANCE.localize("common.yes"), Language.INSTANCE.localize("common.no") };
             int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
@@ -292,12 +295,12 @@ public class Settings {
                     Language.INSTANCE.localize("settings.running32bittitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
-                Utils.openBrowser("http://www.atlauncher.com/help/32bit/");
+                OS.openWebBrowser("http://www.atlauncher.com/help/32bit/");
                 System.exit(0);
             }
         }
 
-        if (Utils.isMinecraftJavaNewerThanJava8() && !this.hideJava9Warning) {
+        if (Java.isMinecraftJavaNewerThanJava8() && !this.hideJava9Warning) {
             LogManager.warn("You're using a newer version of Java than Java 8! Modpacks may not launch!");
             String[] options = { Language.INSTANCE.localize("common.download"),
                     Language.INSTANCE.localize("common" + ".ok"),
@@ -308,7 +311,7 @@ public class Settings {
                     Language.INSTANCE.localize("settings.java9warningtitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.WARNING_MESSAGE, null, options, options[0]);
             if (ret == 0) {
-                Utils.openBrowser("http://atl.pw/java8download");
+                OS.openWebBrowser("http://atl.pw/java8download");
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideJava9Warning = true;
@@ -316,7 +319,7 @@ public class Settings {
             }
         }
 
-        if (!Utils.isUsingJavaSupportingLetsEncrypt() && !this.hideJavaLetsEncryptWarning) {
+        if (!Java.isUsingJavaSupportingLetsEncrypt() && !this.hideJavaLetsEncryptWarning) {
             LogManager.warn("You're using an old version of Java that may not work!");
             String[] options = { Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common.ok"),
                     Language.INSTANCE.localize("instance.dontremindmeagain") };
@@ -326,7 +329,7 @@ public class Settings {
                     Language.INSTANCE.localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
-                Utils.openBrowser("http://atl.pw/java8download");
+                OS.openWebBrowser("http://atl.pw/java8download");
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideJavaLetsEncryptWarning = true;
@@ -334,7 +337,7 @@ public class Settings {
             }
         }
 
-        if (!Utils.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
+        if (!Java.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
             LogManager.warn("You're using an old unsupported version of Java (Java 6 or older)!");
             String[] options = { Language.INSTANCE.localize("common.download"), Language.INSTANCE.localize("common.ok"),
                     Language.INSTANCE.localize("instance.dontremindmeagain") };
@@ -344,7 +347,7 @@ public class Settings {
                     Language.INSTANCE.localize("settings.unsupportedjavatitle"), JOptionPane.DEFAULT_OPTION,
                     JOptionPane.ERROR_MESSAGE, null, options, options[0]);
             if (ret == 0) {
-                Utils.openBrowser("http://atl.pw/java8download");
+                OS.openWebBrowser("http://atl.pw/java8download");
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideOldJavaWarning = true;
@@ -385,11 +388,11 @@ public class Settings {
 
     public void checkForValidJavaPath(boolean save) {
         File java = new File(App.settings.getJavaPath(),
-                "bin" + File.separator + "java" + (Utils.isWindows() ? ".exe" : ""));
+                "bin" + File.separator + "java" + (OS.isWindows() ? ".exe" : ""));
 
         if (!java.exists()) {
             LogManager.error("Custom Java Path Is Incorrect! Defaulting to valid value!");
-            this.setJavaPath(Utils.getJavaHome());
+            this.setJavaPath(OS.getJavaHome());
 
             if (save) {
                 this.saveProperties();
@@ -666,7 +669,7 @@ public class Settings {
         List<String> arguments = new ArrayList<String>();
 
         String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             path += "w";
         }
         arguments.add(path);
@@ -831,7 +834,7 @@ public class Settings {
                                 + "the update and replace the old " + Constants.LAUNCHER_NAME + " file."),
                         "Update Failed!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
                         options[0]);
-                Utils.openBrowser("http://www.atlauncher.com/downloads/");
+                OS.openWebBrowser("http://www.atlauncher.com/downloads/");
                 System.exit(0);
             }
         }
@@ -1188,13 +1191,13 @@ public class Settings {
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
             if (!properties.containsKey("usingcustomjavapath")) {
                 this.usingCustomJavaPath = false;
-                this.javaPath = Utils.getJavaHome();
+                this.javaPath = OS.getJavaHome();
             } else {
                 this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty("usingcustomjavapath", "false"));
                 if (isUsingCustomJavaPath()) {
-                    this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+                    this.javaPath = properties.getProperty("javapath", OS.getJavaHome());
                 } else {
-                    this.javaPath = Utils.getJavaHome();
+                    this.javaPath = Java.getActualJavaVersion();
                 }
             }
 
@@ -1281,30 +1284,30 @@ public class Settings {
                 this.forgeLoggingLevel = "INFO";
             }
 
-            if (Utils.is64Bit()) {
+            if (OS.is64Bit()) {
                 this.maximumMemory = Integer.parseInt(properties.getProperty("ram", "4096"));
-                if (Utils.getMaximumRam() != 0 && this.maximumMemory > Utils.getMaximumRam()) {
+                if (OS.getMaximumRam() != 0 && this.maximumMemory > OS.getMaximumRam()) {
                     LogManager.warn("Tried to allocate " + this.maximumMemory + "MB of Ram but only "
-                            + Utils.getMaximumRam() + "MB is available to use!");
-                    int halfRam = (Utils.getMaximumRam() / 1000) * 512;
+                            + OS.getMaximumRam() + "MB is available to use!");
+                    int halfRam = (OS.getMaximumRam() / 1000) * 512;
                     int defaultRam = (halfRam >= 8192 ? 8192 : halfRam); // Default ram
                     this.maximumMemory = defaultRam; // User tried to allocate too much ram, set it
                     // back to half, capped at 8GB
                 }
             } else {
                 this.maximumMemory = Integer.parseInt(properties.getProperty("ram", "1024"));
-                if (Utils.getMaximumRam() != 0 && this.maximumMemory > Utils.getMaximumRam()) {
+                if (OS.getMaximumRam() != 0 && this.maximumMemory > OS.getMaximumRam()) {
                     LogManager.warn("Tried to allocate " + this.maximumMemory + "MB of Maximum Ram but only "
-                            + Utils.getMaximumRam() + "MB is available to use!");
+                            + OS.getMaximumRam() + "MB is available to use!");
                     this.maximumMemory = 1024; // User tried to allocate too much ram, set it back
                     // to 1GB
                 }
             }
 
             this.initialMemory = Integer.parseInt(properties.getProperty("initialmemory", "512"));
-            if (Utils.getMaximumRam() != 0 && this.initialMemory > Utils.getMaximumRam()) {
+            if (OS.getMaximumRam() != 0 && this.initialMemory > OS.getMaximumRam()) {
                 LogManager.warn("Tried to allocate " + this.initialMemory + "MB of Initial Ram but only "
-                        + Utils.getMaximumRam() + "MB is available to use!");
+                        + OS.getMaximumRam() + "MB is available to use!");
                 this.initialMemory = 512; // User tried to allocate too much ram, set it back to
                 // 512MB
             } else if (this.initialMemory > this.maximumMemory) {
@@ -1314,31 +1317,31 @@ public class Settings {
             }
 
             // Default PermGen to 256 for 64 bit systems and 128 for 32 bit systems
-            this.permGen = Integer.parseInt(properties.getProperty("permGen", (Utils.is64Bit() ? "256" : "128")));
+            this.permGen = Integer.parseInt(properties.getProperty("permGen", (OS.is64Bit() ? "256" : "128")));
 
             this.windowWidth = Integer.parseInt(properties.getProperty("windowwidth", "854"));
-            if (this.windowWidth > Utils.getMaximumWindowWidth()) {
+            if (this.windowWidth > OS.getMaximumWindowWidth()) {
                 LogManager.warn("Tried to set window width to " + this.windowWidth + " pixels but the maximum is "
-                        + Utils.getMaximumWindowWidth() + " pixels!");
-                this.windowWidth = Utils.getMaximumWindowWidth(); // User tried to make screen size
+                        + OS.getMaximumWindowWidth() + " pixels!");
+                this.windowWidth = OS.getMaximumWindowWidth(); // User tried to make screen size
                 // wider than they have
             }
 
             this.windowHeight = Integer.parseInt(properties.getProperty("windowheight", "480"));
-            if (this.windowHeight > Utils.getMaximumWindowHeight()) {
+            if (this.windowHeight > OS.getMaximumWindowHeight()) {
                 LogManager.warn("Tried to set window height to " + this.windowHeight + " pixels but the maximum is "
-                        + Utils.getMaximumWindowHeight() + " pixels!");
-                this.windowHeight = Utils.getMaximumWindowHeight(); // User tried to make screen
+                        + OS.getMaximumWindowHeight() + " pixels!");
+                this.windowHeight = OS.getMaximumWindowHeight(); // User tried to make screen
                 // size wider than they have
             }
 
             this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty("usingcustomjavapath", "false"));
 
             if (isUsingCustomJavaPath()) {
-                this.javaPath = properties.getProperty("javapath", Utils.getJavaHome());
+                this.javaPath = properties.getProperty("javapath", OS.getJavaHome());
             } else {
-                this.javaPath = Utils.getJavaHome();
-                if (this.isUsingMacApp()) {
+                this.javaPath = OS.getJavaHome();
+                if (OS.isUsingMacApp()) {
                     File oracleJava = new File(
                             "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
                     if (oracleJava.exists() && oracleJava.canExecute()) {
@@ -2084,10 +2087,6 @@ public class Settings {
             reloadFeaturedPacksPanel();
             reloadPacksPanel();
         }
-    }
-
-    public boolean isUsingMacApp() {
-        return Utils.isMac() && new File(baseDir.getParentFile().getParentFile(), "MacOS").exists();
     }
 
     public void setInstanceVisbility(Instance instance, boolean collapsed) {
@@ -2844,7 +2843,7 @@ public class Settings {
     }
 
     public void setJavaPath(String javaPath) {
-        this.usingCustomJavaPath = !javaPath.equalsIgnoreCase(Utils.getJavaHome());
+        this.usingCustomJavaPath = !javaPath.equalsIgnoreCase(OS.getJavaHome());
         this.javaPath = javaPath;
     }
 
@@ -3177,46 +3176,6 @@ public class Settings {
     @Deprecated
     public String getLocalizedString(String string, String replace) {
         return Language.INSTANCE.localize(string).replace("%s", replace);
-    }
-
-    public void restartLauncher() {
-        File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        String path = null;
-        try {
-            path = thisFile.getCanonicalPath();
-            path = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            LogManager.logStackTrace(e);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-
-        List<String> arguments = new ArrayList<String>();
-
-        if (this.isUsingMacApp()) {
-            arguments.add("open");
-            arguments.add("-n");
-            arguments.add(baseDir.getParentFile().getParentFile().getParentFile().getAbsolutePath());
-
-        } else {
-            String jpath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-            if (Utils.isWindows()) {
-                jpath += "w";
-            }
-            arguments.add(jpath);
-            arguments.add("-jar");
-            arguments.add(path);
-        }
-
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(arguments);
-
-        try {
-            processBuilder.start();
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to start updater process", e);
-        }
-        System.exit(0);
     }
 
     public void cloneInstance(Instance instance, String clonedName) {

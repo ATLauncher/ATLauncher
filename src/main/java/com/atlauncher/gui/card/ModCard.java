@@ -28,6 +28,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 
 import com.atlauncher.data.json.Mod;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 public final class ModCard extends JPanel {
@@ -45,7 +46,7 @@ public final class ModCard extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (ModCard.this.mod.hasWebsite()) {
-                    Utils.openBrowser(mod.getWebsite());
+                    OS.openWebBrowser(mod.getWebsite());
                 }
             }
         });

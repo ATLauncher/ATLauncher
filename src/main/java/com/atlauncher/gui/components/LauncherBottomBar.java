@@ -36,6 +36,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
@@ -48,6 +49,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -109,7 +111,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         });
         openFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Utils.openExplorer(App.settings.getBaseDir());
+                OS.openFileExplorer(FileSystem.BASE_DIR);
             }
         });
         updateData.addActionListener(new ActionListener() {

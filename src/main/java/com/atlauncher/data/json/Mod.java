@@ -25,11 +25,13 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -366,23 +368,23 @@ public class Mod {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
                 }
                 if (fileCheck != null && fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
-                    String[] files = (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
+                    String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
                             .settings.getDownloadsDir()).list(getFileNameFilter());
                     if (files.length == 1) {
                         this.file = files[0];
-                        fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() :
+                        fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() :
                                 App.settings.getDownloadsDir()), files[0]);
                     } else if (files.length > 1) {
                         for (int i = 0; i < files.length; i++) {
                             if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                                 this.file = files[i];
-                                fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                fileLocation = new File((OS.isUsingMacApp() ? App.settings
                                         .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
                             if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                                 this.file = files[i];
-                                fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                fileLocation = new File((OS.isUsingMacApp() ? App.settings
                                         .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
@@ -393,7 +395,7 @@ public class Mod {
                     int retValue = 1;
                     do {
                         if (retValue == 1) {
-                            Utils.openBrowser(this.getUrl());
+                            OS.openWebBrowser(this.getUrl());
                         }
                         String[] options = new String[]{Language.INSTANCE.localize("common.openfolder"), Language
                                 .INSTANCE.localize("instance.ivedownloaded")};
@@ -402,7 +404,7 @@ public class Mod {
                                         ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
                                         (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>" +
                                         Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                        (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
                                                 : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
                                                 .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
                                                 .getUsersDownloadsDir()))), Language.INSTANCE.localize("common.downloading")
@@ -414,28 +416,28 @@ public class Mod {
                             installer.cancel(true);
                             return;
                         } else if (retValue == 0) {
-                            Utils.openExplorer(App.settings.getDownloadsDir());
+                            OS.openFileExplorer(FileSystem.DOWNLOADS);
                         }
                     } while (retValue != 1);
 
                     if (isFilePattern()) {
-                        String[] files = (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
+                        String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
                                 .settings.getDownloadsDir()).list(getFileNameFilter());
                         if (files.length == 1) {
                             this.file = files[0];
-                            fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir
+                            fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir
                                     () : App.settings.getDownloadsDir()), files[0]);
                         } else if (files.length > 1) {
                             for (int i = 0; i < files.length; i++) {
                                 if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                                     this.file = files[i];
-                                    fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                    fileLocation = new File((OS.isUsingMacApp() ? App.settings
                                             .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                     break;
                                 }
                                 if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                                     this.file = files[i];
-                                    fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                    fileLocation = new File((OS.isUsingMacApp() ? App.settings
                                             .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                     break;
                                 }
@@ -517,23 +519,23 @@ public class Mod {
             }
 
             if (fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
-                String[] files = (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App.settings
+                String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App.settings
                         .getDownloadsDir()).list(getFileNameFilter());
                 if (files.length == 1) {
                     this.file = files[0];
-                    fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
+                    fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
                             .settings.getDownloadsDir()), files[0]);
                 } else if (files.length > 1) {
                     for (int i = 0; i < files.length; i++) {
                         if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                             this.file = files[i];
-                            fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir
+                            fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir
                                     () : App.settings.getDownloadsDir()), files[i]);
                             break;
                         }
                         if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                             this.file = files[i];
-                            fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir
+                            fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir
                                     () : App.settings.getDownloadsDir()), files[i]);
                             break;
                         }
@@ -542,13 +544,13 @@ public class Mod {
             }
 
             while (!fileLocation.exists()) {
-                Utils.openBrowser(this.serverUrl);
+                OS.openWebBrowser(this.serverUrl);
                 String[] options = new String[]{Language.INSTANCE.localize("instance.ivedownloaded")};
                 int retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
                                 (Language.INSTANCE.localizeWithReplace("instance" + "" +
                                         ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
                                         "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                        (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                        (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
                                                 : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App
                                                 .settings.getUsersDownloadsDir())), Language.INSTANCE.localize("common" + "" +
                                 ".downloading") + " " + (serverFile == null ? getFile() : getServerFile()),
@@ -559,23 +561,23 @@ public class Mod {
                 }
 
                 if (isFilePattern()) {
-                    String[] files = (App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
+                    String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
                             .settings.getDownloadsDir()).list(getFileNameFilter());
                     if (files.length == 1) {
                         this.file = files[0];
-                        fileLocation = new File((App.settings.isUsingMacApp() ? App.settings.getUsersDownloadsDir() :
+                        fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() :
                                 App.settings.getDownloadsDir()), files[0]);
                     } else if (files.length > 1) {
                         for (int i = 0; i < files.length; i++) {
                             if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                                 this.file = files[i];
-                                fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                fileLocation = new File((OS.isUsingMacApp() ? App.settings
                                         .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
                             if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                                 this.file = files[i];
-                                fileLocation = new File((App.settings.isUsingMacApp() ? App.settings
+                                fileLocation = new File((OS.isUsingMacApp() ? App.settings
                                         .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }

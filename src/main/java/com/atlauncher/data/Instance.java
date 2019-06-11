@@ -45,6 +45,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -1391,7 +1392,7 @@ public class Instance implements Cloneable {
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
-            if ((App.settings.getMaximumMemory() < this.memory) && (this.memory <= Utils.getSafeMaximumRam())) {
+            if ((App.settings.getMaximumMemory() < this.memory) && (this.memory <= OS.getSafeMaximumRam())) {
                 String[] options = { Language.INSTANCE.localize("common.yes"),
                         Language.INSTANCE.localize("common.no") };
                 int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
@@ -1623,7 +1624,7 @@ public class Instance implements Cloneable {
                                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
                                         options[1]);
                         if (ret == 0) {
-                            Utils.openBrowser(response.getURL());
+                            OS.openWebBrowser(response.getURL());
                         }
                     }
                 }

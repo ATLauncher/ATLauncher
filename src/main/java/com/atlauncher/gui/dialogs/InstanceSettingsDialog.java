@@ -45,6 +45,8 @@ import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -72,7 +74,7 @@ public class InstanceSettingsDialog extends JDialog {
                 ModalityType.APPLICATION_MODAL);
         this.instance = instance;
         InstanceSettings instanceSettings = instance.getSettings();
-        int systemRam = Utils.getSystemRam();
+        int systemRam = OS.getSystemRam();
         setSize(700, 300);
         setLocationRelativeTo(App.settings.getParent());
         setLayout(new BorderLayout());
@@ -98,7 +100,7 @@ public class InstanceSettingsDialog extends JDialog {
 
         JPanel initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (!Utils.is64Bit()) {
+        if (!OS.is64Bit()) {
             initialMemoryPanel.add(initialMemoryLabelWarning);
         }
         initialMemoryPanel.add(initialMemoryLabel);
@@ -188,7 +190,7 @@ public class InstanceSettingsDialog extends JDialog {
         JButton javaPathResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
         javaPathResetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                javaPath.setText(Utils.getJavaHome());
+                javaPath.setText(Java.getPathToMinecraftJavaExecutable());
             }
         });
         JButton javaBrowseButton = new JButton(Language.INSTANCE.localize("common.browse"));

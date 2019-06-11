@@ -20,6 +20,7 @@ package com.atlauncher.data.mojang;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 enum Action {
@@ -43,7 +44,7 @@ public class Rule {
         if (this.os.getName() != null && this.os.getName() != OperatingSystem.getOS()) {
             return false;
         }
-        if (this.os.getArch() != null && (this.os.getArch() == "x86" && Utils.is64Bit())) {
+        if (this.os.getArch() != null && (this.os.getArch() == "x86" && OS.is64Bit())) {
             return false;
         }
         if (this.os.getVersion() == null) {

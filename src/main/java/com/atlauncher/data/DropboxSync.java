@@ -39,6 +39,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.utils.Base64;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -58,9 +59,9 @@ public class DropboxSync extends SyncAbstract {
     public void findDropboxLocation() {
         File dropboxData = null;
         // host.db sometimes disappears for some reason
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             dropboxData = new File(System.getProperty("user.home"), "/AppData/Roaming/Dropbox/host.db");
-        } else if (Utils.isMac() || Utils.isLinux()) {
+        } else if (OS.isMac() || OS.isLinux()) {
             dropboxData = new File(System.getProperty("user.home"), "/.dropbox/host.db");
         }
 

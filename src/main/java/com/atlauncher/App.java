@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
@@ -57,8 +58,11 @@ import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import io.github.asyncronous.toast.Toaster;
@@ -272,20 +276,24 @@ public class App {
             }
         }
 
-        File config = new File(Utils.getCoreGracefully(), "Configs");
-        if (!config.exists()) {
-            int files = config.getParentFile().list().length;
-            if (files > 1) {
-                String[] options = { "Yes It's Fine", "Whoops. I'll Change That Now" };
-                int ret = JOptionPane.showOptionDialog(null,
-                        HTMLUtils.centerParagraph("I've detected that you may "
-                                + "not have installed this in the right location.<br/><br/>The exe or jar file should "
-                                + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
-                                + "that's what you've done?"),
-                        "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                if (ret != 0) {
-                    System.exit(0);
+        if (Files.notExists(FileSystem.CONFIGS)) {
+            try {
+                if (Files.list(FileSystem.CONFIGS.getParent()).count() > 1) {
+                    String content = HTMLUtils.centerParagraph("I've detected that you may "
+                            + "not have installed this in the right location.<br/><br/>The exe or jar file should "
+                            + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
+                            + "that's what you've done?");
+
+                    int returnOption = DialogManager.optionDialog().setTitle("Warning").setContent(content)
+                            .addOption("Yes It's Fine", true).addOption("Whoops. I'll Change That Now")
+                            .setType(DialogManager.ERROR).show();
+
+                    if (returnOption != 0) {
+                        System.exit(0);
+                    }
                 }
+            } catch(IOException e) {
+                // ignored
             }
         }
 
@@ -312,7 +320,7 @@ public class App {
         if (settings.enableTrayIcon() && !skipTrayIntegration) {
             try {
                 // Try to enable the tray icon.
-                trySystemTrayIntegration();
+                App.trySystemTrayIntegration();
             } catch (Exception e) {
                 LogManager.logStackTrace(e);
             }
@@ -326,7 +334,7 @@ public class App {
             LogManager.warn("Custom Java Path Set!");
 
             settings.checkForValidJavaPath(false);
-        } else if (settings.isUsingMacApp()) {
+        } else if (OS.isUsingMacApp()) {
             // If the user is using the Mac Application, then we forcibly set the java path
             // if they have none set.
 
@@ -337,13 +345,13 @@ public class App {
             }
         }
 
-        LogManager.info("Java Version: " + Utils.getActualJavaVersion());
+        LogManager.info("Java Version: " + Java.getActualJavaVersion());
 
         LogManager.info("Java Path: " + settings.getJavaPath());
 
-        LogManager.info("64 Bit Java: " + Utils.is64Bit());
+        LogManager.info("64 Bit Java: " + OS.is64Bit());
 
-        int maxRam = Utils.getMaximumRam();
+        int maxRam = OS.getMaximumRam();
         LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
 
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
@@ -351,7 +359,7 @@ public class App {
 
         // Now for some Mac specific stuff, mainly just setting the name of the
         // application and icon.
-        if (Utils.isMac()) {
+        if (OS.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name",
                     Constants.LAUNCHER_NAME + " " + Constants.VERSION);
@@ -480,7 +488,7 @@ public class App {
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
         UIManager.put("ScrollBar.minimumThumbSize", new Dimension(50, 50));
 
-        if (Utils.isMac()) {
+        if (OS.isMac()) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
             im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
             im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
@@ -559,7 +567,7 @@ public class App {
             }
         }
 
-        props.setProperty("java_version", Utils.getLauncherJavaVersion());
+        props.setProperty("java_version", Java.getLauncherJavaVersion());
         props.setProperty("location", App.settings.getBaseDir().toString());
         props.setProperty("executable",
                 new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath());

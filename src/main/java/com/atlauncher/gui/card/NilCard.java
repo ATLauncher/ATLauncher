@@ -33,6 +33,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.ImagePanel;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -49,7 +50,7 @@ public class NilCard extends JPanel implements RelocalizationListener {
         super(new BorderLayout());
         RelocalizationManager.addListener(this);
 
-        if (Utils.isMac()) {
+        if (OS.isMac()) {
             this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"), TitledBorder
                     .DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
         } else {

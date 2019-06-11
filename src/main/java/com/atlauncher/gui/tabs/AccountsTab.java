@@ -56,6 +56,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
@@ -99,7 +100,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    Utils.openBrowser(e.getURL());
+                    OS.openWebBrowser(e.getURL());
                 }
             }
         });

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.atlauncher.App;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 public class Library {
@@ -129,6 +130,6 @@ public class Library {
         if (this.natives == null || !this.natives.containsKey(OperatingSystem.getOS())) {
             return "";
         }
-        return "-" + this.natives.get(OperatingSystem.getOS()).replace("${arch}", Utils.getArch());
+        return "-" + this.natives.get(OperatingSystem.getOS()).replace("${arch}", OS.getArch());
     }
 }

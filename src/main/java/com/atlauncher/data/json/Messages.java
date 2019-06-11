@@ -26,6 +26,7 @@ import com.atlauncher.App;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 @Json
@@ -49,7 +50,7 @@ public class Messages {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    Utils.openBrowser(e.getURL());
+                    OS.openWebBrowser(e.getURL());
                 }
             }
         });
@@ -74,7 +75,7 @@ public class Messages {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    Utils.openBrowser(e.getURL());
+                    OS.openWebBrowser(e.getURL());
                 }
             }
         });

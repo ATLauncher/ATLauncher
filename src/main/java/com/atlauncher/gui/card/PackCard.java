@@ -39,6 +39,7 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -93,8 +94,8 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.descArea.setHighlighter(null);
         this.descArea.setWrapStyleWord(true);
 
-        this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
-                .HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         this.actionsPanel.add(as, BorderLayout.SOUTH);
         this.actionsPanel.setPreferredSize(new Dimension(this.actionsPanel.getPreferredSize().width, 180));
 
@@ -124,16 +125,18 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
-                    String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" + "" +
-                            ".offlinenewinstance"), Language.INSTANCE.localize("common.offline"), JOptionPane
-                            .DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    String[] options = { Language.INSTANCE.localize("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            Language.INSTANCE.localize("pack" + "" + ".offlinenewinstance"),
+                            Language.INSTANCE.localize("common.offline"), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (App.settings.getAccount() == null) {
-                        String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
-                                        + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        String[] options = { Language.INSTANCE.localize("common.ok") };
+                        JOptionPane.showOptionDialog(App.settings.getParent(),
+                                Language.INSTANCE.localize("instance" + ".cannotcreate"),
+                                Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack);
                     }
@@ -145,16 +148,18 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (App.settings.isInOfflineMode()) {
-                    String[] options = {Language.INSTANCE.localize("common.ok")};
-                    JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("pack" + "" +
-                                    ".offlinecreateserver"), Language.INSTANCE.localize("common.offline"),
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    String[] options = { Language.INSTANCE.localize("common.ok") };
+                    JOptionPane.showOptionDialog(App.settings.getParent(),
+                            Language.INSTANCE.localize("pack" + "" + ".offlinecreateserver"),
+                            Language.INSTANCE.localize("common.offline"), JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                 } else {
                     if (App.settings.getAccount() == null) {
-                        String[] options = {Language.INSTANCE.localize("common.ok")};
-                        JOptionPane.showOptionDialog(App.settings.getParent(), Language.INSTANCE.localize("instance"
-                                        + ".cannotcreate"), Language.INSTANCE.localize("instance.noaccountselected"),
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                        String[] options = { Language.INSTANCE.localize("common.ok") };
+                        JOptionPane.showOptionDialog(App.settings.getParent(),
+                                Language.INSTANCE.localize("instance" + ".cannotcreate"),
+                                Language.INSTANCE.localize("instance.noaccountselected"), JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     } else {
                         new InstanceInstallerDialog(pack, true);
                     }
@@ -165,21 +170,21 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.discordInviteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser(pack.getDiscordInviteURL());
+                OS.openWebBrowser(pack.getDiscordInviteURL());
             }
         });
 
         this.supportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser(pack.getSupportURL());
+                OS.openWebBrowser(pack.getSupportURL());
             }
         });
 
         this.websiteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Utils.openBrowser(pack.getWebsiteURL());
+                OS.openWebBrowser(pack.getWebsiteURL());
             }
         });
 

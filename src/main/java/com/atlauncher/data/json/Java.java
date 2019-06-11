@@ -34,7 +34,7 @@ public class Java {
     }
 
     public boolean conforms() {
-        int javaVersion = Utils.getMinecraftJavaVersionNumber();
+        int javaVersion = com.atlauncher.utils.Java.getMinecraftJavaVersionNumber();
         boolean conforms = true;
 
         if (this.min != 0 && javaVersion < this.min) {

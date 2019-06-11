@@ -33,6 +33,8 @@ import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.mojang.MojangVersion;
 import com.atlauncher.data.mojang.PropertyMapSerializer;
+import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -119,22 +121,22 @@ public class MCLauncher {
         List<String> arguments = new ArrayList<String>();
 
         String path = javaPath + File.separator + "bin" + File.separator + "java";
-        if (Utils.isWindows()) {
+        if (OS.isWindows()) {
             path += "w";
         }
         arguments.add(path);
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
-        if (javaArguments.isEmpty() && !Utils.isMinecraftJavaNewerThanJava8()) {
+        if (javaArguments.isEmpty() && !Java.isMinecraftJavaNewerThanJava8()) {
             // Some defaults if on Java 8 or less
             javaArguments = "-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy";
         }
 
         arguments.add("-Xms" + initialMemory + "M");
 
-        if (Utils.getMaximumRam() != 0 && maximumMemory < instance.getMemory()) {
-            if ((Utils.getMaximumRam() / 2) < instance.getMemory()) {
+        if (OS.getMaximumRam() != 0 && maximumMemory < instance.getMemory()) {
+            if ((OS.getMaximumRam() / 2) < instance.getMemory()) {
                 arguments.add("-Xmx" + maximumMemory + "M");
             } else {
                 arguments.add("-Xmx" + instance.getMemory() + "M");
@@ -142,15 +144,15 @@ public class MCLauncher {
         } else {
             arguments.add("-Xmx" + maximumMemory + "M");
         }
-        if (Utils.getMaximumRam() != 0 && permGen < instance.getPermGen()
-                && (Utils.getMaximumRam() / 8) < instance.getPermGen()) {
-            if (Utils.useMetaspace()) {
+        if (OS.getMaximumRam() != 0 && permGen < instance.getPermGen()
+                && (OS.getMaximumRam() / 8) < instance.getPermGen()) {
+            if (Java.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
             }
         } else {
-            if (Utils.useMetaspace()) {
+            if (Java.useMetaspace()) {
                 arguments.add("-XX:MetaspaceSize=" + permGen + "M");
             } else {
                 arguments.add("-XX:PermSize=" + permGen + "M");
@@ -169,7 +171,7 @@ public class MCLauncher {
 
         arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
 
-        if (Utils.isMac()) {
+        if (OS.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
             arguments.add("-Xdock:icon=" + new File(instance.getAssetsDir(), "icons/minecraft.icns").getAbsolutePath());
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
@@ -277,8 +279,8 @@ public class MCLauncher {
         }
 
         if (App.settings.startMinecraftMaximised()) {
-            arguments.add("--width=" + Utils.getMaximumWindowWidth());
-            arguments.add("--height=" + Utils.getMaximumWindowHeight());
+            arguments.add("--width=" + OS.getMaximumWindowWidth());
+            arguments.add("--height=" + OS.getMaximumWindowHeight());
         } else {
             arguments.add("--width=" + App.settings.getWindowWidth());
             arguments.add("--height=" + App.settings.getWindowHeight());

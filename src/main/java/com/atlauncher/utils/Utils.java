@@ -178,25 +178,6 @@ public class Utils {
         return new ImageIcon(url);
     }
 
-    public static File getCoreGracefully() {
-        if (App.workingDir != null) {
-            return App.workingDir;
-        }
-
-        if (Utils.isLinux()) {
-            try {
-                return new File(
-                        App.class.getProtectionDomain().getCodeSource().getLocation().toURI().getSchemeSpecificPart())
-                                .getParentFile();
-            } catch (URISyntaxException e) {
-                LogManager.logStackTrace("URI syntax error", e);
-                return new File(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
-            }
-        } else {
-            return new File(System.getProperty("user.dir"));
-        }
-    }
-
     public static File getOSStorageDir() {
         switch (OperatingSystem.getOS()) {
         case WINDOWS:
@@ -230,7 +211,7 @@ public class Utils {
      * @return the font
      */
     public static Font getFont() {
-        if (isMac()) {
+        if (OS.isMac()) {
             return new Font("SansSerif", Font.PLAIN, 11);
         } else {
             return new Font("SansSerif", Font.PLAIN, 12);
@@ -306,294 +287,6 @@ public class Utils {
             LogManager.logStackTrace("Failed to read image", e);
             return null;
         }
-    }
-
-    /**
-     * Open explorer.
-     *
-     * @param file the file
-     */
-    public static void openExplorer(File file) {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().open(file);
-            } catch (Exception e) {
-                LogManager.logStackTrace(e);
-            }
-        }
-    }
-
-    /**
-     * Open browser.
-     *
-     * @param URL the url
-     */
-    public static void openBrowser(String URL) {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().browse(new URI(URL));
-            } catch (Exception e) {
-                LogManager.error("Failed to open link " + URL + " in browser!");
-                LogManager.logStackTrace(e);
-            }
-        }
-    }
-
-    /**
-     * Open browser.
-     *
-     * @param URL the url
-     */
-    public static void openBrowser(URL URL) {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().browse(URL.toURI());
-            } catch (Exception e) {
-                LogManager.error("Failed to open link " + URL + " in browser!");
-                LogManager.logStackTrace(e);
-            }
-        }
-    }
-
-    /**
-     * Os slash.
-     *
-     * @return the string
-     */
-    public static String osSlash() {
-        if (isWindows()) {
-            return "\\";
-        } else {
-            return "/";
-        }
-    }
-
-    /**
-     * Os delimiter.
-     *
-     * @return the string
-     */
-    public static String osDelimiter() {
-        if (isWindows()) {
-            return ";";
-        } else {
-            return ":";
-        }
-    }
-
-    /**
-     * Gets the java home.
-     *
-     * @return the java home
-     */
-    public static String getJavaHome() {
-        return System.getProperty("java.home");
-    }
-
-    /**
-     * Checks if is windows.
-     *
-     * @return true, if is windows
-     */
-    public static boolean isWindows() {
-        return OperatingSystem.getOS() == OperatingSystem.WINDOWS;
-    }
-
-    /**
-     * Checks if is mac.
-     *
-     * @return true, if is mac
-     */
-    public static boolean isMac() {
-        return OperatingSystem.getOS() == OperatingSystem.OSX;
-    }
-
-    /**
-     * Checks if is linux.
-     *
-     * @return true, if is linux
-     */
-    public static boolean isLinux() {
-        return OperatingSystem.getOS() == OperatingSystem.LINUX;
-    }
-
-    /**
-     * Checks if is 64 bit.
-     *
-     * @return true, if is 64 bit
-     */
-    public static boolean is64Bit() {
-        return System.getProperty("sun.arch.data.model").contains("64");
-    }
-
-    /**
-     * Checks if Windows is 64 bit
-     *
-     * @return true, if it is 64 bit
-     */
-    public static boolean isWindows64Bit() {
-        return System.getenv("ProgramFiles(x86)") != null;
-    }
-
-    /**
-     * Gets the arch.
-     *
-     * @return the arch
-     */
-    public static String getArch() {
-        if (is64Bit()) {
-            return "64";
-        } else {
-            return "32";
-        }
-    }
-
-    /**
-     * Returns the amount of RAM in the users system via OperatingSystemMXBean. This
-     * was removed in Java 9.
-     *
-     * @return The amount of RAM in the system
-     */
-    public static int getSystemRamViaBean() {
-        long ramm = 0;
-        int ram = 0;
-        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-        try {
-            Method m = operatingSystemMXBean.getClass().getDeclaredMethod("getTotalPhysicalMemorySize");
-            m.setAccessible(true);
-            Object value = m.invoke(operatingSystemMXBean);
-            if (value != null) {
-                ramm = Long.parseLong(value.toString());
-                ram = (int) (ramm / 1048576);
-            } else {
-                ram = 1024;
-            }
-        } catch (SecurityException e) {
-            LogManager.logStackTrace(e);
-        } catch (NoSuchMethodException e) {
-            LogManager.logStackTrace(e);
-        } catch (IllegalArgumentException e) {
-            LogManager.logStackTrace(e);
-        } catch (IllegalAccessException e) {
-            LogManager.logStackTrace(e);
-        } catch (InvocationTargetException e) {
-            LogManager.logStackTrace(e);
-        }
-        return ram;
-    }
-
-    /**
-     * Returns the amount of RAM in the users system via the getMemory tool.
-     *
-     * @return The amount of RAM in the system
-     */
-    public static int getSystemRamViaTool() {
-        long ramm = 0;
-        int ram = 0;
-
-        String binaryFile;
-
-        if (Utils.is64Bit()) {
-            binaryFile = (Utils.isWindows() ? "getMemory-x64.exe"
-                    : (Utils.isLinux() ? "getMemory-x64-linux" : "getMemory-x64-osx"));
-        } else {
-            binaryFile = (Utils.isWindows() ? "getMemory.exe"
-                    : (Utils.isLinux() ? "getMemory-linux" : "getMemory-osx"));
-        }
-
-        ProcessBuilder processBuilder = new ProcessBuilder(App.settings.getToolsDir() + File.separator + binaryFile);
-        processBuilder.directory(App.settings.getToolsDir().getAbsoluteFile());
-        processBuilder.redirectErrorStream(true);
-
-        try {
-            Process process = processBuilder.start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            try {
-                ramm = Long.parseLong(br.readLine());
-                ram = (int) (ramm / 1048576);
-            } finally {
-                br.close();
-            }
-        } catch (IOException ignored) {
-            return ram;
-        }
-
-        return ram;
-    }
-
-    /**
-     * Returns the amount of RAM in the users system.
-     *
-     * @return The amount of RAM in the system
-     */
-    public static int getSystemRam() {
-        if (!Utils.isSystemJavaNewerThanJava8()) {
-            return Utils.getSystemRamViaBean();
-        }
-
-        return Utils.getSystemRamViaTool();
-    }
-
-    /**
-     * Returns the maximum RAM available to Java. If on 64 Bit system then its all
-     * of the System RAM otherwise its limited to 1GB or less due to allocations of
-     * PermGen
-     *
-     * @return The maximum RAM available to Java
-     */
-    public static int getMaximumRam() {
-        int maxRam = getSystemRam();
-        if (!is64Bit()) {
-            if (maxRam < 1024) {
-                return maxRam;
-            } else {
-                return 1024;
-            }
-        } else {
-            return maxRam;
-        }
-    }
-
-    /**
-     * Returns the safe amount of maximum ram available to Java. This is set to half
-     * of the total maximum ram available to Java in order to not allocate too much
-     * and leave enough RAM for the OS and other application
-     *
-     * @return Half the maximum RAM available to Java
-     */
-    public static int getSafeMaximumRam() {
-        int maxRam = getSystemRam();
-        if (!is64Bit()) {
-            if (maxRam < 1024) {
-                return maxRam / 2;
-            } else {
-                return 512;
-            }
-        } else {
-            return maxRam / 2;
-        }
-    }
-
-    /**
-     * Gets the maximum window width.
-     *
-     * @return the maximum window width
-     */
-    public static int getMaximumWindowWidth() {
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension dim = toolkit.getScreenSize();
-        return dim.width;
-    }
-
-    /**
-     * Gets the maximum window height.
-     *
-     * @return the maximum window height
-     */
-    public static int getMaximumWindowHeight() {
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension dim = toolkit.getScreenSize();
-        return dim.height;
     }
 
     /**
@@ -1520,181 +1213,6 @@ public class Utils {
     }
 
     /**
-     * Get the Java version that the launcher runs on.
-     *
-     * @return the Java version that the launcher runs on
-     */
-    public static String getLauncherJavaVersion() {
-        return System.getProperty("java.version");
-    }
-
-    /**
-     * Get the Java version used to run Minecraft.
-     *
-     * @return the Java version used to run Minecraft
-     */
-    public static String getMinecraftJavaVersion() {
-        if (App.settings.isUsingCustomJavaPath()) {
-            File folder = new File(App.settings.getJavaPath(), "bin/");
-            String javaFile = App.settings.getJavaPath() + File.separator + "bin" + File.separator + "java"
-                    + (isWindows() ? "w" : "");
-
-            ProcessBuilder processBuilder = new ProcessBuilder(javaFile, "-version");
-            processBuilder.directory(folder.getAbsoluteFile());
-            processBuilder.redirectErrorStream(true);
-
-            String version = "Unknown";
-
-            try {
-                Process process = processBuilder.start();
-                BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                try {
-                    String line = null;
-                    Pattern p = Pattern.compile("(java|openjdk) version \"([^\"]*)\"");
-
-                    while ((line = br.readLine()) != null) {
-                        // Extract version information
-                        Matcher m = p.matcher(line);
-
-                        if (m.find()) {
-                            version = m.group(2);
-                            break;
-                        }
-                    }
-                } finally {
-                    br.close();
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-
-            if (version.equals("Unknown")) {
-                LogManager.warn("Cannot get Java version from the output of \"" + javaFile + " -version\"");
-            }
-
-            return version;
-        } else {
-            return getLauncherJavaVersion();
-        }
-    }
-
-    /**
-     * Parse a Java version string and get the major version number. For example
-     * "1.8.0_91" is parsed to 8.
-     *
-     * @param version the version string to parse
-     * @return the parsed major version number
-     */
-    public static int parseJavaVersionNumber(String version) {
-        Matcher m = Pattern.compile("(?:1\\.)?([0-9]+).*").matcher(version);
-
-        return m.find() ? Integer.parseInt(m.group(1)) : -1;
-    }
-
-    /**
-     * Parse a Java build version string and get the major version number. For
-     * example "1.8.0_91" is parsed to 91.
-     *
-     * @param version the version string to parse
-     * @return the parsed build number
-     */
-    public static int parseJavaBuildVersion(String version) {
-        Matcher m = Pattern.compile(".*_([0-9]+)").matcher(version);
-
-        if (m.find()) {
-            return Integer.parseInt(m.group(1));
-        }
-
-        return 0;
-    }
-
-    /**
-     * Get the major Java version that the launcher runs on.
-     *
-     * @return the major Java version that the launcher runs on
-     */
-    public static int getLauncherJavaVersionNumber() {
-        return parseJavaVersionNumber(getLauncherJavaVersion());
-    }
-
-    /**
-     * Get the major Java version used to run Minecraft.
-     *
-     * @return the major Java version used to run Minecraft
-     */
-    public static int getMinecraftJavaVersionNumber() {
-        return parseJavaVersionNumber(getMinecraftJavaVersion());
-    }
-
-    /**
-     * Get the Java versions used by the Launcher and Minecraft as a string.
-     *
-     * @return the Java versions used by the Launcher and Minecraft as a string
-     */
-    public static String getActualJavaVersion() {
-        return String.format("Launcher: Java %d (%s) Build %s, Minecraft: Java %d (%s) Build %s",
-                getLauncherJavaVersionNumber(), getLauncherJavaVersion(),
-                parseJavaBuildVersion(getLauncherJavaVersion()), getMinecraftJavaVersionNumber(),
-                getMinecraftJavaVersion(), parseJavaBuildVersion(getMinecraftJavaVersion()));
-    }
-
-    /**
-     * Checks if the user is using Java 7 or above.
-     *
-     * @return true if the user is using Java 7 or above else false
-     */
-    public static boolean isJava7OrAbove(boolean checkCustomPath) {
-        int version = checkCustomPath ? getMinecraftJavaVersionNumber() : getLauncherJavaVersionNumber();
-        return version >= 7 || version == -1;
-    }
-
-    public static boolean isSystemJavaNewerThanJava8() {
-        return getLauncherJavaVersionNumber() >= 9;
-    }
-
-    public static boolean isMinecraftJavaNewerThanJava8() {
-        return getMinecraftJavaVersionNumber() >= 9;
-    }
-
-    /**
-     * Checks if the user is using exactly Java 8.
-     *
-     * @return true if the user is using exactly Java 8
-     */
-    public static boolean isJava8() {
-        return getMinecraftJavaVersionNumber() == 8;
-    }
-
-    /**
-     * Checks if the user is using Java 8 or newer or if on Java 7 at least version
-     * 111 or if on Java 8 at least version 101 or newer.
-     */
-    public static boolean isUsingJavaSupportingLetsEncrypt() {
-        return getLauncherJavaVersionNumber() > 8
-                || (getLauncherJavaVersionNumber() == 7 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 111)
-                || (getLauncherJavaVersionNumber() == 8 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 101);
-    }
-
-    /**
-     * Checks if the user is using exactly Java 9.
-     *
-     * @return true if the user is using exactly Java 9
-     */
-    public static boolean isJava9() {
-        return getMinecraftJavaVersionNumber() == 9;
-    }
-
-    /**
-     * Checks whether Metaspace should be used instead of PermGen. This is the case
-     * for Java 8 and above.
-     *
-     * @return whether Metaspace should be used instead of PermGen
-     */
-    public static boolean useMetaspace() {
-        return getMinecraftJavaVersionNumber() >= 8;
-    }
-
-    /**
      * Gets the open eye pending reports file filter.
      *
      * @return the open eye pending reports file filter
@@ -1847,7 +1365,7 @@ public class Utils {
     }
 
     public static Float getBaseFontSize() {
-        if (isMac()) {
+        if (OS.isMac()) {
             return (float) 11;
         } else {
             return (float) 12;
@@ -1926,7 +1444,7 @@ public class Utils {
         try {
             InetAddress address = InetAddress.getByName(host);
             Process traceRoute;
-            if (Utils.isWindows()) {
+            if (OS.isWindows()) {
                 traceRoute = Runtime.getRuntime().exec("ping -n 10 " + address.getHostAddress());
             } else {
                 traceRoute = Runtime.getRuntime().exec("ping -c 10 " + address.getHostAddress());
@@ -1958,7 +1476,7 @@ public class Utils {
         try {
             InetAddress address = InetAddress.getByName(host);
             Process traceRoute;
-            if (Utils.isWindows()) {
+            if (OS.isWindows()) {
                 traceRoute = Runtime.getRuntime().exec("tracert " + address.getHostAddress());
             } else {
                 traceRoute = Runtime.getRuntime().exec("traceroute " + address.getHostAddress());
@@ -2267,35 +1785,5 @@ public class Utils {
         }
 
         return false;
-    }
-
-    public static void relaunchInDebugMode() {
-        try {
-            List<String> arguments = new ArrayList<String>();
-
-            String launcherPath = URLDecoder
-                    .decode(new File(App.class.getProtectionDomain().getCodeSource().getLocation().getPath())
-                            .getCanonicalPath(), "UTF-8");
-
-            String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-            if (Utils.isWindows()) {
-                path += "w";
-            }
-            arguments.add(path);
-            arguments.add("-jar");
-            arguments.add(launcherPath);
-            arguments.add("--debug");
-            arguments.add("--debug-level 3");
-
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.command(arguments);
-
-            LogManager.info("Running launcher in debug mode " + arguments);
-
-            processBuilder.start();
-            System.exit(0);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
     }
 }

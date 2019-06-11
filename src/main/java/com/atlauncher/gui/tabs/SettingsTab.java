@@ -37,6 +37,7 @@ import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
+import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
@@ -98,7 +99,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                         App.settings.startCheckingServers();
                     }
                     if (reloadTheme) {
-                        App.settings.restartLauncher();
+                        OS.restartLauncher();
                     }
                     App.TOASTER.pop("Settings Saved");
                 }

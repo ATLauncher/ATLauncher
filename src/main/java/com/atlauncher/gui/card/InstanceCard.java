@@ -68,6 +68,8 @@ import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -194,7 +196,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!App.settings.ignoreJavaOnInstanceLaunch() && instance.getJava() != null
-                        && !Utils.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
+                        && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
                         && !instance.getJava().conforms()) {
                     String[] javaBadOptions = { Language.INSTANCE.localize("common.ok") };
                     JOptionPane.showOptionDialog(App.settings.getParent(),
@@ -357,7 +359,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.openButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Utils.openExplorer(instance.getRootDirectory());
+                OS.openFileExplorer(instance.getRootDirectory().toPath());
             }
         });
         this.settingsButton.addActionListener(new ActionListener() {

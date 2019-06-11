@@ -36,6 +36,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
 
@@ -77,7 +78,7 @@ public class NewsTab extends JPanel implements Tab {
                 @Override
                 public void hyperlinkUpdate(HyperlinkEvent e) {
                     if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                        Utils.openBrowser(e.getURL());
+                        OS.openWebBrowser(e.getURL());
                     }
                 }
             });
