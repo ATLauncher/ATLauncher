@@ -135,7 +135,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         if (!OS.is64Bit()) {
-            maximumMemoryPanel.add(maximumMemoryLabelWarning);
+            maximumMemoryPanel
+                    .add(new JLabelWithHover(WARNING_ICON,
+                            "<html>" + Utils.splitMultilinedString(
+                                    Language.INSTANCE.localize("settings.32bitmemorywarning"), 80, "<br/>") + "</html>",
+                            RESTART_BORDER));
         }
         maximumMemoryPanel.add(maximumMemoryLabel);
 
