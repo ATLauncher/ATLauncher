@@ -1197,7 +1197,7 @@ public class Settings {
                 if (isUsingCustomJavaPath()) {
                     this.javaPath = properties.getProperty("javapath", OS.getJavaHome());
                 } else {
-                    this.javaPath = Java.getActualJavaVersion();
+                    this.javaPath = OS.getJavaHome();
                 }
             }
 

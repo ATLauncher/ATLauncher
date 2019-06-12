@@ -77,7 +77,7 @@ public class Java {
 
             if (version.equals("Unknown")) {
                 LogManager.warn("Cannot get Java version from the output of \""
-                        + String.join(" ", processBuilder.command()) + " -version\"");
+                        + getPathToSystemJavaExecutable() + " -version\"");
             }
 
             return version;

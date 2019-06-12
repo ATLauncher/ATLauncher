@@ -214,7 +214,6 @@ public class Instance implements Cloneable {
      * Minecraft.
      *
      * @see com.atlauncher.mclauncher.MCLauncher
-     * @see com.atlauncher.mclauncher.LegacyMCLauncher
      */
     private boolean newLaunchMethod;
 

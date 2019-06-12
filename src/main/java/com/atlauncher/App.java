@@ -276,24 +276,18 @@ public class App {
             }
         }
 
-        if (Files.notExists(FileSystem.CONFIGS)) {
-            try {
-                if (Files.list(FileSystem.CONFIGS.getParent()).count() > 1) {
-                    String content = HTMLUtils.centerParagraph("I've detected that you may "
-                            + "not have installed this in the right location.<br/><br/>The exe or jar file should "
-                            + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
-                            + "that's what you've done?");
+        if (Files.notExists(FileSystem.CONFIGS) && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
+            String content = HTMLUtils.centerParagraph("I've detected that you may "
+                    + "not have installed this in the right location.<br/><br/>The exe or jar file should "
+                    + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
+                    + "that's what you've done?");
 
-                    int returnOption = DialogManager.optionDialog().setParent(null).setTitle("Warning")
-                            .setContent(content).addOption("Yes It's Fine", true)
-                            .addOption("Whoops. I'll Change That Now").setType(DialogManager.ERROR).show();
+            int returnOption = DialogManager.optionDialog().setParent(null).setTitle("Warning")
+                    .setContent(content).addOption("Yes It's Fine", true)
+                    .addOption("Whoops. I'll Change That Now").setType(DialogManager.ERROR).show();
 
-                    if (returnOption != 0) {
-                        System.exit(0);
-                    }
-                }
-            } catch (IOException e) {
-                // ignored
+            if (returnOption != 0) {
+                System.exit(0);
             }
         }
 
