@@ -66,7 +66,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private boolean isVanilla;
     private boolean isFeatured;
 
-    private List<PackCard> cards = new LinkedList<PackCard>();
+    private List<PackCard> cards = new LinkedList<>();
 
     public PacksTab(boolean isFeatured, boolean isVanilla) {
         super(new BorderLayout());

@@ -37,7 +37,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.exceptions.ChunkyException;
 
 public final class Resources {
-    private static final Map<String, Object> resources = new HashMap<String, Object>();
+    private static final Map<String, Object> resources = new HashMap<>();
     public static final String[] FONT_FAMILIES = GraphicsEnvironment.getLocalGraphicsEnvironment()
             .getAvailableFontFamilyNames();
 

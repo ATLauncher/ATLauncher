@@ -38,9 +38,9 @@ import javax.swing.SwingConstants;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
-import com.atlauncher.utils.Base64;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import net.iharder.Base64;
 
 /**
  * @author Kihira
@@ -133,7 +133,7 @@ public class DropboxSync extends SyncAbstract {
         if (backupDir.exists()) {
             File[] files = backupDir.listFiles();
             if (files != null) {
-                List<String> backupList = new ArrayList<String>();
+                List<String> backupList = new ArrayList<>();
                 for (File file : files) {
                     if (file.getName().matches(".*\\.zip")) {
                         backupList.add(file.getName());

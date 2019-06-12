@@ -158,8 +158,8 @@ public class Settings {
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
     private LauncherConsole console; // The Launcher's Console
-    private List<Server> servers = new ArrayList<Server>(); // Servers for the Launcher
-    private List<Server> triedServers = new ArrayList<Server>(); // Servers tried to connect to
+    private List<Server> servers = new ArrayList<>(); // Servers for the Launcher
+    private List<Server> triedServers = new ArrayList<>(); // Servers tried to connect to
     private InstancesTab instancesPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
     private PacksTab vanillaPacksPanel; // The vanilla packs panel
@@ -632,11 +632,7 @@ public class Settings {
         try {
             this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(new File(this.jsonDir, "version.json")),
                     LauncherVersion.class);
-        } catch (JsonSyntaxException e) {
-            LogManager.logStackTrace("Exception when loading latest launcher version!", e);
-        } catch (JsonIOException e) {
-            LogManager.logStackTrace("Exception when loading latest launcher version!", e);
-        } catch (FileNotFoundException e) {
+        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);
         }
 
@@ -666,7 +662,7 @@ public class Settings {
     }
 
     public void runUpdate(String currentPath, String temporaryUpdatePath) {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
 
         String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
         if (OS.isWindows()) {
@@ -719,7 +715,7 @@ public class Settings {
             this.offlineMode = true;
             return null;
         }
-        ArrayList<Downloadable> downloads = new ArrayList<Downloadable>();
+        ArrayList<Downloadable> downloads = new ArrayList<>();
         for (DownloadableFile file : this.launcherFiles) {
             if (file.isLauncher()) {
                 continue;
@@ -1153,8 +1149,6 @@ public class Settings {
                 this.server = getServerByName("Auto"); // Server not found, use default of Auto
                 this.originalServer = this.server;
             }
-        } catch (FileNotFoundException e) {
-            LogManager.logStackTrace(e);
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
@@ -1231,8 +1225,6 @@ public class Settings {
             if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
                 this.daysOfLogsToKeep = 7;
             }
-        } catch (FileNotFoundException e) {
-            LogManager.logStackTrace(e);
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
@@ -1456,8 +1448,6 @@ public class Settings {
             this.autoBackup = Boolean.parseBoolean(properties.getProperty("autobackup", "false"));
             this.notifyBackup = Boolean.parseBoolean(properties.getProperty("notifybackup", "true"));
             this.dropboxFolderLocation = properties.getProperty("dropboxlocation", "");
-        } catch (FileNotFoundException e) {
-            LogManager.logStackTrace(e);
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
@@ -1517,8 +1507,6 @@ public class Settings {
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
             properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
             this.properties.store(new FileOutputStream(propertiesFile), Constants.LAUNCHER_NAME + " Settings");
-        } catch (FileNotFoundException e) {
-            LogManager.logStackTrace(e);
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
@@ -1572,7 +1560,7 @@ public class Settings {
      * connections to download files
      */
     private void setupServers() {
-        this.servers = new ArrayList<Server>(Arrays.asList(Constants.SERVERS));
+        this.servers = new ArrayList<>(Arrays.asList(Constants.SERVERS));
     }
 
     public boolean disableServerGetNext() {
@@ -1589,7 +1577,7 @@ public class Settings {
 
     public void clearTriedServers() {
         if (this.triedServers.size() != 0) {
-            this.triedServers = new ArrayList<Server>(); // Clear the list
+            this.triedServers = new ArrayList<>(); // Clear the list
             this.server = this.originalServer;
         }
     }
@@ -1619,15 +1607,9 @@ public class Settings {
 
             this.news = Gsons.DEFAULT.fromJson(in, type);
             in.close();
-        } catch (JsonSyntaxException e) {
+        } catch (JsonIOException | UnsupportedEncodingException | FileNotFoundException e) {
             LogManager.logStackTrace(e);
-        } catch (JsonIOException e) {
-            LogManager.logStackTrace(e);
-        } catch (FileNotFoundException e) {
-            LogManager.logStackTrace(e);
-        } catch (UnsupportedEncodingException e) {
-            LogManager.logStackTrace(e);
-        } catch (IOException e) {
+        } catch (JsonSyntaxException | IOException e) {
             LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading news");
@@ -1639,7 +1621,7 @@ public class Settings {
     private void loadMinecraftVersions() {
         LogManager.debug("Loading Minecraft versions");
 
-        this.minecraftVersions = new HashMap<String, MinecraftVersion>();
+        this.minecraftVersions = new HashMap<>();
 
         try {
             java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
@@ -1655,11 +1637,7 @@ public class Settings {
             for (MinecraftVersion mv : list) {
                 this.minecraftVersions.put(mv.getVersion(), mv);
             }
-        } catch (JsonSyntaxException e) {
-            LogManager.logStackTrace(e);
-        } catch (JsonIOException e) {
-            LogManager.logStackTrace(e);
-        } catch (FileNotFoundException e) {
+        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading Minecraft versions");
@@ -1674,11 +1652,7 @@ public class Settings {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
             this.packs = Gsons.DEFAULT.fromJson(new FileReader(new File(getJSONDir(), "packs.json")), type);
-        } catch (JsonSyntaxException e) {
-            LogManager.logStackTrace(e);
-        } catch (JsonIOException e) {
-            LogManager.logStackTrace(e);
-        } catch (FileNotFoundException e) {
+        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading packs");
@@ -1695,9 +1669,7 @@ public class Settings {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
             packUsers = Gsons.DEFAULT.fromJson(download.getContents(), type);
-        } catch (JsonSyntaxException e) {
-            LogManager.logStackTrace(e);
-        } catch (JsonIOException e) {
+        } catch (JsonSyntaxException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
         if (packUsers == null) {
@@ -1715,7 +1687,7 @@ public class Settings {
      */
     private void loadInstances() {
         LogManager.debug("Loading instances");
-        this.instances = new ArrayList<Instance>(); // Reset the instances list
+        this.instances = new ArrayList<>(); // Reset the instances list
         if (instancesDataFile.exists()) {
             try {
                 FileInputStream in = new FileInputStream(instancesDataFile);
@@ -1846,9 +1818,7 @@ public class Settings {
                 }
             } catch (EOFException e) {
                 // Don't log this, it always happens when it gets to the end of the file
-            } catch (IOException e) {
-                LogManager.logStackTrace("Exception while trying to read accounts in from file.", e);
-            } catch (ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 LogManager.logStackTrace("Exception while trying to read accounts in from file.", e);
             } finally {
                 try {
@@ -1911,7 +1881,7 @@ public class Settings {
      */
     private void loadCheckingServers() {
         LogManager.debug("Loading servers to check");
-        this.checkingServers = new ArrayList<MinecraftServer>(); // Reset the list
+        this.checkingServers = new ArrayList<>(); // Reset the list
         if (checkingServersFile.exists()) {
             FileReader fileReader = null;
             try {
@@ -2004,7 +1974,7 @@ public class Settings {
      * @return The Packs available in the Launcher sorted alphabetically
      */
     public List<Pack> getPacksSortedAlphabetically(boolean isFeatured, boolean isVanilla) {
-        List<Pack> packs = new LinkedList<Pack>();
+        List<Pack> packs = new LinkedList<>();
 
         for (Pack pack : this.packs) {
             if (isFeatured) {
@@ -2039,7 +2009,7 @@ public class Settings {
      * @return The Packs available in the Launcher sorted by position
      */
     public List<Pack> getPacksSortedPositionally(boolean isFeatured, boolean isVanilla) {
-        List<Pack> packs = new LinkedList<Pack>();
+        List<Pack> packs = new LinkedList<>();
 
         for (Pack pack : this.packs) {
             if (isFeatured) {
@@ -2062,8 +2032,7 @@ public class Settings {
         Collections.sort(packs, new Comparator<Pack>() {
             @Override
             public int compare(Pack result1, Pack result2) {
-                return (result1.getPosition() < result2.getPosition()) ? -1
-                        : ((result1.getPosition() == result2.getPosition()) ? 0 : 1);
+                return Integer.compare(result1.getPosition(), result2.getPosition());
             }
         });
         return packs;
@@ -2122,7 +2091,7 @@ public class Settings {
      * @return The Instances available in the Launcher sorted alphabetically
      */
     public ArrayList<Instance> getInstancesSorted() {
-        ArrayList<Instance> instances = new ArrayList<Instance>(this.instances);
+        ArrayList<Instance> instances = new ArrayList<>(this.instances);
         Collections.sort(instances, new Comparator<Instance>() {
             @Override
             public int compare(Instance result1, Instance result2) {
@@ -2265,7 +2234,7 @@ public class Settings {
      * @return The Languages available in the Launcher
      */
     public List<String> getLanguages() {
-        List<String> langs = new LinkedList<String>();
+        List<String> langs = new LinkedList<>();
         for (File file : this.getLanguagesDir().listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -3116,18 +3085,22 @@ public class Settings {
         }
         if (this.proxy == null) {
             Type type;
-            if (this.proxyType.equals("HTTP")) {
-                type = Proxy.Type.HTTP;
-            } else if (this.proxyType.equals("SOCKS")) {
-                type = Proxy.Type.SOCKS;
-            } else if (this.proxyType.equals("DIRECT")) {
-                type = Proxy.Type.DIRECT;
-            } else {
-                // Oh noes, problem!
-                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
+            switch (this.proxyType) {
+                case "HTTP":
+                    type = Type.HTTP;
+                    break;
+                case "SOCKS":
+                    type = Type.SOCKS;
+                    break;
+                case "DIRECT":
+                    type = Type.DIRECT;
+                    break;
+                default:
+                    // Oh noes, problem!
+                    LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
                         + "disabled!");
-                this.enableProxy = false;
-                return null;
+                    this.enableProxy = false;
+                    return null;
             }
             this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
         }
@@ -3140,18 +3113,22 @@ public class Settings {
         }
         if (this.proxy == null) {
             Type type;
-            if (this.proxyType.equals("HTTP")) {
-                type = Proxy.Type.HTTP;
-            } else if (this.proxyType.equals("SOCKS")) {
-                type = Proxy.Type.SOCKS;
-            } else if (this.proxyType.equals("DIRECT")) {
-                type = Proxy.Type.DIRECT;
-            } else {
-                // Oh noes, problem!
-                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
+            switch (this.proxyType) {
+                case "HTTP":
+                    type = Type.HTTP;
+                    break;
+                case "SOCKS":
+                    type = Type.SOCKS;
+                    break;
+                case "DIRECT":
+                    type = Type.DIRECT;
+                    break;
+                default:
+                    // Oh noes, problem!
+                    LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
                         + "disabled!");
-                this.enableProxy = false;
-                return Proxy.NO_PROXY;
+                    this.enableProxy = false;
+                    return Proxy.NO_PROXY;
             }
             this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
         }

@@ -124,7 +124,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         fillerAccount = new Account(Language.INSTANCE.localize("account.add"));
 
-        accountsComboBox = new JComboBox<Account>();
+        accountsComboBox = new JComboBox<>();
         accountsComboBox.addItem(fillerAccount);
         for (Account account : App.settings.getAccounts()) {
             accountsComboBox.addItem(account);

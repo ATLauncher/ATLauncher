@@ -67,7 +67,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        forgeLoggingLevel = new JComboBox<String>();
+        forgeLoggingLevel = new JComboBox<>();
         forgeLoggingLevel.addItem("SEVERE");
         forgeLoggingLevel.addItem("WARNING");
         forgeLoggingLevel.addItem("INFO");

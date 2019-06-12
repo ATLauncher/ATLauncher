@@ -210,7 +210,7 @@ public class ModsChooser extends JDialog {
         });
         bottomPanel.add(installButton);
 
-        modCheckboxes = new ArrayList<ModsJCheckBox>();
+        modCheckboxes = new ArrayList<>();
         int count1 = 0;
         int count2 = 0;
 
@@ -341,8 +341,7 @@ public class ModsChooser extends JDialog {
                 i++;
             }
         }
-        for (int i = 0; i < modCheckboxes.size(); i++) {
-            ModsJCheckBox checkBox = modCheckboxes.get(i);
+        for (ModsJCheckBox checkBox : modCheckboxes) {
             if ((installer.isServer() ? checkBox.getMod().isServerOptional() : checkBox.getMod().isOptional())) {
                 checkBoxPanel1.add(checkBox);
             } else {
@@ -350,7 +349,7 @@ public class ModsChooser extends JDialog {
             }
         }
 
-        sortedOut = new ArrayList<ModsJCheckBox>();
+        sortedOut = new ArrayList<>();
         for (ModsJCheckBox cb : this.modCheckboxes) {
             if ((installer.isServer() ? cb.getMod().isServerOptional() : cb.getMod().isOptional()) && cb.isSelected()) {
                 sortOutMods(cb);
@@ -456,7 +455,7 @@ public class ModsChooser extends JDialog {
 
     public void sortOutMods(ModsJCheckBox a, boolean firstGo) {
         if (firstGo) {
-            sortedOut = new ArrayList<ModsJCheckBox>();
+            sortedOut = new ArrayList<>();
         }
 
         if (a.isSelected()) {
@@ -528,7 +527,7 @@ public class ModsChooser extends JDialog {
         if (wasClosed) {
             return null;
         }
-        List<Mod> mods = new ArrayList<Mod>();
+        List<Mod> mods = new ArrayList<>();
         for (ModsJCheckBox check : modCheckboxes) {
             if (check.isSelected()) {
                 mods.add(check.getMod());
@@ -541,7 +540,7 @@ public class ModsChooser extends JDialog {
         if (wasClosed) {
             return null;
         }
-        List<Mod> mods = new ArrayList<Mod>();
+        List<Mod> mods = new ArrayList<>();
         for (ModsJCheckBox check : modCheckboxes) {
             if (!check.isSelected()) {
                 mods.add(check.getMod());

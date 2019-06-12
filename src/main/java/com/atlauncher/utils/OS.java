@@ -234,15 +234,7 @@ public enum OS {
             } else {
                 ram = 1024;
             }
-        } catch (SecurityException e) {
-            LogManager.logStackTrace(e);
-        } catch (NoSuchMethodException e) {
-            LogManager.logStackTrace(e);
-        } catch (IllegalArgumentException e) {
-            LogManager.logStackTrace(e);
-        } catch (IllegalAccessException e) {
-            LogManager.logStackTrace(e);
-        } catch (InvocationTargetException e) {
+        } catch (SecurityException | InvocationTargetException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException e) {
             LogManager.logStackTrace(e);
         }
         return ram;

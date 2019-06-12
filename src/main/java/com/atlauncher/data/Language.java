@@ -31,7 +31,7 @@ import com.atlauncher.LogManager;
 public enum Language {
     INSTANCE, Language;
 
-    private final Map<String, Properties> langs = new HashMap<String, Properties>();
+    private final Map<String, Properties> langs = new HashMap<>();
     private volatile String current;
 
     private Language() {

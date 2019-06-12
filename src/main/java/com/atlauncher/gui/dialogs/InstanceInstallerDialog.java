@@ -71,7 +71,7 @@ public class InstanceInstallerDialog extends JDialog {
     private JTextField instanceNameField;
     private JLabel versionLabel;
     private JComboBox<PackVersion> versionsDropDown;
-    private ArrayList<PackVersion> versions = new ArrayList<PackVersion>();
+    private ArrayList<PackVersion> versions = new ArrayList<>();
     private JLabel enableUserLockLabel;
     private JCheckBox enableUserLock;
 
@@ -152,7 +152,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        versionsDropDown = new JComboBox<PackVersion>();
+        versionsDropDown = new JComboBox<>();
         if (pack.isTester()) {
             for (PackVersion pv : pack.getDevVersions()) {
                 if (!isServer || (isServer && pv.getMinecraftVersion().canCreateServer())) {

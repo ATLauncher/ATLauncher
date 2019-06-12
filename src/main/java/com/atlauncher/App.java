@@ -61,7 +61,6 @@ import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Java;
-import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -191,9 +190,7 @@ public class App {
     public static Theme THEME = Theme.DEFAULT_THEME;
 
     static {
-        /**
-         * Sets up where all uncaught exceptions go to.
-         */
+        // Sets up where all uncaught exceptions go to.
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
     }
 
@@ -282,9 +279,9 @@ public class App {
                     + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
                     + "that's what you've done?");
 
-            int returnOption = DialogManager.optionDialog().setParent(null).setTitle("Warning")
-                    .setContent(content).addOption("Yes It's Fine", true)
-                    .addOption("Whoops. I'll Change That Now").setType(DialogManager.ERROR).show();
+            int returnOption = DialogManager.optionDialog().setTitle("Warning").setContent(content)
+                    .addOption("Yes It's Fine", true).addOption("Whoops. I'll Change That Now")
+                    .setType(DialogManager.ERROR).show();
 
             if (returnOption != 0) {
                 System.exit(0);

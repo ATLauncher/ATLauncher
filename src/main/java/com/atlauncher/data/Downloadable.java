@@ -55,7 +55,7 @@ public class Downloadable {
     public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller,
             boolean isATLauncherDownload, File copyTo, boolean actuallyCopy) {
         if (isATLauncherDownload) {
-            this.servers = new ArrayList<Server>(App.settings.getServers());
+            this.servers = new ArrayList<>(App.settings.getServers());
             this.server = this.servers.get(0);
             for (Server server : this.servers) {
                 if (server.getName().equals(App.settings.getServer().getName())) {

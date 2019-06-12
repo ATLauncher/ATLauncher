@@ -29,7 +29,7 @@ import com.atlauncher.gui.components.CollapsiblePanel;
  * @author Kihira
  */
 public abstract class SyncAbstract {
-    public static final HashMap<String, SyncAbstract> syncList = new HashMap<String, SyncAbstract>();
+    public static final HashMap<String, SyncAbstract> syncList = new HashMap<>();
     private final String syncName;
 
     public SyncAbstract(String name) {

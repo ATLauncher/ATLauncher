@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.evnt.listener.SettingsListener;
 
 public final class SettingsManager {
-    private static final List<SettingsListener> listeners = new LinkedList<SettingsListener>();
+    private static final List<SettingsListener> listeners = new LinkedList<>();
 
     public static synchronized void addListener(SettingsListener listener) {
         listeners.add(listener);

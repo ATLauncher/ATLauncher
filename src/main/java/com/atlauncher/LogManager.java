@@ -28,7 +28,7 @@ import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.Utils;
 
 public final class LogManager {
-    private static final BlockingQueue<LogEvent> queue = new ArrayBlockingQueue<LogEvent>(128);
+    private static final BlockingQueue<LogEvent> queue = new ArrayBlockingQueue<>(128);
     public static boolean showDebug = false;
 
     /**

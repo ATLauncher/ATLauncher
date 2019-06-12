@@ -136,7 +136,7 @@ public class HashableDownloadable extends Downloadable {
     }
 
     protected void saveFileHash(File fileToHash) {
-        HashMap<String, String> localHash = new HashMap<String, String>();
+        HashMap<String, String> localHash = new HashMap<>();
 
         localHash.put("sha1", Utils.getSHA1(fileToHash == null ? this.file : fileToHash));
         localHash.put("etag", this.getConnection().getHeaderField("ETag"));

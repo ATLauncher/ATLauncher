@@ -33,8 +33,8 @@ public class MojangArgumentsTypeAdapter implements JsonDeserializer<MojangArgume
     @Override
     public MojangArguments deserialize(JsonElement json, Type type, JsonDeserializationContext context)
             throws JsonParseException {
-        List<ArgumentRule> game = new ArrayList<ArgumentRule>();
-        List<ArgumentRule> jvm = new ArrayList<ArgumentRule>();
+        List<ArgumentRule> game = new ArrayList<>();
+        List<ArgumentRule> jvm = new ArrayList<>();
 
         final JsonObject rootJsonObject = json.getAsJsonObject();
         final JsonArray gameArray = rootJsonObject.getAsJsonArray("game");

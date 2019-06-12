@@ -444,7 +444,7 @@ public class Instance implements Cloneable {
      *         this instance or null if none
      */
     public List<DisableableMod> getInstalledSelectedMods() {
-        List<DisableableMod> mods = new ArrayList<DisableableMod>();
+        List<DisableableMod> mods = new ArrayList<>();
 
         for (DisableableMod mod : this.mods) {
             if (mod.wasSelected()) {
@@ -598,7 +598,7 @@ public class Instance implements Cloneable {
      */
     public void ignoreUpdate() {
         if (this.ignoredUpdates == null) {
-            this.ignoredUpdates = new ArrayList<String>();
+            this.ignoredUpdates = new ArrayList<>();
         }
 
         String version;
@@ -655,7 +655,7 @@ public class Instance implements Cloneable {
                 List<DisableableMod> selectedMods = this.getInstalledSelectedMods();
 
                 if (selectedMods.size() == 0) {
-                    List<DisableableMod> mods = new ArrayList<DisableableMod>();
+                    List<DisableableMod> mods = new ArrayList<>();
 
                     for (DisableableMod mod : this.mods) {
                         mod.setWasSelected(true);
@@ -672,7 +672,7 @@ public class Instance implements Cloneable {
 
         // changes to the way libraries are saved and loaded from disk
         if (this.dataVersion < 2) {
-            this.libraries = new ArrayList<String>();
+            this.libraries = new ArrayList<>();
 
             if (this.librariesNeeded != null) {
                 for (String filePath : this.librariesNeeded.split(",")) {
@@ -1445,7 +1445,7 @@ public class Instance implements Cloneable {
                             App.settings.getParent().setVisible(false);
                         }
                         // Create a note of worlds for auto backup if enabled
-                        HashMap<String, Long> preWorldList = new HashMap<String, Long>();
+                        HashMap<String, Long> preWorldList = new HashMap<>();
                         if (App.settings.isAdvancedBackupsEnabled() && App.settings.getAutoBackup()) {
                             if (getSavesDirectory().exists()) {
                                 File[] files = getSavesDirectory().listFiles();
@@ -1633,7 +1633,7 @@ public class Instance implements Cloneable {
     }
 
     public String addTimePlayed(int time, String version) {
-        Map<String, Object> request = new HashMap<String, Object>();
+        Map<String, Object> request = new HashMap<>();
 
         if (App.settings.enableLeaderboards()) {
             request.put("username", App.settings.getAccount().getMinecraftUsername());
@@ -1681,7 +1681,7 @@ public class Instance implements Cloneable {
     }
 
     public List<String> getCustomMods(Type type) {
-        List<String> customMods = new ArrayList<String>();
+        List<String> customMods = new ArrayList<>();
         for (DisableableMod mod : this.mods) {
             if (mod.isUserAdded() && mod.getType() == type) {
                 customMods.add(mod.getFilename());
@@ -1691,7 +1691,7 @@ public class Instance implements Cloneable {
     }
 
     public List<DisableableMod> getCustomDisableableMods() {
-        List<DisableableMod> customMods = new ArrayList<DisableableMod>();
+        List<DisableableMod> customMods = new ArrayList<>();
         for (DisableableMod mod : this.mods) {
             if (mod.isUserAdded()) {
                 customMods.add(mod);
@@ -1733,7 +1733,7 @@ public class Instance implements Cloneable {
     }
 
     public ArrayList<String> getInstalledOptionalModNames() {
-        ArrayList<String> installedOptionalMods = new ArrayList<String>();
+        ArrayList<String> installedOptionalMods = new ArrayList<>();
 
         for (DisableableMod mod : this.getInstalledMods()) {
             if (mod.isOptional() && !mod.isUserAdded()) {
@@ -1745,12 +1745,12 @@ public class Instance implements Cloneable {
     }
 
     public Map<String, Object> getShareCodeData() {
-        Map<String, Object> data = new HashMap<String, Object>();
-        Map<String, Object> mods = new HashMap<String, Object>();
-        List<Map<String, Object>> optional = new ArrayList<Map<String, Object>>();
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> mods = new HashMap<>();
+        List<Map<String, Object>> optional = new ArrayList<>();
 
         for (String mod : this.getInstalledOptionalModNames()) {
-            Map<String, Object> modInfo = new HashMap<String, Object>();
+            Map<String, Object> modInfo = new HashMap<>();
             modInfo.put("name", mod);
             modInfo.put("selected", true);
             optional.add(modInfo);

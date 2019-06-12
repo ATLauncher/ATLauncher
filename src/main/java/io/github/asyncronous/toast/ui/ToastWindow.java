@@ -1,7 +1,6 @@
 package io.github.asyncronous.toast.ui;
 
 import com.atlauncher.utils.Java;
-import com.atlauncher.utils.Utils;
 import io.github.asyncronous.toast.ToasterConstants;
 import io.github.asyncronous.toast.thread.ToastAnimator;
 

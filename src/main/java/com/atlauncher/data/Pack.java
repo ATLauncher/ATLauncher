@@ -48,8 +48,8 @@ public class Pack {
     private String discordInviteURL;
     private String supportURL;
     private String websiteURL;
-    private List<String> testers = new ArrayList<String>();
-    private List<String> allowedPlayers = new ArrayList<String>();
+    private List<String> testers = new ArrayList<>();
+    private List<String> allowedPlayers = new ArrayList<>();
     private String json; // The JSON for a version of the pack
     private String jsonVersion; // The version the JSON above is for
 
@@ -296,7 +296,7 @@ public class Pack {
     }
 
     public String addInstall(String version) {
-        Map<String, Object> request = new HashMap<String, Object>();
+        Map<String, Object> request = new HashMap<>();
 
         request.put("username", App.settings.getAccount().getMinecraftUsername());
         request.put("version", version);
@@ -310,7 +310,7 @@ public class Pack {
     }
 
     public String addServerInstall(String version) {
-        Map<String, Object> request = new HashMap<String, Object>();
+        Map<String, Object> request = new HashMap<>();
 
         request.put("username", App.settings.getAccount().getMinecraftUsername());
         request.put("version", version);
@@ -324,7 +324,7 @@ public class Pack {
     }
 
     public String addUpdate(String version) {
-        Map<String, Object> request = new HashMap<String, Object>();
+        Map<String, Object> request = new HashMap<>();
 
         request.put("username", App.settings.getAccount().getMinecraftUsername());
         request.put("version", version);

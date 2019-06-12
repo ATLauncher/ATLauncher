@@ -35,7 +35,7 @@ public class DownloadsTypeAdapter implements JsonDeserializer<Downloads> {
     public Downloads deserialize(JsonElement json, Type type, JsonDeserializationContext context)
             throws JsonParseException {
         DownloadsItem artifact = null;
-        Map<String, DownloadsItem> classifiers = new HashMap<String, DownloadsItem>();
+        Map<String, DownloadsItem> classifiers = new HashMap<>();
 
         final JsonObject rootJsonObject = json.getAsJsonObject();
 

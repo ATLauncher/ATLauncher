@@ -194,7 +194,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         widthField.setText(App.settings.getWindowWidth() + "");
         heightField = new JTextField(4);
         heightField.setText(App.settings.getWindowHeight() + "");
-        commonScreenSizes = new JComboBox<String>();
+        commonScreenSizes = new JComboBox<>();
         commonScreenSizes.addItem("Select An Option");
         commonScreenSizes.addItem("854x480");
         if (OS.getMaximumWindowWidth() >= 1280 && OS.getMaximumWindowHeight() >= 720) {

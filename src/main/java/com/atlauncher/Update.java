@@ -33,7 +33,7 @@ public class Update {
         File temporaryUpdate = new File(temporaryUpdatePath);
         Utils.copyFile(temporaryUpdate, launcher.getParentFile());
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
 
         if (OS.isMac() && new File(new File(System.getProperty("user.dir")).getParentFile().getParentFile(), "MacOS")
                 .exists()) {

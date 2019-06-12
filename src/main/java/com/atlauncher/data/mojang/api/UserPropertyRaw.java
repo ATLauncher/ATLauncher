@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
-import com.atlauncher.utils.Base64;
+import net.iharder.Base64;
 
 @Json
 public class UserPropertyRaw {

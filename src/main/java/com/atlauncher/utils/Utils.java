@@ -87,6 +87,7 @@ import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 
+import net.iharder.Base64;
 import org.tukaani.xz.XZInputStream;
 
 public class Utils {
@@ -338,18 +339,16 @@ public class Utils {
             byte[] mdbytes = md.digest();
 
             sb = new StringBuffer();
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            for (byte mdbyte : mdbytes) {
+                sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
             }
 
             if (fis != null) {
                 fis.close();
             }
-        } catch (NoSuchAlgorithmException e) {
-            LogManager.logStackTrace(e);
         } catch (FileNotFoundException e) {
             LogManager.logStackTrace(e);
-        } catch (IOException e) {
+        } catch (NoSuchAlgorithmException | IOException e) {
             LogManager.logStackTrace(e);
         }
         return sb.toString();
@@ -381,18 +380,16 @@ public class Utils {
             byte[] mdbytes = md.digest();
 
             sb = new StringBuffer();
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            for (byte mdbyte : mdbytes) {
+                sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
             }
 
             if (fis != null) {
                 fis.close();
             }
-        } catch (NoSuchAlgorithmException e) {
-            LogManager.logStackTrace(e);
         } catch (FileNotFoundException e) {
             LogManager.logStackTrace(e);
-        } catch (IOException e) {
+        } catch (NoSuchAlgorithmException | IOException e) {
             LogManager.logStackTrace(e);
         }
         return sb.toString();
@@ -417,12 +414,10 @@ public class Utils {
 
             // convert the byte to hex format method 1
             sb = new StringBuffer();
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            for (byte mdbyte : mdbytes) {
+                sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
             }
-        } catch (NoSuchAlgorithmException e) {
-            LogManager.logStackTrace(e);
-        } catch (IOException e) {
+        } catch (NoSuchAlgorithmException | IOException e) {
             LogManager.logStackTrace(e);
         }
         return sb.toString();
@@ -447,12 +442,10 @@ public class Utils {
 
             // convert the byte to hex format method 1
             sb = new StringBuffer();
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            for (byte mdbyte : mdbytes) {
+                sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
             }
-        } catch (NoSuchAlgorithmException e) {
-            LogManager.logStackTrace(e);
-        } catch (IOException e) {
+        } catch (NoSuchAlgorithmException | IOException e) {
             LogManager.logStackTrace(e);
         }
         return sb.toString();
@@ -625,8 +618,8 @@ public class Utils {
                 }
 
                 String[] children = sourceLocation.list();
-                for (int i = 0; i < children.length; i++) {
-                    copyDirectory(new File(sourceLocation, children[i]), new File(targetLocation, children[i]));
+                for (String child : children) {
+                    copyDirectory(new File(sourceLocation, child), new File(targetLocation, child));
                 }
             } else {
 
@@ -716,8 +709,8 @@ public class Utils {
         String[] myFiles;
         if (file.isDirectory()) {
             myFiles = file.list();
-            for (int i = 0; i < myFiles.length; i++) {
-                new File(file, myFiles[i]).delete();
+            for (String myFile : myFiles) {
+                new File(file, myFile).delete();
             }
         }
     }
@@ -840,7 +833,7 @@ public class Utils {
     public static void zip(File in, File out) {
         try {
             URI base = in.toURI();
-            Deque<File> queue = new LinkedList<File>();
+            Deque<File> queue = new LinkedList<>();
             queue.push(in);
             OutputStream stream = new FileOutputStream(out);
             Closeable res = stream;
@@ -948,11 +941,7 @@ public class Utils {
             byte[] decordedValue = Base64.decode(encryptedData);
             byte[] decValue = c.doFinal(decordedValue);
             decryptedValue = new String(decValue);
-        } catch (InvalidKeyException e) {
-            return Utils.decryptOld(encryptedData);
-        } catch (BadPaddingException e) {
-            return Utils.decryptOld(encryptedData);
-        } catch (IllegalBlockSizeException e) {
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             return Utils.decryptOld(encryptedData);
         } catch (Exception e) {
             LogManager.logStackTrace(e);
@@ -1212,7 +1201,7 @@ public class Utils {
             @Override
             public boolean accept(File dir, String name) {
                 File file = new File(dir, name);
-                Pattern pattern = Pattern.compile("^pending-crash-[0-9\\-_\\.]+\\.json$");
+                Pattern pattern = Pattern.compile("^pending-crash-[0-9\\-_.]+\\.json$");
                 return file.isFile() && pattern.matcher(name).matches();
             }
         };

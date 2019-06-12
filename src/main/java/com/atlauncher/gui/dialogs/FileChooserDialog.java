@@ -140,7 +140,7 @@ public class FileChooserDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        selector = new JComboBox<String>();
+        selector = new JComboBox<>();
         for (String item : subOptions) {
             selector.addItem(item);
         }
@@ -176,7 +176,7 @@ public class FileChooserDialog extends JDialog {
     }
 
     public ArrayList<File> getChosenFiles() {
-        ArrayList<File> files = new ArrayList<File>();
+        ArrayList<File> files = new ArrayList<>();
         if (this.filesChosen == null) {
             return null;
         }

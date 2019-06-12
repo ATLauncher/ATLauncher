@@ -47,7 +47,7 @@ public final class ViewModsDialog extends JDialog {
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JTextField searchField = new JTextField(16);
-    private final List<ModCard> cards = new LinkedList<ModCard>();
+    private final List<ModCard> cards = new LinkedList<>();
 
     public ViewModsDialog(Pack pack) {
         super(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("pack.mods", pack.getName()),

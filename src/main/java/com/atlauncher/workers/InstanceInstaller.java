@@ -101,14 +101,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private boolean extractedResourcePack = false; // If there is an extracted resourcepack
     private int permgen = 0;
     private int memory = 0;
-    private List<String> libraries = new ArrayList<String>();
-    private List<String> arguments = new ArrayList<String>();
+    private List<String> libraries = new ArrayList<>();
+    private List<String> arguments = new ArrayList<>();
     private String extraArguments = null;
     private String mainClass = null;
     private int percent = 0; // Percent done installing
     private List<Mod> allMods;
     private List<Mod> selectedMods;
-    private List<Mod> unselectedMods = new ArrayList<Mod>();
+    private List<Mod> unselectedMods = new ArrayList<>();
     private int totalDownloads = 0; // Total number of downloads to download
     private int doneDownloads = 0; // Total number of downloads downloaded
     private int totalBytes = 0; // Total number of bytes to download
@@ -116,7 +116,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private Instance instance = null;
     private List<DisableableMod> modsInstalled;
     private List<File> serverLibraries;
-    private List<File> forgeLibraries = new ArrayList<File>();
+    private List<File> forgeLibraries = new ArrayList<>();
     private com.atlauncher.data.loaders.Loader loader;
 
     public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean isServer,
@@ -129,7 +129,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.shareCode = shareCode;
         this.showModsChooser = showModsChooser;
         if (isServer) {
-            serverLibraries = new ArrayList<File>();
+            serverLibraries = new ArrayList<>();
         }
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapterFactory(new EnumTypeAdapterFactory());
@@ -340,7 +340,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public List<Mod> getLinkedMods(Mod mod) {
-        List<Mod> linkedMods = new ArrayList<Mod>();
+        List<Mod> linkedMods = new ArrayList<>();
         for (Mod modd : allMods) {
             if (!modd.hasLinked()) {
                 continue;
@@ -353,7 +353,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public List<Mod> getGroupedMods(Mod mod) {
-        List<Mod> groupedMods = new ArrayList<Mod>();
+        List<Mod> groupedMods = new ArrayList<>();
         for (Mod modd : allMods) {
             if (!modd.hasGroup()) {
                 continue;
@@ -368,7 +368,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public List<Mod> getModsDependancies(Mod mod) {
-        List<Mod> dependsMods = new ArrayList<Mod>();
+        List<Mod> dependsMods = new ArrayList<>();
         for (String name : mod.getDepends()) {
             inner: {
                 for (Mod modd : allMods) {
@@ -383,7 +383,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public List<Mod> dependedMods(Mod mod) {
-        List<Mod> dependedMods = new ArrayList<Mod>();
+        List<Mod> dependedMods = new ArrayList<>();
         for (Mod modd : allMods) {
             if (!modd.hasDepends()) {
                 continue;
@@ -476,7 +476,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private List<Downloadable> getDownloadableMods() {
-        List<Downloadable> mods = new ArrayList<Downloadable>();
+        List<Downloadable> mods = new ArrayList<>();
 
         for (Mod mod : this.selectedMods) {
             if (mod.getDownload() == DownloadType.server) {
@@ -781,7 +781,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private void organiseLibraries() {
-        List<String> libraryNamesAdded = new ArrayList<String>();
+        List<String> libraryNamesAdded = new ArrayList<>();
         fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
         fireSubProgressUnknown();
         if (!isServer) {
@@ -859,7 +859,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     private ArrayList<Downloadable> getResources() {
-        ArrayList<Downloadable> downloads = new ArrayList<Downloadable>(); // All the files
+        ArrayList<Downloadable> downloads = new ArrayList<>(); // All the files
         File objectsFolder = new File(App.settings.getAssetsDir(), "objects");
         File indexesFolder = new File(App.settings.getAssetsDir(), "indexes");
         File virtualFolder = new File(App.settings.getAssetsDir(), "virtual");
@@ -894,11 +894,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     }
                 }
             }
-        } catch (JsonSyntaxException e) {
-            LogManager.logStackTrace(e);
-        } catch (JsonIOException e) {
-            LogManager.logStackTrace(e);
-        } catch (FileNotFoundException e) {
+        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
 
@@ -906,8 +902,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public ArrayList<Downloadable> getLibraries() {
-        ArrayList<Downloadable> libraries = new ArrayList<Downloadable>();
-        List<String> libraryNamesAdded = new ArrayList<String>();
+        ArrayList<Downloadable> libraries = new ArrayList<>();
+        List<String> libraryNamesAdded = new ArrayList<>();
 
         // Now read in the library jars needed from the pack
         for (com.atlauncher.data.json.Library library : this.jsonVersion.getLibraries()) {
@@ -1219,7 +1215,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public List<Mod> sortMods(List<Mod> original) {
-        List<Mod> mods = new ArrayList<Mod>(original);
+        List<Mod> mods = new ArrayList<>(original);
 
         for (Mod mod : original) {
             if (mod.isOptional()) {
@@ -1236,7 +1232,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
-        List<Mod> modss = new ArrayList<Mod>();
+        List<Mod> modss = new ArrayList<>();
 
         for (Mod mod : mods) {
             if (!mod.isOptional()) {
@@ -1380,7 +1376,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (!hasOptional) {
             this.selectedMods = this.allMods;
         }
-        modsInstalled = new ArrayList<DisableableMod>();
+        modsInstalled = new ArrayList<>();
         for (Mod mod : this.selectedMods) {
             String file = mod.getFile();
             if (this.jsonVersion.getCaseAllFiles() == CaseType.upper) {

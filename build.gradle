@@ -27,6 +27,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'org.tukaani:xz:1.5'
     compile 'com.mojang:authlib:1.5.21'
+    implementation 'net.iharder:base64:2.3.9'
 
     testCompile 'junit:junit:4.11'
 }

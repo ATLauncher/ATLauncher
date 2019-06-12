@@ -136,10 +136,10 @@ public class Version {
      * exist. If they don't exist, having these here will ensure no NPE's.
      */
     public Version() {
-        this.libraries = new ArrayList<Library>();
-        this.colours = new HashMap<String, String>();
-        this.mods = new ArrayList<Mod>();
-        this.actions = new ArrayList<Action>();
+        this.libraries = new ArrayList<>();
+        this.colours = new HashMap<>();
+        this.mods = new ArrayList<>();
+        this.actions = new ArrayList<>();
     }
 
     /**
@@ -251,7 +251,7 @@ public class Version {
     }
 
     public List<Mod> getClientInstallMods() {
-        List<Mod> mods = new ArrayList<Mod>();
+        List<Mod> mods = new ArrayList<>();
         for (Mod mod : this.mods) {
             if (mod.installOnClient()) {
                 mods.add(mod);
@@ -261,7 +261,7 @@ public class Version {
     }
 
     public List<Mod> getServerInstallMods() {
-        List<Mod> mods = new ArrayList<Mod>();
+        List<Mod> mods = new ArrayList<>();
         for (Mod mod : this.mods) {
             if (mod.installOnServer()) {
                 mods.add(mod);

@@ -70,7 +70,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<String>(Language.available());
+        language = new JComboBox<>(Language.available());
         language.setSelectedItem(Language.current());
         add(language, gbc);
 
@@ -97,7 +97,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        theme = new JComboBox<String>();
+        theme = new JComboBox<>();
         for (String themee : App.settings.getThemesDir().list(Utils.getThemesFileFilter())) {
             theme.addItem(themee.replace(".zip", ""));
         }
@@ -120,7 +120,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        dateFormat = new JComboBox<String>();
+        dateFormat = new JComboBox<>();
         dateFormat.addItem("dd/M/yyy");
         dateFormat.addItem("M/dd/yyy");
         dateFormat.addItem("yyy/M/dd");

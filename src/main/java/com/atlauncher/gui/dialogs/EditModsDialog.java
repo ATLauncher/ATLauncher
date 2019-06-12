@@ -234,8 +234,8 @@ public class EditModsDialog extends JDialog {
 
     private void loadMods() {
         List<DisableableMod> mods = instance.getInstalledSelectedMods();
-        enabledMods = new ArrayList<ModsJCheckBox>();
-        disabledMods = new ArrayList<ModsJCheckBox>();
+        enabledMods = new ArrayList<>();
+        disabledMods = new ArrayList<>();
         int dCount = 0;
         int eCount = 0;
         for (DisableableMod mod : mods) {
@@ -253,12 +253,10 @@ public class EditModsDialog extends JDialog {
                 eCount++;
             }
         }
-        for (int i = 0; i < enabledMods.size(); i++) {
-            ModsJCheckBox checkBox = enabledMods.get(i);
+        for (ModsJCheckBox checkBox : enabledMods) {
             enabledModsPanel.add(checkBox);
         }
-        for (int i = 0; i < disabledMods.size(); i++) {
-            ModsJCheckBox checkBox = disabledMods.get(i);
+        for (ModsJCheckBox checkBox : disabledMods) {
             disabledModsPanel.add(checkBox);
         }
         enabledModsPanel.setPreferredSize(new Dimension(0, enabledMods.size() * 20));
@@ -266,7 +264,7 @@ public class EditModsDialog extends JDialog {
     }
 
     private void enableMods() {
-        ArrayList<ModsJCheckBox> mods = new ArrayList<ModsJCheckBox>(disabledMods);
+        ArrayList<ModsJCheckBox> mods = new ArrayList<>(disabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
                 mod.getDisableableMod().enable(instance);
@@ -276,7 +274,7 @@ public class EditModsDialog extends JDialog {
     }
 
     private void disableMods() {
-        ArrayList<ModsJCheckBox> mods = new ArrayList<ModsJCheckBox>(enabledMods);
+        ArrayList<ModsJCheckBox> mods = new ArrayList<>(enabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
                 mod.getDisableableMod().disable(instance);
@@ -286,14 +284,14 @@ public class EditModsDialog extends JDialog {
     }
 
     private void removeMods() {
-        ArrayList<ModsJCheckBox> mods = new ArrayList<ModsJCheckBox>(enabledMods);
+        ArrayList<ModsJCheckBox> mods = new ArrayList<>(enabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
                 instance.removeInstalledMod(mod.getDisableableMod());
                 enabledMods.remove(mod);
             }
         }
-        mods = new ArrayList<ModsJCheckBox>(disabledMods);
+        mods = new ArrayList<>(disabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
                 instance.removeInstalledMod(mod.getDisableableMod());

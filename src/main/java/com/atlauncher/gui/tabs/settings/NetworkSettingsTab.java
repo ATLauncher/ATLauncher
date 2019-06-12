@@ -72,7 +72,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        server = new JComboBox<Server>();
+        server = new JComboBox<>();
         for (Server serverr : App.settings.getServers()) {
             if (serverr.isUserSelectable()) {
                 server.addItem(serverr);
@@ -183,7 +183,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        proxyType = new JComboBox<String>();
+        proxyType = new JComboBox<>();
         proxyType.addItem("HTTP");
         proxyType.addItem("SOCKS");
         proxyType.addItem("DIRECT");

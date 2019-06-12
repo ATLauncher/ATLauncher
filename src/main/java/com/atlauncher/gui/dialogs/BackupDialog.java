@@ -105,7 +105,7 @@ public class BackupDialog extends JDialog implements ActionListener {
                 } else {
                     backupList.setListData(list.toArray(new String[list.size()]));
                 }
-                list = new ArrayList<String>();
+                list = new ArrayList<>();
                 if (instance.getSavesDirectory().exists()) {
                     if (instance.getSavesDirectory().exists()) {
                         File[] files = instance.getSavesDirectory().listFiles();
@@ -130,7 +130,7 @@ public class BackupDialog extends JDialog implements ActionListener {
     }
 
     private JPanel createBackupPanel() {
-        List<String> worldData = new ArrayList<String>();
+        List<String> worldData = new ArrayList<>();
         if (instance.getSavesDirectory().exists()) {
             if (instance.getSavesDirectory().exists()) {
                 File[] files = instance.getSavesDirectory().listFiles();

@@ -43,7 +43,7 @@ public final class GithubIssueReporter {
                 LogManager.logStackTrace("Exception while uploading paste", e);
                 return;
             }
-            Map<String, Object> request = new HashMap<String, Object>();
+            Map<String, Object> request = new HashMap<>();
             request.put("issue", new GithubIssue(title, body));
 
             try {

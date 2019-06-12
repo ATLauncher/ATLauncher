@@ -89,7 +89,7 @@ public class Processor {
             return;
         }
 
-        List<URL> classpath = new ArrayList<URL>();
+        List<URL> classpath = new ArrayList<>();
         classpath.add(jarPath.toURI().toURL());
 
         for (String classpathItem : this.getClasspath()) {
@@ -106,7 +106,7 @@ public class Processor {
             classpath.add(classpathFile.toURI().toURL());
         }
 
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
 
         for (String arg : this.getArgs()) {
             LogManager.debug("Processing argument " + arg);

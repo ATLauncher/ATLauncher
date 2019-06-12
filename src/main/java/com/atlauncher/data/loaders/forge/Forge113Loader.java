@@ -59,7 +59,7 @@ public class Forge113Loader extends ForgeLoader {
 
     @Override
     public List<Downloadable> getDownloadableLibraries() {
-        List<Downloadable> librariesToDownload = new ArrayList<Downloadable>();
+        List<Downloadable> librariesToDownload = new ArrayList<>();
 
         File librariesDirectory = this.instanceInstaller.isServer() ? this.instanceInstaller.getLibrariesDirectory()
                 : App.settings.getGameLibrariesDir();
@@ -141,7 +141,7 @@ public class Forge113Loader extends ForgeLoader {
     }
 
     public List<String> getLibraries() {
-        List<String> libraries = new ArrayList<String>();
+        List<String> libraries = new ArrayList<>();
 
         if (this.instanceInstaller.isServer()) {
             for (Library library : this.getInstallProfile().getLibraries()) {

@@ -139,7 +139,7 @@ public class FabricLoader implements Loader {
 
     @Override
     public List<Downloadable> getDownloadableLibraries() {
-        List<Downloadable> librariesToDownload = new ArrayList<Downloadable>();
+        List<Downloadable> librariesToDownload = new ArrayList<>();
 
         // We use Fabric installer for servers, so we don't need to worry about
         // libraries
@@ -223,7 +223,7 @@ public class FabricLoader implements Loader {
             }
 
             try {
-                List<String> arguments = new ArrayList<String>();
+                List<String> arguments = new ArrayList<>();
                 String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
                 arguments.add(path);
                 arguments.add("-jar");
@@ -259,7 +259,7 @@ public class FabricLoader implements Loader {
     @Override
     public List<String> getLibraries() {
         FabricInstallProfile installProfile = this.getInstallProfile();
-        List<String> libraries = new ArrayList<String>();
+        List<String> libraries = new ArrayList<>();
 
         // We use Fabric installer for servers, so we don't need to worry about
         // libraries
@@ -274,7 +274,7 @@ public class FabricLoader implements Loader {
 
     @Override
     public List<String> getArguments() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
 
         if (this.getInstallProfile().getArguments() != null
                 || this.getInstallProfile().getArguments().containsKey("game")

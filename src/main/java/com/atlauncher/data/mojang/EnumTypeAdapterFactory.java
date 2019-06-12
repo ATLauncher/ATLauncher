@@ -38,7 +38,7 @@ public class EnumTypeAdapterFactory implements TypeAdapterFactory {
         if (!type.getRawType().isEnum()) {
             return null;
         }
-        final Map<String, T> map = new HashMap<String, T>();
+        final Map<String, T> map = new HashMap<>();
         for (T c : (T[]) type.getRawType().getEnumConstants()) {
             map.put(c.toString().toLowerCase(Locale.US), c);
         }

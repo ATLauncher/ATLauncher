@@ -60,7 +60,7 @@ public class MCLauncher {
         File[] jarModFiles = jarMods.listFiles();
         if (jarMods.exists() && jarModFiles != null && (instance.hasJarMods() || jarModFiles.length != 0)) {
             if (instance.hasJarMods()) {
-                ArrayList<String> jarmods = new ArrayList<String>(Arrays.asList(instance.getJarOrder().split(",")));
+                ArrayList<String> jarmods = new ArrayList<>(Arrays.asList(instance.getJarOrder().split(",")));
                 if (jarmods.size() > 1) {
                     hasCustomJarMods = true;
                 }
@@ -117,7 +117,7 @@ public class MCLauncher {
             cpb.append(instance.getMinecraftJar().getAbsolutePath());
         }
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
 
         String path = javaPath + File.separator + "bin" + File.separator + "java";
         if (OS.isWindows()) {
@@ -176,7 +176,7 @@ public class MCLauncher {
             arguments.add("-Xdock:name=\"" + instance.getName() + "\"");
         }
 
-        ArrayList<String> negatedArgs = new ArrayList<String>();
+        ArrayList<String> negatedArgs = new ArrayList<>();
 
         if (!javaArguments.isEmpty()) {
             for (String arg : javaArguments.split(" ")) {
@@ -218,7 +218,7 @@ public class MCLauncher {
             props = gson.toJson(response.getAuth().getUserProperties());
         }
 
-        List<String> launchArguments = new ArrayList<String>();
+        List<String> launchArguments = new ArrayList<>();
 
         if (instance.hasArguments()) {
             launchArguments.addAll(instance.getArguments());

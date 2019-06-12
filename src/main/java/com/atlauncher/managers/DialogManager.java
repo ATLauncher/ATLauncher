@@ -52,7 +52,7 @@ public final class DialogManager {
     public Window parent = App.settings.getParent();
     public String title;
     public Object content;
-    public List<String> options = new LinkedList<String>();
+    public List<String> options = new LinkedList<>();
     public Icon icon = null;
     public int lookAndFeel = DialogManager.DEFAULT_OPTION;
     public Integer defaultOption = null;

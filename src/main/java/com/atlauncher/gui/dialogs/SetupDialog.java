@@ -83,7 +83,7 @@ public class SetupDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<String>(Language.available());
+        language = new JComboBox<>(Language.available());
         language.setSelectedItem(Language.current());
         middle.add(language, gbc);
 

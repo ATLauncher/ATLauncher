@@ -60,7 +60,7 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
         CONTEXT_MENU.add(EDIT_BUTTON);
         CONTEXT_MENU.add(DELETE_BUTTON);
 
-        listModel = new DefaultListModel<MinecraftServer>();
+        listModel = new DefaultListModel<>();
         for (MinecraftServer server : App.settings.getCheckingServers()) {
             listModel.addElement(server);
         }

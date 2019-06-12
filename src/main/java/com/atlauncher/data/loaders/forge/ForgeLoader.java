@@ -138,7 +138,7 @@ public class ForgeLoader implements Loader {
 
     @Override
     public List<Downloadable> getDownloadableLibraries() {
-        List<Downloadable> librariesToDownload = new ArrayList<Downloadable>();
+        List<Downloadable> librariesToDownload = new ArrayList<>();
 
         ForgeInstallProfile installProfile = this.getInstallProfile();
 
@@ -207,7 +207,7 @@ public class ForgeLoader implements Loader {
     @Override
     public List<String> getLibraries() {
         ForgeInstallProfile installProfile = this.getInstallProfile();
-        List<String> libraries = new ArrayList<String>();
+        List<String> libraries = new ArrayList<>();
 
         for (Library library : installProfile.getLibraries()) {
             if (this.instanceInstaller.isServer() && library.getName().equals(installProfile.getInstall().getPath())) {
@@ -222,7 +222,7 @@ public class ForgeLoader implements Loader {
 
     @Override
     public List<String> getArguments() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
 
         for (String argument : this.getInstallProfile().getVersionInfo().getMinecraftArguments().split(" ")) {
             arguments.add(argument);

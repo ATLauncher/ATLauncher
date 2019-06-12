@@ -26,7 +26,7 @@ import com.atlauncher.evnt.listener.ReskinListener;
 
 @Deprecated
 public final class ReskinManager {
-    private static final List<ReskinListener> listeners = new LinkedList<ReskinListener>();
+    private static final List<ReskinListener> listeners = new LinkedList<>();
 
     public static synchronized void addListener(ReskinListener listener) {
         listeners.add(listener);

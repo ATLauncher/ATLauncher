@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 
 public final class RelocalizationManager {
-    private static final List<RelocalizationListener> listeners = new LinkedList<RelocalizationListener>();
+    private static final List<RelocalizationListener> listeners = new LinkedList<>();
 
     public static synchronized void addListener(RelocalizationListener listener) {
         listeners.add(listener);

@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.evnt.listener.ConsoleCloseListener;
 
 public final class ConsoleCloseManager {
-    private static final List<ConsoleCloseListener> listeners = new LinkedList<ConsoleCloseListener>();
+    private static final List<ConsoleCloseListener> listeners = new LinkedList<>();
 
     private ConsoleCloseManager() {
     }

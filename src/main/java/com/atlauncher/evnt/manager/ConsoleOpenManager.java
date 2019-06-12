@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.evnt.listener.ConsoleOpenListener;
 
 public final class ConsoleOpenManager {
-    private static final List<ConsoleOpenListener> listeners = new LinkedList<ConsoleOpenListener>();
+    private static final List<ConsoleOpenListener> listeners = new LinkedList<>();
 
     public static synchronized void addListener(ConsoleOpenListener listener) {
         listeners.add(listener);

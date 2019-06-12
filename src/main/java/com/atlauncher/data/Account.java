@@ -28,7 +28,6 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -153,8 +152,8 @@ public class Account implements Serializable {
         this.uuid = uuid;
         this.remember = remember;
         this.isReal = true;
-        this.collapsedPacks = new ArrayList<String>();
-        this.collapsedInstances = new ArrayList<String>();
+        this.collapsedPacks = new ArrayList<>();
+        this.collapsedInstances = new ArrayList<>();
     }
 
     /**
@@ -169,8 +168,8 @@ public class Account implements Serializable {
         this.uuid = UUID.randomUUID() + "";
         this.remember = false;
         this.isReal = false;
-        this.collapsedPacks = new ArrayList<String>();
-        this.collapsedInstances = new ArrayList<String>();
+        this.collapsedPacks = new ArrayList<>();
+        this.collapsedInstances = new ArrayList<>();
     }
 
     /**
@@ -449,7 +448,7 @@ public class Account implements Serializable {
      */
     public List<String> getCollapsedPacks() {
         if (this.collapsedPacks == null) {
-            this.collapsedPacks = new ArrayList<String>();
+            this.collapsedPacks = new ArrayList<>();
         }
         return this.collapsedPacks;
     }
@@ -462,7 +461,7 @@ public class Account implements Serializable {
      */
     public List<String> getCollapsedInstances() {
         if (this.collapsedInstances == null) {
-            this.collapsedInstances = new ArrayList<String>();
+            this.collapsedInstances = new ArrayList<>();
         }
         return this.collapsedInstances;
     }
@@ -523,8 +522,6 @@ public class Account implements Serializable {
                                     dialog.setReturnValue(true);
                                 }
                             }
-                        } catch (MalformedURLException e) {
-                            LogManager.logStackTrace(e);
                         } catch (IOException e) {
                             LogManager.logStackTrace(e);
                         }
