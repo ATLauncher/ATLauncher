@@ -3137,7 +3137,7 @@ public class Settings {
 
     public String getUserAgent() {
         return this.userAgent + Constants.LAUNCHER_NAME + "/" + Constants.VERSION + " Java/"
-                + Java.getLauncherJavaVersion() + " JavaMC/" + Java.getMinecraftJavaVersion();
+                + Java.getLauncherJavaVersion();
     }
 
     /**
