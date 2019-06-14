@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.7.4
+## 3.2.8.0
 
--   Fix restarting of OSX app after update
+-   Update minimum Java to Java 8
