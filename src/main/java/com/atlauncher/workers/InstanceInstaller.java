@@ -440,20 +440,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (this.instance != null && this.jsonVersion.hasDeletes()) {
                 Deletes deletes = this.jsonVersion.getDeletes();
 
-                for (Delete delete : deletes.getFiles()) {
-                    if (delete.isAllowed()) {
-                        File file = delete.getFile(this.instance.getRootDirectory());
-                        if (file.exists()) {
-                            Utils.delete(file);
+                if (deletes.hasFileDeletes()) {
+                    for (Delete delete : deletes.getFiles()) {
+                        if (delete.isAllowed()) {
+                            File file = delete.getFile(this.instance.getRootDirectory());
+                            if (file.exists()) {
+                                Utils.delete(file);
+                            }
                         }
                     }
                 }
 
-                for (Delete delete : deletes.getFolders()) {
-                    if (delete.isAllowed()) {
-                        File file = delete.getFile(this.instance.getRootDirectory());
-                        if (file.exists()) {
-                            Utils.delete(file);
+                if (deletes.hasFolderDeletes()) {
+                    for (Delete delete : deletes.getFolders()) {
+                        if (delete.isAllowed()) {
+                            File file = delete.getFile(this.instance.getRootDirectory());
+                            if (file.exists()) {
+                                Utils.delete(file);
+                            }
                         }
                     }
                 }

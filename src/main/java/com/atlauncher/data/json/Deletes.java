@@ -26,8 +26,16 @@ public class Deletes {
     private List<Delete> files;
     private List<Delete> folders;
 
+    public boolean hasFileDeletes() {
+        return this.files != null;
+    }
+
     public List<Delete> getFiles() {
         return this.files;
+    }
+
+    public boolean hasFolderDeletes() {
+        return this.files != null;
     }
 
     public List<Delete> getFolders() {
