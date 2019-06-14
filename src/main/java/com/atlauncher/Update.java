@@ -35,11 +35,9 @@ public class Update {
 
         List<String> arguments = new ArrayList<>();
 
-        if (OS.isMac() && new File(new File(System.getProperty("user.dir")).getParentFile().getParentFile(), "MacOS")
-                .exists()) {
+        if (OS.isMac() && OS.isUsingMacApp()) {
             arguments.add("open");
-            arguments.add(new File(System.getProperty("user.dir")).getParentFile().getParentFile().getParentFile()
-                    .getAbsolutePath());
+            arguments.add(FileSystem.BASE_DIR.getParent().getParent().toAbsolutePath().toString());
 
         } else {
             String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";

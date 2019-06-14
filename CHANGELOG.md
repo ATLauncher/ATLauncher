@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.7.3
+## 3.2.7.4
 
--   Fix packs with deletes not reinstalling/updating
+-   Fix restarting of OSX app after update
