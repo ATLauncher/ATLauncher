@@ -32,6 +32,7 @@ import java.util.jar.JarFile;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -225,7 +226,7 @@ public class Processor {
                         return;
                     }
 
-                    String sha1Hash = Utils.getSHA1(outputFile);
+                    String sha1Hash = Hashing.sha1(outputFile.toPath()).toString();
                     String expectedHash = valueDataItem.charAt(0) == '\''
                             ? valueDataItem.substring(1, valueDataItem.length() - 1)
                             : valueDataItem;

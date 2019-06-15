@@ -28,6 +28,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -74,15 +75,15 @@ public class Forge113Loader extends ForgeLoader {
             if (!artifact.hasUrl()) {
                 File extractedLibraryFile = new File(this.tempDir, "maven/" + artifact.getPath());
 
-                if (extractedLibraryFile.exists() && (!finalDownloadTo.exists()
-                        || (finalDownloadTo.exists() && Utils.getSHA1(finalDownloadTo) != artifact.getSha1()))) {
+                if (extractedLibraryFile.exists() && !finalDownloadTo.exists()) {
                     finalDownloadTo.getParentFile().mkdirs();
                     if (!Utils.copyFile(extractedLibraryFile, finalDownloadTo, true)) {
                         LogManager.error("Failed to copy forge library file");
                         instanceInstaller.cancel(true);
                     }
-                } else {
-                    LogManager.error("Failed to find and verify forge library file");
+                } else if (finalDownloadTo.exists() && !Hashing.sha1(finalDownloadTo.toPath())
+                        .equals(Hashing.HashCode.fromString(artifact.getSha1()))) {
+                    LogManager.error("Failed to find and verify forge library file " + extractedLibraryFile);
                     instanceInstaller.cancel(true);
                 }
             } else {
@@ -101,13 +102,13 @@ public class Forge113Loader extends ForgeLoader {
             if (!artifact.hasUrl()) {
                 File extractedLibraryFile = new File(this.tempDir, "maven/" + artifact.getPath());
 
-                if (extractedLibraryFile.exists()
-                        && (!finalDownloadTo.exists() || Utils.getSHA1(finalDownloadTo) != artifact.getSha1())) {
+                if (extractedLibraryFile.exists() && !finalDownloadTo.exists()) {
 
                     new File(finalDownloadTo.getAbsolutePath().substring(0,
                             finalDownloadTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
                     Utils.copyFile(extractedLibraryFile, finalDownloadTo, true);
-                } else {
+                } else if (finalDownloadTo.exists() && !Hashing.sha1(finalDownloadTo.toPath())
+                        .equals(Hashing.HashCode.fromString(artifact.getSha1()))) {
                     LogManager.warn("Cannot resolve Forge loader version library with name of " + library.getName());
                 }
 

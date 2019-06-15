@@ -32,6 +32,7 @@ import java.util.zip.GZIPInputStream;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -163,12 +164,12 @@ public class Downloadable {
             }
 
             if (isMD5()) {
-                if (Utils.getMD5(this.file).equalsIgnoreCase(getHash())) {
+                if (Hashing.md5(this.file.toPath()).equals(Hashing.HashCode.fromString(this.getHash()))) {
                     this.copyFile();
                     return false;
                 }
             } else {
-                if (Utils.getSHA1(this.file).equalsIgnoreCase(getHash())) {
+                if (Hashing.sha1(this.file.toPath()).equals(Hashing.HashCode.fromString(this.getHash()))) {
                     this.copyFile();
                     return false;
                 }
@@ -432,9 +433,9 @@ public class Downloadable {
                 attempts++;
                 if (this.file.exists()) {
                     if (isMD5()) {
-                        fileHash = Utils.getMD5(this.file);
+                        fileHash = Hashing.md5(this.file.toPath()).toString();
                     } else {
-                        fileHash = Utils.getSHA1(this.file);
+                        fileHash = Hashing.sha1(this.file.toPath()).toString();
                     }
                 } else {
                     fileHash = "0";
@@ -488,9 +489,9 @@ public class Downloadable {
                 String fileHash2;
                 if (this.copyTo.exists()) {
                     if (isMD5()) {
-                        fileHash2 = Utils.getMD5(this.file);
+                        fileHash2 = Hashing.md5(this.file.toPath()).toString();
                     } else {
-                        fileHash2 = Utils.getSHA1(this.file);
+                        fileHash2 = Hashing.sha1(this.file.toPath()).toString();
                     }
                 } else {
                     fileHash2 = "0";

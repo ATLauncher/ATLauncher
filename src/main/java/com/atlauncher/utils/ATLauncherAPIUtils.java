@@ -17,13 +17,13 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.LogManager;
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.mojang.OperatingSystem;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.atlauncher.LogManager;
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.mojang.OperatingSystem;
 
 /**
  * Various utility methods for interacting with the ATLauncher API.

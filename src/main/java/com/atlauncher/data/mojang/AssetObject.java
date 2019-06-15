@@ -19,7 +19,7 @@ package com.atlauncher.data.mojang;
 
 import java.io.File;
 
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.Hashing;
 
 public class AssetObject {
     private String hash;
@@ -40,6 +40,6 @@ public class AssetObject {
         if (file.length() != this.size) {
             return true;
         }
-        return !this.hash.equalsIgnoreCase(Utils.getSHA1(file));
+        return !Hashing.sha1(file.toPath()).equals(Hashing.HashCode.fromString(this.hash));
     }
 }

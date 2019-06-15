@@ -80,6 +80,7 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.OS;
@@ -2132,7 +2133,7 @@ public class Settings {
 
     public boolean canViewSemiPublicPackByCode(String packCode) {
         for (String code : this.addedPacks.split(",")) {
-            if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
+            if (Hashing.md5(code).equals(Hashing.HashCode.fromString(packCode))) {
                 return true;
             }
         }
@@ -2147,10 +2148,9 @@ public class Settings {
     }
 
     public boolean semiPublicPackExistsFromCode(String packCode) {
-        String packCodeMD5 = Utils.getMD5(packCode);
         for (Pack pack : this.packs) {
             if (pack.isSemiPublic()) {
-                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
+                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.HashCode.fromString(packCode))) {
                     return true;
                 }
             }
@@ -2159,10 +2159,9 @@ public class Settings {
     }
 
     public Pack getSemiPublicPackByCode(String packCode) {
-        String packCodeMD5 = Utils.getMD5(packCode);
         for (Pack pack : this.packs) {
             if (pack.isSemiPublic()) {
-                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
+                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.HashCode.fromString(packCode))) {
                     return pack;
                 }
             }
@@ -2172,10 +2171,9 @@ public class Settings {
     }
 
     public boolean addPack(String packCode) {
-        String packCodeMD5 = Utils.getMD5(packCode);
         for (Pack pack : this.packs) {
-            if (pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(packCodeMD5)) {
-                if (pack.getCode().equalsIgnoreCase(packCodeMD5)) {
+            if (pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(packCode)) {
+                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.HashCode.fromString(packCode))) {
                     if (pack.isTester()) {
                         return false;
                     }
@@ -2193,7 +2191,7 @@ public class Settings {
 
     public void removePack(String packCode) {
         for (String code : this.addedPacks.split(",")) {
-            if (Utils.getMD5(code).equalsIgnoreCase(packCode)) {
+            if (Hashing.md5(code).equals(Hashing.HashCode.fromString(packCode))) {
                 this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
                 this.refreshVanillaPacksPanel();
@@ -3096,21 +3094,21 @@ public class Settings {
         if (this.proxy == null) {
             Type type;
             switch (this.proxyType) {
-                case "HTTP":
-                    type = Type.HTTP;
-                    break;
-                case "SOCKS":
-                    type = Type.SOCKS;
-                    break;
-                case "DIRECT":
-                    type = Type.DIRECT;
-                    break;
-                default:
-                    // Oh noes, problem!
-                    LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
+            case "HTTP":
+                type = Type.HTTP;
+                break;
+            case "SOCKS":
+                type = Type.SOCKS;
+                break;
+            case "DIRECT":
+                type = Type.DIRECT;
+                break;
+            default:
+                // Oh noes, problem!
+                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
                         + "disabled!");
-                    this.enableProxy = false;
-                    return null;
+                this.enableProxy = false;
+                return null;
             }
             this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
         }
@@ -3124,21 +3122,21 @@ public class Settings {
         if (this.proxy == null) {
             Type type;
             switch (this.proxyType) {
-                case "HTTP":
-                    type = Type.HTTP;
-                    break;
-                case "SOCKS":
-                    type = Type.SOCKS;
-                    break;
-                case "DIRECT":
-                    type = Type.DIRECT;
-                    break;
-                default:
-                    // Oh noes, problem!
-                    LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
+            case "HTTP":
+                type = Type.HTTP;
+                break;
+            case "SOCKS":
+                type = Type.SOCKS;
+                break;
+            case "DIRECT":
+                type = Type.DIRECT;
+                break;
+            default:
+                // Oh noes, problem!
+                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
                         + "disabled!");
-                    this.enableProxy = false;
-                    return Proxy.NO_PROXY;
+                this.enableProxy = false;
+                return Proxy.NO_PROXY;
             }
             this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
         }

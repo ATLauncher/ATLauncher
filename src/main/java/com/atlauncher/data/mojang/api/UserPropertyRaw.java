@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
+
 import net.iharder.Base64;
 
 @Json

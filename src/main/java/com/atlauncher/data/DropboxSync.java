@@ -40,6 +40,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+
 import net.iharder.Base64;
 
 /**

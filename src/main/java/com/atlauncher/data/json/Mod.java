@@ -31,6 +31,7 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.HTMLUtils;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -349,7 +350,7 @@ public class Mod {
                 Utils.delete(fileLocation); // File exists but is corrupt, delete it
             } else if (this.download != DownloadType.direct) {
                 if (hasMD5()) {
-                    if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
+                    if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.md5))) {
                         return; // File already exists and matches hash, don't download it
                     } else {
                         Utils.delete(fileLocation); // File exists but is corrupt, delete it
@@ -479,7 +480,7 @@ public class Mod {
                 break;
         }
         if (hasMD5()) {
-            if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.md5)) {
+            if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.md5))) {
                 return; // MD5 hash matches
             } else {
                 if (attempt < 5) {
@@ -502,7 +503,7 @@ public class Mod {
                 Utils.delete(fileLocation); // File exists but is corrupt, delete it
             } else if (this.download != DownloadType.direct) {
                 if (this.hasServerMD5()) {
-                    if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)) {
+                    if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.serverMD5))) {
                         return; // File already exists and matches hash, don't download it
                     } else {
                         Utils.delete(fileLocation); // File exists but is corrupt, delete it
@@ -615,7 +616,7 @@ public class Mod {
             }
         }
         if (hasServerMD5()) {
-            if (Utils.getMD5(fileLocation).equalsIgnoreCase(this.serverMD5)) {
+            if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.serverMD5))) {
                 return; // MD5 hash matches
             } else {
                 if (attempt < 5) {

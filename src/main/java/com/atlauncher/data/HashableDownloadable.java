@@ -28,7 +28,7 @@ import java.util.Map;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
@@ -62,7 +62,7 @@ public class HashableDownloadable extends Downloadable {
                 Map<String, String> localHash = this.getLocalHash();
                 String sha1 = localHash.get("sha1");
 
-                if (this.file.exists() && Utils.getSHA1(this.file).equals(sha1)) {
+                if (this.file.exists() && Hashing.sha1(this.file.toPath()).equals(Hashing.HashCode.fromString(sha1))) {
                     LogManager.debug("When downloading " + this.url
                             + " a 304 not modified was sent back, so we don't need to redownload");
                     this.copyFile();
@@ -138,7 +138,7 @@ public class HashableDownloadable extends Downloadable {
     protected void saveFileHash(File fileToHash) {
         HashMap<String, String> localHash = new HashMap<>();
 
-        localHash.put("sha1", Utils.getSHA1(fileToHash == null ? this.file : fileToHash));
+        localHash.put("sha1", Hashing.sha1(fileToHash == null ? this.file.toPath() : fileToHash.toPath()).toString());
         localHash.put("etag", this.getConnection().getHeaderField("ETag"));
 
         this.saveLocalHash(localHash);
