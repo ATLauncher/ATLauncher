@@ -1439,10 +1439,19 @@ public class Instance implements Cloneable {
                     if (App.settings.enableDiscordIntegration() && this.getRealPack() != null) {
                         String playing =
                                 this.getRealPack().getName() + " (" + this.getVersion() + ")";
-                        DiscordRPC.discordUpdatePresence(new DiscordRichPresence.Builder("")
-                                .setDetails(playing).setStartTimestamps(System.currentTimeMillis())
-                                .setBigImage(this.getRealPack().getSafeName(), this.getPackName())
-                                .setSmallImage("atlauncher", "ATLauncher").build());
+
+                        DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
+                        presence.setDetails(playing);
+                        presence.setStartTimestamps(System.currentTimeMillis());
+
+                        if (this.getRealPack().hasDiscordImage()) {
+                            presence.setBigImage(this.getRealPack().getSafeName(), playing);
+                            presence.setSmallImage("atlauncher", "ATLauncher");
+                        } else {
+                            presence.setBigImage("atlauncher", playing);
+                        }
+
+                        DiscordRPC.discordUpdatePresence(presence.build());
                     }
 
                     App.settings.showKillMinecraft(process);

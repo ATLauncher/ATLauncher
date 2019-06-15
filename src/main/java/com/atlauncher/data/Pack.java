@@ -44,6 +44,7 @@ public class Pack {
     private boolean leaderboards;
     private boolean logging;
     private boolean featured;
+    private boolean hasDiscordImage;
     private String description;
     private String discordInviteURL;
     private String supportURL;
@@ -132,6 +133,10 @@ public class Pack {
 
     public boolean isFeatured() {
         return this.featured;
+    }
+
+    public boolean hasDiscordImage() {
+        return this.hasDiscordImage;
     }
 
     public void addTesters(List<String> users) {
