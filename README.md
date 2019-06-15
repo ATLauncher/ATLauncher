@@ -48,6 +48,12 @@ Alternatively you can run:
 ./gradlew run --args="--debug --debug-level 3 --working-dir=test"
 ```
 
+## Using VSCode
+
+This project is setup to use [VSCode](https://code.visualstudio.com/) for development. You're free
+to use any other IDE that you're accustomed to (if any), but by using VSCode, you get the benefit
+of predefined tasks and launch commands.
+
 ## Plugging In Your Data
 
 To get started with the code and plug in your own data, you need to edit the
