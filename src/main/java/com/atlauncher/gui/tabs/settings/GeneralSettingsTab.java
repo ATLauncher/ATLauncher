@@ -51,6 +51,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JCheckBox enableConsole;
     private JLabelWithHover enableTrayIconLabel;
     private JCheckBox enableTrayIcon;
+    private JLabelWithHover enableDiscordIntegrationLabel;
+    private JCheckBox enableDiscordIntegration;
     private JLabelWithHover enablePackTagsLabel;
     private JCheckBox enablePackTags;
 
@@ -225,6 +227,25 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         }
         add(enableTrayIcon, gbc);
 
+        // Enable Discord Integration
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        enableDiscordIntegrationLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.discordintegration") + "?", HELP_ICON,
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.discordintegrationhelp", "<br/>") + "</html>");
+        add(enableDiscordIntegrationLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        enableDiscordIntegration = new JCheckBox();
+        if (App.settings.enableDiscordIntegration()) {
+            enableDiscordIntegration.setSelected(true);
+        }
+        add(enableDiscordIntegration, gbc);
+
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
@@ -262,6 +283,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
         App.settings.setEnableConsole(enableConsole.isSelected());
         App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
+        App.settings.setEnableDiscordIntegration(enableDiscordIntegration.isSelected());
         App.settings.setPackTags(enablePackTags.isSelected());
     }
 
@@ -300,5 +322,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.enableTrayIconLabel.setText(Language.INSTANCE.localize("settings.traymenu") + "?");
         this.enableTrayIconLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
                 ".traymenuhelp", "<br/>") + "</html>");
+
+    this.enableDiscordIntegrationLabel.setText(Language.INSTANCE.localize("settings.discordintegration") + "?");
+        this.enableDiscordIntegrationLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
+            ".discordintegrationhelp", "<br/>") + "</html>");
     }
 }

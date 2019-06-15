@@ -1,19 +1,16 @@
 /*
- * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher Copyright (C) 2013-2019 ATLauncher
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher;
 
@@ -41,14 +38,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
-
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
@@ -63,12 +58,13 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-
 import io.github.asyncronous.toast.Toaster;
+import net.arikia.dev.drpc.DiscordEventHandlers;
+import net.arikia.dev.drpc.DiscordRPC;
 
 /**
- * Main entry point for the application, Java runs the main method here when the
- * application is launched.
+ * Main entry point for the application, Java runs the main method here when the application is
+ * launched.
  */
 public class App {
     /**
@@ -82,71 +78,69 @@ public class App {
     public static final Toaster TOASTER = Toaster.instance();
 
     /**
-     * The tray menu shown in the notification area or whatever it's called in non
-     * Windows OS.
+     * The tray menu shown in the notification area or whatever it's called in non Windows OS.
      */
     public static TrayMenu TRAY_MENU = new TrayMenu();
 
     /**
-     * If the launcher was just updated and this is it's first time loading after
-     * the update. This is used to check for when there are possible issues in which
-     * the user may have to download the update manually.
+     * If the launcher was just updated and this is it's first time loading after the update. This
+     * is used to check for when there are possible issues in which the user may have to download
+     * the update manually.
      */
     public static boolean wasUpdated = false;
 
     /**
-     * This controls if GZIP is used when downloading files through the launcher.
-     * It's used as a debugging tool and is enabled with the command line argument
-     * shown below.
+     * This controls if GZIP is used when downloading files through the launcher. It's used as a
+     * debugging tool and is enabled with the command line argument shown below.
      * <p/>
      * --usegzip=false
      */
     public static boolean useGzipForDownloads = true;
 
     /**
-     * This allows skipping the system tray integration so that the launcher doesn't
-     * even try to show the icon and menu etc, in the users system tray. It can be
-     * skipped with the below command line argument.
+     * This allows skipping the system tray integration so that the launcher doesn't even try to
+     * show the icon and menu etc, in the users system tray. It can be skipped with the below
+     * command line argument.
      * <p/>
      * --skip-tray-integration
      */
     public static boolean skipTrayIntegration = false;
 
     /**
-     * This removes writing the launchers location to AppData/Application Support.
-     * It can be enabled with the below command line argument.
+     * This removes writing the launchers location to AppData/Application Support. It can be enabled
+     * with the below command line argument.
      * <p/>
      * --skip-integration
      */
     public static boolean skipIntegration = false;
 
     /**
-     * This allows skipping the hash checking when downloading files. It can be
-     * skipped with the below command line argument.
+     * This allows skipping the hash checking when downloading files. It can be skipped with the
+     * below command line argument.
      * <p/>
      * --skip-hash-checking
      */
     public static boolean skipHashChecking = false;
 
     /**
-     * This forces the launcher to start in offline mode. It can be enabled with the
-     * below command line argument.
+     * This forces the launcher to start in offline mode. It can be enabled with the below command
+     * line argument.
      * <p/>
      * --force-offline-mode
      */
     public static boolean forceOfflineMode = false;
 
     /**
-     * This forces the working directory for the launcher. It can be changed with
-     * the below command line argument.
+     * This forces the working directory for the launcher. It can be changed with the below command
+     * line argument.
      * <p/>
      * --working-dir=C:/Games/ATLauncher
      */
     public static File workingDir = null;
 
     /**
-     * This forces the launcher to not check for a launcher update. It can be
-     * enabled with the below command line argument.
+     * This forces the launcher to not check for a launcher update. It can be enabled with the below
+     * command line argument.
      * <p/>
      * --no-launcher-update
      */
@@ -173,17 +167,16 @@ public class App {
     public static String autoLaunch = null;
 
     /**
-     * This is the Settings instance which holds all the users settings and alot of
-     * methods relating to getting things done.
+     * This is the Settings instance which holds all the users settings and alot of methods relating
+     * to getting things done.
      *
-     * @TODO This should probably be switched to be less large and have less
-     *       responsibility.
+     * @TODO This should probably be switched to be less large and have less responsibility.
      */
     public static Settings settings;
 
     /**
-     * This is the theme used by the launcher. By default it uses the default theme
-     * until the theme can be created and loaded.
+     * This is the theme used by the launcher. By default it uses the default theme until the theme
+     * can be created and loaded.
      * <p/>
      * For more information on themeing, please see https://atl.pw/theme
      */
@@ -217,16 +210,18 @@ public class App {
                 } else if (parts[0].equalsIgnoreCase("--debug")) {
                     LogManager.showDebug = true;
                     LogManager.debugLevel = 1;
-                    LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of "
-                            + "user data!");
+                    LogManager.debug(
+                            "Debug logging is enabled! Please note that this will remove any censoring of "
+                                    + "user data!");
                 } else if (parts[0].equalsIgnoreCase("--debug-level") && parts.length == 2) {
                     int debugLevel;
 
                     try {
                         debugLevel = Integer.parseInt(parts[1]);
                     } catch (NumberFormatException e) {
-                        LogManager.error("Error converting given debug level string to an integer. The specified "
-                                + "debug level given was '" + parts[1] + "'");
+                        LogManager.error(
+                                "Error converting given debug level string to an integer. The specified "
+                                        + "debug level given was '" + parts[1] + "'");
                         continue;
                     }
 
@@ -237,10 +232,12 @@ public class App {
 
                     LogManager.debugLevel = debugLevel;
                     LogManager.debug("Debug level has been set to " + debugLevel + "!");
-                } else if (parts[0].equalsIgnoreCase("--usegzip") && parts[1].equalsIgnoreCase("false")) {
+                } else if (parts[0].equalsIgnoreCase("--usegzip")
+                        && parts[1].equalsIgnoreCase("false")) {
                     useGzipForDownloads = false;
                     LogManager.debug(
-                            "GZip has been turned off for downloads! Don't ask for support with this " + "disabled!",
+                            "GZip has been turned off for downloads! Don't ask for support with this "
+                                    + "disabled!",
                             true);
                 } else if (parts[0].equalsIgnoreCase("--skip-tray-integration")) {
                     skipTrayIntegration = true;
@@ -250,13 +247,16 @@ public class App {
                     LogManager.debug("Skipping integration!", true);
                 } else if (parts[0].equalsIgnoreCase("--skip-hash-checking")) {
                     skipHashChecking = true;
-                    LogManager.debug("Skipping hash checking! Don't ask for support with this enabled!", true);
+                    LogManager.debug(
+                            "Skipping hash checking! Don't ask for support with this enabled!",
+                            true);
                 } else if (parts[0].equalsIgnoreCase("--force-offline-mode")) {
                     forceOfflineMode = true;
                     LogManager.debug("Forcing offline mode!", true);
                 } else if (parts[0].equalsIgnoreCase("--no-launcher-update")) {
                     noLauncherUpdate = true;
-                    LogManager.debug("Not checking for launcher updates! Don't ask for support with this enabled",
+                    LogManager.debug(
+                            "Not checking for launcher updates! Don't ask for support with this enabled",
                             true);
                 } else if (parts[0].equalsIgnoreCase("--working-dir")) {
                     File wDir = new File(parts[1]);
@@ -273,7 +273,8 @@ public class App {
             }
         }
 
-        if (Files.notExists(FileSystem.CONFIGS) && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
+        if (Files.notExists(FileSystem.CONFIGS)
+                && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
             String content = HTMLUtils.centerParagraph("I've detected that you may "
                     + "not have installed this in the right location.<br/><br/>The exe or jar file should "
                     + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
@@ -324,9 +325,11 @@ public class App {
             // If the user is using the Mac Application, then we forcibly set the java path
             // if they have none set.
 
-            File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
+            File oracleJava = new File(
+                    "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
             if (oracleJava.exists() && oracleJava.canExecute()) {
-                settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
+                settings.setJavaPath(
+                        "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
                 LogManager.warn("Launcher Forced Custom Java Path Set!");
             }
         }
@@ -388,6 +391,20 @@ public class App {
 
         TRAY_MENU.localize();
 
+        if (settings.enableDiscordIntegration()) {
+            DiscordEventHandlers handlers =
+                    new DiscordEventHandlers.Builder().setReadyEventHandler((user) -> {
+                        System.out.println(
+                                "Welcome " + user.username + "#" + user.discriminator + "!");
+                    }).build();
+            DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
+            DiscordRPC.discordRegister(Constants.DISCORD_CLIENT_ID, "");
+
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                DiscordRPC.discordShutdown();
+            }));
+        }
+
         if (!skipIntegration) {
             integrate();
         }
@@ -398,12 +415,15 @@ public class App {
             if (settings.addPack(packCodeToAdd)) {
                 Pack packAdded = settings.getSemiPublicPackByCode(packCodeToAdd);
                 if (packAdded != null) {
-                    LogManager.info("The pack " + packAdded.getName() + " was automatically added to the launcher!");
+                    LogManager.info("The pack " + packAdded.getName()
+                            + " was automatically added to the launcher!");
                 } else {
-                    LogManager.error("Error automatically adding semi public pack with code of " + packCodeToAdd + "!");
+                    LogManager.error("Error automatically adding semi public pack with code of "
+                            + packCodeToAdd + "!");
                 }
             } else {
-                LogManager.error("Error automatically adding semi public pack with code of " + packCodeToAdd + "!");
+                LogManager.error("Error automatically adding semi public pack with code of "
+                        + packCodeToAdd + "!");
             }
         }
 
@@ -476,9 +496,12 @@ public class App {
 
         if (OS.isMac()) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
-            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
-            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
-            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
+            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK),
+                    DefaultEditorKit.copyAction);
+            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK),
+                    DefaultEditorKit.pasteAction);
+            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK),
+                    DefaultEditorKit.cutAction);
         }
     }
 
@@ -510,9 +533,8 @@ public class App {
     }
 
     /**
-     * This creates some integration files so the launcher can work with other
-     * applications by storing some properties about itself and it's location in a
-     * set location.
+     * This creates some integration files so the launcher can work with other applications by
+     * storing some properties about itself and it's location in a set location.
      */
     public static void integrate() {
         if (!Utils.getOSStorageDir().exists()) {
@@ -556,7 +578,8 @@ public class App {
         props.setProperty("java_version", Java.getLauncherJavaVersion());
         props.setProperty("location", App.settings.getBaseDir().toString());
         props.setProperty("executable",
-                new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath());
+                new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath())
+                        .getAbsolutePath());
 
         packCodeToAdd = props.getProperty("pack_code_to_add", null);
         props.remove("pack_code_to_add");
