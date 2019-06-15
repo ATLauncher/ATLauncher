@@ -1437,13 +1437,12 @@ public class Instance implements Cloneable {
                     }
 
                     if (App.settings.enableDiscordIntegration() && this.getRealPack() != null) {
+                        String playing =
+                                this.getRealPack().getName() + " (" + this.getVersion() + ")";
                         DiscordRPC.discordUpdatePresence(new DiscordRichPresence.Builder("")
-                                .setDetails(this.getRealPack().getName() + " (" + this.getVersion()
-                                        + ")")
-                                .setStartTimestamps(System.currentTimeMillis())
-                                .setSmallImage(this.getRealPack().getSafeName(), this.getPackName())
+                                .setDetails(playing).setStartTimestamps(System.currentTimeMillis())
                                 .setBigImage(this.getRealPack().getSafeName(), this.getPackName())
-                                .build());
+                                .setSmallImage("atlauncher", "ATLauncher").build());
                     }
 
                     App.settings.showKillMinecraft(process);
