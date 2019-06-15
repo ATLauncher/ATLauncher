@@ -125,10 +125,9 @@ public class FabricLoader implements Loader {
         try {
             installProfile = Gsons.DEFAULT
                     .fromJson(
-                            new FileReader(
-                                    new File(this.tempDir,
-                                            "fabric-loader-" + this.yarn + "-" + this.loader + "/fabric-loader-"
-                                                    + this.yarn + "-" + this.loader + ".json")),
+                            new FileReader(new File(this.tempDir,
+                                    "fabric-loader-" + this.yarn + "_yarn-" + this.loader + "/fabric-loader-"
+                                            + this.yarn + "_yarn-" + this.loader + ".json")),
                             FabricInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
