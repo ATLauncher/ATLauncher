@@ -20,10 +20,8 @@ package com.atlauncher.managers;
 import java.awt.Window;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 
@@ -49,7 +47,7 @@ public final class DialogManager {
     public static final int CLOSED_OPTION = JOptionPane.CLOSED_OPTION;
 
     public int dialogType;
-    public Window parent = App.settings.getParent();
+    public Window parent;
     public String title;
     public Object content;
     public List<String> options = new LinkedList<>();
@@ -135,8 +133,20 @@ public final class DialogManager {
         return this.options.toArray();
     }
 
+    public Window getParent() {
+        if (this.parent != null) {
+            return this.parent;
+        }
+
+        if (App.settings != null && App.settings.getParent() != null) {
+            return App.settings.getParent();
+        }
+
+        return null;
+    }
+
     public int show() {
-        return JOptionPane.showOptionDialog(this.parent, this.content, this.title, this.lookAndFeel, this.type,
-                this.icon, this.getOptions(), this.defaultOption);
+        return JOptionPane.showOptionDialog(this.getParent(), this.content, this.title,
+                this.lookAndFeel, this.type, this.icon, this.getOptions(), this.defaultOption);
     }
 }

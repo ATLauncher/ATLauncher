@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.7.4
+## 3.2.7.5
 
--   Fix restarting of OSX app after update
+-   Fix fresh installs in the wrong directory not showing anything
