@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.utils.HTMLUtils;
 
 public class MinecraftError {
     static final int OUT_OF_MEMORY = 1;
@@ -34,14 +35,15 @@ public class MinecraftError {
 
     static void showOutOfMemoryPopup() {
         DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.aboutyourcrash"))
-                .setContent(Language.INSTANCE.localizeWithReplace("instancecrash.outofmemory", "<br/><br/>"))
+                .setContent(HTMLUtils.centerParagraph(
+                        Language.INSTANCE.localizeWithReplace("instancecrash.outofmemory", "<br/><br/>")))
                 .setType(DialogManager.INFO).show();
     }
 
     static void showConcurrentModificationError16() {
-        DialogManager
-                .okDialog().setTitle(Language.INSTANCE.localize("instance.aboutyourcrash")).setContent(Language.INSTANCE
-                        .localizeWithReplace("instancecrash.concurrentmodificationerror16", "<br/><br/>"))
+        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.aboutyourcrash"))
+                .setContent(HTMLUtils.centerParagraph(Language.INSTANCE
+                        .localizeWithReplace("instancecrash.concurrentmodificationerror16", "<br/><br/>")))
                 .setType(DialogManager.INFO).show();
     }
 }
