@@ -75,12 +75,7 @@ public class SplashScreen extends JWindow {
         public ContextMenu() {
             super();
 
-            this.FORCE_QUIT.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
-                }
-            });
+            this.FORCE_QUIT.addActionListener(e -> System.exit(0));
             this.add(this.FORCE_QUIT);
         }
     }

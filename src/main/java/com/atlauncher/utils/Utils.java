@@ -635,13 +635,7 @@ public class Utils {
      * @param file the file
      */
     public static void deleteWithFilter(File file, final List<String> filesToIgnore) {
-        FilenameFilter ffFilter = new FilenameFilter() {
-
-            @Override
-            public boolean accept(File dir, String name) {
-                return !filesToIgnore.contains(name);
-            }
-        };
+        FilenameFilter ffFilter = (dir, name) -> !filesToIgnore.contains(name);
         for (File aFile : file.listFiles(ffFilter)) {
             Utils.delete(aFile);
         }
@@ -1004,12 +998,9 @@ public class Utils {
      * @return the logs file filter
      */
     public static FilenameFilter getLogsFileFilter() {
-        return new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                File file = new File(dir, name);
-                return file.isFile() && name.startsWith(Constants.LAUNCHER_NAME + "-Log_") && name.endsWith(".log");
-            }
+        return (dir, name) -> {
+            File file = new File(dir, name);
+            return file.isFile() && name.startsWith(Constants.LAUNCHER_NAME + "-Log_") && name.endsWith(".log");
         };
     }
 
@@ -1019,15 +1010,12 @@ public class Utils {
      * @return the instance file filter
      */
     public static FilenameFilter getInstanceFileFilter() {
-        return new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                File instanceDir = new File(dir, name);
-                if (instanceDir.isDirectory()) {
-                    return new File(instanceDir, "instance.json").exists();
-                }
-                return false;
+        return (dir, name) -> {
+            File instanceDir = new File(dir, name);
+            if (instanceDir.isDirectory()) {
+                return new File(instanceDir, "instance.json").exists();
             }
+            return false;
         };
     }
 
@@ -1037,14 +1025,10 @@ public class Utils {
      * @return the open eye pending reports file filter
      */
     public static FilenameFilter getOpenEyePendingReportsFileFilter() {
-        return new FilenameFilter() {
-
-            @Override
-            public boolean accept(File dir, String name) {
-                File file = new File(dir, name);
-                Pattern pattern = Pattern.compile("^pending-crash-[0-9\\-_.]+\\.json$");
-                return file.isFile() && pattern.matcher(name).matches();
-            }
+        return (dir, name) -> {
+            File file = new File(dir, name);
+            Pattern pattern = Pattern.compile("^pending-crash-[0-9\\-_.]+\\.json$");
+            return file.isFile() && pattern.matcher(name).matches();
         };
     }
 
@@ -1215,12 +1199,9 @@ public class Utils {
     }
 
     public static FilenameFilter getThemesFileFilter() {
-        return new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                File file = new File(dir, name);
-                return file.exists() && file.isFile() && name.endsWith(".zip");
-            }
+        return (dir, name) -> {
+            File file = new File(dir, name);
+            return file.exists() && file.isFile() && name.endsWith(".zip");
         };
     }
 

@@ -94,39 +94,36 @@ public class FileChooserDialog extends JDialog {
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         selectButton = new JButton(Language.INSTANCE.localize("common.select"));
-        selectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser(App.settings.getBaseDir());
-                fileChooser.setMultiSelectionEnabled(true);
-                fileChooser.setFileFilter(new FileFilter() {
-                    @Override
-                    public String getDescription() {
-                        return "Mod Files (.jar; .zip; .litemod)";
+        selectButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser(App.settings.getBaseDir());
+            fileChooser.setMultiSelectionEnabled(true);
+            fileChooser.setFileFilter(new FileFilter() {
+                @Override
+                public String getDescription() {
+                    return "Mod Files (.jar; .zip; .litemod)";
+                }
+
+                @Override
+                public boolean accept(File f) {
+                    if (f.isDirectory()) {
+                        return true;
                     }
 
-                    @Override
-                    public boolean accept(File f) {
-                        if (f.isDirectory()) {
+                    for (String ext : fileOptions) {
+                        if (f.getName().endsWith(ext)) {
                             return true;
                         }
-
-                        for (String ext : fileOptions) {
-                            if (f.getName().endsWith(ext)) {
-                                return true;
-                            }
-                        }
-                        return false;
                     }
-                });
-                fileChooser.showOpenDialog(App.settings.getParent());
-                filesChosen = fileChooser.getSelectedFiles();
-                if (filesChosen != null && filesChosen.length >= 1) {
-                    if (filesChosen.length == 1) {
-                        textField.setText(filesChosen[0].getAbsolutePath());
-                    } else {
-                        textField.setText(filesChosen.length + " Files Selected!");
-                    }
+                    return false;
+                }
+            });
+            fileChooser.showOpenDialog(App.settings.getParent());
+            filesChosen = fileChooser.getSelectedFiles();
+            if (filesChosen != null && filesChosen.length >= 1) {
+                if (filesChosen.length == 1) {
+                    textField.setText(filesChosen[0].getAbsolutePath());
+                } else {
+                    textField.setText(filesChosen.length + " Files Selected!");
                 }
             }
         });
@@ -150,11 +147,7 @@ public class FileChooserDialog extends JDialog {
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         bottomButton = new JButton(bottomText);
-        bottomButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        bottomButton.addActionListener(e -> close());
         bottom.add(bottomButton);
 
         add(top, BorderLayout.NORTH);

@@ -95,34 +95,31 @@ public class BackupDialog extends JDialog implements ActionListener {
         tabbedPane.addTab(Language.INSTANCE.localize("common.backup"), null, backupPanel);
         tabbedPane.addTab(Language.INSTANCE.localize("common.restore"), null, restorePanel);
         tabbedPane.addTab(Language.INSTANCE.localize("tabs.settings"), null, settingsPanel);
-        tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                // Update the backup/restore lists
-                List<String> list = selectedSync.getBackupsForInstance(instance);
-                if (list == null) {
-                    backupList.setListData(new String[0]);
-                } else {
-                    backupList.setListData(list.toArray(new String[list.size()]));
-                }
-                list = new ArrayList<>();
+        tabbedPane.addChangeListener(e -> {
+            // Update the backup/restore lists
+            List<String> list = selectedSync.getBackupsForInstance(instance);
+            if (list == null) {
+                backupList.setListData(new String[0]);
+            } else {
+                backupList.setListData(list.toArray(new String[list.size()]));
+            }
+            list = new ArrayList<>();
+            if (instance.getSavesDirectory().exists()) {
                 if (instance.getSavesDirectory().exists()) {
-                    if (instance.getSavesDirectory().exists()) {
-                        File[] files = instance.getSavesDirectory().listFiles();
-                        if (files != null) {
-                            for (File file : files) {
-                                if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
-                                    list.add(file.getName());
-                                }
+                    File[] files = instance.getSavesDirectory().listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
+                                list.add(file.getName());
                             }
                         }
                     }
                 }
-                if (list.size() == 0) {
-                    worldList.setListData(new String[0]);
-                } else {
-                    worldList.setListData(list.toArray(new String[list.size()]));
-                }
+            }
+            if (list.size() == 0) {
+                worldList.setListData(new String[0]);
+            } else {
+                worldList.setListData(list.toArray(new String[list.size()]));
             }
         });
 
@@ -342,12 +339,7 @@ public class BackupDialog extends JDialog implements ActionListener {
             };
             autoBackup.setToolTipText(Language.INSTANCE.localize("backup.label.autobackup.tooltip"));
             autoBackup.setSelected(App.settings.getAutoBackup());
-            autoBackup.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    App.settings.setAutoBackup(e.getStateChange() == ItemEvent.SELECTED);
-                }
-            });
+            autoBackup.addItemListener(e -> App.settings.setAutoBackup(e.getStateChange() == ItemEvent.SELECTED));
             panel.add(autoBackup, getGBCForField());
 
             JLabel notifyLabel = new JLabel(Language.INSTANCE.localize("backup.label.notify") + ":") {
@@ -372,12 +364,7 @@ public class BackupDialog extends JDialog implements ActionListener {
             };
             notify.setToolTipText(Language.INSTANCE.localize("backup.label.notify.tooltip"));
             notify.setSelected(App.settings.getNotifyBackup());
-            notify.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    App.settings.setNotifyBackup(e.getStateChange() == ItemEvent.SELECTED);
-                }
-            });
+            notify.addItemListener(e -> App.settings.setNotifyBackup(e.getStateChange() == ItemEvent.SELECTED));
             panel.add(notify, getGBCForField());
         }
 

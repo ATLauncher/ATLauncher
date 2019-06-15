@@ -91,12 +91,10 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         contextMenu = new JPopupMenu();
 
         copy = new JMenuItem("Copy");
-        copy.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                StringSelection text = new StringSelection(console.getSelectedText());
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(text, null);
-            }
+        copy.addActionListener(e -> {
+            StringSelection text = new StringSelection(console.getSelectedText());
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(text, null);
         });
         contextMenu.add(copy);
 

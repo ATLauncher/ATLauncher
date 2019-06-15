@@ -30,7 +30,7 @@ import com.atlauncher.data.mojang.OperatingSystem;
  */
 public class ATLauncherAPIUtils {
     public static void postSystemInfo() {
-        Map<String, Object> request = new HashMap<String, Object>();
+        Map<String, Object> request = new HashMap<>();
 
         request.put("launcher_version", Constants.VERSION.toString());
         request.put("os_name", OperatingSystem.getOS().getName());

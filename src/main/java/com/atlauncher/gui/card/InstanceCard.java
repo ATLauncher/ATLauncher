@@ -156,267 +156,210 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             for (ActionListener al : playButton.getActionListeners()) {
                 playButton.removeActionListener(al);
             }
-            playButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
-                            .setContent(Language.INSTANCE.localize("instance.corruptplay")).setType(DialogManager.ERROR)
-                            .show();
-                }
-            });
+            playButton.addActionListener(e -> DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
+                    .setContent(Language.INSTANCE.localize("instance.corruptplay")).setType(DialogManager.ERROR)
+                    .show());
             for (ActionListener al : backupButton.getActionListeners()) {
                 backupButton.removeActionListener(al);
             }
-            backupButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
-                            .setContent(Language.INSTANCE.localize("instance.corruptbackup"))
-                            .setType(DialogManager.ERROR).show();
-                }
-            });
+            backupButton.addActionListener(e -> DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
+                    .setContent(Language.INSTANCE.localize("instance.corruptbackup"))
+                    .setType(DialogManager.ERROR).show());
             for (ActionListener al : cloneButton.getActionListeners()) {
                 cloneButton.removeActionListener(al);
             }
-            cloneButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
-                            .setContent(Language.INSTANCE.localize("instance.corruptclone"))
-                            .setType(DialogManager.ERROR).show();
-                }
-            });
+            cloneButton.addActionListener(e -> DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
+                    .setContent(Language.INSTANCE.localize("instance.corruptclone"))
+                    .setType(DialogManager.ERROR).show());
         }
     }
 
     private void addActionListeners() {
-        this.playButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!App.settings.ignoreJavaOnInstanceLaunch() && instance.getJava() != null
-                        && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
-                        && !instance.getJava().conforms()) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.incorrectjavatitle"))
-                            .setContent(HTMLUtils.centerParagraph(
-                                    Language.INSTANCE.localizeWithReplace("instance.incorrectjava", "<br/><br/>")
-                                            + instance.getJava().getVersionString()))
-                            .setType(DialogManager.ERROR).show();
-                    return;
-                }
+        this.playButton.addActionListener(e -> {
+            if (!App.settings.ignoreJavaOnInstanceLaunch() && instance.getJava() != null
+                    && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
+                    && !instance.getJava().conforms()) {
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.incorrectjavatitle"))
+                        .setContent(HTMLUtils.centerParagraph(
+                                Language.INSTANCE.localizeWithReplace("instance.incorrectjava", "<br/><br/>")
+                                        + instance.getJava().getVersionString()))
+                        .setType(DialogManager.ERROR).show();
+                return;
+            }
 
-                if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(
-                        (instance.isDev() ? instance.getLatestDevHash() : instance.getLatestVersion()))) {
-                    String[] options = { Language.INSTANCE.localize("common.yes"),
-                            Language.INSTANCE.localize("common" + ".no"),
-                            Language.INSTANCE.localize("instance.dontremindmeagain") };
-                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                            HTMLUtils.centerParagraph(
-                                    Language.INSTANCE.localizeWithReplace("instance.updatenow", "<br/><br/>")),
-                            Language.INSTANCE.localize("instance.updateavailable"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                    if (ret == 0) {
-                        if (App.settings.getAccount() == null) {
-                            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                                    .setContent(Language.INSTANCE.localize("instance.cantupdate"))
-                                    .setType(DialogManager.ERROR).show();
-                        } else {
-                            new InstanceInstallerDialog(instance, true, false, null, null, true);
-                        }
-                    } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION || ret == 2) {
-                        if (ret == 2) {
-                            instance.ignoreUpdate();
-                        }
-
-                        if (!App.settings.isMinecraftLaunched()) {
-                            if (instance.launch()) {
-                                App.settings.setMinecraftLaunched(true);
-                            }
-                        }
+            if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(
+                    (instance.isDev() ? instance.getLatestDevHash() : instance.getLatestVersion()))) {
+                String[] options = { Language.INSTANCE.localize("common.yes"),
+                        Language.INSTANCE.localize("common" + ".no"),
+                        Language.INSTANCE.localize("instance.dontremindmeagain") };
+                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                        HTMLUtils.centerParagraph(
+                                Language.INSTANCE.localizeWithReplace("instance.updatenow", "<br/><br/>")),
+                        Language.INSTANCE.localize("instance.updateavailable"), JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                if (ret == 0) {
+                    if (App.settings.getAccount() == null) {
+                        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                                .setContent(Language.INSTANCE.localize("instance.cantupdate"))
+                                .setType(DialogManager.ERROR).show();
+                    } else {
+                        new InstanceInstallerDialog(instance, true, false, null, null, true);
                     }
-                } else {
+                } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION || ret == 2) {
+                    if (ret == 2) {
+                        instance.ignoreUpdate();
+                    }
+
                     if (!App.settings.isMinecraftLaunched()) {
                         if (instance.launch()) {
                             App.settings.setMinecraftLaunched(true);
                         }
                     }
                 }
-            }
-        });
-        this.reinstallButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (App.settings.getAccount() == null) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                            .setContent(Language.INSTANCE.localize("instance.cantreinstall"))
-                            .setType(DialogManager.ERROR).show();
-                } else {
-                    new InstanceInstallerDialog(instance);
-                }
-            }
-        });
-        this.updateButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (App.settings.getAccount() == null) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                            .setContent(Language.INSTANCE.localize("instance.cantupdate")).setType(DialogManager.ERROR)
-                            .show();
-                } else {
-                    new InstanceInstallerDialog(instance, true, false, null, null, true);
-                }
-            }
-        });
-        this.renameButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new RenameInstanceDialog(instance);
-            }
-        });
-        this.backupButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (App.settings.isAdvancedBackupsEnabled()) {
-                    new BackupDialog(instance).setVisible(true);
-                } else {
-                    if (instance.getSavesDirectory().exists()) {
-                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                                HTMLUtils.centerParagraph(
-                                        Language.INSTANCE.localizeWithReplace("backup.sure", "<br/><br/>")),
-                                Language.INSTANCE.localize("backup.backingup", instance.getName()),
-                                JOptionPane.YES_NO_OPTION);
-                        if (ret == JOptionPane.YES_OPTION) {
-                            final JDialog dialog = new JDialog(App.settings.getParent(),
-                                    Language.INSTANCE.localizeWithReplace("backup.backingup", instance.getName()),
-                                    ModalityType.APPLICATION_MODAL);
-                            dialog.setSize(300, 100);
-                            dialog.setLocationRelativeTo(App.settings.getParent());
-                            dialog.setResizable(false);
-
-                            JPanel topPanel = new JPanel();
-                            topPanel.setLayout(new BorderLayout());
-                            JLabel doing = new JLabel(
-                                    Language.INSTANCE.localizeWithReplace("backup.backingup", instance.getName()));
-                            doing.setHorizontalAlignment(JLabel.CENTER);
-                            doing.setVerticalAlignment(JLabel.TOP);
-                            topPanel.add(doing);
-
-                            JPanel bottomPanel = new JPanel();
-                            bottomPanel.setLayout(new BorderLayout());
-                            JProgressBar progressBar = new JProgressBar();
-                            bottomPanel.add(progressBar, BorderLayout.NORTH);
-                            progressBar.setIndeterminate(true);
-
-                            dialog.add(topPanel, BorderLayout.CENTER);
-                            dialog.add(bottomPanel, BorderLayout.SOUTH);
-
-                            final Thread backupThread = new Thread() {
-                                public void run() {
-                                    Timestamp timestamp = new Timestamp(new Date().getTime());
-                                    String time = timestamp.toString().replaceAll("[^0-9]", "_");
-                                    String filename = instance.getSafeName() + "-"
-                                            + time.substring(0, time.lastIndexOf("_")) + ".zip";
-                                    Utils.zip(instance.getSavesDirectory(),
-                                            new File(App.settings.getBackupsDir(), filename));
-                                    dialog.dispose();
-                                    App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("backup.backupcomplete",
-                                            " " + "" + filename));
-                                }
-                            };
-                            backupThread.start();
-                            dialog.addWindowListener(new WindowAdapter() {
-                                public void windowClosing(WindowEvent e) {
-                                    backupThread.interrupt();
-                                    dialog.dispose();
-                                }
-                            });
-                            dialog.setVisible(true);
-                        }
-                    } else {
-                        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("backup.nosavestitle"))
-                                .setContent(Language.INSTANCE.localize("backup.nosaves")).setType(DialogManager.ERROR)
-                                .show();
+            } else {
+                if (!App.settings.isMinecraftLaunched()) {
+                    if (instance.launch()) {
+                        App.settings.setMinecraftLaunched(true);
                     }
                 }
             }
         });
-        this.editButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new EditModsDialog(instance);
+        this.reinstallButton.addActionListener(e -> {
+            if (App.settings.getAccount() == null) {
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                        .setContent(Language.INSTANCE.localize("instance.cantreinstall"))
+                        .setType(DialogManager.ERROR).show();
+            } else {
+                new InstanceInstallerDialog(instance);
             }
         });
-        this.openButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                OS.openFileExplorer(instance.getRootDirectory().toPath());
+        this.updateButton.addActionListener(e -> {
+            if (App.settings.getAccount() == null) {
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                        .setContent(Language.INSTANCE.localize("instance.cantupdate")).setType(DialogManager.ERROR)
+                        .show();
+            } else {
+                new InstanceInstallerDialog(instance, true, false, null, null, true);
             }
         });
-        this.settingsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new InstanceSettingsDialog(instance);
-            }
-        });
-        this.cloneButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
-                        Language.INSTANCE.localize("instance.cloneenter"),
-                        Language.INSTANCE.localize("instance.clonetitle"), JOptionPane.INFORMATION_MESSAGE);
-                if (clonedName != null && clonedName.length() >= 1 && App.settings.getInstanceByName(clonedName) == null
-                        && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
-                        && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
+        this.renameButton.addActionListener(e -> new RenameInstanceDialog(instance));
+        this.backupButton.addActionListener(e -> {
+            if (App.settings.isAdvancedBackupsEnabled()) {
+                new BackupDialog(instance).setVisible(true);
+            } else {
+                if (instance.getSavesDirectory().exists()) {
+                    int ret = JOptionPane.showConfirmDialog(App.settings.getParent(),
+                            HTMLUtils.centerParagraph(
+                                    Language.INSTANCE.localizeWithReplace("backup.sure", "<br/><br/>")),
+                            Language.INSTANCE.localize("backup.backingup", instance.getName()),
+                            JOptionPane.YES_NO_OPTION);
+                    if (ret == JOptionPane.YES_OPTION) {
+                        final JDialog dialog = new JDialog(App.settings.getParent(),
+                                Language.INSTANCE.localizeWithReplace("backup.backingup", instance.getName()),
+                                ModalityType.APPLICATION_MODAL);
+                        dialog.setSize(300, 100);
+                        dialog.setLocationRelativeTo(App.settings.getParent());
+                        dialog.setResizable(false);
 
-                    final String newName = clonedName;
-                    final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("instance.clonetitle"),
-                            0, Language.INSTANCE.localize("instance.cloninginstance"), null);
-                    dialog.addThread(new Thread() {
-                        @Override
-                        public void run() {
-                            App.settings.cloneInstance(instance, newName);
-                            dialog.close();
-                            App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("instance.clonedsuccessfully",
-                                    instance.getName()));
-                        }
-                    });
-                    dialog.start();
-                } else if (clonedName == null || clonedName.equals("")) {
-                    LogManager.error("Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
-                    JOptionPane.showMessageDialog(App.settings.getParent(),
-                            HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorclone",
-                                    instance.getName() + "<br/><br/>")),
-                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
-                } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                    LogManager.error("Error Occured While Cloning Instance! Invalid Name!");
-                    JOptionPane.showMessageDialog(App.settings.getParent(),
-                            HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorclone",
-                                    instance.getName() + "<br/><br/>")),
-                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                        JPanel topPanel = new JPanel();
+                        topPanel.setLayout(new BorderLayout());
+                        JLabel doing = new JLabel(
+                                Language.INSTANCE.localizeWithReplace("backup.backingup", instance.getName()));
+                        doing.setHorizontalAlignment(JLabel.CENTER);
+                        doing.setVerticalAlignment(JLabel.TOP);
+                        topPanel.add(doing);
+
+                        JPanel bottomPanel = new JPanel();
+                        bottomPanel.setLayout(new BorderLayout());
+                        JProgressBar progressBar = new JProgressBar();
+                        bottomPanel.add(progressBar, BorderLayout.NORTH);
+                        progressBar.setIndeterminate(true);
+
+                        dialog.add(topPanel, BorderLayout.CENTER);
+                        dialog.add(bottomPanel, BorderLayout.SOUTH);
+
+                        final Thread backupThread = new Thread(() -> {
+                            Timestamp timestamp = new Timestamp(new Date().getTime());
+                            String time = timestamp.toString().replaceAll("[^0-9]", "_");
+                            String filename = instance.getSafeName() + "-"
+                                    + time.substring(0, time.lastIndexOf("_")) + ".zip";
+                            Utils.zip(instance.getSavesDirectory(),
+                                    new File(App.settings.getBackupsDir(), filename));
+                            dialog.dispose();
+                            App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("backup.backupcomplete",
+                                    " " + "" + filename));
+                        });
+                        backupThread.start();
+                        dialog.addWindowListener(new WindowAdapter() {
+                            public void windowClosing(WindowEvent e) {
+                                backupThread.interrupt();
+                                dialog.dispose();
+                            }
+                        });
+                        dialog.setVisible(true);
+                    }
                 } else {
-                    LogManager.error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
-                    JOptionPane.showMessageDialog(App.settings.getParent(),
-                            HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorclone",
-                                    instance.getName() + "<br/><br/>")),
-                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("backup.nosavestitle"))
+                            .setContent(Language.INSTANCE.localize("backup.nosaves")).setType(DialogManager.ERROR)
+                            .show();
                 }
             }
         });
-        this.deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                        Language.INSTANCE.localize("instance.deletesure"),
-                        Language.INSTANCE.localize("instance.deleteinstance"), JOptionPane.YES_NO_OPTION);
-                if (response == JOptionPane.YES_OPTION) {
-                    final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("instance.deletetitle"),
-                            0, Language.INSTANCE.localize("instance.deletinginstance"), null);
-                    dialog.addThread(new Thread() {
-                        @Override
-                        public void run() {
-                            App.settings.removeInstance(instance);
-                            dialog.close();
-                            App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("instance.deletedsuccessfully",
-                                    instance.getName()));
-                        }
-                    });
-                    dialog.start();
-                }
+        this.editButton.addActionListener(e -> new EditModsDialog(instance));
+        this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRootDirectory().toPath()));
+        this.settingsButton.addActionListener(e -> new InstanceSettingsDialog(instance));
+        this.cloneButton.addActionListener(e -> {
+            String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
+                    Language.INSTANCE.localize("instance.cloneenter"),
+                    Language.INSTANCE.localize("instance.clonetitle"), JOptionPane.INFORMATION_MESSAGE);
+            if (clonedName != null && clonedName.length() >= 1 && App.settings.getInstanceByName(clonedName) == null
+                    && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
+                    && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
+
+                final String newName = clonedName;
+                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("instance.clonetitle"),
+                        0, Language.INSTANCE.localize("instance.cloninginstance"), null);
+                dialog.addThread(new Thread(() -> {
+                    App.settings.cloneInstance(instance, newName);
+                    dialog.close();
+                    App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("instance.clonedsuccessfully",
+                            instance.getName()));
+                }));
+                dialog.start();
+            } else if (clonedName == null || clonedName.equals("")) {
+                LogManager.error("Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
+                JOptionPane.showMessageDialog(App.settings.getParent(),
+                        HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorclone",
+                                instance.getName() + "<br/><br/>")),
+                        Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+            } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+                LogManager.error("Error Occured While Cloning Instance! Invalid Name!");
+                JOptionPane.showMessageDialog(App.settings.getParent(),
+                        HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorclone",
+                                instance.getName() + "<br/><br/>")),
+                        Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+            } else {
+                LogManager.error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
+                JOptionPane.showMessageDialog(App.settings.getParent(),
+                        HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorclone",
+                                instance.getName() + "<br/><br/>")),
+                        Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        this.deleteButton.addActionListener(e -> {
+            int response = JOptionPane.showConfirmDialog(App.settings.getParent(),
+                    Language.INSTANCE.localize("instance.deletesure"),
+                    Language.INSTANCE.localize("instance.deleteinstance"), JOptionPane.YES_NO_OPTION);
+            if (response == JOptionPane.YES_OPTION) {
+                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("instance.deletetitle"),
+                        0, Language.INSTANCE.localize("instance.deletinginstance"), null);
+                dialog.addThread(new Thread(() -> {
+                    App.settings.removeInstance(instance);
+                    dialog.close();
+                    App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("instance.deletedsuccessfully",
+                            instance.getName()));
+                }));
+                dialog.start();
             }
         });
     }
@@ -483,96 +426,87 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
                     rightClickMenu.show(image, e.getX(), e.getY());
 
-                    changeImageItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            JFileChooser chooser = new JFileChooser();
-                            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                            chooser.setAcceptAllFileFilterUsed(false);
-                            chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
-                            int ret = chooser.showOpenDialog(App.settings.getParent());
-                            if (ret == JFileChooser.APPROVE_OPTION) {
-                                File img = chooser.getSelectedFile();
-                                if (img.getAbsolutePath().endsWith(".png")) {
-                                    try {
-                                        Utils.safeCopy(img, new File(instance.getRootDirectory(), "instance.png"));
-                                        image.setImage(instance.getImage().getImage());
-                                        instance.save();
-                                    } catch (IOException ex) {
-                                        LogManager.logStackTrace("Failed to set instance image", ex);
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    updateItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())) {
-                                String[] options = { Language.INSTANCE.localize("common.yes"),
-                                        Language.INSTANCE.localize("common.no"),
-                                        Language.INSTANCE.localize("instance.dontremindmeagain") };
-                                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                                        HTMLUtils.centerParagraph(
-                                                Language.INSTANCE.localize("instance.updatenow", "<br/><br/>")),
-                                        Language.INSTANCE.localize("instance" + ".updateavailable"),
-                                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
-                                        options[0]);
-                                if (ret == 0) {
-                                    if (App.settings.getAccount() == null) {
-                                        DialogManager.okDialog()
-                                                .setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                                                .setContent(Language.INSTANCE.localize("instance.cantupdate"))
-                                                .setType(DialogManager.ERROR).show();
-                                    } else {
-                                        new InstanceInstallerDialog(instance, true, false, null, null, true);
-                                    }
-                                } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
-                                    if (!App.settings.isMinecraftLaunched()) {
-                                        if (instance.launch()) {
-                                            App.settings.setMinecraftLaunched(true);
-                                        }
-                                    }
-                                } else if (ret == 2) {
-                                    instance.ignoreUpdate();
-                                    if (!App.settings.isMinecraftLaunched()) {
-                                        if (instance.launch()) {
-                                            App.settings.setMinecraftLaunched(true);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    shareCodeItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (!instance.getInstalledOptionalModNames().isEmpty()) {
+                    changeImageItem.addActionListener(e13 -> {
+                        JFileChooser chooser = new JFileChooser();
+                        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                        chooser.setAcceptAllFileFilterUsed(false);
+                        chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
+                        int ret = chooser.showOpenDialog(App.settings.getParent());
+                        if (ret == JFileChooser.APPROVE_OPTION) {
+                            File img = chooser.getSelectedFile();
+                            if (img.getAbsolutePath().endsWith(".png")) {
                                 try {
-                                    APIResponse response = Gsons.DEFAULT
-                                            .fromJson(Utils.sendAPICall(
-                                                    "pack/" + instance.getRealPack().getSafeName() + "/"
-                                                            + instance.getVersion() + "/share-code",
-                                                    instance.getShareCodeData()), APIResponse.class);
-
-                                    if (response.wasError()) {
-                                        App.TOASTER.pop(Language.INSTANCE.localize("instance.nooptionalmods"));
-                                    } else {
-                                        StringSelection text = new StringSelection(response.getDataAsString());
-                                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                                        clipboard.setContents(text, null);
-
-                                        App.TOASTER.pop(Language.INSTANCE.localize("instance.sharecodecopied"));
-                                        LogManager.info("Share code copied to clipboard");
-                                    }
+                                    Utils.safeCopy(img, new File(instance.getRootDirectory(), "instance.png"));
+                                    image.setImage(instance.getImage().getImage());
+                                    instance.save();
                                 } catch (IOException ex) {
-                                    LogManager.logStackTrace("API call failed", ex);
+                                    LogManager.logStackTrace("Failed to set instance image", ex);
                                 }
-                            } else {
-                                App.TOASTER.pop(Language.INSTANCE.localize("instance.nooptionalmods"));
                             }
+                        }
+                    });
+
+                    updateItem.addActionListener(e12 -> {
+                        if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())) {
+                            String[] options = { Language.INSTANCE.localize("common.yes"),
+                                    Language.INSTANCE.localize("common.no"),
+                                    Language.INSTANCE.localize("instance.dontremindmeagain") };
+                            int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
+                                    HTMLUtils.centerParagraph(
+                                            Language.INSTANCE.localize("instance.updatenow", "<br/><br/>")),
+                                    Language.INSTANCE.localize("instance" + ".updateavailable"),
+                                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options,
+                                    options[0]);
+                            if (ret == 0) {
+                                if (App.settings.getAccount() == null) {
+                                    DialogManager.okDialog()
+                                            .setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                                            .setContent(Language.INSTANCE.localize("instance.cantupdate"))
+                                            .setType(DialogManager.ERROR).show();
+                                } else {
+                                    new InstanceInstallerDialog(instance, true, false, null, null, true);
+                                }
+                            } else if (ret == 1 || ret == JOptionPane.CLOSED_OPTION) {
+                                if (!App.settings.isMinecraftLaunched()) {
+                                    if (instance.launch()) {
+                                        App.settings.setMinecraftLaunched(true);
+                                    }
+                                }
+                            } else if (ret == 2) {
+                                instance.ignoreUpdate();
+                                if (!App.settings.isMinecraftLaunched()) {
+                                    if (instance.launch()) {
+                                        App.settings.setMinecraftLaunched(true);
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    shareCodeItem.addActionListener(e1 -> {
+                        if (!instance.getInstalledOptionalModNames().isEmpty()) {
+                            try {
+                                APIResponse response = Gsons.DEFAULT
+                                        .fromJson(Utils.sendAPICall(
+                                                "pack/" + instance.getRealPack().getSafeName() + "/"
+                                                        + instance.getVersion() + "/share-code",
+                                                instance.getShareCodeData()), APIResponse.class);
+
+                                if (response.wasError()) {
+                                    App.TOASTER.pop(Language.INSTANCE.localize("instance.nooptionalmods"));
+                                } else {
+                                    StringSelection text = new StringSelection(response.getDataAsString());
+                                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                                    clipboard.setContents(text, null);
+
+                                    App.TOASTER.pop(Language.INSTANCE.localize("instance.sharecodecopied"));
+                                    LogManager.info("Share code copied to clipboard");
+                                }
+                            } catch (IOException ex) {
+                                LogManager.logStackTrace("API call failed", ex);
+                            }
+                        } else {
+                            App.TOASTER.pop(Language.INSTANCE.localize("instance.nooptionalmods"));
                         }
                     });
                 }

@@ -36,12 +36,9 @@ public final class SettingsManager {
     }
 
     public static synchronized void post() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                for (SettingsListener listener : listeners) {
-                    listener.onSettingsSaved();
-                }
+        SwingUtilities.invokeLater(() -> {
+            for (SettingsListener listener : listeners) {
+                listener.onSettingsSaved();
             }
         });
     }

@@ -36,12 +36,9 @@ public final class TabChangeManager {
     }
 
     public static synchronized void post() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                for (TabChangeListener listener : listeners) {
-                    listener.on();
-                }
+        SwingUtilities.invokeLater(() -> {
+            for (TabChangeListener listener : listeners) {
+                listener.on();
             }
         });
     }

@@ -36,12 +36,9 @@ public final class RelocalizationManager {
     }
 
     public static synchronized void post() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                for (RelocalizationListener listener : listeners) {
-                    listener.onRelocalization();
-                }
+        SwingUtilities.invokeLater(() -> {
+            for (RelocalizationListener listener : listeners) {
+                listener.onRelocalization();
             }
         });
     }

@@ -48,14 +48,11 @@ public final class LoggingThread extends Thread {
         try {
             this.writer = new LogEventWriter(new FileWriter(log));
             this.writer.write("Generated on " + Timestamper.now() + "\n");
-            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        writer.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }));
         } catch (IOException e) {

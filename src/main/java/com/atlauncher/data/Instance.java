@@ -1423,12 +1423,10 @@ public class Instance implements Cloneable {
             LogManager.info("Logging into Minecraft!");
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
                     Language.INSTANCE.localize("account.loggingin"), "Aborted login to Minecraft!");
-            dialog.addThread(new Thread() {
-                public void run() {
-                    dialog.setReturnValue(account.login());
-                    dialog.close();
-                }
-            });
+            dialog.addThread(new Thread(() -> {
+                dialog.setReturnValue(account.login());
+                dialog.close();
+            }));
             dialog.start();
 
             final LoginResponse session = (LoginResponse) dialog.getReturnValue();
@@ -1437,156 +1435,148 @@ public class Instance implements Cloneable {
                 return false;
             }
 
-            Thread launcher = new Thread() {
-                public void run() {
+            Thread launcher = new Thread(() -> {
+                try {
+                    long start = System.currentTimeMillis();
+                    if (App.settings.getParent() != null) {
+                        App.settings.getParent().setVisible(false);
+                    }
+                    // Create a note of worlds for auto backup if enabled
+                    HashMap<String, Long> preWorldList = new HashMap<>();
+                    if (App.settings.isAdvancedBackupsEnabled() && App.settings.getAutoBackup()) {
+                        if (getSavesDirectory().exists()) {
+                            File[] files = getSavesDirectory().listFiles();
+                            if (files != null) {
+                                for (File file : files) {
+                                    if (file.isDirectory()) {
+                                        preWorldList.put(file.getName(), file.lastModified());
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    LogManager.info("Launching pack " + getPackName() + " " + getVersion() + " for " + "Minecraft "
+                            + getMinecraftVersion());
+
+                    Process process = MCLauncher.launch(account, Instance.this, session);
+
+                    if (!App.settings.keepLauncherOpen() && !App.settings.enableLogs()) {
+                        System.exit(0);
+                    }
+
+                    App.settings.showKillMinecraft(process);
+                    InputStream is = process.getInputStream();
+                    InputStreamReader isr = new InputStreamReader(is);
+                    BufferedReader br = new BufferedReader(isr);
+                    String line;
+                    int detectedError = 0;
+
+                    while ((line = br.readLine()) != null) {
+                        if (line.contains("java.lang.OutOfMemoryError")) {
+                            detectedError = MinecraftError.OUT_OF_MEMORY;
+                        }
+
+                        if (line.contains("java.util.ConcurrentModificationException")
+                                && Utils.matchVersion(Instance.this.getMinecraftVersion(), "1.6", true, true)) {
+                            detectedError = MinecraftError.CONCURRENT_MODIFICATION_ERROR_1_6;
+                        }
+
+                        if (!LogManager.showDebug) {
+                            line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
+                            line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
+                            if (account.hasAccessToken()) {
+                                line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
+                            }
+                            if (account.hasUUID()) {
+                                line = line.replace(account.getUUID(), "**UUID**");
+                            }
+                        }
+                        LogManager.minecraft(line);
+                    }
+                    App.settings.hideKillMinecraft();
+                    if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
+                        App.settings.getParent().setVisible(true);
+                    }
+                    long end = System.currentTimeMillis();
+                    if (App.settings.isInOfflineMode() && !App.forceOfflineMode) {
+                        App.settings.checkOnlineStatus();
+                    }
+                    int exitValue = 0; // Assume we exited fine
                     try {
-                        long start = System.currentTimeMillis();
-                        if (App.settings.getParent() != null) {
-                            App.settings.getParent().setVisible(false);
+                        exitValue = process.exitValue(); // Try to get the real exit value
+                    } catch (IllegalThreadStateException e) {
+                        process.destroy(); // Kill the process
+                    }
+                    if (!App.settings.keepLauncherOpen()) {
+                        App.settings.getConsole().setVisible(false); // Hide the console to pretend we've closed
+                    }
+                    if (exitValue != 0) {
+                        // Submit any pending crash reports from Open Eye if need to since we
+                        // exited abnormally
+                        if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
+                            App.TASKPOOL.submit(this::sendOpenEyePendingReports);
                         }
-                        // Create a note of worlds for auto backup if enabled
-                        HashMap<String, Long> preWorldList = new HashMap<>();
-                        if (App.settings.isAdvancedBackupsEnabled() && App.settings.getAutoBackup()) {
-                            if (getSavesDirectory().exists()) {
-                                File[] files = getSavesDirectory().listFiles();
-                                if (files != null) {
-                                    for (File file : files) {
-                                        if (file.isDirectory()) {
-                                            preWorldList.put(file.getName(), file.lastModified());
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        LogManager.info("Launching pack " + getPackName() + " " + getVersion() + " for " + "Minecraft "
-                                + getMinecraftVersion());
-
-                        Process process = MCLauncher.launch(account, Instance.this, session);
-
-                        if (!App.settings.keepLauncherOpen() && !App.settings.enableLogs()) {
-                            System.exit(0);
-                        }
-
-                        App.settings.showKillMinecraft(process);
-                        InputStream is = process.getInputStream();
-                        InputStreamReader isr = new InputStreamReader(is);
-                        BufferedReader br = new BufferedReader(isr);
-                        String line;
-                        int detectedError = 0;
-
-                        while ((line = br.readLine()) != null) {
-                            if (line.contains("java.lang.OutOfMemoryError")) {
-                                detectedError = MinecraftError.OUT_OF_MEMORY;
-                            }
-
-                            if (line.contains("java.util.ConcurrentModificationException")
-                                    && Utils.matchVersion(Instance.this.getMinecraftVersion(), "1.6", true, true)) {
-                                detectedError = MinecraftError.CONCURRENT_MODIFICATION_ERROR_1_6;
-                            }
-
-                            if (!LogManager.showDebug) {
-                                line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
-                                line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
-                                if (account.hasAccessToken()) {
-                                    line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
-                                }
-                                if (account.hasUUID()) {
-                                    line = line.replace(account.getUUID(), "**UUID**");
-                                }
-                            }
-                            LogManager.minecraft(line);
-                        }
-                        App.settings.hideKillMinecraft();
-                        if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
-                            App.settings.getParent().setVisible(true);
-                        }
-                        long end = System.currentTimeMillis();
-                        if (App.settings.isInOfflineMode() && !App.forceOfflineMode) {
-                            App.settings.checkOnlineStatus();
-                        }
-                        int exitValue = 0; // Assume we exited fine
-                        try {
-                            exitValue = process.exitValue(); // Try to get the real exit value
-                        } catch (IllegalThreadStateException e) {
-                            process.destroy(); // Kill the process
-                        }
-                        if (!App.settings.keepLauncherOpen()) {
-                            App.settings.getConsole().setVisible(false); // Hide the console to pretend we've closed
-                        }
-                        if (exitValue != 0) {
-                            // Submit any pending crash reports from Open Eye if need to since we
-                            // exited abnormally
-                            if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
-                                App.TASKPOOL.submit(new Runnable() {
-                                    public void run() {
-                                        sendOpenEyePendingReports();
-                                    }
-                                });
-                            }
-                        } else if (App.settings.isAdvancedBackupsEnabled() && App.settings.getAutoBackup()) {
-                            // Begin backup
-                            if (getSavesDirectory().exists()) {
-                                File[] files = getSavesDirectory().listFiles();
-                                if (files != null) {
-                                    for (File file : files) {
-                                        if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
-                                            if (preWorldList.containsKey(file.getName())) {
-                                                // Only backup if file changed
-                                                if (!(preWorldList.get(file.getName()) == file.lastModified())) {
-                                                    SyncAbstract sync = SyncAbstract.syncList
-                                                            .get(App.settings.getLastSelectedSync());
-                                                    sync.backupWorld(
-                                                            file.getName() + String.valueOf(file.lastModified()), file,
-                                                            Instance.this);
-                                                }
-                                            }
-                                            // Or backup if a new file is found
-                                            else {
+                    } else if (App.settings.isAdvancedBackupsEnabled() && App.settings.getAutoBackup()) {
+                        // Begin backup
+                        if (getSavesDirectory().exists()) {
+                            File[] files = getSavesDirectory().listFiles();
+                            if (files != null) {
+                                for (File file : files) {
+                                    if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
+                                        if (preWorldList.containsKey(file.getName())) {
+                                            // Only backup if file changed
+                                            if (!(preWorldList.get(file.getName()) == file.lastModified())) {
                                                 SyncAbstract sync = SyncAbstract.syncList
                                                         .get(App.settings.getLastSelectedSync());
                                                 sync.backupWorld(
-                                                        file.getName()
-                                                                + String.valueOf(file.lastModified()).replace(":", ""),
-                                                        file, Instance.this);
+                                                        file.getName() + String.valueOf(file.lastModified()), file,
+                                                        Instance.this);
                                             }
+                                        }
+                                        // Or backup if a new file is found
+                                        else {
+                                            SyncAbstract sync = SyncAbstract.syncList
+                                                    .get(App.settings.getLastSelectedSync());
+                                            sync.backupWorld(
+                                                    file.getName()
+                                                            + String.valueOf(file.lastModified()).replace(":", ""),
+                                                    file, Instance.this);
                                         }
                                     }
                                 }
                             }
                         }
-
-                        if (detectedError != 0) {
-                            MinecraftError.showInformationPopup(detectedError);
-                        }
-
-                        App.settings.setMinecraftLaunched(false);
-                        if (!App.settings.isInOfflineMode()) {
-                            if (isLeaderboardsEnabled() && isLoggingEnabled() && !isDev()
-                                    && App.settings.enableLogs()) {
-                                final int timePlayed = (int) (end - start) / 1000;
-                                if (timePlayed > 0) {
-                                    App.TASKPOOL.submit(new Runnable() {
-                                        public void run() {
-                                            addTimePlayed(timePlayed, (isDev ? "dev" : getVersion()));
-                                        }
-                                    });
-                                }
-                            }
-                            if (App.settings.keepLauncherOpen() && App.settings.hasUpdatedFiles())
-
-                            {
-                                App.settings.reloadLauncherData();
-                            }
-                        }
-                        if (!App.settings.keepLauncherOpen()) {
-                            System.exit(0);
-                        }
-                    } catch (IOException e1) {
-                        LogManager.logStackTrace(e1);
                     }
+
+                    if (detectedError != 0) {
+                        MinecraftError.showInformationPopup(detectedError);
+                    }
+
+                    App.settings.setMinecraftLaunched(false);
+                    if (!App.settings.isInOfflineMode()) {
+                        if (isLeaderboardsEnabled() && isLoggingEnabled() && !isDev()
+                                && App.settings.enableLogs()) {
+                            final int timePlayed = (int) (end - start) / 1000;
+                            if (timePlayed > 0) {
+                                App.TASKPOOL.submit(() -> {
+                                    addTimePlayed(timePlayed, (isDev ? "dev" : getVersion()));
+                                });
+                            }
+                        }
+                        if (App.settings.keepLauncherOpen() && App.settings.hasUpdatedFiles())
+
+                        {
+                            App.settings.reloadLauncherData();
+                        }
+                    }
+                    if (!App.settings.keepLauncherOpen()) {
+                        System.exit(0);
+                    }
+                } catch (IOException e1) {
+                    LogManager.logStackTrace(e1);
                 }
-            };
+            });
             launcher.start();
             return true;
         }

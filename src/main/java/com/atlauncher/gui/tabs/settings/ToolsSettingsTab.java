@@ -59,15 +59,11 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         if (App.settings.enableServerChecker()) {
             enableServerChecker.setSelected(true);
         }
-        enableServerChecker.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!enableServerChecker.isSelected()) {
-                    serverCheckerWait.setEnabled(false);
-                } else {
-                    serverCheckerWait.setEnabled(true);
-                }
+        enableServerChecker.addActionListener(e -> {
+            if (!enableServerChecker.isSelected()) {
+                serverCheckerWait.setEnabled(false);
+            } else {
+                serverCheckerWait.setEnabled(true);
             }
         });
         add(enableServerChecker, gbc);

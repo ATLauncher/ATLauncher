@@ -87,52 +87,37 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.setupTopPanel();
         this.preload();
 
-        TabChangeManager.addListener(new TabChangeListener() {
-            @Override
-            public void on() {
-                searchField.setText("");
-                serversBox.setSelected(false);
-                privateBox.setSelected(false);
-                searchDescBox.setSelected(false);
-            }
+        TabChangeManager.addListener(() -> {
+            searchField.setText("");
+            serversBox.setSelected(false);
+            privateBox.setSelected(false);
+            searchDescBox.setSelected(false);
         });
 
-        this.collapseAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (Component comp : contentPanel.getComponents()) {
-                    if (comp instanceof PackCard) {
-                        ((PackCard) comp).setCollapsed(true);
-                    }
+        this.collapseAllButton.addActionListener(e -> {
+            for (Component comp : contentPanel.getComponents()) {
+                if (comp instanceof PackCard) {
+                    ((PackCard) comp).setCollapsed(true);
                 }
             }
         });
-        this.expandAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (Component comp : contentPanel.getComponents()) {
-                    if (comp instanceof PackCard) {
-                        ((PackCard) comp).setCollapsed(false);
-                    }
+        this.expandAllButton.addActionListener(e -> {
+            for (Component comp : contentPanel.getComponents()) {
+                if (comp instanceof PackCard) {
+                    ((PackCard) comp).setCollapsed(false);
                 }
             }
         });
-        this.addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new AddPackDialog();
-                reload();
-            }
+        this.addButton.addActionListener(e -> {
+            new AddPackDialog();
+            reload();
         });
-        this.clearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchField.setText("");
-                searchDescBox.setSelected(false);
-                serversBox.setSelected(false);
-                privateBox.setSelected(false);
-                reload();
-            }
+        this.clearButton.addActionListener(e -> {
+            searchField.setText("");
+            searchDescBox.setSelected(false);
+            serversBox.setSelected(false);
+            privateBox.setSelected(false);
+            reload();
         });
 
         this.searchField.addKeyListener(new KeyAdapter() {
@@ -140,24 +125,9 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                 reload();
             }
         });
-        this.privateBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                reload();
-            }
-        });
-        this.serversBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                reload();
-            }
-        });
-        this.searchDescBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                reload();
-            }
-        });
+        this.privateBox.addItemListener(e -> reload());
+        this.serversBox.addItemListener(e -> reload());
+        this.searchDescBox.addItemListener(e -> reload());
     }
 
     private void setupTopPanel() {

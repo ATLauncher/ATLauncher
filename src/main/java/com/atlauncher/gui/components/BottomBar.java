@@ -58,41 +58,29 @@ public abstract class BottomBar extends JPanel {
     }
 
     private void setupSocialButtonListeners() {
-        nodeCraftIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                LogManager.info("Opening Up Nodecraft");
-                OS.openWebBrowser("https://atl.pw/nodecraft-from-launcher");
-            }
+        nodeCraftIcon.addActionListener(e -> {
+            LogManager.info("Opening Up Nodecraft");
+            OS.openWebBrowser("https://atl.pw/nodecraft-from-launcher");
         });
-        discordIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                LogManager.info("Opening Up ATLauncher Discord");
-                OS.openWebBrowser("https://atl.pw/discord");
-            }
+        discordIcon.addActionListener(e -> {
+            LogManager.info("Opening Up ATLauncher Discord");
+            OS.openWebBrowser("https://atl.pw/discord");
         });
-        facebookIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                LogManager.info("Opening Up ATLauncher Facebook Page");
-                OS.openWebBrowser("https://atl.pw/facebook");
-            }
+        facebookIcon.addActionListener(e -> {
+            LogManager.info("Opening Up ATLauncher Facebook Page");
+            OS.openWebBrowser("https://atl.pw/facebook");
         });
-        githubIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                LogManager.info("Opening Up ATLauncher GitHub Page");
-                OS.openWebBrowser("https://atl.pw/github-launcher-3");
-            }
+        githubIcon.addActionListener(e -> {
+            LogManager.info("Opening Up ATLauncher GitHub Page");
+            OS.openWebBrowser("https://atl.pw/github-launcher-3");
         });
-        redditIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                LogManager.info("Opening Up ATLauncher Reddit Page");
-                OS.openWebBrowser("https://atl.pw/reddit");
-            }
+        redditIcon.addActionListener(e -> {
+            LogManager.info("Opening Up ATLauncher Reddit Page");
+            OS.openWebBrowser("https://atl.pw/reddit");
         });
-        twitterIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                LogManager.info("Opening Up ATLauncher Twitter Page");
-                OS.openWebBrowser("https://atl.pw/twitter");
-            }
+        twitterIcon.addActionListener(e -> {
+            LogManager.info("Opening Up ATLauncher Twitter Page");
+            OS.openWebBrowser("https://atl.pw/twitter");
         });
     }
 }

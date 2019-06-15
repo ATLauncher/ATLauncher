@@ -75,12 +75,10 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         clearButton = new JButton(Language.INSTANCE.localize("common.clear"));
-        clearButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                searchBox.setText("");
-                hasUpdate.setSelected(false);
-                reload();
-            }
+        clearButton.addActionListener(e -> {
+            searchBox.setText("");
+            hasUpdate.setSelected(false);
+            reload();
         });
         topPanel.add(clearButton);
 
@@ -98,20 +96,12 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         topPanel.add(searchBox);
 
         searchButton = new JButton(Language.INSTANCE.localize("common.search"));
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                reload();
-            }
-        });
+        searchButton.addActionListener(e -> reload());
         topPanel.add(searchButton);
 
         hasUpdate = new JCheckBox();
         hasUpdate.setSelected(isUpdate);
-        hasUpdate.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                reload();
-            }
-        });
+        hasUpdate.addActionListener(e -> reload());
         topPanel.add(hasUpdate);
 
         hasUpdateLabel = new JLabel(Language.INSTANCE.localize("instance.hasupdate"));
@@ -167,11 +157,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
             panel.add(nilCard, gbc);
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                scrollPane.getVerticalScrollBar().setValue(currentPosition);
-            }
-        });
+        SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(currentPosition));
     }
 
     public void reload() {

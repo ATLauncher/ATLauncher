@@ -83,12 +83,7 @@ public final class ViewModsDialog extends JDialog {
         });
 
         List<Mod> mods = this.pack.getJsonVersion(this.pack.getLatestVersion().getVersion()).getMods();
-        Collections.sort(mods, new Comparator<Mod>() {
-            @Override
-            public int compare(Mod o1, Mod o2) {
-                return o1.getName().compareToIgnoreCase(o2.getName());
-            }
-        });
+        mods.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
         for (Mod mod : mods) {
             ModCard card = new ModCard(mod);

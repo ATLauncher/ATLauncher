@@ -294,12 +294,7 @@ public class App {
         final SplashScreen ss = new SplashScreen();
 
         // Load and show the splash screen while we load other things.
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ss.setVisible(true);
-            }
-        });
+        SwingUtilities.invokeLater(() -> ss.setVisible(true));
 
         // Load the theme and style everything.
         loadTheme();

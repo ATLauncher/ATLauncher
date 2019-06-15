@@ -479,56 +479,54 @@ public class Account implements Serializable {
                     Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin", this.minecraftUsername),
                     "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             final UUID uid = this.getRealUUID();
-            dialog.addThread(new Thread() {
-                public void run() {
-                    dialog.setReturnValue(false);
-                    String skinURL = getSkinURL();
-                    if (skinURL == null) {
-                        LogManager.warn("Couldn't download skin because the url found was NULL. Using default skin");
-                        if (!file.exists()) {
-                            String skinFilename = "default.png";
+            dialog.addThread(new Thread(() -> {
+                dialog.setReturnValue(false);
+                String skinURL = getSkinURL();
+                if (skinURL == null) {
+                    LogManager.warn("Couldn't download skin because the url found was NULL. Using default skin");
+                    if (!file.exists()) {
+                        String skinFilename = "default.png";
 
-                            // even UUID's use the alex skin
-                            if ((uid.hashCode() & 1) != 0) {
-                                skinFilename = "default_alex.png";
-                            }
-
-                            // Only copy over the default skin if there is no skin for the user
-                            Utils.copyFile(new File(App.settings.getSkinsDir(), skinFilename), file, true);
-                            dialog.setReturnValue(true);
+                        // even UUID's use the alex skin
+                        if ((uid.hashCode() & 1) != 0) {
+                            skinFilename = "default_alex.png";
                         }
-                    } else {
-                        try {
-                            HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
-                            if (conn.getResponseCode() == 200) {
-                                if (file.exists()) {
-                                    Utils.delete(file);
-                                }
-                                Downloadable skin = new Downloadable(skinURL, file, null, null, false);
-                                skin.download(false);
-                                dialog.setReturnValue(true);
-                            } else {
-                                if (!file.exists()) {
-                                    String skinFilename = "default.png";
 
-                                    // even UUID's use the alex skin
-                                    if ((uid.hashCode() & 1) != 0) {
-                                        skinFilename = "default_alex.png";
-                                    }
-
-                                    // Only copy over the default skin if there is no skin for the user
-                                    Utils.copyFile(new File(App.settings.getSkinsDir(), skinFilename), file, true);
-                                    dialog.setReturnValue(true);
-                                }
-                            }
-                        } catch (IOException e) {
-                            LogManager.logStackTrace(e);
-                        }
-                        App.settings.reloadAccounts();
+                        // Only copy over the default skin if there is no skin for the user
+                        Utils.copyFile(new File(App.settings.getSkinsDir(), skinFilename), file, true);
+                        dialog.setReturnValue(true);
                     }
-                    dialog.close();
+                } else {
+                    try {
+                        HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
+                        if (conn.getResponseCode() == 200) {
+                            if (file.exists()) {
+                                Utils.delete(file);
+                            }
+                            Downloadable skin = new Downloadable(skinURL, file, null, null, false);
+                            skin.download(false);
+                            dialog.setReturnValue(true);
+                        } else {
+                            if (!file.exists()) {
+                                String skinFilename = "default.png";
+
+                                // even UUID's use the alex skin
+                                if ((uid.hashCode() & 1) != 0) {
+                                    skinFilename = "default_alex.png";
+                                }
+
+                                // Only copy over the default skin if there is no skin for the user
+                                Utils.copyFile(new File(App.settings.getSkinsDir(), skinFilename), file, true);
+                                dialog.setReturnValue(true);
+                            }
+                        }
+                    } catch (IOException e) {
+                        LogManager.logStackTrace(e);
+                    }
+                    App.settings.reloadAccounts();
                 }
-            });
+                dialog.close();
+            }));
             dialog.start();
             if (!(Boolean) dialog.getReturnValue()) {
                 DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))

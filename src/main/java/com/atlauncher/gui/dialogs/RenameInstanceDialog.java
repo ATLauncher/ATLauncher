@@ -84,30 +84,28 @@ public class RenameInstanceDialog extends JDialog {
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton(Language.INSTANCE.localize("common.save"));
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (App.settings.isInstance(instanceName.getText())) {
-                    JOptionPane.showMessageDialog(RenameInstanceDialog.this, Language.INSTANCE.localizeWithReplace
-                            ("instance.alreadyinstance", instanceName.getText()), Language.INSTANCE.localize("common"
-                            + ".error"), JOptionPane.ERROR_MESSAGE);
-                } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                    JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                            .INSTANCE.localize("common.error") + "<br/><br/>" + Language.INSTANCE.localizeWithReplace
-                            ("instance.invalidname", instanceName.getText())), Language.INSTANCE.localize("common" +
-                            ".error"), JOptionPane.ERROR_MESSAGE);
+        saveButton.addActionListener(e -> {
+            if (App.settings.isInstance(instanceName.getText())) {
+                JOptionPane.showMessageDialog(RenameInstanceDialog.this, Language.INSTANCE.localizeWithReplace
+                        ("instance.alreadyinstance", instanceName.getText()), Language.INSTANCE.localize("common"
+                        + ".error"), JOptionPane.ERROR_MESSAGE);
+            } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+                JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                        .INSTANCE.localize("common.error") + "<br/><br/>" + Language.INSTANCE.localizeWithReplace
+                        ("instance.invalidname", instanceName.getText())), Language.INSTANCE.localize("common" +
+                        ".error"), JOptionPane.ERROR_MESSAGE);
+            } else {
+                if (instance.rename(instanceName.getText())) {
+                    App.settings.saveInstances();
+                    App.settings.reloadInstancesPanel();
                 } else {
-                    if (instance.rename(instanceName.getText())) {
-                        App.settings.saveInstances();
-                        App.settings.reloadInstancesPanel();
-                    } else {
-                        LogManager.error("Unknown Error Occured While Renaming Instance!");
-                        JOptionPane.showMessageDialog(RenameInstanceDialog.this, HTMLUtils.centerParagraph(Language
-                                .INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".errorrenaming", instance.getName() + "<br/><br/>")), Language.INSTANCE
-                                .localize("common.error"), JOptionPane.ERROR_MESSAGE);
-                    }
-                    close();
+                    LogManager.error("Unknown Error Occured While Renaming Instance!");
+                    JOptionPane.showMessageDialog(RenameInstanceDialog.this, HTMLUtils.centerParagraph(Language
+                            .INSTANCE.localizeWithReplace("instance" + "" +
+                                    ".errorrenaming", instance.getName() + "<br/><br/>")), Language.INSTANCE
+                            .localize("common.error"), JOptionPane.ERROR_MESSAGE);
                 }
+                close();
             }
         });
         bottom.add(saveButton);

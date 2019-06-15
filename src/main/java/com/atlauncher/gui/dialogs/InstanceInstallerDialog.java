@@ -221,22 +221,19 @@ public class InstanceInstallerDialog extends JDialog {
                 gbc.gridx++;
                 gbc.anchor = GridBagConstraints.BASELINE_LEADING;
                 enableUserLock = new JCheckBox();
-                enableUserLock.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (enableUserLock.isSelected()) {
-                            String[] options = { Language.INSTANCE.localize("common.yes"),
-                                    Language.INSTANCE.localize("common.no") };
+                enableUserLock.addActionListener(e -> {
+                    if (enableUserLock.isSelected()) {
+                        String[] options = { Language.INSTANCE.localize("common.yes"),
+                                Language.INSTANCE.localize("common.no") };
 
-                            int ret = JOptionPane.showOptionDialog(null,
-                                    HTMLUtils.centerParagraph(
-                                            Language.INSTANCE.localizeWithReplace("instance.userlockhelp", "<br/>")),
-                                    Language.INSTANCE.localize("instance.userlocktitle"), JOptionPane.DEFAULT_OPTION,
-                                    JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                        int ret = JOptionPane.showOptionDialog(null,
+                                HTMLUtils.centerParagraph(
+                                        Language.INSTANCE.localizeWithReplace("instance.userlockhelp", "<br/>")),
+                                Language.INSTANCE.localize("instance.userlocktitle"), JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
-                            if (ret != 0) {
-                                enableUserLock.setSelected(false);
-                            }
+                        if (ret != 0) {
+                            enableUserLock.setSelected(false);
                         }
                     }
                 });
@@ -491,67 +488,64 @@ public class InstanceInstallerDialog extends JDialog {
                     }
 
                 };
-                instanceInstaller.addPropertyChangeListener(new PropertyChangeListener() {
-
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        if ("progress" == evt.getPropertyName()) {
-                            if (progressBar.isIndeterminate()) {
-                                progressBar.setIndeterminate(false);
-                            }
-                            int progress = (Integer) evt.getNewValue();
-                            if (progress > 100) {
-                                progress = 100;
-                            }
-                            progressBar.setValue(progress);
-                        } else if ("subprogress" == evt.getPropertyName()) {
-                            if (!subProgressBar.isVisible()) {
-                                subProgressBar.setVisible(true);
-                            }
-                            if (subProgressBar.isIndeterminate()) {
-                                subProgressBar.setIndeterminate(false);
-                            }
-                            int progress;
-                            String paint = null;
-                            if (evt.getNewValue() instanceof Integer) {
-                                progress = (Integer) evt.getNewValue();
-                            } else {
-                                String[] parts = (String[]) evt.getNewValue();
-                                progress = Integer.parseInt(parts[0]);
-                                paint = parts[1];
-                            }
-                            if (progress >= 100) {
-                                progress = 100;
-                            }
-                            if (progress < 0) {
-                                if (subProgressBar.isStringPainted()) {
-                                    subProgressBar.setStringPainted(false);
-                                }
-                                subProgressBar.setVisible(false);
-                            } else {
-                                if (!subProgressBar.isStringPainted()) {
-                                    subProgressBar.setStringPainted(true);
-                                }
-                                if (paint != null) {
-                                    subProgressBar.setString(paint);
-                                }
-                            }
-                            subProgressBar.setValue(progress);
-                        } else if ("subprogressint" == evt.getPropertyName()) {
+                instanceInstaller.addPropertyChangeListener(evt -> {
+                    if ("progress" == evt.getPropertyName()) {
+                        if (progressBar.isIndeterminate()) {
+                            progressBar.setIndeterminate(false);
+                        }
+                        int progress = (Integer) evt.getNewValue();
+                        if (progress > 100) {
+                            progress = 100;
+                        }
+                        progressBar.setValue(progress);
+                    } else if ("subprogress" == evt.getPropertyName()) {
+                        if (!subProgressBar.isVisible()) {
+                            subProgressBar.setVisible(true);
+                        }
+                        if (subProgressBar.isIndeterminate()) {
+                            subProgressBar.setIndeterminate(false);
+                        }
+                        int progress;
+                        String paint = null;
+                        if (evt.getNewValue() instanceof Integer) {
+                            progress = (Integer) evt.getNewValue();
+                        } else {
+                            String[] parts = (String[]) evt.getNewValue();
+                            progress = Integer.parseInt(parts[0]);
+                            paint = parts[1];
+                        }
+                        if (progress >= 100) {
+                            progress = 100;
+                        }
+                        if (progress < 0) {
                             if (subProgressBar.isStringPainted()) {
                                 subProgressBar.setStringPainted(false);
                             }
-                            if (!subProgressBar.isVisible()) {
-                                subProgressBar.setVisible(true);
+                            subProgressBar.setVisible(false);
+                        } else {
+                            if (!subProgressBar.isStringPainted()) {
+                                subProgressBar.setStringPainted(true);
                             }
-                            if (!subProgressBar.isIndeterminate()) {
-                                subProgressBar.setIndeterminate(true);
+                            if (paint != null) {
+                                subProgressBar.setString(paint);
                             }
-                        } else if ("doing" == evt.getPropertyName()) {
-                            String doingText = (String) evt.getNewValue();
-                            doing.setText(doingText);
                         }
-
+                        subProgressBar.setValue(progress);
+                    } else if ("subprogressint" == evt.getPropertyName()) {
+                        if (subProgressBar.isStringPainted()) {
+                            subProgressBar.setStringPainted(false);
+                        }
+                        if (!subProgressBar.isVisible()) {
+                            subProgressBar.setVisible(true);
+                        }
+                        if (!subProgressBar.isIndeterminate()) {
+                            subProgressBar.setIndeterminate(true);
+                        }
+                    } else if ("doing" == evt.getPropertyName()) {
+                        String doingText = (String) evt.getNewValue();
+                        doing.setText(doingText);
                     }
+
                 });
                 dialog.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent e) {
@@ -568,11 +562,7 @@ public class InstanceInstallerDialog extends JDialog {
             }
         });
         cancel = new JButton(Language.INSTANCE.localize("common.cancel"));
-        cancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        cancel.addActionListener(e -> dispose());
         bottom.add(install);
         bottom.add(cancel);
 

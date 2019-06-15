@@ -76,80 +76,77 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"), App
                     .settings.getServers().size(), Language.INSTANCE.localize("tools.networkchecker" + "" +
                     ".running"), "Network Checker Tool Cancelled!");
-            dialog.addThread(new Thread() {
-                @Override
-                public void run() {
-                    dialog.setTotalTasksToDo(App.settings.getServers().size() * 5);
-                    StringBuilder results = new StringBuilder();
+            dialog.addThread(new Thread(() -> {
+                dialog.setTotalTasksToDo(App.settings.getServers().size() * 5);
+                StringBuilder results = new StringBuilder();
 
-                    // Ping Test
-                    for (Server server : App.settings.getServers()) {
-                        if (server.getHost().contains(":")) {
-                            dialog.doneTask();
-                            continue;
-                        }
-
-                        results.append("Ping results to " + server.getHost() + " was " + Utils.pingAddress(server
-                                .getHost()) + "\n\n----------------\n\n");
+                // Ping Test
+                for (Server server : App.settings.getServers()) {
+                    if (server.getHost().contains(":")) {
                         dialog.doneTask();
-
-                        results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute(server.getHost()));
-                        dialog.doneTask();
+                        continue;
                     }
 
-                    // Response Code Test
-                    for (Server server : App.settings.getServers()) {
-                        Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"), false);
-                        results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server
-                                .getHost(), download.getResponseCode()));
-                        dialog.doneTask();
-                    }
-
-                    // Ping Pong Test
-                    for (Server server : App.settings.getServers()) {
-                        Downloadable download = new Downloadable(server.getFileURL("ping"), false);
-                        results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n", server
-                                .getHost(), download.getContents()));
-                        dialog.doneTask();
-                    }
-
-                    // Speed Test
-                    for (Server server : App.settings.getServers()) {
-                        File file = new File(App.settings.getTempDir(), "20MB.test");
-                        if (file.exists()) {
-                            Utils.delete(file);
-                        }
-                        long started = System.currentTimeMillis();
-
-                        Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
-                        download.download(false);
-
-                        long timeTaken = System.currentTimeMillis() - started;
-                        float bps = file.length() / (timeTaken / 1000);
-                        float kbps = bps / 1024;
-                        float mbps = kbps / 1024;
-                        String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f "
-                                + "KB/s", kbps)) : String.format("%.2f MB/s", mbps));
-                        results.append(String.format("Download speed to %s was %s, " +
-                                "" + "taking %.2f seconds to download 20MB\n\n----------------\n\n", server.getHost()
-                                , speed, (timeTaken / 1000.0)));
-                        dialog.doneTask();
-                    }
-
-                    String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString
-                            ());
-                    if (result.contains(Constants.PASTE_CHECK_URL)) {
-                        LogManager.info("Network Test has finished running, you can view the results at " + result);
-                    } else {
-                        LogManager.error("Network Test failed to submit to " + Constants.LAUNCHER_NAME + "!");
-                        dialog.setReturnValue(false);
-                    }
-
+                    results.append("Ping results to " + server.getHost() + " was " + Utils.pingAddress(server
+                            .getHost()) + "\n\n----------------\n\n");
                     dialog.doneTask();
-                    dialog.setReturnValue(true);
-                    dialog.close();
+
+                    results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute(server.getHost()));
+                    dialog.doneTask();
                 }
-            });
+
+                // Response Code Test
+                for (Server server : App.settings.getServers()) {
+                    Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"), false);
+                    results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server
+                            .getHost(), download.getResponseCode()));
+                    dialog.doneTask();
+                }
+
+                // Ping Pong Test
+                for (Server server : App.settings.getServers()) {
+                    Downloadable download = new Downloadable(server.getFileURL("ping"), false);
+                    results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n", server
+                            .getHost(), download.getContents()));
+                    dialog.doneTask();
+                }
+
+                // Speed Test
+                for (Server server : App.settings.getServers()) {
+                    File file = new File(App.settings.getTempDir(), "20MB.test");
+                    if (file.exists()) {
+                        Utils.delete(file);
+                    }
+                    long started = System.currentTimeMillis();
+
+                    Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
+                    download.download(false);
+
+                    long timeTaken = System.currentTimeMillis() - started;
+                    float bps = file.length() / (timeTaken / 1000);
+                    float kbps = bps / 1024;
+                    float mbps = kbps / 1024;
+                    String speed = (mbps < 1 ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f "
+                            + "KB/s", kbps)) : String.format("%.2f MB/s", mbps));
+                    results.append(String.format("Download speed to %s was %s, " +
+                            "" + "taking %.2f seconds to download 20MB\n\n----------------\n\n", server.getHost()
+                            , speed, (timeTaken / 1000.0)));
+                    dialog.doneTask();
+                }
+
+                String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString
+                        ());
+                if (result.contains(Constants.PASTE_CHECK_URL)) {
+                    LogManager.info("Network Test has finished running, you can view the results at " + result);
+                } else {
+                    LogManager.error("Network Test failed to submit to " + Constants.LAUNCHER_NAME + "!");
+                    dialog.setReturnValue(false);
+                }
+
+                dialog.doneTask();
+                dialog.setReturnValue(true);
+                dialog.close();
+            }));
             dialog.start();
             if (dialog.getReturnValue() == null || !(Boolean) dialog.getReturnValue()) {
                 LogManager.error("Network Test failed to run!");

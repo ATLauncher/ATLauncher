@@ -36,12 +36,9 @@ public final class ConsoleOpenManager {
     }
 
     public static synchronized void post() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                for (ConsoleOpenListener listener : listeners) {
-                    listener.onConsoleOpen();
-                }
+        SwingUtilities.invokeLater(() -> {
+            for (ConsoleOpenListener listener : listeners) {
+                listener.onConsoleOpen();
             }
         });
     }

@@ -116,19 +116,15 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         if (App.settings.getEnableProxy()) {
             enableProxy.setSelected(true);
         }
-        enableProxy.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!enableProxy.isSelected()) {
-                    proxyHost.setEnabled(false);
-                    proxyPort.setEnabled(false);
-                    proxyType.setEnabled(false);
-                } else {
-                    proxyHost.setEnabled(true);
-                    proxyPort.setEnabled(true);
-                    proxyType.setEnabled(true);
-                }
+        enableProxy.addActionListener(e -> {
+            if (!enableProxy.isSelected()) {
+                proxyHost.setEnabled(false);
+                proxyPort.setEnabled(false);
+                proxyType.setEnabled(false);
+            } else {
+                proxyHost.setEnabled(true);
+                proxyPort.setEnabled(true);
+                proxyType.setEnabled(true);
             }
         });
         add(enableProxy, gbc);
@@ -240,14 +236,11 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings" + "" +
                 ".checkingproxytitle"), 0, Language.INSTANCE.localize("settings.checkingproxy"), "Cancelled Proxy " +
                 "Test!");
-        dialog.addThread(new Thread() {
-            @Override
-            public void run() {
-                dialog.setReturnValue(Utils.testProxy(new Proxy(theType, new InetSocketAddress(proxyHost.getText(),
-                        Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", ""))))));
-                dialog.close();
-            }
-        });
+        dialog.addThread(new Thread(() -> {
+            dialog.setReturnValue(Utils.testProxy(new Proxy(theType, new InetSocketAddress(proxyHost.getText(),
+                    Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", ""))))));
+            dialog.close();
+        }));
         dialog.start();
 
         if (dialog.getReturnValue() == null) {

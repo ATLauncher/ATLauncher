@@ -124,78 +124,47 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     }
 
     private void addActionListeners() {
-        this.newInstanceButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (App.settings.isInOfflineMode()) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
-                            .setContent(Language.INSTANCE.localize("pack.offlinenewinstance"))
+        this.newInstanceButton.addActionListener(e -> {
+            if (App.settings.isInOfflineMode()) {
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
+                        .setContent(Language.INSTANCE.localize("pack.offlinenewinstance"))
+                        .setType(DialogManager.ERROR).show();
+            } else {
+                if (App.settings.getAccount() == null) {
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                            .setContent(Language.INSTANCE.localize("instance.cannotcreate"))
                             .setType(DialogManager.ERROR).show();
                 } else {
-                    if (App.settings.getAccount() == null) {
-                        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                                .setContent(Language.INSTANCE.localize("instance.cannotcreate"))
-                                .setType(DialogManager.ERROR).show();
-                    } else {
-                        new InstanceInstallerDialog(pack);
-                    }
+                    new InstanceInstallerDialog(pack);
                 }
             }
         });
 
-        this.createServerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (App.settings.isInOfflineMode()) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
-                            .setContent(Language.INSTANCE.localize("pack.offlinecreateserver"))
+        this.createServerButton.addActionListener(e -> {
+            if (App.settings.isInOfflineMode()) {
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
+                        .setContent(Language.INSTANCE.localize("pack.offlinecreateserver"))
+                        .setType(DialogManager.ERROR).show();
+            } else {
+                if (App.settings.getAccount() == null) {
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
+                            .setContent(Language.INSTANCE.localize("instance.cannotcreate"))
                             .setType(DialogManager.ERROR).show();
                 } else {
-                    if (App.settings.getAccount() == null) {
-                        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                                .setContent(Language.INSTANCE.localize("instance.cannotcreate"))
-                                .setType(DialogManager.ERROR).show();
-                    } else {
-                        new InstanceInstallerDialog(pack, true);
-                    }
+                    new InstanceInstallerDialog(pack, true);
                 }
             }
         });
 
-        this.discordInviteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                OS.openWebBrowser(pack.getDiscordInviteURL());
-            }
-        });
+        this.discordInviteButton.addActionListener(e -> OS.openWebBrowser(pack.getDiscordInviteURL()));
 
-        this.supportButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                OS.openWebBrowser(pack.getSupportURL());
-            }
-        });
+        this.supportButton.addActionListener(e -> OS.openWebBrowser(pack.getSupportURL()));
 
-        this.websiteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                OS.openWebBrowser(pack.getWebsiteURL());
-            }
-        });
+        this.websiteButton.addActionListener(e -> OS.openWebBrowser(pack.getWebsiteURL()));
 
-        this.modsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new ViewModsDialog(pack).setVisible(true);
-            }
-        });
+        this.modsButton.addActionListener(e -> new ViewModsDialog(pack).setVisible(true));
 
-        this.removePackButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                App.settings.removePack(pack.getCode());
-            }
-        });
+        this.removePackButton.addActionListener(e -> App.settings.removePack(pack.getCode()));
     }
 
     @Override

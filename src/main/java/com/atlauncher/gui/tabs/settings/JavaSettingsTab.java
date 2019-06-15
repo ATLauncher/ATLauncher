@@ -206,15 +206,12 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         if (OS.getMaximumWindowWidth() >= 1920 && OS.getMaximumWindowHeight() >= 1080) {
             commonScreenSizes.addItem("1920x1080");
         }
-        commonScreenSizes.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selected = (String) commonScreenSizes.getSelectedItem();
-                if (selected.contains("x")) {
-                    String[] parts = selected.split("x");
-                    widthField.setText(parts[0]);
-                    heightField.setText(parts[1]);
-                }
+        commonScreenSizes.addActionListener(e -> {
+            String selected = (String) commonScreenSizes.getSelectedItem();
+            if (selected.contains("x")) {
+                String[] parts = selected.split("x");
+                widthField.setText(parts[0]);
+                heightField.setText(parts[1]);
             }
         });
         commonScreenSizes.setPreferredSize(new Dimension(commonScreenSizes.getPreferredSize().width + 10,
@@ -244,23 +241,17 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaPath = new JTextField(32);
         javaPath.setText(App.settings.getJavaPath());
         javaPathResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
-        javaPathResetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                javaPath.setText(OS.getJavaHome());
-            }
-        });
+        javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getJavaHome()));
         javaBrowseButton = new JButton(Language.INSTANCE.localize("common.browse"));
-        javaBrowseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.setCurrentDirectory(new File(javaPath.getText()));
-                chooser.setDialogTitle(Language.INSTANCE.localize("settings.selectjavapath"));
-                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                chooser.setAcceptAllFileFilterUsed(false);
+        javaBrowseButton.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new File(javaPath.getText()));
+            chooser.setDialogTitle(Language.INSTANCE.localize("settings.selectjavapath"));
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
 
-                if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                    javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
-                }
+            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         });
         javaPathPanel.add(javaPath);
@@ -287,12 +278,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaParameters = new JTextField(40);
         javaParameters.setText(App.settings.getJavaParameters());
         javaParametersResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
-        javaParametersResetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                javaParameters.setText(
-                        "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M");
-            }
-        });
+        javaParametersResetButton.addActionListener(e -> javaParameters.setText(
+                "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M"));
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(javaParametersResetButton);
         add(javaParametersPanel, gbc);

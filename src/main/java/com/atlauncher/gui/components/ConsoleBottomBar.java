@@ -67,55 +67,46 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
      * Sets up the action listeners on the buttons
      */
     private void addActionListeners() {
-        clearButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                App.settings.clearConsole();
-                LogManager.info("Console Cleared");
-            }
+        clearButton.addActionListener(e -> {
+            App.settings.clearConsole();
+            LogManager.info("Console Cleared");
         });
-        copyLogButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                App.TOASTER.pop("Copied Log to clipboard");
-                LogManager.info("Copied Log to clipboard");
-                StringSelection text = new StringSelection(App.settings.getLog());
+        copyLogButton.addActionListener(e -> {
+            App.TOASTER.pop("Copied Log to clipboard");
+            LogManager.info("Copied Log to clipboard");
+            StringSelection text = new StringSelection(App.settings.getLog());
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(text, null);
+        });
+        uploadLogButton.addActionListener(e -> {
+            String result;
+            try {
+                result = App.TASKPOOL.submit(new PasteUpload()).get();
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+                return;
+            } catch (ExecutionException ex) {
+                LogManager.logStackTrace("Exception while uploading paste", ex);
+                return;
+            }
+            if (result.contains(Constants.PASTE_CHECK_URL)) {
+                App.TOASTER.pop("Log uploaded and link copied to clipboard");
+                LogManager.info("Log uploaded and link copied to clipboard: " + result);
+                StringSelection text = new StringSelection(result);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);
+            } else {
+                App.TOASTER.popError("Log failed to upload!");
+                LogManager.error("Log failed to upload: " + result);
             }
         });
-        uploadLogButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String result;
-                try {
-                    result = App.TASKPOOL.submit(new PasteUpload()).get();
-                } catch (InterruptedException ignored) {
-                    Thread.currentThread().interrupt();
-                    return;
-                } catch (ExecutionException ex) {
-                    LogManager.logStackTrace("Exception while uploading paste", ex);
-                    return;
-                }
-                if (result.contains(Constants.PASTE_CHECK_URL)) {
-                    App.TOASTER.pop("Log uploaded and link copied to clipboard");
-                    LogManager.info("Log uploaded and link copied to clipboard: " + result);
-                    StringSelection text = new StringSelection(result);
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(text, null);
-                } else {
-                    App.TOASTER.popError("Log failed to upload!");
-                    LogManager.error("Log failed to upload: " + result);
-                }
-            }
-        });
-        killMinecraftButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                        .INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>")), Language.INSTANCE.localize
-                        ("console.kill"), JOptionPane.YES_NO_OPTION);
-                if (ret == JOptionPane.YES_OPTION) {
-                    App.settings.killMinecraft();
-                    killMinecraftButton.setVisible(false);
-                }
+        killMinecraftButton.addActionListener(arg0 -> {
+            int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
+                    .INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>")), Language.INSTANCE.localize
+                    ("console.kill"), JOptionPane.YES_NO_OPTION);
+            if (ret == JOptionPane.YES_OPTION) {
+                App.settings.killMinecraft();
+                killMinecraftButton.setVisible(false);
             }
         });
     }

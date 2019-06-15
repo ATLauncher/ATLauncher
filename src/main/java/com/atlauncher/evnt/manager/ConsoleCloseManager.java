@@ -39,12 +39,9 @@ public final class ConsoleCloseManager {
     }
 
     public static synchronized void post() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                for (ConsoleCloseListener listener : listeners) {
-                    listener.onConsoleClose();
-                }
+        SwingUtilities.invokeLater(() -> {
+            for (ConsoleCloseListener listener : listeners) {
+                listener.onConsoleClose();
             }
         });
     }

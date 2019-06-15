@@ -73,36 +73,34 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         bottomPanel.add(saveButton);
 
         add(bottomPanel, BorderLayout.SOUTH);
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters() &&
-                        networkSettingsTab.isValidConcurrentConnections() && networkSettingsTab.isValidProxyPort() &&
-                        networkSettingsTab.canConnectWithProxy() && toolsSettingsTab.isValidServerCheckerWait()) {
-                    boolean reloadTheme = generalSettingsTab.needToReloadTheme();
-                    boolean reloadLocalizationTable = generalSettingsTab.reloadLocalizationTable();
-                    boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
-                    boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
-                    generalSettingsTab.save();
-                    javaSettingsTab.save();
-                    networkSettingsTab.save();
-                    loggingSettingsTab.save();
-                    toolsSettingsTab.save();
-                    App.settings.saveProperties();
-                    SettingsManager.post();
-                    if (reloadLocalizationTable) {
-                        RelocalizationManager.post();
-                    }
-                    if (reloadPacksPanel) {
-                        App.settings.reloadPacksPanel();
-                    }
-                    if (restartServerChecker) {
-                        App.settings.startCheckingServers();
-                    }
-                    if (reloadTheme) {
-                        OS.restartLauncher();
-                    }
-                    App.TOASTER.pop("Settings Saved");
+        saveButton.addActionListener(arg0 -> {
+            if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters() &&
+                    networkSettingsTab.isValidConcurrentConnections() && networkSettingsTab.isValidProxyPort() &&
+                    networkSettingsTab.canConnectWithProxy() && toolsSettingsTab.isValidServerCheckerWait()) {
+                boolean reloadTheme = generalSettingsTab.needToReloadTheme();
+                boolean reloadLocalizationTable = generalSettingsTab.reloadLocalizationTable();
+                boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
+                boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
+                generalSettingsTab.save();
+                javaSettingsTab.save();
+                networkSettingsTab.save();
+                loggingSettingsTab.save();
+                toolsSettingsTab.save();
+                App.settings.saveProperties();
+                SettingsManager.post();
+                if (reloadLocalizationTable) {
+                    RelocalizationManager.post();
                 }
+                if (reloadPacksPanel) {
+                    App.settings.reloadPacksPanel();
+                }
+                if (restartServerChecker) {
+                    App.settings.startCheckingServers();
+                }
+                if (reloadTheme) {
+                    OS.restartLauncher();
+                }
+                App.TOASTER.pop("Settings Saved");
             }
         });
     }

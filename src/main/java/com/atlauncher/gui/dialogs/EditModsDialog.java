@@ -130,101 +130,78 @@ public class EditModsDialog extends JDialog {
         add(bottomPanel, BorderLayout.SOUTH);
 
         addButton = new JButton(Language.INSTANCE.localize("instance.addmod"));
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean usesCoreMods = false;
-                try {
-                    usesCoreMods = App.settings.getMinecraftVersion(instance.getMinecraftVersion()).usesCoreMods();
-                } catch (InvalidMinecraftVersion e1) {
-                    LogManager.logStackTrace(e1);
-                }
-                String[] modTypes;
-                if (usesCoreMods) {
-                    modTypes = new String[] {"Mods Folder", "Inside Minecraft.jar", "CoreMods Mod", "Texture Pack", "Shader Pack"};
-                } else {
-                    modTypes = new String[] {"Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack"};
-                }
+        addButton.addActionListener(e -> {
+            boolean usesCoreMods = false;
+            try {
+                usesCoreMods = App.settings.getMinecraftVersion(instance.getMinecraftVersion()).usesCoreMods();
+            } catch (InvalidMinecraftVersion e1) {
+                LogManager.logStackTrace(e1);
+            }
+            String[] modTypes;
+            if (usesCoreMods) {
+                modTypes = new String[] {"Mods Folder", "Inside Minecraft.jar", "CoreMods Mod", "Texture Pack", "Shader Pack"};
+            } else {
+                modTypes = new String[] {"Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack"};
+            }
 
-                FileChooserDialog fcd = new FileChooserDialog(
-                    Language.INSTANCE.localize("instance.addmod"),
-                    Language.INSTANCE.localize("common.mod"),
-                    Language.INSTANCE.localize("common.add"),
-                    Language.INSTANCE.localize("instance.typeofmod"),
-                    modTypes,
-                    new String[] {"jar", "zip", "litemod"}
-                );
-                ArrayList<File> files = fcd.getChosenFiles();
-                if (files != null && !files.isEmpty()) {
-                    boolean reload = false;
-                    for (File file : files) {
-                        String typeTemp = fcd.getSelectorValue();
-                        com.atlauncher.data.Type type = null;
-                        if (typeTemp.equalsIgnoreCase("Mods Folder")) {
-                            type = com.atlauncher.data.Type.mods;
-                        } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
-                            type = com.atlauncher.data.Type.jar;
-                        } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
-                            type = com.atlauncher.data.Type.coremods;
-                        } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
-                            type = com.atlauncher.data.Type.texturepack;
-                        } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
-                            type = com.atlauncher.data.Type.resourcepack;
-                        } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
-                            type = com.atlauncher.data.Type.shaderpack;
-                        }
-                        if (type != null) {
-                            DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(),
-                                    type, null, null, true, true);
-                            if (Utils.copyFile(file, instance.getDisabledModsDirectory())) {
-                                instance.getInstalledMods().add(mod);
-                                disabledMods.add(new ModsJCheckBox(mod));
-                                reload = true;
-                            }
+            FileChooserDialog fcd = new FileChooserDialog(
+                Language.INSTANCE.localize("instance.addmod"),
+                Language.INSTANCE.localize("common.mod"),
+                Language.INSTANCE.localize("common.add"),
+                Language.INSTANCE.localize("instance.typeofmod"),
+                modTypes,
+                new String[] {"jar", "zip", "litemod"}
+            );
+            ArrayList<File> files = fcd.getChosenFiles();
+            if (files != null && !files.isEmpty()) {
+                boolean reload = false;
+                for (File file : files) {
+                    String typeTemp = fcd.getSelectorValue();
+                    com.atlauncher.data.Type type = null;
+                    if (typeTemp.equalsIgnoreCase("Mods Folder")) {
+                        type = com.atlauncher.data.Type.mods;
+                    } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
+                        type = com.atlauncher.data.Type.jar;
+                    } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
+                        type = com.atlauncher.data.Type.coremods;
+                    } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
+                        type = com.atlauncher.data.Type.texturepack;
+                    } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
+                        type = com.atlauncher.data.Type.resourcepack;
+                    } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
+                        type = com.atlauncher.data.Type.shaderpack;
+                    }
+                    if (type != null) {
+                        DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(),
+                                type, null, null, true, true);
+                        if (Utils.copyFile(file, instance.getDisabledModsDirectory())) {
+                            instance.getInstalledMods().add(mod);
+                            disabledMods.add(new ModsJCheckBox(mod));
+                            reload = true;
                         }
                     }
-                    if (reload) {
-                        reloadPanels();
-                    }
+                }
+                if (reload) {
+                    reloadPanels();
                 }
             }
         });
         bottomPanel.add(addButton);
 
         enableButton = new JButton(Language.INSTANCE.localize("instance.enablemod"));
-        enableButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                enableMods();
-            }
-        });
+        enableButton.addActionListener(e -> enableMods());
         bottomPanel.add(enableButton);
 
         disableButton = new JButton(Language.INSTANCE.localize("instance.disablemod"));
-        disableButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                disableMods();
-            }
-        });
+        disableButton.addActionListener(e -> disableMods());
         bottomPanel.add(disableButton);
 
         removeButton = new JButton(Language.INSTANCE.localize("instance.removemod"));
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removeMods();
-            }
-        });
+        removeButton.addActionListener(e -> removeMods());
         bottomPanel.add(removeButton);
 
         closeButton = new JButton(Language.INSTANCE.localize("common.close"));
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        closeButton.addActionListener(e -> dispose());
         bottomPanel.add(closeButton);
 
         loadMods();

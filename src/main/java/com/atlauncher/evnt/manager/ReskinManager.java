@@ -33,12 +33,9 @@ public final class ReskinManager {
     }
 
     public static synchronized void post() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                for (ReskinListener listener : listeners) {
-                    listener.onReskin();
-                }
+        SwingUtilities.invokeLater(() -> {
+            for (ReskinListener listener : listeners) {
+                listener.onReskin();
             }
         });
     }

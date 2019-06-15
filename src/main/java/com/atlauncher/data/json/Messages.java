@@ -45,12 +45,9 @@ public class Messages {
         String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common.cancel")};
         JEditorPane ep = new JEditorPane("text/html", "<html>" + this.install + "</html>");
         ep.setEditable(false);
-        ep.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    OS.openWebBrowser(e.getURL());
-                }
+        ep.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                OS.openWebBrowser(e.getURL());
             }
         });
         return JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize("common" + "" +
@@ -70,12 +67,9 @@ public class Messages {
         String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common.cancel")};
         JEditorPane ep = new JEditorPane("text/html", "<html>" + this.update + "</html>");
         ep.setEditable(false);
-        ep.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    OS.openWebBrowser(e.getURL());
-                }
+        ep.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                OS.openWebBrowser(e.getURL());
             }
         });
         return JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize("common" + "" +

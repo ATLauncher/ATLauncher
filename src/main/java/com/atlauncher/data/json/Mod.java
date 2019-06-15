@@ -322,12 +322,7 @@ public class Mod {
     }
 
     public FilenameFilter getFileNameFilter() {
-        return new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.matches(file);
-            }
-        };
+        return (dir, name) -> name.matches(file);
     }
 
     public void download(InstanceInstaller installer) {
@@ -692,12 +687,9 @@ public class Mod {
                 Utils.unzip(fileLocation, tempDirMillenaire);
                 for (String folder : tempDirMillenaire.list()) {
                     File thisFolder = new File(tempDirMillenaire, folder);
-                    for (String dir : thisFolder.list(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File dir, String name) {
-                            File thisFile = new File(dir, name);
-                            return thisFile.isDirectory();
-                        }
+                    for (String dir : thisFolder.list((dir, name) -> {
+                        File thisFile = new File(dir, name);
+                        return thisFile.isDirectory();
                     })) {
                         Utils.copyDirectory(new File(thisFolder, dir), installer.getModsDirectory());
                     }

@@ -133,19 +133,17 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLogs = new JCheckBox();
-        enableLogs.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!enableLogs.isSelected()) {
-                    enableOpenEyeReporting.setSelected(false);
-                    enableOpenEyeReporting.setEnabled(false);
-                    enableLeaderboards.setSelected(false);
-                    enableLeaderboards.setEnabled(false);
-                } else {
-                    enableOpenEyeReporting.setSelected(true);
-                    enableOpenEyeReporting.setEnabled(true);
-                    enableLeaderboards.setSelected(true);
-                    enableLeaderboards.setEnabled(true);
-                }
+        enableLogs.addActionListener(e -> {
+            if (!enableLogs.isSelected()) {
+                enableOpenEyeReporting.setSelected(false);
+                enableOpenEyeReporting.setEnabled(false);
+                enableLeaderboards.setSelected(false);
+                enableLeaderboards.setEnabled(false);
+            } else {
+                enableOpenEyeReporting.setSelected(true);
+                enableOpenEyeReporting.setEnabled(true);
+                enableLeaderboards.setSelected(true);
+                enableLeaderboards.setEnabled(true);
             }
         });
         if (App.settings.enableLogs()) {

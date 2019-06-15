@@ -103,14 +103,12 @@ public class SetupDialog extends JDialog {
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton("Save");
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                App.settings.setLanguage((String) language.getSelectedItem());
-                App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
-                App.settings.saveProperties();
-                setVisible(false);
-                dispose();
-            }
+        saveButton.addActionListener(e -> {
+            App.settings.setLanguage((String) language.getSelectedItem());
+            App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
+            App.settings.saveProperties();
+            setVisible(false);
+            dispose();
         });
         bottom.add(saveButton);
 

@@ -66,38 +66,20 @@ public final class TrayMenu extends JPopupMenu implements RelocalizationListener
     }
 
     private void addActionListeners() {
-        this.killMCButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (App.settings.isMinecraftLaunched()) {
-                            int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils
-                                    .centerParagraph(Language.INSTANCE.localizeWithReplace("console" + "" +
-                                    ".killsure", "<br/><br/>")), Language.INSTANCE.localize("console" + ".kill"),
-                                    JOptionPane.YES_NO_OPTION);
+        this.killMCButton.addActionListener(e -> SwingUtilities.invokeLater(() -> {
+            if (App.settings.isMinecraftLaunched()) {
+                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils
+                        .centerParagraph(Language.INSTANCE.localizeWithReplace("console" + "" +
+                            ".killsure", "<br/><br/>")), Language.INSTANCE.localize("console" + ".kill"),
+                    JOptionPane.YES_NO_OPTION);
 
-                            if (ret == JOptionPane.YES_OPTION) {
-                                App.settings.killMinecraft();
-                            }
-                        }
-                    }
-                });
+                if (ret == JOptionPane.YES_OPTION) {
+                    App.settings.killMinecraft();
+                }
             }
-        });
-        this.tcButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().setVisible(!App.settings.getConsole().isVisible());
-            }
-        });
-        this.quitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        }));
+        this.tcButton.addActionListener(e -> App.settings.getConsole().setVisible(!App.settings.getConsole().isVisible()));
+        this.quitButton.addActionListener(e -> System.exit(0));
     }
 
     public void localize() {

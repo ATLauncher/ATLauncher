@@ -560,16 +560,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         fireSubProgress(0); // Show the subprogress bar
         for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
-                        download.download(true);
-                    } else {
-                        download.copyFile();
-                    }
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
+                    download.download(true);
+                } else {
+                    download.copyFile();
                 }
             });
         }
@@ -598,13 +594,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        totalBytes += download.getFilesize();
-                    }
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    totalBytes += download.getFilesize();
                 }
             });
         }
@@ -617,16 +609,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
-                        download.download(true);
-                    }
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
+                    download.download(true);
                 }
-
             });
         }
         executor.shutdown();
@@ -689,13 +676,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        totalBytes += download.getFilesize();
-                    }
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    totalBytes += download.getFilesize();
                 }
             });
         }
@@ -708,16 +691,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
-                        download.download(true);
-                    }
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
+                    download.download(true);
                 }
-
             });
         }
         executor.shutdown();
@@ -736,13 +714,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        totalBytes += download.getFilesize();
-                    }
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    totalBytes += download.getFilesize();
                 }
             });
         }
@@ -755,13 +729,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
         for (final Downloadable download : downloads) {
-            executor.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (download.needToDownload()) {
-                        download.download(true);
-                    }
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    download.download(true);
                 }
             });
         }
@@ -837,13 +807,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (isReinstall
                 && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion())) {
             final List<String> customMods = instance.getCustomMods(Type.mods);
-            FilenameFilter ffFilter = new FilenameFilter() {
-
-                @Override
-                public boolean accept(File dir, String name) {
-                    return !customMods.contains(name);
-                }
-            };
+            FilenameFilter ffFilter = (dir1, name) -> !customMods.contains(name);
             files = dir.listFiles(ffFilter);
         } else {
             files = dir.listFiles();

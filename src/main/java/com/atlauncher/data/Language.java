@@ -43,12 +43,7 @@ public enum Language {
     }
 
     public static String[] available() {
-        File[] files = App.settings.getLanguagesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".lang");
-            }
-        });
+        File[] files = App.settings.getLanguagesDir().listFiles((dir, name) -> name.endsWith(".lang"));
         String[] langs = new String[files.length];
         for (int i = 0; i < files.length; i++) {
             langs[i] = files[i].getName().substring(0, 1).toUpperCase() + files[i].getName().substring(1, files[i]

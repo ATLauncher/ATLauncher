@@ -73,12 +73,9 @@ public class NewsTab extends JPanel implements Tab {
         {
             this.setEditable(false);
             this.setEditorKit(NEWS_KIT);
-            this.addHyperlinkListener(new HyperlinkListener() {
-                @Override
-                public void hyperlinkUpdate(HyperlinkEvent e) {
-                    if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                        OS.openWebBrowser(e.getURL());
-                    }
+            this.addHyperlinkListener(e -> {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    OS.openWebBrowser(e.getURL());
                 }
             });
             this.addMouseListener(new MouseAdapter() {
@@ -113,12 +110,9 @@ public class NewsTab extends JPanel implements Tab {
 
         public ContextMenu() {
             super();
-            this.COPY_ITEM.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    StringSelection text = new StringSelection(NEWS_PANE.getSelectedText());
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, null);
-                }
+            this.COPY_ITEM.addActionListener(e -> {
+                StringSelection text = new StringSelection(NEWS_PANE.getSelectedText());
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, null);
             });
         }
     }

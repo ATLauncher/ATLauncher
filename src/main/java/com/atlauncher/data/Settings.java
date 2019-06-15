@@ -148,9 +148,9 @@ public class Settings {
     private List<News> news; // News
     private Map<String, MinecraftVersion> minecraftVersions; // Minecraft versions
     private List<Pack> packs; // Packs in the Launcher
-    private List<Instance> instances = new ArrayList<Instance>(); // Users Installed Instances
-    private List<Account> accounts = new ArrayList<Account>(); // Accounts in the Launcher
-    private List<MinecraftServer> checkingServers = new ArrayList<MinecraftServer>();
+    private List<Instance> instances = new ArrayList<>(); // Users Installed Instances
+    private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
+    private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, toolsDir,
             jarsDir, commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, loadersDir,
@@ -370,12 +370,7 @@ public class Settings {
         }
 
         if (this.enableLogs) {
-            App.TASKPOOL.execute(new Runnable() {
-                @Override
-                public void run() {
-                    ATLauncherAPIUtils.postSystemInfo();
-                }
-            });
+            App.TASKPOOL.execute(ATLauncherAPIUtils::postSystemInfo);
         }
     }
 
@@ -536,18 +531,15 @@ public class Settings {
             final ProgressDialog dialog = new ProgressDialog(
                     Language.INSTANCE.localize("settings.rearrangingresources"), 0,
                     Language.INSTANCE.localize("settings.rearrangingresources"), null);
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    Utils.moveDirectory(new File(getResourcesDir(), "indexes"), new File(assetsDir, "indexes"));
-                    Utils.moveDirectory(new File(getResourcesDir(), "objects"), new File(assetsDir, "objects"));
-                    Utils.moveDirectory(new File(getResourcesDir(), "virtual"), new File(assetsDir, "virtual"));
+            Thread thread = new Thread(() -> {
+                Utils.moveDirectory(new File(getResourcesDir(), "indexes"), new File(assetsDir, "indexes"));
+                Utils.moveDirectory(new File(getResourcesDir(), "objects"), new File(assetsDir, "objects"));
+                Utils.moveDirectory(new File(getResourcesDir(), "virtual"), new File(assetsDir, "virtual"));
 
-                    Utils.delete(getResourcesDir());
+                Utils.delete(getResourcesDir());
 
-                    dialog.close();
-                }
-            };
+                dialog.close();
+            });
             dialog.addThread(thread);
             dialog.start();
         }
@@ -741,13 +733,10 @@ public class Settings {
         if (downloads != null) {
             ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
             for (final Downloadable download : downloads) {
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (download.needToDownload()) {
-                            LogManager.info("Downloading Launcher File " + download.getFile().getName());
-                            download.download(false);
-                        }
+                executor.execute(() -> {
+                    if (download.needToDownload()) {
+                        LogManager.info("Downloading Launcher File " + download.getFile().getName());
+                        download.download(false);
                     }
                 });
             }
@@ -799,27 +788,23 @@ public class Settings {
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
         dialog.add(new JLabel("Updating Launcher... Please Wait"));
-        App.TASKPOOL.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                if (hasUpdatedFiles()) {
-                    downloadUpdatedFiles(); // Downloads updated files on the server
-                }
-                checkForLauncherUpdate();
-                addExecutableBitToTools();
-                loadNews(); // Load the news
-                reloadNewsPanel(); // Reload news panel
-                loadPacks(); // Load the Packs available in the Launcher
-                reloadVanillaPacksPanel(); // Reload packs panel
-                reloadFeaturedPacksPanel(); // Reload packs panel
-                reloadPacksPanel(); // Reload packs panel
-                loadUsers(); // Load the Testers and Allowed Players for the packs
-                loadInstances(); // Load the users installed Instances
-                reloadInstancesPanel(); // Reload instances panel
-                dialog.setVisible(false); // Remove the dialog
-                dialog.dispose(); // Dispose the dialog
+        App.TASKPOOL.execute(() -> {
+            if (hasUpdatedFiles()) {
+                downloadUpdatedFiles(); // Downloads updated files on the server
             }
+            checkForLauncherUpdate();
+            addExecutableBitToTools();
+            loadNews(); // Load the news
+            reloadNewsPanel(); // Reload news panel
+            loadPacks(); // Load the Packs available in the Launcher
+            reloadVanillaPacksPanel(); // Reload packs panel
+            reloadFeaturedPacksPanel(); // Reload packs panel
+            reloadPacksPanel(); // Reload packs panel
+            loadUsers(); // Load the Testers and Allowed Players for the packs
+            loadInstances(); // Load the users installed Instances
+            reloadInstancesPanel(); // Reload instances panel
+            dialog.setVisible(false); // Remove the dialog
+            dialog.dispose(); // Dispose the dialog
         });
         dialog.setVisible(true);
     }
@@ -1618,9 +1603,7 @@ public class Settings {
 
             this.news = Gsons.DEFAULT.fromJson(in, type);
             in.close();
-        } catch (JsonIOException | UnsupportedEncodingException | FileNotFoundException e) {
-            LogManager.logStackTrace(e);
-        } catch (JsonSyntaxException | IOException e) {
+        } catch (JsonIOException | JsonSyntaxException | IOException e) {
             LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading news");
@@ -2005,12 +1988,7 @@ public class Settings {
             }
         }
 
-        Collections.sort(packs, new Comparator<Pack>() {
-            @Override
-            public int compare(Pack result1, Pack result2) {
-                return result1.getName().compareTo(result2.getName());
-            }
-        });
+        packs.sort(Comparator.comparing(Pack::getName));
         return packs;
     }
 
@@ -2040,12 +2018,7 @@ public class Settings {
             }
         }
 
-        Collections.sort(packs, new Comparator<Pack>() {
-            @Override
-            public int compare(Pack result1, Pack result2) {
-                return Integer.compare(result1.getPosition(), result2.getPosition());
-            }
-        });
+        packs.sort(Comparator.comparingInt(Pack::getPosition));
         return packs;
     }
 
@@ -2103,12 +2076,7 @@ public class Settings {
      */
     public ArrayList<Instance> getInstancesSorted() {
         ArrayList<Instance> instances = new ArrayList<>(this.instances);
-        Collections.sort(instances, new Comparator<Instance>() {
-            @Override
-            public int compare(Instance result1, Instance result2) {
-                return result1.getName().compareTo(result2.getName());
-            }
-        });
+        instances.sort(Comparator.comparing(Instance::getName));
         return instances;
     }
 
@@ -2243,12 +2211,7 @@ public class Settings {
      */
     public List<String> getLanguages() {
         List<String> langs = new LinkedList<>();
-        for (File file : this.getLanguagesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".lang");
-            }
-        })) {
+        for (File file : this.getLanguagesDir().listFiles((dir, name) -> name.endsWith(".lang"))) {
             langs.add(file.getName().substring(0, file.getName().lastIndexOf(".")));
         }
         return langs;

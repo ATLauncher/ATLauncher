@@ -103,53 +103,29 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
      * Sets up the listeners on the buttons
      */
     private void setupListeners() {
-        toggleConsole.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                App.settings.getConsole().setVisible(!App.settings.isConsoleVisible());
-            }
+        toggleConsole.addActionListener(e -> App.settings.getConsole().setVisible(!App.settings.isConsoleVisible()));
+        openFolder.addActionListener(e -> OS.openFileExplorer(FileSystem.BASE_DIR));
+        updateData.addActionListener(e -> {
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common" + "" +
+                    ".checkingforupdates"), 0, Language.INSTANCE.localize("common.checkingforupdates"), "Aborting" +
+                    " Update Check!");
+            dialog.addThread(new Thread(() -> {
+                if (App.settings.hasUpdatedFiles()) {
+                    App.settings.reloadLauncherData();
+                }
+                dialog.close();
+            }));
+            dialog.start();
         });
-        openFolder.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                OS.openFileExplorer(FileSystem.BASE_DIR);
-            }
-        });
-        updateData.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common" + "" +
-                        ".checkingforupdates"), 0, Language.INSTANCE.localize("common.checkingforupdates"), "Aborting" +
-                        " Update Check!");
-                dialog.addThread(new Thread() {
-                    public void run() {
-                        if (App.settings.hasUpdatedFiles()) {
-                            App.settings.reloadLauncherData();
-                        }
-                        dialog.close();
-                    }
-                });
-                dialog.start();
-            }
-        });
-        username.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    if (!dontSave) {
-                        App.settings.switchAccount((Account) username.getSelectedItem());
-                    }
+        username.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                if (!dontSave) {
+                    App.settings.switchAccount((Account) username.getSelectedItem());
                 }
             }
         });
-        ConsoleCloseManager.addListener(new ConsoleCloseListener() {
-            @Override
-            public void onConsoleClose() {
-                toggleConsole.setText(Language.INSTANCE.localize("console.show"));
-            }
-        });
-        ConsoleOpenManager.addListener(new ConsoleOpenListener() {
-            @Override
-            public void onConsoleOpen() {
-                toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
-            }
-        });
+        ConsoleCloseManager.addListener(() -> toggleConsole.setText(Language.INSTANCE.localize("console.show")));
+        ConsoleOpenManager.addListener(() -> toggleConsole.setText(Language.INSTANCE.localize("console.hide")));
     }
 
     /**

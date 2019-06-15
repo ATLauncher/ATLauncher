@@ -188,23 +188,17 @@ public class InstanceSettingsDialog extends JDialog {
         final JTextField javaPath = new JTextField(32);
         javaPath.setText(getIfNotNull(instanceSettings.getJavaPath(), App.settings.getJavaPath()));
         JButton javaPathResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
-        javaPathResetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                javaPath.setText(Java.getPathToMinecraftJavaExecutable());
-            }
-        });
+        javaPathResetButton.addActionListener(e -> javaPath.setText(Java.getPathToMinecraftJavaExecutable()));
         JButton javaBrowseButton = new JButton(Language.INSTANCE.localize("common.browse"));
-        javaBrowseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.setCurrentDirectory(new File(javaPath.getText()));
-                chooser.setDialogTitle(Language.INSTANCE.localize("settings.selectjavapath"));
-                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                chooser.setAcceptAllFileFilterUsed(false);
+        javaBrowseButton.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new File(javaPath.getText()));
+            chooser.setDialogTitle(Language.INSTANCE.localize("settings.selectjavapath"));
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
 
-                if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                    javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
-                }
+            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         });
         javaPathPanel.add(javaPath);
@@ -232,25 +226,19 @@ public class InstanceSettingsDialog extends JDialog {
         final JTextField javaParameters = new JTextField(40);
         javaParameters.setText(getIfNotNull(instanceSettings.getJavaArguments(), App.settings.getJavaParameters()));
         JButton javaParametersResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
-        javaParametersResetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                javaParameters.setText(
-                        "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M");
-            }
-        });
+        javaParametersResetButton.addActionListener(e -> javaParameters.setText(
+                "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M"));
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(javaParametersResetButton);
         topPanel.add(javaParametersPanel, gbc);
 
         bottomPanel.setLayout(new FlowLayout());
         JButton saveButton = new JButton(Language.INSTANCE.localize("common.save"));
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                saveSettings((Integer) initialMemory.getValue(), (Integer) maximumMemory.getValue(),
-                        (Integer) permGen.getValue(), javaPath.getText(), javaParameters.getText());
-                App.TOASTER.pop("Instance Settings Saved");
-                close();
-            }
+        saveButton.addActionListener(arg0 -> {
+            saveSettings((Integer) initialMemory.getValue(), (Integer) maximumMemory.getValue(),
+                    (Integer) permGen.getValue(), javaPath.getText(), javaParameters.getText());
+            App.TOASTER.pop("Instance Settings Saved");
+            close();
         });
         bottomPanel.add(saveButton);
 

@@ -172,13 +172,10 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                 final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.serverchecker" + "" +
                         ".checkingserver"), 0, Language.INSTANCE.localize("tools.serverchecker.checkingserver"),
                         "Cancelled Server Check!");
-                dialog.addThread(new Thread() {
-                    @Override
-                    public void run() {
-                        dialog.setReturnValue(MCQuery.getMinecraftServerQueryVersion(host, port));
-                        dialog.close();
-                    }
-                });
+                dialog.addThread(new Thread(() -> {
+                    dialog.setReturnValue(MCQuery.getMinecraftServerQueryVersion(host, port));
+                    dialog.close();
+                }));
                 dialog.start();
 
                 if (dialog.getReturnValue() != null) {

@@ -81,25 +81,23 @@ public class AddPackDialog extends JDialog {
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton(Language.INSTANCE.localize("common.save"));
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (App.settings.semiPublicPackExistsFromCode(packCode.getText())) {
-                    if (App.settings.addPack(packCode.getText())) {
-                        JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                        ".packaddedmessage"), Language.INSTANCE.localize("pack.packadded"),
-                                JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                        ".packalreadyaddedmessage"), Language.INSTANCE.localize("pack" +
-                                ".packalreadyadded"), JOptionPane.ERROR_MESSAGE);
-                    }
-                    setVisible(false);
-                    dispose();
+        saveButton.addActionListener(e -> {
+            if (App.settings.semiPublicPackExistsFromCode(packCode.getText())) {
+                if (App.settings.addPack(packCode.getText())) {
+                    JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
+                                    ".packaddedmessage"), Language.INSTANCE.localize("pack.packadded"),
+                            JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                    ".packdoesntexist"), Language.INSTANCE.localize("pack.packaddederror"),
-                            JOptionPane.ERROR_MESSAGE);
+                                    ".packalreadyaddedmessage"), Language.INSTANCE.localize("pack" +
+                            ".packalreadyadded"), JOptionPane.ERROR_MESSAGE);
                 }
+                setVisible(false);
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
+                                ".packdoesntexist"), Language.INSTANCE.localize("pack.packaddederror"),
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
         bottom.add(saveButton);
