@@ -66,7 +66,7 @@ public final class FileSystem {
 
     public static Path getCoreGracefully() {
         if (App.workingDir != null) {
-            return App.workingDir.toPath();
+            return App.workingDir;
         }
 
         if (OS.isLinux()) {

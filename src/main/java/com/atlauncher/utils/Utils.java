@@ -1182,9 +1182,7 @@ public class Utils {
             connection = (HttpURLConnection) url.openConnection(proxy);
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);
-            if (App.useGzipForDownloads) {
-                connection.setRequestProperty("Accept-Encoding", "gzip");
-            }
+            connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
             connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
             connection.setRequestProperty("Expires", "0");
