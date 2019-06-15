@@ -1445,7 +1445,8 @@ public class Instance implements Cloneable {
                         presence.setStartTimestamps(System.currentTimeMillis());
 
                         if (this.getRealPack().hasDiscordImage()) {
-                            presence.setBigImage(this.getRealPack().getSafeName(), playing);
+                            presence.setBigImage(this.getRealPack().getSafeName().toLowerCase(),
+                                    playing);
                             presence.setSmallImage("atlauncher", "ATLauncher");
                         } else {
                             presence.setBigImage("atlauncher", playing);
