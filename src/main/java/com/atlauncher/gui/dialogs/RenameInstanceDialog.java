@@ -21,15 +21,12 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -37,6 +34,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -86,24 +84,30 @@ public class RenameInstanceDialog extends JDialog {
         saveButton = new JButton(Language.INSTANCE.localize("common.save"));
         saveButton.addActionListener(e -> {
             if (App.settings.isInstance(instanceName.getText())) {
-                JOptionPane.showMessageDialog(RenameInstanceDialog.this, Language.INSTANCE.localizeWithReplace
-                        ("instance.alreadyinstance", instanceName.getText()), Language.INSTANCE.localize("common"
-                        + ".error"), JOptionPane.ERROR_MESSAGE);
+                DialogManager.okDialog().setParent(RenameInstanceDialog.this)
+                        .setTitle(Language.INSTANCE.localize("common" + ".error")).setContent(Language.INSTANCE
+                                .localizeWithReplace("instance.alreadyinstance", instanceName.getText()))
+                        .setType(DialogManager.ERROR).show();
             } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                        .INSTANCE.localize("common.error") + "<br/><br/>" + Language.INSTANCE.localizeWithReplace
-                        ("instance.invalidname", instanceName.getText())), Language.INSTANCE.localize("common" +
-                        ".error"), JOptionPane.ERROR_MESSAGE);
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
+                        .setContent(
+                                HTMLUtils
+                                        .centerParagraph(
+                                                Language.INSTANCE.localize("common.error") + "<br/><br/>"
+                                                        + Language.INSTANCE.localizeWithReplace("instance.invalidname",
+                                                                instanceName.getText())))
+                        .setType(DialogManager.ERROR).show();
             } else {
                 if (instance.rename(instanceName.getText())) {
                     App.settings.saveInstances();
                     App.settings.reloadInstancesPanel();
                 } else {
                     LogManager.error("Unknown Error Occured While Renaming Instance!");
-                    JOptionPane.showMessageDialog(RenameInstanceDialog.this, HTMLUtils.centerParagraph(Language
-                            .INSTANCE.localizeWithReplace("instance" + "" +
-                                    ".errorrenaming", instance.getName() + "<br/><br/>")), Language.INSTANCE
-                            .localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                    DialogManager.okDialog().setParent(RenameInstanceDialog.this)
+                            .setTitle(Language.INSTANCE.localize("common" + ".error"))
+                            .setContent(HTMLUtils.centerParagraph(Language.INSTANCE
+                                    .localizeWithReplace("instance.errorrenaming", instance.getName() + "<br/><br/>")))
+                            .setType(DialogManager.ERROR).show();
                 }
                 close();
             }

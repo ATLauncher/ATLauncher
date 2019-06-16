@@ -18,8 +18,6 @@
 package com.atlauncher.gui;
 
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -32,7 +30,8 @@ import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
 /**
- * The splash screen which shows when the launcher is started up and is loading it's stuff.
+ * The splash screen which shows when the launcher is started up and is loading
+ * it's stuff.
  */
 public class SplashScreen extends JWindow {
     private static final BufferedImage img = Utils.getImage("SplashScreen");
@@ -67,7 +66,8 @@ public class SplashScreen extends JWindow {
     }
 
     /**
-     * The context menu which is shows on right click for the splash screen image, giving a force quit option.
+     * The context menu which is shows on right click for the splash screen image,
+     * giving a force quit option.
      */
     private final class ContextMenu extends JPopupMenu {
         private final JMenuItem FORCE_QUIT = new JMenuItem(Language.INSTANCE.localize("common.forcequit"));

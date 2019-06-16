@@ -22,10 +22,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -38,13 +35,11 @@ import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
@@ -206,13 +201,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         bottomPanel.add(rememberField, gbc);
         rememberField.addActionListener(e -> {
             if (rememberField.isSelected()) {
-                String[] options = { Language.INSTANCE.localize("common.yes"),
-                        Language.INSTANCE.localize("common" + ".no") };
-                int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                        HTMLUtils.centerParagraph(Language.INSTANCE
-                                .localizeWithReplace("account" + "" + ".rememberpasswordwarning", "<br/><br/>")),
-                        Language.INSTANCE.localize("account" + ".securitywarningtitle"), JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                int ret = DialogManager.optionDialog()
+                        .setTitle(Language.INSTANCE.localize("account.securitywarningtitle"))
+                        .setContent(HTMLUtils.centerParagraph(
+                                Language.INSTANCE.localizeWithReplace("account.rememberpasswordwarning", "<br/><br/>")))
+                        .setType(DialogManager.ERROR).addOption(Language.INSTANCE.localize("common.yes"), true)
+                        .addOption(Language.INSTANCE.localize("common.no")).show();
+
                 if (ret != 0) {
                     rememberField.setSelected(false);
                 }
@@ -236,10 +231,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 rememberField.setSelected(false);
             } else {
                 Account account = (Account) accountsComboBox.getSelectedItem();
-                int res = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                        Language.INSTANCE.localizeWithReplace("account.deletesure", usernameField.getText()),
-                        Language.INSTANCE.localize("account.delete"), JOptionPane.YES_NO_OPTION);
-                if (res == JOptionPane.YES_OPTION) {
+                int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("account.delete"))
+                        .setContent(
+                                Language.INSTANCE.localizeWithReplace("account.deletesure", usernameField.getText()))
+                        .setType(DialogManager.WARNING).show();
+                if (ret == DialogManager.YES_OPTION) {
                     App.settings.removeAccount(account);
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(fillerAccount);
@@ -316,12 +312,12 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                             response.getAuth().getSelectedProfile().getId().toString(), remember);
                     App.settings.addAccount(account);
                     LogManager.info("Added Account " + account);
-                    String[] options = { Language.INSTANCE.localize("common.yes"),
-                            Language.INSTANCE.localize("common" + ".no") };
-                    int ret = JOptionPane.showOptionDialog(App.settings.getParent(),
-                            Language.INSTANCE.localize("account.addedswitch"),
-                            Language.INSTANCE.localize("account.added"), JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+                    int ret = DialogManager.optionDialog().setTitle(Language.INSTANCE.localize("account.added"))
+                            .setContent(Language.INSTANCE.localize("account.addedswitch")).setType(DialogManager.INFO)
+                            .addOption(Language.INSTANCE.localize("common.yes"), true)
+                            .addOption(Language.INSTANCE.localize("common.no")).show();
+
                     if (ret == 0) {
                         App.settings.switchAccount(account);
                     }

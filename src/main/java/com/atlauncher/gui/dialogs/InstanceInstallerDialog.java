@@ -26,8 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -36,7 +34,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
@@ -48,6 +45,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.mojang.LoggingClient;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -223,14 +221,13 @@ public class InstanceInstallerDialog extends JDialog {
                 enableUserLock = new JCheckBox();
                 enableUserLock.addActionListener(e -> {
                     if (enableUserLock.isSelected()) {
-                        String[] options = { Language.INSTANCE.localize("common.yes"),
-                                Language.INSTANCE.localize("common.no") };
-
-                        int ret = JOptionPane.showOptionDialog(null,
-                                HTMLUtils.centerParagraph(
-                                        Language.INSTANCE.localizeWithReplace("instance.userlockhelp", "<br/>")),
-                                Language.INSTANCE.localize("instance.userlocktitle"), JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                        int ret = DialogManager.optionDialog()
+                                .setTitle(Language.INSTANCE.localize("instance.userlocktitle"))
+                                .setContent(HTMLUtils.centerParagraph(
+                                        Language.INSTANCE.localizeWithReplace("instance.userlockhelp", "<br/>")))
+                                .setType(DialogManager.WARNING)
+                                .addOption(Language.INSTANCE.localize("common.yes"), true)
+                                .addOption(Language.INSTANCE.localize("common.no")).show();
 
                         if (ret != 0) {
                             enableUserLock.setSelected(false);
@@ -253,12 +250,13 @@ public class InstanceInstallerDialog extends JDialog {
                 if (!isReinstall && !isServer && App.settings.isInstance(instanceNameField.getText())) {
                     instance = App.settings.getInstanceByName(instanceNameField.getText());
                     if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
-                        int ret = JOptionPane.showConfirmDialog(App.settings.getParent(),
-                                HTMLUtils.centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
-                                        + Language.INSTANCE.localizeWithReplace("instance" + "" + ".alreadyinstance1",
-                                                instanceNameField.getText() + "<br/><br/>")),
-                                Language.INSTANCE.localize("common.error"), JOptionPane.YES_NO_OPTION);
-                        if (ret != JOptionPane.YES_OPTION) {
+                        int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("common.error"))
+                                .setContent(HTMLUtils
+                                        .centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
+                                                + Language.INSTANCE.localizeWithReplace("instance.alreadyinstance1",
+                                                        instanceNameField.getText() + "<br/><br/>")))
+                                .setType(DialogManager.ERROR).show();
+                        if (ret != DialogManager.YES_OPTION) {
                             return;
                         }
                         isReinstall = true;
@@ -266,20 +264,23 @@ public class InstanceInstallerDialog extends JDialog {
                             return;
                         }
                     } else {
-                        JOptionPane.showMessageDialog(App.settings.getParent(),
-                                HTMLUtils.centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
-                                        + Language.INSTANCE.localizeWithReplace("instance" + "" + ".alreadyinstance",
-                                                instanceNameField.getText() + "<br/><br/>")),
-                                Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
+                                .setContent(HTMLUtils
+                                        .centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
+                                                + Language.INSTANCE.localizeWithReplace("instance.alreadyinstance",
+                                                        instanceNameField.getText() + "<br/><br/>")))
+                                .setType(DialogManager.ERROR).show();
                         return;
                     }
                 } else if (!isReinstall && !isServer
                         && instanceNameField.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                    JOptionPane.showMessageDialog(App.settings.getParent(),
-                            HTMLUtils.centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
-                                    + Language.INSTANCE.localizeWithReplace("instance.invalidname",
-                                            instanceNameField.getText())),
-                            Language.INSTANCE.localize("common.error"), JOptionPane.ERROR_MESSAGE);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
+                            .setContent(
+                                    HTMLUtils
+                                            .centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
+                                                    + Language.INSTANCE.localizeWithReplace("instance.invalidname",
+                                                            instanceNameField.getText())))
+                            .setType(DialogManager.ERROR).show();
                     return;
                 }
                 final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
@@ -325,7 +326,7 @@ public class InstanceInstallerDialog extends JDialog {
                         String text;
                         String title;
                         if (isCancelled()) {
-                            type = JOptionPane.ERROR_MESSAGE;
+                            type = DialogManager.ERROR;
                             text = pack.getName() + " " + version.getVersion() + " "
                                     + Language.INSTANCE.localize("common.wasnt") + " "
                                     + ((isReinstall) ? Language.INSTANCE.localize("common" + "" + ".reinstalled")
@@ -350,7 +351,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 LogManager.logStackTrace(e);
                             }
                             if (success) {
-                                type = JOptionPane.INFORMATION_MESSAGE;
+                                type = DialogManager.INFO;
                                 text = pack.getName() + " " + version.getVersion() + " "
                                         + Language.INSTANCE.localize("common.hasbeen") + " "
                                         + ((isReinstall) ? Language.INSTANCE.localize("common.reinstalled")
@@ -449,7 +450,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 }
                             } else {
                                 if (isReinstall) {
-                                    type = JOptionPane.ERROR_MESSAGE;
+                                    type = DialogManager.ERROR;
                                     text = pack.getName() + " " + version.getVersion() + " "
                                             + Language.INSTANCE.localize("common.wasnt") + " "
                                             + Language.INSTANCE.localize("common" + "" + ".reinstalled") + "<br/><br/>"
@@ -467,7 +468,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 } else {
                                     // Install failed so delete the folder and clear Temp Dir
                                     Utils.delete(this.getRootDirectory());
-                                    type = JOptionPane.ERROR_MESSAGE;
+                                    type = DialogManager.ERROR;
                                     text = pack.getName() + " " + version.getVersion() + " "
                                             + Language.INSTANCE.localize("common.wasnt") + " "
                                             + Language.INSTANCE.localize("common" + "" + ".installed") + "<br/><br/>"
@@ -483,8 +484,8 @@ public class InstanceInstallerDialog extends JDialog {
 
                         Utils.cleanTempDirectory();
 
-                        JOptionPane.showMessageDialog(App.settings.getParent(), HTMLUtils.centerParagraph(text), title,
-                                type);
+                        DialogManager.okDialog().setTitle(title).setContent(HTMLUtils.centerParagraph(text))
+                                .setType(type).show();
                     }
 
                 };

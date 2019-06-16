@@ -21,8 +21,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
@@ -110,8 +108,8 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         add(topPanel, BorderLayout.NORTH);
 
         panel = new JPanel();
-        scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane
-                .HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -128,8 +126,8 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
                     boolean showInstance = true;
 
                     if (searchText != null) {
-                        if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(instance
-                                .getName()).find()) {
+                        if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
+                                .matcher(instance.getName()).find()) {
                             showInstance = false;
                         }
                     }

@@ -20,8 +20,6 @@ package com.atlauncher.gui.tabs.settings;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JButton;
@@ -29,7 +27,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -40,6 +37,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -347,11 +345,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     public boolean isValidJavaPath() {
         File jPath = new File(javaPath.getText(), "bin");
         if (!jPath.exists()) {
-            JOptionPane
-                    .showMessageDialog(App.settings.getParent(),
-                            "<html>" + Language.INSTANCE.localizeWithReplace("settings.javapathincorrect", "<br/><br/>")
-                                    + "</html>",
-                            Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
+            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("settings.help")).setContent("<html>"
+                    + Language.INSTANCE.localizeWithReplace("settings.javapathincorrect", "<br/><br/>") + "</html>")
+                    .setType(DialogManager.ERROR).addOption(Language.INSTANCE.localize("instance.ivedownloaded"), true)
+                    .show();
             return false;
         }
         return true;
@@ -361,10 +358,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
                 || javaParameters.getText().contains("-XX:PermSize")
                 || javaParameters.getText().contains("-XX:MetaspaceSize")) {
-            JOptionPane.showMessageDialog(App.settings.getParent(),
-                    "<html>" + Language.INSTANCE.localizeWithReplace("settings.javaparametersincorrect", "<br/><br/>")
-                            + "</html>",
-                    Language.INSTANCE.localize("settings.help"), JOptionPane.PLAIN_MESSAGE);
+            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("settings.help"))
+                    .setContent("<html>"
+                            + Language.INSTANCE.localizeWithReplace("settings.javaparametersincorrect", "<br/><br/>")
+                            + "</html>")
+                    .setType(DialogManager.ERROR).show();
             return false;
         }
         return true;

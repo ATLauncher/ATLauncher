@@ -18,8 +18,6 @@
 package com.atlauncher.gui.tabs.settings;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -60,8 +58,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         forgeLoggingLevelLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.forgelogginglevel") + ":",
-                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.forgelogginglevelhelp",
-                "<br/><br/>") + "</html>");
+                HELP_ICON,
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.forgelogginglevelhelp", "<br/><br/>")
+                        + "</html>");
         add(forgeLoggingLevelLabel, gbc);
 
         gbc.gridx++;
@@ -158,8 +157,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableOpenEyeReportingLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.openeye") + "?",
-                HELP_ICON, "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings" + "" +
-                ".openeyehelp"), 80, "<br/>") + "</html>");
+                HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings" + "" + ".openeyehelp"), 80,
+                        "<br/>") + "</html>");
         add(enableOpenEyeReportingLabel, gbc);
 
         gbc.gridx++;
@@ -191,8 +191,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
     @Override
     public void onRelocalization() {
         this.forgeLoggingLevelLabel.setText(Language.INSTANCE.localize("settings" + ".forgelogginglevel") + ":");
-        this.forgeLoggingLevelLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
-                ".forgelogginglevelhelp", "<br/><br/>") + "</html>");
+        this.forgeLoggingLevelLabel.setToolTipText("<html>"
+                + Language.INSTANCE.localizeWithReplace("settings" + "" + ".forgelogginglevelhelp", "<br/><br/>")
+                + "</html>");
 
         this.daysOfLogsToKeepLabel.setText(Language.INSTANCE.localize("settings.daysoflogstokeep") + "?");
         this.daysOfLogsToKeepLabel.setToolTipText(Language.INSTANCE.localize("settings.daysoflogstokeephelp"));
@@ -201,11 +202,12 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.enableLeaderboardsLabel.setToolTipText(Language.INSTANCE.localize("settings.leaderboardshelp"));
 
         this.enableLoggingLabel.setText(Language.INSTANCE.localize("settings.logging") + "?");
-        this.enableLoggingLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
-                ".logginghelp", "<br/>" + "</html>"));
+        this.enableLoggingLabel.setToolTipText("<html>"
+                + Language.INSTANCE.localizeWithReplace("settings" + "" + ".logginghelp", "<br/>" + "</html>"));
 
         this.enableOpenEyeReportingLabel.setText(Language.INSTANCE.localize("settings.openeye") + "?");
-        this.enableOpenEyeReportingLabel.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE
-                .localize("settings.openeyehelp"), 80, "<br/>") + "</html>");
+        this.enableOpenEyeReportingLabel.setToolTipText(
+                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.openeyehelp"), 80, "<br/>")
+                        + "</html>");
     }
 }

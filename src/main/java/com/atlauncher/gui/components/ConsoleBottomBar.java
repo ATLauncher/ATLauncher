@@ -22,12 +22,9 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
@@ -36,6 +33,7 @@ import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.HTMLUtils;
 
@@ -101,10 +99,11 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             }
         });
         killMinecraftButton.addActionListener(arg0 -> {
-            int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils.centerParagraph(Language
-                    .INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>")), Language.INSTANCE.localize
-                    ("console.kill"), JOptionPane.YES_NO_OPTION);
-            if (ret == JOptionPane.YES_OPTION) {
+            int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("console.kill"))
+                    .setContent(HTMLUtils
+                            .centerParagraph(Language.INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>")))
+                    .setType(DialogManager.QUESTION).show();
+            if (ret == DialogManager.YES_OPTION) {
                 App.settings.killMinecraft();
                 killMinecraftButton.setVisible(false);
             }

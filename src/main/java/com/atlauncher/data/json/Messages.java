@@ -18,14 +18,12 @@
 package com.atlauncher.data.json;
 
 import javax.swing.JEditorPane;
-import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
-import com.atlauncher.App;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
 
 @Json
@@ -42,7 +40,6 @@ public class Messages {
     }
 
     public int showInstallMessage(Pack pack) {
-        String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common.cancel")};
         JEditorPane ep = new JEditorPane("text/html", "<html>" + this.install + "</html>");
         ep.setEditable(false);
         ep.addHyperlinkListener(e -> {
@@ -50,9 +47,10 @@ public class Messages {
                 OS.openWebBrowser(e.getURL());
             }
         });
-        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize("common" + "" +
-                        ".installing") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
-                .WARNING_MESSAGE, null, options, options[0]);
+        return DialogManager.optionDialog()
+                .setTitle(Language.INSTANCE.localize("common.installing") + " " + pack.getName()).setContent(ep)
+                .setType(DialogManager.WARNING).addOption(Language.INSTANCE.localize("common.ok"), true)
+                .addOption(Language.INSTANCE.localize("common.cancel")).show();
     }
 
     public String getUpdateMessage() {
@@ -64,7 +62,6 @@ public class Messages {
     }
 
     public int showUpdateMessage(Pack pack) {
-        String[] options = {Language.INSTANCE.localize("common.ok"), Language.INSTANCE.localize("common.cancel")};
         JEditorPane ep = new JEditorPane("text/html", "<html>" + this.update + "</html>");
         ep.setEditable(false);
         ep.addHyperlinkListener(e -> {
@@ -72,8 +69,9 @@ public class Messages {
                 OS.openWebBrowser(e.getURL());
             }
         });
-        return JOptionPane.showOptionDialog(App.settings.getParent(), ep, Language.INSTANCE.localize("common" + "" +
-                        ".reinstalling") + " " + pack.getName(), JOptionPane.DEFAULT_OPTION, JOptionPane
-                .WARNING_MESSAGE, null, options, options[0]);
+        return DialogManager.optionDialog()
+                .setTitle(Language.INSTANCE.localize("common.reinstalling") + " " + pack.getName()).setContent(ep)
+                .setType(DialogManager.WARNING).addOption(Language.INSTANCE.localize("common.ok"), true)
+                .addOption(Language.INSTANCE.localize("common.cancel")).show();
     }
 }

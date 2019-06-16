@@ -19,8 +19,6 @@ package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -42,6 +40,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
@@ -61,8 +60,8 @@ public class ModsChooser extends JDialog {
     private boolean wasClosed = false;
 
     public ModsChooser(InstanceInstaller installerr) {
-        super(App.settings.getParent(), Language.INSTANCE.localize("instance.selectmods"), ModalityType
-                .APPLICATION_MODAL);
+        super(App.settings.getParent(), Language.INSTANCE.localize("instance.selectmods"),
+                ModalityType.APPLICATION_MODAL);
         this.installer = installerr;
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setLocationRelativeTo(App.settings.getParent());
@@ -114,8 +113,8 @@ public class ModsChooser extends JDialog {
         checkBoxPanel1.setLayout(null);
         checkBoxPanel1.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
-                .HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
         modsInPack.setRightComponent(scroller1);
 
@@ -123,8 +122,8 @@ public class ModsChooser extends JDialog {
         checkBoxPanel2.setLayout(null);
         checkBoxPanel2.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
-                .HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
         modsInPack.setLeftComponent(scroller2);
 
@@ -156,8 +155,7 @@ public class ModsChooser extends JDialog {
                 if ((installer.isServer() ? check.getMod().isServerOptional() : check.getMod().isOptional())) {
                     if (check.getMod().isRecommended()) {
                         if (check.getMod().hasGroup()) {
-                            if (check.getMod().isRecommended() && installer.isOnlyRecommendedInGroup(check.getMod
-                                    ())) {
+                            if (check.getMod().isRecommended() && installer.isOnlyRecommendedInGroup(check.getMod())) {
                                 check.setSelected(true);
                                 check.setEnabled(true);
                                 sortOutMods(check);
@@ -203,7 +201,7 @@ public class ModsChooser extends JDialog {
         int count1 = 0;
         int count2 = 0;
 
-        for (int i = 0; i < installer.getMods().size(); ) {
+        for (int i = 0; i < installer.getMods().size();) {
             boolean skip = false;
             final Mod mod = installer.getMods().get(i);
             if (installer.isServer() && !mod.installOnServer()) {
@@ -219,8 +217,8 @@ public class ModsChooser extends JDialog {
                     } else {
                         Mod linkedMod = installer.getModByName(mod.getLinked());
                         if (linkedMod == null) {
-                            LogManager.error("The mod " + mod.getName() + " tried to reference a linked mod " + mod
-                                    .getLinked() + " which doesn't exist!");
+                            LogManager.error("The mod " + mod.getName() + " tried to reference a linked mod "
+                                    + mod.getLinked() + " which doesn't exist!");
                             installer.cancel(true);
                             return;
                         }
@@ -266,19 +264,19 @@ public class ModsChooser extends JDialog {
                 if (mod.hasWarning()) {
                     final ModsJCheckBox finalCheckBox = checkBox;
                     checkBox.addActionListener(e -> {
-                        if (finalCheckBox.isSelected() && installer.getJsonVersion().hasWarningMessage(mod
-                                .getWarning())) {
+                        if (finalCheckBox.isSelected()
+                                && installer.getJsonVersion().hasWarningMessage(mod.getWarning())) {
                             String message = installer.getJsonVersion().getWarningMessage(mod.getWarning());
 
                             if (message != null) {
-                                String[] options = {Language.INSTANCE.localize("common.yes"), Language.INSTANCE
-                                        .localize("common.no")};
-                                int ret = JOptionPane.showOptionDialog(App.settings.getParent(), "<html>" +
-                                                message + "<br/>" +
-                                                Language.INSTANCE.localize("instance.warningsure") + "</html>",
-                                        Language.INSTANCE.localize("instance.warning"), JOptionPane
-                                                .DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options,
-                                        options[1]);
+                                int ret = DialogManager.optionDialog()
+                                        .setTitle(Language.INSTANCE.localize("instance.warning"))
+                                        .setContent("<html>" + message + "<br/>"
+                                                + Language.INSTANCE.localize("instance.warningsure") + "</html>")
+                                        .setType(DialogManager.WARNING)
+                                        .addOption(Language.INSTANCE.localize("common.yes"))
+                                        .addOption(Language.INSTANCE.localize("common.no"), true).show();
+
                                 if (ret != 0) {
                                     finalCheckBox.setSelected(false);
                                 }

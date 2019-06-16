@@ -19,7 +19,6 @@ package com.atlauncher.data;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,8 +45,8 @@ public enum Language {
         File[] files = App.settings.getLanguagesDir().listFiles((dir, name) -> name.endsWith(".lang"));
         String[] langs = new String[files.length];
         for (int i = 0; i < files.length; i++) {
-            langs[i] = files[i].getName().substring(0, 1).toUpperCase() + files[i].getName().substring(1, files[i]
-                    .getName().lastIndexOf("."));
+            langs[i] = files[i].getName().substring(0, 1).toUpperCase()
+                    + files[i].getName().substring(1, files[i].getName().lastIndexOf("."));
         }
         return langs;
     }

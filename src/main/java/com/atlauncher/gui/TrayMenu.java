@@ -17,11 +17,7 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
@@ -33,10 +29,11 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 
-public final class TrayMenu extends JPopupMenu implements RelocalizationListener, ConsoleCloseListener,
-        ConsoleOpenListener {
+public final class TrayMenu extends JPopupMenu
+        implements RelocalizationListener, ConsoleCloseListener, ConsoleOpenListener {
 
     private final JMenuItem killMCButton = new JMenuItem();
     private final JMenuItem tcButton = new JMenuItem();
@@ -68,17 +65,18 @@ public final class TrayMenu extends JPopupMenu implements RelocalizationListener
     private void addActionListeners() {
         this.killMCButton.addActionListener(e -> SwingUtilities.invokeLater(() -> {
             if (App.settings.isMinecraftLaunched()) {
-                int ret = JOptionPane.showConfirmDialog(App.settings.getParent(), HTMLUtils
-                        .centerParagraph(Language.INSTANCE.localizeWithReplace("console" + "" +
-                            ".killsure", "<br/><br/>")), Language.INSTANCE.localize("console" + ".kill"),
-                    JOptionPane.YES_NO_OPTION);
+                int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("console.kill"))
+                        .setContent(HTMLUtils.centerParagraph(
+                                Language.INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>")))
+                        .setType(DialogManager.ERROR).show();
 
-                if (ret == JOptionPane.YES_OPTION) {
+                if (ret == DialogManager.YES_OPTION) {
                     App.settings.killMinecraft();
                 }
             }
         }));
-        this.tcButton.addActionListener(e -> App.settings.getConsole().setVisible(!App.settings.getConsole().isVisible()));
+        this.tcButton
+                .addActionListener(e -> App.settings.getConsole().setVisible(!App.settings.getConsole().isVisible()));
         this.quitButton.addActionListener(e -> System.exit(0));
     }
 

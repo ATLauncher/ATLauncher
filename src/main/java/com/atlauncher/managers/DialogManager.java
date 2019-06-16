@@ -20,8 +20,10 @@ package com.atlauncher.managers;
 import java.awt.Window;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
+
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 
@@ -72,6 +74,24 @@ public final class DialogManager {
         DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
 
         dialog.addOption(Language.INSTANCE.localize("common.ok"), true);
+
+        return dialog;
+    }
+
+    public static DialogManager okCancelDialog() {
+        DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
+
+        dialog.addOption(Language.INSTANCE.localize("common.ok"), true);
+        dialog.addOption(Language.INSTANCE.localize("common.cancel"));
+
+        return dialog;
+    }
+
+    public static DialogManager yesNoDialog() {
+        DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
+
+        dialog.addOption(Language.INSTANCE.localize("common.yes"), true);
+        dialog.addOption(Language.INSTANCE.localize("common.no"));
 
         return dialog;
     }
@@ -146,7 +166,7 @@ public final class DialogManager {
     }
 
     public int show() {
-        return JOptionPane.showOptionDialog(this.getParent(), this.content, this.title,
-                this.lookAndFeel, this.type, this.icon, this.getOptions(), this.defaultOption);
+        return JOptionPane.showOptionDialog(this.getParent(), this.content, this.title, this.lookAndFeel, this.type,
+                this.icon, this.getOptions(), this.defaultOption);
     }
 }

@@ -22,14 +22,13 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
@@ -358,121 +357,125 @@ public class Mod {
             }
         }
         switch (this.download) {
-            case browser:
-                File downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(), getFile());
-                if (downloadsFolderFile.exists()) {
-                    Utils.moveFile(downloadsFolderFile, fileLocation, true);
+        case browser:
+            File downloadsFolderFile = new File(App.settings.getUsersDownloadsDir(), getFile());
+            if (downloadsFolderFile.exists()) {
+                Utils.moveFile(downloadsFolderFile, fileLocation, true);
+            }
+            if (fileCheck != null && fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
+                String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                        : App.settings.getDownloadsDir()).list(getFileNameFilter());
+                if (files.length == 1) {
+                    this.file = files[0];
+                    fileLocation = new File(
+                            (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App.settings.getDownloadsDir()),
+                            files[0]);
+                } else if (files.length > 1) {
+                    for (int i = 0; i < files.length; i++) {
+                        if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
+                            this.file = files[i];
+                            fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                    : App.settings.getDownloadsDir()), files[i]);
+                            break;
+                        }
+                        if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
+                            this.file = files[i];
+                            fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                    : App.settings.getDownloadsDir()), files[i]);
+                            break;
+                        }
+                    }
                 }
-                if (fileCheck != null && fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
-                    String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
-                            .settings.getDownloadsDir()).list(getFileNameFilter());
+            }
+            while (!fileLocation.exists()) {
+                int retValue = 1;
+                do {
+                    if (retValue == 1) {
+                        OS.openWebBrowser(this.getUrl());
+                    }
+
+                    retValue = DialogManager.optionDialog()
+                            .setTitle(Language.INSTANCE.localize("common.downloading") + " "
+                                    + (serverFile == null ? (isFilePattern() ? getName() : getFile())
+                                            : (isFilePattern() ? getName() : getServerFile())))
+                            .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace(
+                                    "instance" + "" + ".browseropened",
+                                    (serverFile == null ? (isFilePattern() ? getName() : getFile())
+                                            : (isFilePattern() ? getName() : getServerFile())))
+                                    + "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>"
+                                    + (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                            : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath()
+                                                    : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>"
+                                                            + App.settings.getUsersDownloadsDir()))))
+                            .addOption(Language.INSTANCE.localize("common.openfolder"), true)
+                            .addOption(Language.INSTANCE.localize("instance.ivedownloaded")).setType(DialogManager.INFO)
+                            .show();
+
+                    if (retValue == DialogManager.CLOSED_OPTION) {
+                        installer.cancel(true);
+                        return;
+                    } else if (retValue == 0) {
+                        OS.openFileExplorer(FileSystem.DOWNLOADS);
+                    }
+                } while (retValue != 1);
+
+                if (isFilePattern()) {
+                    String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                            : App.settings.getDownloadsDir()).list(getFileNameFilter());
                     if (files.length == 1) {
                         this.file = files[0];
-                        fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() :
-                                App.settings.getDownloadsDir()), files[0]);
+                        fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                : App.settings.getDownloadsDir()), files[0]);
                     } else if (files.length > 1) {
                         for (int i = 0; i < files.length; i++) {
                             if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                                 this.file = files[i];
-                                fileLocation = new File((OS.isUsingMacApp() ? App.settings
-                                        .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
+                                fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                        : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
                             if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                                 this.file = files[i];
-                                fileLocation = new File((OS.isUsingMacApp() ? App.settings
-                                        .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
+                                fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                        : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
                         }
                     }
-                }
-                while (!fileLocation.exists()) {
-                    int retValue = 1;
-                    do {
-                        if (retValue == 1) {
-                            OS.openWebBrowser(this.getUrl());
+                } else {
+                    if (!fileLocation.exists()) {
+                        // Check users downloads folder to see if it's there
+                        if (downloadsFolderFile.exists()) {
+                            Utils.moveFile(downloadsFolderFile, fileLocation, true);
                         }
-                        String[] options = new String[]{Language.INSTANCE.localize("common.openfolder"), Language
-                                .INSTANCE.localize("instance.ivedownloaded")};
-                        retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
-                                (Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".browseropened", (serverFile == null ? (isFilePattern() ? getName() : getFile()) :
-                                        (isFilePattern() ? getName() : getServerFile()))) + "<br/><br/>" +
-                                        Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                        (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
-                                                : (isFilePattern() ? App.settings.getDownloadsDir().getAbsolutePath() : App
-                                                .settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App.settings
-                                                .getUsersDownloadsDir()))), Language.INSTANCE.localize("common.downloading")
-                                + " " +
-                                (serverFile == null ? (isFilePattern() ? getName() : getFile()) : (isFilePattern() ?
-                                        getName() : getServerFile())), JOptionPane.DEFAULT_OPTION, JOptionPane
-                                .INFORMATION_MESSAGE, null, options, options[0]);
-                        if (retValue == JOptionPane.CLOSED_OPTION) {
-                            installer.cancel(true);
-                            return;
-                        } else if (retValue == 0) {
-                            OS.openFileExplorer(FileSystem.DOWNLOADS);
-                        }
-                    } while (retValue != 1);
-
-                    if (isFilePattern()) {
-                        String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
-                                .settings.getDownloadsDir()).list(getFileNameFilter());
-                        if (files.length == 1) {
-                            this.file = files[0];
-                            fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir
-                                    () : App.settings.getDownloadsDir()), files[0]);
-                        } else if (files.length > 1) {
-                            for (int i = 0; i < files.length; i++) {
-                                if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
-                                    this.file = files[i];
-                                    fileLocation = new File((OS.isUsingMacApp() ? App.settings
-                                            .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
-                                    break;
-                                }
-                                if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
-                                    this.file = files[i];
-                                    fileLocation = new File((OS.isUsingMacApp() ? App.settings
-                                            .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        if (!fileLocation.exists()) {
-                            // Check users downloads folder to see if it's there
-                            if (downloadsFolderFile.exists()) {
-                                Utils.moveFile(downloadsFolderFile, fileLocation, true);
-                            }
-                            // Check to see if a browser has added a .zip to the end of the file
-                            File zipAddedFile = new File(App.settings.getDownloadsDir(), getFile() + ".zip");
+                        // Check to see if a browser has added a .zip to the end of the file
+                        File zipAddedFile = new File(App.settings.getDownloadsDir(), getFile() + ".zip");
+                        if (zipAddedFile.exists()) {
+                            Utils.moveFile(zipAddedFile, fileLocation, true);
+                        } else {
+                            zipAddedFile = new File(App.settings.getUsersDownloadsDir(), getFile() + ".zip");
                             if (zipAddedFile.exists()) {
                                 Utils.moveFile(zipAddedFile, fileLocation, true);
-                            } else {
-                                zipAddedFile = new File(App.settings.getUsersDownloadsDir(), getFile() + ".zip");
-                                if (zipAddedFile.exists()) {
-                                    Utils.moveFile(zipAddedFile, fileLocation, true);
-                                }
                             }
                         }
                     }
                 }
-                break;
-            case direct:
-                Downloadable download1 = new Downloadable(this.getUrl(), fileLocation, this.md5, installer, false);
-                download1.checkForNewness();
-                if (download1.needToDownload()) {
-                    installer.resetDownloadedBytes(download1.getFilesize());
-                    download1.download(true);
-                }
-                break;
-            case server:
-                Downloadable download2 = new Downloadable(this.getUrl(), fileLocation, this.md5, installer, true);
-                if (download2.needToDownload()) {
-                    download2.download(false);
-                }
-                break;
+            }
+            break;
+        case direct:
+            Downloadable download1 = new Downloadable(this.getUrl(), fileLocation, this.md5, installer, false);
+            download1.checkForNewness();
+            if (download1.needToDownload()) {
+                installer.resetDownloadedBytes(download1.getFilesize());
+                download1.download(true);
+            }
+            break;
+        case server:
+            Downloadable download2 = new Downloadable(this.getUrl(), fileLocation, this.md5, installer, true);
+            if (download2.needToDownload()) {
+                download2.download(false);
+            }
+            break;
         }
         if (hasMD5()) {
             if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.md5))) {
@@ -515,24 +518,25 @@ public class Mod {
             }
 
             if (fileCheck.equalsIgnoreCase("before") && isFilePattern()) {
-                String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App.settings
-                        .getDownloadsDir()).list(getFileNameFilter());
+                String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                        : App.settings.getDownloadsDir()).list(getFileNameFilter());
                 if (files.length == 1) {
                     this.file = files[0];
-                    fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
-                            .settings.getDownloadsDir()), files[0]);
+                    fileLocation = new File(
+                            (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App.settings.getDownloadsDir()),
+                            files[0]);
                 } else if (files.length > 1) {
                     for (int i = 0; i < files.length; i++) {
                         if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                             this.file = files[i];
-                            fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir
-                                    () : App.settings.getDownloadsDir()), files[i]);
+                            fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                    : App.settings.getDownloadsDir()), files[i]);
                             break;
                         }
                         if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                             this.file = files[i];
-                            fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir
-                                    () : App.settings.getDownloadsDir()), files[i]);
+                            fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                    : App.settings.getDownloadsDir()), files[i]);
                             break;
                         }
                     }
@@ -541,40 +545,44 @@ public class Mod {
 
             while (!fileLocation.exists()) {
                 OS.openWebBrowser(this.serverUrl);
-                String[] options = new String[]{Language.INSTANCE.localize("instance.ivedownloaded")};
-                int retValue = JOptionPane.showOptionDialog(App.settings.getParent(), HTMLUtils.centerParagraph
-                                (Language.INSTANCE.localizeWithReplace("instance" + "" +
-                                        ".browseropened", (serverFile == null ? getFile() : getServerFile())) +
-                                        "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>" +
-                                        (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
-                                                : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>" + App
-                                                .settings.getUsersDownloadsDir())), Language.INSTANCE.localize("common" + "" +
-                                ".downloading") + " " + (serverFile == null ? getFile() : getServerFile()),
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                if (retValue == JOptionPane.CLOSED_OPTION) {
+
+                int ret = DialogManager.optionDialog()
+                        .setTitle(Language.INSTANCE.localize("common.downloading") + " "
+                                + (serverFile == null ? getFile() : getServerFile()))
+                        .setContent(HTMLUtils
+                                .centerParagraph(Language.INSTANCE.localizeWithReplace("instance.browseropened",
+                                        (serverFile == null ? getFile() : getServerFile())) + "<br/><br/>"
+                                        + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>"
+                                        + (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
+                                                : App.settings.getDownloadsDir().getAbsolutePath() + " or<br/>"
+                                                        + App.settings.getUsersDownloadsDir())))
+                        .setType(DialogManager.INFO)
+                        .addOption(Language.INSTANCE.localize("instance.ivedownloaded"), true).show();
+
+                if (ret == DialogManager.CLOSED_OPTION) {
                     installer.cancel(true);
                     return;
                 }
 
                 if (isFilePattern()) {
-                    String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() : App
-                            .settings.getDownloadsDir()).list(getFileNameFilter());
+                    String[] files = (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                            : App.settings.getDownloadsDir()).list(getFileNameFilter());
                     if (files.length == 1) {
                         this.file = files[0];
-                        fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir() :
-                                App.settings.getDownloadsDir()), files[0]);
+                        fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                : App.settings.getDownloadsDir()), files[0]);
                     } else if (files.length > 1) {
                         for (int i = 0; i < files.length; i++) {
                             if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                                 this.file = files[i];
-                                fileLocation = new File((OS.isUsingMacApp() ? App.settings
-                                        .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
+                                fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                        : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
                             if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                                 this.file = files[i];
-                                fileLocation = new File((OS.isUsingMacApp() ? App.settings
-                                        .getUsersDownloadsDir() : App.settings.getDownloadsDir()), files[i]);
+                                fileLocation = new File((OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir()
+                                        : App.settings.getDownloadsDir()), files[i]);
                                 break;
                             }
                         }
@@ -638,205 +646,204 @@ public class Mod {
             thisType = this.type;
         }
         switch (thisType) {
-            case jar:
-            case forge:
-                if (installer.isServer() && thisType == ModType.forge) {
-                    Utils.copyFile(fileLocation, installer.getRootDirectory());
-                    break;
-                } else if (installer.isServer() && thisType == ModType.jar) {
-                    Utils.unzip(fileLocation, installer.getTempJarDirectory());
-                    break;
-                }
-                Utils.copyFile(fileLocation, installer.getJarModsDirectory());
-                installer.addToJarOrder(getFile());
+        case jar:
+        case forge:
+            if (installer.isServer() && thisType == ModType.forge) {
+                Utils.copyFile(fileLocation, installer.getRootDirectory());
                 break;
-            case mcpc:
-                if (installer.isServer()) {
-                    Utils.copyFile(fileLocation, installer.getRootDirectory());
-                    break;
-                }
+            } else if (installer.isServer() && thisType == ModType.jar) {
+                Utils.unzip(fileLocation, installer.getTempJarDirectory());
                 break;
-            case texturepack:
-                if (!installer.getTexturePacksDirectory().exists()) {
-                    installer.getTexturePacksDirectory().mkdir();
-                }
-                Utils.copyFile(fileLocation, installer.getTexturePacksDirectory());
+            }
+            Utils.copyFile(fileLocation, installer.getJarModsDirectory());
+            installer.addToJarOrder(getFile());
+            break;
+        case mcpc:
+            if (installer.isServer()) {
+                Utils.copyFile(fileLocation, installer.getRootDirectory());
                 break;
-            case resourcepack:
-                if (!installer.getResourcePacksDirectory().exists()) {
-                    installer.getResourcePacksDirectory().mkdir();
+            }
+            break;
+        case texturepack:
+            if (!installer.getTexturePacksDirectory().exists()) {
+                installer.getTexturePacksDirectory().mkdir();
+            }
+            Utils.copyFile(fileLocation, installer.getTexturePacksDirectory());
+            break;
+        case resourcepack:
+            if (!installer.getResourcePacksDirectory().exists()) {
+                installer.getResourcePacksDirectory().mkdir();
+            }
+            Utils.copyFile(fileLocation, installer.getResourcePacksDirectory());
+            break;
+        case texturepackextract:
+            if (!installer.getTexturePacksDirectory().exists()) {
+                installer.getTexturePacksDirectory().mkdir();
+            }
+            Utils.unzip(fileLocation, installer.getTempTexturePackDirectory());
+            installer.setTexturePackExtracted();
+            break;
+        case resourcepackextract:
+            if (!installer.getResourcePacksDirectory().exists()) {
+                installer.getResourcePacksDirectory().mkdir();
+            }
+            Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
+            installer.setResourcePackExtracted();
+            break;
+        case millenaire:
+            File tempDirMillenaire = new File(App.settings.getTempDir(), getSafeName());
+            Utils.unzip(fileLocation, tempDirMillenaire);
+            for (String folder : tempDirMillenaire.list()) {
+                File thisFolder = new File(tempDirMillenaire, folder);
+                for (String dir : thisFolder.list((dir, name) -> {
+                    File thisFile = new File(dir, name);
+                    return thisFile.isDirectory();
+                })) {
+                    Utils.copyDirectory(new File(thisFolder, dir), installer.getModsDirectory());
                 }
-                Utils.copyFile(fileLocation, installer.getResourcePacksDirectory());
-                break;
-            case texturepackextract:
-                if (!installer.getTexturePacksDirectory().exists()) {
-                    installer.getTexturePacksDirectory().mkdir();
+            }
+            Utils.delete(tempDirMillenaire);
+            break;
+        case mods:
+            Utils.copyFile(fileLocation, installer.getModsDirectory());
+            break;
+        case ic2lib:
+            if (!installer.getIC2LibDirectory().exists()) {
+                installer.getIC2LibDirectory().mkdir();
+            }
+            Utils.copyFile(fileLocation, installer.getIC2LibDirectory());
+            break;
+        case flan:
+            if (!installer.getFlanDirectory().exists()) {
+                installer.getFlanDirectory().mkdir();
+            }
+            Utils.copyFile(fileLocation, installer.getFlanDirectory());
+            break;
+        case denlib:
+            if (!installer.getDenLibDirectory().exists()) {
+                installer.getDenLibDirectory().mkdir();
+            }
+            Utils.copyFile(fileLocation, installer.getDenLibDirectory());
+            break;
+        case depandency:
+        case dependency:
+            if (!installer.getDependencyDirectory().exists()) {
+                installer.getDependencyDirectory().mkdirs();
+            }
+            Utils.copyFile(fileLocation, installer.getDependencyDirectory());
+            break;
+        case plugins:
+            if (!installer.getPluginsDirectory().exists()) {
+                installer.getPluginsDirectory().mkdir();
+            }
+            Utils.copyFile(fileLocation, installer.getPluginsDirectory());
+            break;
+        case coremods:
+            if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                if (!installer.getCoreModsDirectory().exists()) {
+                    installer.getCoreModsDirectory().mkdir();
                 }
-                Utils.unzip(fileLocation, installer.getTempTexturePackDirectory());
-                installer.setTexturePackExtracted();
-                break;
-            case resourcepackextract:
-                if (!installer.getResourcePacksDirectory().exists()) {
-                    installer.getResourcePacksDirectory().mkdir();
-                }
-                Utils.unzip(fileLocation, installer.getTempResourcePackDirectory());
-                installer.setResourcePackExtracted();
-                break;
-            case millenaire:
-                File tempDirMillenaire = new File(App.settings.getTempDir(), getSafeName());
-                Utils.unzip(fileLocation, tempDirMillenaire);
-                for (String folder : tempDirMillenaire.list()) {
-                    File thisFolder = new File(tempDirMillenaire, folder);
-                    for (String dir : thisFolder.list((dir, name) -> {
-                        File thisFile = new File(dir, name);
-                        return thisFile.isDirectory();
-                    })) {
-                        Utils.copyDirectory(new File(thisFolder, dir), installer.getModsDirectory());
-                    }
-                }
-                Utils.delete(tempDirMillenaire);
-                break;
-            case mods:
+                Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
+            } else {
                 Utils.copyFile(fileLocation, installer.getModsDirectory());
-                break;
-            case ic2lib:
-                if (!installer.getIC2LibDirectory().exists()) {
-                    installer.getIC2LibDirectory().mkdir();
-                }
-                Utils.copyFile(fileLocation, installer.getIC2LibDirectory());
-                break;
-            case flan:
-                if (!installer.getFlanDirectory().exists()) {
-                    installer.getFlanDirectory().mkdir();
-                }
-                Utils.copyFile(fileLocation, installer.getFlanDirectory());
-                break;
-            case denlib:
-                if (!installer.getDenLibDirectory().exists()) {
-                    installer.getDenLibDirectory().mkdir();
-                }
-                Utils.copyFile(fileLocation, installer.getDenLibDirectory());
-                break;
-            case depandency:
-            case dependency:
-                if (!installer.getDependencyDirectory().exists()) {
-                    installer.getDependencyDirectory().mkdirs();
-                }
-                Utils.copyFile(fileLocation, installer.getDependencyDirectory());
-                break;
-            case plugins:
-                if (!installer.getPluginsDirectory().exists()) {
-                    installer.getPluginsDirectory().mkdir();
-                }
-                Utils.copyFile(fileLocation, installer.getPluginsDirectory());
-                break;
+            }
+            break;
+        case shaderpack:
+            if (!installer.getShaderPacksDirectory().exists()) {
+                installer.getShaderPacksDirectory().mkdir();
+            }
+            Utils.copyFile(fileLocation, installer.getShaderPacksDirectory());
+            break;
+        case extract:
+            File tempDirExtract = new File(App.settings.getTempDir(), getSafeName());
+            Utils.unzip(fileLocation, tempDirExtract);
+            File folder = new File(new File(App.settings.getTempDir(), getSafeName()), this.extractFolder);
+            switch (extractTo) {
             case coremods:
                 if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                     if (!installer.getCoreModsDirectory().exists()) {
                         installer.getCoreModsDirectory().mkdir();
                     }
-                    Utils.copyFile(fileLocation, installer.getCoreModsDirectory());
+                    Utils.copyDirectory(folder, installer.getCoreModsDirectory());
                 } else {
-                    Utils.copyFile(fileLocation, installer.getModsDirectory());
+                    Utils.copyDirectory(folder, installer.getModsDirectory());
                 }
                 break;
-            case shaderpack:
-                if (!installer.getShaderPacksDirectory().exists()) {
-                    installer.getShaderPacksDirectory().mkdir();
-                }
-                Utils.copyFile(fileLocation, installer.getShaderPacksDirectory());
+            case mods:
+                Utils.copyDirectory(folder, installer.getModsDirectory());
                 break;
-            case extract:
-                File tempDirExtract = new File(App.settings.getTempDir(), getSafeName());
-                Utils.unzip(fileLocation, tempDirExtract);
-                File folder = new File(new File(App.settings.getTempDir(), getSafeName()), this.extractFolder);
-                switch (extractTo) {
-                    case coremods:
+            case root:
+                Utils.copyDirectory(folder, installer.getRootDirectory());
+                break;
+            default:
+                LogManager.error("No known way to extract mod " + this.name + " with type " + this.extractTo);
+                break;
+            }
+            Utils.delete(tempDirExtract);
+            break;
+        case decomp:
+            File tempDirDecomp = new File(App.settings.getTempDir(), getSafeName());
+            Utils.unzip(fileLocation, tempDirDecomp);
+            File tempFileDecomp = new File(tempDirDecomp, decompFile);
+            if (tempFileDecomp.exists()) {
+                switch (decompType) {
+                case coremods:
+                    if (tempFileDecomp.isFile()) {
                         if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
                             if (!installer.getCoreModsDirectory().exists()) {
                                 installer.getCoreModsDirectory().mkdir();
                             }
-                            Utils.copyDirectory(folder, installer.getCoreModsDirectory());
+                            Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
                         } else {
-                            Utils.copyDirectory(folder, installer.getModsDirectory());
+                            Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
                         }
-                        break;
-                    case mods:
-                        Utils.copyDirectory(folder, installer.getModsDirectory());
-                        break;
-                    case root:
-                        Utils.copyDirectory(folder, installer.getRootDirectory());
-                        break;
-                    default:
-                        LogManager.error("No known way to extract mod " + this.name + " with type " + this.extractTo);
-                        break;
-                }
-                Utils.delete(tempDirExtract);
-                break;
-            case decomp:
-                File tempDirDecomp = new File(App.settings.getTempDir(), getSafeName());
-                Utils.unzip(fileLocation, tempDirDecomp);
-                File tempFileDecomp = new File(tempDirDecomp, decompFile);
-                if (tempFileDecomp.exists()) {
-                    switch (decompType) {
-                        case coremods:
-                            if (tempFileDecomp.isFile()) {
-                                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                                    if (!installer.getCoreModsDirectory().exists()) {
-                                        installer.getCoreModsDirectory().mkdir();
-                                    }
-                                    Utils.copyFile(tempFileDecomp, installer.getCoreModsDirectory());
-                                } else {
-                                    Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
-                                }
-                            } else {
-                                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                                    if (!installer.getCoreModsDirectory().exists()) {
-                                        installer.getCoreModsDirectory().mkdir();
-                                    }
-                                    Utils.copyDirectory(tempFileDecomp, installer.getCoreModsDirectory());
-                                } else {
-                                    Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
-                                }
+                    } else {
+                        if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                            if (!installer.getCoreModsDirectory().exists()) {
+                                installer.getCoreModsDirectory().mkdir();
                             }
-                            break;
-                        case jar:
-                            if (tempFileDecomp.isFile()) {
-                                Utils.copyFile(tempFileDecomp, installer.getJarModsDirectory());
-                                installer.addToJarOrder(decompFile);
-                            } else {
-                                File newFile = new File(installer.getJarModsDirectory(), getSafeName() + ".zip");
-                                Utils.zip(tempFileDecomp, newFile);
-                                installer.addToJarOrder(getSafeName() + ".zip");
-                            }
-                            break;
-                        case mods:
-                            if (tempFileDecomp.isFile()) {
-                                Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
-                            } else {
-                                Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
-                            }
-                            break;
-                        case root:
-                            if (tempFileDecomp.isFile()) {
-                                Utils.copyFile(tempFileDecomp, installer.getRootDirectory());
-                            } else {
-                                Utils.copyDirectory(tempFileDecomp, installer.getRootDirectory());
-                            }
-                            break;
-                        default:
-                            LogManager.error("No known way to decomp mod " + this.name + " with type " + this
-                                    .decompType);
-                            break;
+                            Utils.copyDirectory(tempFileDecomp, installer.getCoreModsDirectory());
+                        } else {
+                            Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
+                        }
                     }
-                } else {
-                    LogManager.error("Couldn't find decomp file " + this.decompFile + " for mod " + this.name);
+                    break;
+                case jar:
+                    if (tempFileDecomp.isFile()) {
+                        Utils.copyFile(tempFileDecomp, installer.getJarModsDirectory());
+                        installer.addToJarOrder(decompFile);
+                    } else {
+                        File newFile = new File(installer.getJarModsDirectory(), getSafeName() + ".zip");
+                        Utils.zip(tempFileDecomp, newFile);
+                        installer.addToJarOrder(getSafeName() + ".zip");
+                    }
+                    break;
+                case mods:
+                    if (tempFileDecomp.isFile()) {
+                        Utils.copyFile(tempFileDecomp, installer.getModsDirectory());
+                    } else {
+                        Utils.copyDirectory(tempFileDecomp, installer.getModsDirectory());
+                    }
+                    break;
+                case root:
+                    if (tempFileDecomp.isFile()) {
+                        Utils.copyFile(tempFileDecomp, installer.getRootDirectory());
+                    } else {
+                        Utils.copyDirectory(tempFileDecomp, installer.getRootDirectory());
+                    }
+                    break;
+                default:
+                    LogManager.error("No known way to decomp mod " + this.name + " with type " + this.decompType);
+                    break;
                 }
-                Utils.delete(tempDirDecomp);
-                break;
-            default:
-                LogManager.error("No known way to install mod " + this.name + " with type " + thisType);
-                break;
+            } else {
+                LogManager.error("Couldn't find decomp file " + this.decompFile + " for mod " + this.name);
+            }
+            Utils.delete(tempDirDecomp);
+            break;
+        default:
+            LogManager.error("No known way to install mod " + this.name + " with type " + thisType);
+            break;
         }
     }
 
@@ -852,51 +859,51 @@ public class Mod {
             thisType = this.type;
         }
         switch (thisType) {
-            case jar:
-            case forge:
-                if (installer.isServer() && thisType == ModType.forge) {
-                    base = installer.getRootDirectory();
-                    break;
-                }
-                base = installer.getJarModsDirectory();
+        case jar:
+        case forge:
+            if (installer.isServer() && thisType == ModType.forge) {
+                base = installer.getRootDirectory();
                 break;
-            case mcpc:
-                if (installer.isServer()) {
-                    base = installer.getRootDirectory();
-                    break;
-                }
+            }
+            base = installer.getJarModsDirectory();
+            break;
+        case mcpc:
+            if (installer.isServer()) {
+                base = installer.getRootDirectory();
                 break;
-            case texturepack:
-                base = installer.getTexturePacksDirectory();
-                break;
-            case resourcepack:
-                base = installer.getResourcePacksDirectory();
-                break;
-            case mods:
+            }
+            break;
+        case texturepack:
+            base = installer.getTexturePacksDirectory();
+            break;
+        case resourcepack:
+            base = installer.getResourcePacksDirectory();
+            break;
+        case mods:
+            base = installer.getModsDirectory();
+            break;
+        case ic2lib:
+            base = installer.getIC2LibDirectory();
+            break;
+        case denlib:
+            base = installer.getDenLibDirectory();
+            break;
+        case plugins:
+            base = installer.getPluginsDirectory();
+            break;
+        case coremods:
+            if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
+                base = installer.getCoreModsDirectory();
+            } else {
                 base = installer.getModsDirectory();
-                break;
-            case ic2lib:
-                base = installer.getIC2LibDirectory();
-                break;
-            case denlib:
-                base = installer.getDenLibDirectory();
-                break;
-            case plugins:
-                base = installer.getPluginsDirectory();
-                break;
-            case coremods:
-                if (installer.getVersion().getMinecraftVersion().usesCoreMods()) {
-                    base = installer.getCoreModsDirectory();
-                } else {
-                    base = installer.getModsDirectory();
-                }
-                break;
-            case shaderpack:
-                base = installer.getShaderPacksDirectory();
-                break;
-            default:
-                LogManager.error("No known way to find installed mod " + this.name + " with type " + thisType);
-                break;
+            }
+            break;
+        case shaderpack:
+            base = installer.getShaderPacksDirectory();
+            break;
+        default:
+            LogManager.error("No known way to find installed mod " + this.name + " with type " + thisType);
+            break;
         }
         if (base == null) {
             return null;

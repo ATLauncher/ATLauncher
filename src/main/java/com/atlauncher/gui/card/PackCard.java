@@ -20,8 +20,6 @@ package com.atlauncher.gui.card;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -127,8 +125,8 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.newInstanceButton.addActionListener(e -> {
             if (App.settings.isInOfflineMode()) {
                 DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
-                        .setContent(Language.INSTANCE.localize("pack.offlinenewinstance"))
-                        .setType(DialogManager.ERROR).show();
+                        .setContent(Language.INSTANCE.localize("pack.offlinenewinstance")).setType(DialogManager.ERROR)
+                        .show();
             } else {
                 if (App.settings.getAccount() == null) {
                     DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
@@ -143,8 +141,8 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.createServerButton.addActionListener(e -> {
             if (App.settings.isInOfflineMode()) {
                 DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
-                        .setContent(Language.INSTANCE.localize("pack.offlinecreateserver"))
-                        .setType(DialogManager.ERROR).show();
+                        .setContent(Language.INSTANCE.localize("pack.offlinecreateserver")).setType(DialogManager.ERROR)
+                        .show();
             } else {
                 if (App.settings.getAccount() == null) {
                     DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))

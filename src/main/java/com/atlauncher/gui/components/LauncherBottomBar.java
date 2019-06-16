@@ -21,10 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -39,8 +36,6 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
-import com.atlauncher.evnt.listener.ConsoleCloseListener;
-import com.atlauncher.evnt.listener.ConsoleOpenListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
@@ -106,9 +101,9 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         toggleConsole.addActionListener(e -> App.settings.getConsole().setVisible(!App.settings.isConsoleVisible()));
         openFolder.addActionListener(e -> OS.openFileExplorer(FileSystem.BASE_DIR));
         updateData.addActionListener(e -> {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common" + "" +
-                    ".checkingforupdates"), 0, Language.INSTANCE.localize("common.checkingforupdates"), "Aborting" +
-                    " Update Check!");
+            final ProgressDialog dialog = new ProgressDialog(
+                    Language.INSTANCE.localize("common" + "" + ".checkingforupdates"), 0,
+                    Language.INSTANCE.localize("common.checkingforupdates"), "Aborting" + " Update Check!");
             dialog.addThread(new Thread(() -> {
                 if (App.settings.hasUpdatedFiles()) {
                     App.settings.reloadLauncherData();
@@ -174,24 +169,24 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
      */
     public void updateStatus(Status status) {
         switch (status) {
-            case UNKNOWN:
-                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.checking"));
-                statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusWhite.png"));
-                break;
-            case ONLINE:
-                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.online"));
-                statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusGreen.png"));
-                break;
-            case OFFLINE:
-                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.offline"));
-                statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusRed.png"));
-                break;
-            case PARTIAL:
-                statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.partial"));
-                statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusYellow.png"));
-                break;
-            default:
-                break;
+        case UNKNOWN:
+            statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.checking"));
+            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusWhite.png"));
+            break;
+        case ONLINE:
+            statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.online"));
+            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusGreen.png"));
+            break;
+        case OFFLINE:
+            statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.offline"));
+            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusRed.png"));
+            break;
+        case PARTIAL:
+            statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.partial"));
+            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusYellow.png"));
+            break;
+        default:
+            break;
         }
     }
 

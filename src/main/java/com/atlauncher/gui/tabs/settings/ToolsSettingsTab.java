@@ -18,11 +18,8 @@
 package com.atlauncher.gui.tabs.settings;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
@@ -30,6 +27,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -48,8 +46,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableServerCheckerLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.serverchecker") + "?",
-                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.servercheckerhelp", "<br/>" +
-                "</html>"));
+                HELP_ICON,
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.servercheckerhelp", "<br/>" + "</html>"));
         add(enableServerCheckerLabel, gbc);
 
         gbc.gridx++;
@@ -74,8 +72,10 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         serverCheckerWaitLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.servercheckerwait") + ":",
-                HELP_ICON, "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings" + "" +
-                ".servercheckerwaithelp"), 75, "<br/>") + "</html>");
+                HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(
+                        Language.INSTANCE.localize("settings" + "" + ".servercheckerwaithelp"), 75, "<br/>")
+                        + "</html>");
         add(serverCheckerWaitLabel, gbc);
 
         gbc.gridx++;
@@ -90,11 +90,11 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
     }
 
     public boolean isValidServerCheckerWait() {
-        if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1 || Integer.parseInt
-                (serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("settings" + "" +
-                            ".servercheckerwaitinvalid"), Language.INSTANCE.localize("settings.help"), JOptionPane
-                    .PLAIN_MESSAGE);
+        if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1
+                || Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
+            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("settings.help"))
+                    .setContent(Language.INSTANCE.localize("settings.servercheckerwaitinvalid"))
+                    .setType(DialogManager.ERROR).show();
             return false;
         }
         return true;
@@ -118,11 +118,12 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
     @Override
     public void onRelocalization() {
         this.enableServerCheckerLabel.setText(Language.INSTANCE.localize("settings.serverchecker") + "?");
-        this.enableServerCheckerLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
-                ".servercheckerhelp", "<br/>" + "</html>"));
+        this.enableServerCheckerLabel.setToolTipText("<html>"
+                + Language.INSTANCE.localizeWithReplace("settings" + "" + ".servercheckerhelp", "<br/>" + "</html>"));
 
         this.serverCheckerWaitLabel.setText(Language.INSTANCE.localize("settings.servercheckerwait") + ":");
-        this.serverCheckerWaitLabel.setToolTipText("<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize
-                ("settings.servercheckerwaithelp"), 75, "<br/>") + "</html>");
+        this.serverCheckerWaitLabel.setToolTipText("<html>"
+                + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.servercheckerwaithelp"), 75, "<br/>")
+                + "</html>");
     }
 }

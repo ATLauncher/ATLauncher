@@ -28,13 +28,13 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.MinecraftServer;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.MCQuery;
 import com.atlauncher.utils.Utils;
 
@@ -148,30 +148,30 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
     }
 
     public boolean isValidPort() {
-        return !(serverPort.getText().isEmpty() || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) <
-                1 || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) > 65535);
+        return !(serverPort.getText().isEmpty() || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) < 1
+                || Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", "")) > 65535);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addEditButton) {
             if (serverName.getText().isEmpty() || serverHost.getText().isEmpty() || serverPort.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("tools" + "" +
-                                ".serverchecker.notallfields"), Language.INSTANCE.localize("common.error"),
-                        JOptionPane.ERROR_MESSAGE);
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
+                        .setContent(Language.INSTANCE.localize("tools" + "" + ".serverchecker.notallfields"))
+                        .setType(DialogManager.ERROR).show();
             } else if (!isValidPort()) {
-                JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("settings" + "" +
-                                ".proxyportinvalid"), Language.INSTANCE.localize("common.error"), JOptionPane
-                        .ERROR_MESSAGE);
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
+                        .setContent(Language.INSTANCE.localize("settings.proxyportinvalid"))
+                        .setType(DialogManager.ERROR).show();
             } else {
                 String name = serverName.getText();
                 final String host = serverHost.getText();
                 final int port = Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", ""));
                 QueryVersion qv = null;
 
-                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.serverchecker" + "" +
-                        ".checkingserver"), 0, Language.INSTANCE.localize("tools.serverchecker.checkingserver"),
-                        "Cancelled Server Check!");
+                final ProgressDialog dialog = new ProgressDialog(
+                        Language.INSTANCE.localize("tools.serverchecker" + "" + ".checkingserver"), 0,
+                        Language.INSTANCE.localize("tools.serverchecker.checkingserver"), "Cancelled Server Check!");
                 dialog.addThread(new Thread(() -> {
                     dialog.setReturnValue(MCQuery.getMinecraftServerQueryVersion(host, port));
                     dialog.close();
@@ -183,12 +183,13 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                 }
 
                 if (qv == null) {
-                    JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("tools" + "" +
-                                    ".serverchecker.couldntconnect"), Language.INSTANCE.localize("common.error"),
-                            JOptionPane.ERROR_MESSAGE);
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
+                            .setContent(Language.INSTANCE.localize("tools.serverchecker.couldntconnect"))
+                            .setType(DialogManager.ERROR).show();
                 } else {
-                    App.TOASTER.pop(Language.INSTANCE.localize((this.serverEditing == null ? "tools" + "" +
-                            ".serverchecker.serveradded" : "tools.serverchecker.serveredited")));
+                    App.TOASTER.pop(Language.INSTANCE
+                            .localize((this.serverEditing == null ? "tools" + "" + ".serverchecker.serveradded"
+                                    : "tools.serverchecker.serveredited")));
                     if (this.serverEditing == null) {
                         App.settings.addCheckingServer(new MinecraftServer(name, host, port, qv));
                     } else {

@@ -21,8 +21,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -30,12 +28,12 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
 
 public class AddPackDialog extends JDialog {
@@ -84,20 +82,23 @@ public class AddPackDialog extends JDialog {
         saveButton.addActionListener(e -> {
             if (App.settings.semiPublicPackExistsFromCode(packCode.getText())) {
                 if (App.settings.addPack(packCode.getText())) {
-                    JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                    ".packaddedmessage"), Language.INSTANCE.localize("pack.packadded"),
-                            JOptionPane.INFORMATION_MESSAGE);
+                    DialogManager.okDialog().setParent(AddPackDialog.this)
+                            .setTitle(Language.INSTANCE.localize("pack.packadded"))
+                            .setContent(Language.INSTANCE.localize("pack.packaddedmessage"))
+                            .setType(DialogManager.ERROR).show();
                 } else {
-                    JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                    ".packalreadyaddedmessage"), Language.INSTANCE.localize("pack" +
-                            ".packalreadyadded"), JOptionPane.ERROR_MESSAGE);
+                    DialogManager.okDialog().setParent(AddPackDialog.this)
+                            .setTitle(Language.INSTANCE.localize("pack.packalreadyadded"))
+                            .setContent(Language.INSTANCE.localize("pack.packalreadyaddedmessage"))
+                            .setType(DialogManager.ERROR).show();
                 }
                 setVisible(false);
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(AddPackDialog.this, Language.INSTANCE.localize("pack" + "" +
-                                ".packdoesntexist"), Language.INSTANCE.localize("pack.packaddederror"),
-                        JOptionPane.ERROR_MESSAGE);
+                DialogManager.okDialog().setParent(AddPackDialog.this)
+                        .setTitle(Language.INSTANCE.localize("pack.packaddederror"))
+                        .setContent(Language.INSTANCE.localize("pack.packdoesntexist")).setType(DialogManager.ERROR)
+                        .show();
             }
         });
         bottom.add(saveButton);

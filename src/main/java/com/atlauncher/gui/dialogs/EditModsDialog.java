@@ -19,8 +19,6 @@ package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -57,8 +55,9 @@ public class EditModsDialog extends JDialog {
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
     public EditModsDialog(final Instance instance) {
-        super(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("instance.editingmods", instance
-                .getName()), ModalityType.APPLICATION_MODAL);
+        super(App.settings.getParent(),
+                Language.INSTANCE.localizeWithReplace("instance.editingmods", instance.getName()),
+                ModalityType.APPLICATION_MODAL);
         this.instance = instance;
         setSize(550, 450);
         setLocationRelativeTo(App.settings.getParent());
@@ -110,8 +109,8 @@ public class EditModsDialog extends JDialog {
         disabledModsPanel.setLayout(null);
         disabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        scroller1 = new JScrollPane(disabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
-                .HORIZONTAL_SCROLLBAR_NEVER);
+        scroller1 = new JScrollPane(disabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
         scroller1.setPreferredSize(new Dimension(275, 350));
         modsInPack.setRightComponent(scroller1);
@@ -120,8 +119,8 @@ public class EditModsDialog extends JDialog {
         enabledModsPanel.setLayout(null);
         enabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColor());
 
-        scroller2 = new JScrollPane(enabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane
-                .HORIZONTAL_SCROLLBAR_NEVER);
+        scroller2 = new JScrollPane(enabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
         scroller2.setPreferredSize(new Dimension(275, 350));
         modsInPack.setLeftComponent(scroller2);
@@ -139,19 +138,16 @@ public class EditModsDialog extends JDialog {
             }
             String[] modTypes;
             if (usesCoreMods) {
-                modTypes = new String[] {"Mods Folder", "Inside Minecraft.jar", "CoreMods Mod", "Texture Pack", "Shader Pack"};
+                modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "CoreMods Mod", "Texture Pack",
+                        "Shader Pack" };
             } else {
-                modTypes = new String[] {"Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack"};
+                modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
             }
 
-            FileChooserDialog fcd = new FileChooserDialog(
-                Language.INSTANCE.localize("instance.addmod"),
-                Language.INSTANCE.localize("common.mod"),
-                Language.INSTANCE.localize("common.add"),
-                Language.INSTANCE.localize("instance.typeofmod"),
-                modTypes,
-                new String[] {"jar", "zip", "litemod"}
-            );
+            FileChooserDialog fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"),
+                    Language.INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"),
+                    Language.INSTANCE.localize("instance.typeofmod"), modTypes,
+                    new String[] { "jar", "zip", "litemod" });
             ArrayList<File> files = fcd.getChosenFiles();
             if (files != null && !files.isEmpty()) {
                 boolean reload = false;
@@ -172,8 +168,8 @@ public class EditModsDialog extends JDialog {
                         type = com.atlauncher.data.Type.shaderpack;
                     }
                     if (type != null) {
-                        DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(),
-                                type, null, null, true, true);
+                        DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(), type,
+                                null, null, true, true);
                         if (Utils.copyFile(file, instance.getDisabledModsDirectory())) {
                             instance.getInstalledMods().add(mod);
                             disabledMods.add(new ModsJCheckBox(mod));
