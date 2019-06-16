@@ -1501,11 +1501,11 @@ public class Utils {
             // If network is null, user may be using Linux or something it doesn't support
             // so try alternative way
             if (network == null) {
-                Enumeration e = NetworkInterface.getNetworkInterfaces();
+                Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
 
                 while (e.hasMoreElements()) {
                     NetworkInterface n = (NetworkInterface) e.nextElement();
-                    Enumeration ee = n.getInetAddresses();
+                    Enumeration<InetAddress> ee = n.getInetAddresses();
                     while (ee.hasMoreElements()) {
                         InetAddress i = (InetAddress) ee.nextElement();
                         if (!i.isLoopbackAddress() && !i.isLinkLocalAddress() && i.isSiteLocalAddress()) {

@@ -50,8 +50,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 /**
- * TODO: Rewrite this for easier OOP
- * <p/>
  * The user-triggered collapsible panel containing the component (trigger) in
  * the titled border
  */

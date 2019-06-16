@@ -37,6 +37,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.HTMLUtils;
 
+@SuppressWarnings("serial")
 public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
 
     private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 10));

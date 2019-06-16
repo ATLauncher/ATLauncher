@@ -36,6 +36,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public class AddPackDialog extends JDialog {
     private JPanel top;
     private JPanel middle;

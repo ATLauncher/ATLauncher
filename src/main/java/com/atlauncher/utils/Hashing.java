@@ -207,6 +207,7 @@ public final class Hashing {
         }
     }
 
+    @SuppressWarnings("serial")
     public static final class HashCode implements Serializable, Cloneable {
         private static final SoftReference<Caching.Cache<String, HashCode>> hashescache = new SoftReference<>(
                 Caching.<String, HashCode>newLRU());

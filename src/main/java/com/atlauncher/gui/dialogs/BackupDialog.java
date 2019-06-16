@@ -64,13 +64,14 @@ import com.atlauncher.utils.Utils;
 /**
  * @author Kihira
  */
+@SuppressWarnings("serial")
 public class BackupDialog extends JDialog implements ActionListener {
     private final Instance instance;
     private final JButton backupButton = new JButton(Language.INSTANCE.localize("common.backup"));
     private final JButton restoreButton = new JButton(Language.INSTANCE.localize("common.restore"));
     private final JButton deleteButton = new JButton(Language.INSTANCE.localize("common.delete"));
-    private JList worldList;
-    private JList backupList;
+    private JList<String> worldList;
+    private JList<String> backupList;
     private SyncAbstract selectedSync = SyncAbstract.syncList.get(App.settings.getLastSelectedSync());
 
     public BackupDialog(Instance inst) {
@@ -138,7 +139,7 @@ public class BackupDialog extends JDialog implements ActionListener {
             }
         }
 
-        worldList = new JList(worldData.toArray(new String[worldData.size()]));
+        worldList = new JList<>(worldData.toArray(new String[worldData.size()]));
         worldList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         worldList.setLayoutOrientation(JList.VERTICAL_WRAP);
         worldList.setVisibleRowCount(-1);
@@ -179,7 +180,7 @@ public class BackupDialog extends JDialog implements ActionListener {
     }
 
     private JPanel createRestorePanel() {
-        JComboBox syncChoice = new JComboBox();
+        JComboBox<String> syncChoice = new JComboBox<>();
         for (Map.Entry<String, SyncAbstract> entry : SyncAbstract.syncList.entrySet()) {
             syncChoice.addItem(entry.getKey());
         }
@@ -188,9 +189,9 @@ public class BackupDialog extends JDialog implements ActionListener {
 
         List<String> list = selectedSync.getBackupsForInstance(instance);
         if (list == null) {
-            backupList = new JList();
+            backupList = new JList<>();
         } else {
-            backupList = new JList(list.toArray(new String[list.size()]));
+            backupList = new JList<>(list.toArray(new String[list.size()]));
         }
         backupList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         backupList.setLayoutOrientation(JList.VERTICAL_WRAP);
@@ -290,7 +291,7 @@ public class BackupDialog extends JDialog implements ActionListener {
                 }
             }
         } else if (e.getSource() instanceof JComboBox) {
-            String selection = (String) ((JComboBox) e.getSource()).getSelectedItem();
+            String selection = (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
             selectedSync = SyncAbstract.syncList.get(selection);
             App.settings.setLastSelectedSync(selection);
             List<String> list = selectedSync.getBackupsForInstance(instance);

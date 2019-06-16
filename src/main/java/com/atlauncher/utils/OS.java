@@ -39,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.atlauncher.App;
@@ -234,7 +235,8 @@ public enum OS {
             } else {
                 ram = 1024;
             }
-        } catch (SecurityException | InvocationTargetException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException e) {
+        } catch (SecurityException | InvocationTargetException | IllegalAccessException | IllegalArgumentException
+                | NoSuchMethodException e) {
             LogManager.logStackTrace(e);
         }
         return ram;
@@ -400,12 +402,7 @@ public enum OS {
      * This restarts the launcher in debug mode.
      */
     public static void relaunchInDebugMode() {
-        restartLauncher(new ArrayList<String>() {
-            {
-                add("--debug");
-                add("--debug-level 3");
-            }
-        });
+        restartLauncher(new ArrayList<>(Arrays.asList("--debug", "--debug-level 3")));
     }
 
     /**

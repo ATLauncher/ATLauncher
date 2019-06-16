@@ -44,6 +44,7 @@ public final class Caching {
         return new LRUCache<>(size);
     }
 
+    @SuppressWarnings("serial")
     private static final class LRUCache<K, V> extends LinkedHashMap<K, V> implements Cache<K, V> {
         private final int cap;
 

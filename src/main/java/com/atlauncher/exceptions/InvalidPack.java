@@ -20,6 +20,7 @@ package com.atlauncher.exceptions;
 /**
  * InvalidPack is thrown when searching for a Pack by ID and that ID isn't found
  */
+@SuppressWarnings("serial")
 public class InvalidPack extends Exception {
     public InvalidPack(String message) {
         super(message);

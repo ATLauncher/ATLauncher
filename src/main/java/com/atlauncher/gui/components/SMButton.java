@@ -29,6 +29,7 @@ import com.atlauncher.App;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public class SMButton extends JButton {
     private static final Cursor hand = new Cursor(Cursor.HAND_CURSOR);
 

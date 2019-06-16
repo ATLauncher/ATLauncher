@@ -116,7 +116,6 @@ public class ServerListPing17 {
         dataOutputStream.writeByte(0x01); // size is only 1
         dataOutputStream.writeByte(0x00); // packet id for ping
         DataInputStream dataInputStream = new DataInputStream(inputStream);
-        int size = readVarInt(dataInputStream); // size of packet
         int id = readVarInt(dataInputStream); // packet id
 
         if (id == -1) {

@@ -30,6 +30,7 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public class RelaunchInDebugModePanel extends AbstractToolPanel implements ActionListener {
     private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.launchindebugmode"));
 

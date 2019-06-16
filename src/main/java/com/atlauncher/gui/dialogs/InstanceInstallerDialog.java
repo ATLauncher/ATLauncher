@@ -73,9 +73,6 @@ public class InstanceInstallerDialog extends JDialog {
     private JLabel enableUserLockLabel;
     private JCheckBox enableUserLock;
 
-    private PackVersion autoInstallVersion;
-    private String shareCode;
-
     public InstanceInstallerDialog(Object object) {
         this(object, false, false, null, null, true);
     }
@@ -91,9 +88,6 @@ public class InstanceInstallerDialog extends JDialog {
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
             final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
-
-        this.autoInstallVersion = autoInstallVersion;
-        this.shareCode = shareCode;
 
         if (object instanceof Pack) {
             pack = (Pack) object;

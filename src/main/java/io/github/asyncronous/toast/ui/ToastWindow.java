@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
 /**
  * Main Toaster Notification class
  */
+@SuppressWarnings("serial")
 public final class ToastWindow extends JWindow {
     private final JLabel ICON = new JLabel();
     private final JTextArea MESSAGE = new JTextArea();
@@ -37,9 +38,9 @@ public final class ToastWindow extends JWindow {
         this.MESSAGE.setMargin(new Insets(2, 2, 2, 2));
         this.MESSAGE.setWrapStyleWord(true);
 
-        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Java.isJava7OrAbove(false) && GraphicsEnvironment
-                .getLocalGraphicsEnvironment().getDefaultScreenDevice().isWindowTranslucencySupported
-                        (WindowTranslucency.TRANSLUCENT)) {
+        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Java.isJava7OrAbove(false)
+                && GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+                        .isWindowTranslucencySupported(WindowTranslucency.TRANSLUCENT)) {
             this.setOpacity((Float) UIManager.get(ToasterConstants.OPACITY));
         }
 

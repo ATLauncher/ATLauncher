@@ -39,9 +39,10 @@ import com.atlauncher.utils.Utils;
 /**
  * Class for displaying packs in the Pack Tab.
  */
+@SuppressWarnings("serial")
 public class NilCard extends JPanel implements RelocalizationListener {
-    private static final Image defaultImage = Utils.getIconImage(new File(App.settings.getImagesDir(), "defaultimage" +
-            ".png")).getImage();
+    private static final Image defaultImage = Utils
+            .getIconImage(new File(App.settings.getImagesDir(), "defaultimage" + ".png")).getImage();
 
     private final JTextArea error = new JTextArea();
     private final JSplitPane splitter = new JSplitPane();
@@ -51,11 +52,13 @@ public class NilCard extends JPanel implements RelocalizationListener {
         RelocalizationManager.addListener(this);
 
         if (OS.isMac()) {
-            this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"), TitledBorder
-                    .DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
+            this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"),
+                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION,
+                    new Font("SansSerif", Font.BOLD, 14)));
         } else {
-            this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"), TitledBorder
-                    .DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
+            this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"),
+                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION,
+                    new Font("SansSerif", Font.BOLD, 15)));
         }
 
         this.error.setBorder(BorderFactory.createEmptyBorder());

@@ -46,10 +46,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
-/**
- * TODO: Rewrite with the other @link BottomBar classes
- */
-
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
     private JPanel leftSide;

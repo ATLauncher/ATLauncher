@@ -741,9 +741,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         fireSubProgress(-1); // Hide the subprogress bar
 
-        for (
-
-        Mod mod : mods) {
+        for (Mod mod : mods) {
             if (!downloads.contains(mod) && !isCancelled()) {
                 fireTask(Language.INSTANCE.localize("common.downloading") + " "
                         + (mod.isFilePattern() ? mod.getName() : mod.getFile()));
@@ -1012,10 +1010,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public void downloadLoggingClient() {
         totalBytes = 0;
         downloadedBytes = 0;
-        LoggingFile loggingFile = this.version.getMinecraftVersion().getMojangVersion().getLogging().getClient().getFile();
+        LoggingFile loggingFile = this.version.getMinecraftVersion().getMojangVersion().getLogging().getClient()
+                .getFile();
 
-        Downloadable download = new Downloadable(loggingFile.getUrl(), new File(App.settings.getLogConfigsDir(), loggingFile.getId()),
-                loggingFile.getSha1(), (int) loggingFile.getSize(), this, false);
+        Downloadable download = new Downloadable(loggingFile.getUrl(),
+                new File(App.settings.getLogConfigsDir(), loggingFile.getId()), loggingFile.getSha1(),
+                (int) loggingFile.getSize(), this, false);
 
         fireTask(Language.INSTANCE.localize("instance.downloadingloggingconfig"));
         fireSubProgressUnknown();

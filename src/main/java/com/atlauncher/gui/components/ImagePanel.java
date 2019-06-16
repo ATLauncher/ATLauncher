@@ -25,6 +25,7 @@ import java.awt.Image;
 
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public final class ImagePanel extends JPanel {
     private static final Cursor HAND = new Cursor(Cursor.HAND_CURSOR);
 

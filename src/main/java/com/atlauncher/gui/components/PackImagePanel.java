@@ -29,6 +29,7 @@ import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 
+@SuppressWarnings("serial")
 public final class PackImagePanel extends JPanel {
     private final Image image;
     private final Pack pack;

@@ -40,6 +40,7 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.card.ModCard;
 
+@SuppressWarnings("serial")
 public final class ViewModsDialog extends JDialog {
     private final Pack pack;
     private final JPanel contentPanel = new JPanel(new GridBagLayout());

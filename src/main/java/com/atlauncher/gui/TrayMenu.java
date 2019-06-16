@@ -32,6 +32,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 
+@SuppressWarnings("serial")
 public final class TrayMenu extends JPopupMenu
         implements RelocalizationListener, ConsoleCloseListener, ConsoleOpenListener {
 

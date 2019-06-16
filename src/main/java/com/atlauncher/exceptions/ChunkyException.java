@@ -17,6 +17,7 @@
  */
 package com.atlauncher.exceptions;
 
+@SuppressWarnings("serial")
 public final class ChunkyException extends RuntimeException {
     public ChunkyException(String ex) {
         super(ex);

@@ -21,6 +21,7 @@ package com.atlauncher.exceptions;
  * InvalidMinecraftVersion is thrown when a given Minecraft version number isn't
  * supported by the Launcher.
  */
+@SuppressWarnings("serial")
 public class InvalidMinecraftVersion extends Exception {
     public InvalidMinecraftVersion(String message) {
         super(message);

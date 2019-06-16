@@ -40,6 +40,7 @@ import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public class FileChooserDialog extends JDialog {
     private JPanel top;
     private JPanel middle;

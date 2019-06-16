@@ -76,6 +76,7 @@ import com.atlauncher.utils.Utils;
  * <p/>
  * Class for displaying instances in the Instance Tab
  */
+@SuppressWarnings("serial")
 public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
     private final JSplitPane splitter = new JSplitPane();
     private final Instance instance;
