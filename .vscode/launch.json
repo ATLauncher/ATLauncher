@@ -7,7 +7,8 @@
             "request": "launch",
             "mainClass": "com.atlauncher.App",
             "projectName": "ATLauncher",
-            "args": "--debug --debug-level 3 --working-dir=test"
+            "cwd": "${workspaceFolder}/test",
+            "args": "--debug --debug-level 3"
         }
     ]
 }
