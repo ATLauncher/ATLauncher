@@ -100,11 +100,12 @@ public class FabricLoader implements Loader {
     @Override
     public void downloadAndExtractInstaller() {
         File saveTo = new File(App.settings.getLoadersDir(),
-                "fabric-loader-" + this.yarn + "-" + this.loader + "-vanilla-profile.zip");
+                String.format("fabric-loader-%s-%s-vanilla-profile.zip", this.yarn, this.loader));
 
         try {
-            HashableDownloadable download = new HashableDownloadable("https://fabricmc.net/download/vanilla/?yarn="
-                    + URLEncoder.encode(this.yarn, "UTF-8") + "&loader=" + URLEncoder.encode(this.loader, "UTF-8"),
+            HashableDownloadable download = new HashableDownloadable(
+                    String.format("https://fabricmc.net/download/vanilla/?yarn=%s&loader=%s",
+                            URLEncoder.encode(this.yarn, "UTF-8"), URLEncoder.encode(this.loader, "UTF-8")),
                     saveTo, instanceInstaller);
 
             if (download.needToDownload()) {
@@ -123,12 +124,10 @@ public class FabricLoader implements Loader {
         FabricInstallProfile installProfile = null;
 
         try {
-            installProfile = Gsons.DEFAULT
-                    .fromJson(
-                            new FileReader(new File(this.tempDir,
-                                    "fabric-loader-" + this.yarn + "_yarn-" + this.loader + "/fabric-loader-"
-                                            + this.yarn + "_yarn-" + this.loader + ".json")),
-                            FabricInstallProfile.class);
+            installProfile = Gsons.DEFAULT.fromJson(
+                    new FileReader(new File(this.tempDir, String.format(
+                            "fabric-loader-%1$s_yarn-%2$s/fabric-loader-%1$s_yarn-%2$s.json", this.yarn, this.loader))),
+                    FabricInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
         }
@@ -210,11 +209,11 @@ public class FabricLoader implements Loader {
             LogManager.debug("Downloading installer version " + installerVersion + " for Fabric");
 
             File installerFile = new File(App.settings.getLoadersDir(),
-                    "fabric-installer-" + this.yarn + "-" + this.loader + ".jar");
+                    String.format("fabric-installer-%s-%s.jar", this.yarn, this.loader));
 
             Downloadable installerDownload = new HashableDownloadable(
-                    "https://maven.fabricmc.net/net/fabricmc/fabric-installer/" + installerVersion
-                            + "/fabric-installer-" + installerVersion + ".jar",
+                    String.format("https://maven.fabricmc.net/net/fabricmc/fabric-installer/%s/fabric-installer-%s.jar",
+                            installerVersion),
                     installerFile, this.instanceInstaller);
 
             if (installerDownload.needToDownload()) {
