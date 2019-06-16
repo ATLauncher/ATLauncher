@@ -91,10 +91,9 @@ public class InstanceSettingsDialog extends JDialog {
                 + "</html>", RESTART_BORDER);
 
         JLabelWithHover initialMemoryLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings.initialmemory") + ":", HELP_ICON, "<html>"
-                        + Utils.splitMultilinedString(
-                                Language.INSTANCE.localize("settings" + "" + ".initialmemoryhelp"), 80, "<br/>")
-                        + "</html>");
+                Language.INSTANCE.localize("settings.initialmemory") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.initialmemoryhelp"), 80,
+                        "<br/>") + "</html>");
 
         JPanel initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -123,10 +122,9 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover maximumMemoryLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings.maximummemory") + ":", HELP_ICON, "<html>"
-                        + Utils.splitMultilinedString(
-                                Language.INSTANCE.localize("settings" + "" + ".maximummemoryhelp"), 80, "<br/>")
-                        + "</html>");
+                Language.INSTANCE.localize("settings.maximummemory") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.maximummemoryhelp"), 80,
+                        "<br/>") + "</html>");
         topPanel.add(maximumMemoryLabel, gbc);
 
         JPanel maximumMemoryPanel = new JPanel();

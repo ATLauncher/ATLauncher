@@ -399,7 +399,7 @@ public class Mod {
                                     + (serverFile == null ? (isFilePattern() ? getName() : getFile())
                                             : (isFilePattern() ? getName() : getServerFile())))
                             .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace(
-                                    "instance" + "" + ".browseropened",
+                                    "instance.browseropened",
                                     (serverFile == null ? (isFilePattern() ? getName() : getFile())
                                             : (isFilePattern() ? getName() : getServerFile())))
                                     + "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>"

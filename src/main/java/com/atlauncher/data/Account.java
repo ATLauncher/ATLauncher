@@ -474,8 +474,7 @@ public class Account implements Serializable {
             this.skinUpdating = true;
             final File file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
             LogManager.info("Downloading skin for " + this.minecraftUsername);
-            final ProgressDialog dialog = new ProgressDialog(
-                    Language.INSTANCE.localize("account" + "" + ".downloadingskin"), 0,
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.downloadingskin"), 0,
                     Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin", this.minecraftUsername),
                     "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             final UUID uid = this.getRealUUID();

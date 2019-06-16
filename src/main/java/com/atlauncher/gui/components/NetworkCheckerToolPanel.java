@@ -74,8 +74,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
         if (ret == 0) {
             final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"),
-                    App.settings.getServers().size(),
-                    Language.INSTANCE.localize("tools.networkchecker" + "" + ".running"),
+                    App.settings.getServers().size(), Language.INSTANCE.localize("tools.networkchecker.running"),
                     "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread(() -> {
                 dialog.setTotalTasksToDo(App.settings.getServers().size() * 5);

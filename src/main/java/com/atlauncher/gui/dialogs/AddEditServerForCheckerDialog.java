@@ -157,7 +157,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         if (e.getSource() == addEditButton) {
             if (serverName.getText().isEmpty() || serverHost.getText().isEmpty() || serverPort.getText().isEmpty()) {
                 DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                        .setContent(Language.INSTANCE.localize("tools" + "" + ".serverchecker.notallfields"))
+                        .setContent(Language.INSTANCE.localize("tools.serverchecker.notallfields"))
                         .setType(DialogManager.ERROR).show();
             } else if (!isValidPort()) {
                 DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
@@ -170,7 +170,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                 QueryVersion qv = null;
 
                 final ProgressDialog dialog = new ProgressDialog(
-                        Language.INSTANCE.localize("tools.serverchecker" + "" + ".checkingserver"), 0,
+                        Language.INSTANCE.localize("tools.serverchecker.checkingserver"), 0,
                         Language.INSTANCE.localize("tools.serverchecker.checkingserver"), "Cancelled Server Check!");
                 dialog.addThread(new Thread(() -> {
                     dialog.setReturnValue(MCQuery.getMinecraftServerQueryVersion(host, port));
@@ -187,8 +187,8 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                             .setContent(Language.INSTANCE.localize("tools.serverchecker.couldntconnect"))
                             .setType(DialogManager.ERROR).show();
                 } else {
-                    App.TOASTER.pop(Language.INSTANCE
-                            .localize((this.serverEditing == null ? "tools" + "" + ".serverchecker.serveradded"
+                    App.TOASTER.pop(
+                            Language.INSTANCE.localize((this.serverEditing == null ? "tools.serverchecker.serveradded"
                                     : "tools.serverchecker.serveredited")));
                     if (this.serverEditing == null) {
                         App.settings.addCheckingServer(new MinecraftServer(name, host, port, qv));

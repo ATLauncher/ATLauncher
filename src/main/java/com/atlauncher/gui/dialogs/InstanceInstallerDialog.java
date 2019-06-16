@@ -329,12 +329,12 @@ public class InstanceInstallerDialog extends JDialog {
                             type = DialogManager.ERROR;
                             text = pack.getName() + " " + version.getVersion() + " "
                                     + Language.INSTANCE.localize("common.wasnt") + " "
-                                    + ((isReinstall) ? Language.INSTANCE.localize("common" + "" + ".reinstalled")
+                                    + ((isReinstall) ? Language.INSTANCE.localize("common.reinstalled")
                                             : Language.INSTANCE.localize("common.installed"))
                                     + "<br/><br/>" + Language.INSTANCE.localize("instance" + ".checkerrorlogs");
                             title = pack.getName() + " " + version.getVersion() + " "
                                     + Language.INSTANCE.localize("common.not") + " "
-                                    + ((isReinstall) ? Language.INSTANCE.localize("common" + "" + ".reinstalled")
+                                    + ((isReinstall) ? Language.INSTANCE.localize("common.reinstalled")
                                             : Language.INSTANCE.localize("common.installed"));
                             if (isReinstall) {
                                 if (shouldCoruptInstance()) {
@@ -453,7 +453,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     type = DialogManager.ERROR;
                                     text = pack.getName() + " " + version.getVersion() + " "
                                             + Language.INSTANCE.localize("common.wasnt") + " "
-                                            + Language.INSTANCE.localize("common" + "" + ".reinstalled") + "<br/><br/>"
+                                            + Language.INSTANCE.localize("common.reinstalled") + "<br/><br/>"
                                             + (this.shouldCoruptInstance()
                                                     ? Language.INSTANCE.localize("instance.nolongerplayable")
                                                     : "")
@@ -461,7 +461,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             + "!";
                                     title = pack.getName() + " " + version.getVersion() + " "
                                             + Language.INSTANCE.localize("common.not") + " "
-                                            + Language.INSTANCE.localize("common" + "" + ".reinstalled");
+                                            + Language.INSTANCE.localize("common.reinstalled");
                                     if (this.shouldCoruptInstance()) {
                                         App.settings.setInstanceUnplayable(instance);
                                     }
@@ -471,11 +471,11 @@ public class InstanceInstallerDialog extends JDialog {
                                     type = DialogManager.ERROR;
                                     text = pack.getName() + " " + version.getVersion() + " "
                                             + Language.INSTANCE.localize("common.wasnt") + " "
-                                            + Language.INSTANCE.localize("common" + "" + ".installed") + "<br/><br/>"
-                                            + Language.INSTANCE.localize("instance" + "" + ".checkerrorlogs") + "!";
+                                            + Language.INSTANCE.localize("common.installed") + "<br/><br/>"
+                                            + Language.INSTANCE.localize("instance.checkerrorlogs") + "!";
                                     title = pack.getName() + " " + version.getVersion() + " "
                                             + Language.INSTANCE.localize("common.not") + " "
-                                            + Language.INSTANCE.localize("common" + "" + ".installed");
+                                            + Language.INSTANCE.localize("common.installed");
                                 }
                             }
                         }

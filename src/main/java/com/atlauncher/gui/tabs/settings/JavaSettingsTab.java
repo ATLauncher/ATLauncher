@@ -91,11 +91,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.32bitmemorywarning"), 80, "<br/>")
                 + "</html>", RESTART_BORDER);
 
-        initialMemoryLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings.initialmemory") + ":", HELP_ICON, "<html>"
-                        + Utils.splitMultilinedString(
-                                Language.INSTANCE.localize("settings" + "" + ".initialmemoryhelp"), 80, "<br/>")
-                        + "</html>");
+        initialMemoryLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.initialmemory") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.initialmemoryhelp"), 80,
+                        "<br/>") + "</html>");
 
         initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -123,11 +121,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        maximumMemoryLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings.maximummemory") + ":", HELP_ICON, "<html>"
-                        + Utils.splitMultilinedString(
-                                Language.INSTANCE.localize("settings" + "" + ".maximummemoryhelp"), 80, "<br/>")
-                        + "</html>");
+        maximumMemoryLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.maximummemory") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.maximummemoryhelp"), 80,
+                        "<br/>") + "</html>");
         add(maximumMemoryLabel, gbc);
 
         maximumMemoryPanel = new JPanel();
@@ -289,8 +285,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         startMinecraftMaximisedLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings" + "" + ".startminecraftmaximised") + "?", HELP_ICON,
-                Language.INSTANCE.localize("settings" + "" + ".startminecraftmaximisedhelp"));
+                Language.INSTANCE.localize("settings.startminecraftmaximised") + "?", HELP_ICON,
+                Language.INSTANCE.localize("settings.startminecraftmaximisedhelp"));
         add(startMinecraftMaximisedLabel, gbc);
 
         gbc.gridx++;
@@ -401,11 +397,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 + "</html>");
 
         this.maximumMemoryLabel.setText(Language.INSTANCE.localize("settings.maximummemory") + ":");
-        this.maximumMemoryLabel
-                .setToolTipText("<html>"
-                        + Utils.splitMultilinedString(
-                                Language.INSTANCE.localize("settings" + "" + ".maximummemoryhelp"), 80, "<br/>")
-                        + "</html>");
+        this.maximumMemoryLabel.setToolTipText("<html>"
+                + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.maximummemoryhelp"), 80, "<br/>")
+                + "</html>");
 
         this.permGenLabel.setText(Language.INSTANCE.localize("settings.permgen") + ":");
         this.permGenLabel.setToolTipText(Language.INSTANCE.localize("settings.permgenhelp"));
@@ -426,10 +420,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         this.javaParametersResetButton.setText(Language.INSTANCE.localize("settings.javapathreset"));
 
+        this.startMinecraftMaximisedLabel.setText(Language.INSTANCE.localize("settings.startminecraftmaximised") + "?");
         this.startMinecraftMaximisedLabel
-                .setText(Language.INSTANCE.localize("settings" + "" + ".startminecraftmaximised") + "?");
-        this.startMinecraftMaximisedLabel
-                .setToolTipText(Language.INSTANCE.localize("settings" + "" + ".startminecraftmaximisedhelp"));
+                .setToolTipText(Language.INSTANCE.localize("settings.startminecraftmaximisedhelp"));
 
         this.saveCustomModsLabel.setText(Language.INSTANCE.localize("settings.savecustommods") + "?");
         this.saveCustomModsLabel.setToolTipText(Language.INSTANCE.localize("settings.savecustommodshelp"));

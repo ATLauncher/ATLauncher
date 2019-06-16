@@ -85,9 +85,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         concurrentConnectionsLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings" + "" + ".concurrentconnections") + ":", HELP_ICON,
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" + ".concurrentconnectionshelp",
-                        "<br/><br/>") + "</html>");
+                Language.INSTANCE.localize("settings.concurrentconnections") + ":", HELP_ICON,
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.concurrentconnectionshelp", "<br/><br/>")
+                        + "</html>");
         add(concurrentConnectionsLabel, gbc);
 
         gbc.gridx++;
@@ -232,8 +232,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         }
 
         final Type theType = type;
-        final ProgressDialog dialog = new ProgressDialog(
-                Language.INSTANCE.localize("settings" + "" + ".checkingproxytitle"), 0,
+        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("settings.checkingproxytitle"), 0,
                 Language.INSTANCE.localize("settings.checkingproxy"), "Cancelled Proxy " + "Test!");
         dialog.addThread(new Thread(() -> {
             dialog.setReturnValue(Utils.testProxy(new Proxy(theType, new InetSocketAddress(proxyHost.getText(),
@@ -278,11 +277,10 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.downloadServerLabel.setText(Language.INSTANCE.localize("settings.downloadserver") + ":");
         this.downloadServerLabel.setToolTipText(Language.INSTANCE.localize("settings.downloadserverhelp"));
 
-        this.concurrentConnectionsLabel
-                .setText(Language.INSTANCE.localize("settings" + "" + ".concurrentconnections") + ":");
-        this.concurrentConnectionsLabel.setToolTipText("<html>"
-                + Language.INSTANCE.localizeWithReplace("settings" + "" + ".concurrentconnectionshelp", "<br/><br/>")
-                + "</html>");
+        this.concurrentConnectionsLabel.setText(Language.INSTANCE.localize("settings.concurrentconnections") + ":");
+        this.concurrentConnectionsLabel.setToolTipText(
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.concurrentconnectionshelp", "<br/><br/>")
+                        + "</html>");
 
         this.enableProxyLabel.setText(Language.INSTANCE.localize("settings.enableproxy") + "?");
         this.enableProxyLabel.setToolTipText(Language.INSTANCE.localize("settings.enableproxyhelp"));

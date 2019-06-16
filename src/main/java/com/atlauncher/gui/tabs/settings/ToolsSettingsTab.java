@@ -73,9 +73,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         serverCheckerWaitLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.servercheckerwait") + ":",
                 HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(
-                        Language.INSTANCE.localize("settings" + "" + ".servercheckerwaithelp"), 75, "<br/>")
-                        + "</html>");
+                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.servercheckerwaithelp"), 75,
+                        "<br/>") + "</html>");
         add(serverCheckerWaitLabel, gbc);
 
         gbc.gridx++;
@@ -118,8 +117,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
     @Override
     public void onRelocalization() {
         this.enableServerCheckerLabel.setText(Language.INSTANCE.localize("settings.serverchecker") + "?");
-        this.enableServerCheckerLabel.setToolTipText("<html>"
-                + Language.INSTANCE.localizeWithReplace("settings" + "" + ".servercheckerhelp", "<br/>" + "</html>"));
+        this.enableServerCheckerLabel.setToolTipText(
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.servercheckerhelp", "<br/>" + "</html>"));
 
         this.serverCheckerWaitLabel.setText(Language.INSTANCE.localize("settings.servercheckerwait") + ":");
         this.serverCheckerWaitLabel.setToolTipText("<html>"

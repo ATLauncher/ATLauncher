@@ -101,8 +101,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         toggleConsole.addActionListener(e -> App.settings.getConsole().setVisible(!App.settings.isConsoleVisible()));
         openFolder.addActionListener(e -> OS.openFileExplorer(FileSystem.BASE_DIR));
         updateData.addActionListener(e -> {
-            final ProgressDialog dialog = new ProgressDialog(
-                    Language.INSTANCE.localize("common" + "" + ".checkingforupdates"), 0,
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common.checkingforupdates"), 0,
                     Language.INSTANCE.localize("common.checkingforupdates"), "Aborting" + " Update Check!");
             dialog.addThread(new Thread(() -> {
                 if (App.settings.hasUpdatedFiles()) {

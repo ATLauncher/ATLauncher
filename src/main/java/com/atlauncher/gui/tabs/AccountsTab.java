@@ -295,9 +295,8 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             }
 
             LogManager.info("Logging into Minecraft!");
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account" + "" + ".loggingin"),
-                    0, Language.INSTANCE.localize("account.loggingin"),
-                    "Aborting login for " + usernameField.getText());
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
+                    Language.INSTANCE.localize("account.loggingin"), "Aborting login for " + usernameField.getText());
             dialog.addThread(new Thread(() -> {
                 LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
                         new String(passwordField.getPassword()));

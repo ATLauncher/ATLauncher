@@ -255,7 +255,7 @@ public class BackupDialog extends JDialog implements ActionListener {
         if (("Backup".equals(e.getActionCommand())) && (worldList.getSelectedValue() != null)) {
             String worldToBackup = (String) worldList.getSelectedValue();
             String backupName = JOptionPane.showInputDialog(this,
-                    Language.INSTANCE.localize("backup.message" + "" + ".backupname"),
+                    Language.INSTANCE.localize("backup.message.backupname"),
                     Language.INSTANCE.localize("backup.message.backupname.title"), JOptionPane.QUESTION_MESSAGE);
             if (backupName != null) {
                 for (Map.Entry<String, SyncAbstract> entry : SyncAbstract.syncList.entrySet()) {
@@ -264,8 +264,8 @@ public class BackupDialog extends JDialog implements ActionListener {
                         entry.getValue().backupWorld(backupName, worldData, instance);
                     } else {
                         JOptionPane.showMessageDialog(this,
-                                Language.INSTANCE.localize("backup.message" + "" + ".backupfailed.missingdirectory"),
-                                Language.INSTANCE.localize("backup.message" + "" + ".backupfailed.title"),
+                                Language.INSTANCE.localize("backup.message.backupfailed.missingdirectory"),
+                                Language.INSTANCE.localize("backup.message.backupfailed.title"),
                                 JOptionPane.ERROR_MESSAGE);
                     }
                 }
@@ -276,7 +276,7 @@ public class BackupDialog extends JDialog implements ActionListener {
         } else if (("Delete".equals(e.getActionCommand())) && (backupList.getSelectedValue() != null)) {
             String backupToDelete = (String) backupList.getSelectedValue();
             if (JOptionPane.showOptionDialog(this,
-                    Language.INSTANCE.localizeWithReplace("backup.message" + "" + ".deleteconfirm", backupToDelete),
+                    Language.INSTANCE.localizeWithReplace("backup.message.deleteconfirm", backupToDelete),
                     Language.INSTANCE.localize("backup.message" + ".deleteconfirm" + ".title"),
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, null,
                     null) == JOptionPane.OK_OPTION) {
