@@ -6,3 +6,4 @@
 -   Add in Discord rich presence integration
 -   Fix post launch error check dialog not being displayed correctly
 -   Fix fabric not installing correctly
+-   Fix Forge requiring all libraries even if they're clientreq=false

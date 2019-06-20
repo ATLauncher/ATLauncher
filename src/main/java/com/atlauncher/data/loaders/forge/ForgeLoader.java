@@ -175,16 +175,6 @@ public class ForgeLoader implements Loader {
                 continue;
             }
 
-            if (this.instanceInstaller.isServer() && !library.isServerReq()) {
-                LogManager.debug("Not using library " + library.getName()
-                        + " as this is a server install and it's not required");
-                continue;
-            } else if (!this.instanceInstaller.isServer() && !library.isClientReq()) {
-                LogManager.debug("Not using library " + library.getName()
-                        + " as this is a client install and it's not required");
-                continue;
-            }
-
             String urlBase = library.hasUrl() ? library.getUrl() : "https://libraries.minecraft.net/";
 
             String url = urlBase + Utils.convertMavenIdentifierToPath(library.getName());
