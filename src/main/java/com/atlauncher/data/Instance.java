@@ -1492,7 +1492,8 @@ public class Instance implements Cloneable {
                     int detectedError = 0;
 
                     while ((line = br.readLine()) != null) {
-                        if (line.contains("java.lang.OutOfMemoryError")) {
+                        if (line.contains("java.lang.OutOfMemoryError")
+                                || line.contains("There is insufficient memory for the Java Runtime Environment")) {
                             detectedError = MinecraftError.OUT_OF_MEMORY;
                         }
 
