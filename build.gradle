@@ -81,6 +81,7 @@ macAppBundle {
     icon = 'src/main/resources/assets/image/Icon.icns'
     javaProperties.put('user.dir', '$APP_ROOT/Contents/Java')
     javaProperties.put('apple.laf.useScreenMenuBar', 'true')
+    javaExtras.put("-Djna.nosys", "true")
 }
 
 copyToResourcesJava {
@@ -95,6 +96,9 @@ launch4j {
     icon = "${projectDir}/src/main/resources/assets/image/Icon.ico"
     initialHeapPercent = 5;
     maxHeapPercent = 100;
+    jvmOptions = [
+        "-Djna.nosys=true"
+    ]
 }
 
 artifacts {
