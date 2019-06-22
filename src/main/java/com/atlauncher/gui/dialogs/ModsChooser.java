@@ -347,7 +347,7 @@ public class ModsChooser extends JDialog {
     }
 
     private int calculateWidth() {
-        int width = 30;
+        int width = 50;
 
         width += useShareCode.getPreferredSize().width;
         width += selectAllButton.getPreferredSize().width;
