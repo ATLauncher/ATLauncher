@@ -18,13 +18,14 @@
 package com.atlauncher.data;
 
 public class Constants {
-    public static final LauncherVersion VERSION = new LauncherVersion(3, 2, 8, 0);
+    public static final LauncherVersion VERSION = new LauncherVersion(3, 2, 8, 1);
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String DISCORD_CLIENT_ID = "589393213723246592";
     public static final String API_BASE_URL = "https://api.atlauncher.com/v1/launcher/";
     public static final String PASTE_CHECK_URL = "https://paste.atlauncher.com";
     public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";
     public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/";
+    public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
     public static final String LEGACY_JAVA_FIXER_URL = "https://files.minecraftforge.net/LegacyJavaFixer/legacyjavafixer-1.0.jar";
     public static final String LEGACY_JAVA_FIXER_MD5 = "12c337cb2445b56b097e7c25a5642710";
     public static final Server[] SERVERS = new Server[] {

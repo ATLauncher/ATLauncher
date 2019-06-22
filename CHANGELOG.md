@@ -1,10 +1,5 @@
 # Changelog
 
-## 3.2.8.0
+## 3.2.8.1
 
--   Update minimum Java to Java 8
--   Add in Discord rich presence integration
--   Fix post launch error check dialog not being displayed correctly
--   Fix fabric not installing correctly
--   Fix Forge requiring all libraries even if they're clientreq=false
--   Add in more detection for out of memory errors on launch
+-   Change Fabric to use meta api to install

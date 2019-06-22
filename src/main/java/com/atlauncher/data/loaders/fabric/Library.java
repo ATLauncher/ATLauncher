@@ -18,11 +18,21 @@
 package com.atlauncher.data.loaders.fabric;
 
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.Constants;
 
 @Json
 public class Library {
     private String name;
     private String url;
+
+    public Library(String name, String url) {
+        this.name = name;
+        this.url = url;
+    }
+
+    public Library(String name) {
+        this(name, Constants.FABRIC_MAVEN);
+    }
 
     public String getName() {
         return this.name;

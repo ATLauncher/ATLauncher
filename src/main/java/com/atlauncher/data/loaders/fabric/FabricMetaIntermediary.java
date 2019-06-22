@@ -17,25 +17,10 @@
  */
 package com.atlauncher.data.loaders.fabric;
 
-public class FabricMetaMappings {
-    private String gameVersion;
-    private String seperator;
-    private int build;
+public class FabricMetaIntermediary {
     private String maven;
     private String version;
     private boolean stable;
-
-    public String getGameVersion() {
-        return this.gameVersion;
-    }
-
-    public String getSeperator() {
-        return this.seperator;
-    }
-
-    public int getBuild() {
-        return this.build;
-    }
 
     public String getMaven() {
         return this.maven;

@@ -19,13 +19,18 @@ package com.atlauncher.data.loaders.fabric;
 
 public class FabricMetaVersion {
     private FabricMetaLoader loader;
-    private FabricMetaMappings mappings;
+    private FabricMetaIntermediary intermediary;
+    private FabricMetaLauncherMeta launcherMeta;
 
     public FabricMetaLoader getLoader() {
         return this.loader;
     }
 
-    public FabricMetaMappings getMappings() {
-        return this.mappings;
+    public FabricMetaIntermediary getIntermediary() {
+        return this.intermediary;
+    }
+
+    public FabricMetaLauncherMeta getLauncherMeta() {
+        return this.launcherMeta;
     }
 }

@@ -22,6 +22,8 @@ import java.io.File;
 import java.util.Date;
 
 import com.atlauncher.adapter.ColorTypeAdapter;
+import com.atlauncher.data.loaders.fabric.FabricMetaLauncherMeta;
+import com.atlauncher.data.loaders.fabric.FabricMetaLauncherMetaTypeAdapter;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.Downloads;
 import com.atlauncher.data.mojang.DownloadsTypeAdapter;
@@ -43,6 +45,7 @@ public final class Gsons {
     public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
             .registerTypeAdapter(MojangArguments.class, new MojangArgumentsTypeAdapter())
+            .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
             .registerTypeAdapter(Downloads.class, new DownloadsTypeAdapter())
             .registerTypeAdapter(File.class, new FileTypeAdapter())
             .registerTypeAdapter(MojangStatus.class, new MojangStatusTypeAdapter()).create();
