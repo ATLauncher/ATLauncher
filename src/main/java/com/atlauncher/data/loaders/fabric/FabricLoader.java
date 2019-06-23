@@ -31,6 +31,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -111,53 +112,33 @@ public class FabricLoader implements Loader {
 
     @Override
     public List<Downloadable> getDownloadableLibraries() {
-        List<Downloadable> librariesToDownload = new ArrayList<>();
-        List<Library> libraries = new ArrayList<>();
-
-        libraries.add(new Library(this.version.getLoader().getMaven()));
-        libraries.add(new Library(this.version.getIntermediary().getMaven()));
-
-        for (Library library : libraries) {
+        return this.getLibrariesNeeded().stream().map(library -> {
             String libraryPath = Utils.convertMavenIdentifierToPath(library.getName());
-            File downloadTo = new File(App.settings.getGameLibrariesDir(), libraryPath);
 
-            String url = library.getUrl() + Utils.convertMavenIdentifierToPath(library.getName());
-
-            librariesToDownload.add(new HashableDownloadable(url, downloadTo, instanceInstaller));
-        }
-
-        return librariesToDownload;
+            return new HashableDownloadable(library.getUrl() + libraryPath,
+                    new File(App.settings.getGameLibrariesDir(), libraryPath), this.instanceInstaller);
+        }).collect(Collectors.toList());
     }
 
     @Override
     public List<String> getLibraries() {
-        List<String> libraries = new ArrayList<>();
-
-        libraries.add(Utils.convertMavenIdentifierToPath(this.version.getLoader().getMaven()));
-        libraries.add(Utils.convertMavenIdentifierToPath(this.version.getIntermediary().getMaven()));
-
-        for (Library library : this.version.getLauncherMeta().getLibraries(this.instanceInstaller.isServer())) {
-            libraries.add(Utils.convertMavenIdentifierToPath(library.getName()));
-        }
-
-        return libraries;
+        return this.getLibrariesNeeded().stream().map(library -> Utils.convertMavenIdentifierToPath(library.getName()))
+                .collect(Collectors.toList());
     }
 
     private List<File> getLibraryFiles() {
-        List<File> libraryFiles = new ArrayList<>();
+        return this.getLibrariesNeeded().stream().map(library -> new File(App.settings.getGameLibrariesDir(),
+                Utils.convertMavenIdentifierToPath(library.getName()))).collect(Collectors.toList());
+    }
+
+    private List<Library> getLibrariesNeeded() {
         List<Library> libraries = new ArrayList<>();
 
         libraries.add(new Library(this.version.getLoader().getMaven()));
         libraries.add(new Library(this.version.getIntermediary().getMaven()));
         libraries.addAll(this.version.getLauncherMeta().getLibraries(this.instanceInstaller.isServer()));
 
-        File librariesDirectory = App.settings.getGameLibrariesDir();
-
-        for (Library library : libraries) {
-            libraryFiles.add(new File(librariesDirectory, Utils.convertMavenIdentifierToPath(library.getName())));
-        }
-
-        return libraryFiles;
+        return libraries;
     }
 
     @Override
