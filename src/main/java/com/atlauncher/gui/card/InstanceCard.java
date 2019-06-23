@@ -124,6 +124,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         top.add(this.updateButton);
         top.add(this.renameButton);
         top.add(this.backupButton);
+        top.add(this.settingsButton);
         bottom.add(this.cloneButton);
         bottom.add(this.deleteButton);
 
@@ -136,7 +137,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
 
         bottom.add(this.openButton);
-        bottom.add(this.settingsButton);
 
         this.rightPanel.setLayout(new BorderLayout());
         this.rightPanel.setPreferredSize(new Dimension(this.rightPanel.getPreferredSize().width, 180));
