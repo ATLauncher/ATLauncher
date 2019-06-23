@@ -130,6 +130,16 @@ public class EditModsDialog extends JDialog {
 
         addButton = new JButton(Language.INSTANCE.localize("instance.addmod"));
         addButton.addActionListener(e -> {
+            if (instance.hasEnabledCurseIntegration()) {
+                new AddModsDialog(instance);
+
+                loadMods();
+
+                reloadPanels();
+
+                return;
+            }
+
             boolean usesCoreMods = false;
             try {
                 usesCoreMods = App.settings.getMinecraftVersion(instance.getMinecraftVersion()).usesCoreMods();
