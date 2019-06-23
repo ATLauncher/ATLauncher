@@ -49,6 +49,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.json.Version;
+import com.atlauncher.data.loaders.LoaderVersion;
 import com.atlauncher.data.mojang.LoggingClient;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
@@ -77,8 +78,8 @@ public class InstanceInstallerDialog extends JDialog {
     private JComboBox<PackVersion> versionsDropDown;
     private List<PackVersion> versions = new ArrayList<>();
     private JLabel loaderVersionLabel;
-    private JComboBox<String> loaderVersionsDropDown;
-    private List<String> loaderVersions = new ArrayList<>();
+    private JComboBox<LoaderVersion> loaderVersionsDropDown;
+    private List<LoaderVersion> loaderVersions = new ArrayList<>();
     private JLabel enableUserLockLabel;
     private JCheckBox enableUserLock;
     private boolean isUpdate;
@@ -267,7 +268,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(
                         (isServer ? "" : instanceNameField.getText()), pack, version, isReinstall, isServer, shareCode,
-                        showModsChooser, (String) loaderVersionsDropDown.getSelectedItem()) {
+                        showModsChooser, (LoaderVersion) loaderVersionsDropDown.getSelectedItem()) {
 
                     protected void done() {
                         Boolean success = false;
@@ -342,7 +343,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setEnableCurseIntegration(
                                             this.getJsonVersion().hasEnabledCurseIntegration());
                                     instance.setEnableEditingMods(this.getJsonVersion().hasEnabledEditingMods());
-                                    instance.setLoaderVersion((String) loaderVersionsDropDown.getSelectedItem());
+                                    instance.setLoaderVersion((LoaderVersion) loaderVersionsDropDown.getSelectedItem());
                                     if (version.isDev()) {
                                         instance.setDevVersion();
                                         if (version.getHash() != null) {
@@ -375,7 +376,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             this.getJsonVersion().getJava(),
                                             this.getJsonVersion().hasEnabledCurseIntegration(),
                                             this.getJsonVersion().hasEnabledEditingMods(),
-                                            (String) loaderVersionsDropDown.getSelectedItem());
+                                            (LoaderVersion) loaderVersionsDropDown.getSelectedItem());
 
                                     if (this.hasArguments()) {
                                         newInstance.setArguments(this.getArguments());
@@ -606,7 +607,7 @@ public class InstanceInstallerDialog extends JDialog {
         loaderVersions.clear();
 
         loaderVersionsDropDown.removeAllItems();
-        loaderVersionsDropDown.addItem(Language.INSTANCE.localize("instance.gettingloaderversions"));
+        loaderVersionsDropDown.addItem(new LoaderVersion(Language.INSTANCE.localize("instance.gettingloaderversions")));
 
         loaderVersionLabel.setVisible(true);
         loaderVersionsDropDown.setVisible(true);
@@ -628,9 +629,9 @@ public class InstanceInstallerDialog extends JDialog {
                 loaderVersions.addAll(jsonVersion.getLoader().getChoosableVersions(jsonVersion.getMinecraft()));
 
                 // ensures that font width is taken into account
-                for (String version : loaderVersions) {
+                for (LoaderVersion version : loaderVersions) {
                     loaderVersionLength = Math.max(loaderVersionLength,
-                            getFontMetrics(Utils.getFont()).stringWidth(version) + 25);
+                            getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 25);
                 }
 
                 loaderVersionsDropDown.removeAllItems();

@@ -38,6 +38,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.Java;
+import com.atlauncher.data.loaders.LoaderVersion;
 import com.atlauncher.data.mojang.LoggingClient;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -116,7 +117,7 @@ public class Instance implements Cloneable {
     /**
      * The loader version chosen to be installed for this instance.
      */
-    private String loaderVersion;
+    private LoaderVersion loaderVersion;
 
     /**
      * The minimum RAM/memory recommended for this Instance by the pack developer/s.
@@ -272,7 +273,7 @@ public class Instance implements Cloneable {
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
             String assets, LoggingClient logging, boolean isDev, boolean isPlayable, boolean newLaunchMethod, Java java,
-            boolean enableCurseIntegration, boolean enableEditingMods, String loaderVersion) {
+            boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -338,7 +339,7 @@ public class Instance implements Cloneable {
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
             String assets, LoggingClient logging, boolean isDev, boolean newLaunchMethod, Java java,
-            boolean enableCurseIntegration, boolean enableEditingMods, String loaderVersion) {
+            boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
         this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods,
                 jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev, true,
                 newLaunchMethod, java, enableCurseIntegration, enableEditingMods, loaderVersion);
@@ -737,11 +738,11 @@ public class Instance implements Cloneable {
         return this.loaderVersion != null;
     }
 
-    public void setLoaderVersion(String loaderVersion) {
+    public void setLoaderVersion(LoaderVersion loaderVersion) {
         this.loaderVersion = loaderVersion;
     }
 
-    public String getLoaderVersion() {
+    public LoaderVersion getLoaderVersion() {
         return this.loaderVersion;
     }
 

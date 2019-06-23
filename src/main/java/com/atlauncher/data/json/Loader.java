@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.loaders.LoaderVersion;
 import com.atlauncher.workers.InstanceInstaller;
 
 @Json
@@ -60,7 +61,8 @@ public class Loader {
         return this.chooseMethod;
     }
 
-    public com.atlauncher.data.loaders.Loader getLoader(File tempDir, InstanceInstaller instanceInstaller, String loaderVersion)
+    public com.atlauncher.data.loaders.Loader getLoader(File tempDir, InstanceInstaller instanceInstaller,
+            LoaderVersion loaderVersion)
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         com.atlauncher.data.loaders.Loader instance = (com.atlauncher.data.loaders.Loader) Class.forName(this.className)
                 .newInstance();
@@ -70,11 +72,11 @@ public class Loader {
         return instance;
     }
 
-    public List<String> getChoosableVersions(String minecraft) {
+    public List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
             Method method = Class.forName(this.chooseClassName).getDeclaredMethod(this.chooseMethod, String.class);
 
-            return (List<String>) method.invoke(null, minecraft);
+            return (List<LoaderVersion>) method.invoke(null, minecraft);
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             LogManager.logStackTrace(e);

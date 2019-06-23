@@ -33,6 +33,7 @@ import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.ForgeXzDownloadable;
 import com.atlauncher.data.HashableDownloadable;
 import com.atlauncher.data.loaders.Loader;
+import com.atlauncher.data.loaders.LoaderVersion;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
@@ -47,14 +48,14 @@ public class ForgeLoader implements Loader {
 
     @Override
     public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
-            String versionOverride) {
+            LoaderVersion versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
 
         if (versionOverride != null) {
-            this.version = versionOverride;
-            this.rawVersion = this.minecraft + "-" + this.version;
+            this.version = versionOverride.getVersion();
+            this.rawVersion = versionOverride.getRawVersion();
 
             this.installerUrl = Constants.FORGE_MAVEN + this.rawVersion + "/forge-" + this.rawVersion
                     + "-installer.jar";
@@ -251,7 +252,7 @@ public class ForgeLoader implements Loader {
         return false;
     }
 
-    public static List<String> getChoosableVersions(String minecraft) {
+    public static List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
             Downloadable loaderVersions = new Downloadable(
                     String.format("%sforge-versions/%s", Constants.API_BASE_URL, minecraft), false);
@@ -263,7 +264,8 @@ public class ForgeLoader implements Loader {
 
             APIResponse<List<ATLauncherApiForgeVersions>> data = Gsons.DEFAULT_ALT.fromJson(contents, type);
 
-            return data.getData().stream().map(version -> version.getVersion()).collect(Collectors.toList());
+            return data.getData().stream().map(version -> new LoaderVersion(version.getVersion(),
+                    version.getRawVersion(), version.isRecommended())).collect(Collectors.toList());
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
         }

@@ -41,6 +41,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.HashableDownloadable;
 import com.atlauncher.data.loaders.Loader;
+import com.atlauncher.data.loaders.LoaderVersion;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
@@ -53,13 +54,13 @@ public class FabricLoader implements Loader {
 
     @Override
     public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
-            String versionOverride) {
+            LoaderVersion versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
 
         if (versionOverride != null) {
-            this.version = this.getVersion(versionOverride);
+            this.version = this.getVersion(versionOverride.getVersion());
         } else if (metadata.containsKey("loader")) {
             this.version = this.getVersion((String) metadata.get("loader"));
         } else if ((boolean) metadata.get("latest")) {
@@ -252,7 +253,7 @@ public class FabricLoader implements Loader {
         return true;
     }
 
-    public static List<String> getChoosableVersions(String minecraft) {
+    public static List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
             Downloadable loaderVersions = new Downloadable(
                     String.format("https://meta.fabricmc.net/v2/versions/loader/%s", minecraft), false);
@@ -264,7 +265,7 @@ public class FabricLoader implements Loader {
 
             List<FabricMetaVersion> versions = Gsons.DEFAULT_ALT.fromJson(contents, type);
 
-            return versions.stream().map(version -> version.getLoader().getVersion()).collect(Collectors.toList());
+            return versions.stream().map(version -> new LoaderVersion(version.getLoader().getVersion())).collect(Collectors.toList());
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
         }

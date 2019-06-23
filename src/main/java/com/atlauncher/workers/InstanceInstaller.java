@@ -56,6 +56,7 @@ import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;
+import com.atlauncher.data.loaders.LoaderVersion;
 import com.atlauncher.data.mojang.ArgumentRule;
 import com.atlauncher.data.mojang.AssetIndex;
 import com.atlauncher.data.mojang.AssetObject;
@@ -88,7 +89,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private Pack pack;
     private Version jsonVersion;
     private PackVersion version;
-    private String loaderVersion;
+    private LoaderVersion loaderVersion;
     private boolean isReinstall;
     private boolean isServer;
     private String jarOrder;
@@ -122,7 +123,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private com.atlauncher.data.loaders.Loader loader;
 
     public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean isServer,
-            String shareCode, boolean showModsChooser, String loaderVersion) {
+            String shareCode, boolean showModsChooser, LoaderVersion loaderVersion) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
