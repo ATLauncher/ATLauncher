@@ -265,7 +265,8 @@ public class FabricLoader implements Loader {
 
             List<FabricMetaVersion> versions = Gsons.DEFAULT_ALT.fromJson(contents, type);
 
-            return versions.stream().map(version -> new LoaderVersion(version.getLoader().getVersion())).collect(Collectors.toList());
+            return versions.stream().map(version -> new LoaderVersion(version.getLoader().getVersion(),
+                    version.getLoader().getVersion(), false, "Fabric")).collect(Collectors.toList());
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
         }

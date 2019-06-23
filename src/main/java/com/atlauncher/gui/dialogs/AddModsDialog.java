@@ -91,7 +91,11 @@ public final class AddModsDialog extends JDialog {
     private void loadDefaultMods() {
         Runnable r = new Runnable() {
             public void run() {
-                setMods(CurseApi.searchMods(instance.getMinecraftVersion(), ""));
+                if (instance.getLoaderVersion().isFabric()) {
+                    setMods(CurseApi.searchModsForFabric(instance.getMinecraftVersion(), ""));
+                } else {
+                    setMods(CurseApi.searchMods(instance.getMinecraftVersion(), ""));
+                }
             }
         };
 

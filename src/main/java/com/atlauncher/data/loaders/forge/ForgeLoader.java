@@ -265,7 +265,7 @@ public class ForgeLoader implements Loader {
             APIResponse<List<ATLauncherApiForgeVersions>> data = Gsons.DEFAULT_ALT.fromJson(contents, type);
 
             return data.getData().stream().map(version -> new LoaderVersion(version.getVersion(),
-                    version.getRawVersion(), version.isRecommended())).collect(Collectors.toList());
+                    version.getRawVersion(), version.isRecommended(), "Forge")).collect(Collectors.toList());
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
         }

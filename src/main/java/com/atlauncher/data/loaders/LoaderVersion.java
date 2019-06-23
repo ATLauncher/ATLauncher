@@ -21,19 +21,17 @@ public class LoaderVersion {
     private String version;
     private String rawVersion;
     private boolean recommended;
+    private String type;
 
-    public LoaderVersion(String version, String rawVersion, boolean recommended) {
+    public LoaderVersion(String version, String rawVersion, boolean recommended, String type) {
         this.version = version;
         this.rawVersion = rawVersion;
         this.recommended = recommended;
-    }
-
-    public LoaderVersion(String version, String rawVersion) {
-        this(version, rawVersion, false);
+        this.type = type;
     }
 
     public LoaderVersion(String version) {
-        this(version, version, false);
+        this(version, version, false, "Dummy");
     }
 
     public String getVersion() {
@@ -42,6 +40,14 @@ public class LoaderVersion {
 
     public String getRawVersion() {
         return this.rawVersion;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public boolean isFabric() {
+        return this.type.equalsIgnoreCase("Fabric");
     }
 
     public boolean isRecommended() {
