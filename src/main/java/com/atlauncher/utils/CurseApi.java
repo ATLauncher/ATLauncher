@@ -37,9 +37,10 @@ public class CurseApi {
     public static List<CurseMod> searchMods(String gameVersion, String query, int page, int categoryId) {
         try {
             String url = String.format(
-                    "%s/addon/search?gameId=432&gameVersion=%s&categoryId=%d&sectionId=6&searchFilter=%s&sort=Popularity&sortDescending=true&pageSize=25&index=%d",
+                    "%s/addon/search?gameId=432&gameVersion=%s&categoryId=%d&sectionId=6&searchFilter=%s&sort=Popularity&sortDescending=true&pageSize=%d&index=%d",
                     Constants.CURSE_API_URL, gameVersion, categoryId,
-                    URLEncoder.encode(query, StandardCharsets.UTF_8.name()), page * 25);
+                    URLEncoder.encode(query, StandardCharsets.UTF_8.name()), Constants.CURSE_PAGINATION_SIZE,
+                    page * Constants.CURSE_PAGINATION_SIZE);
 
             Downloadable downloadable = new Downloadable(url, false);
 

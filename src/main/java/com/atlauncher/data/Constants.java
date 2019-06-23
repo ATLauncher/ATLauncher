@@ -26,6 +26,7 @@ public class Constants {
     public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";
     public static final String CURSE_API_URL = "https://addons-ecs.forgesvc.net/api/v2";
     public static final int CURSE_FABRIC_CATEGORY_ID = 4780;
+    public static final int CURSE_PAGINATION_SIZE = 40;
     public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/";
     public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
     public static final String LEGACY_JAVA_FIXER_URL = "https://files.minecraftforge.net/LegacyJavaFixer/legacyjavafixer-1.0.jar";

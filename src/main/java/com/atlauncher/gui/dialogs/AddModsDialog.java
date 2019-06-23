@@ -21,7 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -35,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseMod;
@@ -44,7 +45,7 @@ import com.atlauncher.utils.CurseApi;
 @SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {
     private final Instance instance;
-    private final JPanel contentPanel = new JPanel(new GridBagLayout());
+    private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(Language.INSTANCE.localize("common.search"));
@@ -60,7 +61,7 @@ public final class AddModsDialog extends JDialog {
         this.instance = instance;
 
         this.setPreferredSize(new Dimension(550, 450));
-        this.setResizable(true);
+        this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         this.topPanel.add(new JLabel(Language.INSTANCE.localize("common.search") + ": "));
@@ -72,6 +73,8 @@ public final class AddModsDialog extends JDialog {
                 this.getVerticalScrollBar().setUnitIncrement(16);
             }
         };
+
+        this.jscrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(this.topPanel, BorderLayout.NORTH);
@@ -129,6 +132,9 @@ public final class AddModsDialog extends JDialog {
     }
 
     private void getMods() {
+        prevButton.setEnabled(false);
+        nextButton.setEnabled(false);
+
         Runnable r = new Runnable() {
             public void run() {
                 if (instance.getLoaderVersion().isFabric()) {
@@ -171,7 +177,9 @@ public final class AddModsDialog extends JDialog {
         contentPanel.removeAll();
 
         prevButton.setEnabled(page > 0);
-        nextButton.setEnabled(mods.size() == 25);
+        nextButton.setEnabled(mods.size() == Constants.CURSE_PAGINATION_SIZE);
+
+        contentPanel.setLayout(new GridLayout(mods.size() / 2, 2));
 
         mods.stream().forEach(curseMod -> {
             contentPanel.add(new CurseModCard(curseMod, this.instance), gbc);
