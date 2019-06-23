@@ -21,7 +21,7 @@ package com.atlauncher.data;
  * Response to an API call made to ATLauncher servers. This contains information including if there was an error, the
  * response code of the request, the error message (if any) and the data received (if any) from the API.
  */
-public class APIResponse {
+public class APIResponse<T> {
     /**
      * If this request is an error or not.
      */
@@ -42,7 +42,7 @@ public class APIResponse {
     /**
      * The data sent back by the API (if applicable). Can be of various types and may not be specified at all.
      */
-    private Object data;
+    private T data;
 
     /**
      * Checks if this response was an error or not.
@@ -77,25 +77,7 @@ public class APIResponse {
      *
      * @return the data returned from the API. Please note that this may not be set or be null.
      */
-    public Object getData() {
+    public T getData() {
         return this.data;
-    }
-
-    /**
-     * Gets the data returned by the API as an Integer.
-     *
-     * @return the Integer representation of the data
-     */
-    public int getDataAsInt() {
-        return (Integer) this.data;
-    }
-
-    /**
-     * Gets the data returned by the API as a String.
-     *
-     * @return the String representation of the data
-     */
-    public String getDataAsString() {
-        return (String) this.data;
     }
 }

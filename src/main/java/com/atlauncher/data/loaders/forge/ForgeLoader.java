@@ -22,10 +22,12 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.ForgeXzDownloadable;
@@ -33,6 +35,7 @@ import com.atlauncher.data.HashableDownloadable;
 import com.atlauncher.data.loaders.Loader;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
+import com.google.gson.reflect.TypeToken;
 
 public class ForgeLoader implements Loader {
     protected String installerUrl;
@@ -43,12 +46,19 @@ public class ForgeLoader implements Loader {
     protected InstanceInstaller instanceInstaller;
 
     @Override
-    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller) {
+    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
+            String versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
 
-        if (metadata.containsKey("version")) {
+        if (versionOverride != null) {
+            this.version = versionOverride;
+            this.rawVersion = this.minecraft + "-" + this.version;
+
+            this.installerUrl = Constants.FORGE_MAVEN + this.rawVersion + "/forge-" + this.rawVersion
+                    + "-installer.jar";
+        } else if (metadata.containsKey("version")) {
             this.version = (String) metadata.get("version");
             this.rawVersion = this.minecraft + "-" + this.version;
 
@@ -239,5 +249,25 @@ public class ForgeLoader implements Loader {
     @Override
     public boolean useMinecraftArguments() {
         return false;
+    }
+
+    public static List<String> getChoosableVersions(String minecraft) {
+        try {
+            Downloadable loaderVersions = new Downloadable(
+                    String.format("%sforge-versions/%s", Constants.API_BASE_URL, minecraft), false);
+
+            String contents = loaderVersions.getContents();
+
+            java.lang.reflect.Type type = new TypeToken<APIResponse<List<ATLauncherApiForgeVersions>>>() {
+            }.getType();
+
+            APIResponse<List<ATLauncherApiForgeVersions>> data = Gsons.DEFAULT_ALT.fromJson(contents, type);
+
+            return data.getData().stream().map(version -> version.getVersion()).collect(Collectors.toList());
+        } catch (Throwable e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return null;
     }
 }

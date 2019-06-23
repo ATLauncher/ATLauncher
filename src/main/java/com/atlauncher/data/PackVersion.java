@@ -29,6 +29,8 @@ public class PackVersion {
     private boolean canUpdate = true;
     private boolean isRecommended = true;
     private boolean isDev;
+    private boolean hasLoader = false;
+    private boolean hasChoosableLoader = false;
 
     public String getVersion() {
         return this.version;
@@ -91,6 +93,14 @@ public class PackVersion {
         }
 
         return this.hash.equalsIgnoreCase(hash);
+    }
+
+    public boolean hasLoader() {
+        return this.hasLoader;
+    }
+
+    public boolean hasChoosableLoader() {
+        return this.hasChoosableLoader;
     }
 
 }

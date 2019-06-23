@@ -77,6 +77,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
@@ -87,6 +88,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private Pack pack;
     private Version jsonVersion;
     private PackVersion version;
+    private String loaderVersion;
     private boolean isReinstall;
     private boolean isServer;
     private String jarOrder;
@@ -120,7 +122,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private com.atlauncher.data.loaders.Loader loader;
 
     public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean isServer,
-            String shareCode, boolean showModsChooser) {
+            String shareCode, boolean showModsChooser, String loaderVersion) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
@@ -128,6 +130,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.isServer = isServer;
         this.shareCode = shareCode;
         this.showModsChooser = showModsChooser;
+        this.loaderVersion = loaderVersion;
         if (isServer) {
             serverLibraries = new ArrayList<>();
         }
@@ -1390,7 +1393,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (this.jsonVersion.hasLoader()) {
             try {
-                this.loader = this.jsonVersion.getLoader().getLoader(new File(this.getTempDirectory(), "loader"), this);
+                this.loader = this.jsonVersion.getLoader().getLoader(new File(this.getTempDirectory(), "loader"), this,
+                        this.loaderVersion);
             } catch (Throwable e) {
                 LogManager.logStackTrace(e);
                 LogManager.error("Cannot install instance because the loader failed to create");
@@ -1694,13 +1698,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         String shareCodeData = null;
 
         try {
-            APIResponse response = Gsons.DEFAULT.fromJson(
+            java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
+            }.getType();
+            APIResponse<String> response = Gsons.DEFAULT.fromJson(
                     Utils.sendGetAPICall(
                             "pack/" + this.pack.getSafeName() + "/" + version.getVersion() + "/share-code/" + code),
-                    APIResponse.class);
+                    type);
 
             if (!response.wasError()) {
-                shareCodeData = response.getDataAsString();
+                shareCodeData = response.getData();
             }
         } catch (IOException e) {
             LogManager.logStackTrace("API call failed", e);

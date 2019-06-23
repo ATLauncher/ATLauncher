@@ -114,6 +114,11 @@ public class Instance implements Cloneable {
     private Boolean enableEditingMods = true;
 
     /**
+     * The loader version chosen to be installed for this instance.
+     */
+    private String loaderVersion;
+
+    /**
      * The minimum RAM/memory recommended for this Instance by the pack developer/s.
      */
     private int memory = 0;
@@ -267,7 +272,7 @@ public class Instance implements Cloneable {
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
             String assets, LoggingClient logging, boolean isDev, boolean isPlayable, boolean newLaunchMethod, Java java,
-            boolean enableCurseIntegration, boolean enableEditingMods) {
+            boolean enableCurseIntegration, boolean enableEditingMods, String loaderVersion) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -298,6 +303,7 @@ public class Instance implements Cloneable {
         this.java = java;
         this.enableCurseIntegration = enableCurseIntegration;
         this.enableEditingMods = enableEditingMods;
+        this.loaderVersion = loaderVersion;
     }
 
     /**
@@ -332,10 +338,10 @@ public class Instance implements Cloneable {
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
             String assets, LoggingClient logging, boolean isDev, boolean newLaunchMethod, Java java,
-            boolean enableCurseIntegration, boolean enableEditingMods) {
+            boolean enableCurseIntegration, boolean enableEditingMods, String loaderVersion) {
         this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods,
                 jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev, true,
-                newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
+                newLaunchMethod, java, enableCurseIntegration, enableEditingMods, loaderVersion);
     }
 
     /**
@@ -725,6 +731,18 @@ public class Instance implements Cloneable {
 
     public void setEnableEditingMods(boolean enableEditingMods) {
         this.enableEditingMods = enableEditingMods;
+    }
+
+    public boolean installedWithLoaderVersion() {
+        return this.loaderVersion != null;
+    }
+
+    public void setLoaderVersion(String loaderVersion) {
+        this.loaderVersion = loaderVersion;
+    }
+
+    public String getLoaderVersion() {
+        return this.loaderVersion;
     }
 
     /**
@@ -1674,11 +1692,11 @@ public class Instance implements Cloneable {
         if (!this.userLock.equals(null)) {
             clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType, memory, permgen,
                     mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev,
-                    isPlayable, newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
+                    isPlayable, newLaunchMethod, java, enableCurseIntegration, enableEditingMods, loaderVersion);
         } else {
             clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType, memory, permgen,
                     mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev,
-                    isPlayable, newLaunchMethod, java, enableCurseIntegration, enableEditingMods);
+                    isPlayable, newLaunchMethod, java, enableCurseIntegration, enableEditingMods, loaderVersion);
         }
         return clone;
     }

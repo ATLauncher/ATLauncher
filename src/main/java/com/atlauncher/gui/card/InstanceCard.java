@@ -71,6 +71,7 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * <p/>
@@ -485,16 +486,19 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     shareCodeItem.addActionListener(e1 -> {
                         if (!instance.getInstalledOptionalModNames().isEmpty()) {
                             try {
-                                APIResponse response = Gsons.DEFAULT
+                                java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
+                                }.getType();
+
+                                APIResponse<String> response = Gsons.DEFAULT
                                         .fromJson(Utils.sendAPICall(
                                                 "pack/" + instance.getRealPack().getSafeName() + "/"
                                                         + instance.getVersion() + "/share-code",
-                                                instance.getShareCodeData()), APIResponse.class);
+                                                instance.getShareCodeData()), type);
 
                                 if (response.wasError()) {
                                     App.TOASTER.pop(Language.INSTANCE.localize("instance.nooptionalmods"));
                                 } else {
-                                    StringSelection text = new StringSelection(response.getDataAsString());
+                                    StringSelection text = new StringSelection(response.getData());
                                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                                     clipboard.setContents(text, null);
 

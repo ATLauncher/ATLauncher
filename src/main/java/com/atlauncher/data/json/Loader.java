@@ -18,19 +18,30 @@
 package com.atlauncher.data.json;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
+import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.workers.InstanceInstaller;
 
 @Json
 public class Loader {
     private String type;
+    private boolean choose = false;
     private Map<String, Object> metadata;
     private String className;
+    private String chooseClassName;
+    private String chooseMethod;
 
     public String getType() {
         return this.type;
+    }
+
+    public boolean canChoose() {
+        return this.choose;
     }
 
     public Map<String, Object> getMetadata() {
@@ -41,13 +52,34 @@ public class Loader {
         return this.className;
     }
 
-    public com.atlauncher.data.loaders.Loader getLoader(File tempDir, InstanceInstaller instanceInstaller)
+    public String getChooseClassName() {
+        return this.chooseClassName;
+    }
+
+    public String getChooseMethod() {
+        return this.chooseMethod;
+    }
+
+    public com.atlauncher.data.loaders.Loader getLoader(File tempDir, InstanceInstaller instanceInstaller, String loaderVersion)
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         com.atlauncher.data.loaders.Loader instance = (com.atlauncher.data.loaders.Loader) Class.forName(this.className)
                 .newInstance();
 
-        instance.set(this.metadata, tempDir, instanceInstaller);
+        instance.set(this.metadata, tempDir, instanceInstaller, loaderVersion);
 
         return instance;
+    }
+
+    public List<String> getChoosableVersions(String minecraft) {
+        try {
+            Method method = Class.forName(this.chooseClassName).getDeclaredMethod(this.chooseMethod, String.class);
+
+            return (List<String>) method.invoke(null, minecraft);
+        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return null;
     }
 }

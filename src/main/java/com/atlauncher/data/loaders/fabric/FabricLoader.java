@@ -52,12 +52,15 @@ public class FabricLoader implements Loader {
     protected InstanceInstaller instanceInstaller;
 
     @Override
-    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller) {
+    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
+            String versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
 
-        if (metadata.containsKey("loader")) {
+        if (versionOverride != null) {
+            this.version = this.getVersion(versionOverride);
+        } else if (metadata.containsKey("loader")) {
             this.version = this.getVersion((String) metadata.get("loader"));
         } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Fabric version");
@@ -247,5 +250,25 @@ public class FabricLoader implements Loader {
     @Override
     public boolean useMinecraftLibraries() {
         return true;
+    }
+
+    public static List<String> getChoosableVersions(String minecraft) {
+        try {
+            Downloadable loaderVersions = new Downloadable(
+                    String.format("https://meta.fabricmc.net/v2/versions/loader/%s", minecraft), false);
+
+            String contents = loaderVersions.getContents();
+
+            java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
+            }.getType();
+
+            List<FabricMetaVersion> versions = Gsons.DEFAULT_ALT.fromJson(contents, type);
+
+            return versions.stream().map(version -> version.getLoader().getVersion()).collect(Collectors.toList());
+        } catch (Throwable e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return null;
     }
 }

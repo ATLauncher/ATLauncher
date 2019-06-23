@@ -15,24 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.reporter;
+package com.atlauncher.data.loaders.forge;
 
-import com.atlauncher.Gsons;
+public class ATLauncherApiForgeVersions {
+    private String version;
+    private boolean recommended;
+    private String raw_version;
 
-@SuppressWarnings("unused")
-public final class GithubIssue {
-    private final String title;
-    private final String body;
-    private final String[] labels;
-
-    public GithubIssue(String title, String body) {
-        this.title = title;
-        this.body = body;
-        this.labels = new String[]{"Bug(s)"};
+    public String getVersion() {
+        return this.version;
     }
 
-    @Override
-    public String toString() {
-        return Gsons.DEFAULT.toJson(this);
+    public boolean isRecommended() {
+        return this.recommended;
+    }
+
+    public String getRawVersion() {
+        return this.raw_version;
     }
 }

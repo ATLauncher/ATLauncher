@@ -24,9 +24,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
@@ -39,11 +42,13 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
+import com.atlauncher.data.json.Version;
 import com.atlauncher.data.mojang.LoggingClient;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
@@ -53,6 +58,7 @@ import com.atlauncher.workers.InstanceInstaller;
 public class InstanceInstallerDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
     private int versionLength = 0;
+    private int loaderVersionLength = 0;
     private boolean isReinstall = false;
     private boolean isServer = false;
     private Pack pack = null;
@@ -69,9 +75,14 @@ public class InstanceInstallerDialog extends JDialog {
     private JTextField instanceNameField;
     private JLabel versionLabel;
     private JComboBox<PackVersion> versionsDropDown;
-    private ArrayList<PackVersion> versions = new ArrayList<>();
+    private List<PackVersion> versions = new ArrayList<>();
+    private JLabel loaderVersionLabel;
+    private JComboBox<String> loaderVersionsDropDown;
+    private List<String> loaderVersions = new ArrayList<>();
     private JLabel enableUserLockLabel;
     private JCheckBox enableUserLock;
+    private boolean isUpdate;
+    private PackVersion autoInstallVersion;
 
     public InstanceInstallerDialog(Object object) {
         this(object, false, false, null, null, true);
@@ -88,6 +99,9 @@ public class InstanceInstallerDialog extends JDialog {
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
             final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+
+        this.isUpdate = isUpdate;
+        this.autoInstallVersion = autoInstallVersion;
 
         if (object instanceof Pack) {
             pack = (Pack) object;
@@ -108,6 +122,11 @@ public class InstanceInstallerDialog extends JDialog {
         setLayout(new BorderLayout());
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        install = new JButton(((isReinstall)
+                ? (isUpdate ? Language.INSTANCE.localize("common.update")
+                        : Language.INSTANCE.localize("common.reinstall"))
+                : Language.INSTANCE.localize("common.install")));
 
         // Top Panel Stuff
         top = new JPanel();
@@ -138,69 +157,9 @@ public class InstanceInstallerDialog extends JDialog {
             gbc.gridx = 0;
             gbc.gridy++;
         }
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        versionLabel = new JLabel(Language.INSTANCE.localize("instance.versiontoinstall") + ": ");
-        middle.add(versionLabel, gbc);
 
-        gbc.gridx++;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        versionsDropDown = new JComboBox<>();
-        if (pack.isTester()) {
-            for (PackVersion pv : pack.getDevVersions()) {
-                if (!isServer || (isServer && pv.getMinecraftVersion().canCreateServer())) {
-                    versions.add(pv);
-                }
-            }
-        }
-        for (PackVersion pv : pack.getVersions()) {
-            if (!isServer || (isServer && pv.getMinecraftVersion().canCreateServer())) {
-                versions.add(pv);
-            }
-        }
-        PackVersion forUpdate = null;
-        for (PackVersion version : versions) {
-            if ((!version.isDev()) && (forUpdate == null)) {
-                forUpdate = version;
-            }
-            versionsDropDown.addItem(version);
-        }
-        if (isUpdate && forUpdate != null) {
-            versionsDropDown.setSelectedItem(forUpdate);
-        } else if (isReinstall) {
-            for (PackVersion version : versions) {
-                if (version.versionMatches(instance.getVersion())) {
-                    versionsDropDown.setSelectedItem(version);
-                }
-            }
-        } else {
-            for (PackVersion version : versions) {
-                if (!version.isRecommended() || version.isDev()) {
-                    continue;
-                }
-                versionsDropDown.setSelectedItem(version);
-                break;
-            }
-        }
-
-        // ensures that font width is taken into account
-        for (PackVersion version : versions) {
-            versionLength = Math.max(versionLength,
-                    getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 25);
-        }
-
-        // ensures that the dropdown is at least 200 px wide
-        versionLength = Math.max(200, versionLength);
-
-        // ensures that there is a maximum width of 250 px to prevent overflow
-        versionLength = Math.min(250, versionLength);
-
-        versionsDropDown.setPreferredSize(new Dimension(versionLength, 25));
-        middle.add(versionsDropDown, gbc);
-
-        if (autoInstallVersion != null) {
-            versionsDropDown.setSelectedItem(autoInstallVersion);
-            versionsDropDown.setEnabled(false);
-        }
+        gbc = this.setupVersionsDropdown(gbc);
+        gbc = this.setupLoaderVersionsDropdown(gbc);
 
         if (!this.isServer) {
             if (!isReinstall) {
@@ -235,10 +194,6 @@ public class InstanceInstallerDialog extends JDialog {
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
-        install = new JButton(((isReinstall)
-                ? (isUpdate ? Language.INSTANCE.localize("common.update")
-                        : Language.INSTANCE.localize("common.reinstall"))
-                : Language.INSTANCE.localize("common.install")));
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!isReinstall && !isServer && App.settings.isInstance(instanceNameField.getText())) {
@@ -312,7 +267,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(
                         (isServer ? "" : instanceNameField.getText()), pack, version, isReinstall, isServer, shareCode,
-                        showModsChooser) {
+                        showModsChooser, (String) loaderVersionsDropDown.getSelectedItem()) {
 
                     protected void done() {
                         Boolean success = false;
@@ -387,6 +342,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setEnableCurseIntegration(
                                             this.getJsonVersion().hasEnabledCurseIntegration());
                                     instance.setEnableEditingMods(this.getJsonVersion().hasEnabledEditingMods());
+                                    instance.setLoaderVersion((String) loaderVersionsDropDown.getSelectedItem());
                                     if (version.isDev()) {
                                         instance.setDevVersion();
                                         if (version.getHash() != null) {
@@ -418,7 +374,8 @@ public class InstanceInstallerDialog extends JDialog {
                                             version.isDev(), !version.getMinecraftVersion().isLegacy(),
                                             this.getJsonVersion().getJava(),
                                             this.getJsonVersion().hasEnabledCurseIntegration(),
-                                            this.getJsonVersion().hasEnabledEditingMods());
+                                            this.getJsonVersion().hasEnabledEditingMods(),
+                                            (String) loaderVersionsDropDown.getSelectedItem());
 
                                     if (this.hasArguments()) {
                                         newInstance.setArguments(this.getArguments());
@@ -565,5 +522,159 @@ public class InstanceInstallerDialog extends JDialog {
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
         setVisible(true);
+    }
+
+    private GridBagConstraints setupVersionsDropdown(GridBagConstraints gbc) {
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        versionLabel = new JLabel(Language.INSTANCE.localize("instance.versiontoinstall") + ": ");
+        middle.add(versionLabel, gbc);
+
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        versionsDropDown = new JComboBox<>();
+        if (pack.isTester()) {
+            for (PackVersion pv : pack.getDevVersions()) {
+                if (!isServer || (isServer && pv.getMinecraftVersion().canCreateServer())) {
+                    versions.add(pv);
+                }
+            }
+        }
+        for (PackVersion pv : pack.getVersions()) {
+            if (!isServer || (isServer && pv.getMinecraftVersion().canCreateServer())) {
+                versions.add(pv);
+            }
+        }
+        PackVersion forUpdate = null;
+        for (PackVersion version : versions) {
+            if ((!version.isDev()) && (forUpdate == null)) {
+                forUpdate = version;
+            }
+            versionsDropDown.addItem(version);
+        }
+        if (isUpdate && forUpdate != null) {
+            versionsDropDown.setSelectedItem(forUpdate);
+        } else if (isReinstall) {
+            for (PackVersion version : versions) {
+                if (version.versionMatches(instance.getVersion())) {
+                    versionsDropDown.setSelectedItem(version);
+                }
+            }
+        } else {
+            for (PackVersion version : versions) {
+                if (!version.isRecommended() || version.isDev()) {
+                    continue;
+                }
+                versionsDropDown.setSelectedItem(version);
+                break;
+            }
+        }
+
+        // ensures that font width is taken into account
+        for (PackVersion version : versions) {
+            versionLength = Math.max(versionLength,
+                    getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 25);
+        }
+
+        // ensures that the dropdown is at least 200 px wide
+        versionLength = Math.max(200, versionLength);
+
+        // ensures that there is a maximum width of 250 px to prevent overflow
+        versionLength = Math.min(250, versionLength);
+
+        versionsDropDown.setPreferredSize(new Dimension(versionLength, 25));
+        middle.add(versionsDropDown, gbc);
+
+        versionsDropDown.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    updateLoaderVersions((PackVersion) e.getItem());
+                }
+            }
+        });
+
+        if (autoInstallVersion != null) {
+            versionsDropDown.setSelectedItem(autoInstallVersion);
+            versionsDropDown.setEnabled(false);
+        }
+
+        return gbc;
+    }
+
+    protected void updateLoaderVersions(PackVersion item) {
+        loaderVersionsDropDown.setEnabled(false);
+        loaderVersions.clear();
+
+        loaderVersionsDropDown.removeAllItems();
+        loaderVersionsDropDown.addItem(Language.INSTANCE.localize("instance.gettingloaderversions"));
+
+        loaderVersionLabel.setVisible(true);
+        loaderVersionsDropDown.setVisible(true);
+
+        if (!item.hasLoader() || !item.hasChoosableLoader()) {
+            loaderVersionLabel.setVisible(false);
+            loaderVersionsDropDown.setVisible(false);
+            return;
+        }
+
+        install.setEnabled(false);
+        versionsDropDown.setEnabled(false);
+
+        Runnable r = new Runnable() {
+            public void run() {
+                Version jsonVersion = Gsons.DEFAULT.fromJson(pack.getJSON(item.getVersion()), Version.class);
+
+                loaderVersions.clear();
+                loaderVersions.addAll(jsonVersion.getLoader().getChoosableVersions(jsonVersion.getMinecraft()));
+
+                // ensures that font width is taken into account
+                for (String version : loaderVersions) {
+                    loaderVersionLength = Math.max(loaderVersionLength,
+                            getFontMetrics(Utils.getFont()).stringWidth(version) + 25);
+                }
+
+                loaderVersionsDropDown.removeAllItems();
+
+                loaderVersions.stream().forEach(version -> {
+                    loaderVersionsDropDown.addItem(version);
+                });
+
+                if (isReinstall && instance.installedWithLoaderVersion()) {
+                    loaderVersionsDropDown.setSelectedItem(instance.getLoaderVersion());
+                }
+
+                // ensures that the dropdown is at least 200 px wide
+                loaderVersionLength = Math.max(200, loaderVersionLength);
+
+                // ensures that there is a maximum width of 250 px to prevent overflow
+                loaderVersionLength = Math.min(250, loaderVersionLength);
+
+                loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 25));
+
+                loaderVersionsDropDown.setEnabled(true);
+                loaderVersionLabel.setVisible(true);
+                loaderVersionsDropDown.setVisible(true);
+                install.setEnabled(true);
+                versionsDropDown.setEnabled(true);
+            }
+        };
+
+        new Thread(r).start();
+    }
+
+    private GridBagConstraints setupLoaderVersionsDropdown(GridBagConstraints gbc) {
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        loaderVersionLabel = new JLabel(Language.INSTANCE.localize("instance.loaderversion") + ": ");
+        middle.add(loaderVersionLabel, gbc);
+
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        loaderVersionsDropDown = new JComboBox<>();
+        this.updateLoaderVersions((PackVersion) this.versionsDropDown.getSelectedItem());
+        middle.add(loaderVersionsDropDown, gbc);
+
+        return gbc;
     }
 }
