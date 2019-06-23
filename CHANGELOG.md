@@ -1,7 +1,5 @@
 # Changelog
 
-## 3.2.8.1
+## 3.2.8.2
 
--   Change Fabric to use meta api to install
--   Fix mods selection gui not showing all buttons in some languages
--   Fix issues with jna
+-   Fix when restarting, add command to not using system jna

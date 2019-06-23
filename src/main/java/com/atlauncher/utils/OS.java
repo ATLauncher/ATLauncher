@@ -373,6 +373,7 @@ public enum OS {
             arguments.add(FileSystem.BASE_DIR.getParent().getParent().toString());
         } else {
             arguments.add(Java.getPathToSystemJavaExecutable());
+            arguments.add("-Djna.nosys=true");
             arguments.add("-jar");
             arguments.add(path);
         }
