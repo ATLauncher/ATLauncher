@@ -49,6 +49,9 @@ public final class AddModsDialog extends JDialog {
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(Language.INSTANCE.localize("common.search"));
     private final JScrollPane jscrollPane;
+    private final JButton nextButton;
+    private final JButton prevButton;
+    private int page = 0;
 
     public AddModsDialog(Instance instance) {
         super(App.settings.getParent(),
@@ -70,8 +73,29 @@ public final class AddModsDialog extends JDialog {
             }
         };
 
-        this.add(this.topPanel, BorderLayout.NORTH);
-        this.add(this.jscrollPane, BorderLayout.CENTER);
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(this.topPanel, BorderLayout.NORTH);
+        mainPanel.add(this.jscrollPane, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout());
+
+        prevButton = new JButton("<<");
+        prevButton.setEnabled(false);
+        prevButton.addActionListener(e -> {
+            goToPreviousPage();
+        });
+
+        nextButton = new JButton(">>");
+        nextButton.setEnabled(false);
+        nextButton.addActionListener(e -> {
+            goToNextPage();
+        });
+
+        bottomPanel.add(prevButton);
+        bottomPanel.add(nextButton);
+
+        this.add(mainPanel, BorderLayout.CENTER);
+        this.add(bottomPanel, BorderLayout.SOUTH);
 
         this.searchField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -88,13 +112,29 @@ public final class AddModsDialog extends JDialog {
         this.setVisible(true);
     }
 
-    private void loadDefaultMods() {
+    private void goToPreviousPage() {
+        if (page > 0) {
+            page -= 1;
+        }
+
+        getMods();
+    }
+
+    private void goToNextPage() {
+        if (contentPanel.getComponentCount() != 0) {
+            page += 1;
+        }
+
+        getMods();
+    }
+
+    private void getMods() {
         Runnable r = new Runnable() {
             public void run() {
                 if (instance.getLoaderVersion().isFabric()) {
-                    setMods(CurseApi.searchModsForFabric(instance.getMinecraftVersion(), ""));
+                    setMods(CurseApi.searchModsForFabric(instance.getMinecraftVersion(), "", page));
                 } else {
-                    setMods(CurseApi.searchMods(instance.getMinecraftVersion(), ""));
+                    setMods(CurseApi.searchMods(instance.getMinecraftVersion(), "", page));
                 }
             }
         };
@@ -102,12 +142,18 @@ public final class AddModsDialog extends JDialog {
         new Thread(r).start();
     }
 
+    private void loadDefaultMods() {
+        getMods();
+    }
+
     private void searchForMods() {
+        page = 0;
+
         Runnable r = new Runnable() {
             public void run() {
                 String query = searchField.getText();
 
-                setMods(CurseApi.searchMods(instance.getMinecraftVersion(), query));
+                setMods(CurseApi.searchMods(instance.getMinecraftVersion(), query, page));
             }
         };
 
@@ -123,6 +169,9 @@ public final class AddModsDialog extends JDialog {
         gbc.insets.set(2, 2, 2, 2);
 
         contentPanel.removeAll();
+
+        prevButton.setEnabled(page > 0);
+        nextButton.setEnabled(mods.size() == 25);
 
         mods.stream().forEach(curseMod -> {
             contentPanel.add(new CurseModCard(curseMod, this.instance), gbc);

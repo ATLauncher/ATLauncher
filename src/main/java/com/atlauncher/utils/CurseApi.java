@@ -34,12 +34,12 @@ import com.google.gson.reflect.TypeToken;
  * Various utility methods for interacting with the Curse API.
  */
 public class CurseApi {
-    public static List<CurseMod> searchMods(String gameVersion, String query, int categoryId) {
+    public static List<CurseMod> searchMods(String gameVersion, String query, int page, int categoryId) {
         try {
             String url = String.format(
-                    "%s/addon/search?gameId=432&gameVersion=%s&categoryId=%d&sectionId=6&searchFilter=%s&sort=Popularity&sortDescending=true&pageSize=25&index=0",
+                    "%s/addon/search?gameId=432&gameVersion=%s&categoryId=%d&sectionId=6&searchFilter=%s&sort=Popularity&sortDescending=true&pageSize=25&index=%d",
                     Constants.CURSE_API_URL, gameVersion, categoryId,
-                    URLEncoder.encode(query, StandardCharsets.UTF_8.name()));
+                    URLEncoder.encode(query, StandardCharsets.UTF_8.name()), page * 25);
 
             Downloadable downloadable = new Downloadable(url, false);
 
@@ -54,12 +54,12 @@ public class CurseApi {
         return null;
     }
 
-    public static List<CurseMod> searchMods(String gameVersion, String query) {
-        return searchMods(gameVersion, query, 0);
+    public static List<CurseMod> searchMods(String gameVersion, String query, int page) {
+        return searchMods(gameVersion, query, page, 0);
     }
 
-    public static List<CurseMod> searchModsForFabric(String gameVersion, String query) {
-        return searchMods(gameVersion, query, Constants.CURSE_FABRIC_CATEGORY_ID);
+    public static List<CurseMod> searchModsForFabric(String gameVersion, String query, int page) {
+        return searchMods(gameVersion, query, page, Constants.CURSE_FABRIC_CATEGORY_ID);
     }
 
     public static List<CurseFile> getFilesForMod(int modId) {
