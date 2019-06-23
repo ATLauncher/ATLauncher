@@ -92,6 +92,10 @@ public class Downloadable {
         this(url, file, null, -1, null, false, null, false);
     }
 
+    public Downloadable(String url, File file, int size) {
+        this(url, file, null, size, null, false, null, false);
+    }
+
     public Downloadable(String url, boolean isATLauncherDownload) {
         this(url, null, null, -1, null, isATLauncherDownload, null, false);
     }

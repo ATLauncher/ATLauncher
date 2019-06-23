@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -37,6 +38,8 @@ import javax.swing.ImageIcon;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.curse.CurseFile;
+import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Java;
 import com.atlauncher.data.loaders.LoaderVersion;
 import com.atlauncher.data.mojang.LoggingClient;
@@ -1803,5 +1806,42 @@ public class Instance implements Cloneable {
 
     public void setSettings(InstanceSettings settings) {
         this.settings = settings;
+    }
+
+    public void addModFromCurse(CurseMod mod, CurseFile file) {
+        File downloadLocation = new File(App.settings.getDownloadsDir(), file.fileName);
+        File finalLocation = new File(this.getModsDirectory(), file.fileName);
+        Downloadable download = new Downloadable(file.downloadUrl, downloadLocation, file.fileLength);
+
+        if (download.needToDownload()) {
+            download.download();
+        }
+
+        if (finalLocation.exists()) {
+            Utils.delete(finalLocation);
+        }
+
+        // find mods with the same curse mod id
+        List<DisableableMod> sameMods = this.mods.stream()
+                .filter(installedMod -> installedMod.isFromCurse() && installedMod.getCurseModId() == mod.id)
+                .collect(Collectors.toList());
+
+        // delete mod files that are the same mod id
+        sameMods.stream().forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
+
+        // remove any mods that are from the same mod on Curse from the master mod list
+        this.mods = this.mods.stream()
+                .filter(installedMod -> !installedMod.isFromCurse() || installedMod.getCurseModId() != mod.id)
+                .collect(Collectors.toList());
+
+        // add this mod
+        this.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName, Type.mods, null, mod.summary,
+                false, true, true, mod.id, file.id));
+
+        Utils.copyFile(downloadLocation, finalLocation, true);
+
+        this.save(false);
+
+        App.TOASTER.pop(mod.name + " " + Language.INSTANCE.localize("common.installed"));
     }
 }

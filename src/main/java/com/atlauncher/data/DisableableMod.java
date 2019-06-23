@@ -43,9 +43,12 @@ public class DisableableMod implements Serializable {
     private boolean disabled;
     private boolean userAdded = false; // Default to not being user added
     private boolean wasSelected = true; // Default to it being selected on install
+    private Integer curseModId;
+    private Integer curseFileId;
 
-    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour, String
-            description, boolean disabled, boolean userAdded, boolean wasSelected) {
+    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
+            String description, boolean disabled, boolean userAdded, boolean wasSelected, Integer curseModId,
+            Integer curseFileId) {
         this.name = name;
         this.version = version;
         this.optional = optional;
@@ -56,11 +59,18 @@ public class DisableableMod implements Serializable {
         this.disabled = disabled;
         this.userAdded = userAdded;
         this.wasSelected = wasSelected;
+        this.curseModId = curseModId;
+        this.curseFileId = curseFileId;
     }
 
-    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour, String
-            description, boolean disabled, boolean userAdded) {
-        this(name, version, optional, file, type, colour, description, disabled, userAdded, true);
+    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
+            String description, boolean disabled, boolean userAdded, boolean wasSelected) {
+        this(name, version, optional, file, type, colour, description, disabled, userAdded, wasSelected, null, null);
+    }
+
+    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
+            String description, boolean disabled, boolean userAdded) {
+        this(name, version, optional, file, type, colour, description, disabled, userAdded, true, null, null);
     }
 
     public String getName() {
@@ -104,6 +114,18 @@ public class DisableableMod implements Serializable {
 
     public boolean isUserAdded() {
         return this.userAdded;
+    }
+
+    public boolean isFromCurse() {
+        return this.curseModId != null && this.curseFileId != null;
+    }
+
+    public Integer getCurseModId() {
+        return this.curseModId;
+    }
+
+    public Integer getCurseFileId() {
+        return this.curseFileId;
     }
 
     public String getFilename() {
@@ -172,35 +194,35 @@ public class DisableableMod implements Serializable {
     public File getFile(Instance instance) {
         File dir = null;
         switch (type) {
-            case jar:
-            case forge:
-            case mcpc:
-                dir = instance.getJarModsDirectory();
-                break;
-            case texturepack:
-                dir = instance.getTexturePacksDirectory();
-                break;
-            case resourcepack:
-                dir = instance.getResourcePacksDirectory();
-                break;
-            case mods:
-                dir = instance.getModsDirectory();
-                break;
-            case ic2lib:
-                dir = instance.getIC2LibDirectory();
-                break;
-            case denlib:
-                dir = instance.getDenLibDirectory();
-                break;
-            case coremods:
-                dir = instance.getCoreModsDirectory();
-                break;
-            case shaderpack:
-                dir = instance.getShaderPacksDirectory();
-                break;
-            default:
-                LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
-                break;
+        case jar:
+        case forge:
+        case mcpc:
+            dir = instance.getJarModsDirectory();
+            break;
+        case texturepack:
+            dir = instance.getTexturePacksDirectory();
+            break;
+        case resourcepack:
+            dir = instance.getResourcePacksDirectory();
+            break;
+        case mods:
+            dir = instance.getModsDirectory();
+            break;
+        case ic2lib:
+            dir = instance.getIC2LibDirectory();
+            break;
+        case denlib:
+            dir = instance.getDenLibDirectory();
+            break;
+        case coremods:
+            dir = instance.getCoreModsDirectory();
+            break;
+        case shaderpack:
+            dir = instance.getShaderPacksDirectory();
+            break;
+        default:
+            LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
+            break;
         }
         if (dir == null) {
             return null;

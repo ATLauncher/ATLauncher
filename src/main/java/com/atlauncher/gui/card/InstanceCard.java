@@ -60,6 +60,7 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
+import com.atlauncher.gui.dialogs.AddModsDialog;
 import com.atlauncher.gui.dialogs.BackupDialog;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -91,6 +92,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton backupButton = new JButton(Language.INSTANCE.localize("common.backup"));
     private final JButton cloneButton = new JButton(Language.INSTANCE.localize("instance.clone"));
     private final JButton deleteButton = new JButton(Language.INSTANCE.localize("common.delete"));
+    private final JButton addButton = new JButton(Language.INSTANCE.localize("common.addmods"));
     private final JButton editButton = new JButton(Language.INSTANCE.localize("common.editmods"));
     private final JButton openButton = new JButton(Language.INSTANCE.localize("common.openfolder"));
     private final JButton settingsButton = new JButton(Language.INSTANCE.localize("tabs.settings"));
@@ -124,6 +126,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         top.add(this.backupButton);
         bottom.add(this.cloneButton);
         bottom.add(this.deleteButton);
+
+        if (instance.hasEnabledCurseIntegration()) {
+            bottom.add(this.addButton);
+        }
 
         if (instance.hasEnabledEditingMods()) {
             bottom.add(this.editButton);
@@ -307,6 +313,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 }
             }
         });
+        this.addButton.addActionListener(e -> new AddModsDialog(instance));
         this.editButton.addActionListener(e -> new EditModsDialog(instance));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRootDirectory().toPath()));
         this.settingsButton.addActionListener(e -> new InstanceSettingsDialog(instance));
@@ -538,6 +545,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.backupButton.setText(Language.INSTANCE.localize("common.backup"));
         this.cloneButton.setText(Language.INSTANCE.localize("instance.clone"));
         this.deleteButton.setText(Language.INSTANCE.localize("common.delete"));
+        this.addButton.setText(Language.INSTANCE.localize("common.addmods"));
         this.editButton.setText(Language.INSTANCE.localize("common.editmods"));
         this.openButton.setText(Language.INSTANCE.localize("common.openfolder"));
         this.settingsButton.setText(Language.INSTANCE.localize("tabs.settings"));

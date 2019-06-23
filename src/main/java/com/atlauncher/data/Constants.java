@@ -24,6 +24,7 @@ public class Constants {
     public static final String API_BASE_URL = "https://api.atlauncher.com/v1/launcher/";
     public static final String PASTE_CHECK_URL = "https://paste.atlauncher.com";
     public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";
+    public static final String CURSE_API_URL = "https://addons-ecs.forgesvc.net/api/v2";
     public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/";
     public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
     public static final String LEGACY_JAVA_FIXER_URL = "https://files.minecraftforge.net/LegacyJavaFixer/legacyjavafixer-1.0.jar";
