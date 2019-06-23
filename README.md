@@ -1,6 +1,7 @@
 # ATLauncher
 
 [![CircleCI](https://circleci.com/gh/ATLauncher/ATLauncher/tree/master.svg?style=shield)](https://circleci.com/gh/ATLauncher/ATLauncher/tree/master)
+[![Discord](https://discordapp.com/api/guilds/117047818136322057/embed.png?style=shield)](https://atl.pw/discordfromgithub)
 
 ## What is it
 
@@ -20,7 +21,7 @@ Please see the [STYLE.md](STYLE.md) file for coding standards and style guidelin
 
 ## Contributing to ATLauncher
 
-ke a look at [CONTRIBUTING.md](CONTRIBUTING.md)
+Take a look at [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Testing
 
