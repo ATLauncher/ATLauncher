@@ -34,6 +34,7 @@ import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
+import com.google.gson.annotations.SerializedName;
 
 @Json
 public class Mod {
@@ -79,6 +80,12 @@ public class Mod {
     private List<String> depends;
     private String filePrefix;
     private String description;
+
+    @SerializedName("curse_id")
+    private Integer curseModId;
+
+    @SerializedName("curse_file_id")
+    private Integer curseFileId;
 
     public String getName() {
         return this.name;
@@ -293,6 +300,14 @@ public class Mod {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public Integer getCurseModId() {
+        return this.curseModId;
+    }
+
+    public Integer getCurseFileId() {
+        return this.curseFileId;
     }
 
     public boolean hasDepends() {

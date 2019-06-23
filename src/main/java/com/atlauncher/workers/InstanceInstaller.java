@@ -1358,7 +1358,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
             this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
                     Type.valueOf(Type.class, mod.getType().toString()), this.jsonVersion.getColour(mod.getColour()),
-                    mod.getDescription(), false, false));
+                    mod.getDescription(), false, false, true, mod.getCurseModId(), mod.getCurseFileId()));
         }
 
         if (this.isReinstall && instance.hasCustomMods()
@@ -1512,7 +1512,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
             this.modsInstalled.add(new DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
                     Type.valueOf(Type.class, mod.getType().toString()), this.jsonVersion.getColour(mod.getColour()),
-                    mod.getDescription(), false, false, false));
+                    mod.getDescription(), false, false, false, mod.getCurseModId(), mod.getCurseFileId()));
         }
 
         return true;

@@ -266,9 +266,13 @@ public class InstanceInstallerDialog extends JDialog {
                 dialog.add(topPanel, BorderLayout.CENTER);
                 dialog.add(bottomPanel, BorderLayout.SOUTH);
 
+                LoaderVersion loaderVersion = (version.hasLoader() && version.hasChoosableLoader())
+                        ? (LoaderVersion) loaderVersionsDropDown.getSelectedItem()
+                        : null;
+
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(
                         (isServer ? "" : instanceNameField.getText()), pack, version, isReinstall, isServer, shareCode,
-                        showModsChooser, (LoaderVersion) loaderVersionsDropDown.getSelectedItem()) {
+                        showModsChooser, loaderVersion) {
 
                     protected void done() {
                         Boolean success = false;
@@ -603,6 +607,12 @@ public class InstanceInstallerDialog extends JDialog {
     }
 
     protected void updateLoaderVersions(PackVersion item) {
+        if (!item.hasLoader() || !item.hasChoosableLoader()) {
+            loaderVersionLabel.setVisible(false);
+            loaderVersionsDropDown.setVisible(false);
+            return;
+        }
+
         loaderVersionsDropDown.setEnabled(false);
         loaderVersions.clear();
 
@@ -611,12 +621,6 @@ public class InstanceInstallerDialog extends JDialog {
 
         loaderVersionLabel.setVisible(true);
         loaderVersionsDropDown.setVisible(true);
-
-        if (!item.hasLoader() || !item.hasChoosableLoader()) {
-            loaderVersionLabel.setVisible(false);
-            loaderVersionsDropDown.setVisible(false);
-            return;
-        }
 
         install.setEnabled(false);
         versionsDropDown.setEnabled(false);
