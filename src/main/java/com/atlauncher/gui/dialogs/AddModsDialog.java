@@ -18,7 +18,6 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -43,8 +42,6 @@ import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.card.CurseModCard;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
-import com.atlauncher.gui.theme.Theme;
-import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.CurseApi;
 
 @SuppressWarnings("serial")

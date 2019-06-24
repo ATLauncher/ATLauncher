@@ -20,13 +20,12 @@ package com.atlauncher.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -38,7 +37,9 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseFile;
+import com.atlauncher.data.curse.CurseFileDependency;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.gui.card.CurseFileDependencyCard;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.Utils;
@@ -49,7 +50,8 @@ public class CurseModFileSelectorDialog extends JDialog {
     private CurseMod mod;
     private Instance instance;
 
-    private JPanel middle;
+    private JPanel filesPanel;
+    private JPanel dependenciesPanel = new JPanel(new FlowLayout());
     private JButton addButton;
     private JLabel versionsLabel;
     private JComboBox<CurseFile> filesDropdown;
@@ -61,9 +63,9 @@ public class CurseModFileSelectorDialog extends JDialog {
         this.mod = mod;
         this.instance = instance;
 
-        setTitle(mod.name);
+        setTitle(Language.INSTANCE.localize("common.installing") + " " + mod.name);
 
-        setSize(500, 225);
+        setSize(500, 200);
         setLocationRelativeTo(App.settings.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
@@ -72,19 +74,29 @@ public class CurseModFileSelectorDialog extends JDialog {
         addButton = new JButton(Language.INSTANCE.localize("common.add"));
         addButton.setEnabled(false);
 
+        dependenciesPanel.setVisible(false);
+        dependenciesPanel.setBorder(BorderFactory.createTitledBorder("The below mods need to be installed"));
+
         // Top Panel Stuff
         JPanel top = new JPanel();
         top.add(new JLabel(Language.INSTANCE.localize("common.installing") + " " + mod.name));
 
         // Middle Panel Stuff
-        middle = new JPanel();
-        middle.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
+        JPanel middle = new JPanel(new BorderLayout());
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        // Middle Panel Stuff
+        filesPanel = new JPanel(new FlowLayout());
+        filesPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
-        gbc = this.setupFilesDropdown(gbc);
+        versionsLabel = new JLabel(Language.INSTANCE.localize("instance.versiontoinstall") + ": ");
+        filesPanel.add(versionsLabel);
+
+        filesDropdown = new JComboBox<>();
+        filesDropdown.setEnabled(false);
+        filesPanel.add(filesDropdown);
+
+        middle.add(filesPanel, BorderLayout.NORTH);
+        middle.add(dependenciesPanel, BorderLayout.SOUTH);
 
         this.getFiles();
 
@@ -131,6 +143,36 @@ public class CurseModFileSelectorDialog extends JDialog {
             new Thread(r).start();
 
             dialog.setVisible(true);
+        });
+
+        filesDropdown.addActionListener(e -> {
+            CurseFile selectedFile = (CurseFile) filesDropdown.getSelectedItem();
+
+            dependenciesPanel.setVisible(false);
+
+            // this file has dependencies
+            if (selectedFile.dependencies.size() != 0) {
+                // check to see which required ones we don't already have
+                List<CurseFileDependency> dependencies = selectedFile.dependencies.stream()
+                        .filter(dependency -> dependency.isRequired() && instance.getInstalledMods().stream()
+                                .filter(installedMod -> installedMod.isFromCurse()
+                                        && installedMod.getCurseModId() == dependency.addonId)
+                                .count() == 0)
+                        .collect(Collectors.toList());
+
+                if (dependencies.size() != 0) {
+                    dependenciesPanel.removeAll();
+
+                    dependencies.forEach(dependency -> {
+                        dependenciesPanel.add(new CurseFileDependencyCard(selectedFile, dependency, instance));
+                    });
+
+                    setSize(550, 350);
+                    setLocationRelativeTo(App.settings.getParent());
+
+                    dependenciesPanel.setVisible(true);
+                }
+            }
         });
 
         JButton cancel = new JButton(Language.INSTANCE.localize("common.cancel"));
@@ -204,21 +246,5 @@ public class CurseModFileSelectorDialog extends JDialog {
         };
 
         new Thread(r).start();
-    }
-
-    private GridBagConstraints setupFilesDropdown(GridBagConstraints gbc) {
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        versionsLabel = new JLabel(Language.INSTANCE.localize("instance.versiontoinstall") + ": ");
-        middle.add(versionsLabel, gbc);
-
-        gbc.gridx++;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        filesDropdown = new JComboBox<>();
-        filesDropdown.setEnabled(false);
-        middle.add(filesDropdown, gbc);
-
-        return gbc;
     }
 }

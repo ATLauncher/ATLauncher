@@ -37,7 +37,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -66,8 +65,6 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.javafinder.JavaFinder;
-import com.atlauncher.utils.javafinder.JavaInfo;
 
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;

@@ -22,4 +22,12 @@ public class CurseFileDependency {
     public int addonId;
     public int type;
     public int fileId;
+
+    public boolean isRequired() {
+        return this.type == 3;
+    }
+
+    public boolean isOptional() {
+        return this.type == 2;
+    }
 }
