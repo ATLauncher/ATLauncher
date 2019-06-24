@@ -69,23 +69,6 @@ public class FabricLoader implements Loader {
         }
     }
 
-    public List<FabricMetaVersion> getLoaders() {
-        try {
-            Downloadable loaderVersions = new Downloadable(
-                    String.format("https://meta.fabricmc.net/v2/versions/loader/%s", this.minecraft), false);
-
-            String contents = loaderVersions.getContents();
-
-            java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
-            }.getType();
-            return Gsons.DEFAULT_ALT.fromJson(contents, type);
-        } catch (Throwable e) {
-            LogManager.logStackTrace(e);
-        }
-
-        return null;
-    }
-
     public FabricMetaVersion getLoader(String version) {
         try {
             Downloadable loaderVersion = new Downloadable(
@@ -105,13 +88,27 @@ public class FabricLoader implements Loader {
     }
 
     public FabricMetaVersion getLatestVersion() {
-        List<FabricMetaVersion> loaders = this.getLoaders();
+        try {
+            Downloadable loaderVersions = new Downloadable(
+                    String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", this.minecraft), false);
 
-        if (loaders == null || loaders.size() == 0) {
-            return null;
+            String contents = loaderVersions.getContents();
+
+            java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
+            }.getType();
+
+            List<FabricMetaVersion> loaders = Gsons.DEFAULT_ALT.fromJson(contents, type);
+
+            if (loaders == null || loaders.size() == 0) {
+                return null;
+            }
+
+            return loaders.get(0);
+        } catch (Throwable e) {
+            LogManager.logStackTrace(e);
         }
 
-        return loaders.get(0);
+        return null;
     }
 
     @Override
