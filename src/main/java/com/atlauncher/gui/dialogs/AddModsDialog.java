@@ -40,6 +40,8 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.card.CurseModCard;
+import com.atlauncher.gui.panels.LoadingPanel;
+import com.atlauncher.gui.panels.NoCurseModsPanel;
 import com.atlauncher.utils.CurseApi;
 
 @SuppressWarnings("serial")
@@ -52,6 +54,7 @@ public final class AddModsDialog extends JDialog {
     private final JScrollPane jscrollPane;
     private final JButton nextButton;
     private final JButton prevButton;
+    private final JPanel mainPanel = new JPanel(new BorderLayout());
     private int page = 0;
 
     public AddModsDialog(Instance instance) {
@@ -76,7 +79,6 @@ public final class AddModsDialog extends JDialog {
 
         this.jscrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(this.topPanel, BorderLayout.NORTH);
         mainPanel.add(this.jscrollPane, BorderLayout.CENTER);
 
@@ -115,6 +117,17 @@ public final class AddModsDialog extends JDialog {
         this.setVisible(true);
     }
 
+    private void setLoading(boolean loading) {
+        if (loading) {
+            contentPanel.removeAll();
+            contentPanel.setLayout(new BorderLayout());
+            contentPanel.add(new LoadingPanel(), BorderLayout.CENTER);
+        }
+
+        revalidate();
+        repaint();
+    }
+
     private void goToPreviousPage() {
         if (page > 0) {
             page -= 1;
@@ -132,6 +145,7 @@ public final class AddModsDialog extends JDialog {
     }
 
     private void getMods() {
+        setLoading(true);
         prevButton.setEnabled(false);
         nextButton.setEnabled(false);
 
@@ -142,6 +156,8 @@ public final class AddModsDialog extends JDialog {
                 } else {
                     setMods(CurseApi.searchMods(instance.getMinecraftVersion(), "", page));
                 }
+
+                setLoading(false);
             }
         };
 
@@ -153,6 +169,7 @@ public final class AddModsDialog extends JDialog {
     }
 
     private void searchForMods() {
+        setLoading(true);
         page = 0;
 
         Runnable r = new Runnable() {
@@ -160,6 +177,7 @@ public final class AddModsDialog extends JDialog {
                 String query = searchField.getText();
 
                 setMods(CurseApi.searchMods(instance.getMinecraftVersion(), query, page));
+                setLoading(false);
             }
         };
 
@@ -179,12 +197,17 @@ public final class AddModsDialog extends JDialog {
         prevButton.setEnabled(page > 0);
         nextButton.setEnabled(mods.size() == Constants.CURSE_PAGINATION_SIZE);
 
-        contentPanel.setLayout(new GridLayout(mods.size() / 2, 2));
+        if (mods.size() == 0) {
+            contentPanel.setLayout(new BorderLayout());
+            contentPanel.add(new NoCurseModsPanel(), BorderLayout.CENTER);
+        } else {
+            contentPanel.setLayout(new GridLayout(mods.size() / 2, 2));
 
-        mods.stream().forEach(curseMod -> {
-            contentPanel.add(new CurseModCard(curseMod, this.instance), gbc);
-            gbc.gridy++;
-        });
+            mods.stream().forEach(curseMod -> {
+                contentPanel.add(new CurseModCard(curseMod, this.instance), gbc);
+                gbc.gridy++;
+            });
+        }
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
