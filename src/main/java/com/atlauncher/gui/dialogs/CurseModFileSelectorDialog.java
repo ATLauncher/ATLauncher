@@ -157,7 +157,7 @@ public class CurseModFileSelectorDialog extends JDialog {
                 // ensures that font width is taken into account
                 for (CurseFile file : files) {
                     filesLength = Math.max(filesLength,
-                            getFontMetrics(Utils.getFont()).stringWidth(file.displayName) + 25);
+                            getFontMetrics(Utils.getFont()).stringWidth(file.displayName) + 100);
                 }
 
                 files.stream().forEach(version -> {

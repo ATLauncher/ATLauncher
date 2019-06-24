@@ -1,11 +1,5 @@
 # Changelog
 
-## 3.2.9.0
+## 3.2.9.1
 
--   Fix when restarting, add command to not using system jna
--   Fix issue with installing Fabric not downloading all libraries needed
--   Add ability to select loader versions for packs that enable it
--   Add ability to add mods from within the launcher direct from Curse
--   Add in selectbox in Java settings tab to Java paths on windows
--   Use a preferred version of Java on the users system
--   Fix older versions of Minecraft not having sounds
+-   Increase width of dropdown when selecting a curse mod file

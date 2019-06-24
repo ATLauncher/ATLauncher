@@ -18,7 +18,7 @@
 package com.atlauncher.data;
 
 public class Constants {
-    public static final LauncherVersion VERSION = new LauncherVersion(3, 2, 9, 0);
+    public static final LauncherVersion VERSION = new LauncherVersion(3, 2, 9, 1);
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String DISCORD_CLIENT_ID = "589393213723246592";
     public static final String API_BASE_URL = "https://api.atlauncher.com/v1/launcher/";
