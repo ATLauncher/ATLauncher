@@ -39,6 +39,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.Utils;
 
@@ -179,6 +180,12 @@ public class CurseModFileSelectorDialog extends JDialog {
                 }).forEach(version -> {
                     filesDropdown.addItem(version);
                 });
+
+                if (filesDropdown.getItemCount() == 0) {
+                    DialogManager.okDialog().setParent(CurseModFileSelectorDialog.this).setTitle("No files found")
+                            .setContent("No files found for this mod").setType(DialogManager.ERROR).show();
+                    dispose();
+                }
 
                 // ensures that the dropdown is at least 200 px wide
                 filesLength = Math.max(200, filesLength);
