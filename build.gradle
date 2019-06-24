@@ -64,6 +64,7 @@ license {
     exclude 'de/zh32/**/*.java'
     exclude 'io/github/**/*.java'
     exclude 'net/minecraft/**/*.java'
+    exclude 'com/atlauncher/utils/javafinder/*.java'
     newLine = false
 }
 

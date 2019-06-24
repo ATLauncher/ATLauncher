@@ -17,10 +17,12 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -38,8 +40,10 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.javafinder.JavaInfo;
 
 @SuppressWarnings("serial")
 public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
@@ -230,8 +234,36 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        javaPathPanel = new JPanel();
-        javaPathPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        javaPathPanel = new JPanel(new BorderLayout());
+
+        JPanel javaPathPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        JPanel javaPathPanelBottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+        if (OS.isWindows()) {
+            JComboBox<JavaInfo> installedJavas = new JComboBox<>();
+            List<JavaInfo> systemJavas = Java.getInstalledJavas();
+
+            systemJavas.stream().forEach(javaInfo -> {
+                installedJavas.addItem(javaInfo);
+            });
+
+            installedJavas
+                    .setSelectedItem(systemJavas.stream()
+                            .filter(javaInfo -> javaInfo.path
+                                    .replace(OS.osSlash() + "bin" + OS.osSlash() + "java.exe", "")
+                                    .equalsIgnoreCase(App.settings.getJavaPath()))
+                            .findFirst().get());
+
+            installedJavas.addActionListener(e -> {
+                javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).path
+                        .replace(OS.osSlash() + "bin" + OS.osSlash() + "java.exe", ""));
+            });
+
+            if (installedJavas.getItemCount() != 0) {
+                javaPathPanelTop.add(installedJavas);
+            }
+        }
+
         javaPath = new JTextField(32);
         javaPath.setText(App.settings.getJavaPath());
         javaPathResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
@@ -248,9 +280,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         });
-        javaPathPanel.add(javaPath);
-        javaPathPanel.add(javaPathResetButton);
-        javaPathPanel.add(javaBrowseButton);
+        javaPathPanelBottom.add(javaPath);
+        javaPathPanelBottom.add(javaPathResetButton);
+        javaPathPanelBottom.add(javaBrowseButton);
+        javaPathPanel.add(javaPathPanelTop, BorderLayout.NORTH);
+        javaPathPanel.add(javaPathPanelBottom, BorderLayout.CENTER);
         add(javaPathPanel, gbc);
 
         // Java Paramaters

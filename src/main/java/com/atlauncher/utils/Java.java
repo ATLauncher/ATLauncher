@@ -21,11 +21,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.utils.javafinder.JavaFinder;
+import com.atlauncher.utils.javafinder.JavaInfo;
 
 public class Java {
     /**
@@ -76,8 +79,8 @@ public class Java {
             }
 
             if (version.equals("Unknown")) {
-                LogManager.warn("Cannot get Java version from the output of \""
-                        + getPathToSystemJavaExecutable() + " -version\"");
+                LogManager.warn("Cannot get Java version from the output of \"" + getPathToSystemJavaExecutable()
+                        + " -version\"");
             }
 
             return version;
@@ -220,5 +223,9 @@ public class Java {
         }
 
         return path;
+    }
+
+    public static List<JavaInfo> getInstalledJavas() {
+        return JavaFinder.findJavas();
     }
 }
