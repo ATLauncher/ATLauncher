@@ -243,20 +243,22 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             JComboBox<JavaInfo> installedJavas = new JComboBox<>();
             List<JavaInfo> systemJavas = Java.getInstalledJavas();
 
-            systemJavas.stream().forEach(javaInfo -> {
-                installedJavas.addItem(javaInfo);
-            });
+            if (systemJavas.size() != 0) {
+                systemJavas.stream().forEach(javaInfo -> {
+                    installedJavas.addItem(javaInfo);
+                });
 
-            installedJavas.setSelectedItem(systemJavas.stream()
-                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
-                    .get());
+                installedJavas.setSelectedItem(systemJavas.stream()
+                        .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
+                        .get());
 
-            installedJavas.addActionListener(e -> {
-                javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath);
-            });
+                installedJavas.addActionListener(e -> {
+                    javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath);
+                });
 
-            if (installedJavas.getItemCount() != 0) {
-                javaPathPanelTop.add(installedJavas);
+                if (installedJavas.getItemCount() != 0) {
+                    javaPathPanelTop.add(installedJavas);
+                }
             }
         }
 
