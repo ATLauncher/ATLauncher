@@ -225,8 +225,6 @@ public class EditModsDialog extends JDialog {
             ModsJCheckBox checkBox = null;
             int nameSize = getFontMetrics(Utils.getFont()).stringWidth(mod.getName());
 
-            System.out.println(nameSize);
-
             checkBox = new ModsJCheckBox(mod);
             if (mod.isDisabled()) {
                 checkBox.setBounds(0, (dCount * 20), Math.max(nameSize + 23, 250), 20);

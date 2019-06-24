@@ -8,15 +8,18 @@
 package com.atlauncher.utils.javafinder;
 
 import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 
 /**
  * Helper struct to hold information about one installed java version
  ****************************************************************************/
 public class JavaInfo {
     public String path; // ! Full path to java.exe executable file
+    public String rootPath; // ! Full path to install directory
     public String version; // ! Version string. "Unkown" if the java process returned non-standard version
                            // string
     public Integer majorVersion; // The major version
+    public Integer minorVersion; // The minor version
     public boolean is64bits; // ! true for 64-bit javas, false for 32
 
     /**
@@ -29,14 +32,27 @@ public class JavaInfo {
         String[] tokens = versionInfo.split("\"");
 
         if (tokens.length < 2) {
-            this.version = "Unkown";
+            this.version = "Unknown";
         } else {
             this.version = tokens[1];
             this.majorVersion = Java.parseJavaVersionNumber(this.version);
+            this.minorVersion = Java.parseJavaBuildVersion(this.version);
         }
 
         this.is64bits = versionInfo.toUpperCase().contains("64-BIT");
         this.path = javaPath;
+        this.rootPath = javaPath.replace(OS.osSlash() + "bin" + OS.osSlash() + "java.exe", "");
+    }
+
+    // used for testing
+    public JavaInfo(String path, String rootPath, String version, Integer majorVersion, Integer minorVersion,
+            boolean is64bits) {
+        this.path = path;
+        this.rootPath = rootPath;
+        this.version = version;
+        this.majorVersion = majorVersion;
+        this.minorVersion = minorVersion;
+        this.is64bits = is64bits;
     }
 
     /**

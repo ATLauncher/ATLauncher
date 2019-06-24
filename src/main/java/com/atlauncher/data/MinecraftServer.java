@@ -49,7 +49,8 @@ public class MinecraftServer {
     private int port;
 
     /**
-     * The QueryVersion to use when querying the server so we don't have to loop through and try them all everytime.
+     * The QueryVersion to use when querying the server so we don't have to loop
+     * through and try them all everytime.
      */
     private QueryVersion queryVersion;
 
@@ -79,13 +80,13 @@ public class MinecraftServer {
     }
 
     /**
-     * Checks this server to see if it's online or not and if a notification should be displayed to the user.
+     * Checks this server to see if it's online or not and if a notification should
+     * be displayed to the user.
      */
     public void checkServer() {
         int playersOnline = MCQuery.getNumberOfPlayers(this.host, this.port, this.queryVersion);
 
         if (!this.hasRun) {
-            System.out.println("Server Checking Started");
             App.TOASTER.pop(String.format("Server Checking on %s has started!", this.name));
             this.hasRun = true;
         } else {
@@ -94,8 +95,8 @@ public class MinecraftServer {
                 App.TOASTER.popError(String.format("Server %s is now offline!", this.name));
             } else if (playersOnline >= 0 && this.playersOnline == -1) {
                 // The server WAS offline and now it isn't
-                App.TOASTER.pop(String.format("Server %s is now online with %d players", this.name, this
-                        .playersOnline));
+                App.TOASTER
+                        .pop(String.format("Server %s is now online with %d players", this.name, this.playersOnline));
             }
         }
 
@@ -148,8 +149,8 @@ public class MinecraftServer {
         if (this.playersOnline == -1) {
             return Language.INSTANCE.localize("tools.serverchecker.offline");
         } else {
-            return Language.INSTANCE.localize("tools.serverchecker.online") + " - " + this.getPrintablePlayersOnline
-                    () + " Players";
+            return Language.INSTANCE.localize("tools.serverchecker.online") + " - " + this.getPrintablePlayersOnline()
+                    + " Players";
         }
     }
 

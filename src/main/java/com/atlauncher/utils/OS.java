@@ -40,13 +40,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Constants;
+import com.atlauncher.utils.javafinder.JavaInfo;
 
 public enum OS {
     LINUX, WINDOWS, OSX;
@@ -190,6 +194,44 @@ public enum OS {
      */
     public static String getJavaHome() {
         return System.getProperty("java.home");
+    }
+
+    public static String getDefaultJavaPath() {
+        if (!OS.isWindows()) {
+            return OS.getJavaHome();
+        }
+
+        String prefferedPath = OS.getPrefferedJavaPath(Java.getInstalledJavas());
+
+        if (prefferedPath == null) {
+
+            return OS.getJavaHome();
+        }
+
+        return prefferedPath;
+    }
+
+    public static String getPrefferedJavaPath(List<JavaInfo> installedJavas) {
+        if (installedJavas.size() == 0) {
+            return null;
+        }
+
+        // get newest Java 8 64 bit if installed
+        Optional<JavaInfo> java864bit = installedJavas.stream()
+                .filter(javaInfo -> javaInfo.majorVersion == 8 && javaInfo.is64bits)
+                .sorted(Comparator.comparingInt((JavaInfo javaInfo) -> javaInfo.minorVersion).reversed()).findFirst();
+        if (java864bit.isPresent()) {
+            return java864bit.get().rootPath;
+        }
+
+        // get newest 64 bit if installed
+        Optional<JavaInfo> java64bit = installedJavas.stream().filter(javaInfo -> javaInfo.is64bits).findFirst();
+        if (java64bit.isPresent()) {
+            return java64bit.get().rootPath;
+        }
+
+        // default to the first java installed
+        return installedJavas.get(0).rootPath;
     }
 
     /**

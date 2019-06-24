@@ -404,7 +404,7 @@ public class Settings {
 
         if (!java.exists()) {
             LogManager.error("Custom Java Path Is Incorrect! Defaulting to valid value!");
-            this.setJavaPath(OS.getJavaHome());
+            this.setJavaPath(OS.getDefaultJavaPath());
 
             if (save) {
                 this.saveProperties();
@@ -1186,13 +1186,13 @@ public class Settings {
                     .parseBoolean(properties.getProperty("enablediscordintegration", "true"));
             if (!properties.containsKey("usingcustomjavapath")) {
                 this.usingCustomJavaPath = false;
-                this.javaPath = OS.getJavaHome();
+                this.javaPath = OS.getDefaultJavaPath();
             } else {
                 this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty("usingcustomjavapath", "false"));
                 if (isUsingCustomJavaPath()) {
-                    this.javaPath = properties.getProperty("javapath", OS.getJavaHome());
+                    this.javaPath = properties.getProperty("javapath", OS.getDefaultJavaPath());
                 } else {
-                    this.javaPath = OS.getJavaHome();
+                    this.javaPath = OS.getDefaultJavaPath();
                 }
             }
 
@@ -1332,9 +1332,9 @@ public class Settings {
             this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty("usingcustomjavapath", "false"));
 
             if (isUsingCustomJavaPath()) {
-                this.javaPath = properties.getProperty("javapath", OS.getJavaHome());
+                this.javaPath = properties.getProperty("javapath", OS.getDefaultJavaPath());
             } else {
-                this.javaPath = OS.getJavaHome();
+                this.javaPath = OS.getDefaultJavaPath();
                 if (OS.isUsingMacApp()) {
                     File oracleJava = new File(
                             "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
@@ -2798,7 +2798,7 @@ public class Settings {
     }
 
     public void setJavaPath(String javaPath) {
-        this.usingCustomJavaPath = !javaPath.equalsIgnoreCase(OS.getJavaHome());
+        this.usingCustomJavaPath = !javaPath.equalsIgnoreCase(OS.getDefaultJavaPath());
         this.javaPath = javaPath;
     }
 

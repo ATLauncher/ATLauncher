@@ -247,16 +247,12 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 installedJavas.addItem(javaInfo);
             });
 
-            installedJavas
-                    .setSelectedItem(systemJavas.stream()
-                            .filter(javaInfo -> javaInfo.path
-                                    .replace(OS.osSlash() + "bin" + OS.osSlash() + "java.exe", "")
-                                    .equalsIgnoreCase(App.settings.getJavaPath()))
-                            .findFirst().get());
+            installedJavas.setSelectedItem(systemJavas.stream()
+                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
+                    .get());
 
             installedJavas.addActionListener(e -> {
-                javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).path
-                        .replace(OS.osSlash() + "bin" + OS.osSlash() + "java.exe", ""));
+                javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath);
             });
 
             if (installedJavas.getItemCount() != 0) {
@@ -267,7 +263,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaPath = new JTextField(32);
         javaPath.setText(App.settings.getJavaPath());
         javaPathResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
-        javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getJavaHome()));
+        javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
         javaBrowseButton = new JButton(Language.INSTANCE.localize("common.browse"));
         javaBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();

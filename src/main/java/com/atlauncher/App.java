@@ -326,9 +326,7 @@ public class App {
         TRAY_MENU.localize();
 
         if (settings.enableDiscordIntegration()) {
-            DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler((user) -> {
-                System.out.println("Welcome " + user.username + "#" + user.discriminator + "!");
-            }).build();
+            DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();
             DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
             DiscordRPC.discordRegister(Constants.DISCORD_CLIENT_ID, "");
 

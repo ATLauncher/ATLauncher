@@ -142,7 +142,6 @@ public class ServerListPing17 {
         byte[] in = new byte[length];
         dataInputStream.readFully(in); // read json string
         String json = new String(in);
-        // System.out.println(json);
         StatusResponse response = null;
         try {
             response = gson.fromJson(json, StatusResponseOld.class);

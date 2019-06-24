@@ -49,7 +49,7 @@ public class Java {
         if (App.settings.isUsingCustomJavaPath()) {
             File folder = new File(App.settings.getJavaPath(), "bin/");
 
-            ProcessBuilder processBuilder = new ProcessBuilder(getPathToSystemJavaExecutable(), "-version");
+            ProcessBuilder processBuilder = new ProcessBuilder(getPathToMinecraftJavaExecutable(), "-version");
             processBuilder.directory(folder.getAbsoluteFile());
             processBuilder.redirectErrorStream(true);
 
@@ -104,13 +104,14 @@ public class Java {
 
     /**
      * Parse a Java build version string and get the major version number. For
-     * example "1.8.0_91" is parsed to 91.
+     * example "1.8.0_91" is parsed to 91, 11.0.3_7 is parsed to 7 and 11.0.3+7 is
+     * parsed to 7
      *
      * @param version the version string to parse
      * @return the parsed build number
      */
     public static int parseJavaBuildVersion(String version) {
-        Matcher m = Pattern.compile(".*_([0-9]+)").matcher(version);
+        Matcher m = Pattern.compile(".*[_\\.]([0-9]+)").matcher(version);
 
         if (m.find()) {
             return Integer.parseInt(m.group(1));
@@ -143,10 +144,8 @@ public class Java {
      * @return the Java versions used by the Launcher and Minecraft as a string
      */
     public static String getActualJavaVersion() {
-        return String.format("Launcher: Java %d (%s) Build %s, Minecraft: Java %d (%s) Build %s",
-                getLauncherJavaVersionNumber(), getLauncherJavaVersion(),
-                parseJavaBuildVersion(getLauncherJavaVersion()), getMinecraftJavaVersionNumber(),
-                getMinecraftJavaVersion(), parseJavaBuildVersion(getMinecraftJavaVersion()));
+        return String.format("Launcher: Java %d (%s), Minecraft: Java %d (%s)", getLauncherJavaVersionNumber(),
+                getLauncherJavaVersion(), getMinecraftJavaVersionNumber(), getMinecraftJavaVersion());
     }
 
     /**

@@ -7,3 +7,4 @@
 -   Add ability to select loader versions for packs that enable it
 -   Add ability to add mods from within the launcher direct from Curse
 -   Add in selectbox in Java settings tab to Java paths on windows
+-   Use a preferred version of Java on the users system
