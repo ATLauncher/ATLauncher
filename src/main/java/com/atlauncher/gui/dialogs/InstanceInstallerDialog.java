@@ -331,7 +331,6 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setJarOrder(this.getJarOrder());
                                     instance.setMemory(this.getMemory());
                                     instance.setPermgen(this.getPermGen());
-                                    instance.setIsNewLaunchMethod(!this.isLegacy());
                                     instance.setUsesNewLibraries(true);
                                     instance.setLibraries(this.getLibrariesForLaunch());
                                     if (this.hasArguments()) {
@@ -342,6 +341,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     instance.setExtraArguments(this.getExtraArguments());
                                     instance.setMainClass(this.getMainClass());
                                     instance.setAssets(version.getMinecraftVersion().getMojangVersion().getAssets());
+                                    instance.setAssetsMapToResources(this.doAssetsMapToResources());
                                     instance.setLogging(loggingClient);
                                     instance.setJava(this.getJsonVersion().getJava());
                                     instance.setEnableCurseIntegration(
@@ -375,8 +375,8 @@ public class InstanceInstallerDialog extends JDialog {
                                             this.getMemory(), this.getPermGen(), this.getModsInstalled(),
                                             this.getJarOrder(), this.getLibrariesForLaunch(), this.getExtraArguments(),
                                             this.getMinecraftArguments(), this.getMainClass(),
-                                            version.getMinecraftVersion().getMojangVersion().getAssets(), loggingClient,
-                                            version.isDev(), !version.getMinecraftVersion().isLegacy(),
+                                            version.getMinecraftVersion().getMojangVersion().getAssets(),
+                                            this.doAssetsMapToResources(), loggingClient, version.isDev(),
                                             this.getJsonVersion().getJava(),
                                             this.getJsonVersion().hasEnabledCurseIntegration(),
                                             this.getJsonVersion().hasEnabledEditingMods(),

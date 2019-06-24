@@ -25,9 +25,7 @@ import com.google.gson.annotations.SerializedName;
 public class MinecraftVersion {
     private String version;
     private boolean server;
-    private boolean legacy;
     private boolean coremods;
-    private boolean resources;
 
     @SerializedName("json")
     private MojangVersion mojangVersion;
@@ -44,16 +42,8 @@ public class MinecraftVersion {
         return this.mojangVersion;
     }
 
-    public boolean isLegacy() {
-        return this.legacy;
-    }
-
     public boolean usesCoreMods() {
         return this.coremods;
-    }
-
-    public boolean hasResources() {
-        return this.resources;
     }
 
     public String toString() {

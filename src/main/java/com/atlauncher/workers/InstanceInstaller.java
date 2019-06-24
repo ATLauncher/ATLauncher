@@ -102,6 +102,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     private boolean savedPortalGunSounds = false; // If Portal Gun Sounds was found and saved
     private boolean extractedTexturePack = false; // If there is an extracted texturepack
     private boolean extractedResourcePack = false; // If there is an extracted resourcepack
+    private boolean assetsMapToResources = false;
     private int permgen = 0;
     private int memory = 0;
     private List<String> libraries = new ArrayList<>();
@@ -153,10 +154,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean isServer() {
         return this.isServer;
-    }
-
-    public boolean isLegacy() {
-        return this.version.getMinecraftVersion().isLegacy();
     }
 
     public String getInstanceName() {
@@ -314,11 +311,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (jarOrder == null) {
             jarOrder = file;
         } else {
-            if (!isLegacy()) {
-                jarOrder = jarOrder + "," + file;
-            } else {
-                jarOrder = file + "," + jarOrder;
-            }
+            jarOrder = jarOrder + "," + file;
         }
     }
 
@@ -332,6 +325,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     public boolean isReinstall() {
         return this.isReinstall;
+    }
+
+    public boolean doAssetsMapToResources() {
+        return this.assetsMapToResources;
     }
 
     public Mod getModByName(String name) {
@@ -833,6 +830,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         File objectsFolder = new File(App.settings.getAssetsDir(), "objects");
         File indexesFolder = new File(App.settings.getAssetsDir(), "indexes");
         File virtualFolder = new File(App.settings.getAssetsDir(), "virtual");
+        File resourcesFolder = new File(this.getRootDirectory(), "resources");
         String assetVersion = this.version.getMinecraftVersion().getMojangVersion().getAssets();
         File virtualRoot = new File(virtualFolder, assetVersion);
         File indexFile = new File(indexesFolder, assetVersion + ".json");
@@ -849,18 +847,28 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 virtualRoot.mkdirs();
             }
 
+            if (index.mapsToResources()) {
+                resourcesFolder.mkdirs();
+                this.assetsMapToResources = true;
+            }
+
             for (Map.Entry<String, AssetObject> entry : index.getObjects().entrySet()) {
                 AssetObject object = entry.getValue();
                 String filename = object.getHash().substring(0, 2) + "/" + object.getHash();
                 File file = new File(objectsFolder, filename);
-                File virtualFile = new File(virtualRoot, entry.getKey());
+
+                boolean needToCopy = index.isVirtual() || index.mapsToResources();
+                File copyTo = new File(
+                        index.isVirtual() ? virtualRoot : index.mapsToResources() ? resourcesFolder : null,
+                        entry.getKey());
+
                 if (object.needToDownload(file)) {
                     downloads.add(new Downloadable(MojangConstants.RESOURCES_BASE.getURL(filename), file,
-                            object.getHash(), (int) object.getSize(), this, false, virtualFile, index.isVirtual()));
+                            object.getHash(), (int) object.getSize(), this, false, copyTo, needToCopy));
                 } else {
-                    if (index.isVirtual()) {
-                        virtualFile.mkdirs();
-                        Utils.copyFile(file, virtualFile, true);
+                    if (needToCopy) {
+                        copyTo.mkdirs();
+                        Utils.copyFile(file, copyTo, true);
                     }
                 }
             }

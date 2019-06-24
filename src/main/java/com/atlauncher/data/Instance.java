@@ -117,6 +117,8 @@ public class Instance implements Cloneable {
      */
     private Boolean enableEditingMods = true;
 
+    private Boolean assetsMapToResources = false;
+
     /**
      * The loader version chosen to be installed for this instance.
      */
@@ -221,14 +223,6 @@ public class Instance implements Cloneable {
     private boolean isPlayable;
 
     /**
-     * If this instance uses the MCLauncher or the LegacyMCLauncher class to load
-     * Minecraft.
-     *
-     * @see com.atlauncher.mclauncher.MCLauncher
-     */
-    private boolean newLaunchMethod;
-
-    /**
      * List of DisableableMod objects for the mods in the Instance.
      *
      * @see com.atlauncher.data.DisableableMod
@@ -268,15 +262,13 @@ public class Instance implements Cloneable {
      * @param assets             the assets version being used by Minecraft
      * @param isDev              if this Instance is using a dev version of the pack
      * @param isPlayable         if this instance is playable
-     * @param newLaunchMethod    if this instance is using the new launch method for
-     *                           Minecraft
      * @param java               the java requirements for the instance
      */
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, LoggingClient logging, boolean isDev, boolean isPlayable, boolean newLaunchMethod, Java java,
-            boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
+            String assets, boolean assetsMapToResources, LoggingClient logging, boolean isDev, boolean isPlayable,
+            Java java, boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -290,13 +282,13 @@ public class Instance implements Cloneable {
         this.libraries = libraries;
         this.mainClass = mainClass;
         this.assets = assets;
+        this.assetsMapToResources = assetsMapToResources;
         this.logging = logging;
         this.jarOrder = jarOrder;
         this.extraArguments = extraArguments;
         this.minecraftArguments = minecraftArguments;
         this.isDev = isDev;
         this.isPlayable = isPlayable;
-        this.newLaunchMethod = newLaunchMethod;
         if (enableUserLock && !App.settings.getAccount().isUUIDNull()) {
             this.userLock = App.settings.getAccount().getUUIDNoDashes();
         } else {
@@ -334,18 +326,16 @@ public class Instance implements Cloneable {
      * @param mainClass          the main class to run when launching Minecraft
      * @param assets             the assets version being used by Minecraft
      * @param isDev              if this Instance is using a dev version of the pack
-     * @param newLaunchMethod    if this instance is using the new launch method for
-     *                           Minecraft
      * @param java               the java requirements for the instance
      */
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
             String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, LoggingClient logging, boolean isDev, boolean newLaunchMethod, Java java,
+            String assets, boolean assetsMapToResources, LoggingClient logging, boolean isDev, Java java,
             boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
         this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods,
-                jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev, true,
-                newLaunchMethod, java, enableCurseIntegration, enableEditingMods, loaderVersion);
+                jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources,
+                logging, isDev, true, java, enableCurseIntegration, enableEditingMods, loaderVersion);
     }
 
     /**
@@ -831,6 +821,10 @@ public class Instance implements Cloneable {
      * @return File object for the assets directory used by Minecraft
      */
     public File getAssetsDir() {
+        if (this.assetsMapToResources != null && this.assetsMapToResources) {
+            return new File(getRootDirectory(), "resources");
+        }
+
         return new File(App.settings.getVirtualAssetsDir(), getAssets());
     }
 
@@ -1079,25 +1073,6 @@ public class Instance implements Cloneable {
     }
 
     /**
-     * Sets the launch method used to launch this Instance.
-     *
-     * @param newLaunchMethod true if the new launch menthod should be used, false
-     *                        for the legacy launch method
-     */
-    public void setIsNewLaunchMethod(boolean newLaunchMethod) {
-        this.newLaunchMethod = newLaunchMethod;
-    }
-
-    /**
-     * Checks if this Instance uses the new launch method or not.
-     *
-     * @return true if this Instance uses the new launch method
-     */
-    public boolean isNewLaunchMethod() {
-        return this.newLaunchMethod;
-    }
-
-    /**
      * Gets the libraries needed to be loaded when launching Minecraft.
      *
      * @return a list of paths for the libraries to be loaded when Minecraft is
@@ -1238,14 +1213,6 @@ public class Instance implements Cloneable {
         return (this.assets == null ? "legacy" : this.assets);
     }
 
-    public boolean hasLogging() {
-        return this.logging != null;
-    }
-
-    public LoggingClient getLogging() {
-        return this.logging;
-    }
-
     /**
      * Sets the assets value which Minecraft uses to determine how to load assets in
      * the game.
@@ -1254,6 +1221,22 @@ public class Instance implements Cloneable {
      */
     public void setAssets(String assets) {
         this.assets = assets;
+    }
+
+    public boolean doAssetsMapToResources() {
+        return this.assetsMapToResources;
+    }
+
+    public void setAssetsMapToResources(boolean assetsMapToResources) {
+        this.assetsMapToResources = assetsMapToResources;
+    }
+
+    public boolean hasLogging() {
+        return this.logging != null;
+    }
+
+    public LoggingClient getLogging() {
+        return this.logging;
     }
 
     public void setLogging(LoggingClient logging) {
@@ -1695,12 +1678,14 @@ public class Instance implements Cloneable {
         Instance clone;
         if (!this.userLock.equals(null)) {
             clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType, memory, permgen,
-                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev,
-                    isPlayable, newLaunchMethod, java, enableCurseIntegration, enableEditingMods, loaderVersion);
+                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets,
+                    assetsMapToResources, logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods,
+                    loaderVersion);
         } else {
             clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType, memory, permgen,
-                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, logging, isDev,
-                    isPlayable, newLaunchMethod, java, enableCurseIntegration, enableEditingMods, loaderVersion);
+                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets,
+                    assetsMapToResources, logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods,
+                    loaderVersion);
         }
         return clone;
     }

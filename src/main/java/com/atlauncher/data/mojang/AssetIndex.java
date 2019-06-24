@@ -20,10 +20,15 @@ package com.atlauncher.data.mojang;
 import java.util.HashSet;
 import java.util.Map;
 
+import com.google.gson.annotations.SerializedName;
+
 public class AssetIndex {
 
     private Map<String, AssetObject> objects;
     private boolean virtual;
+
+    @SerializedName("map_to_resources")
+    private boolean mapToResources;
 
     public Map<String, AssetObject> getObjects() {
         return this.objects;
@@ -35,5 +40,9 @@ public class AssetIndex {
 
     public boolean isVirtual() {
         return this.virtual;
+    }
+
+    public boolean mapsToResources() {
+        return this.mapToResources;
     }
 }
