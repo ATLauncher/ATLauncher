@@ -160,7 +160,23 @@ public class CurseModFileSelectorDialog extends JDialog {
                             getFontMetrics(Utils.getFont()).stringWidth(file.displayName) + 100);
                 }
 
-                files.stream().forEach(version -> {
+                // try to filter out non compatable mods
+                files.stream().filter(version -> {
+                    String fileName = version.fileName.toLowerCase();
+                    String displayName = version.displayName.toLowerCase();
+
+                    if (instance.getLoaderVersion().isFabric()) {
+                        return !displayName.contains("-forge-") && !displayName.contains("(forge)")
+                                && !displayName.contains("[forge") && !fileName.contains("forgemod");
+                    }
+
+                    if (!instance.getLoaderVersion().isFabric()) {
+                        return !displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
+                                && !displayName.contains("[fabric") && !fileName.contains("fabricmod");
+                    }
+
+                    return true;
+                }).forEach(version -> {
                     filesDropdown.addItem(version);
                 });
 
