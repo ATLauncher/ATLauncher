@@ -6,3 +6,4 @@
 -   Add some basic filtering to not show files for a different loader
 -   Add a warning and button when Fabric API not installed for Fabric loader
 -   Show dependant mods when installing a mod to an instance
+-   Fix crash on 64 bit java check
