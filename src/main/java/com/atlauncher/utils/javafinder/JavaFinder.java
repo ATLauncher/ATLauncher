@@ -34,9 +34,7 @@ public class JavaFinder {
                     result.add(val + "\\bin\\java.exe");
                 }
             }
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
+        } catch (Throwable t) {}
         return result;
     }
 

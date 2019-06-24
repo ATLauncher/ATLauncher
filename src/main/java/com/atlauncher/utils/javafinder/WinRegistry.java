@@ -71,7 +71,6 @@ public class WinRegistry {
             regDeleteKey = userClass.getDeclaredMethod("WindowsRegDeleteKey", new Class[] { int.class, byte[].class });
             regDeleteKey.setAccessible(true);
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
