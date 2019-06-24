@@ -114,7 +114,6 @@ public class Utils {
         File themeFile = App.settings == null ? null : App.settings.getThemeFile();
 
         if (themeFile != null) {
-
             ZipFile zipFile;
             try {
                 zipFile = new ZipFile(themeFile);
@@ -156,7 +155,7 @@ public class Utils {
             }
         }
 
-        URL url = System.class.getResource(path);
+        URL url = App.class.getResource(path);
 
         if (url == null) {
             LogManager.error("Unable to load resource " + path);
