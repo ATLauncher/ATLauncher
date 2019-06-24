@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -42,15 +43,18 @@ import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.card.CurseModCard;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
+import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.CurseApi;
 
 @SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {
     private final Instance instance;
     private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
-    private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(Language.INSTANCE.localize("common.search"));
+    private final JButton installFabricApiButton = new JButton("Install Fabric API");
     private final JScrollPane jscrollPane;
     private final JButton nextButton;
     private final JButton prevButton;
@@ -67,9 +71,29 @@ public final class AddModsDialog extends JDialog {
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        this.topPanel.add(new JLabel(Language.INSTANCE.localize("common.search") + ": "));
-        this.topPanel.add(this.searchField);
-        this.topPanel.add(this.searchButton);
+        JPanel searchButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        searchButtonsPanel.add(new JLabel(Language.INSTANCE.localize("common.search") + ": "));
+        searchButtonsPanel.add(this.searchField);
+        searchButtonsPanel.add(this.searchButton);
+
+        this.installFabricApiButton.addActionListener(e -> {
+            CurseMod mod = CurseApi.getModById(Constants.CURSE_FABRIC_MOD_ID);
+
+            new CurseModFileSelectorDialog(mod, instance);
+        });
+
+        if (instance.getLoaderVersion().isFabric() && instance.getInstalledMods().stream()
+                .filter(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)
+                .count() == 0) {
+            searchButtonsPanel.add(this.installFabricApiButton);
+
+            JLabel fabricApiWarningLabel = new JLabel(
+                    "<html><p align=\"center\" style=\"color: yellow\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
+            this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
+        }
+
+        this.topPanel.add(searchButtonsPanel, BorderLayout.NORTH);
 
         this.jscrollPane = new JScrollPane(this.contentPanel) {
             {

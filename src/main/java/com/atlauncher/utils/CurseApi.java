@@ -73,4 +73,12 @@ public class CurseApi {
 
         return Gsons.DEFAULT.fromJson(downloadable.getContents(), type);
     }
+
+    public static CurseMod getModById(int modId) {
+        String url = String.format("%s/addon/%d", Constants.CURSE_API_URL, modId);
+
+        Downloadable downloadable = new Downloadable(url, false);
+
+        return Gsons.DEFAULT.fromJson(downloadable.getContents(), CurseMod.class);
+    }
 }
