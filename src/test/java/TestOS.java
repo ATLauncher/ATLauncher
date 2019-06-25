@@ -99,7 +99,8 @@ public class TestOS {
     @Test
     public void testThatWhenAnInvalidJavaVersionIsFoundItReturnsNull() {
         // Test an invalid version found returning null
-        installedJavas.add(new JavaInfo("C:/Java/8.111/64bit/bin/java.exe", "C:/Java/8/64bit", null, null, null, true));
+        installedJavas.add(new JavaInfo("C:/Java/8.111/64bit/bin/java.exe", "C:/Java/8/64bit", "Unknown", null, null, false));
+        installedJavas.add(new JavaInfo("C:/Java/8.111/64bit/bin/java.exe", "C:/Java/8/64bit", "Unknown", false));
         assertEquals(null, OS.getPrefferedJavaPath(installedJavas));
     }
 

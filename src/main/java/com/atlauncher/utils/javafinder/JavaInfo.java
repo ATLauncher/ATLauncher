@@ -55,6 +55,14 @@ public class JavaInfo {
         this.is64bits = is64bits;
     }
 
+    // used for testing
+    public JavaInfo(String path, String rootPath, String version, boolean is64bits) {
+        this.path = path;
+        this.rootPath = rootPath;
+        this.version = version;
+        this.is64bits = is64bits;
+    }
+
     /**
      * @return Human-readable contents of this JavaInfo instance
      ****************************************************************************/
