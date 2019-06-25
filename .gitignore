@@ -6,7 +6,7 @@ bin/
 build/
 dist/
 target/
-test/
+testLauncher/
 
 # Files
 .classpath

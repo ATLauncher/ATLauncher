@@ -43,9 +43,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Constants;
@@ -215,8 +217,21 @@ public enum OS {
             return null;
         }
 
+        installedJavas.stream().forEach(version -> {
+            LogManager.debug(Gsons.DEFAULT.toJson(version));
+        });
+
+        List<JavaInfo> validVersions = installedJavas.stream()
+                .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
+                .collect(Collectors.toList());
+
+        if (validVersions.size() == 0) {
+            return null;
+        }
+
         // get newest Java 8 64 bit if installed
-        Optional<JavaInfo> java864bit = installedJavas.stream()
+        Optional<JavaInfo> java864bit = validVersions.stream()
+                .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
                 .sorted(Comparator.comparingInt((JavaInfo javaInfo) -> javaInfo.minorVersion).reversed())
                 .filter(javaInfo -> javaInfo.majorVersion == 8 && javaInfo.is64bits).findFirst();
         if (java864bit.isPresent()) {
@@ -224,13 +239,13 @@ public enum OS {
         }
 
         // get newest 64 bit if installed
-        Optional<JavaInfo> java64bit = installedJavas.stream().filter(javaInfo -> javaInfo.is64bits).findFirst();
+        Optional<JavaInfo> java64bit = validVersions.stream().filter(javaInfo -> javaInfo.is64bits).findFirst();
         if (java64bit.isPresent()) {
             return java64bit.get().rootPath;
         }
 
         // default to the first java installed
-        return installedJavas.get(0).rootPath;
+        return validVersions.get(0).rootPath;
     }
 
     /**
