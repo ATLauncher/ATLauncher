@@ -25,7 +25,7 @@ import java.util.Map;
 
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
-import com.atlauncher.data.loaders.LoaderVersion;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.workers.InstanceInstaller;
 
 @Json
@@ -62,7 +62,7 @@ public class Loader {
     }
 
     public com.atlauncher.data.loaders.Loader getLoader(File tempDir, InstanceInstaller instanceInstaller,
-            LoaderVersion loaderVersion)
+            com.atlauncher.data.loaders.LoaderVersion loaderVersion)
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         com.atlauncher.data.loaders.Loader instance = (com.atlauncher.data.loaders.Loader) Class.forName(this.className)
                 .newInstance();
@@ -72,7 +72,30 @@ public class Loader {
         return instance;
     }
 
-    public List<LoaderVersion> getChoosableVersions(String minecraft) {
+    public com.atlauncher.data.minecraft.loaders.Loader getNewLoader(File tempDir, InstanceInstaller instanceInstaller,
+            LoaderVersion loaderVersion) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+        com.atlauncher.data.minecraft.loaders.Loader instance = (com.atlauncher.data.minecraft.loaders.Loader) Class
+                .forName(this.className).newInstance();
+
+        instance.set(this.metadata, tempDir, instanceInstaller, loaderVersion);
+
+        return instance;
+    }
+
+    public List<com.atlauncher.data.loaders.LoaderVersion> getChoosableVersions(String minecraft) {
+        try {
+            Method method = Class.forName(this.chooseClassName).getDeclaredMethod(this.chooseMethod, String.class);
+
+            return (List<com.atlauncher.data.loaders.LoaderVersion>) method.invoke(null, minecraft);
+        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return null;
+    }
+
+    public List<LoaderVersion> getNewChoosableVersions(String minecraft) {
         try {
             Method method = Class.forName(this.chooseClassName).getDeclaredMethod(this.chooseMethod, String.class);
 

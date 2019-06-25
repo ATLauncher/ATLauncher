@@ -55,6 +55,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
+import com.atlauncher.workers.NewInstanceInstaller;
 
 public class InstanceInstallerDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
@@ -270,7 +271,7 @@ public class InstanceInstallerDialog extends JDialog {
                         ? (LoaderVersion) loaderVersionsDropDown.getSelectedItem()
                         : null;
 
-                final InstanceInstaller instanceInstaller = new InstanceInstaller(
+                final InstanceInstaller instanceInstaller = new NewInstanceInstaller(
                         (isServer ? "" : instanceNameField.getText()), pack, version, isReinstall, isServer, shareCode,
                         showModsChooser, loaderVersion) {
 

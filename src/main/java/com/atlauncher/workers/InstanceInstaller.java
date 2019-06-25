@@ -80,48 +80,48 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IInstanceInstaller {
+public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
-    private final Gson gson; // GSON Parser
-    private final String shareCode;
-    private final boolean showModsChooser;
-    private String instanceName;
-    private Pack pack;
-    private Version jsonVersion;
-    private PackVersion version;
-    private LoaderVersion loaderVersion;
-    private boolean isReinstall;
-    private boolean isServer;
-    private String jarOrder;
-    private boolean instanceIsCorrupt = false; // If the instance should be set as corrupt
-    private boolean savedReis = false; // If Reis Minimap stuff was found and saved
-    private boolean savedZans = false; // If Zans Minimap stuff was found and saved
-    private boolean savedNEICfg = false; // If NEI Config was found and saved
-    private boolean savedOptionsTxt = false; // If options.txt was found and saved
-    private boolean savedServersDat = false; // If servers.dat was found and saved
-    private boolean savedPortalGunSounds = false; // If Portal Gun Sounds was found and saved
-    private boolean extractedTexturePack = false; // If there is an extracted texturepack
-    private boolean extractedResourcePack = false; // If there is an extracted resourcepack
-    private boolean assetsMapToResources = false;
-    private int permgen = 0;
-    private int memory = 0;
-    private List<String> libraries = new ArrayList<>();
-    private List<String> arguments = new ArrayList<>();
-    private String extraArguments = null;
-    private String mainClass = null;
-    private int percent = 0; // Percent done installing
-    private List<Mod> allMods;
-    private List<Mod> selectedMods;
-    private List<Mod> unselectedMods = new ArrayList<>();
-    private int totalDownloads = 0; // Total number of downloads to download
-    private int doneDownloads = 0; // Total number of downloads downloaded
-    private int totalBytes = 0; // Total number of bytes to download
-    private int downloadedBytes = 0; // Total number of bytes downloaded
-    private Instance instance = null;
-    private List<DisableableMod> modsInstalled;
-    private List<File> serverLibraries;
-    private List<File> forgeLibraries = new ArrayList<>();
-    private com.atlauncher.data.loaders.Loader loader;
+    protected final Gson gson; // GSON Parser
+    protected final String shareCode;
+    protected final boolean showModsChooser;
+    protected String instanceName;
+    protected Pack pack;
+    protected Version jsonVersion;
+    protected PackVersion version;
+    protected LoaderVersion loaderVersion;
+    protected boolean isReinstall;
+    protected boolean isServer;
+    protected String jarOrder;
+    protected boolean instanceIsCorrupt = false; // If the instance should be set as corrupt
+    protected boolean savedReis = false; // If Reis Minimap stuff was found and saved
+    protected boolean savedZans = false; // If Zans Minimap stuff was found and saved
+    protected boolean savedNEICfg = false; // If NEI Config was found and saved
+    protected boolean savedOptionsTxt = false; // If options.txt was found and saved
+    protected boolean savedServersDat = false; // If servers.dat was found and saved
+    protected boolean savedPortalGunSounds = false; // If Portal Gun Sounds was found and saved
+    protected boolean extractedTexturePack = false; // If there is an extracted texturepack
+    protected boolean extractedResourcePack = false; // If there is an extracted resourcepack
+    protected boolean assetsMapToResources = false;
+    protected int permgen = 0;
+    protected int memory = 0;
+    protected List<String> libraries = new ArrayList<>();
+    protected List<String> arguments = new ArrayList<>();
+    protected String extraArguments = null;
+    protected String mainClass = null;
+    protected int percent = 0; // Percent done installing
+    protected List<Mod> allMods;
+    protected List<Mod> selectedMods;
+    protected List<Mod> unselectedMods = new ArrayList<>();
+    protected int totalDownloads = 0; // Total number of downloads to download
+    protected int doneDownloads = 0; // Total number of downloads downloaded
+    protected int totalBytes = 0; // Total number of bytes to download
+    protected int downloadedBytes = 0; // Total number of bytes downloaded
+    protected Instance instance = null;
+    protected List<DisableableMod> modsInstalled;
+    protected List<File> serverLibraries;
+    protected List<File> forgeLibraries = new ArrayList<>();
+    protected com.atlauncher.data.loaders.Loader loader;
 
     public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean isServer,
             String shareCode, boolean showModsChooser, LoaderVersion loaderVersion) {
@@ -408,7 +408,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         return false;
     }
 
-    private void makeDirectories() {
+    protected void makeDirectories() {
         if (isReinstall || isServer) {
             // We're reinstalling or installing a server so delete these folders
             Utils.delete(getBinDirectory());
@@ -503,13 +503,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         return mods;
     }
 
-    private void doActions() {
+    protected void doActions() {
         for (Action action : this.jsonVersion.getActions()) {
             action.execute(this);
         }
     }
 
-    private void installMods() {
+    protected void installMods() {
         for (Mod mod : this.selectedMods) {
             if (!isCancelled()) {
                 fireTask(Language.INSTANCE.localize("common.installing") + " " + mod.getName());
@@ -545,7 +545,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         return true; // No other recommended mods found in the group
     }
 
-    private void downloadResources() {
+    protected void downloadResources() {
         fireTask(Language.INSTANCE.localize("instance.downloadingresources"));
         fireSubProgressUnknown();
         ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
@@ -576,7 +576,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    private void downloadLoader() {
+    protected void downloadLoader() {
         fireTask(Language.INSTANCE.localize("instance.downloadingloader"));
         fireSubProgressUnknown();
         totalBytes = 0;
@@ -666,7 +666,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    private void downloadLibraries() {
+    protected void downloadLibraries() {
         fireTask(Language.INSTANCE.localize("instance.downloadinglibraries"));
         fireSubProgressUnknown();
         ExecutorService executor;
@@ -705,7 +705,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    private void downloadMods(List<Mod> mods) {
+    protected void downloadMods(List<Mod> mods) {
         fireSubProgressUnknown();
         ExecutorService executor;
         List<Downloadable> downloads = getDownloadableMods();
@@ -753,7 +753,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
 
     }
 
-    private void organiseLibraries() {
+    protected void organiseLibraries() {
         List<String> libraryNamesAdded = new ArrayList<>();
         fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
         fireSubProgressUnknown();
@@ -801,7 +801,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    private void doCaseConversions(File dir) {
+    protected void doCaseConversions(File dir) {
         File[] files;
         if (isReinstall
                 && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion())) {
@@ -1229,7 +1229,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         return modss;
     }
 
-    private void backupSelectFiles() {
+    protected void backupSelectFiles() {
         File reis = new File(getModsDirectory(), "rei_minimap");
         if (reis.exists() && reis.isDirectory()) {
             if (Utils.copyDirectory(reis, getTempDirectory(), true)) {
@@ -1272,7 +1272,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         }
     }
 
-    private void restoreSelectFiles() {
+    protected void restoreSelectFiles() {
         if (savedReis) {
             Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"),
                     new File(getModsDirectory(), "rei_minimap"));
@@ -1540,7 +1540,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         return false;
     }
 
-    private void setMainClass() {
+    protected void setMainClass() {
         if (this.jsonVersion.hasMainClass()) {
             if (!this.jsonVersion.getMainClass().hasDepends() && !this.jsonVersion.getMainClass().hasDependsGroup()) {
                 this.mainClass = this.jsonVersion.getMainClass().getMainClass();
@@ -1578,7 +1578,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         }
     }
 
-    private void setExtraArguments() {
+    protected void setExtraArguments() {
         if (this.jsonVersion.hasExtraArguments()) {
             if (!this.jsonVersion.getExtraArguments().hasDepends()
                     && !this.jsonVersion.getExtraArguments().hasDependsGroup()) {
@@ -1651,7 +1651,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         firePropertyChange("subprogressint", null, null);
     }
 
-    private void addPercent(int percent) {
+    protected void addPercent(int percent) {
         this.percent = this.percent + percent;
         if (this.percent > 100) {
             this.percent = 100;

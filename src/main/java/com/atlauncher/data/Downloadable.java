@@ -34,7 +34,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.IInstanceInstaller;
+import com.atlauncher.workers.InstanceInstaller;
 
 public class Downloadable {
     private String beforeURL;
@@ -44,7 +44,7 @@ public class Downloadable {
     private String hash;
     private int size;
     protected HttpURLConnection connection;
-    private IInstanceInstaller instanceInstaller;
+    private InstanceInstaller instanceInstaller;
     private boolean isATLauncherDownload;
     private File copyTo;
     private boolean actuallyCopy;
@@ -53,7 +53,7 @@ public class Downloadable {
     private Server server;
     private boolean checkForNewness = false;
 
-    public Downloadable(String url, File file, String hash, int size, IInstanceInstaller instanceInstaller,
+    public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller,
             boolean isATLauncherDownload, File copyTo, boolean actuallyCopy) {
         if (isATLauncherDownload) {
             this.servers = new ArrayList<>(App.settings.getServers());
@@ -78,12 +78,12 @@ public class Downloadable {
         this.actuallyCopy = actuallyCopy;
     }
 
-    public Downloadable(String url, File file, String hash, int size, IInstanceInstaller instanceInstaller,
+    public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller,
             boolean isATLauncherDownload) {
         this(url, file, hash, size, instanceInstaller, isATLauncherDownload, null, false);
     }
 
-    public Downloadable(String url, File file, String hash, IInstanceInstaller instanceInstaller,
+    public Downloadable(String url, File file, String hash, InstanceInstaller instanceInstaller,
             boolean isATLauncherDownload) {
         this(url, file, hash, -1, instanceInstaller, isATLauncherDownload, null, false);
     }
@@ -100,7 +100,7 @@ public class Downloadable {
         this(url, null, null, -1, null, isATLauncherDownload, null, false);
     }
 
-    public Downloadable(String url, File file, IInstanceInstaller instanceInstaller) {
+    public Downloadable(String url, File file, InstanceInstaller instanceInstaller) {
         this(url, file, null, -1, instanceInstaller, false, null, false);
     }
 
