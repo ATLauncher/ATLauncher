@@ -61,8 +61,8 @@ jar {
 
 license {
     header = project.file('LICENSEHEADER')
+    sourceSets = [project.sourceSets.main]
     include '**/*.java'
-    exclude 'test/**/*.java'
     exclude 'de/zh32/**/*.java'
     exclude 'io/github/**/*.java'
     exclude 'net/minecraft/**/*.java'
