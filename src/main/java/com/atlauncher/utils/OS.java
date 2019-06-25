@@ -217,7 +217,7 @@ public enum OS {
 
         // get newest Java 8 64 bit if installed
         Optional<JavaInfo> java864bit = installedJavas.stream()
-                .sorted(Comparator.comparingInt((JavaInfo javaInfo) -> javaInfo.minorVersion).reversed())
+                .sorted(Comparator.comparingInt((JavaInfo javaInfo) -> javaInfo.minorVersion != null ? javaInfo.minorVersion : 0).reversed())
                 .filter(javaInfo -> javaInfo.majorVersion == 8 && javaInfo.is64bits).findFirst();
         if (java864bit.isPresent()) {
             return java864bit.get().rootPath;
