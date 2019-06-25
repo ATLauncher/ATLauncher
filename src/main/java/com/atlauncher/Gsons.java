@@ -24,6 +24,8 @@ import java.util.Date;
 import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.loaders.fabric.FabricMetaLauncherMeta;
 import com.atlauncher.data.loaders.fabric.FabricMetaLauncherMetaTypeAdapter;
+import com.atlauncher.data.minecraft.Arguments;
+import com.atlauncher.data.minecraft.ArgumentsTypeAdapter;
 import com.atlauncher.data.mojang.DateTypeAdapter;
 import com.atlauncher.data.mojang.Downloads;
 import com.atlauncher.data.mojang.DownloadsTypeAdapter;
@@ -49,4 +51,8 @@ public final class Gsons {
             .registerTypeAdapter(Downloads.class, new DownloadsTypeAdapter())
             .registerTypeAdapter(File.class, new FileTypeAdapter())
             .registerTypeAdapter(MojangStatus.class, new MojangStatusTypeAdapter()).create();
+
+    public static final Gson MINECRAFT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
+            .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
+            .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter()).create();
 }

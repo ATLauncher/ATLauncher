@@ -30,6 +30,7 @@ public class Constants {
     public static final int CURSE_FABRIC_MOD_ID = 306612;
     public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/";
     public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
+    public static final String MINECRAFT_LIBRARIES = "https://libraries.minecraft.net/";
     public static final String LEGACY_JAVA_FIXER_URL = "https://files.minecraftforge.net/LegacyJavaFixer/legacyjavafixer-1.0.jar";
     public static final String LEGACY_JAVA_FIXER_MD5 = "12c337cb2445b56b097e7c25a5642710";
     public static final Server[] SERVERS = new Server[] {

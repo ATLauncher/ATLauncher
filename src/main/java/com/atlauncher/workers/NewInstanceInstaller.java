@@ -80,9 +80,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IInstanceInstaller {
-
-    private final Gson gson; // GSON Parser
+public class NewInstanceInstaller extends SwingWorker<Boolean, Void> implements IInstanceInstaller {
     private final String shareCode;
     private final boolean showModsChooser;
     private String instanceName;
@@ -105,7 +103,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
     private boolean assetsMapToResources = false;
     private int permgen = 0;
     private int memory = 0;
-    private List<String> libraries = new ArrayList<>();
+    private List<com.atlauncher.data.minecraft.Library> libraries = new ArrayList<>();
     private List<String> arguments = new ArrayList<>();
     private String extraArguments = null;
     private String mainClass = null;
@@ -123,8 +121,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
     private List<File> forgeLibraries = new ArrayList<>();
     private com.atlauncher.data.loaders.Loader loader;
 
-    public InstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall, boolean isServer,
-            String shareCode, boolean showModsChooser, LoaderVersion loaderVersion) {
+    public NewInstanceInstaller(String instanceName, Pack pack, PackVersion version, boolean isReinstall,
+            boolean isServer, String shareCode, boolean showModsChooser, LoaderVersion loaderVersion) {
         this.instanceName = instanceName;
         this.pack = pack;
         this.version = version;
@@ -136,12 +134,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
         if (isServer) {
             serverLibraries = new ArrayList<>();
         }
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapterFactory(new EnumTypeAdapterFactory());
-        builder.registerTypeAdapter(Date.class, new DateTypeAdapter());
-        builder.registerTypeAdapter(File.class, new FileTypeAdapter());
-        builder.setPrettyPrinting();
-        this.gson = builder.create();
     }
 
     public Pack getPack() {
@@ -841,7 +833,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements IIn
             MojangAssetIndex assetIndex = this.version.getMinecraftVersion().getMojangVersion().getAssetIndex();
             new Downloadable(assetIndex.getUrl(), indexFile, assetIndex.getSha1(), (int) assetIndex.getSize(), this,
                     false).download(false);
-            AssetIndex index = (AssetIndex) this.gson.fromJson(new FileReader(indexFile), AssetIndex.class);
+            AssetIndex index = (AssetIndex) Gsons.MINECRAFT.fromJson(new FileReader(indexFile), AssetIndex.class);
 
             if (index.isVirtual()) {
                 virtualRoot.mkdirs();
