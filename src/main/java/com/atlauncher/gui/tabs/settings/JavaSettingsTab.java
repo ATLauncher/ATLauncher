@@ -250,7 +250,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
                 installedJavas.setSelectedItem(systemJavas.stream()
                         .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
-                        .get());
+                        .orElse(null));
 
                 installedJavas.addActionListener(e -> {
                     javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath);

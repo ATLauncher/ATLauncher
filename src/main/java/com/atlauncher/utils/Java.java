@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
@@ -225,6 +226,8 @@ public class Java {
     }
 
     public static List<JavaInfo> getInstalledJavas() {
-        return JavaFinder.findJavas();
+        return JavaFinder.findJavas().stream()
+                .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
+                .collect(Collectors.toList());
     }
 }
