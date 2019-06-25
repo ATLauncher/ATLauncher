@@ -217,10 +217,6 @@ public enum OS {
             return null;
         }
 
-        installedJavas.stream().forEach(version -> {
-            LogManager.debug(Gsons.DEFAULT.toJson(version));
-        });
-
         List<JavaInfo> validVersions = installedJavas.stream()
                 .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
                 .collect(Collectors.toList());

@@ -267,6 +267,10 @@ public class App {
 
         LogManager.info("Java Version: " + Java.getActualJavaVersion());
 
+        Java.getInstalledJavas().stream().forEach(version -> {
+            LogManager.debug(Gsons.DEFAULT.toJson(version));
+        });
+
         LogManager.info("Java Path: " + settings.getJavaPath());
 
         LogManager.info("64 Bit Java: " + OS.is64Bit());
