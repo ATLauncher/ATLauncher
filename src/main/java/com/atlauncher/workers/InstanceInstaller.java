@@ -666,11 +666,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    protected void downloadLibraries() {
+    private void downloadLibraries() {
         fireTask(Language.INSTANCE.localize("instance.downloadinglibraries"));
         fireSubProgressUnknown();
         ExecutorService executor;
-        ArrayList<Downloadable> downloads = getLibraries();
+        ArrayList<Downloadable> downloads = getDownloadableLibraries();
         totalBytes = 0;
         downloadedBytes = 0;
 
@@ -753,7 +753,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     }
 
-    protected void organiseLibraries() {
+    private void organiseLibraries() {
         List<String> libraryNamesAdded = new ArrayList<>();
         fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
         fireSubProgressUnknown();
@@ -879,7 +879,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return downloads;
     }
 
-    public ArrayList<Downloadable> getLibraries() {
+    private ArrayList<Downloadable> getDownloadableLibraries() {
         ArrayList<Downloadable> libraries = new ArrayList<>();
         List<String> libraryNamesAdded = new ArrayList<>();
 

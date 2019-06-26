@@ -38,6 +38,7 @@ import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.AssetIndex;
 import com.atlauncher.data.minecraft.AssetObject;
+import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingFile;
@@ -158,47 +159,6 @@ public class NewInstanceInstaller extends InstanceInstaller {
         hideSubProgressBar();
     }
 
-    private void downloadLoaderLibraries() {
-        List<Downloadable> downloads = this.loader.getDownloadableLibraries();
-
-        fireTask(Language.INSTANCE.localize("instance.downloadingloaderlibraries"));
-
-        ExecutorService executor;
-        totalBytes = 0;
-        downloadedBytes = 0;
-
-        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
-
-        for (final Downloadable download : downloads) {
-            executor.execute(() -> {
-                if (download.needToDownload()) {
-                    totalBytes += download.getFilesize();
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
-
-        fireSubProgress(0); // Show the subprogress bar
-
-        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
-
-        for (final Downloadable download : downloads) {
-            executor.execute(() -> {
-                if (download.needToDownload()) {
-                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
-                    download.download(true);
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
-
-        hideSubProgressBar();
-    }
-
     private void showMessages() throws Exception {
         int ret = 0;
 
@@ -291,15 +251,16 @@ public class NewInstanceInstaller extends InstanceInstaller {
             return false;
         }
 
-        downloadLibraries(); // Download Libraries
+        downloadLibraries();
         if (isCancelled()) {
             return false;
         }
-        organiseLibraries(); // Organise the libraries
+
+        organiseLibraries();
         if (isCancelled()) {
             return false;
         }
-        addPercent(5);
+
         if (this.isServer && this.hasJarMods()) {
             fireTask(Language.INSTANCE.localize("server.extractingjar"));
             fireSubProgressUnknown();
@@ -405,13 +366,13 @@ public class NewInstanceInstaller extends InstanceInstaller {
             } else if (this.packVersion.mainClass.depends != null) {
                 String depends = this.packVersion.mainClass.depends;
 
-                if (this.selectedMods.stream().filter(mod -> mod.name.equals(depends)).count() != 0) {
+                if (this.selectedMods.stream().filter(mod -> mod.name.equalsIgnoreCase(depends)).count() != 0) {
                     this.mainClass = this.packVersion.mainClass.mainClass;
                 }
             } else if (this.packVersion.getMainClass().hasDependsGroup()) {
                 String dependsGroup = this.packVersion.mainClass.dependsGroup;
 
-                if (this.selectedMods.stream().filter(mod -> mod.name.equals(dependsGroup)).count() != 0) {
+                if (this.selectedMods.stream().filter(mod -> mod.group.equalsIgnoreCase(dependsGroup)).count() != 0) {
                     this.mainClass = this.packVersion.mainClass.mainClass;
                 }
             }
@@ -467,13 +428,13 @@ public class NewInstanceInstaller extends InstanceInstaller {
             } else if (this.packVersion.extraArguments.depends == null) {
                 String depends = this.packVersion.extraArguments.depends;
 
-                if (this.selectedMods.stream().filter(mod -> mod.name.equals(depends)).count() != 0) {
+                if (this.selectedMods.stream().filter(mod -> mod.name.equalsIgnoreCase(depends)).count() != 0) {
                     add = true;
                 }
             } else if (this.packVersion.extraArguments.dependsGroup == null) {
                 String dependsGroup = this.packVersion.extraArguments.dependsGroup;
 
-                if (this.selectedMods.stream().filter(mod -> mod.name.equals(dependsGroup)).count() != 0) {
+                if (this.selectedMods.stream().filter(mod -> mod.group.equalsIgnoreCase(dependsGroup)).count() != 0) {
                     add = true;
                 }
             }
@@ -486,6 +447,8 @@ public class NewInstanceInstaller extends InstanceInstaller {
     }
 
     protected void downloadResources() throws Exception {
+        addPercent(5);
+
         if (this.isServer || this.minecraftVersion.assetIndex == null) {
             return;
         }
@@ -543,6 +506,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
     }
 
     private void downloadMinecraft() {
+        addPercent(5);
         fireTask(Language.INSTANCE.localize("instance.downloadingminecraft"));
         fireSubProgressUnknown();
         totalBytes = 0;
@@ -572,6 +536,8 @@ public class NewInstanceInstaller extends InstanceInstaller {
     }
 
     private void downloadLoggingClient() {
+        addPercent(5);
+
         if (this.isServer || this.minecraftVersion.logging == null) {
             return;
         }
@@ -591,6 +557,140 @@ public class NewInstanceInstaller extends InstanceInstaller {
             totalBytes += download.getFilesize();
             download.download(true);
         }
+
+        hideSubProgressBar();
+    }
+
+    private List<Library> getLibraries() {
+        List<Library> libraries = new ArrayList<>();
+
+        List<Library> packVersionLibraries = getPackVersionLibraries();
+
+        if (packVersionLibraries != null && packVersionLibraries.size() != 0) {
+            libraries.addAll(packVersionLibraries);
+        }
+
+        // Now read in the library jars needed from the loader
+        if (this.loader != null) {
+            libraries.addAll(this.loader.getLibraries());
+        }
+
+        // lastly the Minecraft libraries
+        if (this.loader == null || this.loader.useMinecraftArguments()) {
+            libraries.addAll(this.minecraftVersion.libraries);
+        }
+
+        return libraries;
+    }
+
+    private List<Library> getPackVersionLibraries() {
+        List<Library> libraries = new ArrayList<>();
+
+        // Now read in the library jars needed from the pack
+        for (com.atlauncher.data.json.Library library : this.packVersion.getLibraries()) {
+            if (this.isServer && !library.forServer()) {
+                continue;
+            }
+
+            if (library.depends != null) {
+                if (this.selectedMods.stream().filter(mod -> mod.name.equalsIgnoreCase(library.depends)).count() == 0) {
+                    continue;
+                }
+            } else if (library.hasDependsGroup()) {
+                if (this.selectedMods.stream().filter(mod -> mod.group.equalsIgnoreCase(library.dependsGroup))
+                        .count() == 0) {
+                    continue;
+                }
+            }
+
+            Library minecraftLibrary = new Library();
+
+            minecraftLibrary.name = library.file;
+
+            Download download = new Download();
+            download.path = library.path != null ? library.path
+                    : (library.server != null ? library.server : library.file);
+            download.sha1 = library.md5;
+            download.size = library.filesize;
+            download.url = String.format("%s/%s", Constants.ATLAUNCHER_DOWNLOAD_SERVER, library.url);
+
+            Downloads downloads = new Downloads();
+            downloads.artifact = download;
+
+            minecraftLibrary.downloads = downloads;
+
+            libraries.add(minecraftLibrary);
+        }
+
+        return libraries;
+    }
+
+    private void downloadLibraries() {
+        addPercent(5);
+        fireTask(Language.INSTANCE.localize("instance.downloadinglibraries"));
+        fireSubProgressUnknown();
+        totalBytes = 0;
+        downloadedBytes = 0;
+
+        ExecutorService executor;
+        List<Downloadable> downloads = getDownloadableLibraries();
+
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+
+        for (final Downloadable download : downloads) {
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    totalBytes += download.getFilesize();
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        fireSubProgress(0); // Show the subprogress bar
+
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+
+        for (final Downloadable download : downloads) {
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
+                    download.download(true);
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        hideSubProgressBar();
+    }
+
+    private List<Downloadable> getDownloadableLibraries() {
+        return this.getLibraries().stream().map(library -> {
+            return new Downloadable(library.downloads.artifact.url,
+                    new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
+                    library.downloads.artifact.sha1, library.downloads.artifact.size, this, false);
+        }).collect(Collectors.toList());
+    }
+
+    private void organiseLibraries() {
+        addPercent(5);
+        fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
+        fireSubProgressUnknown();
+
+        this.getLibraries().stream().forEach(library -> {
+            File libraryFile = new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path);
+
+            if (isServer) {
+                File serverFile = new File(getLibrariesDirectory(), library.downloads.artifact.path);
+
+                serverFile.getParentFile().mkdirs();
+
+                Utils.copyFile(libraryFile, serverFile, true);
+            }
+        });
 
         hideSubProgressBar();
     }

@@ -24,16 +24,16 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class Library {
-    private String url;
-    private String path;
-    private String file;
-    private String server;
-    private String md5;
-    private boolean force;
-    private DownloadType download;
-    private int filesize;
-    private String depends;
-    private String dependsGroup;
+    public String url;
+    public String path;
+    public String file;
+    public String server;
+    public String md5;
+    public boolean force;
+    public DownloadType download;
+    public int filesize;
+    public String depends;
+    public String dependsGroup;
 
     public String getUrl() {
         return this.url;
