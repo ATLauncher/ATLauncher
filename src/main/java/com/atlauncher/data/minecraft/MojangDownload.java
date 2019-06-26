@@ -21,19 +21,7 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class MojangDownload {
-    private String sha1;
-    private long size;
-    private String url;
-
-    public String getSha1() {
-        return this.sha1;
-    }
-
-    public long getSize() {
-        return this.size;
-    }
-
-    public String getUrl() {
-        return this.url;
-    }
+    public String sha1;
+    public long size;
+    public String url;
 }

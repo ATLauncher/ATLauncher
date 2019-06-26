@@ -18,22 +18,12 @@
 package com.atlauncher.data.minecraft;
 
 import java.util.List;
+import java.util.Map;
 
 import com.atlauncher.annot.Json;
 
 @Json
-public class Version {
-    public String id;
-    public Arguments arguments;
-    public String type;
-    public String time;
-    public String releaseTime;
-    public String minimumLauncherVersion;
-    public MojangAssetIndex assetIndex;
-    public String assets;
-    public MojangDownloads downloads;
-    public Logging logging;
-    public List<Library> libraries;
-    public List<Rule> rules;
-    public String mainClass;
+public class VersionManifest {
+    public Map<String, String> latest;
+    public List<VersionManifestVersion> versions;
 }

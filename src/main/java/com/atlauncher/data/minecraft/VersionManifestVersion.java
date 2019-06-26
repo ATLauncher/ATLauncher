@@ -17,11 +17,15 @@
  */
 package com.atlauncher.data.minecraft;
 
+import java.util.List;
+
 import com.atlauncher.annot.Json;
 
 @Json
-public class MojangDownloads {
-    public MojangDownload client;
-    public MojangDownload server;
-    public MojangDownload windows_server;
+public class VersionManifestVersion {
+    public String id;
+    public String type;
+    public String url;
+    public String time;
+    public String releaseTime;
 }

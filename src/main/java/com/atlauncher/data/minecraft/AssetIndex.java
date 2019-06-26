@@ -17,32 +17,15 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.util.HashSet;
 import java.util.Map;
 
 import com.google.gson.annotations.SerializedName;
 
 public class AssetIndex {
 
-    private Map<String, AssetObject> objects;
-    private boolean virtual;
+    public Map<String, AssetObject> objects;
+    public boolean virtual;
 
     @SerializedName("map_to_resources")
-    private boolean mapToResources;
-
-    public Map<String, AssetObject> getObjects() {
-        return this.objects;
-    }
-
-    public HashSet<AssetObject> getUniqueObjects() {
-        return new HashSet<>(this.objects.values());
-    }
-
-    public boolean isVirtual() {
-        return this.virtual;
-    }
-
-    public boolean mapsToResources() {
-        return this.mapToResources;
-    }
+    public boolean mapToResources;
 }

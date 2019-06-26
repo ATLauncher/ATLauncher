@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data.minecraft;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.atlauncher.annot.Json;
@@ -29,10 +30,22 @@ public class Arguments {
     public Arguments(List<ArgumentRule> game, List<ArgumentRule> jvm) {
         this.game = game;
         this.jvm = jvm;
+
+        if (this.game == null) {
+            this.game = new ArrayList<>();
+        }
+
+        if (this.jvm == null) {
+            this.jvm = new ArrayList<>();
+        }
     }
 
     public Arguments(List<ArgumentRule> game) {
         this(game, null);
+    }
+
+    public Arguments() {
+        this(null, null);
     }
 
     public String asString() {

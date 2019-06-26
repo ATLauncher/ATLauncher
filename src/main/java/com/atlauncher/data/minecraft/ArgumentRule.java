@@ -31,6 +31,11 @@ public class ArgumentRule {
         this.value = value;
     }
 
+    public ArgumentRule(Object value) {
+        this.rules = null;
+        this.value = value;
+    }
+
     public String getValue() {
         if (this.value instanceof String) {
             return (String) this.value;

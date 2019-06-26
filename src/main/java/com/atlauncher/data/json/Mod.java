@@ -38,54 +38,54 @@ import com.google.gson.annotations.SerializedName;
 
 @Json
 public class Mod {
-    private String name;
-    private String version;
-    private String url;
-    private String file;
-    private String md5;
-    private int filesize;
-    private DownloadType download;
-    private String website;
-    private String donation;
-    private List<String> authors;
-    private String sha1;
-    private String colour;
-    private String warning;
-    private boolean force;
-    private Color compiledColour;
-    private ModType type;
-    private ExtractToType extractTo;
-    private String extractFolder;
-    private String decompFile;
-    private DecompType decompType;
-    private boolean filePattern = false;
-    private String filePreference;
-    private String fileCheck;
-    private boolean client = true;
-    private boolean server = true;
-    private boolean serverSeparate = false;
-    private String serverUrl;
-    private String serverFile;
-    private ModType serverType;
-    private DownloadType serverDownload;
-    private String serverMD5;
-    private Boolean serverOptional;
-    private boolean optional = false;
-    private boolean selected = false;
-    private boolean recommended = true;
-    private boolean hidden = false;
-    private boolean library = false;
-    private String group;
-    private String linked;
-    private List<String> depends;
-    private String filePrefix;
-    private String description;
+    public String name;
+    public String version;
+    public String url;
+    public String file;
+    public String md5;
+    public int filesize;
+    public DownloadType download;
+    public String website;
+    public String donation;
+    public List<String> authors;
+    public String sha1;
+    public String colour;
+    public String warning;
+    public boolean force;
+    public Color compiledColour;
+    public ModType type;
+    public ExtractToType extractTo;
+    public String extractFolder;
+    public String decompFile;
+    public DecompType decompType;
+    public boolean filePattern = false;
+    public String filePreference;
+    public String fileCheck;
+    public boolean client = true;
+    public boolean server = true;
+    public boolean serverSeparate = false;
+    public String serverUrl;
+    public String serverFile;
+    public ModType serverType;
+    public DownloadType serverDownload;
+    public String serverMD5;
+    public Boolean serverOptional;
+    public boolean optional = false;
+    public boolean selected = false;
+    public boolean recommended = true;
+    public boolean hidden = false;
+    public boolean library = false;
+    public String group;
+    public String linked;
+    public List<String> depends;
+    public String filePrefix;
+    public String description;
 
     @SerializedName("curse_id")
-    private Integer curseModId;
+    public Integer curseModId;
 
     @SerializedName("curse_file_id")
-    private Integer curseFileId;
+    public Integer curseFileId;
 
     public String getName() {
         return this.name;

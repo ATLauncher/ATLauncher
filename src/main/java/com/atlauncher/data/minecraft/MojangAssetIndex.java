@@ -21,29 +21,9 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class MojangAssetIndex {
-    private String id;
-    private String sha1;
-    private long size;
-    private String url;
-    private long totalSize;
-
-    public String getId() {
-        return this.id;
-    }
-
-    public String getSha1() {
-        return this.sha1;
-    }
-
-    public long getSize() {
-        return this.size;
-    }
-
-    public String getUrl() {
-        return this.url;
-    }
-
-    public long getTotalSize() {
-        return this.totalSize;
-    }
+    public String id;
+    public String sha1;
+    public long size;
+    public String url;
+    public long totalSize;
 }

@@ -854,8 +854,9 @@ public class Settings {
      */
     private void checkFolders() {
         File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, toolsDir,
-                jarsDir, assetsDir, librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir,
-                instancesDir, serversDir, tempDir, failedDownloadsDir, logsDir };
+                jarsDir, assetsDir, this.getObjectsAssetsDir(), this.getVirtualAssetsDir(), this.getIndexesAssetsDir(),
+                librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir, instancesDir, serversDir,
+                tempDir, failedDownloadsDir, logsDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -992,6 +993,10 @@ public class Settings {
 
     public File getObjectsAssetsDir() {
         return new File(this.assetsDir, "objects");
+    }
+
+    public File getIndexesAssetsDir() {
+        return new File(this.assetsDir, "indexes");
     }
 
     public File getLegacyVirtualAssetsDir() {

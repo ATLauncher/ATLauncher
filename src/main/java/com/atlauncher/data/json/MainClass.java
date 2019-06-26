@@ -21,9 +21,9 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class MainClass {
-    private String mainClass;
-    private String depends;
-    private String dependsGroup;
+    public String mainClass;
+    public String depends;
+    public String dependsGroup;
 
     public String getMainClass() {
         return this.mainClass;

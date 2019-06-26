@@ -35,101 +35,101 @@ public class Version {
     /**
      * The version this pack's version is.
      */
-    private String version;
+    public String version;
 
     /**
      * The version of Minecraft this version is for.
      */
-    private String minecraft;
+    public String minecraft;
 
     /**
      * The minimum amount of memory/ram to use when launching this version.
      */
-    private int memory;
+    public int memory;
 
     /**
      * The minimum amount of PermGen/MetaSpace to use when launching this version.
      */
-    private int permGen;
+    public int permGen;
 
     /**
      * If this version has no configs.
      */
-    private boolean noConfigs;
+    public boolean noConfigs;
 
     /**
      * If this version allows Curse mod integration.
      */
-    private boolean enableCurseIntegration = false;
+    public boolean enableCurseIntegration = false;
 
     /**
      * If this version allows editing mods.
      */
-    private boolean enableEditingMods = true;
+    public boolean enableEditingMods = true;
 
     /**
      * If this version should uppercase/lowercase all files.
      */
-    private CaseType caseAllFiles;
+    public CaseType caseAllFiles;
 
     /**
      * The details about the MainClass to use when launching Minecraft.
      */
-    private MainClass mainClass;
+    public MainClass mainClass;
 
     /**
      * Details about any extra arguments this version uses when launching Minecraft,
      * usually including the tweakClass for Forge.
      */
-    private ExtraArguments extraArguments;
+    public ExtraArguments extraArguments;
 
     /**
      * The java options for this version (if any).
      */
-    private Java java;
+    public Java java;
 
     /**
      * The loader this version uses (if any).
      */
-    private Loader loader;
+    public Loader loader;
 
     /**
      * The deletes which should be made when updating/reinstalling this version.
      */
-    private Deletes deletes;
+    public Deletes deletes;
 
     /**
      * The messages that should be shown to the user upon various different
      * conditions such as a new install or update.
      */
-    private Messages messages;
+    public Messages messages;
 
     /**
      * The warning messages that should be shown to the user when an optional mod is
      * selected.
      */
-    private Map<String, String> warnings;
+    public Map<String, String> warnings;
 
     /**
      * A list of Libraries this version requires.
      */
-    private List<Library> libraries;
+    public List<Library> libraries;
 
     /**
      * A map of the difference colours used in this version for things such as mod
      * display.
      */
-    private Map<String, String> colours;
+    public Map<String, String> colours;
 
     /**
      * A list of mods to be installed with this version.
      */
-    private List<Mod> mods;
+    public List<Mod> mods;
 
     /**
      * A list of actions to perform on this version.
      */
-    private List<Action> actions;
+    public List<Action> actions;
 
     /**
      * Sets the default empty objects which are later overwritten by GSON if they

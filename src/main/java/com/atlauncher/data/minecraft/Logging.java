@@ -21,10 +21,5 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class Logging {
-
-    private LoggingClient client;
-
-    public LoggingClient getClient() {
-        return this.client;
-    }
+    public LoggingClient client;
 }

@@ -21,24 +21,8 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class LoggingFile {
-    private String id;
-    private String sha1;
-    private int size;
-    private String url;
-
-    public String getId() {
-        return id;
-    }
-
-    public String getSha1() {
-        return sha1;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public String getUrl() {
-        return url;
-    }
+    public String id;
+    public String sha1;
+    public int size;
+    public String url;
 }

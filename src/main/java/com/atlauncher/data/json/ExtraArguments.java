@@ -21,9 +21,9 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class ExtraArguments {
-    private String arguments;
-    private String depends;
-    private String dependsGroup;
+    public String arguments;
+    public String depends;
+    public String dependsGroup;
 
     public String getArguments() {
         return this.arguments;

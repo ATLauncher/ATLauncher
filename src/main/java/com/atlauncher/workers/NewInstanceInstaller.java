@@ -18,25 +18,50 @@
 package com.atlauncher.workers;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
+import com.atlauncher.data.minecraft.ArgumentRule;
+import com.atlauncher.data.minecraft.Arguments;
+import com.atlauncher.data.minecraft.AssetIndex;
+import com.atlauncher.data.minecraft.AssetObject;
+import com.atlauncher.data.minecraft.Downloads;
 import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.data.minecraft.LoggingFile;
+import com.atlauncher.data.minecraft.MinecraftVersion;
+import com.atlauncher.data.minecraft.MojangAssetIndex;
+import com.atlauncher.data.minecraft.MojangDownload;
+import com.atlauncher.data.minecraft.MojangDownloads;
+import com.atlauncher.data.minecraft.VersionManifest;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.data.minecraft.loaders.forge.Version;
 import com.atlauncher.utils.Utils;
-import com.google.gson.JsonParseException;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 public class NewInstanceInstaller extends InstanceInstaller {
     public List<Library> libraries = new ArrayList<>();
     public Loader loader;
     public LoaderVersion loaderVersion;
-    public com.atlauncher.data.json.Version jsonVersion;
+    public com.atlauncher.data.json.Version packVersion;
+    public MinecraftVersion minecraftVersion;
+
+    public String mainClass;
+    public Arguments arguments;
 
     public NewInstanceInstaller(String instanceName, com.atlauncher.data.Pack pack,
             com.atlauncher.data.PackVersion version, boolean isReinstall, boolean isServer, String shareCode,
@@ -57,83 +82,213 @@ public class NewInstanceInstaller extends InstanceInstaller {
         LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
 
         try {
-            this.jsonVersion = Gsons.DEFAULT.fromJson(this.pack.getJSON(version.getVersion()),
-                    com.atlauncher.data.json.Version.class);
+            downloadPackVersionJson();
 
-            return install();
-        } catch (JsonParseException e) {
-            LogManager.logStackTrace("Couldn't parse JSON of pack!", e);
+            downloadMinecraftVersionJson();
+
+            if (this.packVersion.loader != null) {
+                this.loader = this.packVersion.getLoader().getNewLoader(new File(this.getTempDirectory(), "loader"),
+                        this, this.loaderVersion);
+
+                downloadLoader();
+            }
+
+            if (this.packVersion.messages != null) {
+                showMessages();
+            }
+
+            determineModsToBeInstalled();
+
+            install();
+
+            return true;
+        } catch (Exception e) {
+            cancel(true);
+            LogManager.logStackTrace(e);
         }
 
         return false;
     }
 
-    private Boolean install() throws Exception {
-        if (this.jsonVersion.hasMessages()) {
-            if (this.isReinstall && this.jsonVersion.getMessages().hasUpdateMessage()) {
-                if (this.jsonVersion.getMessages().showUpdateMessage(this.pack) != 0) {
-                    LogManager.error("Instance Install Cancelled After Viewing Message!");
-                    cancel(true);
-                    return false;
-                }
-            } else if (this.jsonVersion.getMessages().hasInstallMessage()) {
-                if (this.jsonVersion.getMessages().showInstallMessage(this.pack) != 0) {
-                    LogManager.error("Instance Install Cancelled After Viewing Message!");
-                    cancel(true);
-                    return false;
-                }
-            }
+    private void downloadPackVersionJson() {
+        addPercent(5);
+        fireTask(Language.INSTANCE.localize("instance.downloadingpackverisondefinition"));
+        fireSubProgressUnknown();
+
+        this.packVersion = Gsons.DEFAULT.fromJson(this.pack.getJSON(version.getVersion()),
+                com.atlauncher.data.json.Version.class);
+
+        this.packVersion.compileColours();
+
+        hideSubProgressBar();
+    }
+
+    private void downloadMinecraftVersionJson() throws Exception {
+        addPercent(5);
+        fireTask(Language.INSTANCE.localize("instance.downloadingminecraftdefinition"));
+        fireSubProgressUnknown();
+
+        VersionManifest versionManifest = Gsons.MINECRAFT.fromJson(
+                new Downloadable(String.format("%s/mc/game/version_manifest.json", Constants.LAUNCHER_META_MINECRAFT),
+                        false).getContents(),
+                VersionManifest.class);
+
+        VersionManifestVersion minecraftVersion = versionManifest.versions.stream()
+                .filter(version -> version.id.equalsIgnoreCase(this.packVersion.getMinecraft())).findFirst()
+                .orElse(null);
+
+        if (minecraftVersion == null) {
+            throw new Exception(
+                    String.format("Failed to find Minecraft version of %s", this.packVersion.getMinecraft()));
         }
 
-        this.jsonVersion.compileColours();
+        this.minecraftVersion = Gsons.MINECRAFT.fromJson(new Downloadable(minecraftVersion.url, false).getContents(),
+                MinecraftVersion.class);
 
-        determineModsToBeInstalled();
+        hideSubProgressBar();
+    }
 
+    private void downloadLoader() {
+        addPercent(5);
+        fireTask(Language.INSTANCE.localize("instance.downloadingloader"));
+        fireSubProgressUnknown();
+
+        this.loader.downloadAndExtractInstaller();
+
+        hideSubProgressBar();
+    }
+
+    private void downloadLoaderLibraries() {
+        List<Downloadable> downloads = this.loader.getDownloadableLibraries();
+
+        fireTask(Language.INSTANCE.localize("instance.downloadingloaderlibraries"));
+
+        ExecutorService executor;
+        totalBytes = 0;
+        downloadedBytes = 0;
+
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+
+        for (final Downloadable download : downloads) {
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    totalBytes += download.getFilesize();
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        fireSubProgress(0); // Show the subprogress bar
+
+        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+
+        for (final Downloadable download : downloads) {
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
+                    download.download(true);
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        hideSubProgressBar();
+    }
+
+    private void showMessages() throws Exception {
+        int ret = 0;
+
+        if (this.isReinstall && this.packVersion.messages.update != null) {
+            ret = this.packVersion.messages.showUpdateMessage(this.pack);
+        } else if (this.packVersion.messages.install != null) {
+            ret = this.packVersion.messages.showInstallMessage(this.pack);
+        }
+
+        if (ret != 0) {
+            throw new Exception("Install cancelled after viewing message!");
+        }
+    }
+
+    private void determineModsToBeInstalled() {
+        this.allMods = sortMods(
+                (this.isServer ? this.packVersion.getServerInstallMods() : this.packVersion.getClientInstallMods()));
+
+        boolean hasOptional = this.allMods.stream().anyMatch(mod -> mod.isOptional());
+
+        if (this.allMods.size() != 0 && hasOptional) {
+            com.atlauncher.gui.dialogs.ModsChooser modsChooser = new com.atlauncher.gui.dialogs.ModsChooser(this);
+
+            if (this.shareCode != null) {
+                modsChooser.applyShareCode(shareCode);
+            }
+
+            if (this.showModsChooser) {
+                modsChooser.setVisible(true);
+            }
+
+            if (modsChooser.wasClosed()) {
+                this.cancel(true);
+                return;
+            }
+            this.selectedMods = modsChooser.getSelectedMods();
+            this.unselectedMods = modsChooser.getUnselectedMods();
+        }
+
+        if (!hasOptional) {
+            this.selectedMods = this.allMods;
+        }
+
+        modsInstalled = new ArrayList<>();
+        for (com.atlauncher.data.json.Mod mod : this.selectedMods) {
+            String file = mod.getFile();
+            if (this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.upper) {
+                file = file.substring(0, file.lastIndexOf(".")).toUpperCase() + file.substring(file.lastIndexOf("."));
+            } else if (this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
+                file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
+            }
+            this.modsInstalled
+                    .add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
+                            com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
+                            this.packVersion.getColour(mod.getColour()), mod.getDescription(), false, false, true,
+                            mod.getCurseModId(), mod.getCurseFileId()));
+        }
+
+        if (this.isReinstall && instance.hasCustomMods()
+                && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion())) {
+            for (com.atlauncher.data.DisableableMod mod : instance.getCustomDisableableMods()) {
+                modsInstalled.add(mod);
+            }
+        }
+    }
+
+    private Boolean install() throws Exception {
         this.instanceIsCorrupt = true; // From this point on the instance has become corrupt
 
         getTempDirectory().mkdirs(); // Make the temp directory
         backupSelectFiles();
         makeDirectories();
         addPercent(5);
-        if (this.jsonVersion.hasLoader()) {
-            setMainClass();
-        }
-        setExtraArguments();
-        if (!this.isServer && this.version.getMinecraftVersion().getMojangVersion().getAssetIndex() != null) {
-            downloadResources(); // Download Minecraft Resources
-            if (isCancelled()) {
-                return false;
-            }
-        }
 
-        downloadMinecraft(); // Download Minecraft
+        determineMainClass();
+        determineArguments();
+
+        downloadResources();
         if (isCancelled()) {
             return false;
         }
 
-        if (!this.isServer && this.version.getMinecraftVersion().getMojangVersion().hasLogging()) {
-            downloadLoggingClient(); // Download logging client
+        downloadMinecraft();
+        if (isCancelled()) {
+            return false;
         }
 
-        if (this.jsonVersion.hasLoader()) {
-            try {
-                this.loader = this.jsonVersion.getLoader().getNewLoader(new File(this.getTempDirectory(), "loader"), this,
-                        this.loaderVersion);
-            } catch (Throwable e) {
-                LogManager.logStackTrace(e);
-                LogManager.error("Cannot install instance because the loader failed to create");
-                return false;
-            }
-
-            downloadLoader(); // Download Loader
-            if (isCancelled()) {
-                return false;
-            }
-
-            installLoader(); // Install Loader
-            if (isCancelled()) {
-                return false;
-            }
+        downloadLoggingClient();
+        if (isCancelled()) {
+            return false;
         }
 
         downloadLibraries(); // Download Libraries
@@ -169,7 +324,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
         if (isCancelled()) {
             return false;
         }
-        if (this.jsonVersion.shouldCaseAllFiles()) {
+        if (this.packVersion.shouldCaseAllFiles()) {
             doCaseConversions(getModsDirectory());
         }
         if (isServer && hasJarMods()) {
@@ -202,7 +357,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
         if (isCancelled()) {
             return false;
         }
-        if (!this.jsonVersion.hasNoConfigs()) {
+        if (!this.packVersion.hasNoConfigs()) {
             configurePack();
         }
         if (isCancelled()) {
@@ -227,71 +382,220 @@ public class NewInstanceInstaller extends InstanceInstaller {
         // add in the deselected mods to the instance.json
         for (com.atlauncher.data.json.Mod mod : this.unselectedMods) {
             String file = mod.getFile();
-            if (this.jsonVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.upper) {
+            if (this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.upper) {
                 file = file.substring(0, file.lastIndexOf(".")).toUpperCase() + file.substring(file.lastIndexOf("."));
-            } else if (this.jsonVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
+            } else if (this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
 
             this.modsInstalled
                     .add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
                             com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
-                            this.jsonVersion.getColour(mod.getColour()), mod.getDescription(), false, false, false,
+                            this.packVersion.getColour(mod.getColour()), mod.getDescription(), false, false, false,
                             mod.getCurseModId(), mod.getCurseFileId()));
         }
 
         return true;
     }
 
-    private void determineModsToBeInstalled() {
-        this.allMods = sortMods(
-                (this.isServer ? this.jsonVersion.getServerInstallMods() : this.jsonVersion.getClientInstallMods()));
+    private void determineMainClass() {
+        if (this.packVersion.mainClass != null) {
+            if (this.packVersion.mainClass.depends == null && this.packVersion.mainClass.dependsGroup == null) {
+                this.mainClass = this.packVersion.mainClass.mainClass;
+            } else if (this.packVersion.mainClass.depends != null) {
+                String depends = this.packVersion.mainClass.depends;
 
-        boolean hasOptional = this.allMods.stream().anyMatch(mod -> mod.isOptional());
+                if (this.selectedMods.stream().filter(mod -> mod.name.equals(depends)).count() != 0) {
+                    this.mainClass = this.packVersion.mainClass.mainClass;
+                }
+            } else if (this.packVersion.getMainClass().hasDependsGroup()) {
+                String dependsGroup = this.packVersion.mainClass.dependsGroup;
 
-        if (this.allMods.size() != 0 && hasOptional) {
-            com.atlauncher.gui.dialogs.ModsChooser modsChooser = new com.atlauncher.gui.dialogs.ModsChooser(this);
-
-            if (this.shareCode != null) {
-                modsChooser.applyShareCode(shareCode);
-            }
-
-            if (this.showModsChooser) {
-                modsChooser.setVisible(true);
-            }
-
-            if (modsChooser.wasClosed()) {
-                this.cancel(true);
-                return;
-            }
-            this.selectedMods = modsChooser.getSelectedMods();
-            this.unselectedMods = modsChooser.getUnselectedMods();
-        }
-
-        if (!hasOptional) {
-            this.selectedMods = this.allMods;
-        }
-
-        modsInstalled = new ArrayList<>();
-        for (com.atlauncher.data.json.Mod mod : this.selectedMods) {
-            String file = mod.getFile();
-            if (this.jsonVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.upper) {
-                file = file.substring(0, file.lastIndexOf(".")).toUpperCase() + file.substring(file.lastIndexOf("."));
-            } else if (this.jsonVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
-                file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
-            }
-            this.modsInstalled
-                    .add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
-                            com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
-                            this.jsonVersion.getColour(mod.getColour()), mod.getDescription(), false, false, true,
-                            mod.getCurseModId(), mod.getCurseFileId()));
-        }
-
-        if (this.isReinstall && instance.hasCustomMods()
-                && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion())) {
-            for (com.atlauncher.data.DisableableMod mod : instance.getCustomDisableableMods()) {
-                modsInstalled.add(mod);
+                if (this.selectedMods.stream().filter(mod -> mod.name.equals(dependsGroup)).count() != 0) {
+                    this.mainClass = this.packVersion.mainClass.mainClass;
+                }
             }
         }
+
+        // if none set by pack, then use the minecraft one
+        if (this.mainClass == null) {
+            this.mainClass = this.version.getMinecraftVersion().getMojangVersion().getMainClass();
+        }
+    }
+
+    private void determineArguments() {
+        this.arguments = new Arguments();
+
+        if (this.loader != null) {
+            if (this.loader.useMinecraftArguments()) {
+                if (this.minecraftVersion.arguments.game != null && this.minecraftVersion.arguments.game.size() != 0) {
+                    this.arguments.game.addAll(this.minecraftVersion.arguments.game);
+                }
+
+                if (this.minecraftVersion.arguments.jvm != null && this.minecraftVersion.arguments.jvm.size() != 0) {
+                    this.arguments.jvm.addAll(this.minecraftVersion.arguments.jvm);
+                }
+            }
+
+            Arguments loaderArguments = this.loader.getArguments();
+
+            if (loaderArguments != null) {
+                if (loaderArguments.game != null && loaderArguments.game.size() != 0) {
+                    this.arguments.game.addAll(loaderArguments.game);
+                }
+
+                if (loaderArguments.jvm != null && loaderArguments.jvm.size() != 0) {
+                    this.arguments.jvm.addAll(loaderArguments.jvm);
+                }
+            }
+        } else {
+            if (this.minecraftVersion.arguments.game != null && this.minecraftVersion.arguments.game.size() != 0) {
+                this.arguments.game.addAll(this.minecraftVersion.arguments.game);
+            }
+
+            if (this.minecraftVersion.arguments.jvm != null && this.minecraftVersion.arguments.jvm.size() != 0) {
+                this.arguments.jvm.addAll(this.minecraftVersion.arguments.jvm);
+            }
+        }
+
+        if (this.packVersion.extraArguments != null) {
+            boolean add = false;
+
+            if (this.packVersion.extraArguments.depends == null
+                    && this.packVersion.extraArguments.dependsGroup == null) {
+                add = true;
+            } else if (this.packVersion.extraArguments.depends == null) {
+                String depends = this.packVersion.extraArguments.depends;
+
+                if (this.selectedMods.stream().filter(mod -> mod.name.equals(depends)).count() != 0) {
+                    add = true;
+                }
+            } else if (this.packVersion.extraArguments.dependsGroup == null) {
+                String dependsGroup = this.packVersion.extraArguments.dependsGroup;
+
+                if (this.selectedMods.stream().filter(mod -> mod.name.equals(dependsGroup)).count() != 0) {
+                    add = true;
+                }
+            }
+
+            if (add) {
+                this.arguments.game.addAll(Arrays.asList(this.packVersion.extraArguments.arguments.split(" ")).stream()
+                        .map(argument -> new ArgumentRule(argument)).collect(Collectors.toList()));
+            }
+        }
+    }
+
+    protected void downloadResources() throws Exception {
+        if (this.isServer || this.minecraftVersion.assetIndex == null) {
+            return;
+        }
+
+        fireTask(Language.INSTANCE.localize("instance.downloadingresources"));
+        fireSubProgressUnknown();
+
+        MojangAssetIndex assetIndex = this.minecraftVersion.assetIndex;
+        File indexFile = new File(App.settings.getIndexesAssetsDir(), assetIndex.id + ".json");
+
+        Downloadable assetIndexDownloadable = new Downloadable(assetIndex.url, indexFile, assetIndex.sha1,
+                (int) assetIndex.size, this, false);
+
+        if (assetIndexDownloadable.needToDownload()) {
+            assetIndexDownloadable.download();
+        }
+
+        AssetIndex index = this.gson.fromJson(new FileReader(indexFile), AssetIndex.class);
+
+        List<Downloadable> resourceDownloads = index.objects.entrySet().stream().map(entry -> {
+            AssetObject object = entry.getValue();
+            String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, entry.getKey());
+            String filename = object.hash.substring(0, 2) + "/" + object.hash;
+            File file = new File(App.settings.getObjectsAssetsDir(), filename);
+
+            return new Downloadable(url, file, object.hash, (int) object.size, this, false);
+        }).collect(Collectors.toList());
+
+        ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+        totalBytes = 0;
+        downloadedBytes = 0;
+
+        for (Downloadable download : resourceDownloads) {
+            if (download.needToDownload()) {
+                totalBytes += download.getFilesize();
+            }
+        }
+
+        fireSubProgress(0); // Show the subprogress bar
+        for (final Downloadable download : resourceDownloads) {
+            executor.execute(() -> {
+                if (download.needToDownload()) {
+                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
+                    download.download(true);
+                } else {
+                    download.copyFile();
+                }
+            });
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        hideSubProgressBar();
+    }
+
+    private void downloadMinecraft() {
+        fireTask(Language.INSTANCE.localize("instance.downloadingminecraft"));
+        fireSubProgressUnknown();
+        totalBytes = 0;
+        downloadedBytes = 0;
+
+        MojangDownloads downloads = this.minecraftVersion.downloads;
+
+        MojangDownload mojangDownload = this.isServer ? downloads.server : downloads.client;
+
+        Downloadable download = new Downloadable(mojangDownload.url, getMinecraftJarLibrary(), mojangDownload.sha1,
+                (int) mojangDownload.size, this, false, getMinecraftJar(), this.isServer);
+
+        if (download.needToDownload()) {
+            totalBytes += download.getFilesize();
+            download.download(true);
+        }
+
+        hideSubProgressBar();
+    }
+
+    public File getMinecraftJar() {
+        if (isServer) {
+            return new File(getRootDirectory(), String.format("minecraft_server.%s.jar", this.minecraftVersion.id));
+        }
+
+        return new File(getRootDirectory(), String.format("%s.jar", this.minecraftVersion.id));
+    }
+
+    private void downloadLoggingClient() {
+        if (this.isServer || this.minecraftVersion.logging == null) {
+            return;
+        }
+
+        fireTask(Language.INSTANCE.localize("instance.downloadingloggingconfig"));
+        fireSubProgressUnknown();
+        totalBytes = 0;
+        downloadedBytes = 0;
+
+        LoggingFile loggingFile = this.minecraftVersion.logging.client.file;
+
+        Downloadable download = new Downloadable(loggingFile.url,
+                new File(App.settings.getLogConfigsDir(), loggingFile.id), loggingFile.sha1, (int) loggingFile.size,
+                this, false);
+
+        if (download.needToDownload()) {
+            totalBytes += download.getFilesize();
+            download.download(true);
+        }
+
+        hideSubProgressBar();
+    }
+
+    private void hideSubProgressBar() {
+        fireSubProgress(-1);
     }
 }

@@ -22,24 +22,6 @@ import java.io.File;
 import com.atlauncher.utils.Hashing;
 
 public class AssetObject {
-    private String hash;
-    private long size;
-
-    public String getHash() {
-        return hash;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public boolean needToDownload(File file) {
-        if (!file.exists() || !file.isFile()) {
-            return true;
-        }
-        if (file.length() != this.size) {
-            return true;
-        }
-        return !Hashing.sha1(file.toPath()).equals(Hashing.HashCode.fromString(this.hash));
-    }
+    public String hash;
+    public long size;
 }

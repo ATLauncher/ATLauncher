@@ -24,25 +24,12 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class LoggingClient {
-
-    private String argument;
-    private LoggingFile file;
-    private String type;
-
-    public String getArgument() {
-        return this.argument;
-    }
-
-    public LoggingFile getFile() {
-        return this.file;
-    }
-
-    public String getType() {
-        return this.type;
-    }
+    public String argument;
+    public LoggingFile file;
+    public String type;
 
     public File getLogFile() {
-        return new File(App.settings.getLogConfigsDir(), this.getFile().getId());
+        return new File(App.settings.getLogConfigsDir(), this.file.id);
     }
 
     public String getCompiledArgument() {

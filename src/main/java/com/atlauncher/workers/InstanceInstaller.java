@@ -545,7 +545,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return true; // No other recommended mods found in the group
     }
 
-    protected void downloadResources() {
+    protected void downloadResources() throws Exception {
         fireTask(Language.INSTANCE.localize("instance.downloadingresources"));
         fireSubProgressUnknown();
         ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
@@ -576,7 +576,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    protected void downloadLoader() {
+    private void downloadLoader() {
         fireTask(Language.INSTANCE.localize("instance.downloadingloader"));
         fireSubProgressUnknown();
         totalBytes = 0;
@@ -986,7 +986,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return libraries;
     }
 
-    public void downloadMinecraft() {
+    private void downloadMinecraft() {
         totalBytes = 0;
         downloadedBytes = 0;
         MojangDownloads downloads = this.version.getMinecraftVersion().getMojangVersion().getDownloads();
@@ -1019,7 +1019,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    public void downloadLoggingClient() {
+    private void downloadLoggingClient() {
         totalBytes = 0;
         downloadedBytes = 0;
         LoggingFile loggingFile = this.version.getMinecraftVersion().getMojangVersion().getLogging().getClient()
@@ -1623,21 +1623,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         firePropertyChange("doing", null, name);
     }
 
-    private void fireProgress(int percent) {
+    protected void fireProgress(int percent) {
         if (percent > 100) {
             percent = 100;
         }
         firePropertyChange("progress", null, percent);
     }
 
-    private void fireSubProgress(int percent) {
+    protected void fireSubProgress(int percent) {
         if (percent > 100) {
             percent = 100;
         }
         firePropertyChange("subprogress", null, percent);
     }
 
-    private void fireSubProgress(int percent, String paint) {
+    protected void fireSubProgress(int percent, String paint) {
         if (percent > 100) {
             percent = 100;
         }

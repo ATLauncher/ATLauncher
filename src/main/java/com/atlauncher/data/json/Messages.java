@@ -28,8 +28,8 @@ import com.atlauncher.utils.OS;
 
 @Json
 public class Messages {
-    private String install;
-    private String update;
+    public String install;
+    public String update;
 
     public boolean hasInstallMessage() {
         return this.install != null;
