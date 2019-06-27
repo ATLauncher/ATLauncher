@@ -158,6 +158,7 @@ instance.downloadingloaderlibraries=Downloading Loader Libraries
 instance.installingloader=Installing Loader (May Take A While)
 instance.downloadinglibraries=Downloading Libraries
 instance.downloadingmods=Downloading Mods
+instance.installingmods=Installing Mods
 instance.downloadingresources=Downloading Resources (May Take A While)
 instance.addingmods=Adding Mods For %s
 instance.editingmods=Editing Mods For %s

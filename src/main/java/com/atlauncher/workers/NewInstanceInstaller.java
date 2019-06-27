@@ -32,6 +32,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
+import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.AssetIndex;
@@ -260,30 +261,11 @@ public class NewInstanceInstaller extends InstanceInstaller {
             return false;
         }
 
-        if (this.isServer && this.hasJarMods()) {
-            fireTask(Language.INSTANCE.localize("server.extractingjar"));
-            fireSubProgressUnknown();
-            Utils.unzip(getMinecraftJar(), getTempJarDirectory());
-        }
-        if (!this.isServer && this.hasJarMods() && !this.hasForge()) {
-            deleteMetaInf();
-        }
-        addPercent(5);
-        if (selectedMods.size() != 0) {
-            addPercent(40);
-            fireTask(Language.INSTANCE.localize("instance.downloadingmods"));
-            downloadMods(selectedMods);
-            if (isCancelled()) {
-                return false;
-            }
-            addPercent(40);
-            installMods();
-        } else {
-            addPercent(80);
-        }
+        installMods();
         if (isCancelled()) {
             return false;
         }
+
         if (this.packVersion.shouldCaseAllFiles()) {
             doCaseConversions(getModsDirectory());
         }
@@ -669,6 +651,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
     private List<Downloadable> getDownloadableLibraries() {
         return this.getLibraries().stream().map(library -> {
+            System.out.println(Gsons.MINECRAFT.toJson(library));
             return new Downloadable(library.downloads.artifact.url,
                     new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
                     library.downloads.artifact.sha1, library.downloads.artifact.size, this, false);
@@ -711,6 +694,57 @@ public class NewInstanceInstaller extends InstanceInstaller {
                     }
                 });
             }
+        });
+
+        hideSubProgressBar();
+    }
+
+    private void downloadMods() {
+        addPercent(25);
+
+        if (selectedMods.size() == 0) {
+            return;
+        }
+
+        fireTask(Language.INSTANCE.localize("instance.downloadingmods"));
+        fireSubProgressUnknown();
+        totalBytes = 0;
+        downloadedBytes = 0;
+
+        List<Downloadable> downloads = this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser)
+                .map(mod -> {
+                    return new Downloadable(mod.url, new File(App.settings.getDownloadsDir(), mod.getFile()), mod.md5,
+                            mod.filesize, this, false);
+                }).collect(Collectors.toList());
+
+        totalBytes = downloads.stream().map(download -> download.getFilesize()).reduce(0, Integer::sum);
+
+        fireSubProgress(0);
+
+        downloads.parallelStream().forEach(download -> {
+            if (download.needToDownload()) {
+                download.download();
+            }
+        });
+
+        hideSubProgressBar();
+    }
+
+    private void installMods() {
+        addPercent(25);
+
+        if (this.selectedMods.size() == 0) {
+            return;
+        }
+
+        fireTask(Language.INSTANCE.localize("instance.installingmods"));
+        fireSubProgressUnknown();
+
+        int subPercentPerMod = this.selectedMods.size() / 100;
+
+        this.selectedMods.parallelStream().forEach(mod -> {
+            addSubPercent(subPercentPerMod);
+            mod.install(this);
         });
 
         hideSubProgressBar();

@@ -110,6 +110,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     protected String extraArguments = null;
     protected String mainClass = null;
     protected int percent = 0; // Percent done installing
+    protected int subPercent = 0; // Percent done sub installing
     protected List<Mod> allMods;
     protected List<Mod> selectedMods;
     protected List<Mod> unselectedMods = new ArrayList<>();
@@ -509,7 +510,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
-    protected void installMods() {
+    private void installMods() {
         for (Mod mod : this.selectedMods) {
             if (!isCancelled()) {
                 fireTask(Language.INSTANCE.localize("common.installing") + " " + mod.getName());
@@ -705,7 +706,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    protected void downloadMods(List<Mod> mods) {
+    private void downloadMods() {
+        List<Mod> mods = this.selectedMods;
         fireSubProgressUnknown();
         ExecutorService executor;
         List<Downloadable> downloads = getDownloadableMods();
@@ -1442,7 +1444,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         if (selectedMods.size() != 0) {
             addPercent(40);
             fireTask(Language.INSTANCE.localize("instance.downloadingmods"));
-            downloadMods(selectedMods);
+            downloadMods();
             if (isCancelled()) {
                 return false;
             }
@@ -1660,10 +1662,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public void setSubPercent(int percent) {
-        if (percent > 100) {
-            percent = 100;
+        this.subPercent = percent;
+        if (this.subPercent > 100) {
+            this.subPercent = 100;
         }
-        fireSubProgress(percent);
+        fireSubProgress(this.subPercent);
+    }
+
+    public void addSubPercent(int percent) {
+        this.subPercent = this.subPercent + percent;
+        if (this.subPercent > 100) {
+            this.subPercent = 100;
+        }
+
+        if (this.subPercent > 100) {
+            this.subPercent = 100;
+        }
+        fireSubProgress(this.subPercent);
     }
 
     public void setDownloadDone() {
