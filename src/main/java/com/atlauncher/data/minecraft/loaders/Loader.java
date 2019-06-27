@@ -32,8 +32,6 @@ public interface Loader {
 
     public void downloadAndExtractInstaller();
 
-    public List<Downloadable> getDownloadableLibraries();
-
     public void runProcessors();
 
     public List<Library> getLibraries();

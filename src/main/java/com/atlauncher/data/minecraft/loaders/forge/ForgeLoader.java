@@ -95,7 +95,7 @@ public class ForgeLoader implements Loader {
 
             String contents = promotionsSlimJson.getContents();
 
-            return Gsons.DEFAULT.fromJson(contents, ForgePromotions.class);
+            return Gsons.MINECRAFT.fromJson(contents, ForgePromotions.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
         }
@@ -136,68 +136,30 @@ public class ForgeLoader implements Loader {
 
         this.tempDir.mkdir();
         Utils.unzip(saveTo, this.tempDir);
+
+        ForgeInstallProfile installProfile = getInstallProfile();
+        installProfile.getLibraries().stream().forEach(library -> {
+            // copy over any local files from the loader zip file
+            if (library.name.equalsIgnoreCase(installProfile.install.path)) {
+                Utils.copyFile(new File(tempDir, installProfile.install.filePath),
+                        new File(App.settings.getGameLibrariesDir(),
+                                library.downloads.artifact.path), true);
+                        
+            }
+        });
     }
 
     public ForgeInstallProfile getInstallProfile() {
         ForgeInstallProfile installProfile = null;
 
         try {
-            installProfile = Gsons.DEFAULT.fromJson(new FileReader(new File(this.tempDir, "install_profile.json")),
+            installProfile = Gsons.MINECRAFT.fromJson(new FileReader(new File(this.tempDir, "install_profile.json")),
                     ForgeInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
         }
 
         return installProfile;
-    }
-
-    @Override
-    public List<Downloadable> getDownloadableLibraries() {
-        List<Downloadable> librariesToDownload = new ArrayList<>();
-
-        ForgeInstallProfile installProfile = this.getInstallProfile();
-
-        File librariesDirectory = this.instanceInstaller.isServer() ? this.instanceInstaller.getLibrariesDirectory()
-                : App.settings.getGameLibrariesDir();
-
-        for (ForgeLibrary library : installProfile.getLibraries()) {
-            String libraryPath = library.downloads.artifact.path;
-            LogManager.debug(libraryPath);
-            File downloadTo = new File(App.settings.getGameLibrariesDir(), libraryPath);
-            File finalDownloadTo = new File(librariesDirectory, libraryPath);
-
-            // forge universal
-            if (library.name.equals(installProfile.install.path)) {
-                File extractedLibraryFile = new File(this.tempDir, installProfile.install.filePath);
-
-                if (extractedLibraryFile.exists()) {
-                    if (!finalDownloadTo.exists()) {
-                        new File(finalDownloadTo.getAbsolutePath().substring(0,
-                                finalDownloadTo.getAbsolutePath().lastIndexOf(File.separatorChar))).mkdirs();
-                        Utils.copyFile(extractedLibraryFile, finalDownloadTo, true);
-                    }
-
-                    if (this.instanceInstaller.isServer()) {
-                        Utils.copyFile(extractedLibraryFile,
-                                new File(this.instanceInstaller.getRootDirectory(), installProfile.install.filePath),
-                                true);
-                    }
-                } else {
-                    LogManager.warn("Cannot resolve Forge loader install profile library with name of " + library.name);
-                }
-                continue;
-            }
-
-            String url = library.downloads.artifact.url;
-
-            if (library.isUsingPackXz()) {
-                librariesToDownload.add(new ForgeXzDownloadable(url, downloadTo, instanceInstaller, finalDownloadTo));
-            } else {
-                librariesToDownload.add(new HashableDownloadable(url, downloadTo, instanceInstaller, finalDownloadTo));
-            }
-        }
-
-        return librariesToDownload;
     }
 
     @Override
@@ -250,7 +212,7 @@ public class ForgeLoader implements Loader {
             java.lang.reflect.Type type = new TypeToken<APIResponse<List<ATLauncherApiForgeVersions>>>() {
             }.getType();
 
-            APIResponse<List<ATLauncherApiForgeVersions>> data = Gsons.DEFAULT_ALT.fromJson(contents, type);
+            APIResponse<List<ATLauncherApiForgeVersions>> data = Gsons.MINECRAFT.fromJson(contents, type);
 
             return data.getData().stream().map(version -> new LoaderVersion(version.getVersion(),
                     version.getRawVersion(), version.isRecommended(), "Forge")).collect(Collectors.toList());

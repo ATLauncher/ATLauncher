@@ -77,7 +77,7 @@ public class FabricLoader implements Loader {
                     String.format("https://meta.fabricmc.net/v2/versions/loader/%s/%s", this.minecraft, version),
                     false);
 
-            return Gsons.DEFAULT_ALT.fromJson(loaderVersion.getContents(), FabricMetaVersion.class);
+            return Gsons.MINECRAFT.fromJson(loaderVersion.getContents(), FabricMetaVersion.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
         }
@@ -99,7 +99,7 @@ public class FabricLoader implements Loader {
             java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
             }.getType();
 
-            List<FabricMetaVersion> loaders = Gsons.DEFAULT_ALT.fromJson(contents, type);
+            List<FabricMetaVersion> loaders = Gsons.MINECRAFT.fromJson(contents, type);
 
             if (loaders == null || loaders.size() == 0) {
                 return null;
@@ -111,15 +111,6 @@ public class FabricLoader implements Loader {
         }
 
         return null;
-    }
-
-    @Override
-    public List<Downloadable> getDownloadableLibraries() {
-        return this.getLibraries().stream().map(library -> {
-            return new HashableDownloadable(library.downloads.artifact.url,
-                    new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
-                    this.instanceInstaller);
-        }).collect(Collectors.toList());
     }
 
     @Override
@@ -257,7 +248,7 @@ public class FabricLoader implements Loader {
             java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
             }.getType();
 
-            List<FabricMetaVersion> versions = Gsons.DEFAULT_ALT.fromJson(contents, type);
+            List<FabricMetaVersion> versions = Gsons.MINECRAFT.fromJson(contents, type);
 
             return versions.stream().map(version -> new LoaderVersion(version.loader.version, false, "Fabric"))
                     .collect(Collectors.toList());

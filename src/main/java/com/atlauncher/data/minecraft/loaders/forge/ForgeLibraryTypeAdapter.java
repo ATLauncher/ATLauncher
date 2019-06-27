@@ -51,11 +51,18 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
 
             artifact.path = Utils.convertMavenIdentifierToPath(object.get("name").getAsString());
 
+            if (library.name.startsWith("net.minecraftforge:forge:") && !object.has("clientreq")
+                    && !object.has("serverreq") && !object.has("checksums")) {
+                artifact.path = artifact.path.substring(0, artifact.path.lastIndexOf(".jar")) + "-universal.jar";
+            }
+
             if (object.has("url")) {
                 artifact.url = object.get("url").getAsString() + artifact.path;
             } else {
                 artifact.url = Constants.MINECRAFT_LIBRARIES + artifact.path;
             }
+
+            downloads.artifact = artifact;
 
             library.downloads = downloads;
 

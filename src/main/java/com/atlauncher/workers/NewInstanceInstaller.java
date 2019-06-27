@@ -31,6 +31,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.ForgeXzDownloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.minecraft.ArgumentRule;
@@ -49,6 +50,7 @@ import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.utils.Utils;
 
 import org.zeroturnaround.zip.NameMapper;
@@ -651,7 +653,12 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
     private List<Downloadable> getDownloadableLibraries() {
         return this.getLibraries().stream().map(library -> {
-            System.out.println(Gsons.MINECRAFT.toJson(library));
+            if (library instanceof ForgeLibrary && ((ForgeLibrary) library).isUsingPackXz()) {
+                return new ForgeXzDownloadable(library.downloads.artifact.url,
+                        new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
+                        library.downloads.artifact.sha1, library.downloads.artifact.size, this, null);
+            }
+
             return new Downloadable(library.downloads.artifact.url,
                     new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
                     library.downloads.artifact.sha1, library.downloads.artifact.size, this, false);

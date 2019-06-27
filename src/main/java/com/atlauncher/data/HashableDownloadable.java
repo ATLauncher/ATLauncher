@@ -37,6 +37,11 @@ public class HashableDownloadable extends Downloadable {
         super(url, file, null, -1, instanceInstaller, false, copyTo, copyTo != null ? true : false);
     }
 
+    public HashableDownloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller,
+            File copyTo) {
+        super(url, file, hash, size, instanceInstaller, false, copyTo, copyTo != null ? true : false);
+    }
+
     public HashableDownloadable(String url, File file, InstanceInstaller instanceInstaller) {
         this(url, file, instanceInstaller, null);
     }

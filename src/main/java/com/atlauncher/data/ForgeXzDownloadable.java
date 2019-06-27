@@ -28,6 +28,16 @@ public class ForgeXzDownloadable extends HashableDownloadable {
     private File finalFile;
     private File copyTo;
 
+    public ForgeXzDownloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller,
+            File copyTo) {
+        super(url + ".pack.xz", new File(file.getAbsolutePath() + ".pack.xz"), hash, size, instanceInstaller, copyTo);
+
+        this.packXzFile = new File(file.getAbsolutePath() + ".pack.xz");
+        this.packFile = new File(file.getAbsolutePath() + ".pack");
+        this.finalFile = file;
+        this.copyTo = copyTo;
+    }
+
     public ForgeXzDownloadable(String url, File file, InstanceInstaller instanceInstaller, File copyTo) {
         super(url + ".pack.xz", new File(file.getAbsolutePath() + ".pack.xz"), instanceInstaller);
 
