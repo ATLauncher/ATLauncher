@@ -17,11 +17,9 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import com.atlauncher.App;
 import com.atlauncher.utils.OS;
 
 public class Library {
@@ -39,75 +37,39 @@ public class Library {
         return this.rules.stream().filter(rule -> rule.applies()).allMatch(rule -> rule.action == Action.ALLOW);
     }
 
-    public boolean shouldExtract() {
-        return this.extract != null;
-    }
-
-    public boolean hasArtifact() {
-        return this.downloads != null && this.downloads.artifact != null;
-    }
-
-    public boolean hasClassifier(String classifier) {
-        return this.downloads != null && this.downloads.classifiers.containsKey(classifier);
-    }
-
-    public String getURL() {
-        if (this.hasArtifact()) {
-            return this.downloads.artifact.url;
+    public boolean hasNativeForOS() {
+        if (this.natives == null) {
+            return false;
         }
 
-        String[] parts = this.name.split(":", 3);
-
-        return MojangConstants.LIBRARIES_BASE.getURL(String.format("%1$s/%2$s/%3$s/%2$s-%3$s%4$s.jar",
-                parts[0].replace(".", "/"), parts[1], parts[2], this.getClassifier()));
-    }
-
-    public File getFile() {
-        if (this.hasArtifact()) {
-            return new File(App.settings.getGameLibrariesDir(), this.downloads.artifact.path);
+        if (OS.isWindows() && this.natives.containsKey("windows")) {
+            return true;
         }
 
-        String[] parts = this.name.split(":", 3);
-
-        return new File(App.settings.getLibrariesDir(),
-                String.format("%s-%s%s.jar", parts[1], parts[2], this.getClassifier()));
-    }
-
-    public String getPathFromRoot() {
-        if (this.hasArtifact()) {
-            return this.downloads.artifact.path;
+        if (OS.isLinux() && this.natives.containsKey("linux")) {
+            return true;
         }
 
-        String[] parts = this.name.split(":", 3);
-
-        return String.format("%s-%s%s.jar", parts[1], parts[2], this.getClassifier());
-    }
-
-    public String getNativeURL() {
-        return this.getNativeClassifier().url;
-    }
-
-    public File getNativeFile() {
-        return new File(App.settings.getGameLibrariesDir(), this.getNativeClassifier().path);
-    }
-
-    public String getNativePathFromRoot() {
-        return this.getNativeClassifier().path;
-    }
-
-    public Download getNativeClassifier() {
-        return this.downloads.classifiers.get(this.natives.get(OperatingSystem.getOS().name));
-    }
-
-    public boolean hasNatives() {
-        return this.natives != null && this.natives.containsKey(OperatingSystem.getOS().name)
-                && this.hasClassifier(this.natives.get(OperatingSystem.getOS().name));
-    }
-
-    public String getClassifier() {
-        if (this.natives == null || !this.natives.containsKey(OperatingSystem.getOS().name)) {
-            return "";
+        if (OS.isMac() && this.natives.containsKey("osx")) {
+            return true;
         }
-        return "-" + this.natives.get(OperatingSystem.getOS().name).replace("${arch}", OS.getArch());
+
+        return false;
+    }
+
+    public Download getNativeDownloadForOS() {
+        if (OS.isWindows() && this.natives != null && this.natives.containsKey("windows")) {
+            return this.downloads.classifiers.get(this.natives.get("windows"));
+        }
+
+        if (OS.isLinux() && this.natives != null && this.natives.containsKey("osx")) {
+            return this.downloads.classifiers.get(this.natives.get("osx"));
+        }
+
+        if (OS.isMac() && this.natives != null && this.natives.containsKey("linux")) {
+            return this.downloads.classifiers.get(this.natives.get("linux"));
+        }
+
+        return null;
     }
 }

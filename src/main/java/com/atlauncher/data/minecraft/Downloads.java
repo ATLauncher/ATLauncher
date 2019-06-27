@@ -22,16 +22,4 @@ import java.util.Map;
 public class Downloads {
     public Download artifact;
     public Map<String, Download> classifiers;
-
-    public boolean hasArtifact() {
-        return this.artifact != null;
-    }
-
-    public boolean hasClassifier(String name) {
-        return this.classifiers.containsKey(name);
-    }
-
-    public Download getClassifier(String name) {
-        return this.classifiers.get(name);
-    }
 }

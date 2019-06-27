@@ -18,12 +18,10 @@
 package com.atlauncher.workers;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -51,8 +49,9 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.utils.Utils;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
+
+import org.zeroturnaround.zip.NameMapper;
+import org.zeroturnaround.zip.ZipUtil;
 
 public class NewInstanceInstaller extends InstanceInstaller {
     public List<Library> libraries = new ArrayList<>();
@@ -634,6 +633,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         ExecutorService executor;
         List<Downloadable> downloads = getDownloadableLibraries();
+        downloads.addAll(getDownloadableNativeLibraries());
 
         executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
 
@@ -675,6 +675,15 @@ public class NewInstanceInstaller extends InstanceInstaller {
         }).collect(Collectors.toList());
     }
 
+    private List<Downloadable> getDownloadableNativeLibraries() {
+        return this.getLibraries().stream().filter(library -> library.hasNativeForOS()).map(library -> {
+            Download download = library.getNativeDownloadForOS();
+
+            return new Downloadable(download.url, new File(App.settings.getGameLibrariesDir(), download.path),
+                    download.sha1, download.size, this, false);
+        }).collect(Collectors.toList());
+    }
+
     private void organiseLibraries() {
         addPercent(5);
         fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
@@ -689,6 +698,18 @@ public class NewInstanceInstaller extends InstanceInstaller {
                 serverFile.getParentFile().mkdirs();
 
                 Utils.copyFile(libraryFile, serverFile, true);
+            } else if (library.hasNativeForOS()) {
+                File nativeFile = new File(App.settings.getGameLibrariesDir(), library.getNativeDownloadForOS().path);
+
+                ZipUtil.unpack(nativeFile, this.getNativesDirectory(), new NameMapper() {
+                    public String map(String name) {
+                        if (library.extract != null && library.extract.shouldExclude(name)) {
+                            return null;
+                        }
+
+                        return name;
+                    }
+                });
             }
         });
 
