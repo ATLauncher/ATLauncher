@@ -137,14 +137,17 @@ public class ForgeLoader implements Loader {
         this.tempDir.mkdir();
         Utils.unzip(saveTo, this.tempDir);
 
+        this.copyLocalLibraries();
+    }
+
+    public void copyLocalLibraries() {
         ForgeInstallProfile installProfile = getInstallProfile();
         installProfile.getLibraries().stream().forEach(library -> {
             // copy over any local files from the loader zip file
-            if (library.name.equalsIgnoreCase(installProfile.install.path)) {
+            if (installProfile.install != null && installProfile.install.filePath != null
+                    && library.name.equalsIgnoreCase(installProfile.install.path)) {
                 Utils.copyFile(new File(tempDir, installProfile.install.filePath),
-                        new File(App.settings.getGameLibrariesDir(),
-                                library.downloads.artifact.path), true);
-                        
+                        new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path), true);
             }
         });
     }

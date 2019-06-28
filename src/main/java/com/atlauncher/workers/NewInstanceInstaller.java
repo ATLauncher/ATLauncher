@@ -70,6 +70,8 @@ public class NewInstanceInstaller extends InstanceInstaller {
             com.atlauncher.data.PackVersion version, boolean isReinstall, boolean isServer, String shareCode,
             boolean showModsChooser, com.atlauncher.data.loaders.LoaderVersion loaderVersion) {
         super(instanceName, pack, version, isReinstall, isServer, shareCode, showModsChooser, loaderVersion);
+
+        this.loaderVersion = Gsons.MINECRAFT.fromJson(Gsons.DEFAULT.toJson(loaderVersion), LoaderVersion.class);
     }
 
     public NewInstanceInstaller(String instanceName, com.atlauncher.data.Pack pack,
@@ -88,6 +90,8 @@ public class NewInstanceInstaller extends InstanceInstaller {
             downloadPackVersionJson();
 
             downloadMinecraftVersionJson();
+
+            System.out.println(this.loaderVersion);
 
             if (this.packVersion.loader != null) {
                 this.loader = this.packVersion.getLoader().getNewLoader(new File(this.getTempDirectory(), "loader"),

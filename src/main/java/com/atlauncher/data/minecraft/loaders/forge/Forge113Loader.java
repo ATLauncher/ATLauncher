@@ -21,18 +21,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
-import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.minecraft.Arguments;
-import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Library;
-import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -50,11 +46,24 @@ public class Forge113Loader extends ForgeLoader {
         return installProfile;
     }
 
+    @Override
+    public void copyLocalLibraries() {
+        Version version = getVersion();
+        ForgeInstallProfile installProfile = getInstallProfile();
+        version.libraries.stream().forEach(library -> {
+            // copy over any local files from the loader zip file
+            if (library.name.equalsIgnoreCase(installProfile.path)) {
+                Utils.copyFile(new File(tempDir, "maven/" + library.downloads.artifact.path),
+                        new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path), true);
+            }
+        });
+    }
+
     public Version getVersion() {
         Version version = null;
 
         try {
-            version = Gsons.DEFAULT.fromJson(new FileReader(new File(this.tempDir, "version.json")), Version.class);
+            version = Gsons.MINECRAFT.fromJson(new FileReader(new File(this.tempDir, "version.json")), Version.class);
         } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
             LogManager.logStackTrace(e);
         }

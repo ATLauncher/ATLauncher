@@ -37,26 +37,30 @@ public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments> {
         List<ArgumentRule> jvm = new ArrayList<>();
 
         final JsonObject rootJsonObject = json.getAsJsonObject();
-        final JsonArray gameArray = rootJsonObject.getAsJsonArray("game");
-        final JsonArray jvmArray = rootJsonObject.getAsJsonArray("jvm");
 
-        for (JsonElement gameArg : gameArray) {
-            if (gameArg.isJsonObject()) {
-                JsonObject argument = gameArg.getAsJsonObject();
-                game.add(Gsons.DEFAULT_ALT.fromJson(argument, ArgumentRule.class));
-            } else {
-                String argument = gameArg.getAsString();
-                game.add(new ArgumentRule(null, argument));
+        if (rootJsonObject.has("game")) {
+            final JsonArray gameArray = rootJsonObject.getAsJsonArray("game");
+            for (JsonElement gameArg : gameArray) {
+                if (gameArg.isJsonObject()) {
+                    JsonObject argument = gameArg.getAsJsonObject();
+                    game.add(Gsons.DEFAULT_ALT.fromJson(argument, ArgumentRule.class));
+                } else {
+                    String argument = gameArg.getAsString();
+                    game.add(new ArgumentRule(null, argument));
+                }
             }
         }
 
-        for (JsonElement gameArg : jvmArray) {
-            if (gameArg.isJsonObject()) {
-                JsonObject argument = gameArg.getAsJsonObject();
-                jvm.add(Gsons.DEFAULT_ALT.fromJson(argument, ArgumentRule.class));
-            } else {
-                String argument = gameArg.getAsString();
-                jvm.add(new ArgumentRule(null, argument));
+        if (rootJsonObject.has("jvm")) {
+            final JsonArray jvmArray = rootJsonObject.getAsJsonArray("jvm");
+            for (JsonElement gameArg : jvmArray) {
+                if (gameArg.isJsonObject()) {
+                    JsonObject argument = gameArg.getAsJsonObject();
+                    jvm.add(Gsons.DEFAULT_ALT.fromJson(argument, ArgumentRule.class));
+                } else {
+                    String argument = gameArg.getAsString();
+                    jvm.add(new ArgumentRule(null, argument));
+                }
             }
         }
 
