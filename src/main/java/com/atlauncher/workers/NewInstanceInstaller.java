@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.ForgeXzDownloadable;
@@ -52,14 +53,19 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
+import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.Utils;
 
 import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
 
+import okhttp3.OkHttpClient;
+
 public class NewInstanceInstaller extends InstanceInstaller {
     protected double percent = 0.0; // Percent done installing
     protected double subPercent = 0.0; // Percent done sub installing
+    protected double totalBytes = 0; // Total number of bytes to download
+    protected double downloadedBytes = 0; // Total number of bytes downloaded
 
     public List<Library> libraries = new ArrayList<>();
     public Loader loader;
@@ -121,6 +127,8 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
             return true;
         } catch (Exception e) {
+            Network.CLIENT.dispatcher().executorService().shutdown();
+            Network.CLIENT.connectionPool().evictAll();
             cancel(true);
             LogManager.logStackTrace(e);
         }
@@ -133,8 +141,9 @@ public class NewInstanceInstaller extends InstanceInstaller {
         fireTask(Language.INSTANCE.localize("instance.downloadingpackverisondefinition"));
         fireSubProgressUnknown();
 
-        this.packVersion = Gsons.DEFAULT.fromJson(this.pack.getJSON(version.getVersion()),
-                com.atlauncher.data.json.Version.class);
+        this.packVersion = com.atlauncher.network.Download.build()
+                .setUrl(this.pack.getJsonDownloadUrl(version.getVersion()))
+                .asClass(com.atlauncher.data.json.Version.class);
 
         this.packVersion.compileColours();
 
@@ -146,10 +155,9 @@ public class NewInstanceInstaller extends InstanceInstaller {
         fireTask(Language.INSTANCE.localize("instance.downloadingminecraftdefinition"));
         fireSubProgressUnknown();
 
-        VersionManifest versionManifest = Gsons.MINECRAFT.fromJson(
-                new Downloadable(String.format("%s/mc/game/version_manifest.json", Constants.LAUNCHER_META_MINECRAFT),
-                        false).getContents(),
-                VersionManifest.class);
+        VersionManifest versionManifest = com.atlauncher.network.Download.build()
+                .setUrl(String.format("%s/mc/game/version_manifest.json", Constants.LAUNCHER_META_MINECRAFT))
+                .asClass(VersionManifest.class);
 
         VersionManifestVersion minecraftVersion = versionManifest.versions.stream()
                 .filter(version -> version.id.equalsIgnoreCase(this.packVersion.getMinecraft())).findFirst()
@@ -160,8 +168,8 @@ public class NewInstanceInstaller extends InstanceInstaller {
                     String.format("Failed to find Minecraft version of %s", this.packVersion.getMinecraft()));
         }
 
-        this.minecraftVersion = Gsons.MINECRAFT.fromJson(new Downloadable(minecraftVersion.url, false).getContents(),
-                MinecraftVersion.class);
+        this.minecraftVersion = com.atlauncher.network.Download.build().setUrl(minecraftVersion.url)
+                .asClass(MinecraftVersion.class);
 
         hideSubProgressBar();
     }
@@ -411,6 +419,8 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         fireTask(Language.INSTANCE.localize("instance.downloadingresources"));
         fireSubProgressUnknown();
+        this.totalBytes = this.downloadedBytes = 0;
+        OkHttpClient httpClient = Network.createProgressClient(this);
 
         MojangAssetIndex assetIndex = this.minecraftVersion.assetIndex;
         File indexFile = new File(App.settings.getIndexesAssetsDir(), assetIndex.id + ".json");
@@ -424,39 +434,25 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         AssetIndex index = this.gson.fromJson(new FileReader(indexFile), AssetIndex.class);
 
-        List<Downloadable> resourceDownloads = index.objects.entrySet().stream().map(entry -> {
+        DownloadPool pool = new DownloadPool();
+
+        index.objects.entrySet().stream().forEach(entry -> {
             AssetObject object = entry.getValue();
-            String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, entry.getKey());
             String filename = object.hash.substring(0, 2) + "/" + object.hash;
+            String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
             File file = new File(App.settings.getObjectsAssetsDir(), filename);
 
-            return new Downloadable(url, file, object.hash, (int) object.size, this, false);
-        }).collect(Collectors.toList());
+            pool.add(new com.atlauncher.network.Download().setUrl(url).downloadTo(file.toPath()).hash(object.hash)
+                    .size(object.size).withInstanceInstaller(this).withHttpClient(httpClient)
+                    .withFriendlyFileName(entry.getKey()));
+        });
 
-        ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
-        totalBytes = 0;
-        downloadedBytes = 0;
+        pool.downsize();
 
-        for (Downloadable download : resourceDownloads) {
-            if (download.needToDownload()) {
-                totalBytes += download.getFilesize();
-            }
-        }
+        this.setTotalBytes(pool.totalSize());
+        this.fireSubProgress(0);
 
-        fireSubProgress(0); // Show the subprogress bar
-        for (final Downloadable download : resourceDownloads) {
-            executor.execute(() -> {
-                if (download.needToDownload()) {
-                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
-                    download.download(true);
-                } else {
-                    download.copyFile();
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
+        pool.downloadAll(this);
 
         hideSubProgressBar();
     }
@@ -938,6 +934,36 @@ public class NewInstanceInstaller extends InstanceInstaller {
             this.subPercent = 100.0;
         }
         fireSubProgress(this.subPercent);
+    }
+
+    public void setTotalBytes(long bytes) {
+        this.totalBytes = bytes;
+        System.out.println("totalBytes: " + totalBytes);
+        this.updateProgressBar();
+    }
+
+    public void addDownloadedBytes(long bytes) {
+        this.downloadedBytes += bytes;
+        System.out.println("downloadedBytes: " + downloadedBytes);
+        this.updateProgressBar();
+    }
+
+    private void updateProgressBar() {
+        double progress;
+        if (this.totalBytes > 0) {
+            System.out.println(this.downloadedBytes / this.totalBytes);
+            progress = (this.downloadedBytes / this.totalBytes) * 100.0;
+        } else {
+            progress = 0.0;
+        }
+        System.out.println("progress: " + progress);
+        double done = this.downloadedBytes / 1024.0 / 1024.0;
+        double toDo = this.totalBytes / 1024.0 / 1024.0;
+        if (done > toDo) {
+            fireSubProgress(100.0, String.format("%.2f MB", done));
+        } else {
+            fireSubProgress(progress, String.format("%.2f MB / %.2f MB", done, toDo));
+        }
     }
 
     private void hideSubProgressBar() {

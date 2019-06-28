@@ -35,6 +35,7 @@ dependencies {
     implementation 'com.github.Vatuu:discord-rpc:1.6.2'
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
     implementation 'org.zeroturnaround:zt-zip:1.13'
+    implementation 'com.squareup.okhttp3:okhttp:4.0.0'
 
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'

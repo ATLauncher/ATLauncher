@@ -300,6 +300,11 @@ public class Pack {
         return this.json;
     }
 
+    public String getJsonDownloadUrl(String version) {
+        return String.format("%s/packs/%s/versions/%s/Configs.json", Constants.ATLAUNCHER_DOWNLOAD_SERVER,
+                this.getSafeName(), version);
+    }
+
     public String addInstall(String version) {
         Map<String, Object> request = new HashMap<>();
 

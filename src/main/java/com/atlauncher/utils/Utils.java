@@ -50,10 +50,12 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,6 +91,10 @@ import org.tukaani.xz.XZInputStream;
 import net.iharder.Base64;
 
 public class Utils {
+    public static EnumSet<StandardOpenOption> WRITE = EnumSet.of(StandardOpenOption.CREATE_NEW,
+            StandardOpenOption.WRITE);
+    public static EnumSet<StandardOpenOption> READ = EnumSet.of(StandardOpenOption.READ);
+
     public static String error(Throwable t) {
         StringBuilder builder = new StringBuilder();
 

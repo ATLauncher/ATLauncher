@@ -37,21 +37,21 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 public class Downloadable {
-    private String beforeURL;
-    protected String url;
-    protected File file;
-    private File oldFile;
-    private String hash;
-    private int size;
-    protected HttpURLConnection connection;
-    private InstanceInstaller instanceInstaller;
-    private boolean isATLauncherDownload;
-    private File copyTo;
-    private boolean actuallyCopy;
-    private int attempts = 0;
-    private List<Server> servers;
-    private Server server;
-    private boolean checkForNewness = false;
+    public String beforeURL;
+    public String url;
+    public File file;
+    public File oldFile;
+    public String hash;
+    public int size;
+    public HttpURLConnection connection;
+    public InstanceInstaller instanceInstaller;
+    public boolean isATLauncherDownload;
+    public File copyTo;
+    public boolean actuallyCopy;
+    public int attempts = 0;
+    public List<Server> servers;
+    public Server server;
+    public boolean checkForNewness = false;
 
     public Downloadable(String url, File file, String hash, int size, InstanceInstaller instanceInstaller,
             boolean isATLauncherDownload, File copyTo, boolean actuallyCopy) {

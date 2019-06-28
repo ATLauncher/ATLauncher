@@ -476,6 +476,7 @@ public class InstanceInstallerDialog extends JDialog {
                             progress = ((Integer) evt.getNewValue()) * 100.0;
                         } else {
                             String[] parts = (String[]) evt.getNewValue();
+                            System.out.println(parts[0] + " : " + parts[1]);
                             progress = Double.parseDouble(parts[0]);
                             paint = parts[1];
                         }
@@ -495,7 +496,7 @@ public class InstanceInstallerDialog extends JDialog {
                                 subProgressBar.setString(paint);
                             }
                         }
-                        if (paint == null) {
+                        if (paint == null && progress > 0.0) {
                             subProgressBar.setString(String.format("%.2f%%", progress));
                         }
                         subProgressBar.setValue((int) Math.round(progress * 100.0));
