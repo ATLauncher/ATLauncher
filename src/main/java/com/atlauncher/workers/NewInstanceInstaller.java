@@ -19,6 +19,7 @@ package com.atlauncher.workers;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,6 +63,13 @@ public class NewInstanceInstaller extends InstanceInstaller {
     public LoaderVersion loaderVersion;
     public com.atlauncher.data.json.Version packVersion;
     public MinecraftVersion minecraftVersion;
+
+    private boolean savedReis = false; // If Reis Minimap stuff was found and saved
+    private boolean savedZans = false; // If Zans Minimap stuff was found and saved
+    private boolean savedNEICfg = false; // If NEI Config was found and saved
+    private boolean savedOptionsTxt = false; // If options.txt was found and saved
+    private boolean savedServersDat = false; // If servers.dat was found and saved
+    private boolean savedPortalGunSounds = false; // If Portal Gun Sounds was found and saved
 
     public String mainClass;
     public Arguments arguments;
@@ -267,81 +275,39 @@ public class NewInstanceInstaller extends InstanceInstaller {
             return false;
         }
 
+        downloadMods();
+        if (isCancelled()) {
+            return false;
+        }
+
         installMods();
         if (isCancelled()) {
             return false;
         }
 
-        if (this.packVersion.shouldCaseAllFiles()) {
-            doCaseConversions(getModsDirectory());
-        }
-        if (isServer && hasJarMods()) {
-            fireTask(Language.INSTANCE.localize("server.zippingjar"));
-            fireSubProgressUnknown();
-            Utils.zip(getTempJarDirectory(), getMinecraftJar());
-        }
-        if (extractedTexturePack) {
-            fireTask(Language.INSTANCE.localize("instance.zippingtexturepackfiles"));
-            fireSubProgressUnknown();
-            if (!getTexturePacksDirectory().exists()) {
-                getTexturePacksDirectory().mkdir();
-            }
-            Utils.zip(getTempTexturePackDirectory(), new File(getTexturePacksDirectory(), "TexturePack.zip"));
-        }
-        if (extractedResourcePack) {
-            fireTask(Language.INSTANCE.localize("instance.zippingresourcepackfiles"));
-            fireSubProgressUnknown();
-            if (!getResourcePacksDirectory().exists()) {
-                getResourcePacksDirectory().mkdir();
-            }
-            Utils.zip(getTempResourcePackDirectory(), new File(getResourcePacksDirectory(), "ResourcePack.zip"));
-        }
+        runCaseConversion();
         if (isCancelled()) {
             return false;
         }
-        if (hasActions()) {
-            doActions();
-        }
+
+        runActions();
         if (isCancelled()) {
             return false;
         }
-        if (!this.packVersion.hasNoConfigs()) {
-            configurePack();
-        }
+
+        installConfigs();
         if (isCancelled()) {
             return false;
         }
+
         // Copy over common configs if any
         if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
             Utils.copyDirectory(App.settings.getCommonConfigsDir(), getRootDirectory());
         }
+
         restoreSelectFiles();
-        if (isServer) {
-            File batFile = new File(getRootDirectory(), "LaunchServer.bat");
-            File shFile = new File(getRootDirectory(), "LaunchServer.sh");
-            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"), batFile, "%%SERVERJAR%%",
-                    getServerJar());
-            Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.sh"), shFile, "%%SERVERJAR%%",
-                    getServerJar());
-            batFile.setExecutable(true);
-            shFile.setExecutable(true);
-        }
 
-        // add in the deselected mods to the instance.json
-        for (com.atlauncher.data.json.Mod mod : this.unselectedMods) {
-            String file = mod.getFile();
-            if (this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.upper) {
-                file = file.substring(0, file.lastIndexOf(".")).toUpperCase() + file.substring(file.lastIndexOf("."));
-            } else if (this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
-                file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
-            }
-
-            this.modsInstalled
-                    .add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
-                            com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
-                            this.packVersion.getColour(mod.getColour()), mod.getDescription(), false, false, false,
-                            mod.getCurseModId(), mod.getCurseFileId()));
-        }
+        installServerBootScripts();
 
         return true;
     }
@@ -754,11 +720,169 @@ public class NewInstanceInstaller extends InstanceInstaller {
         int subPercentPerMod = this.selectedMods.size() / 100;
 
         this.selectedMods.parallelStream().forEach(mod -> {
-            addSubPercent(subPercentPerMod);
             mod.install(this);
+            addSubPercent(subPercentPerMod);
         });
 
         hideSubProgressBar();
+    }
+
+    // TODO: replace with walkers
+    private void runCaseConversion() {
+        addPercent(5);
+
+        if (this.packVersion.caseAllFiles == null) {
+            return;
+        }
+
+        File[] files;
+        if (isReinstall && instance.getMinecraftVersion().equalsIgnoreCase(minecraftVersion.id)) {
+            final List<String> customMods = instance.getCustomMods(com.atlauncher.data.Type.mods);
+            FilenameFilter ffFilter = (dir, name) -> !customMods.contains(name);
+            files = getModsDirectory().listFiles(ffFilter);
+        } else {
+            files = getModsDirectory().listFiles();
+        }
+
+        for (File file : files) {
+            if (file.isFile() && (file.getName().endsWith("jar") || file.getName().endsWith("zip")
+                    || file.getName().endsWith("litemod"))) {
+                if (this.packVersion.caseAllFiles == com.atlauncher.data.json.CaseType.upper) {
+                    file.renameTo(new File(file.getParentFile(),
+                            file.getName().substring(0, file.getName().lastIndexOf(".")).toUpperCase() + file.getName()
+                                    .substring(file.getName().lastIndexOf("" + "."), file.getName().length())));
+                } else if (this.packVersion.caseAllFiles == com.atlauncher.data.json.CaseType.lower) {
+                    file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
+                }
+            }
+        }
+    }
+
+    private void runActions() {
+        addPercent(5);
+
+        if (this.packVersion.actions == null || this.packVersion.actions.size() == 0) {
+            return;
+        }
+
+        for (com.atlauncher.data.json.Action action : this.packVersion.actions) {
+            action.execute(this);
+        }
+    }
+
+    private void installConfigs() throws Exception {
+        addPercent(5);
+
+        if (this.packVersion.noConfigs) {
+            return;
+        }
+
+        fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
+
+        File configs = new File(App.settings.getTempDir(), "Configs.zip");
+        String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
+        Downloadable configsDownload = new Downloadable(path, configs, null, this, true);
+        this.totalBytes = configsDownload.getFilesize();
+        this.downloadedBytes = 0;
+        configsDownload.download(true);
+
+        if (!configs.exists()) {
+            throw new Exception("Failed to download configs for pack!");
+        }
+
+        fireSubProgressUnknown();
+        fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
+
+        Utils.unzip(configs, getRootDirectory());
+        Utils.delete(configs);
+    }
+
+    private void backupSelectFiles() {
+        File reis = new File(getModsDirectory(), "rei_minimap");
+        if (reis.exists() && reis.isDirectory()) {
+            if (Utils.copyDirectory(reis, getTempDirectory(), true)) {
+                savedReis = true;
+            }
+        }
+
+        File zans = new File(getModsDirectory(), "VoxelMods");
+        if (zans.exists() && zans.isDirectory()) {
+            if (Utils.copyDirectory(zans, getTempDirectory(), true)) {
+                savedZans = true;
+            }
+        }
+
+        File neiCfg = new File(getConfigDirectory(), "NEI.cfg");
+        if (neiCfg.exists() && neiCfg.isFile()) {
+            if (Utils.copyFile(neiCfg, getTempDirectory())) {
+                savedNEICfg = true;
+            }
+        }
+
+        File optionsTXT = new File(getRootDirectory(), "options.txt");
+        if (optionsTXT.exists() && optionsTXT.isFile()) {
+            if (Utils.copyFile(optionsTXT, getTempDirectory())) {
+                savedOptionsTxt = true;
+            }
+        }
+
+        File serversDAT = new File(getRootDirectory(), "servers.dat");
+        if (serversDAT.exists() && serversDAT.isFile()) {
+            if (Utils.copyFile(serversDAT, getTempDirectory())) {
+                savedServersDat = true;
+            }
+        }
+
+        File portalGunSounds = new File(getModsDirectory(), "PortalGunSounds.pak");
+        if (portalGunSounds.exists() && portalGunSounds.isFile()) {
+            savedPortalGunSounds = true;
+            Utils.copyFile(portalGunSounds, getTempDirectory());
+        }
+    }
+
+    private void restoreSelectFiles() {
+        if (savedReis) {
+            Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"),
+                    new File(getModsDirectory(), "rei_minimap"));
+        }
+
+        if (savedZans) {
+            Utils.copyDirectory(new File(getTempDirectory(), "VoxelMods"), new File(getModsDirectory(), "VoxelMods"));
+        }
+
+        if (savedNEICfg) {
+            Utils.copyFile(new File(getTempDirectory(), "NEI.cfg"), new File(getConfigDirectory(), "NEI.cfg"), true);
+        }
+
+        if (savedOptionsTxt) {
+            Utils.copyFile(new File(getTempDirectory(), "options.txt"), new File(getRootDirectory(), "options.txt"),
+                    true);
+        }
+
+        if (savedServersDat) {
+            Utils.copyFile(new File(getTempDirectory(), "servers.dat"), new File(getRootDirectory(), "servers.dat"),
+                    true);
+        }
+
+        if (savedPortalGunSounds) {
+            Utils.copyFile(new File(getTempDirectory(), "PortalGunSounds.pak"),
+                    new File(getModsDirectory(), "PortalGunSounds.pak"), true);
+        }
+    }
+
+    private void installServerBootScripts() throws Exception {
+        if (!isServer) {
+            return;
+        }
+
+        File batFile = new File(getRootDirectory(), "LaunchServer.bat");
+        File shFile = new File(getRootDirectory(), "LaunchServer.sh");
+        Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"), batFile, "%%SERVERJAR%%",
+                getServerJar());
+        Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.sh"), shFile, "%%SERVERJAR%%",
+                getServerJar());
+        batFile.setExecutable(true);
+        shFile.setExecutable(true);
     }
 
     private void hideSubProgressBar() {

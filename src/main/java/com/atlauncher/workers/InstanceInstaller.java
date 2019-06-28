@@ -1231,7 +1231,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         return modss;
     }
 
-    protected void backupSelectFiles() {
+    private void backupSelectFiles() {
         File reis = new File(getModsDirectory(), "rei_minimap");
         if (reis.exists() && reis.isDirectory()) {
             if (Utils.copyDirectory(reis, getTempDirectory(), true)) {
@@ -1274,7 +1274,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
     }
 
-    protected void restoreSelectFiles() {
+    private void restoreSelectFiles() {
         if (savedReis) {
             Utils.copyDirectory(new File(getTempDirectory(), "rei_minimap"),
                     new File(getModsDirectory(), "rei_minimap"));
