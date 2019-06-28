@@ -58,6 +58,9 @@ import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
 
 public class NewInstanceInstaller extends InstanceInstaller {
+    protected double percent = 0.0; // Percent done installing
+    protected double subPercent = 0.0; // Percent done sub installing
+
     public List<Library> libraries = new ArrayList<>();
     public Loader loader;
     public LoaderVersion loaderVersion;
@@ -717,7 +720,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
         fireTask(Language.INSTANCE.localize("instance.installingmods"));
         fireSubProgressUnknown();
 
-        int subPercentPerMod = this.selectedMods.size() / 100;
+        double subPercentPerMod = 100.0 / this.selectedMods.size();
 
         this.selectedMods.parallelStream().forEach(mod -> {
             mod.install(this);
@@ -883,6 +886,58 @@ public class NewInstanceInstaller extends InstanceInstaller {
                 getServerJar());
         batFile.setExecutable(true);
         shFile.setExecutable(true);
+    }
+
+    protected void fireProgress(double percent) {
+        if (percent > 100.0) {
+            percent = 100.0;
+        }
+        firePropertyChange("progress", null, percent);
+    }
+
+    protected void fireSubProgress(double percent) {
+        if (percent > 100.0) {
+            percent = 100.0;
+        }
+        firePropertyChange("subprogress", null, percent);
+    }
+
+    protected void fireSubProgress(double percent, String paint) {
+        if (percent > 100.0) {
+            percent = 100.0;
+        }
+        String[] info = new String[2];
+        info[0] = "" + percent;
+        info[1] = paint;
+        firePropertyChange("subprogress", null, info);
+    }
+
+    protected void addPercent(double percent) {
+        this.percent = this.percent + percent;
+        if (this.percent > 100.0) {
+            this.percent = 100.0;
+        }
+        fireProgress(this.percent);
+    }
+
+    public void setSubPercent(double percent) {
+        this.subPercent = percent;
+        if (this.subPercent > 100.0) {
+            this.subPercent = 100.0;
+        }
+        fireSubProgress(this.subPercent);
+    }
+
+    public void addSubPercent(double percent) {
+        this.subPercent = this.subPercent + percent;
+        if (this.subPercent > 100.0) {
+            this.subPercent = 100.0;
+        }
+
+        if (this.subPercent > 100.0) {
+            this.subPercent = 100.0;
+        }
+        fireSubProgress(this.subPercent);
     }
 
     private void hideSubProgressBar() {

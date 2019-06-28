@@ -256,10 +256,10 @@ public class InstanceInstallerDialog extends JDialog {
 
                 JPanel bottomPanel = new JPanel();
                 bottomPanel.setLayout(new BorderLayout());
-                progressBar = new JProgressBar(0, 100);
+                progressBar = new JProgressBar(0, 10000);
                 bottomPanel.add(progressBar, BorderLayout.NORTH);
                 progressBar.setIndeterminate(true);
-                subProgressBar = new JProgressBar(0, 100);
+                subProgressBar = new JProgressBar(0, 10000);
                 bottomPanel.add(subProgressBar, BorderLayout.SOUTH);
                 subProgressBar.setValue(0);
                 subProgressBar.setVisible(false);
@@ -451,11 +451,16 @@ public class InstanceInstallerDialog extends JDialog {
                         if (progressBar.isIndeterminate()) {
                             progressBar.setIndeterminate(false);
                         }
-                        int progress = (Integer) evt.getNewValue();
-                        if (progress > 100) {
-                            progress = 100;
+                        double progress = 0.0;
+                        if (evt.getNewValue() instanceof Double) {
+                            progress = (Double) evt.getNewValue();
+                        } else if (evt.getNewValue() instanceof Integer) {
+                            progress = ((Integer) evt.getNewValue()) * 100.0;
                         }
-                        progressBar.setValue(progress);
+                        if (progress > 100.0) {
+                            progress = 100.0;
+                        }
+                        progressBar.setValue((int) Math.round(progress * 100.0));
                     } else if ("subprogress" == evt.getPropertyName()) {
                         if (!subProgressBar.isVisible()) {
                             subProgressBar.setVisible(true);
@@ -463,19 +468,21 @@ public class InstanceInstallerDialog extends JDialog {
                         if (subProgressBar.isIndeterminate()) {
                             subProgressBar.setIndeterminate(false);
                         }
-                        int progress;
+                        double progress;
                         String paint = null;
-                        if (evt.getNewValue() instanceof Integer) {
-                            progress = (Integer) evt.getNewValue();
+                        if (evt.getNewValue() instanceof Double) {
+                            progress = (Double) evt.getNewValue();
+                        } else if (evt.getNewValue() instanceof Integer) {
+                            progress = ((Integer) evt.getNewValue()) * 100.0;
                         } else {
                             String[] parts = (String[]) evt.getNewValue();
-                            progress = Integer.parseInt(parts[0]);
+                            progress = Double.parseDouble(parts[0]);
                             paint = parts[1];
                         }
-                        if (progress >= 100) {
-                            progress = 100;
+                        if (progress >= 100.0) {
+                            progress = 100.0;
                         }
-                        if (progress < 0) {
+                        if (progress < 0.0) {
                             if (subProgressBar.isStringPainted()) {
                                 subProgressBar.setStringPainted(false);
                             }
@@ -488,7 +495,10 @@ public class InstanceInstallerDialog extends JDialog {
                                 subProgressBar.setString(paint);
                             }
                         }
-                        subProgressBar.setValue(progress);
+                        if (paint == null) {
+                            subProgressBar.setString(String.format("%.2f%%", progress));
+                        }
+                        subProgressBar.setValue((int) Math.round(progress * 100.0));
                     } else if ("subprogressint" == evt.getPropertyName()) {
                         if (subProgressBar.isStringPainted()) {
                             subProgressBar.setStringPainted(false);
