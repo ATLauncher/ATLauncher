@@ -127,7 +127,7 @@ public class Processor {
                     return;
                 }
 
-                if (value.charAt(0) == '/') {
+                if (value.charAt(0) == File.separatorChar) {
                     File localFile = new File(extractedDir, value);
                     LogManager.debug("Got argument with local file of " + localFile.getAbsolutePath());
 
