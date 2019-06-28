@@ -1,5 +1,8 @@
 # Changelog
 
-## 3.2.9.2
+## 3.2.10.0
 
--   Fix invalid Java versions being found causing crashes
+-   Completely reworked the instance installer (instances should install faster now)
+-   Create profile.json when installing instances which follows same pattern as the Minecraft one
+-   Rework the way downloads are handled
+-   Remove the option to download from multiple ATLauncher servers
