@@ -53,6 +53,10 @@ public final class LogManager {
         debug(message, false);
     }
 
+    public static void debugObject(Object object) {
+        debug(Gsons.DEFAULT.toJson(object), false);
+    }
+
     public static void debug(String message, boolean force) {
         if (showDebug || force) {
             queue.offer(new LogEvent(LogType.DEBUG, message));

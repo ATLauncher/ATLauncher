@@ -627,17 +627,18 @@ public class NewInstanceInstaller extends InstanceInstaller {
     }
 
     private List<Downloadable> getDownloadableLibraries() {
-        return this.getLibraries().stream().map(library -> {
-            if (library instanceof ForgeLibrary && ((ForgeLibrary) library).isUsingPackXz()) {
-                return new ForgeXzDownloadable(library.downloads.artifact.url,
-                        new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
-                        library.downloads.artifact.sha1, library.downloads.artifact.size, this, null);
-            }
+        return this.getLibraries().stream()
+                .filter(library -> library.shouldInstall() && library.downloads.artifact != null).map(library -> {
+                    if (library instanceof ForgeLibrary && ((ForgeLibrary) library).isUsingPackXz()) {
+                        return new ForgeXzDownloadable(library.downloads.artifact.url,
+                                new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
+                                library.downloads.artifact.sha1, library.downloads.artifact.size, this, null);
+                    }
 
-            return new Downloadable(library.downloads.artifact.url,
-                    new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
-                    library.downloads.artifact.sha1, library.downloads.artifact.size, this, false);
-        }).collect(Collectors.toList());
+                    return new Downloadable(library.downloads.artifact.url,
+                            new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
+                            library.downloads.artifact.sha1, library.downloads.artifact.size, this, false);
+                }).collect(Collectors.toList());
     }
 
     private List<Downloadable> getDownloadableNativeLibraries() {
@@ -654,29 +655,31 @@ public class NewInstanceInstaller extends InstanceInstaller {
         fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
         fireSubProgressUnknown();
 
-        this.getLibraries().stream().forEach(library -> {
-            File libraryFile = new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path);
+        this.getLibraries().stream().filter(library -> library.shouldInstall() && library.downloads.artifact != null)
+                .forEach(library -> {
+                    File libraryFile = new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path);
 
-            if (isServer) {
-                File serverFile = new File(getLibrariesDirectory(), library.downloads.artifact.path);
+                    if (isServer) {
+                        File serverFile = new File(getLibrariesDirectory(), library.downloads.artifact.path);
 
-                serverFile.getParentFile().mkdirs();
+                        serverFile.getParentFile().mkdirs();
 
-                Utils.copyFile(libraryFile, serverFile, true);
-            } else if (library.hasNativeForOS()) {
-                File nativeFile = new File(App.settings.getGameLibrariesDir(), library.getNativeDownloadForOS().path);
+                        Utils.copyFile(libraryFile, serverFile, true);
+                    } else if (library.hasNativeForOS()) {
+                        File nativeFile = new File(App.settings.getGameLibrariesDir(),
+                                library.getNativeDownloadForOS().path);
 
-                ZipUtil.unpack(nativeFile, this.getNativesDirectory(), new NameMapper() {
-                    public String map(String name) {
-                        if (library.extract != null && library.extract.shouldExclude(name)) {
-                            return null;
-                        }
+                        ZipUtil.unpack(nativeFile, this.getNativesDirectory(), new NameMapper() {
+                            public String map(String name) {
+                                if (library.extract != null && library.extract.shouldExclude(name)) {
+                                    return null;
+                                }
 
-                        return name;
+                                return name;
+                            }
+                        });
                     }
                 });
-            }
-        });
 
         hideSubProgressBar();
     }
