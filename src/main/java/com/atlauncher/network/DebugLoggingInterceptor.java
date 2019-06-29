@@ -31,7 +31,7 @@ public final class DebugLoggingInterceptor implements Interceptor {
         Request request = chain.request();
 
         LogManager.debug(String.format("Sending request %s", request.url()), 3);
-        LogManager.debug(request.toString(), 3);
+        LogManager.debug(request.toString(), 5);
 
         long t1 = System.nanoTime();
         Response response = chain.proceed(request);
@@ -39,7 +39,7 @@ public final class DebugLoggingInterceptor implements Interceptor {
 
         LogManager.debug(
                 String.format("Received response for %s in %.1fms%n", response.request().url(), (t2 - t1) / 1e6d), 3);
-        LogManager.debug(response.toString(), 3);
+        LogManager.debug(response.toString(), 5);
 
         return response;
     }

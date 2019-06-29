@@ -33,7 +33,7 @@ public final class LogManager {
 
     /**
      * The level of debug logs to show. 1 being lowest, 2 being meh, 3 being
-     * EXTREEEEEEEME
+     * EXTREEEEEEEME and 5 being OMG WTF SO MUCH LOGS
      */
     public static int debugLevel = 0;
 
