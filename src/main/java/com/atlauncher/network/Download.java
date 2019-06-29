@@ -318,6 +318,14 @@ public final class Download {
             return false;
         }
 
+        try {
+            this.execute();
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+
+            return false;
+        }
+
         return this.downloadRec(attempt + 1);
     }
 
