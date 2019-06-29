@@ -1,7 +1,6 @@
 # Directories
 .gradle/
 .settings/
-.vscode/settings.json
 bin/
 build/
 dist/
