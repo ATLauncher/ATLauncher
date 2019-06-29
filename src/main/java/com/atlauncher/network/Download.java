@@ -53,7 +53,7 @@ public final class Download {
     public Path copyTo;
     private String hash;
     private List<String> checksums;
-    public long size = 0;
+    public long size = -1L;
     private NewInstanceInstaller instanceInstaller;
     private OkHttpClient httpClient = Network.CLIENT;
     private boolean usesPackXz = false;
@@ -167,8 +167,6 @@ public final class Download {
     }
 
     private void execute() throws IOException {
-        LogManager.debug("Opening connection to " + this.url, 3);
-
         Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", Network.USER_AGENT);
 
         this.response = httpClient.newCall(builder.build()).execute();
@@ -192,6 +190,53 @@ public final class Download {
         return this.hash == null || this.hash.length() != 40;
     }
 
+    private String getHashFromURL() throws IOException {
+        this.execute();
+
+        String etag = this.response.header("ETag");
+        if (etag == null) {
+            return "-";
+        }
+
+        if (etag.startsWith("\"") && etag.endsWith("\"")) {
+            etag = etag.substring(1, etag.length() - 1);
+        }
+
+        return etag.matches("[A-Za-z0-9]{32}") ? etag : "-";
+    }
+
+    public String getHash() {
+        if (this.hash == null || this.hash.isEmpty()) {
+            try {
+                this.hash = this.getHashFromURL();
+            } catch (Exception e) {
+                LogManager.logStackTrace(e);
+                this.hash = "-";
+            }
+        }
+
+        return this.hash;
+    }
+
+    public long getFilesize() {
+        try {
+            if (this.size == -1L) {
+                this.execute();
+                long size = Long.parseLong(this.response.header("Content-Length"));
+
+                if (size == -1L) {
+                    this.size = 0L;
+                } else {
+                    this.size = size;
+                }
+            }
+        } catch (Exception ignored) {
+            return -1;
+        }
+
+        return this.size;
+    }
+
     public boolean needToDownload() {
         if (this.to == null) {
             return true;
@@ -202,14 +247,14 @@ public final class Download {
         }
 
         if (Files.exists(this.to)) {
-            if (this.to.toFile().length() == this.size) {
+            if (this.to.toFile().length() == this.getFilesize()) {
                 return false;
             }
 
             if (this.md5()) {
-                return !Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.hash));
+                return !Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
             } else {
-                return !Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.hash));
+                return !Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
             }
         }
 
@@ -249,7 +294,7 @@ public final class Download {
                 }
             }
 
-            if (fileHash.equals(Hashing.HashCode.fromString(this.hash))) {
+            if (fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
                 return true;
             }
 
@@ -288,7 +333,7 @@ public final class Download {
                     }
                 }
 
-                if (!fileHash.equals(Hashing.HashCode.fromString(this.hash))) {
+                if (!fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
                     this.copy();
                 }
             }
@@ -315,7 +360,7 @@ public final class Download {
             FileUtils.createDirectory(this.to.getParent());
         }
 
-        Hashing.HashCode expected = Hashing.HashCode.fromString(this.hash);
+        Hashing.HashCode expected = Hashing.HashCode.fromString(this.getHash());
         if (expected.equals(Hashing.HashCode.EMPTY)) {
             this.downloadDirect();
         } else {
@@ -324,7 +369,7 @@ public final class Download {
             if (!downloaded) {
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                        + " hash of " + expected.toString() + " but got " + this.hash + " instead. Copied to "
+                        + " hash of " + expected.toString() + " but got " + this.getHash() + " instead. Copied to "
                         + "FailedDownloads folder & cancelling install!");
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);

@@ -20,6 +20,6 @@ package com.atlauncher.data.minecraft;
 public class Download {
     public String path;
     public String sha1;
-    public int size;
+    public long size = -1L;
     public String url;
 }

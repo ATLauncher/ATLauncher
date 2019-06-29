@@ -20,7 +20,7 @@ package com.atlauncher.data.minecraft.loaders.forge;
 public class DownloadsItem {
     private String path;
     private String sha1;
-    private int size;
+    private long size = -1L;
     private String url;
 
     public String getPath() {

@@ -23,6 +23,6 @@ import com.atlauncher.annot.Json;
 public class LoggingFile {
     public String id;
     public String sha1;
-    public int size;
+    public long size = -1L;
     public String url;
 }

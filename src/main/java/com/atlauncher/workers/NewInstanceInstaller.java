@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
@@ -33,7 +32,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.ForgeXzDownloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.minecraft.ArgumentRule;
@@ -453,12 +451,12 @@ public class NewInstanceInstaller extends InstanceInstaller {
                     .withFriendlyFileName(entry.getKey()));
         });
 
-        pool.downsize();
+        DownloadPool smallPool = pool.downsize();
 
-        this.setTotalBytes(pool.totalSize());
+        this.setTotalBytes(smallPool.totalSize());
         this.fireSubProgress(0);
 
-        pool.downloadAll(this);
+        smallPool.downloadAll(this);
 
         hideSubProgressBar();
     }
@@ -587,10 +585,6 @@ public class NewInstanceInstaller extends InstanceInstaller {
         addPercent(5);
         fireTask(Language.INSTANCE.localize("instance.downloadinglibraries"));
         fireSubProgressUnknown();
-        totalBytes = 0;
-        downloadedBytes = 0;
-
-        ExecutorService executor;
 
         OkHttpClient httpClient = Network.createProgressClient(this);
         DownloadPool pool = new DownloadPool();
@@ -611,23 +605,22 @@ public class NewInstanceInstaller extends InstanceInstaller {
                     pool.add(download);
                 });
 
-        pool.downsize();
-
-        this.setTotalBytes(pool.totalSize());
-        this.fireSubProgress(0);
-
-        pool.downloadAll(this);
-
-        hideSubProgressBar();
-    }
-
-    private List<Downloadable> getDownloadableNativeLibraries() {
-        return this.getLibraries().stream().filter(library -> library.hasNativeForOS()).map(library -> {
+        this.getLibraries().stream().filter(library -> library.hasNativeForOS()).forEach(library -> {
             Download download = library.getNativeDownloadForOS();
 
-            return new Downloadable(download.url, new File(App.settings.getGameLibrariesDir(), download.path),
-                    download.sha1, download.size, this, false);
-        }).collect(Collectors.toList());
+            pool.add(new com.atlauncher.network.Download().setUrl(download.url)
+                    .downloadTo(new File(App.settings.getGameLibrariesDir(), download.path).toPath())
+                    .hash(download.sha1).size(download.size).withInstanceInstaller(this).withHttpClient(httpClient));
+        });
+
+        DownloadPool smallPool = pool.downsize();
+
+        this.setTotalBytes(smallPool.totalSize());
+        this.fireSubProgress(0);
+
+        smallPool.downloadAll(this);
+
+        hideSubProgressBar();
     }
 
     private void organiseLibraries() {
@@ -683,12 +676,12 @@ public class NewInstanceInstaller extends InstanceInstaller {
                     .size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient));
         });
 
-        pool.downsize();
+        DownloadPool smallPool = pool.downsize();
 
-        this.setTotalBytes(pool.totalSize());
+        this.setTotalBytes(smallPool.totalSize());
         this.fireSubProgress(0);
 
-        pool.downloadAll(this);
+        smallPool.downloadAll(this);
 
         hideSubProgressBar();
     }
