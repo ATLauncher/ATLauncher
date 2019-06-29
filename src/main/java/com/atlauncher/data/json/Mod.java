@@ -26,6 +26,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.managers.DialogManager;
@@ -101,6 +102,14 @@ public class Mod {
 
     public String getUrl() {
         return this.url.replace("&amp;", "&").replace(" ", "%20");
+    }
+
+    public String getDownloadUrl() {
+        if (this.download == DownloadType.server) {
+            return String.format("%s/%s", Constants.ATLAUNCHER_DOWNLOAD_SERVER, this.getUrl());
+        }
+
+        return this.getUrl();
     }
 
     public String getRawFile() {

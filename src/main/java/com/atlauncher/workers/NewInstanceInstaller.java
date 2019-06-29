@@ -698,8 +698,9 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         List<Downloadable> downloads = this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser)
                 .map(mod -> {
-                    return new Downloadable(mod.url, new File(App.settings.getDownloadsDir(), mod.getFile()), mod.md5,
-                            mod.filesize, this, false);
+                    return new Downloadable(mod.getDownloadUrl(),
+                            new File(App.settings.getDownloadsDir(), mod.getFile()), mod.md5, mod.filesize, this,
+                            false);
                 }).collect(Collectors.toList());
 
         totalBytes = downloads.stream().map(download -> download.getFilesize()).reduce(0, Integer::sum);
