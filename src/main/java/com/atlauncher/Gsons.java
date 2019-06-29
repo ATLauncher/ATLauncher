@@ -22,10 +22,10 @@ import java.io.File;
 import java.util.Date;
 
 import com.atlauncher.adapter.ColorTypeAdapter;
-import com.atlauncher.data.loaders.fabric.FabricMetaLauncherMeta;
-import com.atlauncher.data.loaders.fabric.FabricMetaLauncherMetaTypeAdapter;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.ArgumentsTypeAdapter;
+import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMeta;
+import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMetaTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibraryTypeAdapter;
 import com.atlauncher.data.mojang.DateTypeAdapter;
@@ -49,7 +49,8 @@ public final class Gsons {
     public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
             .registerTypeAdapter(MojangArguments.class, new MojangArgumentsTypeAdapter())
-            .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
+            .registerTypeAdapter(com.atlauncher.data.loaders.fabric.FabricMetaLauncherMeta.class,
+                    new com.atlauncher.data.loaders.fabric.FabricMetaLauncherMetaTypeAdapter())
             .registerTypeAdapter(Downloads.class, new DownloadsTypeAdapter())
             .registerTypeAdapter(File.class, new FileTypeAdapter())
             .registerTypeAdapter(MojangStatus.class, new MojangStatusTypeAdapter()).create();
