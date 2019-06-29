@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.9.3
+## 3.2.9.4
 
--   Don't use Windows folder Java when looking for Java version to use
+-   Fix root Java path for found versions not resolving on some systems

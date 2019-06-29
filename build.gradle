@@ -14,7 +14,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 group = 'com.atlauncher'
-version = '3.2.9.3'
+version = '3.2.9.4'
 
 repositories {
     mavenCentral()
