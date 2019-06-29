@@ -516,10 +516,40 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         // lastly the Minecraft libraries
         if (this.loader == null || this.loader.useMinecraftArguments()) {
-            libraries.addAll(this.minecraftVersion.libraries);
+            libraries.addAll(this.minecraftVersion.libraries.stream().filter(library -> library.shouldInstall())
+                    .collect(Collectors.toList()));
         }
 
         return libraries;
+    }
+
+    public String getMinecraftJarLibraryPath() {
+        return getMinecraftJarLibraryPath(isServer ? "server" : "client");
+    }
+
+    public String getMinecraftJarLibraryPath(String type) {
+        return "net/minecraft/" + type + "/" + this.minecraftVersion.id + "/" + type + "-" + this.minecraftVersion.id
+                + ".jar".replace("/", File.separatorChar + "");
+    }
+
+    public List<String> getLibrariesForLaunch() {
+        List<String> libraries = new ArrayList<>();
+
+        libraries.add(this.getMinecraftJarLibraryPath());
+
+        libraries.addAll(this.getLibraries().stream()
+                .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
+                .map(library -> library.downloads.artifact.path).collect(Collectors.toList()));
+
+        return libraries;
+    }
+
+    public String getMinecraftArguments() {
+        return this.arguments.asString();
+    }
+
+    public boolean doAssetsMapToResources() {
+        return false;
     }
 
     private List<Library> getPackVersionLibraries() {

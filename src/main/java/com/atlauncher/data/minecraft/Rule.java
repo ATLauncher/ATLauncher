@@ -17,6 +17,9 @@
  */
 package com.atlauncher.data.minecraft;
 
+import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
+
 enum Action {
     ALLOW, DISALLOW
 }
@@ -27,6 +30,14 @@ public class Rule {
     public MojangFeatureRule features;
 
     public boolean applies() {
-        return this.features == null || this.os == null || this.os.applies();
+        if (this.features != null) {
+            return false;
+        }
+
+        if (this.os == null) {
+            return true;
+        }
+
+        return this.os.applies();
     }
 }

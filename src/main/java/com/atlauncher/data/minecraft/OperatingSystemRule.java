@@ -32,7 +32,8 @@ public class OperatingSystemRule {
             return false;
         }
 
-        if (arch != null && (arch == "x86" && OS.is64Bit()) || (arch == "x64" && !OS.is64Bit())) {
+        if (arch != null && ((arch.equalsIgnoreCase("x86") && OS.is64Bit())
+                || (arch.equalsIgnoreCase("x64") && !OS.is64Bit()))) {
             return false;
         }
 

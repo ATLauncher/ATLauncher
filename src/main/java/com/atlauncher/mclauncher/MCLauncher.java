@@ -58,33 +58,11 @@ public class MCLauncher {
 
         File jarMods = instance.getJarModsDirectory();
         File[] jarModFiles = jarMods.listFiles();
-        if (jarMods.exists() && jarModFiles != null && (instance.hasJarMods() || jarModFiles.length != 0)) {
-            if (instance.hasJarMods()) {
-                ArrayList<String> jarmods = new ArrayList<>(Arrays.asList(instance.getJarOrder().split(",")));
-                if (jarmods.size() > 1) {
-                    hasCustomJarMods = true;
-                }
-                for (String mod : jarmods) {
-                    File thisFile = new File(jarMods, mod);
-                    if (thisFile.exists()) {
-                        cpb.append(File.pathSeparator);
-                        cpb.append(thisFile.getAbsolutePath());
-                    }
-                }
-                for (File file : jarModFiles) {
-                    if (jarmods.contains(file.getName())) {
-                        continue;
-                    }
-                    hasCustomJarMods = true;
-                    cpb.append(File.pathSeparator);
-                    cpb.append(file.getAbsolutePath());
-                }
-            } else {
-                for (File file : jarModFiles) {
-                    hasCustomJarMods = true;
-                    cpb.append(File.pathSeparator);
-                    cpb.append(file.getAbsolutePath());
-                }
+        if (jarMods.exists() && jarModFiles != null && jarModFiles.length != 0) {
+            for (File file : jarModFiles) {
+                hasCustomJarMods = true;
+                cpb.append(File.pathSeparator);
+                cpb.append(file.getAbsolutePath());
             }
         }
 

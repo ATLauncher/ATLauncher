@@ -53,13 +53,35 @@ public class Arguments {
 
         for (ArgumentRule rule : this.jvm) {
             if (rule.applies()) {
-                arguments += " " + rule.getValue();
+                arguments += " " + rule.getValueAsString();
             }
         }
 
         for (ArgumentRule rule : this.game) {
             if (rule.applies()) {
-                arguments += " " + rule.getValue();
+                arguments += " " + rule.getValueAsString();
+            }
+        }
+
+        return arguments;
+    }
+
+    public List<String> asStringList() {
+        List<String> arguments = new ArrayList<>();
+
+        if (this.jvm != null) {
+            for (ArgumentRule rule : this.jvm) {
+                if (rule.applies()) {
+                    arguments.addAll(rule.getValueAsList());
+                }
+            }
+        }
+
+        if (this.game != null) {
+            for (ArgumentRule rule : this.game) {
+                if (rule.applies()) {
+                    arguments.addAll(rule.getValueAsList());
+                }
             }
         }
 

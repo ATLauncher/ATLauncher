@@ -42,7 +42,7 @@ import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Java;
 import com.atlauncher.data.loaders.LoaderVersion;
-import com.atlauncher.data.mojang.LoggingClient;
+import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -134,12 +134,6 @@ public class Instance implements Cloneable {
      * developer/s.
      */
     private int permgen = 0;
-
-    /**
-     * Comma separated list of the order of Jar's to be added to the class path when
-     * launching Minecraft.
-     */
-    private String jarOrder;
 
     /**
      * Array of paths for the libraries needed to be loaded.
@@ -253,8 +247,6 @@ public class Instance implements Cloneable {
      * @param permgen            the minimum PermGen/Metaspace as recommended by the
      *                           pack developer/s
      * @param mods               the mods installed in this Instance
-     * @param jarOrder           the order that jar mods are loaded into the class
-     *                           path
      * @param libraries          the libraries needed to launch Minecraft
      * @param extraArguments     the extra arguments for launching the pack
      * @param minecraftArguments the arguments needed by Minecraft to run
@@ -266,7 +258,7 @@ public class Instance implements Cloneable {
      */
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
-            String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
+            List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
             String assets, boolean assetsMapToResources, LoggingClient logging, boolean isDev, boolean isPlayable,
             Java java, boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
         this.name = name;
@@ -278,13 +270,11 @@ public class Instance implements Cloneable {
         this.memory = memory;
         this.permgen = permgen;
         this.mods = mods;
-        this.jarOrder = jarOrder;
         this.libraries = libraries;
         this.mainClass = mainClass;
         this.assets = assets;
         this.assetsMapToResources = assetsMapToResources;
         this.logging = logging;
-        this.jarOrder = jarOrder;
         this.extraArguments = extraArguments;
         this.minecraftArguments = minecraftArguments;
         this.isDev = isDev;
@@ -318,8 +308,6 @@ public class Instance implements Cloneable {
      * @param permgen            the minimum PermGen/Metaspace as recommended by the
      *                           pack developer/s
      * @param mods               the mods installed in this Instance
-     * @param jarOrder           the order that jar mods are loaded into the class
-     *                           path
      * @param libraries          the libraries needed to launch Minecraft
      * @param extraArguments     the extra arguments for launching the pack
      * @param minecraftArguments the arguments needed by Minecraft to run
@@ -330,11 +318,11 @@ public class Instance implements Cloneable {
      */
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
-            String jarOrder, List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
+            List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
             String assets, boolean assetsMapToResources, LoggingClient logging, boolean isDev, Java java,
             boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
         this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods,
-                jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources,
+                libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources,
                 logging, isDev, true, java, enableCurseIntegration, enableEditingMods, loaderVersion);
     }
 
@@ -384,27 +372,6 @@ public class Instance implements Cloneable {
      */
     public boolean hasInstalledMods() {
         return (this.mods == null ? false : (this.mods.size() >= 1 ? true : false));
-    }
-
-    /**
-     * Gets the order to load any jar mods into the class path when launching
-     * Minecraft.
-     *
-     * @return comma separated list of filenames to jar mods in their correct
-     *         loading order
-     */
-    public String getJarOrder() {
-        return this.jarOrder;
-    }
-
-    /**
-     * Sets the order to load the jars from the jarmods folder.
-     *
-     * @param jarOrder comma separated list of filenames for the order to load the
-     *                 mods from the jarmods folder
-     */
-    public void setJarOrder(String jarOrder) {
-        this.jarOrder = jarOrder;
     }
 
     /**
@@ -993,15 +960,6 @@ public class Instance implements Cloneable {
      */
     public void setRealPack(Pack realPack) {
         this.realPack = realPack;
-    }
-
-    /**
-     * Checks if this Instance has installed jar mods.
-     *
-     * @return true if there are jar mods
-     */
-    public boolean hasJarMods() {
-        return this.jarOrder != null;
     }
 
     /**
@@ -1678,12 +1636,12 @@ public class Instance implements Cloneable {
         Instance clone;
         if (!this.userLock.equals(null)) {
             clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType, memory, permgen,
-                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets,
+                    mods, libraries, extraArguments, minecraftArguments, mainClass, assets,
                     assetsMapToResources, logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods,
                     loaderVersion);
         } else {
             clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType, memory, permgen,
-                    mods, jarOrder, libraries, extraArguments, minecraftArguments, mainClass, assets,
+                    mods, libraries, extraArguments, minecraftArguments, mainClass, assets,
                     assetsMapToResources, logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods,
                     loaderVersion);
         }

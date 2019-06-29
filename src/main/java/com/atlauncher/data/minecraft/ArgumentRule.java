@@ -17,8 +17,11 @@
  */
 package com.atlauncher.data.minecraft;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
 
 @Json
@@ -36,7 +39,7 @@ public class ArgumentRule {
         this.value = value;
     }
 
-    public String getValue() {
+    public String getValueAsString() {
         if (this.value instanceof String) {
             return (String) this.value;
         }
@@ -55,11 +58,24 @@ public class ArgumentRule {
         return arguments;
     }
 
+    public List<String> getValueAsList() {
+        List<String> values = new ArrayList<>();
+
+        if (this.value instanceof String) {
+            values.add((String) this.value);
+        } else {
+            values.addAll((ArrayList<String>) this.value);
+        }
+
+        return values;
+    }
+
     public Boolean applies() {
         if (this.rules == null) {
             return true; // No rules setup so we need it
         }
 
-        return this.rules.stream().filter(rule -> rule.applies()).allMatch(rule -> rule.action == Action.ALLOW);
+        return this.rules.stream().filter(rule -> rule.applies()).count() != 0
+                && this.rules.stream().filter(rule -> rule.applies()).allMatch(rule -> rule.action == Action.ALLOW);
     }
 }

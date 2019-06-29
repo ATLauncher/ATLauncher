@@ -50,7 +50,7 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.loaders.LoaderVersion;
-import com.atlauncher.data.mojang.LoggingClient;
+import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -318,36 +318,29 @@ public class InstanceInstallerDialog extends JDialog {
                                                 : Language.INSTANCE.localize("instance.findit"));
                                 title = pack.getName() + " " + version.getVersion() + " "
                                         + Language.INSTANCE.localize("common.installed");
-                                if (isReinstall) {
-                                    LoggingClient loggingClient = version.getMinecraftVersion().getMojangVersion()
-                                            .hasLogging()
-                                                    ? version.getMinecraftVersion().getMojangVersion().getLogging()
-                                                            .getClient()
-                                                    : null;
 
+                                LoggingClient loggingClient = this.minecraftVersion.logging != null
+                                        ? this.minecraftVersion.logging.client
+                                        : null;
+
+                                if (isReinstall) {
                                     instance.setVersion(version.getVersion());
-                                    instance.setMinecraftVersion(version.getMinecraftVersion().getVersion());
-                                    instance.setVersionType(version.getMinecraftVersion().getMojangVersion().getType());
-                                    instance.setModsInstalled(this.getModsInstalled());
-                                    instance.setJarOrder(this.getJarOrder());
-                                    instance.setMemory(this.getMemory());
-                                    instance.setPermgen(this.getPermGen());
+                                    instance.setMinecraftVersion(this.minecraftVersion.id);
+                                    instance.setVersionType(this.minecraftVersion.type);
+                                    instance.setModsInstalled(this.modsInstalled);
+                                    instance.setMemory(this.packVersion.memory);
+                                    instance.setPermgen(this.packVersion.permGen);
                                     instance.setUsesNewLibraries(true);
                                     instance.setLibraries(this.getLibrariesForLaunch());
-                                    if (this.hasArguments()) {
-                                        instance.setArguments(this.getArguments());
-                                    } else {
-                                        instance.setMinecraftArguments(this.getMinecraftArguments());
-                                    }
-                                    instance.setExtraArguments(this.getExtraArguments());
-                                    instance.setMainClass(this.getMainClass());
-                                    instance.setAssets(version.getMinecraftVersion().getMojangVersion().getAssets());
+                                    instance.setArguments(this.arguments.asStringList());
+                                    instance.setExtraArguments("");
+                                    instance.setMainClass(this.mainClass);
+                                    instance.setAssets(this.minecraftVersion.assets);
                                     instance.setAssetsMapToResources(this.doAssetsMapToResources());
                                     instance.setLogging(loggingClient);
-                                    instance.setJava(this.getJsonVersion().getJava());
-                                    instance.setEnableCurseIntegration(
-                                            this.getJsonVersion().hasEnabledCurseIntegration());
-                                    instance.setEnableEditingMods(this.getJsonVersion().hasEnabledEditingMods());
+                                    instance.setJava(this.packVersion.java);
+                                    instance.setEnableCurseIntegration(this.packVersion.enableCurseIntegration);
+                                    instance.setEnableEditingMods(this.packVersion.enableEditingMods);
                                     instance.setLoaderVersion((LoaderVersion) loaderVersionsDropDown.getSelectedItem());
                                     if (version.isDev()) {
                                         instance.setDevVersion();
@@ -363,29 +356,17 @@ public class InstanceInstallerDialog extends JDialog {
                                 } else if (isServer) {
 
                                 } else {
-                                    LoggingClient loggingClient = version.getMinecraftVersion().getMojangVersion()
-                                            .hasLogging()
-                                                    ? version.getMinecraftVersion().getMojangVersion().getLogging()
-                                                            .getClient()
-                                                    : null;
-
                                     Instance newInstance = new Instance(instanceNameField.getText(), pack.getName(),
                                             pack, enableUserLock.isSelected(), version.getVersion(),
-                                            version.getMinecraftVersion().getVersion(),
-                                            version.getMinecraftVersion().getMojangVersion().getType(),
-                                            this.getMemory(), this.getPermGen(), this.getModsInstalled(),
-                                            this.getJarOrder(), this.getLibrariesForLaunch(), this.getExtraArguments(),
-                                            this.getMinecraftArguments(), this.getMainClass(),
-                                            version.getMinecraftVersion().getMojangVersion().getAssets(),
-                                            this.doAssetsMapToResources(), loggingClient, version.isDev(),
-                                            this.getJsonVersion().getJava(),
-                                            this.getJsonVersion().hasEnabledCurseIntegration(),
-                                            this.getJsonVersion().hasEnabledEditingMods(),
+                                            this.minecraftVersion.id, this.minecraftVersion.type,
+                                            this.packVersion.memory, this.packVersion.permGen, this.modsInstalled,
+                                            this.getLibrariesForLaunch(), "", this.arguments.asString(), this.mainClass,
+                                            this.minecraftVersion.assets, this.doAssetsMapToResources(), loggingClient,
+                                            version.isDev(), this.packVersion.java,
+                                            this.packVersion.enableCurseIntegration, this.packVersion.enableEditingMods,
                                             (LoaderVersion) loaderVersionsDropDown.getSelectedItem());
 
-                                    if (this.hasArguments()) {
-                                        newInstance.setArguments(this.getArguments());
-                                    }
+                                    newInstance.setArguments(this.arguments.asStringList());
 
                                     if (version.isDev() && (version.getHash() != null)) {
                                         newInstance.setHash(version.getHash());
