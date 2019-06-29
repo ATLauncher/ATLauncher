@@ -328,7 +328,7 @@ public final class Download {
             }
 
             FileUtils.createDirectory(this.copyTo.getParent());
-            FileUtils.copyFile(this.to, this.copyTo);
+            FileUtils.copyFile(this.to, this.copyTo, true);
         }
     }
 

@@ -69,6 +69,8 @@ public class NewInstanceInstaller extends InstanceInstaller {
     public com.atlauncher.data.json.Version packVersion;
     public MinecraftVersion minecraftVersion;
 
+    public boolean assetsMapToResources = false;
+
     private boolean savedReis = false; // If Reis Minimap stuff was found and saved
     private boolean savedZans = false; // If Zans Minimap stuff was found and saved
     private boolean savedNEICfg = false; // If NEI Config was found and saved
@@ -429,6 +431,10 @@ public class NewInstanceInstaller extends InstanceInstaller {
                 .downloadTo(new File(App.settings.getIndexesAssetsDir(), assetIndex.id + ".json").toPath())
                 .asClass(AssetIndex.class);
 
+        if (index.mapToResources) {
+            this.assetsMapToResources = true;
+        }
+
         OkHttpClient httpClient = Network.createProgressClient(this);
         DownloadPool pool = new DownloadPool();
 
@@ -438,9 +444,16 @@ public class NewInstanceInstaller extends InstanceInstaller {
             String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
             File file = new File(App.settings.getObjectsAssetsDir(), filename);
 
-            pool.add(new com.atlauncher.network.Download().setUrl(url).downloadTo(file.toPath()).hash(object.hash)
-                    .size(object.size).withInstanceInstaller(this).withHttpClient(httpClient)
-                    .withFriendlyFileName(entry.getKey()));
+            com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
+                    .downloadTo(file.toPath()).hash(object.hash).size(object.size).withInstanceInstaller(this)
+                    .withHttpClient(httpClient).withFriendlyFileName(entry.getKey());
+
+            if (index.mapToResources) {
+                download = download
+                        .copyTo(new File(new File(this.getRootDirectory(), "resources"), entry.getKey()).toPath());
+            }
+
+            pool.add(download);
         });
 
         DownloadPool smallPool = pool.downsize();
@@ -549,7 +562,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
     }
 
     public boolean doAssetsMapToResources() {
-        return false;
+        return this.assetsMapToResources;
     }
 
     private List<Library> getPackVersionLibraries() {
@@ -641,32 +654,29 @@ public class NewInstanceInstaller extends InstanceInstaller {
         fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
         fireSubProgressUnknown();
 
-        this.getLibraries().stream().filter(library -> library.shouldInstall())
-                .forEach(library -> {
-                    if (isServer && library.downloads.artifact != null) {
-                        File libraryFile = new File(App.settings.getGameLibrariesDir(),
-                                library.downloads.artifact.path);
+        this.getLibraries().stream().filter(library -> library.shouldInstall()).forEach(library -> {
+            if (isServer && library.downloads.artifact != null) {
+                File libraryFile = new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path);
 
-                        File serverFile = new File(getLibrariesDirectory(), library.downloads.artifact.path);
+                File serverFile = new File(getLibrariesDirectory(), library.downloads.artifact.path);
 
-                        serverFile.getParentFile().mkdirs();
+                serverFile.getParentFile().mkdirs();
 
-                        Utils.copyFile(libraryFile, serverFile, true);
-                    } else if (library.hasNativeForOS()) {
-                        File nativeFile = new File(App.settings.getGameLibrariesDir(),
-                                library.getNativeDownloadForOS().path);
+                Utils.copyFile(libraryFile, serverFile, true);
+            } else if (library.hasNativeForOS()) {
+                File nativeFile = new File(App.settings.getGameLibrariesDir(), library.getNativeDownloadForOS().path);
 
-                        ZipUtil.unpack(nativeFile, this.getNativesDirectory(), new NameMapper() {
-                            public String map(String name) {
-                                if (library.extract != null && library.extract.shouldExclude(name)) {
-                                    return null;
-                                }
+                ZipUtil.unpack(nativeFile, this.getNativesDirectory(), new NameMapper() {
+                    public String map(String name) {
+                        if (library.extract != null && library.extract.shouldExclude(name)) {
+                            return null;
+                        }
 
-                                return name;
-                            }
-                        });
+                        return name;
                     }
                 });
+            }
+        });
 
         hideSubProgressBar();
     }
