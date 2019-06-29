@@ -641,11 +641,12 @@ public class NewInstanceInstaller extends InstanceInstaller {
         fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
         fireSubProgressUnknown();
 
-        this.getLibraries().stream().filter(library -> library.shouldInstall() && library.downloads.artifact != null)
+        this.getLibraries().stream().filter(library -> library.shouldInstall())
                 .forEach(library -> {
-                    File libraryFile = new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path);
+                    if (isServer && library.downloads.artifact != null) {
+                        File libraryFile = new File(App.settings.getGameLibrariesDir(),
+                                library.downloads.artifact.path);
 
-                    if (isServer) {
                         File serverFile = new File(getLibrariesDirectory(), library.downloads.artifact.path);
 
                         serverFile.getParentFile().mkdirs();
