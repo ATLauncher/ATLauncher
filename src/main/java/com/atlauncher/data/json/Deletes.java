@@ -35,7 +35,7 @@ public class Deletes {
     }
 
     public boolean hasFolderDeletes() {
-        return this.files != null;
+        return this.folders != null;
     }
 
     public List<Delete> getFolders() {
