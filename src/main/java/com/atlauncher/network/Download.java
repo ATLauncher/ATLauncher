@@ -18,6 +18,7 @@
 package com.atlauncher.network;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -83,6 +84,11 @@ public final class Download {
 
     public <T> T asClass(Class<T> tClass, Gson gson) {
         try {
+            if (this.to != null) {
+                this.downloadFile();
+                return gson.fromJson(new InputStreamReader(Files.newInputStream(this.to)), tClass);
+            }
+
             this.execute();
 
             return gson.fromJson(this.response.body().charStream(), tClass);
@@ -99,6 +105,11 @@ public final class Download {
 
     public <T> T asType(Type tClass, Gson gson) {
         try {
+            if (this.to != null) {
+                this.downloadFile();
+                return gson.fromJson(new InputStreamReader(Files.newInputStream(this.to)), tClass);
+            }
+
             this.execute();
 
             return gson.fromJson(this.response.body().charStream(), tClass);

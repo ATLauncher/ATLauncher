@@ -36,6 +36,7 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
@@ -144,8 +145,8 @@ public class ForgeLoader implements Loader {
             // copy over any local files from the loader zip file
             if (installProfile.install != null && installProfile.install.filePath != null
                     && library.name.equalsIgnoreCase(installProfile.install.path)) {
-                Utils.copyFile(new File(tempDir, installProfile.install.filePath),
-                        new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path), true);
+                FileUtils.copyFile(new File(tempDir, installProfile.install.filePath).toPath(),
+                        new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path).toPath(), true);
             }
         });
     }

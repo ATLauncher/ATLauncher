@@ -18,12 +18,10 @@
 package com.atlauncher.workers;
 
 import java.io.File;
-import java.io.FileReader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
@@ -31,7 +29,6 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.minecraft.ArgumentRule;
@@ -426,16 +423,11 @@ public class NewInstanceInstaller extends InstanceInstaller {
         this.totalBytes = this.downloadedBytes = 0;
 
         MojangAssetIndex assetIndex = this.minecraftVersion.assetIndex;
-        File indexFile = new File(App.settings.getIndexesAssetsDir(), assetIndex.id + ".json");
 
-        Downloadable assetIndexDownloadable = new Downloadable(assetIndex.url, indexFile, assetIndex.sha1,
-                (int) assetIndex.size, this, false);
-
-        if (assetIndexDownloadable.needToDownload()) {
-            assetIndexDownloadable.download();
-        }
-
-        AssetIndex index = this.gson.fromJson(new FileReader(indexFile), AssetIndex.class);
+        AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
+                .size(assetIndex.size)
+                .downloadTo(new File(App.settings.getIndexesAssetsDir(), assetIndex.id + ".json").toPath())
+                .asClass(AssetIndex.class);
 
         OkHttpClient httpClient = Network.createProgressClient(this);
         DownloadPool pool = new DownloadPool();
@@ -461,7 +453,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
         hideSubProgressBar();
     }
 
-    private void downloadMinecraft() {
+    private void downloadMinecraft() throws Exception {
         addPercent(5);
         fireTask(Language.INSTANCE.localize("instance.downloadingminecraft"));
         fireSubProgressUnknown();
@@ -472,13 +464,12 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         MojangDownload mojangDownload = this.isServer ? downloads.server : downloads.client;
 
-        Downloadable download = new Downloadable(mojangDownload.url, getMinecraftJarLibrary(), mojangDownload.sha1,
-                (int) mojangDownload.size, this, false, getMinecraftJar(), this.isServer);
+        com.atlauncher.network.Download.build().setUrl(mojangDownload.url).hash(mojangDownload.sha1)
+                .size(mojangDownload.size).downloadTo(getMinecraftJarLibrary().toPath())
+                .copyTo(this.isServer ? getMinecraftJar().toPath() : null).withInstanceInstaller(this)
+                .withHttpClient(Network.createProgressClient(this)).downloadFile();
 
-        if (download.needToDownload()) {
-            totalBytes += download.getFilesize();
-            download.download(true);
-        }
+        setTotalBytes(mojangDownload.size);
 
         hideSubProgressBar();
     }
@@ -491,7 +482,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
         return new File(getRootDirectory(), String.format("%s.jar", this.minecraftVersion.id));
     }
 
-    private void downloadLoggingClient() {
+    private void downloadLoggingClient() throws Exception {
         addPercent(5);
 
         if (this.isServer || this.minecraftVersion.logging == null) {
@@ -500,19 +491,11 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         fireTask(Language.INSTANCE.localize("instance.downloadingloggingconfig"));
         fireSubProgressUnknown();
-        totalBytes = 0;
-        downloadedBytes = 0;
 
         LoggingFile loggingFile = this.minecraftVersion.logging.client.file;
 
-        Downloadable download = new Downloadable(loggingFile.url,
-                new File(App.settings.getLogConfigsDir(), loggingFile.id), loggingFile.sha1, (int) loggingFile.size,
-                this, false);
-
-        if (download.needToDownload()) {
-            totalBytes += download.getFilesize();
-            download.download(true);
-        }
+        com.atlauncher.network.Download.build().setUrl(loggingFile.url).hash(loggingFile.sha1).size(loggingFile.size)
+                .downloadTo(new File(App.settings.getLogConfigsDir(), loggingFile.id).toPath()).downloadFile();
 
         hideSubProgressBar();
     }
@@ -744,10 +727,13 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         File configs = new File(App.settings.getTempDir(), "Configs.zip");
         String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
-        Downloadable configsDownload = new Downloadable(path, configs, null, this, true);
-        this.totalBytes = configsDownload.getFilesize();
-        this.downloadedBytes = 0;
-        configsDownload.download(true);
+
+        com.atlauncher.network.Download configsDownload = com.atlauncher.network.Download.build()
+                .setUrl(String.format("%s/%s", Constants.ATLAUNCHER_DOWNLOAD_SERVER, path)).downloadTo(configs.toPath())
+                .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
+
+        this.setTotalBytes(configsDownload.getFilesize());
+        configsDownload.downloadFile();
 
         if (!configs.exists()) {
             throw new Exception("Failed to download configs for pack!");
@@ -901,6 +887,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
     }
 
     public void setTotalBytes(long bytes) {
+        this.downloadedBytes = 0L;
         this.totalBytes = bytes;
         this.updateProgressBar();
     }
