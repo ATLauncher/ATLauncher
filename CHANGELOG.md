@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.9.2
+## 3.2.9.3
 
--   Fix invalid Java versions being found causing crashes
+-   Don't use Windows folder Java when looking for Java version to use

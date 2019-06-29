@@ -62,9 +62,6 @@ public class JavaFinder {
         javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\JDK", WinRegistry.KEY_WOW64_32KEY, javaExecs);
         javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\JDK", WinRegistry.KEY_WOW64_64KEY, javaExecs);
 
-        javaExecs.add(System.getenv("WINDIR") + "\\system32\\java.exe");
-        javaExecs.add(System.getenv("WINDIR") + "\\SysWOW64\\java.exe");
-
         List<JavaInfo> result = new ArrayList<JavaInfo>();
         for (String javaPath : javaExecs) {
             if (!(new File(javaPath).exists()))
