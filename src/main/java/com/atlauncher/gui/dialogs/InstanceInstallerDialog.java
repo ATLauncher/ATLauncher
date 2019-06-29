@@ -476,7 +476,6 @@ public class InstanceInstallerDialog extends JDialog {
                             progress = ((Integer) evt.getNewValue()) * 100.0;
                         } else {
                             String[] parts = (String[]) evt.getNewValue();
-                            System.out.println(parts[0] + " : " + parts[1]);
                             progress = Double.parseDouble(parts[0]);
                             paint = parts[1];
                         }

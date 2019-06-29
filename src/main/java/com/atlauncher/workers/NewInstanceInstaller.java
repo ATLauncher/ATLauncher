@@ -109,8 +109,6 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
             downloadMinecraftVersionJson();
 
-            System.out.println(this.loaderVersion);
-
             if (this.packVersion.loader != null) {
                 this.loader = this.packVersion.getLoader().getNewLoader(new File(this.getTempDirectory(), "loader"),
                         this, this.loaderVersion);
@@ -354,13 +352,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         if (this.loader != null) {
             if (this.loader.useMinecraftArguments()) {
-                if (this.minecraftVersion.arguments.game != null && this.minecraftVersion.arguments.game.size() != 0) {
-                    this.arguments.game.addAll(this.minecraftVersion.arguments.game);
-                }
-
-                if (this.minecraftVersion.arguments.jvm != null && this.minecraftVersion.arguments.jvm.size() != 0) {
-                    this.arguments.jvm.addAll(this.minecraftVersion.arguments.jvm);
-                }
+                addMinecraftArguments();
             }
 
             Arguments loaderArguments = this.loader.getArguments();
@@ -375,13 +367,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
                 }
             }
         } else {
-            if (this.minecraftVersion.arguments.game != null && this.minecraftVersion.arguments.game.size() != 0) {
-                this.arguments.game.addAll(this.minecraftVersion.arguments.game);
-            }
-
-            if (this.minecraftVersion.arguments.jvm != null && this.minecraftVersion.arguments.jvm.size() != 0) {
-                this.arguments.jvm.addAll(this.minecraftVersion.arguments.jvm);
-            }
+            addMinecraftArguments();
         }
 
         if (this.packVersion.extraArguments != null) {
@@ -407,6 +393,25 @@ public class NewInstanceInstaller extends InstanceInstaller {
             if (add) {
                 this.arguments.game.addAll(Arrays.asList(this.packVersion.extraArguments.arguments.split(" ")).stream()
                         .map(argument -> new ArgumentRule(argument)).collect(Collectors.toList()));
+            }
+        }
+    }
+
+    private void addMinecraftArguments() {
+        // older MC versions
+        if (this.minecraftVersion.minecraftArguments != null) {
+            this.arguments.game.addAll(Arrays.asList(this.minecraftVersion.minecraftArguments.split(" ")).stream()
+                    .map(arg -> new ArgumentRule(null, arg)).collect(Collectors.toList()));
+        }
+
+        // newer MC versions
+        if (this.minecraftVersion.arguments != null) {
+            if (this.minecraftVersion.arguments.game != null && this.minecraftVersion.arguments.game.size() != 0) {
+                this.arguments.game.addAll(this.minecraftVersion.arguments.game);
+            }
+
+            if (this.minecraftVersion.arguments.jvm != null && this.minecraftVersion.arguments.jvm.size() != 0) {
+                this.arguments.jvm.addAll(this.minecraftVersion.arguments.jvm);
             }
         }
     }
@@ -923,25 +928,21 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
     public void setTotalBytes(long bytes) {
         this.totalBytes = bytes;
-        System.out.println("totalBytes: " + totalBytes);
         this.updateProgressBar();
     }
 
     public void addDownloadedBytes(long bytes) {
         this.downloadedBytes += bytes;
-        System.out.println("downloadedBytes: " + downloadedBytes);
         this.updateProgressBar();
     }
 
     private void updateProgressBar() {
         double progress;
         if (this.totalBytes > 0) {
-            System.out.println(this.downloadedBytes / this.totalBytes);
             progress = (this.downloadedBytes / this.totalBytes) * 100.0;
         } else {
             progress = 0.0;
         }
-        System.out.println("progress: " + progress);
         double done = this.downloadedBytes / 1024.0 / 1024.0;
         double toDo = this.totalBytes / 1024.0 / 1024.0;
         if (done > toDo) {

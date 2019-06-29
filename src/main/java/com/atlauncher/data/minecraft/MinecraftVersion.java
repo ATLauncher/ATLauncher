@@ -25,6 +25,7 @@ import com.atlauncher.annot.Json;
 public class MinecraftVersion {
     public String id;
     public Arguments arguments;
+    public String minecraftArguments;
     public String type;
     public String time;
     public String releaseTime;
